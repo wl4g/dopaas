@@ -33,8 +33,8 @@ public class SpringCloudMvnGeneratorProvider extends AbstractGeneratorProvider {
 	}
 
 	@Override
-	public void generate() throws Exception {
-		doGenerate(PROVIDER_NAME);
+	public void doGenerate() throws Exception {
+		processGenerate(PROVIDER_NAME);
 	}
 
 }

@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static com.wl4g.components.common.jvm.JvmRuntimeKit.isJVMDebugging;
 import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.ByteStreamUtils.readFullyToString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
@@ -72,41 +73,51 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	@Override
 	public void run() {
 		try {
-			generate();
+			doGenerate();
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	/**
-	 * Hanlding generation.
+	 * DO generation project codes.
 	 *
 	 * @throws Exception
 	 */
-	protected abstract void generate() throws Exception;
+	protected abstract void doGenerate() throws Exception;
 
-	protected void doGenerate(String provider) throws Exception {
+	/**
+	 * Processing generate codes.
+	 * 
+	 * @param provider
+	 * @throws Exception
+	 */
+	protected void processGenerate(String provider) throws Exception {
+		hasTextOf(provider, "provider");
 		GenProject project = context.getGenProject();
 
 		// Load templates.
 		List<TemplateWrapper> tpls = loadTemplates(provider);
 
 		// Handling generate
-		doHandleGenerateAndSave(tpls, project, context.getJobDir().getAbsolutePath());
+		renderingAndGenerate(tpls, project, context.getJobDir().getAbsolutePath());
 	}
 
 	/**
-	 * Do handling rendering generate and save.
+	 * Do rendering generate and save.
 	 *
 	 * @param tpls
 	 * @param project
-	 * @param targetBasePath
+	 * @param writeBasePath
 	 * @throws Exception
 	 */
-	private void doHandleGenerateAndSave(List<TemplateWrapper> tpls, GenProject project, String targetBasePath) throws Exception {
+	private void renderingAndGenerate(List<TemplateWrapper> tpls, GenProject project, String writeBasePath) throws Exception {
 		for (TemplateWrapper tpl : tpls) {
+			log.info("Rendering generate for tpl - {}", tpl.getTplPath());
+
 			// Create rednering model.
 			Map<String, Object> model = createRenderingModel(tpl.getTplPath(), project);
+
 			if (tpl.isTpl()) {
 				// foreach template by table
 				if (tpl.isForeachTpl()) {
@@ -115,24 +126,24 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 						model.putAll(toRenderingFlatModel(tab));
 
 						// Rendering tpl
-						String targetPath = targetBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
+						String writePath = writeBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
 						Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
 						String fileContent = renderingTemplateToString(template, model);
-						writeFile(new File(targetPath), fileContent, false);
+						writeFile(new File(writePath), fileContent, false);
 					}
 				}
 				// Simple template.
 				else {
-					String targetPath = targetBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
+					String writePath = writeBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
 					// Rendering tpl
 					Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
 					String fileContent = renderingTemplateToString(template, model);
-					writeFile(new File(targetPath), fileContent, false);
+					writeFile(new File(writePath), fileContent, false);
 				}
 			}
-			// e.g: static file
+			// e.g: static resource files
 			else {
-				String targetPath = targetBasePath + "/" + resolveExpressionPath(tpl.getTplPath(), model);
+				String targetPath = writeBasePath + "/" + resolveExpressionPath(tpl.getTplPath(), model);
 				writeFile(new File(targetPath), tpl.getFileContent(), false);
 			}
 		}
@@ -192,10 +203,14 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param model
 	 * @return
 	 */
-	private String resolveExpressionPath(String tplPath, Map<String, Object> model) {
+	@SuppressWarnings("unchecked")
+	private String resolveExpressionPath(String tplPath, final Map<String, Object> model) {
 		if (tplPath.endsWith(".ftl")) {
 			tplPath = tplPath.substring(0, tplPath.length() - 4);
 		}
+
+		final String path = tplPath;
+		log.debug("Resolving SPEL for tplPath: {}, model: {}", () -> path, () -> model);
 		return valueOf(defaultExpressions.resolve(tplPath, model));
 	}
 
@@ -206,15 +221,17 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return
 	 * @throws IOException
 	 */
-	private static List<TemplateWrapper> loadTemplates(String provider) throws IOException {
+	private static final List<TemplateWrapper> loadTemplates(String provider) throws IOException {
 		List<TemplateWrapper> tpls = templatesCache.get(provider);
-		if (isNull(tpls)) {
+		if (isJVMDebugging || isNull(tpls)) {
 			synchronized (AbstractGeneratorProvider.class) {
 				tpls = templatesCache.get(provider);
-				if (isNull(tpls)) {
+				if (isJVMDebugging || isNull(tpls)) {
 					tpls = new ArrayList<>();
-					Set<StreamResource> resources = defaultResourceResolver
-							.getResources("classpath:/" + DEFAULT_TPL_BASEPATH + "/" + provider + "/**/*.ftl");
+					// Scanning templates resources.
+					Set<StreamResource> resources = defaultResourceResolver.getResources(DEFAULT_TPLS_LOCATIONS);
+					staticLog.info("Loaded templates resources: {}", resources);
+
 					for (StreamResource res : resources) {
 						if (res.getFile().isFile()) {
 							tpls.add(wrapTemplate(res, provider));
@@ -270,7 +287,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			this.fileName = filename;
 			this.fileContent = fileContent;
 			this.isTpl = filename.endsWith(DEFAULT_TPL_SUFFIX);
-			this.isForeachTpl = filename.contains(VARIABLE_ENTITY_NAME);
+			this.isForeachTpl = filename.contains(VAR_ENTITY_NAME);
 		}
 
 		public String getTplPath() {
@@ -295,12 +312,21 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 	}
 
+	/**
+	 * Static log of {@link SmartLogger}
+	 */
+	private static final SmartLogger staticLog = getLogger(AbstractGeneratorProvider.class);
+
 	// Template configuration.
 	private static final String DEFAULT_TPL_BASEPATH = "projects-template";
 	private static final String DEFAULT_TPL_SUFFIX = ".ftl";
 
-	// Template configuration.
-	private static final String VARIABLE_ENTITY_NAME = "entityName";
+	// for example: classpath:/projects-template/myGenProvider/**/*/.ftl
+	private static final String DEFAULT_TPLS_LOCATIONS = "classpath:/".concat(DEFAULT_TPL_BASEPATH).concat("/%s").concat("/**/*")
+			.concat(DEFAULT_TPL_SUFFIX);
+
+	// Variables of entityName.
+	private static final String VAR_ENTITY_NAME = "entityName";
 
 	/**
 	 * Global project {@link Template} cache.
