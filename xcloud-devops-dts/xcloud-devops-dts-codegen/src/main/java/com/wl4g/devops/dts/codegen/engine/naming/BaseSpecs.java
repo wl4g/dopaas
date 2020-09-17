@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.dts.codegen.engine.naming;
 
+import com.wl4g.components.common.annotation.Nullable;
+
 import static java.lang.String.valueOf;
 import static java.util.Locale.US;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-
-import com.wl4g.components.common.annotation.Nullable;
 
 /**
  * Common base language specification of {@link BaseSpecs}
@@ -30,48 +30,53 @@ import com.wl4g.components.common.annotation.Nullable;
  */
 public abstract class BaseSpecs {
 
-	/**
-	 * Gets the string that converts the first letter to uppercase
-	 */
-	public static String fistUCase(@Nullable String str) {
-		if (isBlank(str)) {
-			return str;
-		}
-		char[] cs = str.toCharArray();
-		cs[0] -= 32;
-		return valueOf(cs);
-	}
+    /**
+     * Gets the string that converts the first letter to uppercase
+     */
+    public static String fistUCase(@Nullable String str) {
+        if (isBlank(str)) {
+            return str;
+        }
+        char[] cs = str.toCharArray();
+        if (97 <= cs[0] && cs[0] <= 122) {
+			cs[0] -= 32;
+        }
+        return valueOf(cs);
+    }
 
-	/**
-	 * Gets the string that converts the first letter to lowercase
-	 */
-	public static String fistLCase(@Nullable String str) {
-		if (isBlank(str)) {
-			return str;
+    /**
+     * Gets the string that converts the first letter to lowercase
+     */
+    public static String fistLCase(@Nullable String str) {
+        if (isBlank(str)) {
+            return str;
+        }
+        char[] cs = str.toCharArray();
+		if (65 <= cs[0] && cs[0] <= 90) {
+			cs[0] += 32;
 		}
-		char[] cs = str.toCharArray();
-		cs[0] += 32;
-		return valueOf(cs);
-	}
 
-	/**
-	 * Gets the string that converts the all letter to upper case
-	 */
-	public static String uCase(@Nullable String str) {
-		if (isBlank(str)) {
-			return str;
-		}
-		return str.toUpperCase(US);
-	}
+        return valueOf(cs);
+    }
 
-	/**
-	 * Gets the string that converts the all letter to lower case
-	 */
-	public static String lCase(@Nullable String str) {
-		if (isBlank(str)) {
-			return str;
-		}
-		return str.toLowerCase(US);
-	}
+    /**
+     * Gets the string that converts the all letter to upper case
+     */
+    public static String uCase(@Nullable String str) {
+        if (isBlank(str)) {
+            return str;
+        }
+        return str.toUpperCase(US);
+    }
+
+    /**
+     * Gets the string that converts the all letter to lower case
+     */
+    public static String lCase(@Nullable String str) {
+        if (isBlank(str)) {
+            return str;
+        }
+        return str.toLowerCase(US);
+    }
 
 }
