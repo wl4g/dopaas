@@ -30,6 +30,7 @@ import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -83,6 +84,7 @@ public class DefaultGenerateManager implements GenerateManager {
 			List<GenTableColumn> genColumns = genColumnDao.selectByTableId(genTable.getId());
 			genTable.setGenTableColumns(genColumns);
 			BeanUtils.copyProperties(genProject,genTable,"id","genTables");
+			genTable.setPk(getPk(genColumns));
 		}
 		genProject.setGenTables(genTables);
 
@@ -95,6 +97,15 @@ public class DefaultGenerateManager implements GenerateManager {
 
 		log.info("generate code success");
 
+	}
+
+	private GenTableColumn getPk(List<GenTableColumn> genColumns){
+		for(GenTableColumn genTableColumn : genColumns){
+			if(StringUtils.equalsIgnoreCase(genTableColumn.getIsPk(),"1")){
+				return genTableColumn;
+			}
+		}
+		return null;
 	}
 
 }
