@@ -95,4 +95,16 @@ public class GenerateController {
 		return resp;
 	}
 
+
+	@RequestMapping("downloadTest")
+	public RespBase<?> downloadTest() {
+		RespBase<Object> resp = RespBase.create();
+
+
+
+		return resp;
+	}
+
+
+
 }
