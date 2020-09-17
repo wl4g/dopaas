@@ -1,15 +1,15 @@
+<!-- ${watermark} -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-ci-core</artifactId>
-	<packaging>jar</packaging>
-	<name>${companyName?cap_first} ${projectName?cap_first} Dao</name>
-	<url>http://xcloud.wl4g.com</url>
+	<artifactId>${organName?uncap_first}-${projectName?uncap_first}-dao</artifactId>
+	<packaging>pom</packaging>
+	<name>${organName?cap_first} ${projectName?cap_first} DAO</name>
+	<url>http://${projectName?uncap_first}.${organName?uncap_first}.${organType}</url>
 	<parent>
-		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-ci</artifactId>
-		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
+		<groupId>${organType?uncap_first}.${organName?uncap_first}</groupId>
+		<artifactId>${projectName?uncap_first}</artifactId>
+		<version>${version?uncap_first}</version>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -28,23 +28,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
+			<artifactId>xcloud-components-data</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-dao</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-cli</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-springboot</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client</artifactId>
+			<groupId>${organType?uncap_first}.${organName?uncap_first}</groupId>
+			<artifactId>${organName?uncap_first}-${projectName?uncap_first}-common</artifactId>
+			<version>${version?uncap_first}</version>
 		</dependency>
 	</dependencies>
 	<build>
