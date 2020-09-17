@@ -297,7 +297,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 	// Template configuration.
 	private static final String DEFAULT_TPL_BASEPATH = "projects-template";
-	private static final String DEFAULT_TPL_SUFFIX = ".fpl";
+	private static final String DEFAULT_TPL_SUFFIX = ".ftl";
 
 	// Template configuration.
 	private static final String VARIABLE_ENTITY_NAME = "entityName";

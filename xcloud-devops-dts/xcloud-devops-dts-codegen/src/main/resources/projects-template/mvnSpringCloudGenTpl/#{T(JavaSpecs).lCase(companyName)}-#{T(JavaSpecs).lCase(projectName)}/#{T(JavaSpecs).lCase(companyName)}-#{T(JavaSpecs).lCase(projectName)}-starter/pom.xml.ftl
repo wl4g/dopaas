@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-ci-core</artifactId>
 	<packaging>jar</packaging>
-	<name>#{T(JavaSpecs).fistUCase(companyName)}-#{projectName} Starter</name>
+	<name>${companyName?cap_first}-${projectName?cap_first} Starter</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
