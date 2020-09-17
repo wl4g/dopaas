@@ -19,11 +19,20 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.wl4g.components.common.annotation.Nullable;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.validation.constraints.NotBlank;
+
+import static java.util.Objects.isNull;
 import static java.util.regex.Pattern.compile;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static java.lang.ThreadLocal.withInitial;
 
 /**
@@ -100,6 +109,39 @@ public abstract class JavaSpecs extends BaseSpecs {
 			return str;
 		}
 		return str.replaceAll("\\.", File.separator);
+	}
+
+	/**
+	 * Escape copyright string. If there is no multi line comment in the
+	 * Copyright string, the identifier is inserted, otherwise nothing is done.
+	 * (Multi line annotation conforming to Java specification)
+	 * 
+	 * @param copyright
+	 * @return
+	 */
+	public static String escapeCopyright(@NotBlank String copyright) {
+		hasTextOf(copyright, "copyright");
+
+		// Nothing do
+		if (copyright.contains("/*") && copyright.contains("*/")) {
+			return copyright;
+		}
+
+		StringBuffer newCopyright = new StringBuffer("/*");
+		try (BufferedReader bfr = new BufferedReader(new StringReader(copyright));) {
+			String line = null;
+			while (!isNull(line = bfr.readLine())) {
+				newCopyright.append(LINE_SEPARATOR);
+				newCopyright.append(" * ");
+				newCopyright.append(line);
+			}
+			newCopyright.append(LINE_SEPARATOR);
+			newCopyright.append(" */");
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+
+		return newCopyright.toString();
 	}
 
 	/** Underline {@link Pattern} */

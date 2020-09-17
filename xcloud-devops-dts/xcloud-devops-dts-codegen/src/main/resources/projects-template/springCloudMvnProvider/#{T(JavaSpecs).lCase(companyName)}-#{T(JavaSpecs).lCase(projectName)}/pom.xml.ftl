@@ -1,19 +1,41 @@
+<!-- ${watermark} -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-ci-core</artifactId>
-	<packaging>jar</packaging>
-	<name>${companyName?cap_first} ${projectName?cap_first} Commons</name>
-	<url>http://xcloud.wl4g.com</url>
+	<artifactId>${organName?cap_first}-${projectName?cap_first}</artifactId>
+	<packaging>pom</packaging>
+	<name>${organName?cap_first} ${projectName?cap_first}</name>
+	<url>http://${projectName?uncap_first}.${organName?uncap_first}.${organType}</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-ci</artifactId>
+		<artifactId>xcloud-parent</artifactId>
 		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
+	<modules>
+		<module>${organName?cap_first}-${projectName?cap_first}-common</module>
+		<module>${organName?cap_first}-${projectName?cap_first}-dao</module>
+		<module>${organName?cap_first}-${projectName?cap_first}-service</module>
+		<module>${organName?cap_first}-${projectName?cap_first}-starter</module>
+	</modules>
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 	</properties>
+	<repositories>
+		<repository>
+			<id>aliyun-public</id>
+			<name>Aliyun public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
+		</repository>
+		<repository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/libs-snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -25,28 +47,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<dependencies>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-dao</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-cli</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-springboot</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client</artifactId>
-		</dependency>
-	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -55,6 +55,8 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
