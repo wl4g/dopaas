@@ -31,7 +31,7 @@ public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
 	}
 
 	@Override
-	protected void generate() throws Exception {
+	protected void doGenerate() throws Exception {
 
 	}
 
