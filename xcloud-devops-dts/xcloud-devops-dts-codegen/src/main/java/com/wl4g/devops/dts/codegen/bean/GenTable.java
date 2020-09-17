@@ -69,4 +69,6 @@ public class GenTable extends GenProject {
 	// Extend
 	private List<GenTableColumn> genTableColumns;
 
+	private GenTableColumn pk;
+
 }
