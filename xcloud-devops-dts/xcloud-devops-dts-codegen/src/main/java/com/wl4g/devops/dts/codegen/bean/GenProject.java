@@ -16,9 +16,11 @@
 package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.ExtraConfigurableSupport.ConfigOption;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Wither;
 
 import java.util.List;
 
@@ -52,6 +54,37 @@ public class GenProject extends BaseBean {
 
 	private List<GenTable> genTables;
 
-	private String extraConfigOptions;
+	private String extraOptionsJson;
+
+	// --- Temporary fields. ---
+
+	/**
+	 * Configured extra options.
+	 */
+	private ConfigOptions extraOptions;
+
+	/**
+	 * {@link ConfigOptions}
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020-09-17
+	 * @since
+	 */
+	@Getter
+	@Setter
+	@Wither
+	public static class ConfigOptions {
+
+		private List<ConfigOption> options;
+
+		public ConfigOptions() {
+		}
+
+		public ConfigOptions(List<ConfigOption> options) {
+			super();
+			this.options = options;
+		}
+
+	}
 
 }

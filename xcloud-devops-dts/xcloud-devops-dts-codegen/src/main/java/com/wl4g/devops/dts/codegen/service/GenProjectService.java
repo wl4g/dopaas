@@ -17,7 +17,6 @@ package com.wl4g.devops.dts.codegen.service;
 
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
-import com.wl4g.devops.dts.codegen.web.model.GenProjectModel;
 
 /**
  * GenProjectService
@@ -29,7 +28,7 @@ public interface GenProjectService {
 
 	PageModel page(PageModel pm, String name);
 
-	void save(GenProjectModel genProject);
+	void save(GenProject project);
 
 	GenProject detail(Integer id);
 

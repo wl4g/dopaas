@@ -12,15 +12,15 @@
     <result column="since" property="since" jdbcType="VARCHAR" />
     <result column="copyright" property="copyright" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="extra_config_options" property="extraConfigOptions" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="extra_options_json" property="extraOptionsJson" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, project_name, company_name, provider_group, package_name, version, author, since, copyright, remark, extra_config_options, del_flag, create_date,
+    id, project_name, company_name, provider_group, package_name, version, author, since, copyright, remark, extra_options_json, del_flag, create_date,
     create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -36,13 +36,13 @@
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenProject" >
     insert into dts_gen_project (id, project_name, company_name, provider_group, package_name, version,
       author, since, copyright, 
-      remark, extra_config_options, del_flag, create_date,
+      remark, extra_options_json, del_flag, create_date,
       create_by, update_date, update_by
       )
     values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR},
       #{providerGroup,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
       #{author,jdbcType=VARCHAR}, #{since,jdbcType=VARCHAR}, #{copyright,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{extraConfigOptions,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
+      #{remark,jdbcType=VARCHAR}, #{extraOptionsJson,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
       )
   </insert>
@@ -79,8 +79,8 @@
       <if test="remark != null" >
         remark,
       </if>
-      <if test="extraConfigOptions != null" >
-        extra_config_options,
+      <if test="extraOptionsJson != null" >
+        extra_options_json,
       </if>
       <if test="delFlag != null" >
         del_flag,
@@ -129,8 +129,8 @@
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="extraConfigOptions != null" >
-        #{extraConfigOptions,jdbcType=VARCHAR},
+      <if test="extraOptionsJson != null" >
+        #{extraOptionsJson,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
         #{delFlag,jdbcType=INTEGER},
@@ -179,11 +179,8 @@
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="extraConfigOptions != null" >
-        extra_config_options = #{extraConfigOptions,jdbcType=VARCHAR},
-      </if>
-      <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=INTEGER},
+      <if test="extraOptionsJson != null" >
+        extra_options_json = #{extraOptionsJson,jdbcType=VARCHAR},
       </if>
       <if test="createDate != null" >
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -196,6 +193,9 @@
       </if>
       <if test="updateBy != null" >
         update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -210,7 +210,7 @@
       author = #{author,jdbcType=VARCHAR},
       since = #{since,jdbcType=VARCHAR},
       copyright = #{copyright,jdbcType=VARCHAR},
-      extra_config_options = #{extraConfigOptions,jdbcType=VARCHAR},
+      extra_options_json = #{extraOptionsJson,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},

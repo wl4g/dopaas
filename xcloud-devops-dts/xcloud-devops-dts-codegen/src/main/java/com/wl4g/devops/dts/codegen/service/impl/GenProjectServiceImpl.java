@@ -15,29 +15,24 @@
  */
 package com.wl4g.devops.dts.codegen.service.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
+import com.wl4g.devops.dts.codegen.bean.GenProject.ConfigOptions;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
-import com.wl4g.devops.dts.codegen.web.model.ConfigOptionModel;
-import com.wl4g.devops.dts.codegen.web.model.GenProjectModel;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * GenProjectServiceImpl
@@ -58,16 +53,16 @@ public class GenProjectServiceImpl implements GenProjectService {
 		return pm;
 	}
 
-	public void save(GenProjectModel model) {
-		if (!isEmpty(model.getSelectedConfigOptions())) {
-			model.setExtraConfigOptions(toJSONString(model.getSelectedConfigOptions()));
+	public void save(GenProject project) {
+		if (nonNull(project.getExtraOptions())) {
+			project.setExtraOptionsJson(toJSONString(project.getExtraOptions()));
 		}
-		if (isNull(model.getId())) {
-			model.preInsert();
-			insert(model);
+		if (isNull(project.getId())) {
+			project.preInsert();
+			insert(project);
 		} else {
-			model.preUpdate();
-			update(model);
+			project.preUpdate();
+			update(project);
 		}
 	}
 
@@ -79,21 +74,16 @@ public class GenProjectServiceImpl implements GenProjectService {
 		genProjectDao.updateByPrimaryKeySelective(genProject);
 	}
 
-	public GenProjectModel detail(Integer id) {
+	public GenProject detail(Integer id) {
 		notNullOf(id, "genProjectId");
 
-		GenProjectModel model = new GenProjectModel();
-
-		GenProject genProject = genProjectDao.selectByPrimaryKey(id);
-		if (isNotBlank(genProject.getExtraConfigOptions())) {
-			List<ConfigOptionModel> extraConfigOptions = parseJSON(genProject.getExtraConfigOptions(),
-					new TypeReference<List<ConfigOptionModel>>() {
-					});
-			model.setSelectedConfigOptions(extraConfigOptions);
+		GenProject project = genProjectDao.selectByPrimaryKey(id);
+		if (isNotBlank(project.getExtraOptionsJson())) {
+			ConfigOptions configuredOptions = parseJSON(project.getExtraOptionsJson(), ConfigOptions.class);
+			project.setExtraOptions(configuredOptions);
 		}
-		BeanUtils.copyProperties(genProject, model);
 
-		return model;
+		return project;
 	}
 
 	public void del(Integer id) {
