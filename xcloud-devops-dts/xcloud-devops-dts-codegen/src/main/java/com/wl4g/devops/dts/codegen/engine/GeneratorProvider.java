@@ -23,7 +23,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
@@ -32,7 +31,6 @@ import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
 import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias.*;
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -76,32 +74,40 @@ public interface GeneratorProvider extends Runnable {
 	}
 
 	/**
-	 * An extensible configuration item {@link ExtraConfigSupport} which is
-	 * supported by itself, If NULL is returned, there is no extensible
+	 * An extensible configuration item {@link ExtraConfigurableSupport} which
+	 * is supported by itself, If NULL is returned, there is no extensible
 	 * configuration item.
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020-09-16
 	 * @since
 	 */
-	@SuppressWarnings("serial")
-	public static abstract class ExtraConfigSupport {
+	public static enum ExtraConfigurableSupport {
 
-		/** {@link ConfigOption} register. */
-		private static final List<ConfigOption> extraOptionsRegistry = unmodifiableList(new LinkedList<ConfigOption>() {
-			{
-				add(new ConfigOption(SPINGCLOUD_MVN, "codegen.provider.springcloudmvn.build-assets-type", "MvnAssTar",
-						"SpringExecJar"));
-				add(new ConfigOption(VUEJS, "codegen.provider.vue.compression", "true", "false"));
-			}
-		});
+		SpringCloudMvnBuildAssetsType(
+				new ConfigOption(SPINGCLOUD_MVN, "codegen.springcloudmvn.build-assets-type", "MvnAssTar", "SpringExecJar")),
 
-		private ExtraConfigSupport() {
-			extraOptionsRegistry.forEach(o -> o.validate());
+		VueJSCompression(new ConfigOption(VUEJS, "codegen.vuejs.compression", "true", "false")),
+
+		VueJSBasedOnAdminUi(new ConfigOption(VUEJS, "codegen.vuejs.basedon-adminui", "true", "false")),
+
+		NgJSCompression(new ConfigOption(NGJS, "codegen.ngjs.compression", "true", "false"));
+
+		/** Gen provider extra option of {@link ConfigOption} . */
+		@NotNull
+		private final ConfigOption option;
+
+		private ExtraConfigurableSupport(@NotNull ConfigOption option) {
+			notNullOf(option, "option");
+			this.option = option.validate();
+		}
+
+		public final ConfigOption getOption() {
+			return option;
 		}
 
 		/**
-		 * Gets {@link ConfigOption} by provider.
+		 * Gets {@link ConfigOption} by providers.
 		 * 
 		 * @param provider
 		 * @return
@@ -111,16 +117,17 @@ public interface GeneratorProvider extends Runnable {
 			if (!isEmptyArray(providers)) {
 				conditions.addAll(asList(providers));
 			}
-			return extraOptionsRegistry.stream().filter(o -> (isEmpty(conditions) || conditions.contains(o.getProvider())))
-					.collect(toList());
+			return asList(values()).stream()
+					.filter(o -> (isEmpty(conditions) || conditions.contains(o.getOption().getProvider())))
+					.map(o -> o.getOption()).collect(toList());
 		}
 
 		/**
-		 * Check {@link ConfigOption} name and values invalid?
+		 * Validation {@link ConfigOption} name and values invalid?
 		 * 
 		 * @param option
 		 */
-		public static void checkOption(@NotBlank String provider, @NotBlank String name, @NotBlank String value) {
+		public static void validateOption(@NotBlank String provider, @NotBlank String name, @NotBlank String value) {
 			hasTextOf(provider, "provider");
 			hasTextOf(name, "name");
 			hasTextOf(value, "value");
@@ -131,6 +138,28 @@ public interface GeneratorProvider extends Runnable {
 					"Invalid option name: '%s' of provider: '%s'", name, provider);
 			isTrue(options.stream().filter(o -> o.getValues().contains(value)).count() > 0,
 					"Invalid option name: '%s', value: '%s' of provider: '%s'", name, value, provider);
+		}
+
+		/**
+		 * Check whether the current configured items match the additional
+		 * configuration items of the specified service provider.
+		 * 
+		 * @param provider
+		 * @param configuredOptions
+		 * @return
+		 */
+		public static boolean checkConfigured(@NotNull String provider, @NotEmpty List<ConfigOption> configuredOptions) {
+			hasTextOf(provider, "provider");
+			notEmptyOf(configuredOptions, "configuredOptions");
+			for (ConfigOption defineOption : safeList(getOptions(provider))) {
+				for (ConfigOption configuredOption : configuredOptions) {
+					if (defineOption.getName().equals(configuredOption.getName())
+							&& defineOption.getValues().contains(configuredOption.getSelectedValue())) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/**
@@ -154,6 +183,10 @@ public interface GeneratorProvider extends Runnable {
 			@NotEmpty
 			private List<String> values;
 
+			/** Gen provider used configured value. */
+			@Nullable
+			private String selectedValue;
+
 			public ConfigOption() {
 				super();
 			}
@@ -173,6 +206,7 @@ public interface GeneratorProvider extends Runnable {
 			 * 
 			 * @return
 			 */
+			@NotBlank
 			public String getProvider() {
 				return provider;
 			}
@@ -182,8 +216,18 @@ public interface GeneratorProvider extends Runnable {
 			 * 
 			 * @param provider
 			 */
-			public void setProvider(String provider) {
+			public void setProvider(@NotBlank String provider) {
 				this.provider = hasTextOf(provider, "provider");
+			}
+
+			/**
+			 * Sets extra option of gen provider.
+			 * 
+			 * @param provider
+			 */
+			public ConfigOption withProvider(@NotBlank String provider) {
+				setProvider(provider);
+				return this;
 			}
 
 			/**
@@ -191,6 +235,7 @@ public interface GeneratorProvider extends Runnable {
 			 * 
 			 * @return
 			 */
+			@NotBlank
 			public final String getName() {
 				return name;
 			}
@@ -200,8 +245,18 @@ public interface GeneratorProvider extends Runnable {
 			 * 
 			 * @param name
 			 */
-			public void setName(String name) {
+			public void setName(@NotBlank String name) {
 				this.name = hasTextOf(name, "name");
+			}
+
+			/**
+			 * Sets extra option name.
+			 * 
+			 * @param name
+			 */
+			public ConfigOption withName(@NotBlank String name) {
+				setName(name);
+				return this;
 			}
 
 			/**
@@ -209,6 +264,7 @@ public interface GeneratorProvider extends Runnable {
 			 * 
 			 * @return
 			 */
+			@NotEmpty
 			public final List<String> getValues() {
 				return values;
 			}
@@ -218,8 +274,49 @@ public interface GeneratorProvider extends Runnable {
 			 * 
 			 * @param values
 			 */
-			public void setValues(List<String> values) {
+			public void setValues(@NotEmpty List<String> values) {
 				this.values = notEmptyOf(values, "values");
+			}
+
+			/**
+			 * Sets extra option values.
+			 * 
+			 * @param values
+			 */
+			public ConfigOption withValues(@NotEmpty List<String> values) {
+				setValues(values);
+				return this;
+			}
+
+			/**
+			 * Gets selected extra option value.
+			 * 
+			 * @return
+			 */
+			@Nullable
+			public final String getSelectedValue() {
+				return selectedValue;
+			}
+
+			/**
+			 * Sets selected extra option value.
+			 * 
+			 * @param values
+			 */
+			public void setSelectedValue(@Nullable String selectedValue) {
+				// this.selectedValue = hasTextOf(selectedValue,
+				// "selectedValue");
+				this.selectedValue = selectedValue;
+			}
+
+			/**
+			 * Sets selected extra option value.
+			 * 
+			 * @param values
+			 */
+			public ConfigOption withSelectedValue(@Nullable String selectedValue) {
+				setSelectedValue(selectedValue);
+				return this;
 			}
 
 			/**
@@ -291,7 +388,7 @@ public interface GeneratorProvider extends Runnable {
 		 */
 		public static List<String> getProviders(@Nullable String group) {
 			for (GenProviderGroup en : values()) {
-				if (StringUtils.equalsIgnoreCase(en.name(),group)) {
+				if (StringUtils.equalsIgnoreCase(en.name(), group)) {
 					return en.providers();
 				}
 			}

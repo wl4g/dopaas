@@ -13,27 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.web.model;
-
-import java.util.List;
-
-import com.wl4g.devops.dts.codegen.bean.GenProject;
-
-import lombok.Getter;
-import lombok.Setter;
-
 /**
- * {@link GenProjectModel}
+ * {@link package-info} 
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-09-16
+ * @version v1.0 2020-09-17
  * @since
  */
-@Getter
-@Setter
-public class GenProjectModel extends GenProject {
-	private static final long serialVersionUID = 5202314066192720904L;
-
-	private List<ConfigOptionModel> selectedConfigOptions;
-
-}
+package com.wl4g.devops.dts.codegen.web.model;
