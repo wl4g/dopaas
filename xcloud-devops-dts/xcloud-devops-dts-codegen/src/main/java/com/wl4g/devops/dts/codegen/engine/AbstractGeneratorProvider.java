@@ -16,10 +16,12 @@
 package com.wl4g.devops.dts.codegen.engine;
 
 import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
+import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.ByteStreamUtils.readFullyToString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.resource.StreamResource;
@@ -35,6 +37,7 @@ import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import freemarker.template.Template;
 
+import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 import java.io.*;
 import java.util.*;
@@ -42,11 +45,11 @@ import java.util.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import static org.apache.commons.beanutils.BeanUtils.describe;
-
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 
 /**
  * {@link AbstractGeneratorProvider}
@@ -86,57 +89,54 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 	protected void doGenerate(String provider) throws Exception {
 		GenProject project = context.getGenProject();
-		genCode(provider, project, context.getJobDir().getAbsolutePath());
-	}
 
-	private void genCode(String provider, GenProject project, String jobPath) throws Exception {
+		// Load templates.
 		List<TemplateWrapper> tpls = loadTemplates(provider);
-		doHandleGenerateAndSave(tpls, project, jobPath);
+
+		// Handling generate
+		doHandleGenerateAndSave(tpls, project, context.getJobDir().getAbsolutePath());
 	}
 
+	/**
+	 * Do handling rendering generate and save.
+	 * 
+	 * @param tpls
+	 * @param project
+	 * @param targetBasePath
+	 * @throws Exception
+	 */
 	private void doHandleGenerateAndSave(List<TemplateWrapper> tpls, GenProject project, String targetBasePath) throws Exception {
 		for (TemplateWrapper tpl : tpls) {
+			// Create rednering model.
+			Map<String, Object> model = createRenderingModel(tpl.getTplPath(), project, null);
 			if (tpl.isTpl()) {
-				// Create rednering model.
-				Map<String, Object> model = createRenderingModel(tpl.getTplPath(), project, null);
-				if (tpl.isForeachTpl()) { // foreach table
+				// foreach template by table
+				if (tpl.isForeachTpl()) {
 					for (GenTable tab : project.getGenTables()) {
-						String targetPath = targetBasePath.concat("/").concat(parseTablePath(tpl.getTplPath(), tab));
+						// Additidtion table model attributes
+						model.putAll(toRenderingModel(tab));
+						// Rendering tpl
+						String targetPath = targetBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
 						Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
 						String fileContent = renderingTemplateToString(template, model);
 						writeFile(new File(targetPath), fileContent, false);
 					}
-				} else {
-					String targetPath = targetBasePath.concat("/").concat(parsePackagePath(tpl.getTplPath(), project));
+				}
+				// Simple template.
+				else {
+					String targetPath = targetBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
+					// Rendering tpl
 					Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
 					String fileContent = renderingTemplateToString(template, model);
 					writeFile(new File(targetPath), fileContent, false);
 				}
-			} else { // e.g: static file
-				String targetPath = targetBasePath + "/" + parsePackagePath(tpl.getTplPath(), project);
+			}
+			// e.g: static file
+			else {
+				String targetPath = targetBasePath + "/" + resolveExpressionPath(tpl.getTplPath(), model);
 				writeFile(new File(targetPath), tpl.getFileContent(), false);
 			}
 		}
-	}
-
-	/**
-	 * Create rendering model
-	 * 
-	 * @param tplPath
-	 * @param project
-	 * @param table
-	 * @return
-	 * @throws Exception
-	 */
-	private Map<String, Object> createRenderingModel(String tplPath, GenProject project, GenTable table) throws Exception {
-		// Gets customize model.
-		Map<String, Object> model = customizeRenderingModel(tplPath, project, table);
-
-		// Fill requires rendering parameters.
-		model.putAll(describe(project));
-		model.putAll(describe(table));
-
-		return model;
 	}
 
 	/**
@@ -152,20 +152,51 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		return null;
 	}
 
-	private String parsePackagePath(String tplPath, GenProject project) {
-		if (tplPath.endsWith(".ftl")) {
-			tplPath = tplPath.substring(0, tplPath.length() - 4);
-		}
-		tplPath = "" + defaultExpressions.resolve(tplPath, project);
-		return tplPath;
+	/**
+	 * Create rendering model
+	 * 
+	 * @param tplPath
+	 * @param project
+	 * @param table
+	 * @return
+	 * @throws Exception
+	 */
+	private Map<String, Object> createRenderingModel(String tplPath, GenProject project, GenTable table) throws Exception {
+		// Gets customize model.
+		Map<String, Object> model = ensureMap(customizeRenderingModel(tplPath, project, table));
+
+		// Fill requires rendering parameters.
+		model.putAll(toRenderingModel(project));
+		model.putAll(toRenderingModel(table));
+
+		return model;
 	}
 
-	private String parseTablePath(String tplPath, GenTable table) {
+	/**
+	 * Resolving path SPEL expression
+	 * 
+	 * @param tplPath
+	 * @param model
+	 * @return
+	 */
+	private String resolveExpressionPath(String tplPath, Map<String, Object> model) {
 		if (tplPath.endsWith(".ftl")) {
 			tplPath = tplPath.substring(0, tplPath.length() - 4);
 		}
-		tplPath = "" + defaultExpressions.resolve(tplPath, table);
-		return tplPath;
+		return valueOf(defaultExpressions.resolve(tplPath, model));
+	}
+
+	/**
+	 * Gets object to map model
+	 * 
+	 * @param object
+	 * @return
+	 * @throws Exception
+	 */
+	protected static Map<String, Object> toRenderingModel(Object object) throws Exception {
+		String modelJson = toJSONString(object);
+		return parseJSON(modelJson, new TypeReference<HashMap<String, Object>>() {
+		});
 	}
 
 	/**
