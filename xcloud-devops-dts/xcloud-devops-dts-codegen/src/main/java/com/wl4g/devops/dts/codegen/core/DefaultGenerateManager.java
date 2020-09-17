@@ -30,6 +30,7 @@ import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -81,6 +82,7 @@ public class DefaultGenerateManager implements GenerateManager {
 		for (GenTable genTable : genTables) {
 			List<GenTableColumn> genColumns = genColumnDao.selectByTableId(genTable.getId());
 			genTable.setGenTableColumns(genColumns);
+			BeanUtils.copyProperties(genProject,genTable,"id","genTables");
 		}
 		genProject.setGenTables(genTables);
 
