@@ -17,6 +17,7 @@ package com.wl4g.devops.dts.codegen.engine;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.annotation.Nullable;
+import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.resource.StreamResource;
 import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
@@ -47,6 +48,7 @@ import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
 import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
+import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
@@ -181,6 +183,9 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			}
 		}
 
+		// Addidition special variables.
+		model.put(VAR_WATERMARK, DEFAULT_TPL_WATERMARK);
+
 		return model;
 	}
 
@@ -229,8 +234,9 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 				if (isJVMDebugging || isNull(tpls)) {
 					tpls = new ArrayList<>();
 					// Scanning templates resources.
-					Set<StreamResource> resources = defaultResourceResolver.getResources(DEFAULT_TPLS_LOCATIONS);
-					staticLog.info("Loaded templates resources: {}", resources);
+					Set<StreamResource> resources = defaultResourceResolver
+							.getResources(format(DEFAULT_TPLS_LOCATIONS, provider));
+					STATICLOG.info("Loaded templates resources: {}", resources);
 
 					for (StreamResource res : resources) {
 						if (res.getFile().isFile()) {
@@ -312,21 +318,23 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 	}
 
+	// Template configuration.
+	public static final String DEFAULT_TPL_BASEPATH = "gen-config/projects-template";
+	public static final String DEFAULT_TPL_SUFFIX = ".ftl";
+	public static final String DEFAULT_TPL_WATERMARK = FileIOUtils.readFullyResourceString("gen-config/watermark.txt");
+
+	// for example: classpath:/projects-template/myGenProvider/**/*/.ftl
+	public static final String DEFAULT_TPLS_LOCATIONS = "classpath:/".concat(DEFAULT_TPL_BASEPATH).concat("/%s").concat("/**/*")
+			.concat(DEFAULT_TPL_SUFFIX);
+
+	// Definition of special variables.
+	public static final String VAR_ENTITY_NAME = "entityName";
+	public static final String VAR_WATERMARK = "watermark";
+
 	/**
 	 * Static log of {@link SmartLogger}
 	 */
-	private static final SmartLogger staticLog = getLogger(AbstractGeneratorProvider.class);
-
-	// Template configuration.
-	private static final String DEFAULT_TPL_BASEPATH = "projects-template";
-	private static final String DEFAULT_TPL_SUFFIX = ".ftl";
-
-	// for example: classpath:/projects-template/myGenProvider/**/*/.ftl
-	private static final String DEFAULT_TPLS_LOCATIONS = "classpath:/".concat(DEFAULT_TPL_BASEPATH).concat("/%s").concat("/**/*")
-			.concat(DEFAULT_TPL_SUFFIX);
-
-	// Variables of entityName.
-	private static final String VAR_ENTITY_NAME = "entityName";
+	private static final SmartLogger STATICLOG = getLogger(AbstractGeneratorProvider.class);
 
 	/**
 	 * Global project {@link Template} cache.
