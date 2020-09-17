@@ -34,57 +34,59 @@ import java.util.List;
 @Getter
 @Setter
 public class GenProject extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private String projectName;
+    private String projectName;
 
-	private String companyName;
+    private String organType;
 
-	private String providerGroup;
+    private String organName;
 
-	private String packageName;
+    private String providerGroup;
 
-	private String version;
+    private String packageName;
 
-	private String author;
+    private String version;
 
-	private String since;
+    private String author;
 
-	private String copyright;
+    private String since;
 
-	private List<GenTable> genTables;
+    private String copyright;
 
-	private String extraOptionsJson;
+    private List<GenTable> genTables;
 
-	// --- Temporary fields. ---
+    private String extraOptionsJson;
 
-	/**
-	 * Configured extra options.
-	 */
-	private ConfigOptions extraOptions;
+    // --- Temporary fields. ---
 
-	/**
-	 * {@link ConfigOptions}
-	 *
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2020-09-17
-	 * @since
-	 */
-	@Getter
-	@Setter
-	@Wither
-	public static class ConfigOptions {
+    /**
+     * Configured extra options.
+     */
+    private ConfigOptions extraOptions;
 
-		private List<ConfigOption> options;
+    /**
+     * {@link ConfigOptions}
+     *
+     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @version v1.0 2020-09-17
+     * @since
+     */
+    @Getter
+    @Setter
+    @Wither
+    public static class ConfigOptions {
 
-		public ConfigOptions() {
-		}
+        private List<ConfigOption> options;
 
-		public ConfigOptions(List<ConfigOption> options) {
-			super();
-			this.options = options;
-		}
+        public ConfigOptions() {
+        }
 
-	}
+        public ConfigOptions(List<ConfigOption> options) {
+            super();
+            this.options = options;
+        }
+
+    }
 
 }
