@@ -1,0 +1,48 @@
+.fa {
+  margin-right: 8px;
+}
+
+.left-fixed-right-auto {
+  padding-top: 60px;
+}
+
+.left {
+  position: fixed;
+  float: left;
+  top: 50px;
+}
+
+.right-content {
+  float: right;
+  width: 100%;
+}
+
+#left-menu {
+  height: 100%;
+  background: #324057;
+  overflow-x: hidden;
+}
+
+.el-menu {
+  background-color: #324057!important;
+}
+
+.toggle-menu {
+  width: 40px;
+  height: 40px;
+  background: #1f2f3d;
+  position: absolute;
+  top: 0px;
+  z-index: 1000;
+  cursor: pointer;
+  line-height: 40px;
+  text-align: center;
+  color: #fff;
+  font-size: 12 px;
+  opacity: 0.2;
+  transition: opacity 0.3s ease-out;
+}
+
+.toggle-menu:hover {
+  opacity: 0.3;
+}
