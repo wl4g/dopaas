@@ -58,265 +58,264 @@ import static java.util.Objects.isNull;
  */
 public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
-    protected final SmartLogger log = getLogger(getClass());
+	protected final SmartLogger log = getLogger(getClass());
 
-    /**
-     * {@link GenerateContext}
-     */
-    protected final GenerateContext context;
+	/**
+	 * {@link GenerateContext}
+	 */
+	protected final GenerateContext context;
 
-    public AbstractGeneratorProvider(GenerateContext context) {
-        this.context = notNullOf(context, "context");
-    }
+	public AbstractGeneratorProvider(GenerateContext context) {
+		this.context = notNullOf(context, "context");
+	}
 
-    @Override
-    public void run() {
-        try {
-            generate();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
+	@Override
+	public void run() {
+		try {
+			generate();
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
 
-    /**
-     * Hanlding generation.
-     *
-     * @throws Exception
-     */
-    protected abstract void generate() throws Exception;
+	/**
+	 * Hanlding generation.
+	 *
+	 * @throws Exception
+	 */
+	protected abstract void generate() throws Exception;
 
-    protected void doGenerate(String provider) throws Exception {
-        GenProject project = context.getGenProject();
+	protected void doGenerate(String provider) throws Exception {
+		GenProject project = context.getGenProject();
 
-        // Load templates.
-        List<TemplateWrapper> tpls = loadTemplates(provider);
+		// Load templates.
+		List<TemplateWrapper> tpls = loadTemplates(provider);
 
-        // Handling generate
-        doHandleGenerateAndSave(tpls, project, context.getJobDir().getAbsolutePath());
-    }
+		// Handling generate
+		doHandleGenerateAndSave(tpls, project, context.getJobDir().getAbsolutePath());
+	}
 
-    /**
-     * Do handling rendering generate and save.
-     *
-     * @param tpls
-     * @param project
-     * @param targetBasePath
-     * @throws Exception
-     */
-    private void doHandleGenerateAndSave(List<TemplateWrapper> tpls, GenProject project, String targetBasePath) throws Exception {
-        for (TemplateWrapper tpl : tpls) {
-            // Create rednering model.
-            Map<String, Object> model = createRenderingModel(tpl.getTplPath(), project);
-            if (tpl.isTpl()) {
-                // foreach template by table
-                if (tpl.isForeachTpl()) {
-                    for (GenTable tab : project.getGenTables()) {
-                        // Additidtion table model attributes
-                        model.putAll(toRenderingModel(tab));
-                        // Rendering tpl
-                        String targetPath = targetBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
-                        Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
-                        String fileContent = renderingTemplateToString(template, model);
-                        writeFile(new File(targetPath), fileContent, false);
-                    }
-                }
-                // Simple template.
-                else {
-                    String targetPath = targetBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
-                    // Rendering tpl
-                    Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
-                    String fileContent = renderingTemplateToString(template, model);
-                    writeFile(new File(targetPath), fileContent, false);
-                }
-            }
-            // e.g: static file
-            else {
-                String targetPath = targetBasePath + "/" + resolveExpressionPath(tpl.getTplPath(), model);
-                writeFile(new File(targetPath), tpl.getFileContent(), false);
-            }
-        }
-    }
+	/**
+	 * Do handling rendering generate and save.
+	 *
+	 * @param tpls
+	 * @param project
+	 * @param targetBasePath
+	 * @throws Exception
+	 */
+	private void doHandleGenerateAndSave(List<TemplateWrapper> tpls, GenProject project, String targetBasePath) throws Exception {
+		for (TemplateWrapper tpl : tpls) {
+			// Create rednering model.
+			Map<String, Object> model = createRenderingModel(tpl.getTplPath(), project);
+			if (tpl.isTpl()) {
+				// foreach template by table
+				if (tpl.isForeachTpl()) {
+					for (GenTable tab : project.getGenTables()) {
+						// Additidtion table model attributes
+						model.putAll(toRenderingFlatModel(tab));
 
-    /**
-     * Customize rendering model
-     *
-     * @param tplPath
-     * @param project
-     * @param table
-     * @return
-     */
-    protected Map<String, Object> customizeRenderingModel(@NotBlank String tplPath,
-                                                          @Nullable Object... beans) {
-        return null;
-    }
+						// Rendering tpl
+						String targetPath = targetBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
+						Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
+						String fileContent = renderingTemplateToString(template, model);
+						writeFile(new File(targetPath), fileContent, false);
+					}
+				}
+				// Simple template.
+				else {
+					String targetPath = targetBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
+					// Rendering tpl
+					Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
+					String fileContent = renderingTemplateToString(template, model);
+					writeFile(new File(targetPath), fileContent, false);
+				}
+			}
+			// e.g: static file
+			else {
+				String targetPath = targetBasePath + "/" + resolveExpressionPath(tpl.getTplPath(), model);
+				writeFile(new File(targetPath), tpl.getFileContent(), false);
+			}
+		}
+	}
 
-    /**
-     * Create rendering model
-     *
-     * @param tplPath
-     * @param project
-     * @param table
-     * @return
-     * @throws Exception
-     */
-    private Map<String, Object> createRenderingModel(String tplPath, Object... beans) throws Exception {
-        // Gets customize model.
-        Map<String, Object> model = ensureMap(customizeRenderingModel(tplPath, beans));
+	/**
+	 * Gets object to flat map model
+	 *
+	 * @param object
+	 * @return
+	 * @throws Exception
+	 */
+	protected Map<String, Object> toRenderingFlatModel(Object object) throws Exception {
+		return parseJSON(toJSONString(object), new TypeReference<HashMap<String, Object>>() {
+		});
+	}
 
-        // Fill requires rendering parameters.
-        if (!isNull(beans)) {
-            for (Object bean : beans) {
-                model.putAll(toRenderingModel(bean));
-            }
-        }
+	/**
+	 * Create rendering model
+	 *
+	 * @param tplPath
+	 * @param project
+	 * @param table
+	 * @return
+	 * @throws Exception
+	 */
+	private Map<String, Object> createRenderingModel(String tplPath, Object... beans) throws Exception {
+		// Gets customize model.
+		Map<String, Object> model = ensureMap(customizeRenderingModel(tplPath, beans));
 
-        return model;
-    }
+		// Fill requires rendering parameters.
+		if (!isNull(beans)) {
+			for (Object bean : beans) {
+				model.putAll(toRenderingFlatModel(bean));
+			}
+		}
 
-    /**
-     * Resolving path SPEL expression
-     *
-     * @param tplPath
-     * @param model
-     * @return
-     */
-    private String resolveExpressionPath(String tplPath, Map<String, Object> model) {
-        if (tplPath.endsWith(".ftl")) {
-            tplPath = tplPath.substring(0, tplPath.length() - 4);
-        }
-        return valueOf(defaultExpressions.resolve(tplPath, model));
-    }
+		return model;
+	}
 
-    /**
-     * Gets object to map model
-     *
-     * @param object
-     * @return
-     * @throws Exception
-     */
-    protected static Map<String, Object> toRenderingModel(Object object) throws Exception {
-        String modelJson = toJSONString(object);
-        return parseJSON(modelJson, new TypeReference<HashMap<String, Object>>() {
-        });
-    }
+	/**
+	 * Customize rendering model
+	 *
+	 * @param tplPath
+	 * @param project
+	 * @param table
+	 * @return
+	 */
+	protected Map<String, Object> customizeRenderingModel(@NotBlank String tplPath, @Nullable Object... beans) {
+		return null;
+	}
 
-    /**
-     * Load {@link Template} list by provider.
-     *
-     * @param provider
-     * @return
-     * @throws IOException
-     */
-    private static List<TemplateWrapper> loadTemplates(String provider) throws IOException {
-        List<TemplateWrapper> tpls = templatesCache.get(provider);
-        if (isNull(tpls)) {
-            synchronized (AbstractGeneratorProvider.class) {
-                tpls = templatesCache.get(provider);
-                if (isNull(tpls)) {
-                    tpls = new ArrayList<>();
-                    Set<StreamResource> resources = defaultResourceResolver
-                            .getResources("classpath:/" + DEFAULT_TPL_BASEPATH + "/" + provider + "/**/*.ftl");
-                    for (StreamResource res : resources) {
-                        if (res.getFile().isFile()) {
-                            tpls.add(wrapTemplate(res, provider));
-                        }
-                    }
-                    templatesCache.put(provider, tpls);
-                }
-            }
-        }
-        return tpls;
-    }
+	/**
+	 * Resolving path SPEL expression
+	 *
+	 * @param tplPath
+	 * @param model
+	 * @return
+	 */
+	private String resolveExpressionPath(String tplPath, Map<String, Object> model) {
+		if (tplPath.endsWith(".ftl")) {
+			tplPath = tplPath.substring(0, tplPath.length() - 4);
+		}
+		return valueOf(defaultExpressions.resolve(tplPath, model));
+	}
 
-    /**
-     * Wrapper {@link Template}
-     *
-     * @param res
-     * @param provider
-     * @return
-     * @throws IOException
-     */
-    private static TemplateWrapper wrapTemplate(StreamResource res, String provider) throws IOException {
-        String path = res.getURI().getPath();
-        String splitStr = DEFAULT_TPL_BASEPATH + "/" + provider + "/";
-        int i = path.indexOf(splitStr);
-        if (i >= 0) {
-            path = path.substring(i + splitStr.length());
-        }
-        return new TemplateWrapper(path, res.getFilename(), readFullyToString(res.getInputStream()));
-    }
+	/**
+	 * Load {@link Template} list by provider.
+	 *
+	 * @param provider
+	 * @return
+	 * @throws IOException
+	 */
+	private static List<TemplateWrapper> loadTemplates(String provider) throws IOException {
+		List<TemplateWrapper> tpls = templatesCache.get(provider);
+		if (isNull(tpls)) {
+			synchronized (AbstractGeneratorProvider.class) {
+				tpls = templatesCache.get(provider);
+				if (isNull(tpls)) {
+					tpls = new ArrayList<>();
+					Set<StreamResource> resources = defaultResourceResolver
+							.getResources("classpath:/" + DEFAULT_TPL_BASEPATH + "/" + provider + "/**/*.ftl");
+					for (StreamResource res : resources) {
+						if (res.getFile().isFile()) {
+							tpls.add(wrapTemplate(res, provider));
+						}
+					}
+					templatesCache.put(provider, tpls);
+				}
+			}
+		}
+		return tpls;
+	}
 
-    /**
-     * {@link TemplateWrapper}
-     *
-     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-     * @author Vjay
-     * @version v1.0 2020-09-16
-     * @since
-     */
-    protected final static class TemplateWrapper {
+	/**
+	 * Wrapper {@link Template}
+	 *
+	 * @param res
+	 * @param provider
+	 * @return
+	 * @throws IOException
+	 */
+	private static TemplateWrapper wrapTemplate(StreamResource res, String provider) throws IOException {
+		String path = res.getURI().getPath();
+		String splitStr = DEFAULT_TPL_BASEPATH + "/" + provider + "/";
+		int i = path.indexOf(splitStr);
+		if (i >= 0) {
+			path = path.substring(i + splitStr.length());
+		}
+		return new TemplateWrapper(path, res.getFilename(), readFullyToString(res.getInputStream()));
+	}
 
-        // Template class path.
-        private final String tplPath;
-        private final String fileName;
-        private final String fileContent;
-        private final boolean isTpl;
-        private final boolean isForeachTpl;
+	/**
+	 * {@link TemplateWrapper}
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @author Vjay
+	 * @version v1.0 2020-09-16
+	 * @since
+	 */
+	protected final static class TemplateWrapper {
 
-        protected TemplateWrapper(String tplPath, String filename, String fileContent) {
-            hasTextOf(tplPath, "tplClassPath");
-            hasTextOf(filename, "filename");
-            hasTextOf(fileContent, "fileContent");
-            this.tplPath = tplPath;
-            this.fileName = filename;
-            this.fileContent = fileContent;
-            this.isTpl = filename.endsWith(DEFAULT_TPL_SUFFIX);
-            this.isForeachTpl = filename.contains(VARIABLE_ENTITY_NAME);
-        }
+		// Template class path.
+		private final String tplPath;
+		private final String fileName;
+		private final String fileContent;
+		private final boolean isTpl;
+		private final boolean isForeachTpl;
 
-        public String getTplPath() {
-            return tplPath;
-        }
+		protected TemplateWrapper(String tplPath, String filename, String fileContent) {
+			hasTextOf(tplPath, "tplClassPath");
+			hasTextOf(filename, "filename");
+			hasTextOf(fileContent, "fileContent");
+			this.tplPath = tplPath;
+			this.fileName = filename;
+			this.fileContent = fileContent;
+			this.isTpl = filename.endsWith(DEFAULT_TPL_SUFFIX);
+			this.isForeachTpl = filename.contains(VARIABLE_ENTITY_NAME);
+		}
 
-        public String getFileName() {
-            return fileName;
-        }
+		public String getTplPath() {
+			return tplPath;
+		}
 
-        public String getFileContent() {
-            return fileContent;
-        }
+		public String getFileName() {
+			return fileName;
+		}
 
-        public boolean isTpl() {
-            return isTpl;
-        }
+		public String getFileContent() {
+			return fileContent;
+		}
 
-        public boolean isForeachTpl() {
-            return isForeachTpl;
-        }
+		public boolean isTpl() {
+			return isTpl;
+		}
 
-    }
+		public boolean isForeachTpl() {
+			return isForeachTpl;
+		}
 
-    // Template configuration.
-    private static final String DEFAULT_TPL_BASEPATH = "projects-template";
-    private static final String DEFAULT_TPL_SUFFIX = ".tpl";
+	}
 
-    // Template configuration.
-    private static final String VARIABLE_ENTITY_NAME = "entityName";
+	// Template configuration.
+	private static final String DEFAULT_TPL_BASEPATH = "projects-template";
+	private static final String DEFAULT_TPL_SUFFIX = ".fpl";
 
-    /**
-     * Global project {@link Template} cache.
-     */
-    private static final Map<String, List<TemplateWrapper>> templatesCache = new HashMap<>();
+	// Template configuration.
+	private static final String VARIABLE_ENTITY_NAME = "entityName";
 
-    /**
-     * {@link SpelExpressions}
-     */
-    private static final SpelExpressions defaultExpressions = create(CSharpSpecs.class, GolangSpecs.class, JavaSpecs.class,
-            PythonSpecs.class);
+	/**
+	 * Global project {@link Template} cache.
+	 */
+	private static final Map<String, List<TemplateWrapper>> templatesCache = new HashMap<>();
 
-    /**
-     * {@link ClassPathResourcePatternResolver}
-     */
-    private static final ClassPathResourcePatternResolver defaultResourceResolver = new ClassPathResourcePatternResolver();
+	/**
+	 * {@link SpelExpressions}
+	 */
+	private static final SpelExpressions defaultExpressions = create(CSharpSpecs.class, GolangSpecs.class, JavaSpecs.class,
+			PythonSpecs.class);
+
+	/**
+	 * {@link ClassPathResourcePatternResolver}
+	 */
+	private static final ClassPathResourcePatternResolver defaultResourceResolver = new ClassPathResourcePatternResolver();
 
 }
