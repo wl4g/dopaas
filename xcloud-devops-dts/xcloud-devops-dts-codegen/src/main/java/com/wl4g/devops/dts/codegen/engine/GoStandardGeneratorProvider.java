@@ -31,7 +31,7 @@ public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
 	}
 
 	@Override
-	public void doRun() {
+	public void generate() {
 		// TODO
 
 	}

@@ -31,7 +31,7 @@ public class VueGeneratorProvider extends AbstractGeneratorProvider {
 	}
 
 	@Override
-	protected void doRun() throws Exception {
+	protected void generate() throws Exception {
 
 	}
 

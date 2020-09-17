@@ -15,34 +15,32 @@
  */
 package com.wl4g.devops.dts.codegen.utils;
 
-import com.wl4g.components.common.log.SmartLogger;
+import static java.util.Collections.singletonList;
+
+import static com.wl4g.components.common.view.Freemarkers.createDefault;
+
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-
 /**
- * {@link FreemarkerUtils2}
+ * {@link FreemarkerUtils}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
  * @version v1.0 2020-09-10
  * @since
  */
-public abstract class FreemarkerUtils2 {
-	protected static final SmartLogger log = getLogger(FreemarkerUtils2.class);
-
-	public final static Configuration defaultGenConfigurer = configuration();
+public abstract class FreemarkerUtils {
 
 	/**
-	 * freemarker configuration
+	 * Create freemarker configuration
 	 */
-	private static Configuration  configuration() {
-		Configuration configuration = new Configuration(Configuration.VERSION_2_3_27);
-		StringTemplateLoader templateLoader = new StringTemplateLoader();
-		configuration.setTemplateLoader(templateLoader);
-		configuration.setDefaultEncoding("UTF-8");
-		return configuration;
+	private static Configuration newTemplateStringConfiguration0() {
+		return createDefault().withVersion(Configuration.VERSION_2_3_27)
+				.withTemplateLoaders(singletonList(new StringTemplateLoader())).build();
 	}
+
+	/** Default freemarker {@link Configuration} */
+	public final static Configuration defaultGenConfigurer = newTemplateStringConfiguration0();
 
 }
