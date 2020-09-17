@@ -32,6 +32,8 @@ import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import freemarker.template.Template;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -41,6 +43,7 @@ import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.ByteStreamUtils.readFullyToString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
@@ -102,7 +105,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		List<TemplateWrapper> tpls = loadTemplates(provider);
 
 		// Handling generate
-		renderingAndGenerate(tpls, project, context.getJobDir().getAbsolutePath());
+		doRenderingAndGenerate(tpls, project, context.getJobDir().getAbsolutePath());
 	}
 
 	/**
@@ -113,7 +116,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param writeBasePath
 	 * @throws Exception
 	 */
-	private void renderingAndGenerate(List<TemplateWrapper> tpls, GenProject project, String writeBasePath) throws Exception {
+	private void doRenderingAndGenerate(List<TemplateWrapper> tpls, GenProject project, String writeBasePath) throws Exception {
 		for (TemplateWrapper tpl : tpls) {
 			log.info("Rendering generate for tpl - {}", tpl.getTplPath());
 
@@ -127,28 +130,53 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 						// Additidtion table model attributes
 						model.putAll(toRenderingFlatModel(tab));
 
-						// Rendering tpl
+						// Pre rendering.
+						String rendered = preRendering(tpl.getFileContent(), model);
+
+						// Rendering with freemarker.
 						String writePath = writeBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
-						Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
-						String fileContent = renderingTemplateToString(template, model);
-						writeFile(new File(writePath), fileContent, false);
+						Template template = new Template(tpl.getFileName(), rendered, defaultGenConfigurer);
+						rendered = renderingTemplateToString(template, model);
+						writeFile(new File(writePath), rendered, false);
 					}
 				}
 				// Simple template.
 				else {
+					// Pre rendering.
+					String rendered = preRendering(tpl.getFileContent(), model);
+
+					// Rendering with freemarker.
 					String writePath = writeBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
-					// Rendering tpl
-					Template template = new Template(tpl.getFileName(), tpl.getFileContent(), defaultGenConfigurer);
-					String fileContent = renderingTemplateToString(template, model);
-					writeFile(new File(writePath), fileContent, false);
+					Template template = new Template(tpl.getFileName(), rendered, defaultGenConfigurer);
+					rendered = renderingTemplateToString(template, model);
+					writeFile(new File(writePath), rendered, false);
 				}
 			}
-			// e.g: static resource files
+			// e.g: static resources files
 			else {
 				String targetPath = writeBasePath + "/" + resolveExpressionPath(tpl.getTplPath(), model);
 				writeFile(new File(targetPath), tpl.getFileContent(), false);
 			}
 		}
+	}
+
+	/**
+	 * Preparing rendering.
+	 * 
+	 * @param tplContent
+	 * @param model
+	 * @return
+	 */
+	protected String preRendering(@NotBlank String tplContent, @NotEmpty Map<String, Object> model) {
+		hasTextOf(tplContent, "tplContent");
+		notEmptyOf(model, "model");
+
+		// Rendering with spel ahead of time
+		//
+		// Note: After testing, we found that we should use spel to render
+		// first, otherwise FreeMarker will report an error.
+		//
+		return defaultExpressions.resolve(tplContent, model);
 	}
 
 	/**
@@ -233,9 +261,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 				tpls = templatesCache.get(provider);
 				if (isJVMDebugging || isNull(tpls)) {
 					tpls = new ArrayList<>();
+
 					// Scanning templates resources.
 					Set<StreamResource> resources = defaultResourceResolver
-							.getResources(format(DEFAULT_TPLS_LOCATIONS, provider));
+							.getResources(getResourceLocations(provider).toArray(new String[] {}));
 					STATICLOG.info("Loaded templates resources: {}", resources);
 
 					for (StreamResource res : resources) {
@@ -266,6 +295,24 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			path = path.substring(i + splitStr.length());
 		}
 		return new TemplateWrapper(path, res.getFilename(), readFullyToString(res.getInputStream()));
+	}
+
+	/**
+	 * Gets scanning resources locations.
+	 * 
+	 * @param provider
+	 * @return
+	 */
+	private static List<String> getResourceLocations(@NotBlank String provider) {
+		hasTextOf(provider, "provider");
+
+		List<String> locations = new ArrayList<>();
+		for (String suffix : DEFAULT_LOCATION_SUFFIXS) {
+			String location = format(DEFAULT_TPLS_LOCATION, provider);
+			location = format(location, suffix);
+			locations.add(location);
+		}
+		return locations;
 	}
 
 	/**
@@ -320,12 +367,14 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 	// Template configuration.
 	public static final String DEFAULT_TPL_BASEPATH = "gen-config/projects-template";
+	// Load tpl suffix rules.
 	public static final String DEFAULT_TPL_SUFFIX = ".ftl";
+	public static final String[] DEFAULT_LOCATION_SUFFIXS = { DEFAULT_TPL_SUFFIX, ".css", ".js", ".vue", ".ts", ".jpg", ".gif",
+			".html", ".json", ".md", ".png", ".svg", ".eot", ".ttf", ".woff", ".woff2" };
 	public static final String DEFAULT_TPL_WATERMARK = FileIOUtils.readFullyResourceString("gen-config/watermark.txt");
 
 	// for example: classpath:/projects-template/myGenProvider/**/*/.ftl
-	public static final String DEFAULT_TPLS_LOCATIONS = "classpath:/".concat(DEFAULT_TPL_BASEPATH).concat("/%s").concat("/**/*")
-			.concat(DEFAULT_TPL_SUFFIX);
+	public static final String DEFAULT_TPLS_LOCATION = "classpath:/".concat(DEFAULT_TPL_BASEPATH).concat("/%s").concat("/**/*%s");
 
 	// Definition of special variables.
 	public static final String VAR_ENTITY_NAME = "entityName";

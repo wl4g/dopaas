@@ -1,0 +1,65 @@
+body {
+    color: #333;
+}
+#app {
+    background: #fff;
+}
+#app .head-nav {
+    background: #fff;
+    box-shadow: 0 0 18px -8px #d6d3ce;
+}
+#app .head-nav .el-menu {
+    background: #fff;
+}
+#app .head-nav .el-menu .el-menu-item.is-active {
+    color: #303133;
+    border-bottom: 2px solid #191c23;
+}
+#app .head-nav .el-menu .el-menu-item:not(.is-disabled):focus,
+#app .head-nav .el-menu .el-menu-item:not(.is-disabled):hover,
+#app .head-nav .el-menu .el-submenu .el-submenu__title:hover {
+    background-color: #fff;
+}
+#app .head-nav .el-dropdown {
+    color: #606266;
+}
+
+#app #left-menu {
+    background: #eae8e4;
+}
+#app .left-fixed-right-auto .left .el-menu {
+    background: #eae8e4;
+}
+#app .left-fixed-right-auto .left .el-menu-item:focus,
+#app .left-fixed-right-auto .left .el-menu-item:hover,
+#app .left-fixed-right-auto .left .el-menu-item.is-active {
+    background-color: #fff;
+}
+#app .el-menu-item,
+#app .el-submenu__title {
+    color: #38311b;
+}
+#app .left-fixed-right-auto .left .el-submenu__title:hover {
+    background-color: #fff;
+}
+#app .toggle-menu {
+    opacity: 0.2;
+    background: #1f2f3d;
+    transition: all 0.3s ease-out;
+}
+#app .toggle-menu:hover {
+    opacity: 1;
+}
+#app .right-content > .content {
+    background: #fff;
+}
+
+#app .el-input__inner {
+    color: #606266;
+    background-color: #FFF;
+    border: 1px solid #DCDFE6;
+}
+
+
+
+

@@ -1,0 +1,79 @@
+.fa {
+  margin-right: 8px;
+}
+
+.left-fixed-right-auto {
+  padding-top: 60px;
+}
+
+.left {
+  position: fixed;
+  float: left;
+  top: 50px;
+  z-index: 1999;
+  transition: all 0.25s ease-in-out 0s;
+}
+
+.right-content {
+  float: right;
+  width: 100%;
+}
+
+#left-menu {
+  height: 100%;
+  background: #eae8e4;
+  //position: relative;
+  overflow-x: hidden;
+  box-shadow: 1px 1px 2px rgb(204, 207, 208);
+}
+
+.toggle-menu {
+  height: 66px;
+  position: absolute;
+  top: 50%;
+  z-index: 1000;
+  transform: translate(2px, -50%);
+  cursor: pointer;
+  text-align: center;
+  color: #fff;
+  font-size: 12px;
+  opacity: .7;
+  transition: all .3s ease-out;
+  border-bottom: 8px solid transparent;
+  border-right: none;
+  border-left: 12px solid #EBEBEB;
+  border-top: 8px solid transparent;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .el-icon-arrow-left {
+    position: absolute;
+    left: -14px;
+    top: 13px;
+    margin: 0;
+    font-size: 18px;
+    color: #546478;
+  }
+
+  .el-icon-arrow-right {
+    position: absolute;
+    left: -14px;
+    top: 13px;
+    margin: 0;
+    font-size: 18px;
+    color: #546478;
+  }
+}
+
+.el-menu-item,
+.el-submenu__title {
+  color: #98a3b5;
+}
+
+.el-menu--horizontal.el-menu--dark .el-submenu .el-menu-item:hover,
+.el-menu--horizontal.el-menu--dark .el-submenu .el-submenu-title:hover,
+.el-menu-item:hover {
+  background: #3d4f6b;
+}
