@@ -4,6 +4,7 @@ SELECT
 	c.DATA_TYPE AS "dataType",
 	c.COLUMN_COMMENT AS "columnComment",
 	c.COLUMN_KEY AS "columnKey",
+	c.IS_NULLABLE AS "isNullable",
 	c.EXTRA AS "extra"
 FROM
 	information_schema.`COLUMNS` c

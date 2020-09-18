@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.engine.resolver;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * {@link TableMetadata}
@@ -34,9 +34,7 @@ import java.util.List;
 public class TableMetadata {
 
 	private String tableName;
-
 	private String comments;
-
 	private List<ColumnMetadata> columns;
 
 	/**
@@ -48,23 +46,13 @@ public class TableMetadata {
 	@Setter
 	public static class ColumnMetadata {
 
-		// 列名
 		private String columnName;
-
-		// 主键？
-		private String columnKey;
-
-		// 列名类型
+		private boolean isPk;
 		private String columnType;
-
-		// 列名备注
 		private String comments;
-
-		// 属性类型
-		private String attrType;
-
-		// extra config
-		private String extra;
+		private String attrType; // class attr type
+		private boolean isNullable;
+		private String extra; // extra
 
 	}
 

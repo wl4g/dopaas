@@ -30,7 +30,7 @@ import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.Language;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper.MappedMatcher;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
@@ -48,7 +48,6 @@ import java.util.Objects;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs.underlineToHump;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
  * {@link GenerateServiceImpl}
@@ -64,7 +63,7 @@ public class GenerateServiceImpl implements GenerateService {
 	private NamingPrototypeBeanFactory beanFactory;
 
 	@Autowired
-	private GenericOperatorAdapter<ConverterKind, DbTypeConverter> typeConverter;
+	private GenericOperatorAdapter<ConverterKind, DbTypeConverter> converter;
 
 	@Autowired
 	private GenerateManager genManager;
@@ -114,18 +113,18 @@ public class GenerateServiceImpl implements GenerateService {
 			col.setAttrName(underlineToHump(colmd.getColumnName()));
 			// TODO
 			// Converting java type
-			DbTypeConverter conv = typeConverter.forOperator(genDS.getType());
-			col.setAttrType(conv.convertBy(Language.JAVA, MappedMatcher.Column2Sql, col.getColumnType()));
+			DbTypeConverter conv = converter.forOperator(genDS.getType());
+			col.setAttrType(conv.convertBy(CodeLanguage.JAVA, MappedMatcher.Column2Sql, col.getColumnType()));
 
 			// Sets defaults
 			col.setIsInsert("1");
 			col.setIsUpdate("1");
 			col.setIsList("1");
 			col.setIsEdit("1");
-			col.setNoNull("1");
+			col.setNoNull(colmd.isNullable() ? "0" : "1");
 			col.setQueryType("1");
 			col.setShowType("1");
-			if (equalsIgnoreCase(colmd.getColumnKey(), "PRI")) {
+			if (colmd.isPk()) {
 				col.setIsPk("1");
 				col.setIsList("0");
 				col.setNoNull("0");
@@ -154,10 +153,10 @@ public class GenerateServiceImpl implements GenerateService {
 
 		GenTable genTableFromLoadMetadata = loadMetadata(genTable.getDatabaseId(), genTable.getTableName());
 		List<GenTableColumn> genTableColumnsFromLoadMetadata = genTableFromLoadMetadata.getGenTableColumns();
-		for(GenTableColumn genTableColumn : genTableColumnsFromLoadMetadata){
+		for (GenTableColumn genTableColumn : genTableColumnsFromLoadMetadata) {
 			GenTableColumn column = genTableColumnByName(genTableColumns, genTableColumn.getColumnName());
-			if(column != null){
-				BeanUtils.copyProperties(column,genTableColumn);
+			if (column != null) {
+				BeanUtils.copyProperties(column, genTableColumn);
 			}
 		}
 		genTable.setGenTableColumns(genTableColumnsFromLoadMetadata);
@@ -165,9 +164,9 @@ public class GenerateServiceImpl implements GenerateService {
 		return genTable;
 	}
 
-	private GenTableColumn genTableColumnByName(List<GenTableColumn> genTableColumns, String name){
-		for(GenTableColumn genTableColumn : genTableColumns){
-			if(StringUtils.equals(genTableColumn.getColumnName(),name)){
+	private GenTableColumn genTableColumnByName(List<GenTableColumn> genTableColumns, String name) {
+		for (GenTableColumn genTableColumn : genTableColumns) {
+			if (StringUtils.equals(genTableColumn.getColumnName(), name)) {
 				return genTableColumn;
 			}
 		}

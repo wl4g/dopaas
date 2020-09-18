@@ -22,7 +22,9 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.AngularJSGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.CsharpStandardGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.GoStandardGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.PythonStandardGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.SpringCloudMvnGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
@@ -115,7 +117,19 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@NamingPrototype({SPINGCLOUD_MVN})
+	@NamingPrototype({ PYTHON_STANDARD })
+	public PythonStandardGeneratorProvider pythonStandardGeneratorProvider(GenerateContext context) {
+		return new PythonStandardGeneratorProvider(context);
+	}
+
+	@Bean
+	@NamingPrototype({ CSHARP_STANDARD })
+	public CsharpStandardGeneratorProvider csharpStandardGeneratorProvider(GenerateContext context) {
+		return new CsharpStandardGeneratorProvider(context);
+	}
+
+	@Bean
+	@NamingPrototype({ SPINGCLOUD_MVN })
 	public SpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
 		return new SpringCloudMvnGeneratorProvider(context);
 	}

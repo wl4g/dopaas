@@ -49,10 +49,10 @@ import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWr
 public abstract class DbTypeConverter implements Operator<ConverterKind> {
 
 	/** Sql and code types cache. */
-	private final Map<Language, List<TypeMappedWrapper>> typesCache = new ConcurrentHashMap<>(4);
+	private final Map<CodeLanguage, List<TypeMappedWrapper>> typesCache = new ConcurrentHashMap<>(4);
 
 	protected DbTypeConverter() {
-		for (Language mk : Language.values()) {
+		for (CodeLanguage mk : CodeLanguage.values()) {
 			this.typesCache.put(mk, loadMappingTypes(kind().getDbName(), mk.getMappingResource()));
 		}
 	}
@@ -62,12 +62,12 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 	 * conversion with sqlType and database column type
 	 * 
 	 * @param lang
-	 *            {@link Language}
+	 *            {@link CodeLanguage}
 	 * @param fromType
 	 * @return
 	 */
 	public String convertBy(@NotBlank String lang, @NotNull MappedMatcher matcher, @NotBlank String fromType) {
-		return convertBy(Language.of(hasTextOf(lang, "lang")), matcher, fromType);
+		return convertBy(CodeLanguage.of(hasTextOf(lang, "lang")), matcher, fromType);
 	}
 
 	/**
@@ -75,11 +75,11 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 	 * conversion with sqlType and database column type
 	 * 
 	 * @param lang
-	 *            {@link Language}
+	 *            {@link CodeLanguage}
 	 * @param fromType
 	 * @return
 	 */
-	public String convertBy(@NotNull Language lang, @NotNull MappedMatcher matcher, @NotBlank String fromType) {
+	public String convertBy(@NotNull CodeLanguage lang, @NotNull MappedMatcher matcher, @NotBlank String fromType) {
 		notNullOf(lang, "lang");
 		notNullOf(matcher, "matcher");
 		hasTextOf(fromType, "fromType");
@@ -147,11 +147,11 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 	}
 
 	/**
-	 * Codes of {@link Language}
+	 * Codes of {@link CodeLanguage}
 	 * 
 	 * @see
 	 */
-	public static enum Language {
+	public static enum CodeLanguage {
 
 		JAVA("java", "java-sql-column.types"),
 
@@ -164,7 +164,7 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 		private final String lang; // language
 		private final String mappingResource;
 
-		private Language(String lang, String mappingResource) {
+		private CodeLanguage(String lang, String mappingResource) {
 			this.lang = hasTextOf(lang, "lang");
 			this.mappingResource = hasTextOf(mappingResource, "mappingResource");
 		}
@@ -177,12 +177,12 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 			return mappingResource;
 		}
 
-		public static Language of(String lang) {
+		public static CodeLanguage of(String lang) {
 			return notNull(safeOf(lang), "No such codeKind of %s", lang);
 		}
 
-		public static Language safeOf(String lang) {
-			for (Language mk : values()) {
+		public static CodeLanguage safeOf(String lang) {
+			for (CodeLanguage mk : values()) {
 				if (mk.getAlias().equalsIgnoreCase(lang) || mk.name().equalsIgnoreCase(lang)) {
 					return mk;
 				}
@@ -199,9 +199,9 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 	 */
 	public static class TypeMappedWrapper {
 
-		private final String columnType;
-		private final String sqlType;
-		private final String attrType;
+		private final String columnType; // DB column type
+		private final String sqlType; // e.g: JDBC type
+		private final String attrType; // e.g: JavaBean fieldType
 
 		public TypeMappedWrapper(String columnType, String sqlType, String attrType) {
 			this.columnType = notNullOf(columnType, "columnType");

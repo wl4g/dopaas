@@ -19,15 +19,15 @@ import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
 
 /**
- * Golang standard generator provider.
+ * Python standard generator provider.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
+public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
 
-	public GoStandardGeneratorProvider(GenerateContext context) {
+	public PythonStandardGeneratorProvider(GenerateContext context) {
 		super(context);
 	}
 
