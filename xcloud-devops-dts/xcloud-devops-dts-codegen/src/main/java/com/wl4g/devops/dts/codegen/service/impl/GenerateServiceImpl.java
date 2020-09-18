@@ -21,16 +21,18 @@ import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
+import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.core.GenerateManager;
 import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
+import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper.MappedMatcher;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
@@ -38,7 +40,6 @@ import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,6 +73,9 @@ public class GenerateServiceImpl implements GenerateService {
 	private GenDataSourceDao genDatabaseDao;
 
 	@Autowired
+	private GenProjectDao genProjectDao;
+
+	@Autowired
 	private GenTableDao genTableDao;
 
 	@Autowired
@@ -87,10 +91,12 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public GenTable loadMetadata(Integer databaseId, String tableName) {
+	public GenTable loadMetadata(Integer databaseId,Integer projectId, String tableName) {
 		notNullOf(databaseId, "databaseId");
 		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(databaseId);
 		notNullOf(genDS, "genDatabase");
+
+		GenProject genProject = genProjectDao.selectByPrimaryKey(projectId);
 
 		MetadataResolver resolver = getMetadataPaser(genDS);
 		TableMetadata metadata = resolver.findTableDescribe(tableName);
@@ -110,11 +116,12 @@ public class GenerateServiceImpl implements GenerateService {
 			col.setColumnName(colmd.getColumnName());
 			col.setColumnComment(colmd.getComments());
 			col.setColumnType(colmd.getColumnType());
+			col.setSimpleColumnType(colmd.getSimpleColumnType());
 			col.setAttrName(underlineToHump(colmd.getColumnName()));
 			// TODO
 			// Converting java type
 			DbTypeConverter conv = converter.forOperator(genDS.getType());
-			col.setAttrType(conv.convertBy(CodeLanguage.JAVA, MappedMatcher.Column2Sql, col.getColumnType()));
+			col.setAttrType(conv.convertBy(CodeLanguage.JAVA, MappedMatcher.Column2Lang, col.getSimpleColumnType()));
 
 			// Sets defaults
 			col.setIsInsert("1");
@@ -123,11 +130,14 @@ public class GenerateServiceImpl implements GenerateService {
 			col.setIsEdit("1");
 			col.setNoNull(colmd.isNullable() ? "0" : "1");
 			col.setQueryType("1");
+			col.setIsQuery("0");
 			col.setShowType("1");
 			if (colmd.isPk()) {
 				col.setIsPk("1");
 				col.setIsList("0");
 				col.setNoNull("0");
+			}else{
+				col.setIsPk("0");
 			}
 			cols.add(col);
 		}
@@ -151,16 +161,28 @@ public class GenerateServiceImpl implements GenerateService {
 		List<GenTableColumn> genTableColumns = genColumnDao.selectByTableId(tableId);
 		genTable.setGenTableColumns(genTableColumns);
 
-		GenTable genTableFromLoadMetadata = loadMetadata(genTable.getDatabaseId(), genTable.getTableName());
+		GenTable genTableFromLoadMetadata = loadMetadata(genTable.getDatabaseId(),genTable.getProjectId(), genTable.getTableName());
 		List<GenTableColumn> genTableColumnsFromLoadMetadata = genTableFromLoadMetadata.getGenTableColumns();
+
+		List<GenTableColumn> needAdd = new ArrayList<>();
+		List<GenTableColumn> needDel = new ArrayList<>();
+
 		for (GenTableColumn genTableColumn : genTableColumnsFromLoadMetadata) {
 			GenTableColumn column = genTableColumnByName(genTableColumns, genTableColumn.getColumnName());
-			if (column != null) {
-				BeanUtils.copyProperties(column, genTableColumn);
+			if (column == null) {
+				needAdd.add(genTableColumn);
 			}
 		}
-		genTable.setGenTableColumns(genTableColumnsFromLoadMetadata);
+		for (GenTableColumn genTableColumn : genTableColumns) {
+			GenTableColumn column = genTableColumnByName(genTableColumnsFromLoadMetadata, genTableColumn.getColumnName());
+			if (column == null) {
+				needDel.add(genTableColumn);
+			}
+		}
+		genTableColumns.removeAll(needDel);
+		genTableColumns.addAll(needAdd);
 
+		genTable.setGenTableColumns(genTableColumns);
 		return genTable;
 	}
 
@@ -187,21 +209,25 @@ public class GenerateServiceImpl implements GenerateService {
 	private void insert(GenTable genTable) {
 
 		List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
+		int i = 0;
 		for (GenTableColumn column : genTableColumns) {
 			column.preInsert();
 			column.setTableId(genTable.getId());
+			column.setColumnSort(i++);
 		}
-		genColumnDao.insertBatch(genTableColumns);
 		genTableDao.insertSelective(genTable);
+		genColumnDao.insertBatch(genTableColumns);
 	}
 
 	private void update(GenTable genTable) {
 		genColumnDao.deleteByTableId(genTable.getId());
 		genTableDao.updateByPrimaryKeySelective(genTable);
 		List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
+		int i = 0;
 		for (GenTableColumn column : genTableColumns) {
 			column.preInsert();
 			column.setTableId(genTable.getId());
+			column.setColumnSort(i++);
 		}
 		genColumnDao.insertBatch(genTable.getGenTableColumns());
 	}
@@ -216,8 +242,8 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public void generate(Integer tableId) {
-		genManager.execute(new GenericParameter(tableId));
+	public String generate(Integer tableId) {
+		return genManager.execute(new GenericParameter(tableId));
 	}
 
 	/**

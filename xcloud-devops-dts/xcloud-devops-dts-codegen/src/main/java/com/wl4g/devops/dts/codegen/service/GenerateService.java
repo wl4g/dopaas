@@ -37,7 +37,7 @@ public interface GenerateService {
 	 * @param databaseId
 	 * @param tableName
 	 */
-	GenTable loadMetadata(Integer databaseId, String tableName);
+	GenTable loadMetadata(Integer databaseId,Integer projectId, String tableName);
 
 	PageModel page(PageModel pm, String tableName, Integer projectId);
 
@@ -47,6 +47,6 @@ public interface GenerateService {
 
 	void delete(Integer tableId);
 
-	void generate(Integer tableId);
+	String generate(Integer tableId);
 
 }

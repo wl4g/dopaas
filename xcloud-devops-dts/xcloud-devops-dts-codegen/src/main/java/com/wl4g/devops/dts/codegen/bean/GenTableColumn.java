@@ -40,6 +40,8 @@ public class GenTableColumn extends BaseBean {
 
 	private String columnType;
 
+	private String simpleColumnType;
+
 	private String columnComment;
 
 	private Integer columnSort;

@@ -28,7 +28,6 @@ import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -38,6 +37,7 @@ import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderGroup.getProviders;
 
 /**
  * {@link DefaultGenerateManager}
@@ -74,7 +74,7 @@ public class DefaultGenerateManager implements GenerateManager {
 	}
 
 	@Override
-	public void execute(GenericParameter param) {
+	public String execute(GenericParameter param) {
 		// Gets generate configuration.
 
 		GenProject genProject = genProjectService.detail(param.getProjectId());
@@ -92,11 +92,15 @@ public class DefaultGenerateManager implements GenerateManager {
 		GenerateContext context = new DefaultGenerateContext(config, genProject);
 		// TODO ...
 
-		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderAlias.SPINGCLOUD_MVN, context);
-		provider.run();
+		String providerGroup = genProject.getProviderGroup();
+		List<String> providers = getProviders(providerGroup);
+		for(String p : providers){
+			GeneratorProvider provider = beanFactory.getPrototypeBean(p, context);
+			provider.run();
+		}
 
 		log.info("generate code success");
-
+		return context.getJobDir().getAbsolutePath();
 	}
 
 	private GenTableColumn getPk(List<GenTableColumn> genColumns){

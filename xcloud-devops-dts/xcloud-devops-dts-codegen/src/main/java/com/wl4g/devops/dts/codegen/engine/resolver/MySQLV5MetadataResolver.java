@@ -93,6 +93,7 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 			ColumnMetadata column = new ColumnMetadata();
 			column.setColumnName((String) row.get("columnName"));
 			column.setColumnType((String) row.get("columnType"));
+			column.setSimpleColumnType((String) row.get("dataType"));
 			column.setComments((String) row.get("columnComment"));
 			column.setPk(eqIgnCase((String) row.get("columnKey"), "PRI"));
 			column.setNullable(eqIgnCase((String) row.get("isNullable"), "YES"));

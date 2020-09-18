@@ -15,22 +15,20 @@
  */
 package com.wl4g.devops.dts.codegen.utils;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static java.lang.String.format;
-import static java.util.Objects.nonNull;
+import com.google.common.io.Resources;
+import com.wl4g.components.common.annotation.Nullable;
+import org.springframework.util.ResourceUtils;
 
+import javax.validation.constraints.NotBlank;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.util.ResourceUtils;
-
-import com.google.common.io.Resources;
-import com.wl4g.components.common.annotation.Nullable;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 
 /**
  * {@link ResourceBundleUtils}
@@ -62,23 +60,23 @@ public abstract class ResourceBundleUtils {
 			// First get from cache
 			String path = basePath.concat(type).concat("/").concat(filename);
 
-			String content = null;
+			String sqlStr = null;
 			if (useCache) {
-				content = resourcesCache.get(path);
-				if (nonNull(content)) {
-					return content;
+				sqlStr = resourcesCache.get(path);
+				if (nonNull(sqlStr)) {
+					return format(sqlStr, nonNull(args) ? args : null);
 				}
 			}
 
 			File sqlFile = ResourceUtils.getFile("classpath:" + path);
-			content = Resources.toString(sqlFile.toURI().toURL(), UTF_8);
+			sqlStr = Resources.toString(sqlFile.toURI().toURL(), UTF_8);
 
 			// Storage resource content
 			if (useCache) {
-				resourcesCache.put(path, content = format(content, nonNull(args) ? args : null));
+				resourcesCache.put(path, sqlStr);
 			}
 
-			return content;
+			return format(sqlStr, nonNull(args) ? args : null);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
