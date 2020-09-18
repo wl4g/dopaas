@@ -26,7 +26,7 @@ import javax.validation.constraints.NotBlank;
  * @version v1.0 2020-09-11
  * @since
  */
-public abstract class PythonSpecs extends BaseSpecs {
+public class PythonSpecs extends BaseSpecs {
 
 	/**
 	 * Escape copyright string. If there is no multi line comment in the

@@ -31,8 +31,8 @@ public class SpringCloudMvnGeneratorProvider extends AbstractGeneratorProvider {
 	}
 
 	@Override
-	public void doGenerate() throws Exception {
-		processGenerate(GenProviderAlias.SPINGCLOUD_MVN);
+	public void doHandleGenerate() throws Exception {
+		processGenerateWithTemplates(GenProviderAlias.SPINGCLOUD_MVN);
 	}
 
 }

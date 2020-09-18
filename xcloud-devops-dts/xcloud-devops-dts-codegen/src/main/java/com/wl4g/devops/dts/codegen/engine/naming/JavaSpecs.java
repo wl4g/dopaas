@@ -43,7 +43,7 @@ import static java.lang.ThreadLocal.withInitial;
  * @version v1.0 2020-09-09
  * @since
  */
-public abstract class JavaSpecs extends BaseSpecs {
+public class JavaSpecs extends BaseSpecs {
 
 	/**
 	 * TableName to className

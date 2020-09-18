@@ -33,6 +33,7 @@ import freemarker.template.Template;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import static com.wl4g.components.common.jvm.JvmRuntimeKit.isJVMDebugging;
 import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.ByteStreamUtils.readFullyToString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
+import static com.wl4g.components.common.lang.Assert2.hasText;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
@@ -78,7 +80,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	@Override
 	public void run() {
 		try {
-			doGenerate();
+			doHandleGenerate();
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -89,7 +91,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 *
 	 * @throws Exception
 	 */
-	protected abstract void doGenerate() throws Exception;
+	protected abstract void doHandleGenerate() throws Exception;
 
 	/**
 	 * Processing generate codes.
@@ -97,7 +99,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param provider
 	 * @throws Exception
 	 */
-	protected void processGenerate(String provider) throws Exception {
+	protected void processGenerateWithTemplates(String provider) throws Exception {
 		hasTextOf(provider, "provider");
 		GenProject project = context.getGenProject();
 
@@ -105,18 +107,18 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		List<TemplateWrapper> tpls = loadTemplates(provider);
 
 		// Handling generate
-		doRenderingAndGenerate(tpls, project, context.getJobDir().getAbsolutePath());
+		doRenderingTemplates(tpls, project, context.getJobDir().getAbsolutePath());
 	}
 
 	/**
-	 * Do rendering generate and save.
+	 * Do rendering templates generate and save.
 	 *
 	 * @param tpls
 	 * @param project
 	 * @param writeBasePath
 	 * @throws Exception
 	 */
-	private void doRenderingAndGenerate(List<TemplateWrapper> tpls, GenProject project, String writeBasePath) throws Exception {
+	protected void doRenderingTemplates(List<TemplateWrapper> tpls, GenProject project, String writeBasePath) throws Exception {
 		for (TemplateWrapper tpl : tpls) {
 			log.info("Rendering generate for tpl - {}", tpl.getTplPath());
 
@@ -130,53 +132,76 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 						// Additidtion table model attributes
 						model.putAll(toRenderingFlatModel(tab));
 
-						// Pre rendering.
-						String rendered = preRendering(tpl.getFileContent(), model);
+						// Call Pre rendering.
+						String rendered = hasText(preRendering(tpl, model), "Pre rendering should return the rendered value");
 
 						// Rendering with freemarker.
-						String writePath = writeBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
+						String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(tpl.getTplPath(), model));
 						Template template = new Template(tpl.getFileName(), rendered, defaultGenConfigurer);
 						rendered = renderingTemplateToString(template, model);
-						writeFile(new File(writePath), rendered, false);
+
+						// Call post rendered.
+						postRendering(tpl, rendered, writePath);
 					}
 				}
 				// Simple template.
 				else {
-					// Pre rendering.
-					String rendered = preRendering(tpl.getFileContent(), model);
+					// Call Pre rendering.
+					String rendered = hasText(preRendering(tpl, model), "Pre rendering should return the rendered value");
 
 					// Rendering with freemarker.
-					String writePath = writeBasePath.concat("/").concat(resolveExpressionPath(tpl.getTplPath(), model));
+					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(tpl.getTplPath(), model));
 					Template template = new Template(tpl.getFileName(), rendered, defaultGenConfigurer);
 					rendered = renderingTemplateToString(template, model);
-					writeFile(new File(writePath), rendered, false);
+
+					// Call post rendered.
+					postRendering(tpl, rendered, writePath);
 				}
 			}
 			// e.g: static resources files
 			else {
-				String targetPath = writeBasePath + "/" + resolveExpressionPath(tpl.getTplPath(), model);
+				String targetPath = writeBasePath + "/" + resolveSpelExpression(tpl.getTplPath(), model);
 				writeFile(new File(targetPath), tpl.getFileContent(), false);
 			}
 		}
 	}
 
 	/**
-	 * Preparing rendering.
+	 * Preparing rendering processing.
 	 * 
-	 * @param tplContent
+	 * @param tpl
 	 * @param model
 	 * @return
 	 */
-	protected String preRendering(@NotBlank String tplContent, @NotEmpty Map<String, Object> model) {
-		hasTextOf(tplContent, "tplContent");
+	protected String preRendering(@NotNull TemplateWrapper tpl, @NotEmpty Map<String, Object> model) {
+		notNullOf(tpl, "tpl");
 		notEmptyOf(model, "model");
 
-		// Rendering with spel ahead of time
-		//
-		// Note: After testing, we found that we should use spel to render
-		// first, otherwise FreeMarker will report an error.
-		//
-		return defaultExpressions.resolve(tplContent, model);
+		// It is recommended to use FreeMarker to call Java methods.
+
+		// // Rendering with spel ahead of time
+		// //
+		// // Note: After testing, we found that we should use spel to render
+		// // first, otherwise FreeMarker will report an error.
+		// //
+		// return defaultExpressions.resolve(tpl.getFileContent(), model);
+		return tpl.getFileContent();
+	}
+
+	/**
+	 * Post rendered processing.
+	 * 
+	 * @param tpl
+	 * @param rendered
+	 * @param writePath
+	 */
+	protected void postRendering(@NotNull TemplateWrapper tpl, @NotBlank String rendered, @NotBlank String writePath) {
+		notNullOf(tpl, "tpl");
+		hasTextOf(rendered, "rendered");
+		hasTextOf(writePath, "writePath");
+
+		// Default by write to local disk
+		writeFile(new File(writePath), rendered, false);
 	}
 
 	/**
@@ -189,6 +214,18 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	protected Map<String, Object> toRenderingFlatModel(Object object) throws Exception {
 		return parseJSON(toJSONString(object), new TypeReference<HashMap<String, Object>>() {
 		});
+	}
+
+	/**
+	 * Customize rendering model
+	 *
+	 * @param tplPath
+	 * @param project
+	 * @param table
+	 * @return
+	 */
+	protected Map<String, Object> customizeRenderingModel(@NotBlank String tplPath, @Nullable Object... beans) {
+		return null;
 	}
 
 	/**
@@ -214,37 +251,32 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// Addidition special variables.
 		model.put(VAR_WATERMARK, DEFAULT_TPL_WATERMARK);
 
-		return model;
-	}
+		// Addidition default utils. (Called when rendering templates for
+		// Freemarker)
+		model.put("javaSpecs", new JavaSpecs());
+		model.put("csharpSpecs", new CSharpSpecs());
+		model.put("golangSpecs", new GolangSpecs());
+		model.put("pythonSpecs", new PythonSpecs());
 
-	/**
-	 * Customize rendering model
-	 *
-	 * @param tplPath
-	 * @param project
-	 * @param table
-	 * @return
-	 */
-	protected Map<String, Object> customizeRenderingModel(@NotBlank String tplPath, @Nullable Object... beans) {
-		return null;
+		return model;
 	}
 
 	/**
 	 * Resolving path SPEL expression
 	 *
-	 * @param tplPath
+	 * @param expression
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private String resolveExpressionPath(String tplPath, final Map<String, Object> model) {
-		if (tplPath.endsWith(".ftl")) {
-			tplPath = tplPath.substring(0, tplPath.length() - 4);
+	private String resolveSpelExpression(String expression, final Map<String, Object> model) {
+		if (expression.endsWith(DEFAULT_TPL_SUFFIX)) {
+			expression = expression.substring(0, expression.length() - DEFAULT_TPL_SUFFIX.length());
 		}
+		final String expression0 = expression;
+		log.debug("Resolving SPEL for expression: {}, model: {}", () -> expression0, () -> model);
 
-		final String path = tplPath;
-		log.debug("Resolving SPEL for tplPath: {}, model: {}", () -> path, () -> model);
-		return valueOf(defaultExpressions.resolve(tplPath, model));
+		return valueOf(defaultExpressions.resolve(expression0, model));
 	}
 
 	/**
@@ -308,9 +340,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 		List<String> locations = new ArrayList<>();
 		for (String suffix : DEFAULT_LOCATION_SUFFIXS) {
-			String location = format(DEFAULT_TPLS_LOCATION, provider);
-			location = format(location, suffix);
-			locations.add(location);
+			locations.add(format(DEFAULT_TPLS_LOCATION, provider, suffix));
 		}
 		return locations;
 	}
