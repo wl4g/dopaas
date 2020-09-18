@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>${organName?cap_first}-${projectName?cap_first}</artifactId>
+	<artifactId>${organName?uncap_first}-${projectName?uncap_first}</artifactId>
 	<packaging>pom</packaging>
-	<name>${organName?cap_first} ${projectName?cap_first}</name>
+	<name>${organName?cap_first} ${projectName?cap_first} Projects</name>
 	<url>http://${projectName?uncap_first}.${organName?uncap_first}.${organType}</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -12,10 +12,10 @@
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>${organName?cap_first}-${projectName?cap_first}-common</module>
-		<module>${organName?cap_first}-${projectName?cap_first}-dao</module>
-		<module>${organName?cap_first}-${projectName?cap_first}-service</module>
-		<module>${organName?cap_first}-${projectName?cap_first}-starter</module>
+		<module>${organName?uncap_first}-${projectName?uncap_first}-common</module>
+		<module>${organName?uncap_first}-${projectName?uncap_first}-dao</module>
+		<module>${organName?uncap_first}-${projectName?uncap_first}-service</module>
+		<module>${organName?uncap_first}-${projectName?uncap_first}-starter</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
