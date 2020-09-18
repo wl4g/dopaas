@@ -16,7 +16,6 @@
 package com.wl4g.devops.dts.codegen.engine;
 
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
 
 /**
  * Python standard generator provider.
@@ -29,11 +28,6 @@ public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	public PythonStandardGeneratorProvider(GenerateContext context) {
 		super(context);
-	}
-
-	@Override
-	public CodeLanguage getLanguage() {
-		return CodeLanguage.GO;
 	}
 
 	@Override

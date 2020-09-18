@@ -16,7 +16,6 @@
 package com.wl4g.devops.dts.codegen.engine;
 
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
 
 /**
  * C_sharp standard generator provider.
@@ -29,11 +28,6 @@ public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	public CsharpStandardGeneratorProvider(GenerateContext context) {
 		super(context);
-	}
-
-	@Override
-	public CodeLanguage getLanguage() {
-		return CodeLanguage.GO;
 	}
 
 	@Override
