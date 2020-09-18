@@ -26,7 +26,7 @@ import javax.validation.constraints.NotBlank;
  * @version v1.0 2020-09-11
  * @since
  */
-public abstract class GolangSpecs extends BaseSpecs {
+public class GolangSpecs extends BaseSpecs {
 
 	/**
 	 * Escape copyright string. If there is no multi line comment in the
@@ -36,7 +36,7 @@ public abstract class GolangSpecs extends BaseSpecs {
 	 * @param copyright
 	 * @return
 	 */
-	public static String escapeCopyright(@NotBlank String copyright) { 
+	public static String escapeCopyright(@NotBlank String copyright) {
 		hasTextOf(copyright, "copyright");
 		// TODO
 		return copyright;
