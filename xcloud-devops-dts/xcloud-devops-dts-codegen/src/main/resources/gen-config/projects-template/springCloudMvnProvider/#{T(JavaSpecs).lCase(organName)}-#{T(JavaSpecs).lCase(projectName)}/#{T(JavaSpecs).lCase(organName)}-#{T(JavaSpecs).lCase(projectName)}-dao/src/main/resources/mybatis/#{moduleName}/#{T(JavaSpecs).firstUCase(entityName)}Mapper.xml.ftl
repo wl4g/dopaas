@@ -21,12 +21,12 @@
         select
         <include refid="Base_Column_List" />
         from ${tableName}
-        where ${pk.columnName} = #{${pk.attrName},jdbcType=${pk.columnType}}
+        where ${pk.columnName} = ${r'#{'}${pk.attrName},jdbcType=${pk.columnType}}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from ${tableName}
-    where ${pk.columnName} = #{${pk.attrName},jdbcType=${pk.columnType}}
+    where ${pk.columnName} = ${r'#{'}${pk.attrName},jdbcType=${pk.columnType}}
     </delete>
 
     <insert id="insertSelective" parameterType="${packageName}.commons.bean.${moduleName}.${entityName?cap_first}">
@@ -41,7 +41,7 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <#list genTableColumns as param>
                <if test="${param.attrName} != null">
-                   #{${param.attrName},jdbcType=${param.columnType}},
+                   ${r'#{'}${param.attrName},jdbcType=${param.columnType}},
                </if>
             </#list>
         </trim>
@@ -52,15 +52,15 @@
         <set>
         <#list genTableColumns as param>
                <if test="${param.attrName} != null">
-                   #{${param.attrName},jdbcType=${param.columnType}},
+                   ${r'#{'}${param.attrName},jdbcType=${param.columnType}},
                </if>
 
             <if test="${param.attrName} != null">
-                ${param.columnName} = #{${param.attrName},jdbcType=${param.columnType}},
+                ${param.columnName} = ${r'#{'}${param.attrName},jdbcType=${param.columnType}},
             </if>
         </#list>
         </set>
-        where id = #{id,jdbcType=INTEGER}
+        where id = ${r'#{'}id,jdbcType=INTEGER}
     </update>
 
 

@@ -33,7 +33,7 @@ public abstract class BaseSpecs {
     /**
      * Gets the string that converts the first letter to uppercase
      */
-    public static String fistUCase(@Nullable String str) {
+    public static String firstUCase(@Nullable String str) {
         if (isBlank(str)) {
             return str;
         }
@@ -47,7 +47,7 @@ public abstract class BaseSpecs {
     /**
      * Gets the string that converts the first letter to lowercase
      */
-    public static String fistLCase(@Nullable String str) {
+    public static String firstLCase(@Nullable String str) {
         if (isBlank(str)) {
             return str;
         }
