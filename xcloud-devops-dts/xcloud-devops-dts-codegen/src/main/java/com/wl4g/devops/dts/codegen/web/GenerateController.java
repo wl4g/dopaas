@@ -87,9 +87,9 @@ public class GenerateController {
 	}
 
 	@RequestMapping("del")
-	public RespBase<?> del(Integer tableId) {
+	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		genConfigurationService.delete(tableId);
+		genConfigurationService.delete(id);
 		return resp;
 	}
 

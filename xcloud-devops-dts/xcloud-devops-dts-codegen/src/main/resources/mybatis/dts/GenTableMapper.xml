@@ -43,7 +43,7 @@
     select
     <include refid="Base_Column_List" />
     from dts_gen_table
-    where project_id = #{id,jdbcType=INTEGER}
+    where project_id = #{id,jdbcType=INTEGER} and del_flag!=1
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from dts_gen_table

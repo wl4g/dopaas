@@ -233,10 +233,10 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public void delete(Integer tableId) {
+	public void delete(Integer id) {
 		GenTable genTable = new GenTable();
 		genTable.preUpdate();
-		genTable.setId(tableId);
+		genTable.setId(id);
 		genTable.setDelFlag(BaseBean.DEL_FLAG_DELETE);
 		genTableDao.updateByPrimaryKeySelective(genTable);
 	}
