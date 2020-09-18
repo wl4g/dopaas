@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.dts.codegen.engine.converter;
 
-import static com.wl4g.components.common.lang.Assert2.hasText;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notEmpty;
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils.readResource;
+import com.wl4g.components.common.lang.StringUtils2;
+import com.wl4g.components.core.framework.operator.Operator;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper.MappedMatcher;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,13 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import com.wl4g.components.common.lang.StringUtils2;
-import com.wl4g.components.core.framework.operator.Operator;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper.MappedMatcher;
+import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils.readResource;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
  * Database type or JDBC/SQL type and Java class, go structure class, python
@@ -228,22 +224,22 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 		 */
 		public static enum MappedMatcher {
 
-			lang2Sql((mapped, fromType) -> mapped.stream().filter(m -> m.getAttrType().equals(fromType)).map(m -> m.getSqlType())
+			lang2Sql((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(),fromType)).map(m -> m.getSqlType())
 					.findFirst().orElse(null)),
 
-			Sql2Column((mapped, fromType) -> mapped.stream().filter(m -> m.getSqlType().equals(fromType))
+			Sql2Column((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getSqlType(),fromType))
 					.map(m -> m.getColumnType()).findFirst().orElse(null)),
 
-			Lang2Column((mapped, fromType) -> mapped.stream().filter(m -> m.getAttrType().equals(fromType))
+			Lang2Column((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(),fromType))
 					.map(m -> m.getColumnType()).findFirst().orElse(null)),
 
-			Column2Sql((mapped, fromType) -> mapped.stream().filter(m -> m.getColumnType().equals(fromType))
+			Column2Sql((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getColumnType(),fromType))
 					.map(m -> m.getSqlType()).findFirst().orElse(null)),
 
-			Column2Lang((mapped, fromType) -> mapped.stream().filter(m -> m.getColumnType().equals(fromType))
+			Column2Lang((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getColumnType(),fromType))
 					.map(m -> m.getAttrType()).findFirst().orElse(null)),
 
-			Sql2Lang((mapped, fromType) -> mapped.stream().filter(m -> m.getSqlType().equals(fromType)).map(m -> m.getAttrType())
+			Sql2Lang((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getSqlType(),fromType)).map(m -> m.getAttrType())
 					.findFirst().orElse(null));
 
 			/**

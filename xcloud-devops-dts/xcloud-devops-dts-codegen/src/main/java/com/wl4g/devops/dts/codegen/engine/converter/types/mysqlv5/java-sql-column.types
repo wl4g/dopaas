@@ -14,17 +14,18 @@
 #
 
 # -------------------------------------------------------------------------------
-#    AttrType					   SqlType                       DbColumnType
+#    AttrType			 SqlType                          DbColumnType
 # -------------------------------------------------------------------------------
-java.lang.String                   VARCHAR                          VARCHAR
-Ljava.lang.byte[]                  BLOB                             BLOB
-java.lang.Boolean                  BIT                              BIT
-java.lang.Long                     INTEGER                          INTEGER
-java.lang.Integer                  INTEGER                          INTEGER
-java.math.BigInteger               BIGINT                    	    BIGINT
-java.lang.Float                    FLOAT                            FLOAT
-java.lang.Double                   DOUBLE                      	    DOUBLE
-java.math.BigDecimal               DECIMAL                          DECIMAL
-java.sql.Date                      DATETIME                         DATETIME
-java.sql.Time                      DATETIME                         DATETIME
-java.sql.Timestamp                 TIMESTAMP                        TIMESTAMP
+String                   VARCHAR                          VARCHAR
+byte[]                   BLOB                             BLOB
+Boolean                  BIT                              BIT
+Long                     INTEGER                          INTEGER
+Integer                  INTEGER                          INT
+BigInteger               BIGINT                    	      BIGINT
+Float                    FLOAT                            FLOAT
+Double                   DOUBLE                      	  DOUBLE
+BigDecimal               DECIMAL                          DECIMAL
+Date                     DATETIME                         DATETIME
+Time                     DATETIME                         DATETIME
+Timestamp                TIMESTAMP                        TIMESTAMP
+String                   VARCHAR                          TEXT

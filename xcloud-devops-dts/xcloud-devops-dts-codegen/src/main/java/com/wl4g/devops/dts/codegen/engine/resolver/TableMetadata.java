@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.engine.resolver;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * {@link TableMetadata}
@@ -48,7 +48,8 @@ public class TableMetadata {
 
 		private String columnName;
 		private boolean isPk;
-		private String columnType;
+		private String columnType;//e.g varchar(255)
+		private String simpleColumnType;//e.g varchar
 		private String comments;
 		private String attrType; // class attr type
 		private boolean isNullable;

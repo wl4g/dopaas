@@ -31,6 +31,6 @@ public interface GenerateManager {
 	 * 
 	 * @param parameter
 	 */
-	void execute(GenericParameter parameter);
+	String execute(GenericParameter parameter);
 
 }
