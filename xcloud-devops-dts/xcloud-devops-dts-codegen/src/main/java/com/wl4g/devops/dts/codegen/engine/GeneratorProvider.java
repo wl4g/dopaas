@@ -74,30 +74,29 @@ public interface GeneratorProvider extends Runnable {
 	}
 
 	/**
-	 * An extensible configuration item {@link ExtraConfigurableSupport} which
-	 * is supported by itself, If NULL is returned, there is no extensible
+	 * An extensible configuration options {@link ExtraOptionsSupport} which is
+	 * supported by itself, If NULL is returned, there is no extensible
 	 * configuration item.
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020-09-16
 	 * @since
 	 */
-	public static enum ExtraConfigurableSupport {
+	public static enum ExtraOptionsSupport {
 
-		SpringCloudMvnBuildAssetsType(
-				new ConfigOption(SPINGCLOUD_MVN, "codegen.springcloudmvn.build-assets-type", "MvnAssTar", "SpringExecJar")),
+		SpringCloudMvnBuildAssetsType(new ConfigOption(SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
 
-		VueJSCompression(new ConfigOption(VUEJS, "codegen.vuejs.compression", "true", "false")),
+		VueJSCompression(new ConfigOption(VUEJS, "gen.compression", "true", "false")),
 
-		VueJSBasedOnAdminUi(new ConfigOption(VUEJS, "codegen.vuejs.basedon-adminui", "true", "false")),
+		VueJSBasedOnAdminUi(new ConfigOption(VUEJS, "gen.basedon.adminui", "true", "false")),
 
-		NgJSCompression(new ConfigOption(NGJS, "codegen.ngjs.compression", "true", "false"));
+		NgJSCompression(new ConfigOption(NGJS, "gen.compression", "true", "false"));
 
 		/** Gen provider extra option of {@link ConfigOption} . */
 		@NotNull
 		private final ConfigOption option;
 
-		private ExtraConfigurableSupport(@NotNull ConfigOption option) {
+		private ExtraOptionsSupport(@NotNull ConfigOption option) {
 			notNullOf(option, "option");
 			this.option = option.validate();
 		}

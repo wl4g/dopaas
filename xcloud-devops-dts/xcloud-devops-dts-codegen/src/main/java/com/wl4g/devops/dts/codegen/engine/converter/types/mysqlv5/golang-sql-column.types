@@ -13,11 +13,12 @@
 # limitations under the License.
 #
 
-int                 = int32
-integer             = int32
-varchar             = string
-text                = string
-bit                 = bool
-bigint              = int64
-float               = float32
-blob                = byte[]
+# --------------------------------------------
+# AttrType		 SqlType       DbColumnType
+# --------------------------------------------
+int32             null            int
+string            null            varchar
+bool              null            bit
+int64             null            bigint
+float32           null            float
+byte[]            null            blob
