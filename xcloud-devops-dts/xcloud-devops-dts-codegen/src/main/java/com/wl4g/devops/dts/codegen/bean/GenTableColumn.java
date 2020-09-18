@@ -38,15 +38,23 @@ public class GenTableColumn extends BaseBean {
 
 	private String columnName;
 
-	private String columnComment;
-
 	private String columnType;
+
+	private String columnComment;
 
 	private Integer columnSort;
 
 	private String attrType;
 
 	private String attrName;
+
+	private String queryType;
+
+	private String showType;
+
+	private String dictType;
+
+	private String validRule; // form valid rule
 
 	private String isPk;
 
@@ -60,16 +68,6 @@ public class GenTableColumn extends BaseBean {
 
 	private String isQuery;
 
-	private String queryType;
-
 	private String isEdit;
-
-	private String showType;
-
-	private String options;
-
-	private String dictType;
-
-	private String rule;
 
 }

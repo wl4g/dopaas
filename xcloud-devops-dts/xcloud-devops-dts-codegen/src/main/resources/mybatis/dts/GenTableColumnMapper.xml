@@ -19,14 +19,13 @@
     <result column="query_type" property="queryType" jdbcType="VARCHAR" />
     <result column="is_edit" property="isEdit" jdbcType="VARCHAR" />
     <result column="show_type" property="showType" jdbcType="VARCHAR" />
-    <result column="options" property="options" jdbcType="VARCHAR" />
     <result column="dict_type" property="dictType" jdbcType="VARCHAR" />
-    <result column="rule" property="rule" jdbcType="VARCHAR" />
+    <result column="valid_rule" property="validRule" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, table_id, column_name, column_comment, column_type, column_sort, attr_type, attr_name, 
     is_pk, no_null, is_insert, is_update, is_list, is_query, query_type, is_edit, show_type, 
-    options, dict_type, rule
+    dict_type, valid_rule
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -56,15 +55,15 @@
       attr_type, attr_name, is_pk, 
       no_null, is_insert, is_update, 
       is_list, is_query, query_type, 
-      is_edit, show_type, options, dict_type, rule
+      is_edit, show_type, dict_type, valid_rule
       )
     values (#{id,jdbcType=INTEGER}, #{tableId,jdbcType=INTEGER}, #{columnName,jdbcType=VARCHAR}, 
       #{columnComment,jdbcType=VARCHAR}, #{columnType,jdbcType=VARCHAR}, #{columnSort,jdbcType=INTEGER}, 
       #{attrType,jdbcType=VARCHAR}, #{attrName,jdbcType=VARCHAR}, #{isPk,jdbcType=VARCHAR}, 
       #{noNull,jdbcType=VARCHAR}, #{isInsert,jdbcType=VARCHAR}, #{isUpdate,jdbcType=VARCHAR}, 
       #{isList,jdbcType=VARCHAR}, #{isQuery,jdbcType=VARCHAR}, #{queryType,jdbcType=VARCHAR}, 
-      #{isEdit,jdbcType=VARCHAR}, #{showType,jdbcType=VARCHAR}, #{options,jdbcType=VARCHAR},
-      #{dictType,jdbcType=VARCHAR}, #{rule,jdbcType=VARCHAR}
+      #{isEdit,jdbcType=VARCHAR}, #{showType,jdbcType=VARCHAR},
+      #{dictType,jdbcType=VARCHAR}, #{validRule,jdbcType=VARCHAR}
       )
   </insert>
 
@@ -74,7 +73,7 @@
     attr_type, attr_name, is_pk,
     no_null, is_insert, is_update,
     is_list, is_query, query_type,
-    is_edit, show_type, options, dict_type, rule
+    is_edit, show_type, dict_type, valid_rule
     )
     VALUES
     <foreach collection="columns" item="column" separator=",">
@@ -83,8 +82,8 @@
       #{column.attrType,jdbcType=VARCHAR}, #{column.attrName,jdbcType=VARCHAR}, #{column.isPk,jdbcType=VARCHAR},
       #{column.noNull,jdbcType=VARCHAR}, #{column.isInsert,jdbcType=VARCHAR}, #{column.isUpdate,jdbcType=VARCHAR},
       #{column.isList,jdbcType=VARCHAR}, #{column.isQuery,jdbcType=VARCHAR}, #{column.queryType,jdbcType=VARCHAR},
-      #{column.isEdit,jdbcType=VARCHAR}, #{column.showType,jdbcType=VARCHAR}, #{column.options,jdbcType=VARCHAR},
-      #{column.dictType,jdbcType=VARCHAR}, #{column.rule,jdbcType=VARCHAR}
+      #{column.isEdit,jdbcType=VARCHAR}, #{column.showType,jdbcType=VARCHAR},
+      #{column.dictType,jdbcType=VARCHAR}, #{column.validRule,jdbcType=VARCHAR}
       )
     </foreach>
   </insert>
@@ -143,14 +142,11 @@
       <if test="showType != null" >
         show_type,
       </if>
-      <if test="options != null" >
-        options,
-      </if>
       <if test="dictType != null" >
         dict_type,
       </if>
-      <if test="rule != null" >
-        rule,
+      <if test="validRule != null" >
+        valid_rule,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -205,14 +201,11 @@
       <if test="showType != null" >
         #{showType,jdbcType=VARCHAR},
       </if>
-      <if test="options != null" >
-        #{options,jdbcType=VARCHAR},
-      </if>
       <if test="dictType != null" >
         #{dictType,jdbcType=VARCHAR},
       </if>
-      <if test="rule != null" >
-        #{rule,jdbcType=VARCHAR},
+      <if test="validRule != null" >
+        #{validRule,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -267,14 +260,11 @@
       <if test="showType != null" >
         show_type = #{showType,jdbcType=VARCHAR},
       </if>
-      <if test="options != null" >
-        options = #{options,jdbcType=VARCHAR},
-      </if>
       <if test="dictType != null" >
         dict_type = #{dictType,jdbcType=VARCHAR},
       </if>
-      <if test="rule != null" >
-        rule = #{rule,jdbcType=VARCHAR},
+      <if test="validRule != null" >
+        valid_rule = #{validRule,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -297,9 +287,8 @@
       query_type = #{queryType,jdbcType=VARCHAR},
       is_edit = #{isEdit,jdbcType=VARCHAR},
       show_type = #{showType,jdbcType=VARCHAR},
-      options = #{options,jdbcType=VARCHAR},
       dict_type = #{dictType,jdbcType=VARCHAR},
-      rule = #{rule,jdbcType=VARCHAR}
+      valid_rule = #{validRule,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
