@@ -92,7 +92,7 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 			ColumnMetadata column = new ColumnMetadata();
 			column.setColumnName((String) row.get("columnName"));
 			column.setColumnType((String) row.get("columnType"));
-			column.setDataType((String) row.get("dataType"));
+			// column.setDataType((String) row.get("dataType"));
 			column.setComments((String) row.get("columnComment"));
 			column.setColumnKey((String) row.get("columnKey"));
 			column.setExtra((String) row.get("extra"));

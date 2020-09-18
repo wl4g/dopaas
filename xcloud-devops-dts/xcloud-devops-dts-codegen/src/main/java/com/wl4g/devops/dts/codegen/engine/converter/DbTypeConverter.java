@@ -234,8 +234,14 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 			Sql2Column((mapped, fromType) -> mapped.stream().filter(m -> m.getSqlType().equals(fromType))
 					.map(m -> m.getColumnType()).findFirst().orElse(null)),
 
+			Lang2Column((mapped, fromType) -> mapped.stream().filter(m -> m.getAttrType().equals(fromType))
+					.map(m -> m.getColumnType()).findFirst().orElse(null)),
+
 			Column2Sql((mapped, fromType) -> mapped.stream().filter(m -> m.getColumnType().equals(fromType))
 					.map(m -> m.getSqlType()).findFirst().orElse(null)),
+
+			Column2Lang((mapped, fromType) -> mapped.stream().filter(m -> m.getColumnType().equals(fromType))
+					.map(m -> m.getAttrType()).findFirst().orElse(null)),
 
 			Sql2Lang((mapped, fromType) -> mapped.stream().filter(m -> m.getSqlType().equals(fromType)).map(m -> m.getAttrType())
 					.findFirst().orElse(null));

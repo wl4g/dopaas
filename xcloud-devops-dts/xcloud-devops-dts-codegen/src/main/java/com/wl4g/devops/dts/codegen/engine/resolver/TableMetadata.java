@@ -33,18 +33,17 @@ import lombok.Setter;
 @Setter
 public class TableMetadata {
 
-	// 表的名称
 	private String tableName;
-	// 表的备注
+
 	private String comments;
-	// 表的主键
+
 	private ColumnMetadata pk;
 
-	// 表的字段
 	private List<ColumnMetadata> columns;
 
 	// 类名(第一个字母大写)，如：sys_user => SysUser
 	private String classNameFirstUpper;
+
 	// 类名(第一个字母小写)，如：sys_user => sysUser
 	private String classNameFirstLower;
 
@@ -59,19 +58,25 @@ public class TableMetadata {
 
 		// 列名
 		private String columnName;
+
 		// 主键？
 		private String columnKey;
+
 		// 列名类型
-		private String dataType;
 		private String columnType;
+
 		// 列名备注
 		private String comments;
+
 		// 属性名称(第一个字母大写)，如：user_name => UserName
 		private String attrNameFirstUpper;
+
 		// 属性名称(第一个字母小写)，如：user_name => userName
 		private String attrNameFirstLower;
+
 		// 属性类型
 		private String attrType;
+
 		// auto_increment
 		private String extra;
 
