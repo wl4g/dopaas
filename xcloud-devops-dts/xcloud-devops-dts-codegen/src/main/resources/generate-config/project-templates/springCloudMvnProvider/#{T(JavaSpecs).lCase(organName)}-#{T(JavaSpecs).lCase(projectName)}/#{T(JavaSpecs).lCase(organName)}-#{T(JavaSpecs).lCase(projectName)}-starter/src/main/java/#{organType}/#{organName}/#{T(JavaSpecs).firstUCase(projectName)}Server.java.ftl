@@ -1,6 +1,8 @@
 // ${watermark}
 
-package com.wl4g;
+${javaSpecs.escapeCopyright(copyright)}
+
+package ${organType?uncap_first}.${organName?uncap_first};
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

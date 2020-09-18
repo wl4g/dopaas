@@ -1,17 +1,21 @@
-<#macro class_annotation class_name author date>/**
-    * ${class_name}
-    *
-    * @author ${author}
-    * @Date ${date}
-    */
+// ${watermark}
+
+${javaSpecs.escapeCopyright(copyright)}
+
+<#macro class_annotation class_name author date>
+/**
+ * ${class_name}
+ *
+ * @author ${author}
+ * @Date ${date}
+ */
 </#macro>
 <#--{包名}/{模块名}/{分层(dao,entity,service,web)}/{子模块名}-->
-<#--package com.wl4g.devops.dts.codegen.service;-->
 <#macro class_package package_name module_name demixing_package>${package_name}.${module_name}.${demixing_package}</#macro>
 <#assign aDateTime = .now>
 <#assign aDate = aDateTime?date>
 <#--package name-->
-package <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="service" />
+package <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="service" />;
 
 <#--import-->
 import com.wl4g.components.data.page.PageModel;
