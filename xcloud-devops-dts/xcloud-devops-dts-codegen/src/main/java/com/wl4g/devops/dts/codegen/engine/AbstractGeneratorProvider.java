@@ -295,7 +295,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 					STATICLOG.info("Loaded templates resources: {}", resources);
 
 					for (StreamResource res : resources) {
-						if (res.getFile().isFile()) {
+						if (res.isReadable()) {
 							tpls.add(wrapTemplate(res, provider));
 						}
 					}
