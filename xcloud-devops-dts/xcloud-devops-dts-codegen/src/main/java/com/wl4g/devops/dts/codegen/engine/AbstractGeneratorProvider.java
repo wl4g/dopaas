@@ -17,7 +17,6 @@ package com.wl4g.devops.dts.codegen.engine;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.annotation.Nullable;
-import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.resource.StreamResource;
 import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
@@ -34,12 +33,17 @@ import freemarker.template.Template;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.codec.net.URLCodec;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.ByteStreamUtils.readFullyToString;
+import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.jvm.JvmRuntimeKit.isJVMDebugging;
 import static com.wl4g.components.common.lang.Assert2.*;
@@ -244,7 +248,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		}
 
 		// Addidition special variables.
-		model.put(VAR_WATERMARK, DEFAULT_TPL_WATERMARK);
+		model.put(VAR_WATERMARK, TPL_WATERMARK);
 
 		// Addidition default utils. (Called when rendering templates for
 		// Freemarker)
@@ -265,8 +269,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	private String resolveSpelExpression(String expression, final Map<String, Object> model) {
-		if (expression.endsWith(DEFAULT_TPL_SUFFIX)) {
-			expression = expression.substring(0, expression.length() - DEFAULT_TPL_SUFFIX.length());
+		if (expression.endsWith(TPL_SUFFIX)) {
+			expression = expression.substring(0, expression.length() - TPL_SUFFIX.length());
 		}
 		final String expression0 = expression;
 		log.debug("Resolving SPEL for expression: {}, model: {}", () -> expression0, () -> model);
@@ -281,7 +285,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return
 	 * @throws IOException
 	 */
-	private static final List<TemplateWrapper> loadTemplates(String provider) throws IOException {
+	private static final List<TemplateWrapper> loadTemplates(String provider) throws Exception {
 		List<TemplateWrapper> tpls = templatesCache.get(provider);
 		if (isJVMDebugging || isNull(tpls)) {
 			synchronized (AbstractGeneratorProvider.class) {
@@ -290,8 +294,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 					tpls = new ArrayList<>();
 
 					// Scanning templates resources.
-					Set<StreamResource> resources = defaultResourceResolver
-							.getResources(getResourceLocations(provider).toArray(new String[] {}));
+					String[] locations = getResourceLocations(provider).toArray(new String[0]);
+					Set<StreamResource> resources = defaultResourceResolver.getResources(locations);
 					STATICLOG.info("Loaded templates resources: {}", resources);
 
 					for (StreamResource res : resources) {
@@ -312,14 +316,29 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param res
 	 * @param provider
 	 * @return
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	private static TemplateWrapper wrapTemplate(StreamResource res, String provider) throws IOException {
-		String path = res.getURI().getPath();
-		String splitStr = DEFAULT_TPL_BASEPATH + "/" + provider + "/";
-		int i = path.indexOf(splitStr);
+	private static TemplateWrapper wrapTemplate(StreamResource res, String provider) throws Exception {
+		/**
+		 * e.g: res.getURI().toString()
+		 * 
+		 * <pre>
+		 * jar:file:/opt/apps/acm/dts-manager-package/dts-manager-master-bin/
+		 * libs/xcloud-devops-dts-codegen-master.jar!/generate-config/project-
+		 * templates/springCloudMvnProvider/%23%7bT(JavaSpecs).lCase(organName)%
+		 * 7d-%23%7bT(JavaSpecs).lCase(projectName)%7d/%23%7bT(JavaSpecs).lCase(
+		 * organName)%7d-%23%7bT(JavaSpecs).lCase(projectName)%7d-dao/pom.xml.
+		 * ftl
+		 * </pre>
+		 * 
+		 * Note: The original path (need decoded) is used here.
+		 */
+		String path = res.getURI().toString();
+		path = new String(URLCodec.decodeUrl(path.getBytes(UTF_8)));
+		String projectRootPathPart = TPL_PROJECT_PATH.concat("/").concat(provider).concat("/");
+		int i = path.indexOf(projectRootPathPart);
 		if (i >= 0) {
-			path = path.substring(i + splitStr.length());
+			path = path.substring(i + projectRootPathPart.length());
 		}
 		return new TemplateWrapper(path, res.getFilename(), readFullyToString(res.getInputStream()));
 	}
@@ -334,8 +353,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		hasTextOf(provider, "provider");
 
 		List<String> locations = new ArrayList<>();
-		for (String suffix : DEFAULT_LOCATION_SUFFIXS) {
-			locations.add(format(DEFAULT_TPLS_LOCATION, provider, suffix));
+		for (String suffix : LOAD_SUFFIXS) {
+			locations.add(format(LOAD_PATTERN, provider, suffix));
 		}
 		return locations;
 	}
@@ -364,7 +383,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			this.tplPath = tplPath;
 			this.fileName = filename;
 			this.fileContent = fileContent;
-			this.isTpl = filename.endsWith(DEFAULT_TPL_SUFFIX);
+			this.isTpl = filename.endsWith(TPL_SUFFIX);
 			this.isForeachTpl = filename.contains(VAR_ENTITY_NAME);
 		}
 
@@ -391,19 +410,20 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	}
 
 	// Template configuration.
-	public static final String DEFAULT_TPL_BASEPATH = "gen-config/projects-template";
+	public static final String TPL_BASEPATH = "generate-config";
+	public static final String TPL_PROJECT_PATH = TPL_BASEPATH.concat("/project-templates");
 	// Load tpl suffix rules.
-	public static final String DEFAULT_TPL_SUFFIX = ".ftl";
-	public static final String[] DEFAULT_LOCATION_SUFFIXS = { DEFAULT_TPL_SUFFIX, ".css", ".js", ".vue", ".ts", ".jpg", ".gif",
-			".html", ".json", ".md", ".png", ".svg", ".eot", ".ttf", ".woff", ".woff2" };
-	public static final String DEFAULT_TPL_WATERMARK = FileIOUtils.readFullyResourceString("gen-config/watermark.txt");
+	public static final String TPL_SUFFIX = ".ftl";
+	public static final String[] LOAD_SUFFIXS = { TPL_SUFFIX, ".css", ".js", ".vue", ".ts", ".jpg", ".gif", ".html", ".json",
+			".md", ".png", ".svg", ".eot", ".ttf", ".woff", ".woff2" };
 
-	// for example: classpath:/projects-template/myGenProvider/**/*/.ftl
-	public static final String DEFAULT_TPLS_LOCATION = "classpath:/".concat(DEFAULT_TPL_BASEPATH).concat("/%s").concat("/**/*%s");
+	// e.g: classpath:/templates/xxGenProvider/**/*/.ftl
+	public static final String LOAD_PATTERN = "classpath:/".concat(TPL_PROJECT_PATH).concat("/%s/**/*%s");
 
 	// Definition of special variables.
 	public static final String VAR_ENTITY_NAME = "entityName";
 	public static final String VAR_WATERMARK = "watermark";
+	public static final String TPL_WATERMARK = readFullyResourceString(TPL_BASEPATH.concat("/watermark.txt"));
 
 	/**
 	 * Static log of {@link SmartLogger}

@@ -21,7 +21,6 @@ import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
-import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.core.GenerateManager;
@@ -61,25 +60,25 @@ import static com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs.underlineToHum
 public class GenerateServiceImpl implements GenerateService {
 
 	@Autowired
-	private NamingPrototypeBeanFactory beanFactory;
+	protected NamingPrototypeBeanFactory beanFactory;
 
 	@Autowired
-	private GenericOperatorAdapter<ConverterKind, DbTypeConverter> converter;
+	protected GenericOperatorAdapter<ConverterKind, DbTypeConverter> converter;
 
 	@Autowired
-	private GenerateManager genManager;
+	protected GenerateManager genManager;
 
 	@Autowired
-	private GenDataSourceDao genDatabaseDao;
+	protected GenDataSourceDao genDatabaseDao;
 
 	@Autowired
-	private GenProjectDao genProjectDao;
+	protected GenProjectDao genProjectDao;
 
 	@Autowired
-	private GenTableDao genTableDao;
+	protected GenTableDao genTableDao;
 
 	@Autowired
-	private GenTableColumnDao genColumnDao;
+	protected GenTableColumnDao genColumnDao;
 
 	@Override
 	public List<String> loadTables(Integer databaseId) {
@@ -91,12 +90,12 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public GenTable loadMetadata(Integer databaseId,Integer projectId, String tableName) {
+	public GenTable loadMetadata(Integer databaseId, Integer projectId, String tableName) {
 		notNullOf(databaseId, "databaseId");
 		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(databaseId);
 		notNullOf(genDS, "genDatabase");
 
-		GenProject genProject = genProjectDao.selectByPrimaryKey(projectId);
+		// GenProject project = genProjectDao.selectByPrimaryKey(projectId);
 
 		MetadataResolver resolver = getMetadataPaser(genDS);
 		TableMetadata metadata = resolver.findTableDescribe(tableName);
@@ -136,7 +135,7 @@ public class GenerateServiceImpl implements GenerateService {
 				col.setIsPk("1");
 				col.setIsList("0");
 				col.setNoNull("0");
-			}else{
+			} else {
 				col.setIsPk("0");
 			}
 			cols.add(col);
@@ -161,7 +160,8 @@ public class GenerateServiceImpl implements GenerateService {
 		List<GenTableColumn> genTableColumns = genColumnDao.selectByTableId(tableId);
 		genTable.setGenTableColumns(genTableColumns);
 
-		GenTable genTableFromLoadMetadata = loadMetadata(genTable.getDatabaseId(),genTable.getProjectId(), genTable.getTableName());
+		GenTable genTableFromLoadMetadata = loadMetadata(genTable.getDatabaseId(), genTable.getProjectId(),
+				genTable.getTableName());
 		List<GenTableColumn> genTableColumnsFromLoadMetadata = genTableFromLoadMetadata.getGenTableColumns();
 
 		List<GenTableColumn> needAdd = new ArrayList<>();

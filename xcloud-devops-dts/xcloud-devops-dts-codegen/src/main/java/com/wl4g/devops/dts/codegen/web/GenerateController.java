@@ -16,9 +16,8 @@
 package com.wl4g.devops.dts.codegen.web;
 
 import com.wl4g.components.common.io.ZipIOUtils;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.log.SmartLoggerFactory;
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
@@ -42,9 +41,7 @@ import static java.lang.Integer.valueOf;
  */
 @RestController
 @RequestMapping("/gen/configure")
-public class GenerateController {
-
-	final private static SmartLogger log = SmartLoggerFactory.getLogger(GenerateController.class);
+public class GenerateController extends BaseController {
 
 	@Autowired
 	private GenerateService genConfigurationService;
@@ -58,9 +55,9 @@ public class GenerateController {
 	}
 
 	@RequestMapping("loadMetadata")
-	public RespBase<?> loadMetadata(Integer databaseId,Integer projectId, String tableName) {
+	public RespBase<?> loadMetadata(Integer databaseId, Integer projectId, String tableName) {
 		RespBase<Object> resp = RespBase.create();
-		GenTable genTable = genConfigurationService.loadMetadata(databaseId,projectId, tableName);
+		GenTable genTable = genConfigurationService.loadMetadata(databaseId, projectId, tableName);
 		resp.setData(genTable);
 		return resp;
 	}
@@ -94,17 +91,10 @@ public class GenerateController {
 	}
 
 	@RequestMapping("generate")
-	public void generate(String id,HttpServletResponse response) {
+	public void generate(String id, HttpServletResponse response) {
 		hasTextOf(id, "id");
 		String jobPath = genConfigurationService.generate(valueOf(id));
-		ZipIOUtils.zip(jobPath,response);
+		ZipIOUtils.zip(jobPath, response);
 	}
-
-
-
-
-
-
-
 
 }
