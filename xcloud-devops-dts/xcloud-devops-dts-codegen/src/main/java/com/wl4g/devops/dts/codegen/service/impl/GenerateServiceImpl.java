@@ -37,7 +37,8 @@ import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
-
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -150,7 +151,27 @@ public class GenerateServiceImpl implements GenerateService {
 		notNullOf(genTable, "genTable");
 		List<GenTableColumn> genTableColumns = genColumnDao.selectByTableId(tableId);
 		genTable.setGenTableColumns(genTableColumns);
+
+		GenTable genTableFromLoadMetadata = loadMetadata(genTable.getDatabaseId(), genTable.getTableName());
+		List<GenTableColumn> genTableColumnsFromLoadMetadata = genTableFromLoadMetadata.getGenTableColumns();
+		for(GenTableColumn genTableColumn : genTableColumnsFromLoadMetadata){
+			GenTableColumn column = genTableColumnByName(genTableColumns, genTableColumn.getColumnName());
+			if(column != null){
+				BeanUtils.copyProperties(column,genTableColumn);
+			}
+		}
+		genTable.setGenTableColumns(genTableColumnsFromLoadMetadata);
+
 		return genTable;
+	}
+
+	private GenTableColumn genTableColumnByName(List<GenTableColumn> genTableColumns, String name){
+		for(GenTableColumn genTableColumn : genTableColumns){
+			if(StringUtils.equals(genTableColumn.getColumnName(),name)){
+				return genTableColumn;
+			}
+		}
+		return null;
 	}
 
 	@Override

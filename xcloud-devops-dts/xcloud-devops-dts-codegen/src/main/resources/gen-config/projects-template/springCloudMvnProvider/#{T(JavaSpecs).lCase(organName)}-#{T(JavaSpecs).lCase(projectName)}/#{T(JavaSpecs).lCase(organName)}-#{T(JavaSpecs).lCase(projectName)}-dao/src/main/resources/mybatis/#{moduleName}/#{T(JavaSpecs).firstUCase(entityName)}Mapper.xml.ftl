@@ -13,8 +13,7 @@
 
     <sql id="Base_Column_List">
         <#list genTableColumns as param>
-            ${param.columnName}<#if param_has_next>,</#if>
-        </#list>
+            ${param.columnName}<#if param_has_next>,</#if></#list>
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -51,10 +50,6 @@
         update ${tableName}
         <set>
         <#list genTableColumns as param>
-               <if test="${param.attrName} != null">
-                   ${r'#{'}${param.attrName},jdbcType=${param.columnType}},
-               </if>
-
             <if test="${param.attrName} != null">
                 ${param.columnName} = ${r'#{'}${param.attrName},jdbcType=${param.columnType}},
             </if>

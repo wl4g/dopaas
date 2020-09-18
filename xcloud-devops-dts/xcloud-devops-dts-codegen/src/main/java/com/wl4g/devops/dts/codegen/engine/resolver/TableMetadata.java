@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.engine.resolver;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * {@link TableMetadata}
@@ -37,15 +37,7 @@ public class TableMetadata {
 
 	private String comments;
 
-	private ColumnMetadata pk;
-
 	private List<ColumnMetadata> columns;
-
-	// 类名(第一个字母大写)，如：sys_user => SysUser
-	private String classNameFirstUpper;
-
-	// 类名(第一个字母小写)，如：sys_user => sysUser
-	private String classNameFirstLower;
 
 	/**
 	 * {@link ColumnMetadata}
@@ -68,16 +60,10 @@ public class TableMetadata {
 		// 列名备注
 		private String comments;
 
-		// 属性名称(第一个字母大写)，如：user_name => UserName
-		private String attrNameFirstUpper;
-
-		// 属性名称(第一个字母小写)，如：user_name => userName
-		private String attrNameFirstLower;
-
 		// 属性类型
 		private String attrType;
 
-		// auto_increment
+		// extra config
 		private String extra;
 
 	}
