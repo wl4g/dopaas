@@ -1,4 +1,7 @@
-${watermark}
+// ${watermark}
+
+${javaSpecs.escapeCopyright(copyright)}
+
 <#assign aDateTime = .now>
 <#assign now = aDateTime?date>
 package ${packageName}.dao.${moduleName};
@@ -6,11 +9,12 @@ package ${packageName}.dao.${moduleName};
 import java.util.Date;
 import ${packageName}.commons.bean.${moduleName}.${entityName?cap_first};
 
-* ${entityName}
-*
-* @author ${author}
-* @Date ${now}
-*/
+/**
+ * {@link ${entityName?cap_first}}
+ *
+ * @author ${author}
+ * @Date ${now}
+ */
 public class ${entityName?cap_first}Dao {
 
     int deleteByPrimaryKey(Integer id);

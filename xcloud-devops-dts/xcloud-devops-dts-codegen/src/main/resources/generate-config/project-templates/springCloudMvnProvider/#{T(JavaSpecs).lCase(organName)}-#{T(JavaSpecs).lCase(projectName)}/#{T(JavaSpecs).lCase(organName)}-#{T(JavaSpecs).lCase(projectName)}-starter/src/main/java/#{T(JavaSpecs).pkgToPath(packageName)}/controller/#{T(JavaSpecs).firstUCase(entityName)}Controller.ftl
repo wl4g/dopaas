@@ -1,18 +1,22 @@
-<#macro class_annotation class_name author date>/**
-    * ${class_name}
-    *
-    * @author ${author}
-    * @Date ${date}
-    */
+// ${watermark}
+
+${javaSpecs.escapeCopyright(copyright)}
+
+<#macro class_annotation class_name author date>
+/**
+ * ${class_name}
+ *
+ * @author ${author}
+ * @Date ${date}
+ */
 </#macro>
 <#macro class_package package_name module_name demixing_package>${package_name}.${module_name}.${demixing_package}</#macro>
 
 <#assign aDateTime = .now>
 <#assign aDate = aDateTime?date>
 
-
 <#--package name-->
-package <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="web" />
+package <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="web" />;
 
 <#--import-->
 import com.wl4g.components.common.web.rest.RespBase;

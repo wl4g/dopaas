@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ${watermark} -->
+
 <mapper namespace="${packageName}.dao.${moduleName}.${entityName?cap_first}Dao">
     <resultMap id="BaseResultMap" type="${packageName}.commons.bean.${moduleName}.${entityName?cap_first}">
         <#list genTableColumns as param>
