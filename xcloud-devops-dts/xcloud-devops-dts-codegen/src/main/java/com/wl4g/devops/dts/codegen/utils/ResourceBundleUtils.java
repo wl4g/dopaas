@@ -17,15 +17,16 @@ package com.wl4g.devops.dts.codegen.utils;
 
 import com.google.common.io.Resources;
 import com.wl4g.components.common.annotation.Nullable;
-import org.springframework.util.ResourceUtils;
+import com.wl4g.components.common.resource.StreamResource;
+import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
 
 import javax.validation.constraints.NotBlank;
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.components.common.collection.Collections2.safeSet;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
@@ -68,8 +69,9 @@ public abstract class ResourceBundleUtils {
 				}
 			}
 
-			File sqlFile = ResourceUtils.getFile("classpath:" + path);
-			sqlStr = Resources.toString(sqlFile.toURI().toURL(), UTF_8);
+			StreamResource res = safeSet(new ClassPathResourcePatternResolver().getResources("classpath:" + path)).stream()
+					.findFirst().get();
+			sqlStr = Resources.toString(res.getURL(), UTF_8);
 
 			// Storage resource content
 			if (useCache) {
