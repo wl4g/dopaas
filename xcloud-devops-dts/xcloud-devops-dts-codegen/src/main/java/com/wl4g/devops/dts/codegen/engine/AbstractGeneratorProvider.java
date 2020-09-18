@@ -34,19 +34,15 @@ import freemarker.template.Template;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static com.wl4g.components.common.jvm.JvmRuntimeKit.isJVMDebugging;
 import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.ByteStreamUtils.readFullyToString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
-import static com.wl4g.components.common.lang.Assert2.hasText;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.jvm.JvmRuntimeKit.isJVMDebugging;
+import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
@@ -54,7 +50,6 @@ import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToStr
 import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
 /**
@@ -276,7 +271,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		final String expression0 = expression;
 		log.debug("Resolving SPEL for expression: {}, model: {}", () -> expression0, () -> model);
 
-		return valueOf(defaultExpressions.resolve(expression0, model));
+		return defaultExpressions.resolve(expression0, model);
 	}
 
 	/**

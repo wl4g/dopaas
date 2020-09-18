@@ -30,8 +30,8 @@ public class JavaNamingSpecsTests {
 		System.out.println(JavaSpecs.tableName2className("sys_user"));
 		System.out.println(JavaSpecs.tableName2ClassName("sys_user"));
 		System.out.println(JavaSpecs.underlineToHump("sys_user"));
-		System.out.println(JavaSpecs.fistUCase("user"));
-		System.out.println(JavaSpecs.fistLCase("USER"));
+		System.out.println(JavaSpecs.firstUCase("user"));
+		System.out.println(JavaSpecs.firstLCase("USER"));
 	}
 
 }
