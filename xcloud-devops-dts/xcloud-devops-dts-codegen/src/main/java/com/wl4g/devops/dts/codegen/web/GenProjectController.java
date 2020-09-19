@@ -32,13 +32,13 @@ import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.Ext
 import java.util.List;
 
 /**
- * GenProjectServiceImpl
+ * {@link GenProjectController}
  *
  * @author heweijie
  * @Date 2020-09-11
  */
 @RestController
-@RequestMapping("/project")
+@RequestMapping("/gen/project")
 public class GenProjectController extends BaseController {
 
 	@Autowired

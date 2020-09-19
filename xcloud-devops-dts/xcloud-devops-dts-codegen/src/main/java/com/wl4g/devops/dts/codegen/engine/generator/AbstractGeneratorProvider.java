@@ -274,7 +274,6 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	}
 
 	// Definition of special variables.
-	public static final String VAR_ENTITY_NAME = "entityName";
 	public static final String VAR_WATERMARK = "watermark";
 	public static final String TPL_WATERMARK = readFullyResourceString(TPL_BASEPATH.concat("/watermark.txt"));
 
