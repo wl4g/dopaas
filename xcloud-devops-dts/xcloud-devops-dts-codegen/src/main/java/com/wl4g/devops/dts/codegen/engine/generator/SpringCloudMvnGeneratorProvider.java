@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine.provider;
+package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 /**
  * SpringMVC service, serviceImpl and controller generator.
@@ -26,12 +27,12 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
  */
 public class SpringCloudMvnGeneratorProvider extends AbstractGeneratorProvider {
 
-	public SpringCloudMvnGeneratorProvider(GenerateContext context) {
-		super(context);
+	public SpringCloudMvnGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
+		super(context, locator);
 	}
 
 	@Override
-	public void doHandleGenerate() throws Exception {
+	public void doGenerate() throws Exception {
 		processGenerateWithTemplates(GenProviderAlias.SPINGCLOUD_MVN);
 	}
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine.provider;
+package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
@@ -30,7 +30,7 @@ import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
-import static com.wl4g.devops.dts.codegen.engine.provider.GeneratorProvider.GenProviderAlias.*;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;

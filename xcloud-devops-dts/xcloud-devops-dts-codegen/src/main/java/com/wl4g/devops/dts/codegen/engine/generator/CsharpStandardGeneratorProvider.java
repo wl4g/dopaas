@@ -13,26 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine.provider;
+package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 /**
- * Golang standard generator provider.
+ * C_sharp standard generator provider.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
+public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 
-	public GoStandardGeneratorProvider(GenerateContext context) {
-		super(context);
+	public CsharpStandardGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
+		super(context, locator);
 	}
 
 	@Override
-	public void doHandleGenerate() {
-		// TODO
-
+	public void doGenerate() throws Exception {
+		processGenerateWithTemplates(GenProviderAlias.CSHARP_STANDARD);
 	}
+
 }
