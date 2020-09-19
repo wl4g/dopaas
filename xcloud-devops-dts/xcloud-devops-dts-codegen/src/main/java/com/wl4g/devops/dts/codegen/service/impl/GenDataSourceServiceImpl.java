@@ -27,8 +27,10 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
+import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author vjay
@@ -43,13 +45,17 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 	@Override
 	public PageModel page(PageModel pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(genDSDao.list(name));
+		// desensitization
+		List<GenDataSource> records = safeList(genDSDao.list(name)).stream().map(ds -> ds.withPassword("******"))
+				.collect(toList());
+		pm.setRecords(records);
 		return pm;
 	}
 
 	@Override
 	public List<GenDataSource> getForSelect() {
-		return genDSDao.list(null);
+		// desensitization
+		return safeList(genDSDao.list(null)).stream().map(ds -> ds.withPassword("******")).collect(toList());
 	}
 
 	public void save(GenDataSource gen) {

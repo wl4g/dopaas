@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.wl4g.devops.dts.codegen.dao.GenTableDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenTable" >
     <id column="id" property="id" jdbcType="INTEGER" />
@@ -10,49 +11,51 @@
     <result column="comments" property="comments" jdbcType="VARCHAR" />
     <result column="parent_table_name" property="parentTableName" jdbcType="VARCHAR" />
     <result column="parent_table_fk_name" property="parentTableFkName" jdbcType="VARCHAR" />
-    <result column="data_source_name" property="dataSourceName" jdbcType="VARCHAR" />
-    <result column="tpl_category" property="tplCategory" jdbcType="VARCHAR" />
     <result column="package_name" property="packageName" jdbcType="VARCHAR" />
     <result column="module_name" property="moduleName" jdbcType="VARCHAR" />
     <result column="sub_module_name" property="subModuleName" jdbcType="VARCHAR" />
     <result column="function_name" property="functionName" jdbcType="VARCHAR" />
     <result column="function_name_simple" property="functionNameSimple" jdbcType="VARCHAR" />
     <result column="function_author" property="functionAuthor" jdbcType="VARCHAR" />
-    <result column="gen_base_dir" property="genBaseDir" jdbcType="VARCHAR" />
     <result column="options" property="options" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
+
   <sql id="Base_Column_List" >
     id, database_id, project_id, table_name, entity_name, comments, parent_table_name, parent_table_fk_name,
-    data_source_name, tpl_category, package_name, module_name, sub_module_name, function_name, 
-    function_name_simple, function_author, gen_base_dir, options, remark, del_flag, create_date, 
-    create_by, update_date, update_by
+    package_name, module_name, sub_module_name, function_name, 
+    function_name_simple, function_author, options, remark, create_date, 
+    create_by, update_date, update_by, del_flag
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from dts_gen_table
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <select id="selectByProjectId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
     from dts_gen_table
     where project_id = #{id,jdbcType=INTEGER} and del_flag!=1
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from dts_gen_table
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
     insert into dts_gen_table (id, database_id, project_id, table_name,
       entity_name, comments, parent_table_name,
-      parent_table_fk_name, data_source_name, tpl_category, 
+      parent_table_fk_name,
       package_name, module_name, sub_module_name, 
       function_name, function_name_simple, function_author, 
       gen_base_dir, options, remark, 
@@ -60,13 +63,12 @@
       update_date, update_by)
     values (#{id,jdbcType=INTEGER}, #{databaseId,jdbcType=INTEGER},  #{projectId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR},
       #{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{parentTableName,jdbcType=VARCHAR},
-      #{parentTableFkName,jdbcType=VARCHAR}, #{dataSourceName,jdbcType=VARCHAR}, #{tplCategory,jdbcType=VARCHAR}, 
-      #{packageName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
+      #{parentTableFkName,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
       #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR}, #{functionAuthor,jdbcType=VARCHAR}, 
-      #{genBaseDir,jdbcType=VARCHAR}, #{options,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+      #{options,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER})
   </insert>
+
   <insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
     insert into dts_gen_table
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -94,12 +96,6 @@
       <if test="parentTableFkName != null" >
         parent_table_fk_name,
       </if>
-      <if test="dataSourceName != null" >
-        data_source_name,
-      </if>
-      <if test="tplCategory != null" >
-        tpl_category,
-      </if>
       <if test="packageName != null" >
         package_name,
       </if>
@@ -117,9 +113,6 @@
       </if>
       <if test="functionAuthor != null" >
         function_author,
-      </if>
-      <if test="genBaseDir != null" >
-        gen_base_dir,
       </if>
       <if test="options != null" >
         options,
@@ -168,12 +161,6 @@
       <if test="parentTableFkName != null" >
         #{parentTableFkName,jdbcType=VARCHAR},
       </if>
-      <if test="dataSourceName != null" >
-        #{dataSourceName,jdbcType=VARCHAR},
-      </if>
-      <if test="tplCategory != null" >
-        #{tplCategory,jdbcType=VARCHAR},
-      </if>
       <if test="packageName != null" >
         #{packageName,jdbcType=VARCHAR},
       </if>
@@ -191,9 +178,6 @@
       </if>
       <if test="functionAuthor != null" >
         #{functionAuthor,jdbcType=VARCHAR},
-      </if>
-      <if test="genBaseDir != null" >
-        #{genBaseDir,jdbcType=VARCHAR},
       </if>
       <if test="options != null" >
         #{options,jdbcType=VARCHAR},
@@ -218,6 +202,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
     update dts_gen_table
     <set >
@@ -242,12 +227,6 @@
       <if test="parentTableFkName != null" >
         parent_table_fk_name = #{parentTableFkName,jdbcType=VARCHAR},
       </if>
-      <if test="dataSourceName != null" >
-        data_source_name = #{dataSourceName,jdbcType=VARCHAR},
-      </if>
-      <if test="tplCategory != null" >
-        tpl_category = #{tplCategory,jdbcType=VARCHAR},
-      </if>
       <if test="packageName != null" >
         package_name = #{packageName,jdbcType=VARCHAR},
       </if>
@@ -265,9 +244,6 @@
       </if>
       <if test="functionAuthor != null" >
         function_author = #{functionAuthor,jdbcType=VARCHAR},
-      </if>
-      <if test="genBaseDir != null" >
-        gen_base_dir = #{genBaseDir,jdbcType=VARCHAR},
       </if>
       <if test="options != null" >
         options = #{options,jdbcType=VARCHAR},
@@ -293,6 +269,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
     update dts_gen_table
     set database_id = #{databaseId,jdbcType=INTEGER},
@@ -302,15 +279,12 @@
       comments = #{comments,jdbcType=VARCHAR},
       parent_table_name = #{parentTableName,jdbcType=VARCHAR},
       parent_table_fk_name = #{parentTableFkName,jdbcType=VARCHAR},
-      data_source_name = #{dataSourceName,jdbcType=VARCHAR},
-      tpl_category = #{tplCategory,jdbcType=VARCHAR},
       package_name = #{packageName,jdbcType=VARCHAR},
       module_name = #{moduleName,jdbcType=VARCHAR},
       sub_module_name = #{subModuleName,jdbcType=VARCHAR},
       function_name = #{functionName,jdbcType=VARCHAR},
       function_name_simple = #{functionNameSimple,jdbcType=VARCHAR},
       function_author = #{functionAuthor,jdbcType=VARCHAR},
-      gen_base_dir = #{genBaseDir,jdbcType=VARCHAR},
       options = #{options,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=INTEGER},
@@ -334,4 +308,5 @@
     </if>
     order by update_date desc
   </select>
+
 </mapper>

@@ -12,8 +12,8 @@
     <result column="author" property="author" jdbcType="VARCHAR" />
     <result column="since" property="since" jdbcType="VARCHAR" />
     <result column="copyright" property="copyright" jdbcType="VARCHAR" />
-    <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="extra_options_json" property="extraOptionsJson" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
