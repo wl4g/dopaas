@@ -19,14 +19,14 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
-import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
+import com.wl4g.devops.dts.codegen.service.GenDatasourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * {@link GenDatabase}
+ * {@link GenDatasourceController}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
@@ -36,10 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/database") // TODO rename
-public class GenDatabase extends BaseController {
+public class GenDatasourceController extends BaseController {
 
 	@Autowired
-	private GenConfigurationService genDatabaseService;
+	private GenDatasourceService genDatabaseService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String name) {

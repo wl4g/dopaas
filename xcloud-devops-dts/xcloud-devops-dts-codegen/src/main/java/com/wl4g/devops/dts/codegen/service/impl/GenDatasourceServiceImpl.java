@@ -20,7 +20,7 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
-import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
+import com.wl4g.devops.dts.codegen.service.GenDatasourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -35,7 +35,7 @@ import static java.util.Objects.isNull;
  * @date 2019-11-14 14:10:00
  */
 @Service
-public class GenConfigurationServiceImpl implements GenConfigurationService {
+public class GenDatasourceServiceImpl implements GenDatasourceService {
 
 	@Autowired
 	private GenDataSourceDao genDSDao;

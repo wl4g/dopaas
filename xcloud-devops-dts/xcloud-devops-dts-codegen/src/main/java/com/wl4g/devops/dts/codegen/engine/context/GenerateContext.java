@@ -16,6 +16,7 @@
 package com.wl4g.devops.dts.codegen.engine.context;
 
 import com.wl4g.devops.dts.codegen.bean.GenProject;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 import java.io.File;
 
@@ -27,6 +28,13 @@ import java.io.File;
  * @since
  */
 public interface GenerateContext {
+
+	/**
+	 * Gets generate template locator {@link GenTemplateLocator}
+	 * 
+	 * @return
+	 */
+	GenTemplateLocator getLocator();
 
 	/**
 	 * Gets generate for {@link GenProject}

@@ -44,12 +44,12 @@ import static java.lang.Integer.valueOf;
 public class GenerateController extends BaseController {
 
 	@Autowired
-	private GenerateService genConfigurationService;
+	private GenerateService generateService;
 
 	@RequestMapping("loadTables")
 	public RespBase<?> loadTables(Integer databaseId) {
 		RespBase<Object> resp = RespBase.create();
-		List<String> strings = genConfigurationService.loadTables(databaseId);
+		List<String> strings = generateService.loadTables(databaseId);
 		resp.setData(strings);
 		return resp;
 	}
@@ -57,7 +57,7 @@ public class GenerateController extends BaseController {
 	@RequestMapping("loadMetadata")
 	public RespBase<?> loadMetadata(Integer databaseId, Integer projectId, String tableName) {
 		RespBase<Object> resp = RespBase.create();
-		GenTable genTable = genConfigurationService.loadMetadata(databaseId, projectId, tableName);
+		GenTable genTable = generateService.loadMetadata(databaseId, projectId, tableName);
 		resp.setData(genTable);
 		return resp;
 	}
@@ -65,35 +65,35 @@ public class GenerateController extends BaseController {
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String tableName, Integer projectId) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(genConfigurationService.page(pm, tableName, projectId));
+		resp.setData(generateService.page(pm, tableName, projectId));
 		return resp;
 	}
 
 	@RequestMapping("save")
 	public RespBase<?> save(@RequestBody GenTable genTable) {
 		RespBase<Object> resp = RespBase.create();
-		genConfigurationService.saveGenConfig(genTable);
+		generateService.saveGenConfig(genTable);
 		return resp;
 	}
 
 	@RequestMapping("detail")
 	public RespBase<?> detail(Integer tableId) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(genConfigurationService.detail(tableId));
+		resp.setData(generateService.detail(tableId));
 		return resp;
 	}
 
 	@RequestMapping("del")
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		genConfigurationService.delete(id);
+		generateService.delete(id);
 		return resp;
 	}
 
 	@RequestMapping("generate")
 	public void generate(String id, HttpServletResponse response) {
 		hasTextOf(id, "id");
-		String jobPath = genConfigurationService.generate(valueOf(id));
+		String jobPath = generateService.generate(valueOf(id));
 		ZipIOUtils.zip(jobPath, response);
 	}
 
