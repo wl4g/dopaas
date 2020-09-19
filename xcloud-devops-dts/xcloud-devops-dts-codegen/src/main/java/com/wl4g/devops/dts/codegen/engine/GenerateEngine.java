@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.core;
+package com.wl4g.devops.dts.codegen.engine;
 
-import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
+import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 
 /**
- * {@link GenerateManager}
+ * {@link GenerateEngine}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public interface GenerateManager {
+public interface GenerateEngine {
 
 	/**
 	 * Execution automatic generating projects.

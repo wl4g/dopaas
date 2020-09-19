@@ -16,19 +16,18 @@
 package com.wl4g.devops.dts.codegen.config;
 
 import com.wl4g.components.core.framework.beans.NamingPrototype;
-import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
-import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
-import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.AngularJSGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.CsharpStandardGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.GoStandardGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.PythonStandardGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.SpringCloudMvnGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.VueGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.DefaultGenerateEngineImpl;
+import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
+import com.wl4g.devops.dts.codegen.engine.provider.AngularJSGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.provider.CsharpStandardGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.provider.GoStandardGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.provider.PythonStandardGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.provider.SpringCloudMvnGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.provider.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5TypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.OracleV11gTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.PostgreSQLV10TypeConverter;
@@ -42,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias.*;
+import static com.wl4g.devops.dts.codegen.engine.provider.GeneratorProvider.GenProviderAlias.*;
 import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.ResolverAlias.*;
 
 /**
@@ -61,8 +60,8 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	public DefaultGenerateManager defaultGenerateManager(NamingPrototypeBeanFactory beanFactory) {
-		return new DefaultGenerateManager(beanFactory);
+	public DefaultGenerateEngineImpl defaultGenerateEngineImpl() {
+		return new DefaultGenerateEngineImpl();
 	}
 
 	// --- Metadata resolver's. ---

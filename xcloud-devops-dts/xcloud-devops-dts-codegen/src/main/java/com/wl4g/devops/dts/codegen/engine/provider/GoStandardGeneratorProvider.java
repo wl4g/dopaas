@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine;
+package com.wl4g.devops.dts.codegen.engine.provider;
 
-import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 
 /**
- * Python standard generator provider.
+ * Golang standard generator provider.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
+public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
 
-	public PythonStandardGeneratorProvider(GenerateContext context) {
+	public GoStandardGeneratorProvider(GenerateContext context) {
 		super(context);
 	}
 

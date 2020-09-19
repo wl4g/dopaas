@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine;
+package com.wl4g.devops.dts.codegen.engine.provider;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.annotation.Nullable;
@@ -23,7 +23,7 @@ import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternReso
 import com.wl4g.components.core.utils.expression.SpelExpressions;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
-import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;

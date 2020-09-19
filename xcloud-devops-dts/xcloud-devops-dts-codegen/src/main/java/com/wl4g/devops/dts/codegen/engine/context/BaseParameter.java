@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.core.param;
+package com.wl4g.devops.dts.codegen.engine.context;
 
 import java.io.Serializable;
 
 /**
- * {@link AbstractParameter}
+ * {@link BaseParameter}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public abstract class AbstractParameter implements Serializable {
+abstract class BaseParameter implements Serializable {
 	private static final long serialVersionUID = 7731101309466737836L;
 
 }
