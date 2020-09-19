@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.engine.provider.GeneratorProvider.ExtraConfigSupport.ConfigOption;
+import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.ExtraConfigSupport.ConfigOption;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -18,16 +18,17 @@ package com.wl4g.devops.dts.codegen.config;
 import com.wl4g.components.core.framework.beans.NamingPrototype;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
+import com.wl4g.devops.dts.codegen.console.CodegenConsole;
 import com.wl4g.devops.dts.codegen.engine.DefaultGenerateEngineImpl;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
-import com.wl4g.devops.dts.codegen.engine.provider.AngularJSGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.provider.CsharpStandardGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.provider.GoStandardGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.provider.PythonStandardGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.provider.SpringCloudMvnGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.provider.VueGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.AngularJSGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.CsharpStandardGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.GoStandardGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.PythonStandardGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.SpringCloudMvnGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5TypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.OracleV11gTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.PostgreSQLV10TypeConverter;
@@ -35,13 +36,15 @@ import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.OracleV11gMetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.PostgreSQLV10MetadataResolver;
+import com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-import static com.wl4g.devops.dts.codegen.engine.provider.GeneratorProvider.GenProviderAlias.*;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.*;
 import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.ResolverAlias.*;
 
 /**
@@ -59,12 +62,21 @@ public class CodegenAutoConfiguration {
 		return new CodegenProperties();
 	}
 
+	// --- Console. ---
+
+	@Bean
+	public CodegenConsole codegenConsole() {
+		return new CodegenConsole();
+	}
+
+	// --- Generator Engine. ---
+
 	@Bean
 	public DefaultGenerateEngineImpl defaultGenerateEngineImpl() {
 		return new DefaultGenerateEngineImpl();
 	}
 
-	// --- Metadata resolver's. ---
+	// --- Metadata Resolver's. ---
 
 	@Bean
 	@NamingPrototype({ MYSQLV5 })
@@ -84,7 +96,7 @@ public class CodegenAutoConfiguration {
 		return new PostgreSQLV10MetadataResolver(genDS);
 	}
 
-	// --- DB type converter's. ---
+	// --- Database Type Converter's. ---
 
 	@Bean
 	public DbTypeConverter mySQLV5xTypeConverter() {
@@ -107,42 +119,49 @@ public class CodegenAutoConfiguration {
 		};
 	}
 
-	// --- Generator provider's. ---
+	// --- Generator Template Locator. ---
+
+	@Bean
+	public GenTemplateLocator classPathGenTemplateLocator() {
+		return new ClassPathGenTemplateLocator();
+	}
+
+	// --- Generator Provider's. ---
 
 	@Bean
 	@NamingPrototype({ GO_STANDARD })
-	public GoStandardGeneratorProvider goStandardGeneratorProvider(GenerateContext context) {
-		return new GoStandardGeneratorProvider(context);
+	public GoStandardGeneratorProvider goStandardGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
+		return new GoStandardGeneratorProvider(context, locator);
 	}
 
 	@Bean
 	@NamingPrototype({ PYTHON_STANDARD })
-	public PythonStandardGeneratorProvider pythonStandardGeneratorProvider(GenerateContext context) {
-		return new PythonStandardGeneratorProvider(context);
+	public PythonStandardGeneratorProvider pythonStandardGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
+		return new PythonStandardGeneratorProvider(context, locator);
 	}
 
 	@Bean
 	@NamingPrototype({ CSHARP_STANDARD })
-	public CsharpStandardGeneratorProvider csharpStandardGeneratorProvider(GenerateContext context) {
-		return new CsharpStandardGeneratorProvider(context);
+	public CsharpStandardGeneratorProvider csharpStandardGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
+		return new CsharpStandardGeneratorProvider(context, locator);
 	}
 
 	@Bean
 	@NamingPrototype({ SPINGCLOUD_MVN })
-	public SpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
-		return new SpringCloudMvnGeneratorProvider(context);
+	public SpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
+		return new SpringCloudMvnGeneratorProvider(context, locator);
 	}
 
 	@Bean
 	@NamingPrototype({ VUEJS })
-	public VueGeneratorProvider vueGeneratorProvider(GenerateContext context) {
-		return new VueGeneratorProvider(context);
+	public VueGeneratorProvider vueGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
+		return new VueGeneratorProvider(context, locator);
 	}
 
 	@Bean
 	@NamingPrototype({ NGJS })
-	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context) {
-		return new AngularJSGeneratorProvider(context);
+	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
+		return new AngularJSGeneratorProvider(context, locator);
 	}
 
 }

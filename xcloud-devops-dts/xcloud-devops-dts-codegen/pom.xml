@@ -40,8 +40,16 @@
 			<artifactId>xcloud-iam-client</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mybatis.generator</groupId>
-			<artifactId>mybatis-generator-core</artifactId>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-shell-cli</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-shell-springboot</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.freemarker</groupId>

@@ -28,7 +28,7 @@ import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
-import com.wl4g.devops.dts.codegen.engine.provider.GeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ import java.util.List;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.dts.codegen.engine.provider.GeneratorProvider.GenProviderSet.getProviders;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
 
 /**
  * {@link DefaultGenerateEngineImpl}
