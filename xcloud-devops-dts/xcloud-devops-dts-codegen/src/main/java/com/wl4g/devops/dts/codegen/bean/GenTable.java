@@ -20,6 +20,8 @@ import lombok.Setter;
 
 import java.util.List;
 
+import com.wl4g.components.core.bean.BaseBean;
+
 /**
  * {@link GenTable}
  *
@@ -29,7 +31,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class GenTable extends GenProject {
+public class GenTable extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
 	private Integer databaseId;
@@ -46,10 +48,6 @@ public class GenTable extends GenProject {
 
 	private String parentTableFkName;
 
-	private String dataSourceName;
-
-	private String tplCategory;
-
 	private String packageName;
 
 	private String moduleName;
@@ -61,8 +59,6 @@ public class GenTable extends GenProject {
 	private String functionNameSimple;
 
 	private String functionAuthor;
-
-	private String genBaseDir;
 
 	private String options;
 

@@ -19,6 +19,7 @@ import com.wl4g.components.core.bean.BaseBean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Wither;
 
 /**
  * {@link GenDataSource}
@@ -29,6 +30,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Wither
 public class GenDataSource extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
@@ -47,5 +49,22 @@ public class GenDataSource extends BaseBean {
 	private String password;
 
 	private String url;
+
+	public GenDataSource() {
+		super();
+	}
+
+	public GenDataSource(String name, String type, String host, String port, String database, String username, String password,
+			String url) {
+		super();
+		this.name = name;
+		this.type = type;
+		this.host = host;
+		this.port = port;
+		this.database = database;
+		this.username = username;
+		this.password = password;
+		this.url = url;
+	}
 
 }

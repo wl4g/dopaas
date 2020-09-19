@@ -155,35 +155,36 @@ public class GenerateServiceImpl implements GenerateService {
 	@Override
 	public GenTable detail(Integer tableId) {
 		notNullOf(tableId, "tableId");
-		GenTable genTable = genTableDao.selectByPrimaryKey(tableId);
-		notNullOf(genTable, "genTable");
-		List<GenTableColumn> genTableColumns = genColumnDao.selectByTableId(tableId);
-		genTable.setGenTableColumns(genTableColumns);
 
-		GenTable genTableFromLoadMetadata = loadMetadata(genTable.getDatabaseId(), genTable.getProjectId(),
-				genTable.getTableName());
-		List<GenTableColumn> genTableColumnsFromLoadMetadata = genTableFromLoadMetadata.getGenTableColumns();
+		GenTable oldGenTab = notNullOf(genTableDao.selectByPrimaryKey(tableId), "genTable");
+		List<GenTableColumn> oldGenCols = genColumnDao.selectByTableId(tableId);
+		oldGenTab.setGenTableColumns(oldGenCols);
+
+		// Reload the latest table/columns metadata (sure you get the
+		// latest information)
+		GenTable newGenTab = loadMetadata(oldGenTab.getDatabaseId(), oldGenTab.getProjectId(), oldGenTab.getTableName());
+		List<GenTableColumn> newGenCols = newGenTab.getGenTableColumns();
 
 		List<GenTableColumn> needAdd = new ArrayList<>();
 		List<GenTableColumn> needDel = new ArrayList<>();
 
-		for (GenTableColumn genTableColumn : genTableColumnsFromLoadMetadata) {
-			GenTableColumn column = genTableColumnByName(genTableColumns, genTableColumn.getColumnName());
+		for (GenTableColumn newCol : newGenCols) {
+			GenTableColumn column = genTableColumnByName(oldGenCols, newCol.getColumnName());
 			if (column == null) {
-				needAdd.add(genTableColumn);
+				needAdd.add(newCol);
 			}
 		}
-		for (GenTableColumn genTableColumn : genTableColumns) {
-			GenTableColumn column = genTableColumnByName(genTableColumnsFromLoadMetadata, genTableColumn.getColumnName());
+		for (GenTableColumn oldCol : oldGenCols) {
+			GenTableColumn column = genTableColumnByName(newGenCols, oldCol.getColumnName());
 			if (column == null) {
-				needDel.add(genTableColumn);
+				needDel.add(oldCol);
 			}
 		}
-		genTableColumns.removeAll(needDel);
-		genTableColumns.addAll(needAdd);
+		oldGenCols.removeAll(needDel);
+		oldGenCols.addAll(needAdd);
 
-		genTable.setGenTableColumns(genTableColumns);
-		return genTable;
+		oldGenTab.setGenTableColumns(oldGenCols);
+		return oldGenTab;
 	}
 
 	private GenTableColumn genTableColumnByName(List<GenTableColumn> genTableColumns, String name) {
