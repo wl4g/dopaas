@@ -29,6 +29,7 @@ import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,12 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 	 */
 	@Autowired
 	protected CodegenProperties config;
+
+	/**
+	 * {@link GenTemplateLocator}
+	 */
+	@Autowired
+	protected GenTemplateLocator locator;
 
 	/**
 	 * {@link NamingPrototypeBeanFactory}
@@ -97,7 +104,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 
 		// Invoke generate providers.
 		for (String p : providers) {
-			GeneratorProvider provider = beanFactory.getPrototypeBean(p, context);
+			GeneratorProvider provider = beanFactory.getPrototypeBean(p, context, locator);
 			provider.run();
 		}
 
