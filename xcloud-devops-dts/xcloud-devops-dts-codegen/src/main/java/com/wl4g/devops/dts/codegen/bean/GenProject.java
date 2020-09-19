@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.ExtraConfigSupport.ConfigOption;
+import com.wl4g.devops.dts.codegen.engine.provider.GeneratorProvider.ExtraConfigSupport.ConfigOption;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +42,7 @@ public class GenProject extends BaseBean {
 
     private String organName;
 
-    private String providerGroup;
+    private String providerSet;
 
     private String packageName;
 

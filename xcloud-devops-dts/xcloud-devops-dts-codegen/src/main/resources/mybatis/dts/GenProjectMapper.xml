@@ -6,7 +6,7 @@
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
     <result column="organ_type" property="organType" jdbcType="VARCHAR" />
     <result column="organ_name" property="organName" jdbcType="VARCHAR" />
-    <result column="provider_group" property="providerGroup" jdbcType="VARCHAR" />
+    <result column="provider_set" property="providerSet" jdbcType="VARCHAR" />
     <result column="package_name" property="packageName" jdbcType="VARCHAR" />
     <result column="version" property="version" jdbcType="VARCHAR" />
     <result column="author" property="author" jdbcType="VARCHAR" />
@@ -21,7 +21,7 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, project_name, organ_type, organ_name, provider_group, package_name, version, author, since, copyright, remark, extra_options_json, del_flag, create_date,
+    id, project_name, organ_type, organ_name, provider_set, package_name, version, author, since, copyright, remark, extra_options_json, del_flag, create_date,
     create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -35,13 +35,13 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenProject" >
-    insert into dts_gen_project (id, project_name, organ_type, organ_name, provider_group, package_name, version,
+    insert into dts_gen_project (id, project_name, organ_type, organ_name, provider_set, package_name, version,
       author, since, copyright, 
       remark, extra_options_json, del_flag, create_date,
       create_by, update_date, update_by
       )
     values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{organType,jdbcType=VARCHAR}, #{organName,jdbcType=VARCHAR},
-      #{providerGroup,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
+      #{providerSet,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
       #{author,jdbcType=VARCHAR}, #{since,jdbcType=VARCHAR}, #{copyright,jdbcType=VARCHAR}, 
       #{remark,jdbcType=VARCHAR}, #{extraOptionsJson,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
@@ -62,8 +62,8 @@
       <if test="organName != null" >
         organ_name,
       </if>
-      <if test="providerGroup != null" >
-        provider_group,
+      <if test="providerSet != null" >
+        provider_set,
       </if>
       <if test="packageName != null" >
         package_name,
@@ -115,8 +115,8 @@
       <if test="organName != null" >
         #{organName,jdbcType=VARCHAR},
       </if>
-      <if test="providerGroup != null" >
-        #{providerGroup,jdbcType=VARCHAR},
+      <if test="providerSet != null" >
+        #{providerSet,jdbcType=VARCHAR},
       </if>
       <if test="packageName != null" >
         #{packageName,jdbcType=VARCHAR},
@@ -168,8 +168,8 @@
       <if test="organName != null" >
         organ_name = #{organName,jdbcType=VARCHAR},
       </if>
-      <if test="providerGroup != null" >
-        provider_group = #{providerGroup,jdbcType=VARCHAR},
+      <if test="providerSet != null" >
+        provider_set = #{providerSet,jdbcType=VARCHAR},
       </if>
       <if test="packageName != null" >
         package_name = #{packageName,jdbcType=VARCHAR},
@@ -215,7 +215,7 @@
     set project_name = #{projectName,jdbcType=VARCHAR},
       organ_type = #{organType,jdbcType=VARCHAR},
       organ_name = #{organName,jdbcType=VARCHAR},
-      provider_group = #{providerGroup,jdbcType=VARCHAR},
+      provider_set = #{providerSet,jdbcType=VARCHAR},
       package_name = #{packageName,jdbcType=VARCHAR},
       version = #{version,jdbcType=VARCHAR},
       author = #{author,jdbcType=VARCHAR},

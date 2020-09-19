@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine;
+package com.wl4g.devops.dts.codegen.engine.provider;
 
-import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 
 /**
- * {@link AngularJSGeneratorProvider}
+ * SpringMVC service, serviceImpl and controller generator.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
+public class SpringCloudMvnGeneratorProvider extends AbstractGeneratorProvider {
 
-	public AngularJSGeneratorProvider(GenerateContext context) {
+	public SpringCloudMvnGeneratorProvider(GenerateContext context) {
 		super(context);
 	}
 
 	@Override
-	protected void doHandleGenerate() throws Exception {
-
+	public void doHandleGenerate() throws Exception {
+		processGenerateWithTemplates(GenProviderAlias.SPINGCLOUD_MVN);
 	}
 
 }

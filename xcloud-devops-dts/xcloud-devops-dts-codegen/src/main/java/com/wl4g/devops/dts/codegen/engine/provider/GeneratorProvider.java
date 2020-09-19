@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine;
+package com.wl4g.devops.dts.codegen.engine.provider;
 
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
@@ -30,7 +30,7 @@ import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
-import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias.*;
+import static com.wl4g.devops.dts.codegen.engine.provider.GeneratorProvider.GenProviderAlias.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -358,13 +358,13 @@ public interface GeneratorProvider extends Runnable {
 	}
 
 	/**
-	 * {@link GenProviderGroup}
+	 * {@link GeneratorProvider} group set.
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020-09-16
 	 * @since
 	 */
-	public static enum GenProviderGroup {
+	public static enum GenProviderSet {
 
 		DaoServiceController(asList(SPINGCLOUD_MVN), CodeLanguage.JAVA),
 
@@ -389,7 +389,7 @@ public interface GeneratorProvider extends Runnable {
 		@Nullable
 		private final CodeLanguage language;
 
-		private GenProviderGroup(@NotEmpty List<String> providers, @Nullable CodeLanguage language) {
+		private GenProviderSet(@NotEmpty List<String> providers, @Nullable CodeLanguage language) {
 			this.providers = notEmptyOf(providers, "providers");
 			this.language = language;
 		}
@@ -419,7 +419,7 @@ public interface GeneratorProvider extends Runnable {
 		 * @return
 		 */
 		public static List<String> getProviders(@Nullable String group) {
-			for (GenProviderGroup en : values()) {
+			for (GenProviderSet en : values()) {
 				if (StringUtils.equalsIgnoreCase(en.name(), group)) {
 					return en.getProviders();
 				}
@@ -428,13 +428,13 @@ public interface GeneratorProvider extends Runnable {
 		}
 
 		/**
-		 * Parse {@link GenProviderGroup} name.
+		 * Parse {@link GenProviderSet} name.
 		 * 
 		 * @param group
 		 * @return
 		 */
-		public static GenProviderGroup safeOf(@NotBlank String group) {
-			for (GenProviderGroup gpg : values()) {
+		public static GenProviderSet safeOf(@NotBlank String group) {
+			for (GenProviderSet gpg : values()) {
 				if (equalsIgnoreCase(gpg.name(), group)) {
 					return gpg;
 				}
@@ -443,12 +443,12 @@ public interface GeneratorProvider extends Runnable {
 		}
 
 		/**
-		 * Parse {@link GenProviderGroup} name.
+		 * Parse {@link GenProviderSet} name.
 		 * 
 		 * @param group
 		 * @return
 		 */
-		public static GenProviderGroup of(@NotBlank String group) {
+		public static GenProviderSet of(@NotBlank String group) {
 			return notNull(safeOf(group), "Cannot parse gen provider group of '%s'", group);
 		}
 

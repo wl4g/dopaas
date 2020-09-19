@@ -23,12 +23,12 @@ import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.core.GenerateManager;
-import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
+import com.wl4g.devops.dts.codegen.engine.GenerateEngine;
+import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
@@ -66,7 +66,7 @@ public class GenerateServiceImpl implements GenerateService {
 	protected GenericOperatorAdapter<ConverterKind, DbTypeConverter> converter;
 
 	@Autowired
-	protected GenerateManager genManager;
+	protected GenerateEngine genManager;
 
 	@Autowired
 	protected GenDataSourceDao genDatabaseDao;
