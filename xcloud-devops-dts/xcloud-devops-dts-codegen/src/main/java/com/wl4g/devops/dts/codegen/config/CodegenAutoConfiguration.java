@@ -130,38 +130,38 @@ public class CodegenAutoConfiguration {
 
 	@Bean
 	@NamingPrototype({ GO_STANDARD })
-	public GoStandardGeneratorProvider goStandardGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		return new GoStandardGeneratorProvider(context, locator);
+	public GoStandardGeneratorProvider goStandardGeneratorProvider(GenerateContext context) {
+		return new GoStandardGeneratorProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ PYTHON_STANDARD })
-	public PythonStandardGeneratorProvider pythonStandardGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		return new PythonStandardGeneratorProvider(context, locator);
+	public PythonStandardGeneratorProvider pythonStandardGeneratorProvider(GenerateContext context) {
+		return new PythonStandardGeneratorProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ CSHARP_STANDARD })
-	public CsharpStandardGeneratorProvider csharpStandardGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		return new CsharpStandardGeneratorProvider(context, locator);
+	public CsharpStandardGeneratorProvider csharpStandardGeneratorProvider(GenerateContext context) {
+		return new CsharpStandardGeneratorProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ SPINGCLOUD_MVN })
-	public SpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		return new SpringCloudMvnGeneratorProvider(context, locator);
+	public SpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
+		return new SpringCloudMvnGeneratorProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ VUEJS })
-	public VueGeneratorProvider vueGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		return new VueGeneratorProvider(context, locator);
+	public VueGeneratorProvider vueGeneratorProvider(GenerateContext context) {
+		return new VueGeneratorProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ NGJS })
-	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		return new AngularJSGeneratorProvider(context, locator);
+	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context) {
+		return new AngularJSGeneratorProvider(context);
 	}
 
 }

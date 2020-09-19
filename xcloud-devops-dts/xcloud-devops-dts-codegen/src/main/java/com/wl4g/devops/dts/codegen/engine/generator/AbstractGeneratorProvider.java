@@ -26,7 +26,6 @@ import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateWrapper;
 import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
@@ -68,14 +67,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 */
 	protected final GenerateContext context;
 
-	/**
-	 * {@link GenTemplateLocator}
-	 */
-	protected final GenTemplateLocator locator;
-
-	public AbstractGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
+	public AbstractGeneratorProvider(GenerateContext context) {
 		this.context = notNullOf(context, "context");
-		this.locator = notNullOf(locator, "locator");
 	}
 
 	@Override
@@ -105,7 +98,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		GenProject project = context.getGenProject();
 
 		// Load templates.
-		List<TemplateWrapper> tpls = locator.locate(provider);
+		List<TemplateWrapper> tpls = context.getLocator().locate(provider);
 
 		// Handling generate
 		doRenderingTemplates(tpls, project, context.getJobDir().getAbsolutePath());

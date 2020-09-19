@@ -18,6 +18,7 @@
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
+
   <sql id="Base_Column_List" >
     id, `name`, `type`, host, port, `database`, username, password, url, remark, del_flag,
     create_date, create_by, update_date, update_by
@@ -25,15 +26,15 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from dts_gen_database
+    from dts_gen_datasource
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from dts_gen_database
+    delete from dts_gen_datasource
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
-    insert into dts_gen_database (id, name, `type`,
+    insert into dts_gen_datasource (id, name, `type`,
       host, port, `database`,
       username, password, url, 
       remark, del_flag, create_date, 
@@ -47,7 +48,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
-    insert into dts_gen_database
+    insert into dts_gen_datasource
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -143,8 +144,9 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
-    update dts_gen_database
+    update dts_gen_datasource
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -191,8 +193,9 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
-    update dts_gen_database
+    update dts_gen_datasource
     set name = #{name,jdbcType=VARCHAR},
       `type` = #{type,jdbcType=VARCHAR},
       host = #{host,jdbcType=VARCHAR},
@@ -210,11 +213,10 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List"/>
-    from dts_gen_database
+    from dts_gen_datasource
     where del_flag!=1
     <if test="name != null and name != ''" >
       AND `name` LIKE CONCAT('%','${name}','%')

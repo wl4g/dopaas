@@ -16,7 +16,6 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 /**
  * Golang standard generator provider.
@@ -27,8 +26,8 @@ import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
  */
 public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
 
-	public GoStandardGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		super(context, locator);
+	public GoStandardGeneratorProvider(GenerateContext context) {
+		super(context);
 	}
 
 	@Override

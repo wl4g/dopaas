@@ -97,14 +97,14 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		project.setGenTables(tabs);
 
 		// Create context.
-		GenerateContext context = new DefaultGenerateContext(config, project);
+		GenerateContext context = new DefaultGenerateContext(config, locator, project);
 
 		// Gets Generate of providers.
 		List<String> providers = getProviders(project.getProviderSet());
 
 		// Invoke generate providers.
 		for (String p : providers) {
-			GeneratorProvider provider = beanFactory.getPrototypeBean(p, context, locator);
+			GeneratorProvider provider = beanFactory.getPrototypeBean(p, context);
 			provider.run();
 		}
 

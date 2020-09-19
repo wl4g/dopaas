@@ -16,7 +16,6 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 /**
  * {@link VueGeneratorProvider}
@@ -27,8 +26,8 @@ import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
  */
 public class VueGeneratorProvider extends AbstractGeneratorProvider {
 
-	public VueGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		super(context, locator);
+	public VueGeneratorProvider(GenerateContext context) {
+		super(context);
 	}
 
 	@Override

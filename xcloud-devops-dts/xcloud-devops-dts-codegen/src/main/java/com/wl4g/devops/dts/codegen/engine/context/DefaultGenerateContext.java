@@ -18,8 +18,11 @@ package com.wl4g.devops.dts.codegen.engine.context;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 import java.io.File;
+
+import javax.validation.constraints.NotNull;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
@@ -35,21 +38,33 @@ public class DefaultGenerateContext implements GenerateContext {
 	/** {@link CodegenProperties} */
 	protected final CodegenProperties config;
 
+	/**
+	 * {@link GenTemplateLocator}
+	 */
+	protected GenTemplateLocator locator;
+
 	/** {@link GenTable} */
-	protected final GenProject genProject;
+	protected final GenProject project;
 
 	/** Generating job workspace directory. */
 	protected final File jobDir;
 
-	public DefaultGenerateContext(CodegenProperties config, GenProject genProject) {
+	public DefaultGenerateContext(@NotNull CodegenProperties config, @NotNull GenTemplateLocator locator,
+			@NotNull GenProject project) {
 		this.config = notNullOf(config, "config");
-		this.genProject = notNullOf(genProject, "genProject");
-		this.jobDir = config.getJobDir(genProject.getId());
+		this.locator = notNullOf(locator, "locator");
+		this.project = notNullOf(project, "genProject");
+		this.jobDir = config.getJobDir(project.getId());
+	}
+
+	@Override
+	public GenTemplateLocator getLocator() {
+		return locator;
 	}
 
 	@Override
 	public GenProject getGenProject() {
-		return genProject;
+		return project;
 	}
 
 	@Override

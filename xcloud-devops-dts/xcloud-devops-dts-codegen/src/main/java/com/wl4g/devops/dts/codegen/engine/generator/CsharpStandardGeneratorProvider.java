@@ -16,7 +16,6 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 /**
  * C_sharp standard generator provider.
@@ -27,8 +26,8 @@ import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
  */
 public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 
-	public CsharpStandardGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		super(context, locator);
+	public CsharpStandardGeneratorProvider(GenerateContext context) {
+		super(context);
 	}
 
 	@Override

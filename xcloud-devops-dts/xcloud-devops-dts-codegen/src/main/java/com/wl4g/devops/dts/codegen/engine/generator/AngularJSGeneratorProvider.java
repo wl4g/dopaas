@@ -16,7 +16,6 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 /**
  * {@link AngularJSGeneratorProvider}
@@ -27,8 +26,8 @@ import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
  */
 public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
 
-	public AngularJSGeneratorProvider(GenerateContext context, GenTemplateLocator locator) {
-		super(context, locator);
+	public AngularJSGeneratorProvider(GenerateContext context) {
+		super(context);
 	}
 
 	@Override

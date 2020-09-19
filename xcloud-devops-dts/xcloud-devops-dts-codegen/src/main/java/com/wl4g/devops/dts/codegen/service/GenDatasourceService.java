@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author vjay
  */
-public interface GenConfigurationService {
+public interface GenDatasourceService {
 
 	PageModel page(PageModel pm, String name);
 
