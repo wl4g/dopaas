@@ -61,7 +61,6 @@
         where id = ${r'#{'}id,jdbcType=INTEGER}
     </update>
 
-
     <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
         select
         <include refid="Base_Column_List"/>

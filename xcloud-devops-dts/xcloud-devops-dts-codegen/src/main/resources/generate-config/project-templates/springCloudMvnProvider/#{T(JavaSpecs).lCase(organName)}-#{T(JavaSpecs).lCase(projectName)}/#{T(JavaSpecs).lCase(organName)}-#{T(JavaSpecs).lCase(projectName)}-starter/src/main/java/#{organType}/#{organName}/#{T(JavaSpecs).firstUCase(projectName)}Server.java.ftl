@@ -11,6 +11,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
+/**
+ * {@link ${projectName?cap_first}Server}
+ *
+ * @author ${author}
+ * @version ${version}
+ * @Date ${now}
+ * @since ${since}
+ */
 @EnableIamClient
 @MapperScan("${organName?uncap_first}.${projectName?uncap_first}.dao.*")
 @AutoConfigureComponentsDataSource

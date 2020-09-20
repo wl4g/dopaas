@@ -7,7 +7,9 @@ ${javaSpecs.escapeCopyright(copyright)}
  * ${class_name}
  *
  * @author ${author}
- * @Date ${date}
+ * @version ${version}
+ * @Date ${now}
+ * @since ${since}
  */
 </#macro>
 <#--{包名}/{模块名}/{分层(dao,entity,service,web)}/{子模块名}-->
