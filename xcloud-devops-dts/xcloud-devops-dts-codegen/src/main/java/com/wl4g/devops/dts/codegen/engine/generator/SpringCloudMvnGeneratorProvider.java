@@ -24,7 +24,7 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
  * @version v1.0 2020-09-07
  * @since
  */
-public class SpringCloudMvnGeneratorProvider extends AbstractGeneratorProvider {
+public class SpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvider {
 
 	public SpringCloudMvnGeneratorProvider(GenerateContext context) {
 		super(context);

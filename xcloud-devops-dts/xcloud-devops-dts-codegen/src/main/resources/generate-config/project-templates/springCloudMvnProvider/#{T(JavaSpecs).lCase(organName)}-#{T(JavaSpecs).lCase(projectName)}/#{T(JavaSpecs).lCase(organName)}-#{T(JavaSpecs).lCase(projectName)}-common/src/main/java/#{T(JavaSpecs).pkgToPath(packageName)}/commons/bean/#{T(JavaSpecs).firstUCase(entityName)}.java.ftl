@@ -4,7 +4,7 @@ ${javaSpecs.escapeCopyright(copyright)}
 
 <#assign aDateTime = .now>
 <#assign now = aDateTime?date>
-package ${packageName}.commons.bean.${moduleName};
+package ${packageName}.common.bean.${moduleName};
 
 import java.util.Date;
 
