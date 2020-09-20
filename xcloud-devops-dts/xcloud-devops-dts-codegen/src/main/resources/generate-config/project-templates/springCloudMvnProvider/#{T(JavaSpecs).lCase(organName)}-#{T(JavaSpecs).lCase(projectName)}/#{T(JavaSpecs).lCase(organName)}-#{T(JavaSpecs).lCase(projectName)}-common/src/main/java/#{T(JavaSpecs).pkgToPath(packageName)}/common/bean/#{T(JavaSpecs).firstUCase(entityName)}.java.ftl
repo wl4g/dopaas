@@ -12,7 +12,9 @@ import java.util.Date;
  * {@link ${entityName?cap_first}}
  *
  * @author ${author}
+ * @version ${version}
  * @Date ${now}
+ * @since ${since}
  */
 public class ${entityName?cap_first} {
 

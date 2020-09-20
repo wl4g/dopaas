@@ -13,7 +13,9 @@ import ${packageName}.commons.bean.${moduleName}.${entityName?cap_first};
  * {@link ${entityName?cap_first}}
  *
  * @author ${author}
+ * @version ${version}
  * @Date ${now}
+ * @since ${since}
  */
 public class ${entityName?cap_first}Dao {
 
