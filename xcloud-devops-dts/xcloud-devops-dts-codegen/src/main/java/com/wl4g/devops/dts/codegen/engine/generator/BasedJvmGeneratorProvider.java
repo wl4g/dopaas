@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.utils.RenderableDataModel;
+import com.wl4g.devops.dts.codegen.utils.RenderableModelMap;
 
 /**
  * {@link BasedJvmGeneratorProvider}
@@ -39,7 +39,7 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull RenderableDataModel model, @NotBlank String tplPath, Object... beans) {
+	protected void customizeRenderingModel(@NotNull RenderableModelMap model, @NotBlank String tplPath, Object... beans) {
 		GenProject project = context.getGenProject();
 
 		// Add variable of java/scala/groovy/kotlin project packageName.

@@ -28,7 +28,7 @@ import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateWrapper;
-import com.wl4g.devops.dts.codegen.utils.RenderableDataModel;
+import com.wl4g.devops.dts.codegen.utils.RenderableModelMap;
 
 import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
@@ -48,11 +48,11 @@ import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
 import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
+import static com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.parseJSON;
+import static com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
 
 /**
@@ -127,13 +127,17 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			log.info("Rendering generate for tpl - {}", tpl.getTplPath());
 
 			// Create rednering model.
-			Map<String, Object> model = createRenderingModel(tpl.getTplPath(), project);
+			RenderableModelMap primaryModel = createRenderingModel(tpl.getTplPath(), project);
 
 			if (tpl.isTpl()) {
 				// foreach template by table
 				if (tpl.isForeachTpl()) {
 					for (GenTable tab : project.getGenTables()) {
-						// Additidtion table model attributes
+						// In order to avoid override replacement of the model
+						// key, it must be cloned.
+						RenderableModelMap model = primaryModel.clone();
+
+						// Add table attributes model
 						model.putAll(toRenderingFlatModel(tab));
 
 						// Call Pre rendering.
@@ -151,12 +155,12 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 				// Simple template.
 				else {
 					// Call Pre rendering.
-					String rendered = hasText(preRendering(tpl, model), "Pre rendering should return the rendered value");
+					String rendered = hasText(preRendering(tpl, primaryModel), "Pre rendering should return the rendered value");
 
 					// Rendering with freemarker.
-					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(tpl.getTplPath(), model));
+					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(tpl.getTplPath(), primaryModel));
 					Template template = new Template(tpl.getFileName(), rendered, defaultGenConfigurer);
-					rendered = renderingTemplateToString(template, model);
+					rendered = renderingTemplateToString(template, primaryModel);
 
 					// Call post rendered.
 					postRendering(tpl, rendered, writePath);
@@ -164,7 +168,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			}
 			// e.g: static resources files
 			else {
-				String targetPath = writeBasePath + "/" + resolveSpelExpression(tpl.getTplPath(), model);
+				String targetPath = writeBasePath + "/" + resolveSpelExpression(tpl.getTplPath(), primaryModel);
 				writeFile(new File(targetPath), tpl.getFileContent(), false);
 			}
 		}
@@ -228,7 +232,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param beans
 	 * @return
 	 */
-	protected void customizeRenderingModel(@NotNull RenderableDataModel model, @NotBlank String tplPath,
+	protected void customizeRenderingModel(@NotNull RenderableModelMap model, @NotBlank String tplPath,
 			@Nullable Object... beans) {
 	}
 
@@ -241,8 +245,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return
 	 * @throws Exception
 	 */
-	private Map<String, Object> createRenderingModel(String tplPath, Object... innerRequiresBeans) throws Exception {
-		RenderableDataModel model = new RenderableDataModel(config.isAllowRenderingCustomizeModelOverride());
+	private RenderableModelMap createRenderingModel(String tplPath, Object... innerRequiresBeans) throws Exception {
+		RenderableModelMap model = new RenderableModelMap(config.isAllowRenderingCustomizeModelOverride());
 
 		// Add requires rendering parameters.
 		if (!isNull(innerRequiresBeans)) {

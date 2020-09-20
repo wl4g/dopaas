@@ -11,7 +11,6 @@
     <result column="comments" property="comments" jdbcType="VARCHAR" />
     <result column="parent_table_name" property="parentTableName" jdbcType="VARCHAR" />
     <result column="parent_table_fk_name" property="parentTableFkName" jdbcType="VARCHAR" />
-    <result column="package_name" property="packageName" jdbcType="VARCHAR" />
     <result column="module_name" property="moduleName" jdbcType="VARCHAR" />
     <result column="sub_module_name" property="subModuleName" jdbcType="VARCHAR" />
     <result column="function_name" property="functionName" jdbcType="VARCHAR" />
@@ -28,7 +27,7 @@
 
   <sql id="Base_Column_List" >
     id, database_id, project_id, table_name, entity_name, comments, parent_table_name, parent_table_fk_name,
-    package_name, module_name, sub_module_name, function_name, 
+    module_name, sub_module_name, function_name, 
     function_name_simple, function_author, options, remark, create_date, 
     create_by, update_date, update_by, del_flag
   </sql>
@@ -56,14 +55,14 @@
     insert into dts_gen_table (id, database_id, project_id, table_name,
       entity_name, comments, parent_table_name,
       parent_table_fk_name,
-      package_name, module_name, sub_module_name, 
+      module_name, sub_module_name, 
       function_name, function_name_simple, function_author, 
       gen_base_dir, options, remark, 
       del_flag, create_date, create_by, 
       update_date, update_by)
     values (#{id,jdbcType=INTEGER}, #{databaseId,jdbcType=INTEGER},  #{projectId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR},
       #{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{parentTableName,jdbcType=VARCHAR},
-      #{parentTableFkName,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
+      #{parentTableFkName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
       #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR}, #{functionAuthor,jdbcType=VARCHAR}, 
       #{options,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER})
@@ -95,9 +94,6 @@
       </if>
       <if test="parentTableFkName != null" >
         parent_table_fk_name,
-      </if>
-      <if test="packageName != null" >
-        package_name,
       </if>
       <if test="moduleName != null" >
         module_name,
@@ -160,9 +156,6 @@
       </if>
       <if test="parentTableFkName != null" >
         #{parentTableFkName,jdbcType=VARCHAR},
-      </if>
-      <if test="packageName != null" >
-        #{packageName,jdbcType=VARCHAR},
       </if>
       <if test="moduleName != null" >
         #{moduleName,jdbcType=VARCHAR},
@@ -227,9 +220,6 @@
       <if test="parentTableFkName != null" >
         parent_table_fk_name = #{parentTableFkName,jdbcType=VARCHAR},
       </if>
-      <if test="packageName != null" >
-        package_name = #{packageName,jdbcType=VARCHAR},
-      </if>
       <if test="moduleName != null" >
         module_name = #{moduleName,jdbcType=VARCHAR},
       </if>
@@ -279,7 +269,6 @@
       comments = #{comments,jdbcType=VARCHAR},
       parent_table_name = #{parentTableName,jdbcType=VARCHAR},
       parent_table_fk_name = #{parentTableFkName,jdbcType=VARCHAR},
-      package_name = #{packageName,jdbcType=VARCHAR},
       module_name = #{moduleName,jdbcType=VARCHAR},
       sub_module_name = #{subModuleName,jdbcType=VARCHAR},
       function_name = #{functionName,jdbcType=VARCHAR},

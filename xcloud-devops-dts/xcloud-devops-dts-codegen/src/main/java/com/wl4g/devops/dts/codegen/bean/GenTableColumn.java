@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.bean;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils;
+import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.RenderingProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +32,7 @@ import lombok.Setter;
  * @sine v1.0.0
  * @see
  */
+@JsonFilter(RenderingJacksonUtils.FILTER_ID)
 @Getter
 @Setter
 public class GenTableColumn extends BaseBean {
@@ -36,40 +40,58 @@ public class GenTableColumn extends BaseBean {
 
 	private Integer tableId;
 
+	@RenderingProperty
 	private String columnName;
 
+	@RenderingProperty
 	private String columnType;
 
+	@RenderingProperty
 	private String simpleColumnType;
 
+	@RenderingProperty
 	private String columnComment;
 
+	@RenderingProperty
 	private Integer columnSort;
 
+	@RenderingProperty
 	private String attrType;
 
+	@RenderingProperty
 	private String attrName;
 
+	@RenderingProperty
 	private String queryType;
 
+	@RenderingProperty
 	private String showType;
 
+	@RenderingProperty
 	private String dictType;
 
+	@RenderingProperty
 	private String validRule; // form valid rule
 
+	@RenderingProperty
 	private String isPk;
 
+	@RenderingProperty
 	private String noNull;
 
+	@RenderingProperty
 	private String isInsert;
 
+	@RenderingProperty
 	private String isUpdate;
 
+	@RenderingProperty
 	private String isList;
 
+	@RenderingProperty
 	private String isQuery;
 
+	@RenderingProperty
 	private String isEdit;
 
 }

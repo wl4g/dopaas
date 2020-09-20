@@ -20,7 +20,10 @@ import lombok.Setter;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils;
+import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.RenderingProperty;
 
 /**
  * {@link GenTable}
@@ -29,6 +32,7 @@ import com.wl4g.components.core.bean.BaseBean;
  * @version v1.0 2020-09-10
  * @since
  */
+@JsonFilter(RenderingJacksonUtils.FILTER_ID)
 @Getter
 @Setter
 public class GenTable extends BaseBean {
@@ -38,33 +42,44 @@ public class GenTable extends BaseBean {
 
 	private Integer projectId;
 
+	@RenderingProperty
 	private String tableName;
 
+	@RenderingProperty
 	private String entityName;
 
+	@RenderingProperty
 	private String comments;
 
+	@RenderingProperty
 	private String parentTableName;
 
+	@RenderingProperty
 	private String parentTableFkName;
 
-	private String packageName;
-
+	@RenderingProperty
 	private String moduleName;
 
+	@RenderingProperty
 	private String subModuleName;
 
+	@RenderingProperty
 	private String functionName;
 
+	@RenderingProperty
 	private String functionNameSimple;
 
+	@RenderingProperty
 	private String functionAuthor;
 
+	@RenderingProperty
 	private String options;
 
 	// Extends
+	@RenderingProperty
 	private List<GenTableColumn> genTableColumns;
 
+	@RenderingProperty
 	private GenTableColumn pk;
 
 }
