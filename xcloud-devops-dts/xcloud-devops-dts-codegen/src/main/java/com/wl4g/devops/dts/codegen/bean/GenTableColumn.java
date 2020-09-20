@@ -15,10 +15,8 @@
  */
 package com.wl4g.devops.dts.codegen.bean;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils;
-import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.RenderingProperty;
+import com.wl4g.devops.dts.codegen.engine.generator.AbstractGeneratorProvider.RenderingProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +30,6 @@ import lombok.Setter;
  * @sine v1.0.0
  * @see
  */
-@JsonFilter(RenderingJacksonUtils.FILTER_ID)
 @Getter
 @Setter
 public class GenTableColumn extends BaseBean {

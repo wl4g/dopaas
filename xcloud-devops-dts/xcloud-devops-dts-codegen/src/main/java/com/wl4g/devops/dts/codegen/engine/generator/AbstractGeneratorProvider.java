@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.components.common.reflect.TypeUtils2;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
@@ -42,18 +42,24 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.*;
 
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.common.reflect.ReflectionUtils2.doFullWithFields;
+import static com.wl4g.components.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.components.common.reflect.ReflectionUtils2.isGenericModifier;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
 import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
-import static com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.parseJSON;
-import static com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * {@link AbstractGeneratorProvider}
@@ -138,7 +144,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 						RenderableModelMap model = primaryModel.clone();
 
 						// Add table attributes model
-						model.putAll(toRenderingFlatModel(tab));
+						model.putAll(convertToRenderingModel(tab));
 
 						// Call Pre rendering.
 						String rendered = hasText(preRendering(tpl, model), "Pre rendering should return the rendered value");
@@ -213,15 +219,26 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	}
 
 	/**
-	 * Gets object to flat map model
+	 * Converting object to flat map model
 	 *
 	 * @param object
 	 * @return
 	 * @throws Exception
 	 */
-	protected Map<String, Object> toRenderingFlatModel(Object object) throws Exception {
-		return parseJSON(toJSONString(object), new TypeReference<HashMap<String, Object>>() {
+	protected Map<String, Object> convertToRenderingModel(Object object) throws Exception {
+		final Map<String, Object> model = new HashMap<>();
+		doFullWithFields(object, field -> {
+			return isGenericModifier(field.getModifiers());
+		}, (field, objOfField) -> {
+			if (Objects.isNull(objOfField)) {
+				objOfField = TypeUtils2.instantiate(null, field.getType());
+			}
+			RenderingProperty rp = field.getDeclaredAnnotation(RenderingProperty.class);
+			if (nonNull(rp)) {
+				model.put(field.getName(), getField(field, objOfField));
+			}
 		});
+		return model;
 	}
 
 	/**
@@ -251,7 +268,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// Add requires rendering parameters.
 		if (!isNull(innerRequiresBeans)) {
 			for (Object bean : innerRequiresBeans) {
-				model.putAll(toRenderingFlatModel(bean));
+				model.putAll(convertToRenderingModel(bean));
 			}
 		}
 
@@ -287,6 +304,20 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		log.debug("Resolving SPEL for expression: {}, model: {}", () -> spelExpr, () -> model);
 
 		return defaultExpressions.resolve(spelExpr, model);
+	}
+
+	/**
+	 * Whether the property fields of the annotation system bean will be
+	 * serialized to the rendering model.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020-09-20
+	 * @sine v1.0.0
+	 * @see
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ ElementType.FIELD })
+	public static @interface RenderingProperty {
 	}
 
 	// Definition of special variables.

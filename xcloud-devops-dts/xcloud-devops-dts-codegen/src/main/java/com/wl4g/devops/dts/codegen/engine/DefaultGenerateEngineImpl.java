@@ -38,7 +38,7 @@ import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.toJSONString;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
 
 /**

@@ -20,10 +20,8 @@ import lombok.Setter;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils;
-import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.RenderingProperty;
+import com.wl4g.devops.dts.codegen.engine.generator.AbstractGeneratorProvider.RenderingProperty;
 
 /**
  * {@link GenTable}
@@ -32,7 +30,6 @@ import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.RenderingProperty
  * @version v1.0 2020-09-10
  * @since
  */
-@JsonFilter(RenderingJacksonUtils.FILTER_ID)
 @Getter
 @Setter
 public class GenTable extends BaseBean {
