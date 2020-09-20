@@ -15,8 +15,11 @@
  */
 package com.wl4g.devops.dts.codegen.bean;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.ExtraConfigSupport.ConfigOption;
+import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils;
+import com.wl4g.devops.dts.codegen.utils.RenderingJacksonUtils.RenderingProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -31,27 +34,37 @@ import java.util.List;
  * @version v1.0 2020-09-14
  * @since
  */
+@JsonFilter(RenderingJacksonUtils.FILTER_ID)
 @Getter
 @Setter
 public class GenProject extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
+	@RenderingProperty
 	private String projectName;
 
+	@RenderingProperty
 	private String organType;
 
+	@RenderingProperty
 	private String organName;
 
+	@RenderingProperty
 	private String providerSet;
 
+	@RenderingProperty
 	private String version;
 
+	@RenderingProperty
 	private String author;
 
+	@RenderingProperty
 	private String since;
 
+	@RenderingProperty
 	private String copyright;
 
+	@RenderingProperty
 	private List<GenTable> genTables;
 
 	private String extraOptionsJson;
@@ -61,6 +74,7 @@ public class GenProject extends BaseBean {
 	/**
 	 * Configured extra options.
 	 */
+	@RenderingProperty
 	private ConfigOptions extraOptions;
 
 	/**
