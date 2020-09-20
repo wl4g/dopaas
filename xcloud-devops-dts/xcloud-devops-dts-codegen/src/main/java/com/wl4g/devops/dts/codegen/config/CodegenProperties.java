@@ -45,6 +45,11 @@ public class CodegenProperties implements InitializingBean {
 	 */
 	private String workspace = USER_HOME + File.separator + ".codegen-workspace"; // By-default.
 
+	/**
+	 * Is it allowed to override the key of the data model.
+	 */
+	private boolean allowRenderingCustomizeModelOverride = false;
+
 	public String getWorkspace() {
 		return workspace;
 	}
@@ -52,6 +57,14 @@ public class CodegenProperties implements InitializingBean {
 	public void setWorkspace(String workspace) {
 		hasTextOf(workspace, "workspace");
 		this.workspace = workspace;
+	}
+
+	public boolean isAllowRenderingCustomizeModelOverride() {
+		return allowRenderingCustomizeModelOverride;
+	}
+
+	public void setAllowRenderingCustomizeModelOverride(boolean allowRenderingCustomizeModelOverride) {
+		this.allowRenderingCustomizeModelOverride = allowRenderingCustomizeModelOverride;
 	}
 
 	@Override

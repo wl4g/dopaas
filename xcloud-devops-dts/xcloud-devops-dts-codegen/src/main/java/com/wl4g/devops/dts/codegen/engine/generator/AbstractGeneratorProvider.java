@@ -21,12 +21,15 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateWrapper;
+import com.wl4g.devops.dts.codegen.utils.RenderableDataModel;
+
 import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 
@@ -36,10 +39,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.File;
 import java.util.*;
 
-import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
@@ -61,6 +65,12 @@ import static java.util.Objects.isNull;
 public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 	protected final SmartLogger log = getLogger(getClass());
+
+	/**
+	 * {@link CodegenProperties}
+	 */
+	@Autowired
+	protected CodegenProperties config;
 
 	/**
 	 * {@link GenerateContext}
@@ -213,13 +223,13 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	/**
 	 * Customize rendering model
 	 *
+	 * @param model
 	 * @param tplPath
-	 * @param project
-	 * @param table
+	 * @param beans
 	 * @return
 	 */
-	protected Map<String, Object> customizeRenderingModel(@NotBlank String tplPath, @Nullable Object... beans) {
-		return null;
+	protected void customizeRenderingModel(@NotNull RenderableDataModel model, @NotBlank String tplPath,
+			@Nullable Object... beans) {
 	}
 
 	/**
@@ -231,27 +241,29 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return
 	 * @throws Exception
 	 */
-	private Map<String, Object> createRenderingModel(String tplPath, Object... beans) throws Exception {
-		// Gets customize model.
-		Map<String, Object> model = ensureMap(customizeRenderingModel(tplPath, beans));
+	private Map<String, Object> createRenderingModel(String tplPath, Object... innerRequiresBeans) throws Exception {
+		RenderableDataModel model = new RenderableDataModel(config.isAllowRenderingCustomizeModelOverride());
 
-		// Fill requires rendering parameters.
-		if (!isNull(beans)) {
-			for (Object bean : beans) {
+		// Add requires rendering parameters.
+		if (!isNull(innerRequiresBeans)) {
+			for (Object bean : innerRequiresBeans) {
 				model.putAll(toRenderingFlatModel(bean));
 			}
 		}
 
-		// Addidition special variables.
+		// Add variable of watermark.
 		model.put(VAR_WATERMARK, TPL_WATERMARK);
 
-		// Addidition default utils. (Called when rendering templates for
-		// Freemarker)
+		// Add variable of naming utils.
 		model.put("javaSpecs", new JavaSpecs());
 		model.put("csharpSpecs", new CSharpSpecs());
 		model.put("golangSpecs", new GolangSpecs());
 		model.put("pythonSpecs", new PythonSpecs());
 
+		// Add customization model attibutes.
+		customizeRenderingModel(model, tplPath, innerRequiresBeans);
+
+		log.debug("Gen rendering model: {}", model);
 		return model;
 	}
 
@@ -267,10 +279,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		if (expression.endsWith(DEFAULT_TPL_SUFFIX)) {
 			expression = expression.substring(0, expression.length() - DEFAULT_TPL_SUFFIX.length());
 		}
-		final String expression0 = expression;
-		log.debug("Resolving SPEL for expression: {}, model: {}", () -> expression0, () -> model);
+		final String spelExpr = expression;
+		log.debug("Resolving SPEL for expression: {}, model: {}", () -> spelExpr, () -> model);
 
-		return defaultExpressions.resolve(expression0, model);
+		return defaultExpressions.resolve(spelExpr, model);
 	}
 
 	// Definition of special variables.
