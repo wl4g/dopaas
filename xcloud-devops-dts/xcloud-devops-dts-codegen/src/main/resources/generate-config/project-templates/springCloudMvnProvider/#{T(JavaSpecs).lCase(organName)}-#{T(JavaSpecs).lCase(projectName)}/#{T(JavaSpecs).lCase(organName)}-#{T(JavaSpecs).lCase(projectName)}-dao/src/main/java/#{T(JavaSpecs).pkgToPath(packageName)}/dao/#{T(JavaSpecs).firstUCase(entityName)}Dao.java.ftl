@@ -27,6 +27,6 @@ public class ${entityName?cap_first}Dao {
 
     int updateByPrimaryKeySelective(${entityName?cap_first} ${entityName?uncap_first});
 
-    List<${entityName?cap_first}> list(@Param("name") String name);
+    List<${entityName?cap_first}> list(@Param("${entityName?uncap_first}") ${entityName} ${entityName?uncap_first});
 
 }

@@ -26,7 +26,7 @@ import <@class_package package_name="${packageName}" module_name="${moduleName}"
 <@class_annotation class_name="${entityName}Service" author="${functionAuthor}" date="${aDate?iso_utc}" />
 public interface ${entityName}Service {
 
-    PageModel page(PageModel pm, String name);
+    PageModel page(PageModel pm, ${entityName} ${entityName?uncap_first});
 
     void save(${entityName} ${entityName?uncap_first});
 
