@@ -42,9 +42,9 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
     private ${entityName}Dao ${entityName?uncap_first}Dao;
 
     @Override
-    public PageModel page(PageModel pm, String name) {
+    public PageModel page(PageModel pm, ${entityName} ${entityName?uncap_first}) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(${entityName?uncap_first}Dao.list(name));
+        pm.setRecords(${entityName?uncap_first}Dao.list(${entityName?uncap_first}));
         return pm;
     }
 

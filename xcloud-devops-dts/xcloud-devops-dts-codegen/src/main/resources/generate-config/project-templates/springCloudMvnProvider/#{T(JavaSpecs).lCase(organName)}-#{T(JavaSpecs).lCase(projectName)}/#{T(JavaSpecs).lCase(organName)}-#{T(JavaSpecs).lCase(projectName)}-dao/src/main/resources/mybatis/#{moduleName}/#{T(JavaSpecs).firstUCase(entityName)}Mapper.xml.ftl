@@ -58,7 +58,7 @@
             </if>
         </#list>
         </set>
-        where id = ${r'#{'}id,jdbcType=INTEGER}
+        where ${pk.columnName} = ${r'#{'}${pk.attrName},jdbcType=${pk.columnType}}
     </update>
 
     <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
@@ -69,6 +69,47 @@
         <if test="name != null and name != ''" >
             AND `name` LIKE CONCAT('%','${name}','%')
         </if>
+        <#list genTableColumns as param>
+            <#if param.isQuery == 1>
+                <#if param.queryType == 1>
+                    <if test="${entityName?uncap_first}.${param.attrName} != null" >
+                        AND `${param.columnName}` = ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+                    </if>
+                <#elseif param.queryType == 2>
+                    <if test="${entityName?uncap_first}.${param.attrName} != null" >
+                        AND `${param.columnName}` != ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+                    </if>
+                <#elseif param.queryType == 3>
+                    <if test="${entityName?uncap_first}.${param.attrName} != null" >
+                        AND `${param.columnName}` > ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+                    </if>
+                <#elseif param.queryType == 4>
+                    <if test="${entityName?uncap_first}.${param.attrName} != null" >
+                        AND `${param.columnName}` >= ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+                    </if>
+                <#elseif param.queryType == 5>
+                    <if test="${entityName?uncap_first}.${param.attrName} != null" >
+                        AND `${param.columnName}` ${r'<'} ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+                    </if>
+                <#elseif param.queryType == 6>
+                    <if test="${entityName?uncap_first}.${param.attrName} != null" >
+                        AND `${param.columnName}` ${r'<='} ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+                    </if>
+                <#elseif param.queryType == 7>
+                    <if test="${entityName?uncap_first}.${param.attrName} != null" >
+                        AND `${param.columnName}` LIKE CONCAT('%','${r'${'}${entityName?uncap_first}.${param.attrName}}','%')
+                    </if>
+                <#elseif param.queryType == 8>
+                    <if test="${entityName?uncap_first}.${param.attrName} != null" >
+                        AND `${param.columnName}` LIKE CONCAT('%','${r'${'}${entityName?uncap_first}.${param.attrName}}')
+                    </if>
+                <#elseif param.queryType == 9>
+                    <if test="${entityName?uncap_first}.${param.attrName} != null" >
+                        AND `${param.columnName}` LIKE CONCAT('${r'${'}${entityName?uncap_first}.${param.attrName}}','%')
+                    </if>
+                </#if>
+            </#if>
+        </#list>
     </select>
 
 </mapper>

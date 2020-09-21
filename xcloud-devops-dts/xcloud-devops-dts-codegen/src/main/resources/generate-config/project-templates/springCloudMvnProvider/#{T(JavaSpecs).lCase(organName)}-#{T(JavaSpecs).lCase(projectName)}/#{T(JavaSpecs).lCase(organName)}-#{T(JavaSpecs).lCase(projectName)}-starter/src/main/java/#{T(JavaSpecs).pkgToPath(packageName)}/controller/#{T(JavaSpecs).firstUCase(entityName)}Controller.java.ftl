@@ -42,9 +42,9 @@ public class ${entityName}Controller extends BaseController {
     private ${entityName}Service ${entityName?uncap_first}Service;
 
     @RequestMapping(value = "/list")
-    public RespBase${r"<"}?> list(PageModel pm, String name) {
+    public RespBase${r"<"}?> list(PageModel pm, ${entityName} ${entityName?uncap_first}) {
         RespBase${r"<"}Object> resp = RespBase.create();
-        resp.setData(${entityName?uncap_first}Service.page(pm, name));
+        resp.setData(${entityName?uncap_first}Service.page(pm, ${entityName?uncap_first}));
         return resp;
     }
 
