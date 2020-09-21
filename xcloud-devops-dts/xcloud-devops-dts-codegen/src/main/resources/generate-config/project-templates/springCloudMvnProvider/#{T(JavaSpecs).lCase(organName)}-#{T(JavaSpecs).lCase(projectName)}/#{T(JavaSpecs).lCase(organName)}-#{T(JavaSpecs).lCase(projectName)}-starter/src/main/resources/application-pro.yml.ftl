@@ -1,3 +1,4 @@
+# ${watermark}
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
 # All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
 #
@@ -7,6 +8,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+<#assign topDomain =  organName?lower_case + '.'+ organType?lower_case />
 
 # #### Environment(PRO) configuration. ####
 #
@@ -18,24 +21,24 @@ spring:
           rules:
             '[/**]':
               allows-origins:
-                - https://${r'${'}X_SERVICE_ZONE:wl4g.com}
-                - http://${r'${'}X_SERVICE_ZONE:wl4g.com}
-                - https://*.${r'${'}X_SERVICE_ZONE:wl4g.com}
-                - http://*.${r'${'}X_SERVICE_ZONE:wl4g.com}      
+                - https://${r'${'}X_SERVICE_ZONE:${topDomain}}
+                - http://${r'${'}X_SERVICE_ZONE:${topDomain}}
+                - https://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
+                - http://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
           denyIpRange: ${r'${'}X_IAM_ACL_DENY}
         client:
-          server-uri: ${r'${'}X_SERVICE_SCHEMA:https}://iam.${r'${'}X_SERVICE_ZONE:wl4g.com}/iam-server
+          server-uri: ${r'${'}X_SERVICE_SCHEMA:https}://iam.${r'${'}X_SERVICE_ZONE:${topDomain}}/iam-server
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: ${r'${'}X_SERVICE_SCHEMA:https}://devops.${r'${'}X_SERVICE_ZONE:wl4g.com}/#/share
+          success-uri: ${r'${'}X_SERVICE_SCHEMA:https}://devops.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/share
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${r'${'}X_DB_URL:safecloud-defaulti.mysql.rds.aliyuncs.com:3306}/${r'${'}X_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://${r'${'}X_DB_URL:${projectName}.mysql.rds.aliyuncs.com:3306}/${r'${'}X_DB_NAME:${projectName?lower_case}?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: ${r'${'}X_DB_USER:devops}
       password: ${r'${'}X_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       initial-size: 10
@@ -59,4 +62,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${r'${'}X_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
+  nodes: ${r'${'}X_REDIS_NODES:${topDomain}:6379,${topDomain}:6380,${topDomain}:6381,${topDomain}:7379,${topDomain}:7380,${topDomain}:7381}

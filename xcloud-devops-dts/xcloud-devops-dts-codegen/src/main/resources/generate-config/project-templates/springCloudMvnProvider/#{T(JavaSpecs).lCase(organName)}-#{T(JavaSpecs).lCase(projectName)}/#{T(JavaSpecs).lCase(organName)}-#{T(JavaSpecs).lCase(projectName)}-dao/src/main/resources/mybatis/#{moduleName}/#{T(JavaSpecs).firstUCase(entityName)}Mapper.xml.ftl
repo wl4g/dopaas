@@ -77,19 +77,19 @@
         </if>
                 <#elseif param.queryType == 3>
         <if test="${entityName?uncap_first}.${param.attrName} != null" >
-            AND `${param.columnName}` > ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+            AND `${param.columnName}` &gt; ${r'#{'}${entityName?uncap_first}.${param.attrName}}
         </if>
                 <#elseif param.queryType == 4>
         <if test="${entityName?uncap_first}.${param.attrName} != null" >
-            AND `${param.columnName}` >= ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+            AND `${param.columnName}` &gt;= ${r'#{'}${entityName?uncap_first}.${param.attrName}}
         </if>
                 <#elseif param.queryType == 5>
         <if test="${entityName?uncap_first}.${param.attrName} != null" >
-            AND `${param.columnName}` ${r'<'} ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+            AND `${param.columnName}` &lt; ${r'#{'}${entityName?uncap_first}.${param.attrName}}
         </if>
                 <#elseif param.queryType == 6>
         <if test="${entityName?uncap_first}.${param.attrName} != null" >
-            AND `${param.columnName}` ${r'<='} ${r'#{'}${entityName?uncap_first}.${param.attrName}}
+            AND `${param.columnName}` &lt;= ${r'#{'}${entityName?uncap_first}.${param.attrName}}
         </if>
                 <#elseif param.queryType == 7>
         <if test="${entityName?uncap_first}.${param.attrName} != null" >
