@@ -13,7 +13,7 @@ import lombok.Getter;
  * @see
  */
 @Getter
-public class YamlMapPropertySource extends GenericPropertySource {
+public class YamlMapPropertySource extends AbstractConfigSource {
 	private static final long serialVersionUID = -4793468560178245882L;
 
 	@Override

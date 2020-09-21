@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link FetchConfigRequest}
+ * {@link FetchReleaseConfigRequest}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-08-17
@@ -37,7 +37,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class FetchConfigRequest extends AbstractConfigInfo {
+public class FetchReleaseConfigRequest extends AbstractConfigInfo {
 	final private static long serialVersionUID = -4016863811283064989L;
 
 	/**
@@ -53,7 +53,7 @@ public class FetchConfigRequest extends AbstractConfigInfo {
 	@NotEmpty
 	private List<ConfigProfile> profiles = new ArrayList<>(2);
 
-	public FetchConfigRequest() {
+	public FetchReleaseConfigRequest() {
 		super();
 	}
 

@@ -12,7 +12,7 @@ import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
  * @sine v1.0.0
  * @see
  */
-public interface ScmPropertySource extends Serializable {
+public interface ScmConfigSource extends Serializable {
 
 	/**
 	 * Gets {@link ConfigProfile}

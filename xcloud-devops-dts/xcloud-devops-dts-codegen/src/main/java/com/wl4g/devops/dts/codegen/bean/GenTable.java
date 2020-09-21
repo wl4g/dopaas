@@ -76,7 +76,7 @@ public class GenTable extends BaseBean {
 	@RenderingProperty
 	private List<GenTableColumn> genTableColumns;
 
-	@RenderingProperty
+	@RenderingProperty(describeForObjField = "No")
 	private GenTableColumn pk;
 
 }

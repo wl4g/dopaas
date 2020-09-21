@@ -192,7 +192,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public ConfigSourceBean findSource(FetchConfigRequest getRelease) {
+	public ConfigSourceBean findSource(FetchReleaseConfigRequest getRelease) {
 		return this.configurationDao.findSource(getRelease);
 	}
 

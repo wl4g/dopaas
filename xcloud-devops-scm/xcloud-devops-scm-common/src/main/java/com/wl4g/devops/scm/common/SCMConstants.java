@@ -26,41 +26,44 @@ public abstract class SCMConstants {
 
 	// --- Common. ---
 
+	/** Cipher property value prefix. */
+	public static final String KEY_CIPHER_PREFIX = "{cipher}";
+
 	/** Server pre-release source response data key. */
-	final public static String KEY_PRE_RELEASE = "pre-release-source";
+	public static final String KEY_PRE_RELEASE = "pre-release-source";
 	/** Client environment source response data key. */
-	final public static String KEY_USED_SOURCES = "used-source";
+	public static final String KEY_USED_SOURCES = "used-source";
 
 	/** Configuration modified status. */
-	final public static int WATCH_CHANGED = 200;
+	public static final int WATCH_CHANGED = 200;
 	/** Configuration report check status. */
-	final public static int WATCH_CHECKPOINT = 103;
+	public static final int WATCH_CHECKPOINT = 103;
 	/** Configuration non-modified status. */
-	final public static int WATCH_NOT_MODIFIED = 304;
+	public static final int WATCH_NOT_MODIFIED = 304;
 
 	// --- Server. ---
 
 	/** Service web root URI. */
-	final public static String URI_S_BASE = "/scm-server";
+	public static final String URI_S_BASE = "/scm-server";
 	/** Initialization handshake URI. */
-	final public static String URI_S_HANDSHAKE = "handshake";
+	public static final String URI_S_HANDSHAKE = "handshake";
 	/** Long-polling watching URI. */
-	final public static String URI_S_SOURCE_WATCH = "watching";
+	public static final String URI_S_SOURCE_WATCH = "watching";
 	/** Report configuration result URI. */
-	final public static String URI_S_REFRESHED_REPORT = "report";
+	public static final String URI_S_REFRESHED_REPORT = "report";
 
 	/** SCM session cache. */
-	final public static String CACHE_SESSIONS = "scm:session:";
+	public static final String CACHE_SESSIONS = "scm:session:";
 	/** SCM publisher group. */
-	final public static String CACHE_PUB_GROUPS = "scm:publish:groups:";
+	public static final String CACHE_PUB_GROUPS = "scm:publish:groups:";
 	/** SCM publisher config prefix. */
-	final public static String KEY_PUB_PREFIX = "scm:publish:config:";
+	public static final String KEY_PUB_PREFIX = "scm:publish:config:";
 
 	// --- Client. ---
 
 	/** Service web root URI. */
-	final public static String URI_C_BASE = "/scm-client";
+	public static final String URI_C_BASE = "/scm-client";
 	/** Refresh URI. */
-	final public static String URI_C_REFRESH = "refresh";
+	public static final String URI_C_REFRESH = "refresh";
 
 }

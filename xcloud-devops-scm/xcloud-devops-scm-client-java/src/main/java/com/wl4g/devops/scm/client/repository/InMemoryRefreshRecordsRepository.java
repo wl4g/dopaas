@@ -26,22 +26,22 @@ import java.util.Set;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 
 /**
- * {@link InMemoryRefreshConfigRepository}
+ * {@link InMemoryRefreshRecordsRepository}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-08-20
  * @since
  */
-public class InMemoryRefreshConfigRepository implements RefreshConfigRepository {
+public class InMemoryRefreshRecordsRepository implements RefreshRecordsRepository {
 
 	/** Capacity size */
 	private final int capacity;
 
-	public InMemoryRefreshConfigRepository() {
+	public InMemoryRefreshRecordsRepository() {
 		this(10);
 	}
 
-	public InMemoryRefreshConfigRepository(int capacity) {
+	public InMemoryRefreshRecordsRepository(int capacity) {
 		isTrueOf(capacity > 0, "capacity");
 		this.capacity = capacity;
 	}
@@ -49,14 +49,14 @@ public class InMemoryRefreshConfigRepository implements RefreshConfigRepository 
 	// --- Release config source. ---
 
 	@Override
-	public void saveReleaseSource(ReleasePropertySourceWrapper wrapper) {
+	public void saveReleaseSource(ReleaseConfigSourceWrapper wrapper) {
 		if (refreshConfigStore.size() <= capacity) {
 			refreshConfigStore.add(wrapper);
 		}
 	}
 
 	@Override
-	public ReleasePropertySourceWrapper getLastReleaseSource() {
+	public ReleaseConfigSourceWrapper getLastReleaseSource() {
 		if (refreshConfigStore.isEmpty()) {
 			return null;
 		}
@@ -68,7 +68,7 @@ public class InMemoryRefreshConfigRepository implements RefreshConfigRepository 
 	}
 
 	@Override
-	public ReleasePropertySourceWrapper getCurrentReleaseSource() {
+	public ReleaseConfigSourceWrapper getCurrentReleaseSource() {
 		if (refreshConfigStore.isEmpty()) {
 			return null;
 		}
@@ -92,12 +92,12 @@ public class InMemoryRefreshConfigRepository implements RefreshConfigRepository 
 	}
 
 	@Override
-	public void saveChanged(Set<String> changedKeys, ReleasePropertySourceWrapper wrapper) {
+	public void saveChanged(Set<String> changedKeys, ReleaseConfigSourceWrapper wrapper) {
 		changeRecordStore.add(new ChangedRecord(changedKeys, wrapper.getRelease()));
 	}
 
 	/** Refresh configuration source cache registry. */
-	private static final List<ReleasePropertySourceWrapper> refreshConfigStore = synchronizedList(new LinkedList<>());
+	private static final List<ReleaseConfigSourceWrapper> refreshConfigStore = synchronizedList(new LinkedList<>());
 
 	/** Refreshed configuration changed records. */
 	private static final List<ChangedRecord> changeRecordStore = synchronizedList(new LinkedList<>());

@@ -23,14 +23,14 @@ import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.event.ScmEventPublisher;
 import com.wl4g.devops.scm.client.event.ScmEventSubscriber;
-import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
-import com.wl4g.devops.scm.client.repository.ReleasePropertySourceWrapper;
+import com.wl4g.devops.scm.client.repository.RefreshRecordsRepository;
+import com.wl4g.devops.scm.client.repository.ReleaseConfigSourceWrapper;
 import com.wl4g.devops.scm.client.utils.NodeHolder;
-import com.wl4g.devops.scm.common.config.ScmPropertySource;
+import com.wl4g.devops.scm.common.config.ScmConfigSource;
 import com.wl4g.devops.scm.common.config.resolve.DefaultPropertySourceResolver;
 import com.wl4g.devops.scm.common.config.resolve.PropertySourceResolver;
 import com.wl4g.devops.scm.common.exception.ScmException;
-import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseContent;
 
@@ -72,8 +72,8 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	/** SCM client instance holder */
 	protected final NodeHolder nodeHolder;
 
-	/** {@link RefreshConfigRepository} */
-	protected final RefreshConfigRepository repository;
+	/** {@link RefreshRecordsRepository} */
+	protected final RefreshRecordsRepository repository;
 
 	/** {@link PropertySourceResolver} */
 	protected final PropertySourceResolver resolver;
@@ -85,7 +85,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	protected long lastRefreshTime = 0;
 
 	public GenericRefreshWatcher(@NotNull RunnerProperties runner, @NotNull ScmClientProperties<?> config,
-			@NotNull RefreshConfigRepository repository, @Nullable ConfigEventListener... listeners) {
+			@NotNull RefreshRecordsRepository repository, @Nullable ConfigEventListener... listeners) {
 		super(runner);
 		notNullOf(config, "config");
 		notNullOf(repository, "repository");
@@ -135,11 +135,11 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	}
 
 	/**
-	 * Gets {@link RefreshConfigRepository}
+	 * Gets {@link RefreshRecordsRepository}
 	 * 
 	 * @return
 	 */
-	public RefreshConfigRepository getRepository() {
+	public RefreshRecordsRepository getRepository() {
 		return repository;
 	}
 
@@ -150,15 +150,15 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	}
 
 	/**
-	 * New create {@link FetchConfigRequest}
+	 * New create {@link FetchReleaseConfigRequest}
 	 * 
 	 * @return
 	 */
-	protected FetchConfigRequest createFetchRequest() {
+	protected FetchReleaseConfigRequest createFetchRequest() {
 		// Create config watching fetching command
-		ReleasePropertySourceWrapper last = repository.getLastReleaseSource();
+		ReleaseConfigSourceWrapper last = repository.getLastReleaseSource();
 
-		FetchConfigRequest fetch = new FetchConfigRequest();
+		FetchReleaseConfigRequest fetch = new FetchReleaseConfigRequest();
 		fetch.setZone(config.getZone());
 		fetch.setCluster(config.getCluster());
 		fetch.setNode(nodeHolder.getConfigNode());
@@ -185,26 +185,26 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	 * Handling watch result.
 	 * 
 	 * @param command
-	 * @param release
+	 * @param info
 	 */
-	protected void handleWatchResult(int command, ReleaseConfigInfo release) {
+	protected void handleWatchResult(int command, ReleaseConfigInfo info) {
 		switch (command) {
 		case WATCH_CHANGED:
 			lastRefreshTime = currentTimeMillis();
 
 			// Extract config result
-			notNull(release, ScmException.class, "Watch received config source not available");
-			release.validate(true, true);
+			notNull(info, ScmException.class, "Watch received config source not available");
+			info.validate(true, true);
 
 			// Print release sources
-			printConfigSources(release);
+			printConfigSources(info);
 
 			// Resolving to property sources.
-			List<ScmPropertySource> sources = safeList(release.getReleases()).stream()
+			List<ScmConfigSource> sources = safeList(info.getReleases()).stream()
 					.map(r -> resolver.resolve(r.getProfile(), r.getSourceContent())).collect(toList());
 
 			// Addition refresh config source.
-			ReleasePropertySourceWrapper wrapper = new ReleasePropertySourceWrapper(release, sources);
+			ReleaseConfigSourceWrapper wrapper = new ReleaseConfigSourceWrapper(info, sources);
 			repository.saveReleaseSource(wrapper);
 
 			// Publishing refresh

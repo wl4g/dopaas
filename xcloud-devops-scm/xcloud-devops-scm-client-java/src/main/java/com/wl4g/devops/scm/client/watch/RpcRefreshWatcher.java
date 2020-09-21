@@ -21,7 +21,7 @@ import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
-import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
+import com.wl4g.devops.scm.client.repository.RefreshRecordsRepository;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 
 /**
@@ -34,7 +34,7 @@ import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 @Reserved
 public class RpcRefreshWatcher extends GenericRefreshWatcher {
 
-	public RpcRefreshWatcher(ScmClientProperties<?> config, RefreshConfigRepository repository,
+	public RpcRefreshWatcher(ScmClientProperties<?> config, RefreshRecordsRepository repository,
 			ConfigEventListener... listeners) {
 		super(new RunnerProperties(true), config, repository, listeners);
 		throw new UnsupportedOperationException();

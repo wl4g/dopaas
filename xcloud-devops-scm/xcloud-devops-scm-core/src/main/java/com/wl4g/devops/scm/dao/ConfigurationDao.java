@@ -16,7 +16,7 @@
 package com.wl4g.devops.scm.dao;
 
 import com.wl4g.devops.scm.bean.*;
-import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest;
 
 import java.util.List;
@@ -50,7 +50,7 @@ public interface ConfigurationDao {
 
 	public List<VersionContentBean> selectVersion(int id);
 
-	public ConfigSourceBean findSource(FetchConfigRequest get);
+	public ConfigSourceBean findSource(FetchReleaseConfigRequest get);
 
 	public void updateReleaseDetail(ReportChangedRequest report);
 }

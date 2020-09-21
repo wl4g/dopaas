@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 
 /**
@@ -45,6 +45,6 @@ public interface ConfigSourcePublisher {
 	 * @param watch
 	 * @return
 	 */
-	WatchDeferredResult<ResponseEntity<?>> watch(FetchConfigRequest watch);
+	WatchDeferredResult<ResponseEntity<?>> watch(FetchReleaseConfigRequest watch);
 
 }

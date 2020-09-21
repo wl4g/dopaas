@@ -21,34 +21,34 @@ import java.util.Set;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 
 /**
- * {@link RefreshConfigRepository}
+ * {@link RefreshRecordsRepository}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-08-20
  * @since
  */
-public interface RefreshConfigRepository {
+public interface RefreshRecordsRepository {
 
 	/**
-	 * Addition save refresh configuration property source.
+	 * Save released configuration source.
 	 * 
 	 * @param wrapper
 	 */
-	void saveReleaseSource(ReleasePropertySourceWrapper wrapper);
+	void saveReleaseSource(ReleaseConfigSourceWrapper wrapper);
 
 	/**
 	 * Gets last refresh configuration property source.
 	 * 
 	 * @return
 	 */
-	ReleasePropertySourceWrapper getLastReleaseSource();
+	ReleaseConfigSourceWrapper getLastReleaseSource();
 
 	/**
 	 * Gets refresh configuration source currently in use.
 	 * 
 	 * @return
 	 */
-	ReleasePropertySourceWrapper getCurrentReleaseSource();
+	ReleaseConfigSourceWrapper getCurrentReleaseSource();
 
 	// --- Changed records .---
 
@@ -72,6 +72,6 @@ public interface RefreshConfigRepository {
 	 * @param changedKeys
 	 * @param wrapper
 	 */
-	void saveChanged(Set<String> changedKeys, ReleasePropertySourceWrapper wrapper);
+	void saveChanged(Set<String> changedKeys, ReleaseConfigSourceWrapper wrapper);
 
 }

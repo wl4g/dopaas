@@ -18,7 +18,7 @@ package com.wl4g.devops.scm.endpoint;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
@@ -79,7 +79,7 @@ public class ScmServerEndpoint extends BaseController {
 	 * @return
 	 */
 	@PostMapping(value = URI_S_SOURCE_WATCH)
-	public DeferredResult<?> watch(@Validated @RequestBody FetchConfigRequest watch) {
+	public DeferredResult<?> watch(@Validated @RequestBody FetchReleaseConfigRequest watch) {
 		log.info("Long polling watching... <= {}", watch);
 		return handler.watch(watch);
 	}

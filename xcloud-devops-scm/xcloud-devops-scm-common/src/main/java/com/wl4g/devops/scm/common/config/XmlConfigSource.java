@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * {@link XmlPropertySource}
+ * {@link XmlConfigSource}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-15
@@ -19,7 +19,7 @@ import lombok.Setter;
  * @see
  */
 @Getter
-public class XmlPropertySource extends GenericPropertySource {
+public class XmlConfigSource extends AbstractConfigSource {
 
 	private static final long serialVersionUID = -7806121596630535330L;
 

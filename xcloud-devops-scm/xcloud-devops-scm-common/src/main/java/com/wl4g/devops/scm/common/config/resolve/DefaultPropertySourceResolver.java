@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.wl4g.components.common.reflect.ObjectInstantiators;
-import com.wl4g.devops.scm.common.config.HoconPropertySource;
-import com.wl4g.devops.scm.common.config.TomlPropertySource;
-import com.wl4g.devops.scm.common.config.JsonPropertySource;
-import com.wl4g.devops.scm.common.config.PropertiesPropertySource;
-import com.wl4g.devops.scm.common.config.ScmPropertySource;
-import com.wl4g.devops.scm.common.config.XmlPropertySource;
+import com.wl4g.devops.scm.common.config.HoconConfigSource;
+import com.wl4g.devops.scm.common.config.TomlConfigSource;
+import com.wl4g.devops.scm.common.config.JsonConfigSource;
+import com.wl4g.devops.scm.common.config.PropertiesConfigSource;
+import com.wl4g.devops.scm.common.config.ScmConfigSource;
+import com.wl4g.devops.scm.common.config.XmlConfigSource;
 import com.wl4g.devops.scm.common.config.YamlMapPropertySource;
 import com.wl4g.devops.scm.common.exception.UnknownPropertySourceException;
 import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
@@ -44,14 +44,14 @@ import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
 public class DefaultPropertySourceResolver implements PropertySourceResolver {
 
 	@Override
-	public ScmPropertySource resolve(ConfigProfile profile, String sourceContent) {
+	public ScmConfigSource resolve(ConfigProfile profile, String sourceContent) {
 		// Gets source type.
-		Class<? extends ScmPropertySource> soruceClass = getPropertySourceOfType(profile.getType());
+		Class<? extends ScmConfigSource> soruceClass = getPropertySourceOfType(profile.getType());
 		notNull(soruceClass, UnknownPropertySourceException.class, "Unsupported property source of configuration format: %s",
 				profile.getType());
 
 		// New property source.
-		ScmPropertySource source = ObjectInstantiators.newInstance(soruceClass);
+		ScmConfigSource source = ObjectInstantiators.newInstance(soruceClass);
 
 		// Read & parsing.
 		source.read(profile, sourceContent);
@@ -60,29 +60,29 @@ public class DefaultPropertySourceResolver implements PropertySourceResolver {
 	}
 
 	/**
-	 * Gets {@link ScmPropertySource} class by type.
+	 * Gets {@link ScmConfigSource} class by type.
 	 * 
 	 * @param type
 	 * @return
 	 */
-	private Class<? extends ScmPropertySource> getPropertySourceOfType(String type) {
+	private Class<? extends ScmConfigSource> getPropertySourceOfType(String type) {
 		return PRPERTY_SOURCE_TYPE.entrySet().stream()
 				.filter(e -> e.getKey().stream().filter(t -> t.equalsIgnoreCase(type)).findFirst().isPresent())
 				.map(e -> e.getValue()).findFirst().orElse(null);
 	}
 
 	/**
-	 * Property source definitions of {@link ScmPropertySource}
+	 * Property source definitions of {@link ScmConfigSource}
 	 */
-	public static final Map<List<String>, Class<? extends ScmPropertySource>> PRPERTY_SOURCE_TYPE = new ConcurrentHashMap<>();
+	public static final Map<List<String>, Class<? extends ScmConfigSource>> PRPERTY_SOURCE_TYPE = new ConcurrentHashMap<>();
 
 	static {
 		PRPERTY_SOURCE_TYPE.put(asList("yaml", "yml"), YamlMapPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(asList("properties"), PropertiesPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(asList("json"), JsonPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(asList("hocon", "conf"), HoconPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(asList("ini", "toml"), TomlPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(asList("xml"), XmlPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("properties"), PropertiesConfigSource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("json"), JsonConfigSource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("hocon", "conf"), HoconConfigSource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("ini", "toml"), TomlConfigSource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("xml"), XmlConfigSource.class);
 	}
 
 }

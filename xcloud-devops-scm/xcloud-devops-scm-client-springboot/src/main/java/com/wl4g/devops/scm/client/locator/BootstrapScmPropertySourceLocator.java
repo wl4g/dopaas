@@ -19,7 +19,7 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.devops.scm.client.GenericScmClient;
 import com.wl4g.devops.scm.client.ScmClient;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
+import com.wl4g.devops.scm.client.repository.RefreshRecordsRepository;
 import com.wl4g.devops.scm.client.utils.NodeHolder;
 import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
@@ -92,11 +92,11 @@ public class BootstrapScmPropertySourceLocator implements PropertySourceLocator 
 	}
 
 	/**
-	 * Gets {@link RefreshConfigRepository}
+	 * Gets {@link RefreshRecordsRepository}
 	 * 
 	 * @return
 	 */
-	protected RefreshConfigRepository getRefreshRepository() {
+	protected RefreshRecordsRepository getRefreshRepository() {
 		return ((GenericRefreshWatcher) ((GenericScmClient) client).getWatcher()).getRepository();
 	}
 

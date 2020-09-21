@@ -35,7 +35,7 @@ import lombok.experimental.Wither;
 @Getter
 @Setter
 @Wither
-public class ReportChangedRequest extends FetchConfigRequest {
+public class ReportChangedRequest extends FetchReleaseConfigRequest {
 	final private static long serialVersionUID = 2523769504519533902L;
 
 	private Collection<ChangedRecord> changedRecords;
