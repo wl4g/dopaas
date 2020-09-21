@@ -21,6 +21,7 @@ import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.service.GenDataSourceService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -73,6 +74,9 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 	}
 
 	private void update(GenDataSource gen) {
+		if(StringUtils.equals("******",gen.getPassword())){
+			gen.setPassword(null);
+		}
 		genDSDao.updateByPrimaryKeySelective(gen);
 	}
 
