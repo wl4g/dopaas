@@ -1,3 +1,4 @@
+# ${watermark}
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
 # All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
 #
@@ -11,7 +12,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: ${projectName?uncap_first}-server
+  application.name: ${projectName?lower_case}-server
   profiles:
     include: common,support,util
     active: dev
