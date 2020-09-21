@@ -29,8 +29,8 @@ import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
-import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
-import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.client.repository.RefreshRecordsRepository;
+import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
@@ -81,10 +81,10 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	 */
 	private RestClient http;
 
-	public LongPollingRefreshWatcher(ScmClientProperties<?> config, RefreshConfigRepository repository,
+	public LongPollingRefreshWatcher(ScmClientProperties<?> config, RefreshRecordsRepository repository,
 			ConfigEventListener... listeners) {
 		super(new RunnerProperties(true, 1), config, repository, listeners);
-		this.http = initRestClient(config);
+		this.http = initNetworkClient(config);
 	}
 
 	/**
@@ -139,13 +139,13 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 		beforeSafeRefreshProtectDelaying();
 
 		// Gets watch command
-		FetchConfigRequest request = createFetchRequest();
+		FetchReleaseConfigRequest request = createFetchRequest();
 
 		HttpHeaders headers = new HttpHeaders();
 		attachHeaders(headers); // Extra headers
 		log.debug("Watching request headers : {}", headers);
 
-		HttpEntity<FetchConfigRequest> entity = new HttpEntity<>(request, headers);
+		HttpEntity<FetchReleaseConfigRequest> entity = new HttpEntity<>(request, headers);
 		HttpResponseEntity<RespBase<ReleaseConfigInfo>> resp = http.exchange(config.getWatchUri(), POST, entity,
 				new ParameterizedTypeReference<RespBase<ReleaseConfigInfo>>() {
 				});
@@ -172,7 +172,7 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	 * @param config
 	 * @return
 	 */
-	private RestClient initRestClient(ScmClientProperties<?> config) {
+	private final RestClient initNetworkClient(ScmClientProperties<?> config) {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
 		factory.setConnectTimeout(config.getConnectTimeout());
 		factory.setReadTimeout(config.getLongPollTimeout());

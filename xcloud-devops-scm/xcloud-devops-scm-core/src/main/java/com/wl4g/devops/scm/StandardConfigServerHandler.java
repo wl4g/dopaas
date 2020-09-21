@@ -54,7 +54,7 @@ public class StandardConfigServerHandler implements CentralConfigServerHandler {
 	private ConfigurationService configService;
 
 	@Override
-	public WatchDeferredResult<ResponseEntity<?>> watch(FetchConfigRequest watch) {
+	public WatchDeferredResult<ResponseEntity<?>> watch(FetchReleaseConfigRequest watch) {
 		return publisher.watch(watch);
 	}
 

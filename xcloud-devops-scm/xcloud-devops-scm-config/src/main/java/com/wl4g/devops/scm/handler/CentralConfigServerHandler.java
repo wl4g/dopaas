@@ -37,7 +37,7 @@ public interface CentralConfigServerHandler {
 	 * @param watch
 	 * @return
 	 */
-	WatchDeferredResult<ResponseEntity<?>> watch(FetchConfigRequest watch);
+	WatchDeferredResult<ResponseEntity<?>> watch(FetchReleaseConfigRequest watch);
 
 	/**
 	 * Release configuration property-sources.

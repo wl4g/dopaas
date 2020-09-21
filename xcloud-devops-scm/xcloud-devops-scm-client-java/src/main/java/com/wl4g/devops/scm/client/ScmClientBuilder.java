@@ -25,8 +25,8 @@ import static com.wl4g.devops.scm.client.config.CommType.*;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.console.ScmManagementConsole;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
-import com.wl4g.devops.scm.client.repository.InMemoryRefreshConfigRepository;
-import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
+import com.wl4g.devops.scm.client.repository.InMemoryRefreshRecordsRepository;
+import com.wl4g.devops.scm.client.repository.RefreshRecordsRepository;
 import com.wl4g.devops.scm.client.watch.RefreshWatcher;
 import com.wl4g.devops.scm.common.exception.ScmException;
 import com.wl4g.shell.core.EmbeddedShellServerBuilder;
@@ -48,8 +48,8 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	/** Configuration refreshing {@link ConfigEventListener} */
 	private ConfigEventListener[] listeners;
 
-	/** {@link RefreshConfigRepository} */
-	private RefreshConfigRepository repository = new InMemoryRefreshConfigRepository();
+	/** {@link RefreshRecordsRepository} */
+	private RefreshRecordsRepository repository = new InMemoryRefreshRecordsRepository();
 
 	/** Enable managementconsole for {@link ScmManagementConsole} */
 	private boolean enableManagementConsole = false;
@@ -109,12 +109,12 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 
 	/**
 	 * Sets use refresh configuration source of
-	 * {@link InMemoryRefreshConfigRepository}
+	 * {@link InMemoryRefreshRecordsRepository}
 	 * 
 	 * @return
 	 */
 	public ScmClientBuilder useInMemoryConfigStore() {
-		this.repository = new InMemoryRefreshConfigRepository();
+		this.repository = new InMemoryRefreshRecordsRepository();
 		return this;
 	}
 

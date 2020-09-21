@@ -24,32 +24,32 @@ import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.scm.common.config.ScmPropertySource;
+import com.wl4g.devops.scm.common.config.ScmConfigSource;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 
 import lombok.Getter;
 
 /**
- * {@link ReleasePropertySourceWrapper}
+ * {@link ReleaseConfigSourceWrapper}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-08-28
  * @since
  */
 @Getter
-public class ReleasePropertySourceWrapper {
+public class ReleaseConfigSourceWrapper {
 
 	/**
 	 * Origin release of {@link ReleaseConfigInfo}
 	 */
-	private final ReleaseConfigInfo release;
+	private transient final ReleaseConfigInfo release;
 
 	/**
-	 * List of {@link ScmPropertySource}
+	 * List of {@link ScmConfigSource}
 	 */
-	private final List<ScmPropertySource> sources;
+	private final List<ScmConfigSource> sources;
 
-	public ReleasePropertySourceWrapper(@NotNull ReleaseConfigInfo release, @NotEmpty List<ScmPropertySource> sources) {
+	public ReleaseConfigSourceWrapper(@NotNull ReleaseConfigInfo release, @NotEmpty List<ScmConfigSource> sources) {
 		notNullOf(release, "release");
 		notEmptyOf(sources, "sources");
 		this.release = release;

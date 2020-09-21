@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.ResponseEntity;
 
-import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest;
 import com.wl4g.devops.scm.publish.WatchDeferredResult;
@@ -45,7 +45,7 @@ public class CheckCentralConfigServerHandler implements CentralConfigServerHandl
 	}
 
 	@Override
-	public WatchDeferredResult<ResponseEntity<?>> watch(FetchConfigRequest watch) {
+	public WatchDeferredResult<ResponseEntity<?>> watch(FetchReleaseConfigRequest watch) {
 		return null;
 	}
 

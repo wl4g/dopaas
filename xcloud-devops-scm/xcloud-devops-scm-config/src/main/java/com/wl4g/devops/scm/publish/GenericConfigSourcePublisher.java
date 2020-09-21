@@ -23,7 +23,7 @@ import static com.wl4g.components.common.lang.Assert2.notNull;
 
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
-import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigNode;
 import com.wl4g.devops.scm.config.ScmProperties;
@@ -90,7 +90,7 @@ public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner
 
 						getCreateWithDeferreds(wrap.getCluster()).values().stream().filter(deferred -> {
 							if (nonNull(deferred)) {
-								FetchConfigRequest watch = deferred.getWatch();
+								FetchReleaseConfigRequest watch = deferred.getWatch();
 								// Filter namespace
 								wrap.getProfiles().retainAll(watch.getProfiles());
 								if (!CollectionUtils.isEmpty(wrap.getProfiles())) {
@@ -129,7 +129,7 @@ public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner
 	}
 
 	@Override
-	public WatchDeferredResult<ResponseEntity<?>> watch(FetchConfigRequest watch) {
+	public WatchDeferredResult<ResponseEntity<?>> watch(FetchReleaseConfigRequest watch) {
 		// Override creation listening latency.
 		WatchDeferredResult<ResponseEntity<?>> deferred = doCreateWatchDeferred(watch);
 
@@ -168,7 +168,7 @@ public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner
 	 * @param watch
 	 * @return
 	 */
-	protected WatchDeferredResult<ResponseEntity<?>> doCreateWatchDeferred(FetchConfigRequest watch) {
+	protected WatchDeferredResult<ResponseEntity<?>> doCreateWatchDeferred(FetchReleaseConfigRequest watch) {
 		notNull(watch, "Watch must not be null");
 
 		// Create watch-deferred

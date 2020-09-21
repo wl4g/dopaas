@@ -17,6 +17,7 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.components.common.reflect.ReflectionUtils2.FieldFilter;
 import com.wl4g.components.common.reflect.TypeUtils2;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
@@ -46,11 +47,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.components.common.lang.StringUtils2.isTrue;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.doFullWithFields;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getField;
@@ -241,8 +244,17 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	private Map<String, Object> convertToRenderingModel(Object object) throws Exception {
 		final Map<String, Object> model = new HashMap<>();
 
-		doFullWithFields(object, field -> {
-			return isGenericModifier(field.getModifiers());
+		doFullWithFields(object, new FieldFilter() {
+			@Override
+			public boolean matches(Field field) {
+				return isGenericModifier(field.getModifiers());
+			}
+
+			@Override
+			public boolean describeForObjField(Field field) {
+				RenderingProperty rp = field.getDeclaredAnnotation(RenderingProperty.class);
+				return nonNull(rp) && isTrue(rp.describeForObjField());
+			}
 		}, (field, objOfField) -> {
 			if (Objects.isNull(objOfField)) {
 				objOfField = TypeUtils2.instantiate(null, field.getType());
@@ -326,6 +338,16 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.FIELD })
 	public static @interface RenderingProperty {
+
+		/**
+		 * It is used to control whether to continue to reflect the structure of
+		 * the field recursively if the field traversed by reflection is of
+		 * object type.
+		 * 
+		 * @return
+		 */
+		String describeForObjField() default "Yes";
+
 	}
 
 	// Definition of special variables.

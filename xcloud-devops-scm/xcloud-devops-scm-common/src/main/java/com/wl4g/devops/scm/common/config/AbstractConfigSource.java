@@ -5,8 +5,14 @@ import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 
 import javax.validation.constraints.NotNull;
 
+import com.wl4g.components.common.codec.CodecSource;
+import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.devops.scm.common.exception.ScmException;
 import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
+import static com.wl4g.devops.scm.common.SCMConstants.KEY_CIPHER_PREFIX;
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +27,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public abstract class GenericPropertySource implements ScmPropertySource {
+public abstract class AbstractConfigSource implements ScmConfigSource {
 	private static final long serialVersionUID = -5037062685017411482L;
 
 	final protected SmartLogger log = getLogger(getClass());
@@ -32,7 +38,7 @@ public abstract class GenericPropertySource implements ScmPropertySource {
 	@NotNull
 	private ConfigProfile profile;
 
-	public GenericPropertySource() {
+	public AbstractConfigSource() {
 		super();
 	}
 
@@ -54,5 +60,31 @@ public abstract class GenericPropertySource implements ScmPropertySource {
 	 * @param sourceContent
 	 */
 	protected abstract void doRead(ConfigProfile profile, String sourceContent);
+
+	/**
+	 * Resolving cipher release source property value.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	protected String resolveCipherProperty(String key, String value) {
+		if (!isBlank(value) && value.startsWith(KEY_CIPHER_PREFIX)) {
+			try {
+				// TODO using dynamic cipherKey??
+				byte[] cipherKey = AES128ECBPKCS5.getEnvCipherKey("DEVOPS_CIPHER_KEY");
+				String cipherText = value.substring(KEY_CIPHER_PREFIX.length());
+
+				// TODO fromHex()??
+				String plainVal = new AES128ECBPKCS5().decrypt(cipherKey, CodecSource.fromHex(cipherText)).toString();
+				log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, value, plainVal);
+
+				return plainVal;
+			} catch (Exception e) {
+				throw new ScmException(format("Cannot decrypt cipher property. '%s' -> '%s'", key, value), e);
+			}
+		}
+		return value;
+	}
 
 }

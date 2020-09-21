@@ -202,10 +202,9 @@ public abstract class AbstractConfigInfo implements Serializable {
 		@NotBlank
 		private String name;
 
-		public ConfigProfile(@NotNull @NotBlank String type, @NotNull @NotBlank String name) {
-			super();
-			this.type = type;
-			this.name = name;
+		public ConfigProfile(@NotBlank String type, @NotBlank String name) {
+			this.type = hasTextOf(type, "type");
+			this.name = hasTextOf(name, "name");
 		}
 
 		@Override

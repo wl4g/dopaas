@@ -24,7 +24,7 @@ import static java.lang.System.out;
 import java.util.function.Function;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.scm.client.repository.ReleasePropertySourceWrapper;
+import com.wl4g.devops.scm.client.repository.ReleaseConfigSourceWrapper;
 import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
 import com.wl4g.devops.scm.client.watch.RefreshWatcher;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseContent;
@@ -63,7 +63,7 @@ public class ScmManagementConsole {
 		log.info("Exporting configuration soruce... format: {}", format);
 
 		// Gets current used configuration.
-		ReleasePropertySourceWrapper release = getRuntimeUseConfiguration();
+		ReleaseConfigSourceWrapper release = getRuntimeUseConfiguration();
 
 		switch (format.toUpperCase()) {
 		case "JSON":
@@ -84,7 +84,7 @@ public class ScmManagementConsole {
 	 * 
 	 * @return
 	 */
-	private ReleasePropertySourceWrapper getRuntimeUseConfiguration() {
+	private ReleaseConfigSourceWrapper getRuntimeUseConfiguration() {
 		return ((GenericRefreshWatcher) watcher).getRepository().getCurrentReleaseSource();
 	}
 
@@ -94,7 +94,7 @@ public class ScmManagementConsole {
 	 * @param release
 	 * @param func
 	 */
-	private void outputConfigurationSources(ReleasePropertySourceWrapper release, Function<ReleaseContent, String> func) {
+	private void outputConfigurationSources(ReleaseConfigSourceWrapper release, Function<ReleaseContent, String> func) {
 		for (ReleaseContent source : release.getRelease().getReleases()) {
 			out.println("--- ".concat(source.getProfile().getName()).concat(".").concat(source.getProfile().getType())
 					.concat(" ---"));
