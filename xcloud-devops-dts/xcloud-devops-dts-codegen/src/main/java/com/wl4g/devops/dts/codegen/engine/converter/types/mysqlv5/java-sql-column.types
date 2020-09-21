@@ -21,11 +21,10 @@ byte[]                   BLOB                             BLOB
 Boolean                  BIT                              BIT
 Long                     INTEGER                          INTEGER
 Integer                  INTEGER                          INT
-BigInteger               BIGINT                    	      BIGINT
+LONG                     BIGINT                    	      BIGINT
 Float                    FLOAT                            FLOAT
 Double                   DOUBLE                      	  DOUBLE
 BigDecimal               DECIMAL                          DECIMAL
 Date                     DATETIME                         DATETIME
-Time                     DATETIME                         DATETIME
-Timestamp                TIMESTAMP                        TIMESTAMP
+Date                     TIMESTAMP                        TIMESTAMP
 String                   VARCHAR                          TEXT

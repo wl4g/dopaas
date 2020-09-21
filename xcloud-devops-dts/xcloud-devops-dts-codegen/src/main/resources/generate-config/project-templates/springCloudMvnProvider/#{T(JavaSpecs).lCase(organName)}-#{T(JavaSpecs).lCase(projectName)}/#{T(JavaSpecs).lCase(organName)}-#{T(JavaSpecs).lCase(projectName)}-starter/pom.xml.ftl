@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>${organName?uncap_first}-${projectName?uncap_first}-starter</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<name>${organName?cap_first} ${projectName?cap_first} Starter</name>
 	<url>http://${projectName?uncap_first}.${organName?uncap_first}.${organType}</url>
 	<parent>
 		<groupId>${organType?uncap_first}.${organName?uncap_first}</groupId>
-		<artifactId>${projectName?uncap_first}</artifactId>
+		<artifactId>${organName?uncap_first}-${projectName?uncap_first}</artifactId>
 		<version>${version?uncap_first}</version>
 	</parent>
 	<properties>
@@ -44,7 +44,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${final.name}</finalName>
+		<finalName>${projectName?uncap_first}-server</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

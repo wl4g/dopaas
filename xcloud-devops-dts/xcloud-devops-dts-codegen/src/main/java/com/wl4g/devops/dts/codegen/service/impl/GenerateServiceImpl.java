@@ -198,6 +198,13 @@ public class GenerateServiceImpl implements GenerateService {
 
 	@Override
 	public void saveGenConfig(GenTable genTable) {
+		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(genTable.getDatabaseId());
+
+		for (GenTableColumn column : genTable.getGenTableColumns()) {
+			DbTypeConverter conv = converter.forOperator(genDS.getType());
+			column.setSqlType(conv.convertBy(CodeLanguage.JAVA, MappedMatcher.Column2Sql, column.getSimpleColumnType()));
+		}
+
 		if (Objects.nonNull(genTable.getId())) {
 			genTable.preUpdate();
 			update(genTable);

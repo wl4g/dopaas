@@ -2,15 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>${organType?uncap_first}.${organName?uncap_first}</groupId>
 	<artifactId>${organName?uncap_first}-${projectName?uncap_first}</artifactId>
+	<version>${version?uncap_first}</version>
 	<packaging>pom</packaging>
 	<name>${organName?cap_first} ${projectName?cap_first} Projects</name>
 	<url>http://${projectName?uncap_first}.${organName?uncap_first}.${organType}</url>
-	<parent>
-		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-parent</artifactId>
-		<version>master</version>
-	</parent>
 	<modules>
 		<module>${organName?uncap_first}-${projectName?uncap_first}-common</module>
 		<module>${organName?uncap_first}-${projectName?uncap_first}-dao</module>

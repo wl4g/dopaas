@@ -47,6 +47,9 @@ public class GenTableColumn extends BaseBean {
 	private String simpleColumnType;
 
 	@RenderingProperty
+	private String sqlType;
+
+	@RenderingProperty
 	private String columnComment;
 
 	@RenderingProperty

@@ -2,23 +2,10 @@
 
 ${javaSpecs.escapeCopyright(copyright)}
 
-<#macro class_annotation class_name author date>
-/**
- * ${class_name}
- *
- * @author ${author}
- * @version ${version}
- * @Date ${now}
- * @since ${since}
- */
-</#macro>
-<#macro class_package package_name module_name demixing_package>${package_name}.${module_name}.${demixing_package}</#macro>
-
 <#assign aDateTime = .now>
 <#assign aDate = aDateTime?date>
 
-<#--package name-->
-package <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="web" />;
+package ${packageName}.controller.${moduleName};
 
 <#--import-->
 import com.wl4g.components.common.web.rest.RespBase;
@@ -29,11 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="bean" />.${entityName};
-import <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="service" />.${entityName}Service;
+import ${packageName}.common.bean.${moduleName}.${entityName?cap_first};
+import ${packageName}.service.${moduleName}.${entityName?cap_first}Service;
 
-
-<@class_annotation class_name="${entityName}ServiceImpl" author="${functionAuthor}" date="${aDate?iso_utc}" />
+/**
+* {@link ${entityName?cap_first}}
+*
+* @author ${author}
+* @version ${version}
+* @Date ${now}
+* @since ${since}
+*/
 @RestController
 @RequestMapping("/${entityName?uncap_first}")
 public class ${entityName}Controller extends BaseController {
