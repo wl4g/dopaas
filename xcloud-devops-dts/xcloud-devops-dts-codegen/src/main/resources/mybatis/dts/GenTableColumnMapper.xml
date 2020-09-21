@@ -8,6 +8,7 @@
     <result column="column_comment" property="columnComment" jdbcType="VARCHAR" />
     <result column="column_type" property="columnType" jdbcType="VARCHAR" />
     <result column="simple_column_type" property="simpleColumnType" jdbcType="VARCHAR" />
+    <result column="sql_type" property="sqlType" jdbcType="VARCHAR" />
     <result column="column_sort" property="columnSort" jdbcType="INTEGER" />
     <result column="attr_type" property="attrType" jdbcType="VARCHAR" />
     <result column="attr_name" property="attrName" jdbcType="VARCHAR" />
@@ -24,7 +25,7 @@
     <result column="valid_rule" property="validRule" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, table_id, column_name, column_comment, column_type, simple_column_type, column_sort, attr_type, attr_name,
+    id, table_id, column_name, column_comment, column_type, simple_column_type, sql_type, column_sort, attr_type, attr_name,
     is_pk, no_null, is_insert, is_update, is_list, is_query, query_type, is_edit, show_type, 
     dict_type, valid_rule
   </sql>
@@ -53,14 +54,14 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn" >
     insert into dts_gen_table_column (id, table_id, column_name, 
-      column_comment, column_type, simple_column_type, column_sort,
+      column_comment, column_type, simple_column_type, sql_type, column_sort,
       attr_type, attr_name, is_pk, 
       no_null, is_insert, is_update, 
       is_list, is_query, query_type, 
       is_edit, show_type, dict_type, valid_rule
       )
     values (#{id,jdbcType=INTEGER}, #{tableId,jdbcType=INTEGER}, #{columnName,jdbcType=VARCHAR}, 
-      #{columnComment,jdbcType=VARCHAR}, #{columnType,jdbcType=VARCHAR}, #{simpleColumnType,jdbcType=VARCHAR}, #{columnSort,jdbcType=INTEGER},
+      #{columnComment,jdbcType=VARCHAR}, #{columnType,jdbcType=VARCHAR}, #{simpleColumnType,jdbcType=VARCHAR}, #{sqlType,jdbcType=VARCHAR}, #{columnSort,jdbcType=INTEGER},
       #{attrType,jdbcType=VARCHAR}, #{attrName,jdbcType=VARCHAR}, #{isPk,jdbcType=VARCHAR}, 
       #{noNull,jdbcType=VARCHAR}, #{isInsert,jdbcType=VARCHAR}, #{isUpdate,jdbcType=VARCHAR}, 
       #{isList,jdbcType=VARCHAR}, #{isQuery,jdbcType=VARCHAR}, #{queryType,jdbcType=VARCHAR}, 
@@ -71,7 +72,7 @@
 
   <insert id="insertBatch" parameterType="java.util.Map">
     insert into dts_gen_table_column (id, table_id, column_name,
-    column_comment, column_type, simple_column_type, column_sort,
+    column_comment, column_type, simple_column_type, sql_type, column_sort,
     attr_type, attr_name, is_pk,
     no_null, is_insert, is_update,
     is_list, is_query, query_type,
@@ -80,7 +81,8 @@
     VALUES
     <foreach collection="columns" item="column" separator=",">
       (#{column.id,jdbcType=INTEGER}, #{column.tableId,jdbcType=INTEGER}, #{column.columnName,jdbcType=VARCHAR},
-      #{column.columnComment,jdbcType=VARCHAR}, #{column.columnType,jdbcType=VARCHAR}, #{column.simpleColumnType,jdbcType=VARCHAR}, #{column.columnSort,jdbcType=INTEGER},
+      #{column.columnComment,jdbcType=VARCHAR}, #{column.columnType,jdbcType=VARCHAR}, #{column.simpleColumnType,jdbcType=VARCHAR},
+      #{column.sqlType,jdbcType=VARCHAR}, #{column.columnSort,jdbcType=INTEGER},
       #{column.attrType,jdbcType=VARCHAR}, #{column.attrName,jdbcType=VARCHAR}, #{column.isPk,jdbcType=VARCHAR},
       #{column.noNull,jdbcType=VARCHAR}, #{column.isInsert,jdbcType=VARCHAR}, #{column.isUpdate,jdbcType=VARCHAR},
       #{column.isList,jdbcType=VARCHAR}, #{column.isQuery,jdbcType=VARCHAR}, #{column.queryType,jdbcType=VARCHAR},
@@ -110,6 +112,9 @@
       </if>
       <if test="simpleColumnType != null" >
         simple_column_type,
+      </if>
+      <if test="sqlType != null" >
+        sql_type,
       </if>
       <if test="columnSort != null" >
         column_sort,
@@ -169,6 +174,12 @@
       </if>
       <if test="columnType != null" >
         #{columnType,jdbcType=VARCHAR},
+      </if>
+      <if test="simpleColumnType != null" >
+        #{simpleColumnType,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlType != null" >
+        #{sqlType,jdbcType=VARCHAR},
       </if>
       <if test="columnSort != null" >
         #{columnSort,jdbcType=INTEGER},
@@ -230,7 +241,10 @@
         column_type = #{columnType,jdbcType=VARCHAR},
       </if>
       <if test="simpleColumnType != null" >
-        simple_column_type = #{columnType,jdbcType=VARCHAR},
+        simple_column_type = #{simpleColumnType,jdbcType=VARCHAR},
+      </if>
+      <if test="sqlType != null" >
+        sql_type = #{sqlType,jdbcType=VARCHAR},
       </if>
       <if test="columnSort != null" >
         column_sort = #{columnSort,jdbcType=INTEGER},
@@ -284,6 +298,7 @@
       column_comment = #{columnComment,jdbcType=VARCHAR},
       column_type = #{columnType,jdbcType=VARCHAR},
       simple_column_type = #{simpleColumnType,jdbcType=VARCHAR},
+      sql_type = #{sqlType,jdbcType=VARCHAR},
       column_sort = #{columnSort,jdbcType=INTEGER},
       attr_type = #{attrType,jdbcType=VARCHAR},
       attr_name = #{attrName,jdbcType=VARCHAR},

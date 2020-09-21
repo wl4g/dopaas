@@ -15,6 +15,15 @@
  */
 package com.wl4g.devops.dts.codegen.engine.template;
 
+import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.components.common.resource.StreamResource;
+import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
+import freemarker.template.Template;
+import org.apache.commons.codec.net.URLCodec;
+
+import javax.validation.constraints.NotBlank;
+import java.util.*;
+
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.io.ByteStreamUtils.readFullyToString;
 import static com.wl4g.components.common.jvm.JvmRuntimeKit.isJVMDebugging;
@@ -22,22 +31,6 @@ import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.constraints.NotBlank;
-
-import org.apache.commons.codec.net.URLCodec;
-
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.resource.StreamResource;
-import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
-
-import freemarker.template.Template;
 
 /**
  * {@link ClassPathGenTemplateLocator}
@@ -142,7 +135,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	public static final String TPL_PROJECT_PATH = TPL_BASEPATH.concat("/project-templates");
 	// Load tpl suffix rules.
 	public static final String[] LOAD_SUFFIXS = { DEFAULT_TPL_SUFFIX, ".css", ".js", ".vue", ".ts", ".jpg", ".gif", ".html",
-			".json", ".md", ".png", ".svg", ".eot", ".ttf", ".woff", ".woff2" };
+			".json", ".md", ".png", ".svg", ".eot", ".ttf", ".woff", ".woff2",".xml" };
 	// e.g: classpath:/templates/xxGenProvider/**/*/.ftl
 	public static final String LOAD_PATTERN = "classpath:/".concat(TPL_PROJECT_PATH).concat("/%s/**/*%s");
 

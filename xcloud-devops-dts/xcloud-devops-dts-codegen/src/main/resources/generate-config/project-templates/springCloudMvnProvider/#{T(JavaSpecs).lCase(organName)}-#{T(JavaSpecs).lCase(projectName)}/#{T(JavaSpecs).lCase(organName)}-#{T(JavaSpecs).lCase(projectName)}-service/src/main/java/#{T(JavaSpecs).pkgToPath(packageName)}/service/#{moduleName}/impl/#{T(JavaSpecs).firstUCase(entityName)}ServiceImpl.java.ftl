@@ -2,23 +2,10 @@
 
 ${javaSpecs.escapeCopyright(copyright)}
 
-<#macro class_annotation class_name author date>
-/**
- * ${class_name}
- *
- * @author ${author}
- * @version ${version}
- * @Date ${now}
- * @since ${since}
- */
-</#macro>
-<#--{包名}/{模块名}/{分层(dao,entity,service,web)}/{子模块名}-->
-<#--package com.wl4g.devops.dts.codegen.service;-->
-<#macro class_package package_name module_name demixing_package>${package_name}.${module_name}.${demixing_package}</#macro>
 <#assign aDateTime = .now>
 <#assign aDate = aDateTime?date>
 <#--package name-->
-package <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="service.impl" />;
+package ${packageName}.service.${moduleName}.impl;
 
 <#--import-->
 import com.wl4g.components.data.page.PageModel;
@@ -28,13 +15,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="bean" />.${entityName};
-import <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="dao" />.${entityName}Dao;
-import <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="service" />.${entityName}Service;
+import ${packageName}.common.bean.${moduleName}.${entityName?cap_first};
+import ${packageName}.dao.${moduleName}.${entityName?cap_first}Dao;
+import ${packageName}.service.${moduleName}.${entityName?cap_first}Service;
 
 import static java.util.Objects.isNull;
 
-<@class_annotation class_name="${entityName}ServiceImpl" author="${functionAuthor}" date="${aDate?iso_utc}" />
+/**
+* {@link ${entityName?cap_first}}
+*
+* @author ${author}
+* @version ${version}
+* @Date ${now}
+* @since ${since}
+*/
 @Service
 public class ${entityName}ServiceImpl implements ${entityName}Service {
 

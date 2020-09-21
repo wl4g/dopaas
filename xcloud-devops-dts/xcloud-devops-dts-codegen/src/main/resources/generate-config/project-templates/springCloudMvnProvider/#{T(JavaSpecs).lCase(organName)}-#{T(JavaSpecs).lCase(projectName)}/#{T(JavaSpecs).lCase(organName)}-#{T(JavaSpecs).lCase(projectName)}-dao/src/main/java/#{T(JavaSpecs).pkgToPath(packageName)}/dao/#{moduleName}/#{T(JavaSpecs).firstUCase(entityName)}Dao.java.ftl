@@ -6,8 +6,9 @@ ${javaSpecs.escapeCopyright(copyright)}
 <#assign now = aDateTime?date>
 package ${packageName}.dao.${moduleName};
 
-import java.util.Date;
-import ${packageName}.commons.bean.${moduleName}.${entityName?cap_first};
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+import ${packageName}.common.bean.${moduleName}.${entityName?cap_first};
 
 /**
  * {@link ${entityName?cap_first}}
@@ -17,7 +18,7 @@ import ${packageName}.commons.bean.${moduleName}.${entityName?cap_first};
  * @Date ${now}
  * @since ${since}
  */
-public class ${entityName?cap_first}Dao {
+public interface ${entityName?cap_first}Dao {
 
     int deleteByPrimaryKey(Integer id);
 
