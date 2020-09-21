@@ -37,7 +37,7 @@ public interface GenTemplateLocator {
 	 * @return
 	 * @throws Exception
 	 */
-	List<TemplateWrapper> locate(String provider) throws Exception;
+	List<RenderingResourceWrapper> locate(String provider) throws Exception;
 
 	/**
 	 * Cleanup located templates cache all.
@@ -47,52 +47,58 @@ public interface GenTemplateLocator {
 	boolean cleanAll();
 
 	/**
-	 * Generate template wrapper.
+	 * Generate rendering resource wrapper.
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @author Vjay
 	 * @version v1.0 2020-09-16
 	 * @since
 	 */
-	public static class TemplateWrapper implements Serializable {
+	public static class RenderingResourceWrapper implements Serializable {
 		private static final long serialVersionUID = 4336198329362479594L;
 
 		// Template class path.
-		private final String tplPath;
-		private final String fileName;
-		private final String fileContent;
-		private final boolean isTpl;
-		private final boolean isForeachTpl;
+		private final String path;
+		private final String name;
+		private final String content;
+		private final boolean isTemplate;
+		private final boolean isForeachTemplate;
 
-		protected TemplateWrapper(String tplPath, String filename, String fileContent) {
+		protected RenderingResourceWrapper(String tplPath, String filename, String fileContent) {
 			hasTextOf(tplPath, "tplPath");
 			hasTextOf(filename, "filename");
 			hasTextOf(fileContent, "fileContent");
-			this.tplPath = tplPath;
-			this.fileName = filename;
-			this.fileContent = fileContent;
-			this.isTpl = filename.endsWith(DEFAULT_TPL_SUFFIX);
-			this.isForeachTpl = filename.contains(DEFAULT_VARIABLE_ENTITY_NAME);
+			this.path = tplPath;
+			this.name = filename;
+			this.content = fileContent;
+			this.isTemplate = filename.endsWith(DEFAULT_TPL_SUFFIX);
+			this.isForeachTemplate = filename.contains(DEFAULT_VARIABLE_ENTITY_NAME);
 		}
 
-		public String getTplPath() {
-			return tplPath;
+		public String getPath() {
+			return path;
 		}
 
-		public String getFileName() {
-			return fileName;
+		public String getName() {
+			return name;
 		}
 
-		public String getFileContent() {
-			return fileContent;
+		public String getContent() {
+			return content;
 		}
 
-		public boolean isTpl() {
-			return isTpl;
+		public boolean isTemplate() {
+			return isTemplate;
 		}
 
-		public boolean isForeachTpl() {
-			return isForeachTpl;
+		public boolean isForeachTemplate() {
+			return isForeachTemplate;
+		}
+
+		public void validate() {
+			hasTextOf(path, "tplPath");
+			hasTextOf(name, "fileName");
+			hasTextOf(content, "fileContent");
 		}
 
 	}

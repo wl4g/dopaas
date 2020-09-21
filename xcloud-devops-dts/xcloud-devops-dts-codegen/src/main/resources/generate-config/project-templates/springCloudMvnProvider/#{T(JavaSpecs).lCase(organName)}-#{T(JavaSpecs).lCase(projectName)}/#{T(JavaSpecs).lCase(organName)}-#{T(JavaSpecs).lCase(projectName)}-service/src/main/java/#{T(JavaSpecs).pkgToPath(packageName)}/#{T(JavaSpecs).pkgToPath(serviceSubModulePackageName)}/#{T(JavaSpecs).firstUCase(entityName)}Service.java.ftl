@@ -5,11 +5,11 @@ ${javaSpecs.escapeCopyright(copyright)}
 <#assign aDateTime = .now>
 <#assign aDate = aDateTime?date>
 <#--package name-->
-package ${packageName}.service.${moduleName};
+package ${packageName}.${serviceSubModulePackageName};
 
 <#--import-->
 import com.wl4g.components.data.page.PageModel;
-import ${packageName}.common.bean.${moduleName}.${entityName?cap_first};
+import ${packageName}.common.${beanSubModulePackageName}.${entityName?cap_first};
 
 /**
 * {@link ${entityName?cap_first}}

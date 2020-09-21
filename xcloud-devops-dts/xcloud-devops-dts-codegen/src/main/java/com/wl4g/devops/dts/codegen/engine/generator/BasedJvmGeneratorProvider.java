@@ -16,13 +16,17 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import static java.util.Locale.US;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.dts.codegen.bean.GenProject;
+import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.utils.RenderableModelMap;
+import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
+import com.wl4g.devops.dts.codegen.utils.RenderableMapModel;
 
 /**
  * {@link BasedJvmGeneratorProvider}
@@ -39,14 +43,42 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull RenderableModelMap model, @NotBlank String tplPath, Object... beans) {
+	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull RenderableMapModel model) {
 		GenProject project = context.getGenProject();
+		GenTable table = context.getGenTable();
 
-		// Add variable of java/scala/groovy/kotlin project packageName.
+		// Add variable of naming utils.
+		model.put("javaSpecs", new JavaSpecs());
+
+		// Add variable of java/scala/groovy/kotlin packageName
+		// e.g: {organType}.{organName}.{projectName}.{moduleName}
+		// => com.mycompany.myproject.sys
 		StringBuffer packageName = new StringBuffer(project.getOrganType());
 		packageName.append(".").append(project.getOrganName());
 		packageName.append(".").append(project.getProjectName());
+		if (nonNull(table)) { // If there
+			packageName.append(".").append(table.getModuleName());
+		}
 		model.put("packageName", packageName.toString().toLowerCase(US));
+
+		// Add variable of sub module packageName.
+		// e.g: bean.order, dao.order, service.order, controller.order
+		if (nonNull(table)) { // If there
+			String beanSubModulePackageName = "bean";
+			String daoSubModulePackageName = "dao";
+			String serviceSubModulePackageName = "service";
+			String controllerSubModulePackageName = "controller";
+			if (!isBlank(table.getSubModuleName())) { // Optional
+				beanSubModulePackageName = beanSubModulePackageName.concat(".").concat(table.getSubModuleName());
+				daoSubModulePackageName = daoSubModulePackageName.concat(".").concat(table.getSubModuleName());
+				serviceSubModulePackageName = serviceSubModulePackageName.concat(".").concat(table.getSubModuleName());
+				controllerSubModulePackageName = controllerSubModulePackageName.concat(".").concat(table.getSubModuleName());
+			}
+			model.put("beanSubModulePackageName", beanSubModulePackageName);
+			model.put("daoSubModulePackageName", daoSubModulePackageName);
+			model.put("serviceSubModulePackageName", serviceSubModulePackageName);
+			model.put("controllerSubModulePackageName", controllerSubModulePackageName);
+		}
 
 	}
 

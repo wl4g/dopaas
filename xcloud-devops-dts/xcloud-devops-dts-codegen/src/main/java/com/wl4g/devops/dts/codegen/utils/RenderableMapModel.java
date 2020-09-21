@@ -25,14 +25,14 @@ import java.util.Map;
 import com.wl4g.components.common.log.SmartLogger;
 
 /**
- * {@link RenderableModelMap}
+ * {@link RenderableMapModel}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-09-20
  * @sine v1.0.0
  * @see
  */
-public class RenderableModelMap extends HashMap<String, Object> {
+public class RenderableMapModel extends HashMap<String, Object> {
 	private static final long serialVersionUID = -3984465155412592192L;
 
 	protected final SmartLogger log = getLogger(getClass());
@@ -42,7 +42,7 @@ public class RenderableModelMap extends HashMap<String, Object> {
 	 */
 	protected final boolean overridable;
 
-	public RenderableModelMap(boolean overridable) {
+	public RenderableMapModel(boolean overridable) {
 		this.overridable = overridable;
 	}
 
@@ -81,8 +81,8 @@ public class RenderableModelMap extends HashMap<String, Object> {
 	}
 
 	@Override
-	public RenderableModelMap clone() {
-		return (RenderableModelMap) super.clone();
+	public RenderableMapModel clone() {
+		return (RenderableMapModel) super.clone();
 	}
 
 }

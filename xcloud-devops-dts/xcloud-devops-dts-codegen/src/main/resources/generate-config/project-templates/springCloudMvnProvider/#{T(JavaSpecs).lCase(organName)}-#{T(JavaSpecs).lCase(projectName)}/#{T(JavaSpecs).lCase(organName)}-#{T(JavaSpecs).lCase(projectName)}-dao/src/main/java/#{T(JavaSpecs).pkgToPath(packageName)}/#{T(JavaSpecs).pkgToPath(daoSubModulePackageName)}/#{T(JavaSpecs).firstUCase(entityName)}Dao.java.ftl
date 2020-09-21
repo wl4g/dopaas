@@ -4,11 +4,11 @@ ${javaSpecs.escapeCopyright(copyright)}
 
 <#assign aDateTime = .now>
 <#assign now = aDateTime?date>
-package ${packageName}.dao.${moduleName};
+package ${packageName}.${daoSubModulePackageName};
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
-import ${packageName}.common.bean.${moduleName}.${entityName?cap_first};
+import ${packageName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first};
 
 /**
  * {@link ${entityName?cap_first}}

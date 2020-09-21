@@ -41,19 +41,22 @@ public class DefaultGenerateContext implements GenerateContext {
 	/**
 	 * {@link GenTemplateLocator}
 	 */
-	protected GenTemplateLocator locator;
-
-	/** {@link GenTable} */
-	protected final GenProject project;
+	protected final GenTemplateLocator locator;
 
 	/** Generating job workspace directory. */
 	protected final File jobDir;
+
+	/** {@link GenProject} */
+	protected final GenProject genProject;
+
+	/** {@link GenTable} */
+	protected GenTable genTable;
 
 	public DefaultGenerateContext(@NotNull CodegenProperties config, @NotNull GenTemplateLocator locator,
 			@NotNull GenProject project) {
 		this.config = notNullOf(config, "config");
 		this.locator = notNullOf(locator, "locator");
-		this.project = notNullOf(project, "genProject");
+		this.genProject = notNullOf(project, "genProject");
 		this.jobDir = config.getJobDir(project.getId());
 	}
 
@@ -63,13 +66,23 @@ public class DefaultGenerateContext implements GenerateContext {
 	}
 
 	@Override
-	public GenProject getGenProject() {
-		return project;
+	public File getJobDir() {
+		return jobDir;
 	}
 
 	@Override
-	public File getJobDir() {
-		return jobDir;
+	public GenProject getGenProject() {
+		return genProject;
+	}
+
+	@Override
+	public GenTable getGenTable() {
+		return genTable;
+	}
+
+	@Override
+	public void setGenTable(GenTable genTable) {
+		this.genTable = notNullOf(genTable, "genTable");
 	}
 
 }

@@ -28,8 +28,10 @@ import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.io.ByteStreamUtils.readFullyToString;
 import static com.wl4g.components.common.jvm.JvmRuntimeKit.isJVMDebugging;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
 
 /**
@@ -47,11 +49,73 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	/**
 	 * Generate template {@link Template} cache.
 	 */
-	private final Map<String, List<TemplateWrapper>> templatesCache = new HashMap<>();
+	private final Map<String, List<RenderingResourceWrapper>> templatesCache = new HashMap<>();
+
+	/**
+	 * Load generate template suffixs.
+	 */
+	private final List<String> loadTplSuffixs;
+
+	@SuppressWarnings("serial")
+	public ClassPathGenTemplateLocator() {
+		this(new ArrayList<String>() {
+			{
+				add(DEFAULT_TPL_SUFFIX);
+				add(".shtml");
+				add(".html");
+				add(".htm");
+				add(".vue");
+				add(".css");
+				add(".js");
+				add(".ts");
+				add(".jpeg");
+				add(".jpg");
+				add(".gif");
+				add(".svg");
+				add(".waa");
+				add(".mp4");
+				add(".avi");
+				add(".mpeg");
+				add(".mov");
+				add(".wmv");
+				add(".3gp");
+				add(".navi");
+				add(".flv");
+				add(".hddvd");
+				add(".png");
+				add(".ico");
+				add(".icon");
+				add(".json");
+				add(".xml");
+				add(".conf");
+				add(".yaml");
+				add(".yml");
+				add(".eot");
+				add(".ttf");
+				add(".woff");
+				add(".woff2");
+				add(".sh");
+				add(".bat");
+				add(".cmd");
+				add(".md");
+				add(".doc");
+				add(".docx");
+				add(".xls");
+				add(".xlsx");
+				add(".pdf");
+				add(".drawio");
+				add(".mma");
+			}
+		});
+	}
+
+	public ClassPathGenTemplateLocator(List<String> loadTplSuffixs) {
+		this.loadTplSuffixs = unmodifiableList(notEmptyOf(loadTplSuffixs, "loadTplSuffixs"));
+	}
 
 	@Override
-	public List<TemplateWrapper> locate(String provider) throws Exception {
-		List<TemplateWrapper> tpls = templatesCache.get(provider);
+	public List<RenderingResourceWrapper> locate(String provider) throws Exception {
+		List<RenderingResourceWrapper> tpls = templatesCache.get(provider);
 		if (isJVMDebugging || isNull(tpls)) {
 			synchronized (this) {
 				tpls = templatesCache.get(provider);
@@ -87,11 +151,11 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	 * @param provider
 	 * @return
 	 */
-	private static List<String> getResourceLocations(@NotBlank String provider) {
+	private List<String> getResourceLocations(@NotBlank String provider) {
 		hasTextOf(provider, "provider");
 
 		List<String> locations = new ArrayList<>();
-		for (String suffix : LOAD_SUFFIXS) {
+		for (String suffix : loadTplSuffixs) {
 			locations.add(format(LOAD_PATTERN, provider, suffix));
 		}
 		return locations;
@@ -105,7 +169,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	 * @return
 	 * @throws Exception
 	 */
-	private static TemplateWrapper wrapTemplate(StreamResource res, String provider) throws Exception {
+	private static RenderingResourceWrapper wrapTemplate(StreamResource res, String provider) throws Exception {
 		/**
 		 * e.g: res.getURI().toString()
 		 * 
@@ -127,15 +191,12 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 		if (i >= 0) {
 			path = path.substring(i + projectRootPathPart.length());
 		}
-		return new TemplateWrapper(path, res.getFilename(), readFullyToString(res.getInputStream()));
+		return new RenderingResourceWrapper(path, res.getFilename(), readFullyToString(res.getInputStream()));
 	}
 
 	// Template configuration.
 	public static final String TPL_BASEPATH = "generate-config";
 	public static final String TPL_PROJECT_PATH = TPL_BASEPATH.concat("/project-templates");
-	// Load tpl suffix rules.
-	public static final String[] LOAD_SUFFIXS = { DEFAULT_TPL_SUFFIX, ".css", ".js", ".vue", ".ts", ".jpg", ".gif", ".html",
-			".json", ".md", ".png", ".svg", ".eot", ".ttf", ".woff", ".woff2",".xml" };
 	// e.g: classpath:/templates/xxGenProvider/**/*/.ftl
 	public static final String LOAD_PATTERN = "classpath:/".concat(TPL_PROJECT_PATH).concat("/%s/**/*%s");
 
@@ -143,5 +204,9 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	 * {@link ClassPathResourcePatternResolver}
 	 */
 	private static final ClassPathResourcePatternResolver defaultResolver = new ClassPathResourcePatternResolver();
+
+	static {
+
+	}
 
 }

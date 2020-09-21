@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.naming;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.wl4g.components.common.annotation.Nullable;
@@ -142,6 +143,15 @@ public class JavaSpecs extends BaseSpecs {
 		}
 
 		return newCopyright.toString();
+	}
+
+	/**
+	 * Generate java bean serialVersionUID
+	 * 
+	 * @return
+	 */
+	public static long genSerialVersionUID() {
+		return RandomUtils.nextLong(100000000000000000L, 999999999999999999L);
 	}
 
 	/** Underline {@link Pattern} */
