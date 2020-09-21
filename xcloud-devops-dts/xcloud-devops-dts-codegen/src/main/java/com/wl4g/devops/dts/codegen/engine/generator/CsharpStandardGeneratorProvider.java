@@ -15,7 +15,12 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import javax.validation.constraints.NotNull;
+
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
+import com.wl4g.devops.dts.codegen.utils.RenderableMapModel;
 
 /**
  * C_sharp standard generator provider.
@@ -33,6 +38,12 @@ public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 	@Override
 	public void doGenerate() throws Exception {
 		processGenerateWithTemplates(GenProviderAlias.CSHARP_STANDARD);
+	}
+
+	@Override
+	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull RenderableMapModel model) {
+		// Add variable of naming utils.
+		model.put("csharpSpecs", new CSharpSpecs());
 	}
 
 }

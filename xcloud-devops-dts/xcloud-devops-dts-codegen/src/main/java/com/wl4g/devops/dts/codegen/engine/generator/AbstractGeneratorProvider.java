@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.reflect.ReflectionUtils2.FieldFilter;
 import com.wl4g.components.common.reflect.TypeUtils2;
@@ -28,8 +27,8 @@ import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateWrapper;
-import com.wl4g.devops.dts.codegen.utils.RenderableModelMap;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
+import com.wl4g.devops.dts.codegen.utils.RenderableMapModel;
 
 import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
@@ -118,68 +117,70 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		GenProject project = context.getGenProject();
 
 		// Load templates.
-		List<TemplateWrapper> tpls = context.getLocator().locate(provider);
+		List<RenderingResourceWrapper> tpls = context.getLocator().locate(provider);
 
 		// Handling generate
-		doRenderingTemplates(tpls, project, context.getJobDir().getAbsolutePath());
+		handleRenderingTemplates(tpls, project, context.getJobDir().getAbsolutePath());
 	}
 
 	/**
-	 * Do rendering templates generate and save.
+	 * Handling rendering templates generate and save.
 	 *
-	 * @param tpls
+	 * @param resources
 	 * @param project
 	 * @param writeBasePath
 	 * @throws Exception
 	 */
-	protected void doRenderingTemplates(List<TemplateWrapper> tpls, GenProject project, String writeBasePath) throws Exception {
-		for (TemplateWrapper tpl : tpls) {
-			log.info("Rendering generate for tpl - {}", tpl.getTplPath());
+	protected void handleRenderingTemplates(List<RenderingResourceWrapper> resources, GenProject project, String writeBasePath)
+			throws Exception {
+		for (RenderingResourceWrapper resource : resources) {
+			log.info("Rendering generate for - {}", resource.getPath());
 
-			// Create rednering model.
-			RenderableModelMap primaryModel = createRenderingModel(tpl.getTplPath(), project);
+			// Create rendering model.
+			RenderableMapModel primaryModel = createRenderingModel(resource, project);
 
-			if (tpl.isTpl()) {
-				// foreach template by table
-				if (tpl.isForeachTpl()) {
+			if (resource.isTemplate()) {
+				// Foreach template
+				if (resource.isForeachTemplate()) {
 					for (GenTable tab : project.getGenTables()) {
-						// In order to avoid override replacement of the model
-						// key, it must be cloned.
-						RenderableModelMap model = primaryModel.clone();
+						context.setGenTable(tab); // Set current genTable
 
-						// Add table attributes model
+						// When traversing the rendering table (entity), it
+						// needs to share the item information and must be
+						// cloned to prevent it from being covered.
+						RenderableMapModel model = primaryModel.clone();
+
+						// Add table model attributes.
 						model.putAll(convertToRenderingModel(tab));
 
-						// Call Pre rendering.
-						String rendered = hasText(preRendering(tpl, model), "Pre rendering should return the rendered value");
+						// Add customization model attibutes.
+						customizeRenderingModel(resource, model);
 
-						// Rendering with freemarker.
-						String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(tpl.getTplPath(), model));
-						Template template = new Template(tpl.getFileName(), rendered, defaultGenConfigurer);
-						rendered = renderingTemplateToString(template, model);
+						// Rendering source templates.
+						String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(resource.getPath(), model));
+						String renderedString = doHandleRenderingTemplateToString(resource, model);
 
 						// Call post rendered.
-						postRendering(tpl, rendered, writePath);
+						postRenderingComplete(resource, renderedString, writePath);
 					}
 				}
 				// Simple template.
 				else {
-					// Call Pre rendering.
-					String rendered = hasText(preRendering(tpl, primaryModel), "Pre rendering should return the rendered value");
+					// Add customization model attibutes.
+					customizeRenderingModel(resource, primaryModel);
 
-					// Rendering with freemarker.
-					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(tpl.getTplPath(), primaryModel));
-					Template template = new Template(tpl.getFileName(), rendered, defaultGenConfigurer);
-					rendered = renderingTemplateToString(template, primaryModel);
+					// Rendering source templates.
+					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(resource.getPath(), primaryModel));
+					String renderedString = doHandleRenderingTemplateToString(resource, primaryModel);
 
 					// Call post rendered.
-					postRendering(tpl, rendered, writePath);
+					postRenderingComplete(resource, renderedString, writePath);
 				}
 			}
 			// e.g: static resources files
 			else {
-				String targetPath = writeBasePath + "/" + resolveSpelExpression(tpl.getTplPath(), primaryModel);
-				writeFile(new File(targetPath), tpl.getFileContent(), false);
+				String targetPath = writeBasePath + "/" + resolveSpelExpression(resource.getPath(), primaryModel);
+				writeFile(new File(targetPath), resource.getContent(), false);
 			}
 		}
 	}
@@ -187,12 +188,12 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	/**
 	 * Preparing rendering processing.
 	 * 
-	 * @param tpl
+	 * @param resource
 	 * @param model
 	 * @return
 	 */
-	protected String preRendering(@NotNull TemplateWrapper tpl, @NotEmpty Map<String, Object> model) {
-		notNullOf(tpl, "tpl");
+	protected String preRendering(@NotNull RenderingResourceWrapper resource, @NotEmpty Map<String, Object> model) {
+		notNullOf(resource, "resource");
 		notEmptyOf(model, "model");
 
 		// It is recommended to use FreeMarker to call Java methods.
@@ -203,48 +204,47 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// // first, otherwise FreeMarker will report an error.
 		// //
 		// return defaultExpressions.resolve(tpl.getFileContent(), model);
-		return tpl.getFileContent();
+		return resource.getContent();
 	}
 
 	/**
-	 * Post rendered processing.
+	 * Post rendering complete processing.
 	 * 
-	 * @param tpl
-	 * @param rendered
+	 * @param resource
+	 * @param renderedString
 	 * @param writePath
 	 */
-	protected void postRendering(@NotNull TemplateWrapper tpl, @NotBlank String rendered, @NotBlank String writePath) {
-		notNullOf(tpl, "tpl");
-		hasTextOf(rendered, "rendered");
+	protected void postRenderingComplete(@NotNull RenderingResourceWrapper resource, @NotBlank String renderedString,
+			@NotBlank String writePath) {
+		notNullOf(resource, "resource");
+		hasTextOf(renderedString, "renderedString");
 		hasTextOf(writePath, "writePath");
 
 		// Default by write to local disk
-		writeFile(new File(writePath), rendered, false);
+		writeFile(new File(writePath), renderedString, false);
 	}
 
 	/**
 	 * Customize rendering model
 	 *
+	 * @param resource
 	 * @param model
-	 * @param tplPath
-	 * @param beans
 	 * @return
 	 */
-	protected void customizeRenderingModel(@NotNull RenderableModelMap model, @NotBlank String tplPath,
-			@Nullable Object... beans) {
+	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull RenderableMapModel model) {
 	}
 
 	/**
 	 * Converting object to flat map model
 	 *
-	 * @param object
+	 * @param bean
 	 * @return
 	 * @throws Exception
 	 */
-	private Map<String, Object> convertToRenderingModel(Object object) throws Exception {
+	protected final Map<String, Object> convertToRenderingModel(Object bean) throws Exception {
 		final Map<String, Object> model = new HashMap<>();
 
-		doFullWithFields(object, new FieldFilter() {
+		doFullWithFields(bean, new FieldFilter() {
 			@Override
 			public boolean matches(Field field) {
 				return isGenericModifier(field.getModifiers());
@@ -276,14 +276,15 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	/**
 	 * Create rendering model
 	 *
-	 * @param tplPath
+	 * @param resource
 	 * @param project
 	 * @param table
 	 * @return
 	 * @throws Exception
 	 */
-	private RenderableModelMap createRenderingModel(String tplPath, Object... innerRequiresBeans) throws Exception {
-		RenderableModelMap model = new RenderableModelMap(config.isAllowRenderingCustomizeModelOverride());
+	private RenderableMapModel createRenderingModel(RenderingResourceWrapper resource, Object... innerRequiresBeans)
+			throws Exception {
+		RenderableMapModel model = new RenderableMapModel(config.isAllowRenderingCustomizeModelOverride());
 
 		// Add requires rendering parameters.
 		if (!isNull(innerRequiresBeans)) {
@@ -295,16 +296,6 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// Add variable of watermark.
 		model.put(VAR_WATERMARK, TPL_WATERMARK);
 
-		// Add variable of naming utils.
-		model.put("javaSpecs", new JavaSpecs());
-		model.put("csharpSpecs", new CSharpSpecs());
-		model.put("golangSpecs", new GolangSpecs());
-		model.put("pythonSpecs", new PythonSpecs());
-
-		// Add customization model attibutes.
-		customizeRenderingModel(model, tplPath, innerRequiresBeans);
-
-		log.debug("Gen rendering model: {}", model);
 		return model;
 	}
 
@@ -324,6 +315,31 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		log.debug("Resolving SPEL for expression: {}, model: {}", () -> spelExpr, () -> model);
 
 		return defaultExpressions.resolve(spelExpr, model);
+	}
+
+	/**
+	 * Do processing template rendering to string.
+	 * 
+	 * @param resource
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	private String doHandleRenderingTemplateToString(RenderingResourceWrapper resource, RenderableMapModel model)
+			throws Exception {
+		notNullOf(resource, "resource");
+		notEmptyOf(model, "model");
+		resource.validate();
+
+		log.debug("Generate rendering model: {}", model);
+
+		// Preparing rendering
+		String renderedString = preRendering(resource, model);
+		renderedString = isBlank(renderedString) ? resource.getContent() : renderedString; // Fallback
+
+		// Primary rendering
+		Template template = new Template(resource.getName(), renderedString, defaultGenConfigurer);
+		return renderingTemplateToString(template, model);
 	}
 
 	/**

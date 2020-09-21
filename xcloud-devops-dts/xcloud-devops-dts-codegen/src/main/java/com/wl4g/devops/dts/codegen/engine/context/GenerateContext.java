@@ -15,10 +15,14 @@
  */
 package com.wl4g.devops.dts.codegen.engine.context;
 
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
+import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 import java.io.File;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * {@link GenerateContext}
@@ -34,20 +38,38 @@ public interface GenerateContext {
 	 * 
 	 * @return
 	 */
+	@NotNull
 	GenTemplateLocator getLocator();
-
-	/**
-	 * Gets generate for {@link GenProject}
-	 * 
-	 * @return
-	 */
-	GenProject getGenProject();
 
 	/**
 	 * Gets generate workspace job directory.
 	 * 
 	 * @return
 	 */
+	@NotNull
 	File getJobDir();
+
+	/**
+	 * Gets generate for {@link GenProject}
+	 * 
+	 * @return
+	 */
+	@NotNull
+	GenProject getGenProject();
+
+	/**
+	 * Gets current generating for {@link GenTable}
+	 * 
+	 * @return
+	 */
+	@Nullable
+	GenTable getGenTable();
+
+	/**
+	 * Sets current generating for {@link GenTable}
+	 * 
+	 * @param genTable
+	 */
+	void setGenTable(@NotNull GenTable genTable);
 
 }

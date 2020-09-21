@@ -3,8 +3,8 @@
 
 <!-- ${watermark} -->
 
-<mapper namespace="${packageName}.dao.${moduleName}.${entityName?cap_first}Dao">
-    <resultMap id="BaseResultMap" type="${packageName}.common.bean.${moduleName}.${entityName?cap_first}">
+<mapper namespace="${packageName}.${daoSubModulePackageName}.${entityName?cap_first}Dao">
+    <resultMap id="BaseResultMap" type="${packageName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first}">
         <#list genTableColumns as param>
             <#if param.isPk == 1>
         <id column="${param.columnName}" jdbcType="${param.sqlType}" property="${param.attrName}" />
@@ -30,7 +30,7 @@
         where ${pk.columnName} = ${r'#{'}${pk.attrName},jdbcType=${pk.sqlType}}
     </delete>
 
-    <insert id="insertSelective" parameterType="${packageName}.common.bean.${moduleName}.${entityName?cap_first}">
+    <insert id="insertSelective" parameterType="${packageName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first}">
         insert into ${tableName}
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <#list genTableColumns as param>
@@ -48,7 +48,7 @@
         </trim>
     </insert>
 
-    <update id="updateByPrimaryKeySelective" parameterType="${packageName}.common.bean.${moduleName}.${entityName?cap_first}">
+    <update id="updateByPrimaryKeySelective" parameterType="${packageName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first}">
         update ${tableName}
         <set>
         <#list genTableColumns as param>
