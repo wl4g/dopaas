@@ -36,7 +36,6 @@ import org.apache.commons.codec.net.URLCodec;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.resource.StreamResource;
 import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
-import com.wl4g.devops.dts.codegen.engine.generator.AbstractGeneratorProvider;
 
 import freemarker.template.Template;
 
@@ -52,18 +51,23 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 
 	protected final SmartLogger log = getLogger(getClass());
 
+	/**
+	 * Generate template {@link Template} cache.
+	 */
+	private final Map<String, List<TemplateWrapper>> templatesCache = new HashMap<>();
+
 	@Override
 	public List<TemplateWrapper> locate(String provider) throws Exception {
 		List<TemplateWrapper> tpls = templatesCache.get(provider);
 		if (isJVMDebugging || isNull(tpls)) {
-			synchronized (AbstractGeneratorProvider.class) {
+			synchronized (this) {
 				tpls = templatesCache.get(provider);
 				if (isJVMDebugging || isNull(tpls)) {
 					tpls = new ArrayList<>();
 
 					// Scanning templates resources.
 					String[] locations = getResourceLocations(provider).toArray(new String[0]);
-					Set<StreamResource> resources = defaultResourceResolver.getResources(locations);
+					Set<StreamResource> resources = defaultResolver.getResources(locations);
 
 					log.info("Loaded templates resources: {}", resources);
 					for (StreamResource res : resources) {
@@ -136,22 +140,15 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	// Template configuration.
 	public static final String TPL_BASEPATH = "generate-config";
 	public static final String TPL_PROJECT_PATH = TPL_BASEPATH.concat("/project-templates");
-
 	// Load tpl suffix rules.
-	public static final String[] LOAD_SUFFIXS = { DEFAULT_TPL_SUFFIX, ".css", ".js", ".vue", ".ts", ".jpg", ".gif", ".html", ".json",
-			".md", ".png", ".svg", ".eot", ".ttf", ".woff", ".woff2" };
-
+	public static final String[] LOAD_SUFFIXS = { DEFAULT_TPL_SUFFIX, ".css", ".js", ".vue", ".ts", ".jpg", ".gif", ".html",
+			".json", ".md", ".png", ".svg", ".eot", ".ttf", ".woff", ".woff2" };
 	// e.g: classpath:/templates/xxGenProvider/**/*/.ftl
 	public static final String LOAD_PATTERN = "classpath:/".concat(TPL_PROJECT_PATH).concat("/%s/**/*%s");
 
 	/**
-	 * Global project {@link Template} cache.
-	 */
-	private static final Map<String, List<TemplateWrapper>> templatesCache = new HashMap<>();
-
-	/**
 	 * {@link ClassPathResourcePatternResolver}
 	 */
-	private static final ClassPathResourcePatternResolver defaultResourceResolver = new ClassPathResourcePatternResolver();
+	private static final ClassPathResourcePatternResolver defaultResolver = new ClassPathResourcePatternResolver();
 
 }

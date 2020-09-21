@@ -7,7 +7,9 @@ ${javaSpecs.escapeCopyright(copyright)}
  * ${class_name}
  *
  * @author ${author}
- * @Date ${date}
+ * @version ${version}
+ * @Date ${now}
+ * @since ${since}
  */
 </#macro>
 <#macro class_package package_name module_name demixing_package>${package_name}.${module_name}.${demixing_package}</#macro>

@@ -60,6 +60,7 @@ import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * {@link AbstractGeneratorProvider}
@@ -219,29 +220,6 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	}
 
 	/**
-	 * Converting object to flat map model
-	 *
-	 * @param object
-	 * @return
-	 * @throws Exception
-	 */
-	protected Map<String, Object> convertToRenderingModel(Object object) throws Exception {
-		final Map<String, Object> model = new HashMap<>();
-		doFullWithFields(object, field -> {
-			return isGenericModifier(field.getModifiers());
-		}, (field, objOfField) -> {
-			if (Objects.isNull(objOfField)) {
-				objOfField = TypeUtils2.instantiate(null, field.getType());
-			}
-			RenderingProperty rp = field.getDeclaredAnnotation(RenderingProperty.class);
-			if (nonNull(rp)) {
-				model.put(field.getName(), getField(field, objOfField));
-			}
-		});
-		return model;
-	}
-
-	/**
 	 * Customize rendering model
 	 *
 	 * @param model
@@ -251,6 +229,36 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 */
 	protected void customizeRenderingModel(@NotNull RenderableModelMap model, @NotBlank String tplPath,
 			@Nullable Object... beans) {
+	}
+
+	/**
+	 * Converting object to flat map model
+	 *
+	 * @param object
+	 * @return
+	 * @throws Exception
+	 */
+	private Map<String, Object> convertToRenderingModel(Object object) throws Exception {
+		final Map<String, Object> model = new HashMap<>();
+
+		doFullWithFields(object, field -> {
+			return isGenericModifier(field.getModifiers());
+		}, (field, objOfField) -> {
+			if (Objects.isNull(objOfField)) {
+				objOfField = TypeUtils2.instantiate(null, field.getType());
+			}
+			RenderingProperty rp = field.getDeclaredAnnotation(RenderingProperty.class);
+			if (nonNull(rp)) {
+				Object modelAttrVal = getField(field, objOfField);
+				// Note: Combined with FreeMarker script, no value is saved when
+				// there is no available value.
+				if (!isNull(modelAttrVal) || (modelAttrVal instanceof String && !isBlank((String) modelAttrVal))) {
+					model.put(field.getName(), modelAttrVal);
+				}
+			}
+		});
+
+		return model;
 	}
 
 	/**
