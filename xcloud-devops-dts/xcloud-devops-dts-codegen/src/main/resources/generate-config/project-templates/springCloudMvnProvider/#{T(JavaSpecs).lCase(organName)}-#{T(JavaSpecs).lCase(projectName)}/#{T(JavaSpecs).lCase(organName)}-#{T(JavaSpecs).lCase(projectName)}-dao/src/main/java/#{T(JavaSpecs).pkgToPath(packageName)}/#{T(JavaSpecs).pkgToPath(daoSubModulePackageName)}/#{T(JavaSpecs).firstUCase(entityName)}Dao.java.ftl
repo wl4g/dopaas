@@ -8,7 +8,7 @@ package ${packageName}.${daoSubModulePackageName};
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
-import ${packageName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first};
+import ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first};
 
 /**
  * {@link ${entityName?cap_first}}
@@ -27,6 +27,8 @@ public interface ${entityName?cap_first}Dao {
     ${entityName?cap_first} selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKeySelective(${entityName?cap_first} ${entityName?uncap_first});
+
+    int updateByPrimaryKey(${entityName?cap_first} ${entityName?uncap_first});
 
     List<${entityName?cap_first}> list(@Param("${entityName?uncap_first}") ${entityName} ${entityName?uncap_first});
 

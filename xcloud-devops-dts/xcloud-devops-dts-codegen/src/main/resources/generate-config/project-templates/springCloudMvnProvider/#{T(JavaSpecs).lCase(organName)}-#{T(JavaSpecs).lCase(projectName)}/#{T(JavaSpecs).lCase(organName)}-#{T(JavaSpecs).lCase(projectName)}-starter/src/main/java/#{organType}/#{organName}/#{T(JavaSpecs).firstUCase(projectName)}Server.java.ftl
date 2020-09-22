@@ -20,7 +20,7 @@ import com.wl4g.iam.client.annotation.EnableIamClient;
  * @since ${since}
  */
 @EnableIamClient
-@MapperScan("${organType?uncap_first}.${organName?uncap_first}.${projectName?uncap_first}.dao.*")
+@MapperScan("${organType?uncap_first}.${organName?uncap_first}.${projectName?uncap_first}.*.dao.*")
 @AutoConfigureComponentsDataSource
 @SpringBootApplication(scanBasePackages = { "com.wl4g", "${organType?uncap_first}.${organName?uncap_first}" })
 public class ${projectName?cap_first}Server {
