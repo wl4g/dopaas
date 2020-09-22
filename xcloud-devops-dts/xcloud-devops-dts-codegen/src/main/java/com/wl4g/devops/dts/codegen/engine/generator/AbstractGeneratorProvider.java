@@ -31,6 +31,8 @@ import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.RenderableMapModel;
 import freemarker.template.Template;
+
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotBlank;
@@ -71,7 +73,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0 2020-09-07
  * @since
  */
-public abstract class AbstractGeneratorProvider implements GeneratorProvider {
+public abstract class AbstractGeneratorProvider implements GeneratorProvider, InitializingBean {
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -89,10 +91,14 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	/**
 	 * Generate primary {@link RenderableMapModel}.
 	 */
-	protected final RenderableMapModel primaryModel;
+	protected RenderableMapModel primaryModel;
 
 	public AbstractGeneratorProvider(GenerateContext context) {
 		this.context = notNullOf(context, "context");
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
 		this.primaryModel = initPrimaryRenderingModel();
 	}
 
