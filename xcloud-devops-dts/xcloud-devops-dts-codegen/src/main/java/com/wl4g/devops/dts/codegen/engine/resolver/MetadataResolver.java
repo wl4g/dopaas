@@ -78,17 +78,32 @@ public interface MetadataResolver {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Query tables foreign
+	 * 
+	 * @param tableName
+	 * @return
+	 */
 	default List<ForeignMetadata> findTableForeign(@NotBlank String tableName) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Query database version.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	default String findDBVersion() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
-	 * {@link ResolverAlias}
+	 * Database handler resolver alias.
 	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020-09-17
+	 * @sine v1.0.0
 	 * @see
 	 */
 	public static interface ResolverAlias {

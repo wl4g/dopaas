@@ -18,7 +18,13 @@ package com.wl4g.devops.dts.codegen.engine.template;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
+import com.wl4g.components.common.annotation.Nullable;
+
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * {@link GenTemplateLocator}
@@ -64,13 +70,13 @@ public interface GenTemplateLocator {
 		private final boolean isTemplate;
 		private final boolean isForeachTemplate;
 
-		protected RenderingResourceWrapper(String path, String name, String content) {
+		protected RenderingResourceWrapper(@NotBlank String path, @NotBlank String name, @Nullable String content) {
 			hasTextOf(path, "path");
 			hasTextOf(name, "name");
-			hasTextOf(content, "content");
+			// hasTextOf(content, "content");
 			this.path = path;
 			this.name = name;
-			this.content = content;
+			this.content = isBlank(content) ? EMPTY : content; // By default
 			this.isTemplate = name.endsWith(DEFAULT_TPL_SUFFIX);
 			this.isForeachTemplate = name.contains(DEFAULT_VARIABLE_ENTITY_NAME);
 		}
