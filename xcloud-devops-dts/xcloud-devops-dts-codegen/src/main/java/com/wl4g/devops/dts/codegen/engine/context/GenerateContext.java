@@ -16,13 +16,13 @@
 package com.wl4g.devops.dts.codegen.engine.context;
 
 import com.wl4g.components.common.annotation.Nullable;
+import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
-import java.io.File;
-
 import javax.validation.constraints.NotNull;
+import java.io.File;
 
 /**
  * {@link GenerateContext}
@@ -64,6 +64,14 @@ public interface GenerateContext {
 	 */
 	@Nullable
 	GenTable getGenTable();
+
+	/**
+	 * Gets current generating for {@link GenDataSource}
+	 *
+	 * @return
+	 */
+	@Nullable
+	GenDataSource getGenDataSource();
 
 	/**
 	 * Sets current generating for {@link GenTable}

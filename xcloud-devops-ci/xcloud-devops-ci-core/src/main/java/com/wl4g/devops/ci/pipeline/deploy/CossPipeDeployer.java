@@ -20,7 +20,7 @@ import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.components.core.bean.erm.ClusterConfig;
+import com.wl4g.components.core.bean.iam.ClusterConfig;
 import com.wl4g.devops.ci.pipeline.ViewNativePipelineProvider;
 
 import org.springframework.core.io.FileSystemResource;

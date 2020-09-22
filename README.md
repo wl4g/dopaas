@@ -35,7 +35,7 @@ mvn -U clean install -DskipTests -T 2C
 - step2, Initialize the db, First prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8/utf8_bin), and then use [Initial SQL script](../../../super-cloudops-data/tree/master/db) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest)
 - step3, Configure hosts, Add local domain name resolution.（C:\Windows\System32\drivers\etc or vim /etc/hosts）：
 ```
-10.0.0.160	wl4g.debug # Corresponding to erm_cluster_config.extranet_base_uri
+10.0.0.160	wl4g.debug # Corresponding to sys_cluster_config.extranet_base_uri
 ```
 - step4：[Optional] Quickly build a redis cluster (docker). The current version supports the coexistence of redis single point and cluster. In application-{env}.yml redis.nodes When the key is configured with a value, the redis stand-alone mode will be automatically checked.
 ```

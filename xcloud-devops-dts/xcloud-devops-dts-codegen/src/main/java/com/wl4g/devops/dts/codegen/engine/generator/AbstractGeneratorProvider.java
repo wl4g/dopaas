@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.reflect.ReflectionUtils2.FieldFilter;
+import com.wl4g.components.common.reflect.ReflectionUtils2.*;
 import com.wl4g.components.common.reflect.TypeUtils2;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
@@ -29,36 +29,33 @@ import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.RenderableMapModel;
-
-import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
-import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
-
 import freemarker.template.Template;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.lang.StringUtils2.isTrue;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.reflect.ReflectionUtils2.doFullWithFields;
-import static com.wl4g.components.common.reflect.ReflectionUtils2.getField;
-import static com.wl4g.components.common.reflect.ReflectionUtils2.isGenericModifier;
+import static com.wl4g.components.common.reflect.ReflectionUtils2.*;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
 import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
+import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
+import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -138,6 +135,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 			// Create rendering model.
 			RenderableMapModel primaryModel = createRenderingModel(resource, project);
+			primaryModel.put("datasource", convertToRenderingModel(context.getGenDataSource()));
 
 			if (resource.isTemplate()) {
 				// Foreach template

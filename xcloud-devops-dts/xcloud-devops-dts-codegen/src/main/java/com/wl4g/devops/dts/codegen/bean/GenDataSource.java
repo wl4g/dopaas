@@ -19,6 +19,8 @@ import com.wl4g.components.core.bean.BaseBean;
 import lombok.Getter;
 import lombok.Setter;
 
+import static com.wl4g.devops.dts.codegen.engine.generator.AbstractGeneratorProvider.RenderingProperty;
+
 /**
  * {@link GenDataSource}
  *
@@ -29,65 +31,70 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GenDataSource extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private String name;
+    @RenderingProperty
+    private String name;
 
-	private String type;
+    @RenderingProperty
+    private String type;
 
-	private String host;
+    @RenderingProperty
+    private String host;
 
-	private String port;
+    @RenderingProperty
+    private String port;
 
-	private String database;
+    @RenderingProperty
+    private String database;
 
-	private String username;
+    private String username;
 
-	private String password;
+    private String password;
 
-	private String url;
+    private String url;
 
-	public GenDataSource() {
-		super();
-	}
+    public GenDataSource() {
+        super();
+    }
 
-	public GenDataSource withName(String name) {
-		this.name = name;
-		return this;
-	}
+    public GenDataSource withName(String name) {
+        this.name = name;
+        return this;
+    }
 
-	public GenDataSource withType(String type) {
-		this.type = type;
-		return this;
-	}
+    public GenDataSource withType(String type) {
+        this.type = type;
+        return this;
+    }
 
-	public GenDataSource withHost(String host) {
-		this.host = host;
-		return this;
-	}
+    public GenDataSource withHost(String host) {
+        this.host = host;
+        return this;
+    }
 
-	public GenDataSource withPort(String port) {
-		this.port = port;
-		return this;
-	}
+    public GenDataSource withPort(String port) {
+        this.port = port;
+        return this;
+    }
 
-	public GenDataSource withDatabase(String database) {
-		this.database = database;
-		return this;
-	}
+    public GenDataSource withDatabase(String database) {
+        this.database = database;
+        return this;
+    }
 
-	public GenDataSource withUsername(String username) {
-		this.username = username;
-		return this;
-	}
+    public GenDataSource withUsername(String username) {
+        this.username = username;
+        return this;
+    }
 
-	public GenDataSource withPassword(String password) {
-		this.password = password;
-		return this;
-	}
+    public GenDataSource withPassword(String password) {
+        this.password = password;
+        return this;
+    }
 
-	public GenDataSource withUrl(String url) {
-		this.url = url;
-		return this;
-	}
+    public GenDataSource withUrl(String url) {
+        this.url = url;
+        return this;
+    }
 }
