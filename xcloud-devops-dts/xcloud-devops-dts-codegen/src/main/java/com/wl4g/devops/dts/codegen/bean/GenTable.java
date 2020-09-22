@@ -34,8 +34,6 @@ import java.util.List;
 public class GenTable extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
-	private Integer databaseId;
-
 	private Integer projectId;
 
 	@RenderingProperty

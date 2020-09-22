@@ -48,17 +48,17 @@ public class GenerateController extends BaseController {
 	private GenerateService generateService;
 
 	@RequestMapping("loadTables")
-	public RespBase<?> loadTables(Integer databaseId) {
+	public RespBase<?> loadTables(Integer projectId) {
 		RespBase<Object> resp = RespBase.create();
-		List<TableMetadata> tables = generateService.loadTables(databaseId);
+		List<TableMetadata> tables = generateService.loadTables(projectId);
 		resp.setData(tables);
 		return resp;
 	}
 
 	@RequestMapping("loadMetadata")
-	public RespBase<?> loadMetadata(Integer databaseId, Integer projectId, String tableName) {
+	public RespBase<?> loadMetadata(Integer projectId, String tableName) {
 		RespBase<Object> resp = RespBase.create();
-		GenTable genTable = generateService.loadMetadata(databaseId, projectId, tableName);
+		GenTable genTable = generateService.loadMetadata(projectId, tableName);
 		resp.setData(genTable);
 		return resp;
 	}
