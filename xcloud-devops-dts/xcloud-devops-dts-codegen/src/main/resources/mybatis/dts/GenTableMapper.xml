@@ -4,7 +4,6 @@
 <mapper namespace="com.wl4g.devops.dts.codegen.dao.GenTableDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenTable" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="database_id" property="databaseId" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="table_name" property="tableName" jdbcType="VARCHAR" />
     <result column="entity_name" property="entityName" jdbcType="VARCHAR" />
@@ -27,7 +26,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, database_id, project_id, table_name, entity_name, comments, parent_table_name, parent_table_fk_name,
+    id, project_id, table_name, entity_name, comments, parent_table_name, parent_table_fk_name,
     module_name, sub_module_name, function_name, 
     function_name_simple, function_author, options, status, remark, create_date,
     create_by, update_date, update_by, del_flag
@@ -53,7 +52,7 @@
   </delete>
 
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
-    insert into dts_gen_table (id, database_id, project_id, table_name,
+    insert into dts_gen_table (id, project_id, table_name,
       entity_name, comments, parent_table_name,
       parent_table_fk_name,
       module_name, sub_module_name, 
@@ -61,7 +60,7 @@
       gen_base_dir, options, status, remark,
       del_flag, create_date, create_by, 
       update_date, update_by)
-    values (#{id,jdbcType=INTEGER}, #{databaseId,jdbcType=INTEGER},  #{projectId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR},
+    values (#{id,jdbcType=INTEGER},  #{projectId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR},
       #{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{parentTableName,jdbcType=VARCHAR},
       #{parentTableFkName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
       #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR}, #{functionAuthor,jdbcType=VARCHAR}, 
@@ -74,9 +73,6 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
-      </if>
-      <if test="databaseId != null" >
-        database_id,
       </if>
       <if test="projectId != null" >
         project_id,
@@ -139,9 +135,6 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
-      </if>
-      <if test="databaseId != null" >
-        #{databaseId,jdbcType=INTEGER},
       </if>
       <if test="projectId != null" >
         #{projectId,jdbcType=INTEGER},
@@ -206,9 +199,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
     update dts_gen_table
     <set >
-      <if test="databaseId != null" >
-        database_id = #{databaseId,jdbcType=INTEGER},
-      </if>
       <if test="projectId != null" >
         project_id = #{projectId,jdbcType=INTEGER},
       </if>
@@ -272,8 +262,7 @@
 
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
     update dts_gen_table
-    set database_id = #{databaseId,jdbcType=INTEGER},
-      project_id = #{projectId,jdbcType=INTEGER},
+    set project_id = #{projectId,jdbcType=INTEGER},
       table_name = #{tableName,jdbcType=VARCHAR},
       entity_name = #{entityName,jdbcType=VARCHAR},
       comments = #{comments,jdbcType=VARCHAR},

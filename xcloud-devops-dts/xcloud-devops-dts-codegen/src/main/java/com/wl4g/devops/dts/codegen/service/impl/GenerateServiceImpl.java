@@ -21,6 +21,7 @@ import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
+import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
@@ -81,18 +82,22 @@ public class GenerateServiceImpl implements GenerateService {
 	protected GenTableColumnDao genColumnDao;
 
 	@Override
-	public List<TableMetadata> loadTables(Integer databaseId) {
-		notNullOf(databaseId, "databaseId");
-		GenDataSource genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
+	public List<TableMetadata> loadTables(Integer projectId) {
+		notNullOf(projectId, "projectId");
+		GenProject genProject = genProjectDao.selectByPrimaryKey(projectId);
+		notNullOf(genProject, "genProject");
+		GenDataSource genDatabase = genDatabaseDao.selectByPrimaryKey(genProject.getDatasourceId());
 		notNullOf(genDatabase, "genDatabase");
 		MetadataResolver resolver = getMetadataPaser(genDatabase);
 		return resolver.findTablesAll();
 	}
 
 	@Override
-	public GenTable loadMetadata(Integer databaseId, Integer projectId, String tableName) {
-		notNullOf(databaseId, "databaseId");
-		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(databaseId);
+	public GenTable loadMetadata(Integer projectId, String tableName) {
+		notNullOf(projectId, "projectId");
+		GenProject genProject = genProjectDao.selectByPrimaryKey(projectId);
+		notNullOf(genProject, "genProject");
+		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(genProject.getDatasourceId());
 		notNullOf(genDS, "genDatabase");
 
 		// GenProject project = genProjectDao.selectByPrimaryKey(projectId);
@@ -157,12 +162,13 @@ public class GenerateServiceImpl implements GenerateService {
 		notNullOf(tableId, "tableId");
 
 		GenTable oldGenTab = notNullOf(genTableDao.selectByPrimaryKey(tableId), "genTable");
+
 		List<GenTableColumn> oldGenCols = genColumnDao.selectByTableId(tableId);
 		oldGenTab.setGenTableColumns(oldGenCols);
 
 		// Reload the latest table/columns metadata (sure you get the
 		// latest information)
-		GenTable newGenTab = loadMetadata(oldGenTab.getDatabaseId(), oldGenTab.getProjectId(), oldGenTab.getTableName());
+		GenTable newGenTab = loadMetadata(oldGenTab.getProjectId(), oldGenTab.getTableName());
 		List<GenTableColumn> newGenCols = newGenTab.getGenTableColumns();
 
 		List<GenTableColumn> needAdd = new ArrayList<>();
@@ -198,7 +204,9 @@ public class GenerateServiceImpl implements GenerateService {
 
 	@Override
 	public void saveGenConfig(GenTable genTable) {
-		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(genTable.getDatabaseId());
+
+		GenProject genProject = notNullOf(genProjectDao.selectByPrimaryKey(genTable.getProjectId()), "genProject");
+		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(genProject.getDatasourceId());
 
 		for (GenTableColumn column : genTable.getGenTableColumns()) {
 			DbTypeConverter conv = converter.forOperator(genDS.getType());

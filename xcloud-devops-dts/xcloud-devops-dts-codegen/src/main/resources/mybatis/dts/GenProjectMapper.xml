@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenProject" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="datasource_id" property="datasourceId" jdbcType="VARCHAR" />
     <result column="organ_type" property="organType" jdbcType="VARCHAR" />
     <result column="organ_name" property="organName" jdbcType="VARCHAR" />
     <result column="provider_set" property="providerSet" jdbcType="VARCHAR" />
@@ -20,7 +21,7 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, project_name, organ_type, organ_name, provider_set, version, author, since, copyright, remark, extra_options_json, del_flag, create_date,
+    id, project_name, datasource_id, organ_type, organ_name, provider_set, version, author, since, copyright, remark, extra_options_json, del_flag, create_date,
     create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -34,12 +35,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenProject" >
-    insert into dts_gen_project (id, project_name, organ_type, organ_name, provider_set, version,
+    insert into dts_gen_project (id, project_name, datasource_id, organ_type, organ_name, provider_set, version,
       author, since, copyright, 
       remark, extra_options_json, del_flag, create_date,
       create_by, update_date, update_by
       )
-    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{organType,jdbcType=VARCHAR}, #{organName,jdbcType=VARCHAR},
+    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR},  #{datasourceId,jdbcType=INTEGER}, #{organType,jdbcType=VARCHAR}, #{organName,jdbcType=VARCHAR},
       #{providerSet,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
       #{author,jdbcType=VARCHAR}, #{since,jdbcType=VARCHAR}, #{copyright,jdbcType=VARCHAR}, 
       #{remark,jdbcType=VARCHAR}, #{extraOptionsJson,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
@@ -54,6 +55,9 @@
       </if>
       <if test="projectName != null" >
         project_name,
+      </if>
+      <if test="datasourceId != null" >
+        datasource_id,
       </if>
       <if test="organType != null" >
         organ_type,
@@ -105,6 +109,9 @@
       <if test="projectName != null" >
         #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="datasourceId != null" >
+        #{datasourceId,jdbcType=INTEGER},
+      </if>
       <if test="organType != null" >
         #{organType,jdbcType=VARCHAR},
       </if>
@@ -155,6 +162,9 @@
       <if test="projectName != null" >
         project_name = #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="datasourceId != null" >
+        datasource_id = #{datasourceId,jdbcType=INTEGER},
+      </if>
       <if test="organType != null" >
         organ_type = #{organType,jdbcType=VARCHAR},
       </if>
@@ -203,6 +213,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenProject" >
     update dts_gen_project
     set project_name = #{projectName,jdbcType=VARCHAR},
+      datasource_id = #{datasourceId,jdbcType=INTEGER},
       organ_type = #{organType,jdbcType=VARCHAR},
       organ_name = #{organName,jdbcType=VARCHAR},
       provider_set = #{providerSet,jdbcType=VARCHAR},

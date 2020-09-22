@@ -41,6 +41,9 @@ public class GenProject extends BaseBean {
 	private String projectName;
 
 	@RenderingProperty
+	private Integer datasourceId;
+
+	@RenderingProperty
 	private String organType;
 
 	@RenderingProperty

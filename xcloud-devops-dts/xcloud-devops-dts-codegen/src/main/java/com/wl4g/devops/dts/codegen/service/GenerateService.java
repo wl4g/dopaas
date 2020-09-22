@@ -30,7 +30,7 @@ import java.util.List;
  */
 public interface GenerateService {
 
-	List<TableMetadata> loadTables(Integer databaseId);
+	List<TableMetadata> loadTables(Integer projectId);
 
 	/**
 	 * new gen code
@@ -38,7 +38,7 @@ public interface GenerateService {
 	 * @param databaseId
 	 * @param tableName
 	 */
-	GenTable loadMetadata(Integer databaseId, Integer projectId, String tableName);
+	GenTable loadMetadata(Integer projectId, String tableName);
 
 	PageModel page(PageModel pm, String tableName, Integer projectId);
 
