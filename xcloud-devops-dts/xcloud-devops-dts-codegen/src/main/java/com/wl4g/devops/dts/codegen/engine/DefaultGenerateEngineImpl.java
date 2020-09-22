@@ -91,7 +91,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		// Gets project generates configuration.
 		GenProject project = genProjectService.detail(param.getProjectId());
 
-		genDataSourceDao.selectByPrimaryKey(project)
+		//genDataSourceDao.selectByPrimaryKey(project)
 
 		List<GenTable> tabs = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tabs) {
