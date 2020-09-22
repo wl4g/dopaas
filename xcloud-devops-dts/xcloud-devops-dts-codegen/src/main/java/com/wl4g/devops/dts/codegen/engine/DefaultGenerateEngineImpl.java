@@ -22,6 +22,7 @@ import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
+import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
@@ -74,6 +75,9 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 	protected GenTableDao genTableDao;
 
 	@Autowired
+	protected GenDataSourceDao genDataSourceDao;
+
+	@Autowired
 	protected GenProjectDao genProjectDao;
 
 	@Autowired
@@ -86,6 +90,8 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 	public String execute(GenericParameter param) {
 		// Gets project generates configuration.
 		GenProject project = genProjectService.detail(param.getProjectId());
+
+		genDataSourceDao.selectByPrimaryKey(project)
 
 		List<GenTable> tabs = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tabs) {
