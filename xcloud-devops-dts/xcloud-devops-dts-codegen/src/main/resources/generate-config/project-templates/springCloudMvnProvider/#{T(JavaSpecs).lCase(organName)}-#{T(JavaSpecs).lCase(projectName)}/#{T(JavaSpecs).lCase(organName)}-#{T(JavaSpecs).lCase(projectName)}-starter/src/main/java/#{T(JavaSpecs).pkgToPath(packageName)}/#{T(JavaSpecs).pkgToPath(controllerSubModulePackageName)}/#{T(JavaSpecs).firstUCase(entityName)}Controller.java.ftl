@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ${packageName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first};
+import ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first};
 import ${packageName}.${serviceSubModulePackageName}.${entityName?cap_first}Service;
 
 /**

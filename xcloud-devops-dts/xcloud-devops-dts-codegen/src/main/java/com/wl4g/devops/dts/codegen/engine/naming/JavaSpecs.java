@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.dts.codegen.engine.naming;
 
+import com.wl4g.components.common.annotation.Nullable;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.wl4g.components.common.annotation.Nullable;
-
+import javax.validation.constraints.NotBlank;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -27,14 +27,12 @@ import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.validation.constraints.NotBlank;
-
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static java.lang.ThreadLocal.withInitial;
 import static java.util.Objects.isNull;
 import static java.util.regex.Pattern.compile;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static java.lang.ThreadLocal.withInitial;
 
 /**
  * Java naming specification {@link JavaSpecs}
@@ -143,6 +141,13 @@ public class JavaSpecs extends BaseSpecs {
 		}
 
 		return newCopyright.toString();
+	}
+
+	public static String durlWithBlankString(String sqlType,String attrName){
+		if(StringUtils.equalsAnyIgnoreCase(sqlType,"VARCHAR","LONGVARCHAR")){
+			return " and "+ attrName +" != ''";
+		}
+		return "";
 	}
 
 	/**

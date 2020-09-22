@@ -9,7 +9,7 @@ package ${packageName}.${serviceSubModulePackageName};
 
 <#--import-->
 import com.wl4g.components.data.page.PageModel;
-import ${packageName}.common.${beanSubModulePackageName}.${entityName?cap_first};
+import ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first};
 
 /**
 * {@link ${entityName?cap_first}}
@@ -23,10 +23,10 @@ public interface ${entityName}Service {
 
     PageModel page(PageModel pm, ${entityName} ${entityName?uncap_first});
 
-    void save(${entityName} ${entityName?uncap_first});
+    int save(${entityName} ${entityName?uncap_first});
 
     ${entityName} detail(Integer id);
 
-    void del(Integer id);
+    int del(Integer id);
 }
 

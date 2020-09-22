@@ -15,7 +15,7 @@ import com.wl4g.components.core.bean.BaseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ${packageName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first};
+import ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first};
 import ${packageName}.${daoSubModulePackageName}.${entityName?cap_first}Dao;
 import ${packageName}.${serviceSubModulePackageName}.${entityName?cap_first}Service;
 
@@ -42,22 +42,22 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
         return pm;
     }
 
-    public void save(${entityName} ${entityName?uncap_first}) {
+    public int save(${entityName} ${entityName?uncap_first}) {
         if (isNull(${entityName?uncap_first}.getId())) {
         ${entityName?uncap_first}.preInsert();
-			insert(${entityName?uncap_first});
+			return insert(${entityName?uncap_first});
         } else {
         ${entityName?uncap_first}.preUpdate();
-			update(${entityName?uncap_first});
+			return update(${entityName?uncap_first});
         }
     }
 
-    private void insert(${entityName} ${entityName?uncap_first}) {
-        ${entityName?uncap_first}Dao.insertSelective(${entityName?uncap_first});
+    private int insert(${entityName} ${entityName?uncap_first}) {
+        return ${entityName?uncap_first}Dao.insertSelective(${entityName?uncap_first});
     }
 
-    private void update(${entityName} ${entityName?uncap_first}) {
-        ${entityName?uncap_first}Dao.updateByPrimaryKeySelective(${entityName?uncap_first});
+    private int update(${entityName} ${entityName?uncap_first}) {
+        return ${entityName?uncap_first}Dao.updateByPrimaryKeySelective(${entityName?uncap_first});
     }
 
     public ${entityName} detail(Integer id) {
@@ -65,11 +65,11 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
         return ${entityName?uncap_first}Dao.selectByPrimaryKey(id);
     }
 
-    public void del(Integer id) {
+    public int del(Integer id) {
         notNullOf(id, "${entityName?uncap_first}Id");
         ${entityName} ${entityName?uncap_first} = new ${entityName}();
         ${entityName?uncap_first}.setId(id);
         ${entityName?uncap_first}.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        ${entityName?uncap_first}Dao.updateByPrimaryKeySelective(${entityName?uncap_first});
+        return ${entityName?uncap_first}Dao.updateByPrimaryKeySelective(${entityName?uncap_first});
     }
 }

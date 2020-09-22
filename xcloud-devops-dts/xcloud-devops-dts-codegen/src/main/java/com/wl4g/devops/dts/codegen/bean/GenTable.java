@@ -15,13 +15,12 @@
  */
 package com.wl4g.devops.dts.codegen.bean;
 
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.devops.dts.codegen.engine.generator.AbstractGeneratorProvider.RenderingProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.engine.generator.AbstractGeneratorProvider.RenderingProperty;
 
 /**
  * {@link GenTable}
@@ -71,6 +70,9 @@ public class GenTable extends BaseBean {
 
 	@RenderingProperty
 	private String options;
+
+	@RenderingProperty
+	private String status;
 
 	// Extends
 	@RenderingProperty
