@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.resolver;
 
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata;
@@ -22,12 +23,16 @@ import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotBlank;
+
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notEmpty;
 import static com.wl4g.components.common.lang.StringUtils2.eqIgnCase;
 import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.ResolverAlias.MYSQLV5;
 import static java.util.stream.Collectors.toList;
+
+import java.util.Date;
 
 /**
  * {@link MySQLV5MetadataResolver}
@@ -63,14 +68,23 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 	}
 
 	@Override
-	public List<String> findTables() {
-		String sql = loadResolvingSql(MYSQLV5, SQL_TABLES);
+	public List<TableMetadata> findTables(@Nullable String search) {
+		String sql = loadResolvingSql(MYSQLV5, SQL_TABLES, search);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
-		return safeList(list).stream().map(row -> (String) row.get("tableName")).collect(toList());
+
+		return safeList(list).stream().map(row -> {
+			TableMetadata table = new TableMetadata();
+			table.setTableSchema((String) row.get("tableSchema"));
+			table.setTableName((String) row.get("tableName"));
+			table.setEngine((String) row.get("engine"));
+			table.setComments((String) row.get("tableComment"));
+			table.setCreateTime((Date) row.get("createTime"));
+			return table;
+		}).collect(toList());
 	}
 
 	@Override
-	public TableMetadata findTableDescribe(String tableName) {
+	public TableMetadata findTableDescribe(@NotBlank String tableName) {
 		hasTextOf(tableName, "tableName");
 
 		String sql = loadResolvingSql(MYSQLV5, SQL_TABLE_DESCRIBE, tableName);
@@ -83,7 +97,7 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 	}
 
 	@Override
-	public List<ColumnMetadata> findTableColumns(String tableName) {
+	public List<ColumnMetadata> findTableColumns(@NotBlank String tableName) {
 		hasTextOf(tableName, "tableName");
 
 		String sql = loadResolvingSql(MYSQLV5, SQL_COLUMNS, tableName);
@@ -103,7 +117,7 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 	}
 
 	@Override
-	public List<ForeignMetadata> findTableForeign(String tableName) {
+	public List<ForeignMetadata> findTableForeign(@NotBlank String tableName) {
 		hasTextOf(tableName, "tableName");
 
 		String sql = loadResolvingSql(MYSQLV5, SQL_FOREIGN, tableName);

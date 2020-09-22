@@ -20,6 +20,7 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,8 +50,8 @@ public class GenerateController extends BaseController {
 	@RequestMapping("loadTables")
 	public RespBase<?> loadTables(Integer databaseId) {
 		RespBase<Object> resp = RespBase.create();
-		List<String> strings = generateService.loadTables(databaseId);
-		resp.setData(strings);
+		List<TableMetadata> tables = generateService.loadTables(databaseId);
+		resp.setData(tables);
 		return resp;
 	}
 

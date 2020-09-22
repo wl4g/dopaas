@@ -81,12 +81,12 @@ public class GenerateServiceImpl implements GenerateService {
 	protected GenTableColumnDao genColumnDao;
 
 	@Override
-	public List<String> loadTables(Integer databaseId) {
+	public List<TableMetadata> loadTables(Integer databaseId) {
 		notNullOf(databaseId, "databaseId");
 		GenDataSource genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
 		notNullOf(genDatabase, "genDatabase");
 		MetadataResolver resolver = getMetadataPaser(genDatabase);
-		return resolver.findTables();
+		return resolver.findTablesAll();
 	}
 
 	@Override
