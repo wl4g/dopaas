@@ -32,7 +32,7 @@ import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
-import com.wl4g.devops.dao.erm.ClusterConfigDao;
+import com.wl4g.devops.dao.iam.ClusterConfigDao;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

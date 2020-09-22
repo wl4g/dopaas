@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.dts.codegen.engine.context;
 
+import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
-import java.io.File;
-
 import javax.validation.constraints.NotNull;
+import java.io.File;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
@@ -52,12 +52,16 @@ public class DefaultGenerateContext implements GenerateContext {
 	/** {@link GenTable} */
 	protected GenTable genTable;
 
+	/** {@link GenDataSource} */
+	protected GenDataSource genDataSource;
+
 	public DefaultGenerateContext(@NotNull CodegenProperties config, @NotNull GenTemplateLocator locator,
-			@NotNull GenProject project) {
+			@NotNull GenProject project,@NotNull GenDataSource genDataSource) {
 		this.config = notNullOf(config, "config");
 		this.locator = notNullOf(locator, "locator");
 		this.genProject = notNullOf(project, "genProject");
 		this.jobDir = config.getJobDir(project.getId());
+		this.genDataSource = notNullOf(genDataSource, "genDataSource");
 	}
 
 	@Override
@@ -78,6 +82,11 @@ public class DefaultGenerateContext implements GenerateContext {
 	@Override
 	public GenTable getGenTable() {
 		return genTable;
+	}
+
+	@Override
+	public GenDataSource getGenDataSource() {
+		return genDataSource;
 	}
 
 	@Override

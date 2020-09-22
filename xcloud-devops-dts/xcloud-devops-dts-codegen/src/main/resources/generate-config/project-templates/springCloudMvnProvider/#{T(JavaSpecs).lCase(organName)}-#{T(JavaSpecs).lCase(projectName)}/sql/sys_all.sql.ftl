@@ -1,13 +1,12 @@
 /*
 ${watermark}
 
-Generated From Server Type    : MySQL
-Generated From Server Version : 50645
-Generated From Host           : 10.0.0.160:3306
-Schema                        : devops_dev
+Generated From Server Type    : ${datasource.type}
+Generated From Server Version : 50645//TODO
+Generated From Host           : ${datasource.host}:${datasource.port}
+Schema                        : ${datasource.database}
 File Encoding                 : 65001
-
-Date: 22/09/2020 11:45:51
+Date: ${.now?string('yyyy-MM-dd hh:mm:ss')}
 */
 
 SET NAMES utf8mb4;

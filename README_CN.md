@@ -34,7 +34,7 @@ mvn -U clean install -DskipTests -T 2C
 - step2：初始化数据库，首先准备一台CentOS6.5+以及MySQL5.6+实例，新建名为devops(utf8/utf8_bin)的数据库，再使用 [初始sql脚本](../../../super-cloudops-data/tree/master/db) 进行初始化它。（注：此脚本与代码版本对应，我们会定期更新，请使用最新）
 - step3：配置hosts，添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
-10.0.0.160	wl4g.debug # 与数据库erm_cluster_config.extranet_base_uri对应
+10.0.0.160	wl4g.debug # 与数据库sys_cluster_config.extranet_base_uri对应
 ```
 - step4：[可选] 快速搭建redis集群(docker), 当前版本已实现了redis单点与集群共存, 在配置文件application-{ENV}.yml中的redis.nodes项, 若只配置一个时自动认为是redis单机环境.
 ```

@@ -18,6 +18,7 @@ package com.wl4g.devops.dts.codegen.engine;
 import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
@@ -91,7 +92,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		// Gets project generates configuration.
 		GenProject project = genProjectService.detail(param.getProjectId());
 
-		//genDataSourceDao.selectByPrimaryKey(project)
+		GenDataSource genDataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
 
 		List<GenTable> tabs = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tabs) {
@@ -103,7 +104,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		project.setGenTables(tabs);
 
 		// Create context.
-		GenerateContext context = new DefaultGenerateContext(config, locator, project);
+		GenerateContext context = new DefaultGenerateContext(config, locator, project, genDataSource);
 
 		// Gets Generate of providers.
 		List<String> providers = getProviders(project.getProviderSet());
