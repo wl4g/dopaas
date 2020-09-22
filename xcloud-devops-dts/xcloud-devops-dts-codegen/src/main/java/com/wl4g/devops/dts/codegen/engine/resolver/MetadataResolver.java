@@ -15,12 +15,16 @@
  */
 package com.wl4g.devops.dts.codegen.engine.resolver;
 
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata;
 
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.List;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * {@link MetadataResolver}
@@ -32,7 +36,23 @@ import java.util.List;
  */
 public interface MetadataResolver {
 
-	default List<String> findTables() {
+	/**
+	 * Query tables all info.
+	 * 
+	 * @param search
+	 * @return
+	 */
+	default List<TableMetadata> findTablesAll() {
+		return findTables(EMPTY);
+	}
+
+	/**
+	 * Query tables info.
+	 * 
+	 * @param search
+	 * @return
+	 */
+	default List<TableMetadata> findTables(@Nullable String search) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -43,7 +63,7 @@ public interface MetadataResolver {
 	 * @return
 	 * @throws Exception
 	 */
-	default TableMetadata findTableDescribe(String tableName) {
+	default TableMetadata findTableDescribe(@NotBlank String tableName) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -54,11 +74,11 @@ public interface MetadataResolver {
 	 * @return
 	 * @throws Exception
 	 */
-	default List<ColumnMetadata> findTableColumns(String tableName) {
+	default List<ColumnMetadata> findTableColumns(@NotBlank String tableName) {
 		throw new UnsupportedOperationException();
 	}
 
-	default List<ForeignMetadata> findTableForeign(String tableName) {
+	default List<ForeignMetadata> findTableForeign(@NotBlank String tableName) {
 		throw new UnsupportedOperationException();
 	}
 

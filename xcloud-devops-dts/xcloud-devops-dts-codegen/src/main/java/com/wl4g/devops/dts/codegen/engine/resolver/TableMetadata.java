@@ -17,8 +17,16 @@ package com.wl4g.devops.dts.codegen.engine.resolver;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Wither;
 
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+
+import java.util.Date;
 import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
+import com.wl4g.components.common.annotation.Nullable;
 
 /**
  * {@link TableMetadata}
@@ -31,11 +39,40 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Wither
 public class TableMetadata {
 
+	@NotBlank
+	private String tableSchema;
+
+	@NotBlank
 	private String tableName;
+
+	@Nullable
+	private String engine;
+
+	@Nullable
+	private Date createTime;
+
+	@Nullable
 	private String comments;
+
+	// @NotEmpty
 	private List<ColumnMetadata> columns;
+
+	public TableMetadata() {
+		super();
+	}
+
+	public TableMetadata(@NotBlank String tableSchema, @NotBlank String tableName, String engine, Date createTime,
+			String comments, List<ColumnMetadata> columns) {
+		this.tableSchema = hasTextOf(tableSchema, "tableSchema");
+		this.tableName = hasTextOf(tableName, "tableName");
+		this.engine = engine;
+		this.createTime = createTime;
+		this.comments = comments;
+		this.columns = columns;
+	}
 
 	/**
 	 * {@link ColumnMetadata}
@@ -48,8 +85,8 @@ public class TableMetadata {
 
 		private String columnName;
 		private boolean isPk;
-		private String columnType;//e.g varchar(255)
-		private String simpleColumnType;//e.g varchar
+		private String columnType;// e.g varchar(255)
+		private String simpleColumnType;// e.g varchar
 		private String comments;
 		private String attrType; // class attr type
 		private boolean isNullable;
