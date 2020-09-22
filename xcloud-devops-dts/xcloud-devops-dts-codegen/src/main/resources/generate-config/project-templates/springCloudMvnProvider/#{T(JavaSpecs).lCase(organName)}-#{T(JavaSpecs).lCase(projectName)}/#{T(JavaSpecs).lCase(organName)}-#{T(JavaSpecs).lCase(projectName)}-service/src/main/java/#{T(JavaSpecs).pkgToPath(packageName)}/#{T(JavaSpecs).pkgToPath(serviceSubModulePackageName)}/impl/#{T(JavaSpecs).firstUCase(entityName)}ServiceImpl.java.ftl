@@ -44,10 +44,10 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
 
     public int save(${entityName} ${entityName?uncap_first}) {
         if (isNull(${entityName?uncap_first}.getId())) {
-        ${entityName?uncap_first}.preInsert();
+        	${entityName?uncap_first}.preInsert();
 			return insert(${entityName?uncap_first});
         } else {
-        ${entityName?uncap_first}.preUpdate();
+        	${entityName?uncap_first}.preUpdate();
 			return update(${entityName?uncap_first});
         }
     }
