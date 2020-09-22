@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.reflect.ReflectionUtils2.*;
 import com.wl4g.components.common.reflect.TypeUtils2;
@@ -57,6 +58,8 @@ import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
 import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -241,13 +244,16 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return
 	 * @throws Exception
 	 */
-	protected final Map<String, Object> convertToRenderingModel(Object bean) throws Exception {
-		final Map<String, Object> model = new HashMap<>();
+	protected final Map<String, Object> convertToRenderingModel(final @NotNull Object bean,
+			@Nullable final String... includeFieldNames) throws Exception {
+		notNullOf(bean, "bean");
+		final List<String> includes = isNull(includeFieldNames) ? emptyList() : asList(includeFieldNames);
 
+		final Map<String, Object> model = new HashMap<>();
 		doFullWithFields(bean, new FieldFilter() {
 			@Override
 			public boolean matches(Field field) {
-				return isGenericModifier(field.getModifiers());
+				return isGenericModifier(field.getModifiers()) && includes.contains(field.getName());
 			}
 
 			@Override
@@ -326,7 +332,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 		try {
 			// Add rendering model of GenProject.
-			model.putAll(convertToRenderingModel(context.getGenProject()));
+			model.putAll(convertToRenderingModel(context.getGenProject(), "remark"));
 
 			// Add rendering model of GenDataSource.
 			Map<String, Object> datasource = convertToRenderingModel(context.getGenDataSource());
