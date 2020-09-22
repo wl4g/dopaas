@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.engine.template;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-
 import java.io.Serializable;
 import java.util.List;
+
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 
 /**
  * {@link GenTemplateLocator}
@@ -64,15 +64,15 @@ public interface GenTemplateLocator {
 		private final boolean isTemplate;
 		private final boolean isForeachTemplate;
 
-		protected RenderingResourceWrapper(String tplPath, String filename, String fileContent) {
-			hasTextOf(tplPath, "tplPath");
-			hasTextOf(filename, "filename");
-			hasTextOf(fileContent, "fileContent");
-			this.path = tplPath;
-			this.name = filename;
-			this.content = fileContent;
-			this.isTemplate = filename.endsWith(DEFAULT_TPL_SUFFIX);
-			this.isForeachTemplate = filename.contains(DEFAULT_VARIABLE_ENTITY_NAME);
+		protected RenderingResourceWrapper(String path, String name, String content) {
+			hasTextOf(path, "path");
+			hasTextOf(name, "name");
+			hasTextOf(content, "content");
+			this.path = path;
+			this.name = name;
+			this.content = content;
+			this.isTemplate = name.endsWith(DEFAULT_TPL_SUFFIX);
+			this.isForeachTemplate = name.contains(DEFAULT_VARIABLE_ENTITY_NAME);
 		}
 
 		public String getPath() {

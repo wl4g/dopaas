@@ -144,7 +144,7 @@ router.beforeEach(async (to, from, next) => {
 
           // 特殊处理newpipeline页面
           highLevel.forEach(n => {
-            if (n.permission === 'ci') {
+            /*if (n.permission === 'ci') {
               n.children.push({
                 path: '/ci/pipelineedit',
                 component: require("@/views/ci/pipelineedit/PipelineEdit.vue"),
@@ -276,7 +276,7 @@ router.beforeEach(async (to, from, next) => {
                 icon: '',
                 hidden: true
               })
-            }
+            }*/
           });
 
           utilstore.set('allRouter',res);

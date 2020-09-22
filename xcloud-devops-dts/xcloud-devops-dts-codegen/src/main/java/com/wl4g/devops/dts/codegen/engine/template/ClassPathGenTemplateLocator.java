@@ -68,10 +68,24 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 				add(".css");
 				add(".js");
 				add(".ts");
+				add(".less");
+				add(".sass");
+				add(".map");
+				add(".babelrc");
+				//
+				add(".eot");
+				add(".ttf");
+				add(".woff");
+				add(".woff2");
+				//
 				add(".jpeg");
 				add(".jpg");
+				add(".png");
+				add(".ico");
+				add(".icon");
 				add(".gif");
 				add(".svg");
+				//
 				add(".waa");
 				add(".mp4");
 				add(".avi");
@@ -82,27 +96,25 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 				add(".navi");
 				add(".flv");
 				add(".hddvd");
-				add(".png");
-				add(".ico");
-				add(".icon");
+				//
 				add(".json");
 				add(".xml");
 				add(".conf");
 				add(".yaml");
 				add(".yml");
-				add(".eot");
-				add(".ttf");
-				add(".woff");
-				add(".woff2");
+				//
 				add(".sh");
 				add(".bat");
 				add(".cmd");
+				//
 				add(".md");
 				add(".doc");
 				add(".docx");
 				add(".xls");
 				add(".xlsx");
 				add(".pdf");
+				add("LICENSE");
+				//
 				add(".drawio");
 				add(".mma");
 			}
