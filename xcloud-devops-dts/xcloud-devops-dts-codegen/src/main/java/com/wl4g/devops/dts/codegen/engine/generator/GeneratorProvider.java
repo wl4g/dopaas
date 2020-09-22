@@ -85,15 +85,15 @@ public interface GeneratorProvider extends Runnable {
 	}
 
 	/**
-	 * An extensible configuration options {@link ExtraConfigSupport} which is
-	 * supported by itself, If NULL is returned, there is no extensible
+	 * An extensible configuration options {@link GenExtraOptionSupport} which
+	 * is supported by itself, If NULL is returned, there is no extensible
 	 * configuration item.
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020-09-16
 	 * @since
 	 */
-	public static enum ExtraConfigSupport {
+	public static enum GenExtraOptionSupport {
 
 		ExtSpringCloudMvnBuildAssetsType(new ConfigOption(SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
 
@@ -107,7 +107,7 @@ public interface GeneratorProvider extends Runnable {
 		@NotNull
 		private final ConfigOption option;
 
-		private ExtraConfigSupport(@NotNull ConfigOption option) {
+		private GenExtraOptionSupport(@NotNull ConfigOption option) {
 			notNullOf(option, "option");
 			this.option = option.validate();
 		}
@@ -366,15 +366,16 @@ public interface GeneratorProvider extends Runnable {
 	 */
 	public static enum GenProviderSet {
 
-		DaoServiceController(asList(SPINGCLOUD_MVN), CodeLanguage.JAVA),
+		DaoServiceController(asList(SPINGCLOUD_MVN), CodeLanguage.JAVA, "Mybatis/Spring Cloud/XCloud Iam"),
 
-		DaoServiceControllerVueJS(asList(SPINGCLOUD_MVN, VUEJS), CodeLanguage.JAVA),
-
-		// Nothing to do with DAO layer
-		JustVueJS(asList(VUEJS), null),
+		DaoServiceControllerVueJS(asList(SPINGCLOUD_MVN, VUEJS), CodeLanguage.JAVA,
+				"Mybatis/Spring Cloud/XCloud Iam/ElementUI Vue"),
 
 		// Nothing to do with DAO layer
-		JustNgJS(asList(NGJS), null);
+		JustVueJS(asList(VUEJS), null, "ElementUI Vue"),
+
+		// Nothing to do with DAO layer
+		JustNgJS(asList(NGJS), null, "AngularJS");
 
 		/** {@link GenProviderAlias} */
 		@NotEmpty
@@ -389,9 +390,13 @@ public interface GeneratorProvider extends Runnable {
 		@Nullable
 		private final CodeLanguage language;
 
-		private GenProviderSet(@NotEmpty List<String> providers, @Nullable CodeLanguage language) {
+		@Nullable
+		private final String description;
+
+		private GenProviderSet(@NotEmpty List<String> providers, @Nullable CodeLanguage language, @Nullable String description) {
 			this.providers = notEmptyOf(providers, "providers");
 			this.language = language;
+			this.description = description;
 		}
 
 		/**
@@ -410,6 +415,10 @@ public interface GeneratorProvider extends Runnable {
 		 */
 		public final CodeLanguage getLanguage() {
 			return language;
+		}
+
+		public String getDescription() {
+			return description;
 		}
 
 		/**

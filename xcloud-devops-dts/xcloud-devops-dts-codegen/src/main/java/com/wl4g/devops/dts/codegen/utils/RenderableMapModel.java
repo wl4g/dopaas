@@ -165,15 +165,15 @@ public class RenderableMapModel implements Map<String, Object>, Cloneable {
 		return clone;
 	}
 
-	/**
-	 * Sets allowed modifiable to elements.
-	 * 
-	 * @return
-	 */
-	public final RenderableMapModel enableModifiable() {
-		this.isModifiable.set(true);
-		return this;
-	}
+	// /**
+	// * Sets allowed modifiable to elements.
+	// *
+	// * @return
+	// */
+	// public final RenderableMapModel enableModifiable() {
+	// this.isModifiable.set(true);
+	// return this;
+	// }
 
 	/**
 	 * Sets not allowed modifiable to elements.

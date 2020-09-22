@@ -1,15 +1,1619 @@
 /*
-${watermark}
+ ${watermark}
 
-Generated From Server Type    : ${datasource.type}
-Generated From Server Version : 50645//TODO
-Generated From Host           : ${datasource.host}:${datasource.port}
-Schema                        : ${datasource.database}
-File Encoding                 : 65001
-Date: ${.now?string('yyyy-MM-dd hh:mm:ss')}
+ Generated From Server Type    : ${datasource.type}
+ Generated From Server Version : 50645//TODO
+ Generated From Host           : ${datasource.host}:${datasource.port}
+ Schema                        : ${datasource.database}
+ File Encoding                 : 65001
+ Date: ${.now?string('yyyy-MM-dd hh:mm:ss')}
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
--- TODO
+-- ----------------------------
+-- Table structure for sys_area
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_area`;
+CREATE TABLE `sys_area` (
+  `id` int(11) NOT NULL,
+  `parent_id` int(11) NOT NULL DEFAULT '0' COMMENT '父级ID',
+  `name` varchar(50) NOT NULL COMMENT '名称',
+  `short_name` varchar(50) NOT NULL COMMENT '简称',
+  `longitude` float NOT NULL DEFAULT '0' COMMENT '经度',
+  `latitude` float NOT NULL DEFAULT '0' COMMENT '纬度',
+  `level` int(1) NOT NULL COMMENT '等级(1省/直辖市,2地级市,3区县,4镇/街道)',
+  `sort` int(3) NOT NULL DEFAULT '1' COMMENT '排序',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '状态(0禁用/1启用)',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of sys_area
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_area` VALUES (0, -1, '中国', '中国', 116.405, 39.905, 0, 1, 1);
+INSERT INTO `sys_area` VALUES (1, -1, '美国', '美国', 116.405, 39.905, 0, 1, 1);
+INSERT INTO `sys_area` VALUES (2, -1, '俄罗斯', '俄罗斯', 116.405, 39.905, 0, 1, 1);
+INSERT INTO `sys_area` VALUES (3, -1, '英国', '英国', 116.405, 39.905, 0, 1, 1);
+INSERT INTO `sys_area` VALUES (4, -1, '日本', '日本', 116.405, 39.905, 0, 1, 1);
+INSERT INTO `sys_area` VALUES (5, -1, '德国', '德国', 116.405, 39.905, 0, 1, 1);
+INSERT INTO `sys_area` VALUES (110000, 0, '北京', '北京', 116.405, 39.905, 1, 1, 1);
+INSERT INTO `sys_area` VALUES (110100, 110000, '北京市', '北京', 116.405, 39.905, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (120000, 0, '天津', '天津', 117.19, 39.1256, 1, 2, 1);
+INSERT INTO `sys_area` VALUES (120100, 120000, '天津市', '天津', 117.19, 39.1256, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (130000, 0, '河北省', '河北', 114.502, 38.0455, 1, 3, 1);
+INSERT INTO `sys_area` VALUES (130100, 130000, '石家庄市', '石家庄', 114.502, 38.0455, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (130200, 130000, '唐山市', '唐山', 118.175, 39.6351, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (130300, 130000, '秦皇岛市', '秦皇岛', 119.587, 39.9425, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (130400, 130000, '邯郸市', '邯郸', 114.491, 36.6123, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (130500, 130000, '邢台市', '邢台', 114.509, 37.0682, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (130600, 130000, '保定市', '保定', 115.482, 38.8677, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (130700, 130000, '张家口市', '张家口', 114.884, 40.8119, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (130800, 130000, '承德市', '承德', 117.939, 40.9762, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (130900, 130000, '沧州市', '沧州', 116.857, 38.3106, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (131000, 130000, '廊坊市', '廊坊', 116.704, 39.5239, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (131100, 130000, '衡水市', '衡水', 115.666, 37.7351, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (140000, 0, '山西省', '山西', 112.549, 37.857, 1, 4, 1);
+INSERT INTO `sys_area` VALUES (140100, 140000, '太原市', '太原', 112.549, 37.857, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (140200, 140000, '大同市', '大同', 113.295, 40.0903, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (140300, 140000, '阳泉市', '阳泉', 113.583, 37.8612, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (140400, 140000, '长治市', '长治', 113.114, 36.1911, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (140500, 140000, '晋城市', '晋城', 112.851, 35.4976, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (140600, 140000, '朔州市', '朔州', 112.433, 39.3313, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (140700, 140000, '晋中市', '晋中', 112.736, 37.6965, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (140800, 140000, '运城市', '运城', 111.004, 35.0228, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (140900, 140000, '忻州市', '忻州', 112.734, 38.4177, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (141000, 140000, '临汾市', '临汾', 111.518, 36.0841, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (141100, 140000, '吕梁市', '吕梁', 111.134, 37.5244, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (150000, 0, '内蒙古自治区', '内蒙古', 111.671, 40.8183, 1, 5, 1);
+INSERT INTO `sys_area` VALUES (150100, 150000, '呼和浩特市', '呼和浩特', 111.671, 40.8183, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (150200, 150000, '包头市', '包头', 109.84, 40.6582, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (150300, 150000, '乌海市', '乌海', 106.826, 39.6737, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (150400, 150000, '赤峰市', '赤峰', 118.957, 42.2753, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (150500, 150000, '通辽市', '通辽', 122.263, 43.6174, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (150600, 150000, '鄂尔多斯市', '鄂尔多斯', 109.99, 39.8172, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (150700, 150000, '呼伦贝尔市', '呼伦贝尔', 119.758, 49.2153, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (150800, 150000, '巴彦淖尔市', '巴彦淖尔', 107.417, 40.7574, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (150900, 150000, '乌兰察布市', '乌兰察布', 113.115, 41.0341, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (152200, 150000, '兴安盟', '兴安', 122.07, 46.0763, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (152500, 150000, '锡林郭勒盟', '锡林郭勒', 116.091, 43.944, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (152900, 150000, '阿拉善盟', '阿拉善', 105.706, 38.8448, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (210000, 0, '辽宁省', '辽宁', 123.429, 41.7968, 1, 6, 1);
+INSERT INTO `sys_area` VALUES (210100, 210000, '沈阳市', '沈阳', 123.429, 41.7968, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (210200, 210000, '大连市', '大连', 121.619, 38.9146, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (210300, 210000, '鞍山市', '鞍山', 122.996, 41.1106, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (210400, 210000, '抚顺市', '抚顺', 123.921, 41.876, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (210500, 210000, '本溪市', '本溪', 123.771, 41.2979, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (210600, 210000, '丹东市', '丹东', 124.383, 40.1243, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (210700, 210000, '锦州市', '锦州', 121.136, 41.1193, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (210800, 210000, '营口市', '营口', 122.235, 40.6674, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (210900, 210000, '阜新市', '阜新', 121.649, 42.0118, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (211000, 210000, '辽阳市', '辽阳', 123.182, 41.2694, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (211100, 210000, '盘锦市', '盘锦', 122.07, 41.1245, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (211200, 210000, '铁岭市', '铁岭', 123.844, 42.2906, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (211300, 210000, '朝阳市', '朝阳', 120.451, 41.5768, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (211400, 210000, '葫芦岛市', '葫芦岛', 120.856, 40.7556, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (220000, 0, '吉林省', '吉林', 125.325, 43.8868, 1, 7, 1);
+INSERT INTO `sys_area` VALUES (220100, 220000, '长春市', '长春', 125.325, 43.8868, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (220200, 220000, '吉林市', '吉林', 126.553, 43.8436, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (220300, 220000, '四平市', '四平', 124.371, 43.1703, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (220400, 220000, '辽源市', '辽源', 125.145, 42.9027, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (220500, 220000, '通化市', '通化', 125.937, 41.7212, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (220600, 220000, '白山市', '白山', 126.428, 41.9425, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (220700, 220000, '松原市', '松原', 124.824, 45.1182, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (220800, 220000, '白城市', '白城', 122.841, 45.619, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (222400, 220000, '延边朝鲜族自治州', '延边朝鲜族', 129.513, 42.9048, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (230000, 0, '黑龙江省', '黑龙江', 126.642, 45.757, 1, 8, 1);
+INSERT INTO `sys_area` VALUES (230100, 230000, '哈尔滨市', '哈尔滨', 126.642, 45.757, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (230200, 230000, '齐齐哈尔市', '齐齐哈尔', 123.958, 47.3421, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (230300, 230000, '鸡西市', '鸡西', 130.976, 45.3, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (230400, 230000, '鹤岗市', '鹤岗', 130.277, 47.3321, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (230500, 230000, '双鸭山市', '双鸭山', 131.157, 46.6434, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (230600, 230000, '大庆市', '大庆', 125.113, 46.5907, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (230700, 230000, '伊春市', '伊春', 128.899, 47.7248, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (230800, 230000, '佳木斯市', '佳木斯', 130.362, 46.8096, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (230900, 230000, '七台河市', '七台河', 131.016, 45.7713, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (231000, 230000, '牡丹江市', '牡丹江', 129.619, 44.583, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (231100, 230000, '黑河市', '黑河', 127.499, 50.2496, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (231200, 230000, '绥化市', '绥化', 126.993, 46.6374, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (232700, 230000, '大兴安岭地区', '大兴安岭', 124.712, 52.3353, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (310000, 0, '上海', '上海', 121.473, 31.2317, 1, 9, 1);
+INSERT INTO `sys_area` VALUES (310100, 310000, '上海市', '上海', 121.473, 31.2317, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (320000, 0, '江苏省', '江苏', 118.767, 32.0415, 1, 10, 1);
+INSERT INTO `sys_area` VALUES (320100, 320000, '南京市', '南京', 118.767, 32.0415, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (320200, 320000, '无锡市', '无锡', 120.302, 31.5747, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (320300, 320000, '徐州市', '徐州', 117.185, 34.2618, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (320400, 320000, '常州市', '常州', 119.947, 31.7728, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (320500, 320000, '苏州市', '苏州', 120.62, 31.2994, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (320600, 320000, '南通市', '南通', 120.865, 32.0162, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (320700, 320000, '连云港市', '连云港', 119.179, 34.6, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (320800, 320000, '淮安市', '淮安', 119.021, 33.5975, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (320900, 320000, '盐城市', '盐城', 120.14, 33.3776, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (321000, 320000, '扬州市', '扬州', 119.421, 32.3932, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (321100, 320000, '镇江市', '镇江', 119.453, 32.2044, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (321200, 320000, '泰州市', '泰州', 119.915, 32.4849, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (321300, 320000, '宿迁市', '宿迁', 118.275, 33.963, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (330000, 0, '浙江省', '浙江', 120.154, 30.2875, 1, 11, 1);
+INSERT INTO `sys_area` VALUES (330100, 330000, '杭州市', '杭州', 120.154, 30.2875, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (330200, 330000, '宁波市', '宁波', 121.55, 29.8684, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (330300, 330000, '温州市', '温州', 120.672, 28.0006, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (330400, 330000, '嘉兴市', '嘉兴', 120.751, 30.7627, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (330500, 330000, '湖州市', '湖州', 120.102, 30.8672, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (330600, 330000, '绍兴市', '绍兴', 120.582, 29.9971, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (330700, 330000, '金华市', '金华', 119.65, 29.0895, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (330800, 330000, '衢州市', '衢州', 118.873, 28.9417, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (330900, 330000, '舟山市', '舟山', 122.107, 30.016, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (331000, 330000, '台州市', '台州', 121.429, 28.6614, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (331100, 330000, '丽水市', '丽水', 119.922, 28.452, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (340000, 0, '安徽省', '安徽', 117.283, 31.8612, 1, 12, 1);
+INSERT INTO `sys_area` VALUES (340100, 340000, '合肥市', '合肥', 117.283, 31.8612, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (340200, 340000, '芜湖市', '芜湖', 118.376, 31.3263, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (340300, 340000, '蚌埠市', '蚌埠', 117.363, 32.9397, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (340400, 340000, '淮南市', '淮南', 117.018, 32.6476, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (340500, 340000, '马鞍山市', '马鞍山', 118.508, 31.6894, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (340600, 340000, '淮北市', '淮北', 116.795, 33.9717, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (340700, 340000, '铜陵市', '铜陵', 117.817, 30.9299, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (340800, 340000, '安庆市', '安庆', 117.044, 30.5088, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (341000, 340000, '黄山市', '黄山', 118.317, 29.7092, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (341100, 340000, '滁州市', '滁州', 118.316, 32.3036, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (341200, 340000, '阜阳市', '阜阳', 115.82, 32.897, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (341300, 340000, '宿州市', '宿州', 116.984, 33.6339, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (341500, 340000, '六安市', '六安', 116.508, 31.7529, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (341600, 340000, '亳州市', '亳州', 115.783, 33.8693, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (341700, 340000, '池州市', '池州', 117.489, 30.656, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (341800, 340000, '宣城市', '宣城', 118.758, 30.9457, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (350000, 0, '福建省', '福建', 119.306, 26.0753, 1, 13, 1);
+INSERT INTO `sys_area` VALUES (350100, 350000, '福州市', '福州', 119.306, 26.0753, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (350200, 350000, '厦门市', '厦门', 118.11, 24.4905, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (350300, 350000, '莆田市', '莆田', 119.008, 25.431, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (350400, 350000, '三明市', '三明', 117.635, 26.2654, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (350500, 350000, '泉州市', '泉州', 118.589, 24.9089, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (350600, 350000, '漳州市', '漳州', 117.662, 24.5109, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (350700, 350000, '南平市', '南平', 118.178, 26.6356, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (350800, 350000, '龙岩市', '龙岩', 117.03, 25.0916, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (350900, 350000, '宁德市', '宁德', 119.527, 26.6592, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (360000, 0, '江西省', '江西', 115.892, 28.6765, 1, 14, 1);
+INSERT INTO `sys_area` VALUES (360100, 360000, '南昌市', '南昌', 115.892, 28.6765, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (360200, 360000, '景德镇市', '景德镇', 117.215, 29.2926, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (360300, 360000, '萍乡市', '萍乡', 113.852, 27.6229, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (360400, 360000, '九江市', '九江', 115.993, 29.712, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (360500, 360000, '新余市', '新余', 114.931, 27.8108, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (360600, 360000, '鹰潭市', '鹰潭', 117.034, 28.2386, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (360700, 360000, '赣州市', '赣州', 114.94, 25.851, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (360800, 360000, '吉安市', '吉安', 114.986, 27.1117, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (360900, 360000, '宜春市', '宜春', 114.391, 27.8043, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (361000, 360000, '抚州市', '抚州', 116.358, 27.9839, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (361100, 360000, '上饶市', '上饶', 117.971, 28.4444, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (370000, 0, '山东省', '山东', 117.001, 36.6758, 1, 15, 1);
+INSERT INTO `sys_area` VALUES (370100, 370000, '济南市', '济南', 117.001, 36.6758, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (370200, 370000, '青岛市', '青岛', 120.355, 36.083, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (370300, 370000, '淄博市', '淄博', 118.048, 36.8149, 2, 17, 1);
+INSERT INTO `sys_area` VALUES (370400, 370000, '枣庄市', '枣庄', 117.558, 34.8564, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (370500, 370000, '东营市', '东营', 118.665, 37.4346, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (370600, 370000, '烟台市', '烟台', 121.391, 37.5393, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (370700, 370000, '潍坊市', '潍坊', 119.107, 36.7093, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (370800, 370000, '济宁市', '济宁', 116.587, 35.4154, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (370900, 370000, '泰安市', '泰安', 117.129, 36.195, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (371000, 370000, '威海市', '威海', 122.116, 37.5097, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (371100, 370000, '日照市', '日照', 119.461, 35.4286, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (371200, 370000, '莱芜市', '莱芜', 117.678, 36.2144, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (371300, 370000, '临沂市', '临沂', 118.326, 35.0653, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (371400, 370000, '德州市', '德州', 116.307, 37.454, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (371500, 370000, '聊城市', '聊城', 115.98, 36.456, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (371600, 370000, '滨州市', '滨州', 118.017, 37.3835, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (371700, 370000, '菏泽市', '菏泽', 115.469, 35.2465, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (410000, 0, '河南省', '河南', 113.665, 34.758, 1, 16, 1);
+INSERT INTO `sys_area` VALUES (410100, 410000, '郑州市', '郑州', 113.665, 34.758, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (410200, 410000, '开封市', '开封', 114.341, 34.7971, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (410300, 410000, '洛阳市', '洛阳', 112.434, 34.663, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (410400, 410000, '平顶山市', '平顶山', 113.308, 33.7352, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (410500, 410000, '安阳市', '安阳', 114.352, 36.1034, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (410600, 410000, '鹤壁市', '鹤壁', 114.295, 35.7482, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (410700, 410000, '新乡市', '新乡', 113.884, 35.3026, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (410800, 410000, '焦作市', '焦作', 113.238, 35.239, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (410881, 410000, '济源市', '济源', 112.59, 35.0904, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (410900, 410000, '濮阳市', '濮阳', 115.041, 35.7682, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (411000, 410000, '许昌市', '许昌', 113.826, 34.023, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (411100, 410000, '漯河市', '漯河', 114.026, 33.5759, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (411200, 410000, '三门峡市', '三门峡', 111.194, 34.7773, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (411300, 410000, '南阳市', '南阳', 112.541, 32.9991, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (411400, 410000, '商丘市', '商丘', 115.65, 34.4371, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (411500, 410000, '信阳市', '信阳', 114.075, 32.1233, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (411600, 410000, '周口市', '周口', 114.65, 33.6204, 2, 17, 1);
+INSERT INTO `sys_area` VALUES (411700, 410000, '驻马店市', '驻马店', 114.025, 32.9802, 2, 18, 1);
+INSERT INTO `sys_area` VALUES (420000, 0, '湖北省', '湖北', 114.299, 30.5844, 1, 17, 1);
+INSERT INTO `sys_area` VALUES (420100, 420000, '武汉市', '武汉', 114.299, 30.5844, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (420200, 420000, '黄石市', '黄石', 115.077, 30.2201, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (420300, 420000, '十堰市', '十堰', 110.788, 32.6469, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (420500, 420000, '宜昌市', '宜昌', 111.291, 30.7026, 2, 17, 1);
+INSERT INTO `sys_area` VALUES (420600, 420000, '襄阳市', '襄阳', 112.144, 32.0424, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (420700, 420000, '鄂州市', '鄂州', 114.891, 30.3965, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (420800, 420000, '荆门市', '荆门', 112.204, 31.0354, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (420900, 420000, '孝感市', '孝感', 113.927, 30.9264, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (421000, 420000, '荆州市', '荆州', 112.238, 30.3269, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (421100, 420000, '黄冈市', '黄冈', 114.879, 30.4477, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (421200, 420000, '咸宁市', '咸宁', 114.329, 29.8328, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (421300, 420000, '随州市', '随州', 113.374, 31.7175, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (422800, 420000, '恩施土家族苗族自治州', '恩施', 109.487, 30.2831, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (429004, 420000, '仙桃市', '仙桃', 113.454, 30.365, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (429005, 420000, '潜江市', '潜江', 112.897, 30.4212, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (429006, 420000, '天门市', '天门', 113.166, 30.6531, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (429021, 420000, '神农架林区', '神农架', 114.299, 30.5844, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (430000, 0, '湖南省', '湖南', 112.982, 28.1941, 1, 18, 1);
+INSERT INTO `sys_area` VALUES (430100, 430000, '长沙市', '长沙', 112.982, 28.1941, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (430200, 430000, '株洲市', '株洲', 113.152, 27.8358, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (430300, 430000, '湘潭市', '湘潭', 112.944, 27.8297, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (430400, 430000, '衡阳市', '衡阳', 112.608, 26.9004, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (430500, 430000, '邵阳市', '邵阳', 111.469, 27.2378, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (430600, 430000, '岳阳市', '岳阳', 113.133, 29.3703, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (430700, 430000, '常德市', '常德', 111.691, 29.0402, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (430800, 430000, '张家界市', '张家界', 110.48, 29.1274, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (430900, 430000, '益阳市', '益阳', 112.355, 28.5701, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (431000, 430000, '郴州市', '郴州', 113.032, 25.7936, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (431100, 430000, '永州市', '永州', 111.608, 26.4345, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (431200, 430000, '怀化市', '怀化', 109.978, 27.5501, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (431300, 430000, '娄底市', '娄底', 112.008, 27.7281, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (433100, 430000, '湘西土家族苗族自治州', '湘西', 109.74, 28.3143, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (440000, 0, '广东省', '广东', 113.325, 23.1506, 1, 19, 1);
+INSERT INTO `sys_area` VALUES (440100, 440000, '广州市', '广州', 113.281, 23.1252, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (440200, 440000, '韶关市', '韶关', 113.592, 24.8013, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (440300, 440000, '深圳市', '深圳', 114.086, 22.547, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (440400, 440000, '珠海市', '珠海', 113.554, 22.225, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (440500, 440000, '汕头市', '汕头', 116.708, 23.371, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (440600, 440000, '佛山市', '佛山', 113.123, 23.0288, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (440700, 440000, '江门市', '江门', 113.095, 22.5904, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (440800, 440000, '湛江市', '湛江', 110.365, 21.2749, 2, 19, 1);
+INSERT INTO `sys_area` VALUES (440900, 440000, '茂名市', '茂名', 110.919, 21.6598, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (441200, 440000, '肇庆市', '肇庆', 112.473, 23.0515, 2, 20, 1);
+INSERT INTO `sys_area` VALUES (441300, 440000, '惠州市', '惠州', 114.413, 23.0794, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (441400, 440000, '梅州市', '梅州', 116.118, 24.2991, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (441500, 440000, '汕尾市', '汕尾', 115.364, 22.7745, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (441600, 440000, '河源市', '河源', 114.698, 23.7463, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (441700, 440000, '阳江市', '阳江', 111.975, 21.8592, 2, 17, 1);
+INSERT INTO `sys_area` VALUES (441800, 440000, '清远市', '清远', 113.051, 23.685, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (441900, 440000, '东莞市', '东莞', 113.746, 23.0462, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (442000, 440000, '中山市', '中山', 113.382, 22.5211, 2, 21, 1);
+INSERT INTO `sys_area` VALUES (445100, 440000, '潮州市', '潮州', 116.632, 23.6617, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (445200, 440000, '揭阳市', '揭阳', 116.356, 23.5438, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (445300, 440000, '云浮市', '云浮', 112.044, 22.9298, 2, 18, 1);
+INSERT INTO `sys_area` VALUES (450000, 0, '广西壮族自治区', '广西', 108.32, 22.824, 1, 20, 1);
+INSERT INTO `sys_area` VALUES (450100, 450000, '南宁市', '南宁', 108.32, 22.824, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (450200, 450000, '柳州市', '柳州', 109.412, 24.3146, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (450300, 450000, '桂林市', '桂林', 110.299, 25.2742, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (450400, 450000, '梧州市', '梧州', 111.298, 23.4748, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (450500, 450000, '北海市', '北海', 109.119, 21.4733, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (450600, 450000, '防城港市', '防城港', 108.345, 21.6146, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (450700, 450000, '钦州市', '钦州', 108.624, 21.9671, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (450800, 450000, '贵港市', '贵港', 109.602, 23.0936, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (450900, 450000, '玉林市', '玉林', 110.154, 22.6314, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (451000, 450000, '百色市', '百色', 106.616, 23.8977, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (451100, 450000, '贺州市', '贺州', 111.552, 24.4141, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (451200, 450000, '河池市', '河池', 108.062, 24.6959, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (451300, 450000, '来宾市', '来宾', 109.23, 23.7338, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (451400, 450000, '崇左市', '崇左', 107.354, 22.4041, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (460000, 0, '海南省', '海南', 110.331, 20.032, 1, 21, 1);
+INSERT INTO `sys_area` VALUES (460100, 460000, '海口市', '海口', 110.331, 20.032, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (460200, 460000, '三亚市', '三亚', 109.508, 18.2479, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (460300, 460000, '三沙市', '三沙', 112.349, 16.831, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (469001, 460000, '五指山市', '五指山', 109.517, 18.7769, 2, 19, 1);
+INSERT INTO `sys_area` VALUES (469002, 460000, '琼海市', '琼海', 110.467, 19.246, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (469003, 460000, '儋州市', '儋州', 109.577, 19.5175, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (469005, 460000, '文昌市', '文昌', 110.754, 19.613, 2, 18, 1);
+INSERT INTO `sys_area` VALUES (469006, 460000, '万宁市', '万宁', 110.389, 18.7962, 2, 17, 1);
+INSERT INTO `sys_area` VALUES (469007, 460000, '东方市', '东方', 108.654, 19.102, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (469025, 460000, '定安县', '定安', 110.349, 19.685, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (469026, 460000, '屯昌县', '屯昌', 110.103, 19.3629, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (469027, 460000, '澄迈县', '澄迈', 110.007, 19.7371, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (469028, 460000, '临高县', '临高', 109.688, 19.9083, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (469030, 460000, '白沙黎族自治县', '白沙', 109.453, 19.2246, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (469031, 460000, '昌江黎族自治县', '昌江', 109.053, 19.261, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (469033, 460000, '乐东黎族自治县', '乐东', 109.175, 18.7476, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (469034, 460000, '陵水黎族自治县', '陵水', 110.037, 18.505, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (469035, 460000, '保亭黎族苗族自治县', '保亭', 109.702, 18.6364, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (469036, 460000, '琼中黎族苗族自治县', '琼中', 109.84, 19.0356, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (500000, 0, '重庆', '重庆', 106.505, 29.5332, 1, 22, 1);
+INSERT INTO `sys_area` VALUES (500100, 500000, '重庆市', '重庆', 106.505, 29.5332, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (510000, 0, '四川省', '四川', 104.066, 30.6595, 1, 23, 1);
+INSERT INTO `sys_area` VALUES (510100, 510000, '成都市', '成都', 104.066, 30.6595, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (510300, 510000, '自贡市', '自贡', 104.773, 29.3528, 2, 20, 1);
+INSERT INTO `sys_area` VALUES (510400, 510000, '攀枝花市', '攀枝花', 101.716, 26.5804, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (510500, 510000, '泸州市', '泸州', 105.443, 28.8891, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (510600, 510000, '德阳市', '德阳', 104.399, 31.128, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (510700, 510000, '绵阳市', '绵阳', 104.742, 31.464, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (510800, 510000, '广元市', '广元', 105.83, 32.4337, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (510900, 510000, '遂宁市', '遂宁', 105.571, 30.5133, 2, 17, 1);
+INSERT INTO `sys_area` VALUES (511000, 510000, '内江市', '内江', 105.066, 29.5871, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (511100, 510000, '乐山市', '乐山', 103.761, 29.582, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (511300, 510000, '南充市', '南充', 106.083, 30.7953, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (511400, 510000, '眉山市', '眉山', 103.832, 30.0483, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (511500, 510000, '宜宾市', '宜宾', 104.631, 28.7602, 2, 19, 1);
+INSERT INTO `sys_area` VALUES (511600, 510000, '广安市', '广安', 106.633, 30.4564, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (511700, 510000, '达州市', '达州', 107.502, 31.2095, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (511800, 510000, '雅安市', '雅安', 103.001, 29.9877, 2, 18, 1);
+INSERT INTO `sys_area` VALUES (511900, 510000, '巴中市', '巴中', 106.754, 31.8588, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (512000, 510000, '资阳市', '资阳', 104.642, 30.1222, 2, 21, 1);
+INSERT INTO `sys_area` VALUES (513200, 510000, '阿坝藏族羌族自治州', '阿坝', 102.221, 31.8998, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (513300, 510000, '甘孜藏族自治州', '甘孜', 101.964, 30.0507, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (513400, 510000, '凉山彝族自治州', '凉山', 102.259, 27.8868, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (520000, 0, '贵州省', '贵州', 106.713, 26.5783, 1, 24, 1);
+INSERT INTO `sys_area` VALUES (520100, 520000, '贵阳市', '贵阳', 106.713, 26.5783, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (520200, 520000, '六盘水市', '六盘水', 104.847, 26.5846, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (520300, 520000, '遵义市', '遵义', 106.937, 27.7066, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (520400, 520000, '安顺市', '安顺', 105.932, 26.2455, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (522200, 520000, '铜仁市', '铜仁', 109.192, 27.7183, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (522300, 520000, '黔西南布依族苗族自治州', '黔西南', 104.898, 25.0881, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (522400, 520000, '毕节市', '毕节', 105.285, 27.3017, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (522600, 520000, '黔东南苗族侗族自治州', '黔东南', 107.977, 26.5834, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (522700, 520000, '黔南布依族苗族自治州', '黔南', 107.517, 26.2582, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (530000, 0, '云南省', '云南', 102.712, 25.0406, 1, 25, 1);
+INSERT INTO `sys_area` VALUES (530100, 530000, '昆明市', '昆明', 102.712, 25.0406, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (530300, 530000, '曲靖市', '曲靖', 103.798, 25.5016, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (530400, 530000, '玉溪市', '玉溪', 102.544, 24.3505, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (530500, 530000, '保山市', '保山', 99.1671, 25.1118, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (530600, 530000, '昭通市', '昭通', 103.717, 27.337, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (530700, 530000, '丽江市', '丽江', 100.233, 26.8721, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (530800, 530000, '普洱市', '普洱', 100.972, 22.7773, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (530900, 530000, '临沧市', '临沧', 100.087, 23.8866, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (532300, 530000, '楚雄彝族自治州', '楚雄', 101.546, 25.042, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (532500, 530000, '红河哈尼族彝族自治州', '红河', 103.384, 23.3668, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (532600, 530000, '文山壮族苗族自治州', '文山', 104.244, 23.3695, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (532800, 530000, '西双版纳傣族自治州', '西双版纳', 100.798, 22.0017, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (532900, 530000, '大理白族自治州', '大理', 100.226, 25.5894, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (533100, 530000, '德宏傣族景颇族自治州', '德宏', 98.5784, 24.4367, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (533300, 530000, '怒江傈僳族自治州', '怒江', 98.8543, 25.8509, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (533400, 530000, '迪庆藏族自治州', '迪庆', 99.7065, 27.8269, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (540000, 0, '西藏自治区', '西藏', 91.1322, 29.6604, 1, 26, 1);
+INSERT INTO `sys_area` VALUES (540100, 540000, '拉萨市', '拉萨', 91.1322, 29.6604, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (542100, 540000, '昌都地区', '昌都', 97.1785, 31.1369, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (542200, 540000, '山南地区', '山南', 91.7665, 29.236, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (542300, 540000, '日喀则地区', '日喀则', 88.8851, 29.2675, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (542400, 540000, '那曲地区', '那曲', 92.0602, 31.476, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (542500, 540000, '阿里地区', '阿里', 80.1055, 32.5032, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (542600, 540000, '林芝地区', '林芝', 94.3624, 29.6547, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (610000, 0, '陕西省', '陕西', 108.948, 34.2632, 1, 27, 1);
+INSERT INTO `sys_area` VALUES (610100, 610000, '西安市', '西安', 108.948, 34.2632, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (610200, 610000, '铜川市', '铜川', 108.98, 34.9166, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (610300, 610000, '宝鸡市', '宝鸡', 107.145, 34.3693, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (610400, 610000, '咸阳市', '咸阳', 108.705, 34.3334, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (610500, 610000, '渭南市', '渭南', 109.503, 34.4994, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (610600, 610000, '延安市', '延安', 109.491, 36.5965, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (610700, 610000, '汉中市', '汉中', 107.029, 33.0777, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (610800, 610000, '榆林市', '榆林', 109.741, 38.2902, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (610900, 610000, '安康市', '安康', 109.029, 32.6903, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (611000, 610000, '商洛市', '商洛', 109.94, 33.8683, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (620000, 0, '甘肃省', '甘肃', 103.824, 36.058, 1, 28, 1);
+INSERT INTO `sys_area` VALUES (620100, 620000, '兰州市', '兰州', 103.824, 36.058, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (620200, 620000, '嘉峪关市', '嘉峪关', 98.2773, 39.7865, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (620300, 620000, '金昌市', '金昌', 102.188, 38.5142, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (620400, 620000, '白银市', '白银', 104.174, 36.5457, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (620500, 620000, '天水市', '天水', 105.725, 34.5785, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (620600, 620000, '武威市', '武威', 102.635, 37.93, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (620700, 620000, '张掖市', '张掖', 100.455, 38.9329, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (620800, 620000, '平凉市', '平凉', 106.685, 35.5428, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (620900, 620000, '酒泉市', '酒泉', 98.5108, 39.744, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (621000, 620000, '庆阳市', '庆阳', 107.638, 35.7342, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (621100, 620000, '定西市', '定西', 104.626, 35.5796, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (621200, 620000, '陇南市', '陇南', 104.929, 33.3886, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (622900, 620000, '临夏回族自治州', '临夏', 103.212, 35.5994, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (623000, 620000, '甘南藏族自治州', '甘南', 102.911, 34.9864, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (630000, 0, '青海省', '青海', 101.779, 36.6232, 1, 29, 1);
+INSERT INTO `sys_area` VALUES (630100, 630000, '西宁市', '西宁', 101.779, 36.6232, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (632100, 630000, '海东市', '海东', 102.103, 36.5029, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (632200, 630000, '海北藏族自治州', '海北', 100.901, 36.9594, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (632300, 630000, '黄南藏族自治州', '黄南', 102.02, 35.5177, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (632500, 630000, '海南藏族自治州', '海南藏族', 100.62, 36.2804, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (632600, 630000, '果洛藏族自治州', '果洛', 100.242, 34.4736, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (632700, 630000, '玉树藏族自治州', '玉树', 97.0085, 33.004, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (632800, 630000, '海西蒙古族藏族自治州', '海西', 97.3708, 37.3747, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (640000, 0, '宁夏回族自治区', '宁夏', 106.278, 38.4664, 1, 30, 1);
+INSERT INTO `sys_area` VALUES (640100, 640000, '银川市', '银川', 106.278, 38.4664, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (640200, 640000, '石嘴山市', '石嘴山', 106.376, 39.0133, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (640300, 640000, '吴忠市', '吴忠', 106.199, 37.9862, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (640400, 640000, '固原市', '固原', 106.285, 36.0046, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (640500, 640000, '中卫市', '中卫', 105.19, 37.5149, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (650000, 0, '新疆维吾尔自治区', '新疆', 87.6177, 43.7928, 1, 31, 1);
+INSERT INTO `sys_area` VALUES (650100, 650000, '乌鲁木齐市', '乌鲁木齐', 87.6177, 43.7928, 2, 17, 1);
+INSERT INTO `sys_area` VALUES (650200, 650000, '克拉玛依市', '克拉玛依', 84.8739, 45.5959, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (652100, 650000, '吐鲁番地区', '吐鲁番', 89.1841, 42.9476, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (652200, 650000, '哈密地区', '哈密', 93.5132, 42.8332, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (652300, 650000, '昌吉回族自治州', '昌吉', 87.304, 44.0146, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (652700, 650000, '博尔塔拉蒙古自治州', '博尔塔拉', 82.0748, 44.9033, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (652800, 650000, '巴音郭楞蒙古自治州', '巴音郭楞', 86.151, 41.7686, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (652900, 650000, '阿克苏地区', '阿克苏', 80.2651, 41.1707, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (653000, 650000, '克孜勒苏柯尔克孜自治州', '克孜勒苏柯尔克孜', 76.1728, 39.7134, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (653100, 650000, '喀什地区', '喀什', 75.9891, 39.4677, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (653200, 650000, '和田地区', '和田', 79.9253, 37.1107, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (654000, 650000, '伊犁哈萨克自治州', '伊犁', 81.3179, 43.9219, 2, 18, 1);
+INSERT INTO `sys_area` VALUES (654200, 650000, '塔城地区', '塔城', 82.9857, 46.7463, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (654300, 650000, '阿勒泰地区', '阿勒泰', 88.1396, 47.8484, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (659001, 650000, '石河子市', '石河子', 86.0411, 44.3059, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (659002, 650000, '阿拉尔市', '阿拉尔', 81.2859, 40.5419, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (659003, 650000, '图木舒克市', '图木舒克', 79.078, 39.8673, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (659004, 650000, '五家渠市', '五家渠', 87.5269, 44.1674, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (710000, 0, '台湾', '台湾', 121.509, 25.0443, 1, 34, 1);
+INSERT INTO `sys_area` VALUES (710100, 710000, '台北市', '台北', 121.509, 25.0443, 2, 12, 1);
+INSERT INTO `sys_area` VALUES (710200, 710000, '高雄市', '高雄', 121.509, 25.0443, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (710300, 710000, '台南市', '台南', 121.509, 25.0443, 2, 14, 1);
+INSERT INTO `sys_area` VALUES (710400, 710000, '台中市', '台中', 121.509, 25.0443, 2, 15, 1);
+INSERT INTO `sys_area` VALUES (710500, 710000, '金门县', '金门', 121.509, 25.0443, 2, 6, 1);
+INSERT INTO `sys_area` VALUES (710600, 710000, '南投县', '南投', 121.509, 25.0443, 2, 9, 1);
+INSERT INTO `sys_area` VALUES (710700, 710000, '基隆市', '基隆', 121.509, 25.0443, 2, 5, 1);
+INSERT INTO `sys_area` VALUES (710800, 710000, '新竹市', '新竹', 121.509, 25.0443, 2, 18, 1);
+INSERT INTO `sys_area` VALUES (710900, 710000, '嘉义市', '嘉义', 121.509, 25.0443, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (711100, 710000, '新北市', '新北', 121.509, 25.0443, 2, 17, 1);
+INSERT INTO `sys_area` VALUES (711200, 710000, '宜兰县', '宜兰', 121.509, 25.0443, 2, 20, 1);
+INSERT INTO `sys_area` VALUES (711300, 710000, '新竹县', '新竹', 121.509, 25.0443, 2, 19, 1);
+INSERT INTO `sys_area` VALUES (711400, 710000, '桃园县', '桃园', 121.509, 25.0443, 2, 16, 1);
+INSERT INTO `sys_area` VALUES (711500, 710000, '苗栗县', '苗栗', 121.509, 25.0443, 2, 8, 1);
+INSERT INTO `sys_area` VALUES (711700, 710000, '彰化县', '彰化', 121.509, 25.0443, 2, 22, 1);
+INSERT INTO `sys_area` VALUES (711900, 710000, '嘉义县', '嘉义', 121.509, 25.0443, 2, 4, 1);
+INSERT INTO `sys_area` VALUES (712100, 710000, '云林县', '云林', 121.509, 25.0443, 2, 21, 1);
+INSERT INTO `sys_area` VALUES (712400, 710000, '屏东县', '屏东', 121.509, 25.0443, 2, 11, 1);
+INSERT INTO `sys_area` VALUES (712500, 710000, '台东县', '台东', 121.509, 25.0443, 2, 13, 1);
+INSERT INTO `sys_area` VALUES (712600, 710000, '花莲县', '花莲', 121.509, 25.0443, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (712700, 710000, '澎湖县', '澎湖', 121.509, 25.0443, 2, 10, 1);
+INSERT INTO `sys_area` VALUES (712800, 710000, '连江县', '连江', 121.509, 25.0443, 2, 7, 1);
+INSERT INTO `sys_area` VALUES (810000, 0, '香港特别行政区', '香港', 114.173, 22.32, 1, 32, 1);
+INSERT INTO `sys_area` VALUES (810100, 810000, '香港岛', '香港岛', 114.173, 22.32, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (810200, 810000, '九龙', '九龙', 114.173, 22.32, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (810300, 810000, '新界', '新界', 114.173, 22.32, 2, 3, 1);
+INSERT INTO `sys_area` VALUES (820000, 0, '澳门特别行政区', '澳门', 113.549, 22.199, 1, 33, 1);
+INSERT INTO `sys_area` VALUES (820100, 820000, '澳门半岛', '澳门半岛', 113.549, 22.1988, 2, 1, 1);
+INSERT INTO `sys_area` VALUES (820200, 820000, '离岛', '离岛', 113.549, 22.199, 2, 2, 1);
+INSERT INTO `sys_area` VALUES (900000100, 0, '越南胡志明市', '越南胡志明市', 108.827, 12.1846, 1, 100, 1);
+INSERT INTO `sys_area` VALUES (900000101, 900000100, '大叻', '大叻', 108.827, 12.1846, 2, 1, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_cluster_config
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_cluster_config`;
+CREATE TABLE `sys_cluster_config` (
+  `id` int(11) NOT NULL,
+  `cluster_id` int(11) NOT NULL COMMENT '对应cluster表的id',
+  `display_name` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '应用名称',
+  `type` int(1) DEFAULT '1' COMMENT '应用集群类型（1:iam/sso，2:其他）',
+  `env_type` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '环境类型,字典value',
+  `view_extranet_base_uri` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '前端视图页面外网BaseURI',
+  `extranet_base_uri` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '外网BaseURI',
+  `intranet_base_uri` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '内网BaseURI',
+  `remark` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0：正常，1：删除）',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `cluster_id` (`cluster_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用集群配置表（cluster与环境关联的具体配置，一定程度上也相当于app_cluster的明细子表，注：如，对于公私混合部署时，一个cluster_id/env_id可对应多条记录，iam/online功能会用到）';
+
+-- ----------------------------
+-- Records of sys_cluster_config
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_cluster_config` VALUES (1, 84, 'ci-server', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14046/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14040/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (3, 79, 'scm-server', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14043/scm-server', 'http://localhost:14043/scm-server', 'Scm platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (4, 76, 'erm-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14051/erm-manager', 'http://localhost:14051/erm-manager', 'Erm platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (6, 77, 'umc-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14048/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (7, 84, 'ci-server', 2, 'fat', 'http://localhost:8080', 'http://ci.sunwuu.fat/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://localhost:8080', 'http://iam.sunwuu.fat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (9, 79, 'scm-server', 2, 'fat', 'http://localhost:8080', 'http://scm.sunwuu.fat/scm-server', 'http://localhost:14043/scm-server', 'Share platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (10, 76, 'erm-manager', 2, 'fat', 'http://localhost:8080', 'http://erm.sunwuu.fat/erm-manager', 'http://localhost:14051/erm-manager', 'Erm platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (12, 77, 'umc-manager', 2, 'fat', 'http://localhost:8080', 'http://umc.sunwuu.fat/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (13, 84, 'ci-server', 2, 'pro', 'http://localhost:8080', 'https://ci.sunwuu.com/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'pro', 'http://localhost:8080', 'https://iam.sunwuu.com/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (15, 79, 'scm-server', 2, 'pro', 'http://localhost:8080', 'https://scm.sunwuu.com/scm-server', 'http://localhost:14043/scm-server', 'Share platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (16, 76, 'erm-manager', 2, 'pro', 'http://localhost:8080', 'https://erm.sunwuu.com/erm-manager', 'http://localhost:14051/erm-manager', 'Erm platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (17, 77, 'umc-manager', 2, 'pro', 'http://localhost:8080', 'https://umc.sunwuu.com/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (18, 94, 'doc-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14060/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (19, 94, 'doc-manager', 2, 'fat', 'http://localhost:8080', 'http://doc.sunwuu.fat/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (20, 94, 'doc-manager', 2, 'pro', 'http://localhost:8080', 'https://doc.sunwuu.com/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (21, 57995, 'coss-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14062/coss-manager', 'http://localhost:14062/coss-manager', 'Coss platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (22, 57995, 'coss-manager', 2, 'fat', 'http://localhost:8080', 'http://coss-console.sunwuu.fat/coss-manager', 'http://localhost:14062/coss-manager', 'Coss platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (23, 57995, 'coss-manager', 2, 'pro', 'http://localhost:8080', 'https://coss-console.sunwuu.com/coss-manager', 'http://localhost:14062/coss-manager', 'Coss platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (24, 57996, 'vcs-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14063/vcs-manager', 'http://localhost:14063/vcs-manager', 'vcs platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (25, 57996, 'vcs-manager', 2, 'fat', 'http://localhost:8080', 'http://vcs.sunwuu.fat/vcs-manager', 'http://localhost:14063/vcs-manager', 'vcs platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (26, 57996, 'vcs-manager', 2, 'pro', 'http://localhost:8080', 'https://vcs.sunwuu.com/vcs-manager', 'http://localhost:14063/vcs-manager', 'vcs platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (27, 84, 'ci-server', 2, 'uat', 'http://localhost:8080', 'http://ci.sunwuu.uat/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'uat', 'http://localhost:8080', 'http://iam.sunwuu.uat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (29, 79, 'scm-server', 2, 'uat', 'http://localhost:8080', 'http://scm.sunwuu.uat/scm-server', 'http://localhost:14043/scm-server', 'Scm platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (30, 76, 'erm-manager', 2, 'uat', 'http://localhost:8080', 'http://erm.sunwuu.uat/erm-manager', 'http://localhost:14051/erm-manager', 'Erm platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (31, 77, 'umc-manager', 2, 'uat', 'http://localhost:8080', 'http://umc-manager.sunwuu.uat/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (32, 57996, 'vcs-manager', 2, 'uat', 'http://localhost:8080', 'http://vcs.sunwuu.uat/vcs-manager', 'http://localhost:14063/vcs-manager', 'vcs platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (33, 57995, 'coss-manager', 2, 'uat', 'http://localhost:8080', 'http://coss-console.sunwuu.uat/coss-manager', 'http://localhost:14062/coss-manager', 'Coss platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (34, 94, 'doc-manager', 2, 'uat', 'http://localhost:8080', 'http://doc.sunwuu.uat/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (35, 95, 'dts-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14080/dts-manager', 'http://localhost:14080/dts-manager', 'Dts platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (36, 95, 'dts-manager', 2, 'fat', 'http://localhost:8080', 'http://dts.sunwuu.fat/dts-manager', 'http://localhost:14080/dts-manager', 'Dts platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (37, 95, 'dts-manager', 2, 'uat', 'http://localhost:8080', 'http://dts.sunwuu.uat/dts-manager', 'http://localhost:14080/dts-manager', 'Dts platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (38, 95, 'dts-manager', 2, 'pro', 'http://localhost:8080', 'http://dts.sunwuu.com/dts-manager', 'http://localhost:14080/dts-manager', 'Dts platform', NULL, NULL, NULL, NULL, 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_company
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_company`;
+CREATE TABLE `sys_company` (
+  `id` int(11) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  CONSTRAINT `sys_company_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_company
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_company` VALUES (2, 7, 'adsf', 'asdf', 'adsf', 'asdf');
+INSERT INTO `sys_company` VALUES (3, 2, NULL, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact`;
+CREATE TABLE `sys_contact` (
+  `id` int(11) NOT NULL,
+  `name` varchar(30) CHARACTER SET utf8 NOT NULL COMMENT '通知分组名称',
+  `create_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='告警联系人表';
+
+-- ----------------------------
+-- Records of sys_contact
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact` VALUES (1, 'test1', '1', '2019-08-05 06:45:17', '1', '2019-08-05 17:22:41', 1, NULL);
+INSERT INTO `sys_contact` VALUES (2, 'wangsir', '1', '2019-08-05 06:45:17', '1', '2020-04-10 14:44:22', 0, NULL);
+INSERT INTO `sys_contact` VALUES (3, 'testuser', '1', '2019-08-05 16:40:58', '1', '2019-08-23 16:33:01', 1, NULL);
+INSERT INTO `sys_contact` VALUES (7, 'hwj', '1', '2019-08-23 15:16:39', '1', '2020-07-24 15:43:11', 0, NULL);
+INSERT INTO `sys_contact` VALUES (68259, 'testuser', '1', '2020-03-16 09:47:26', '1', '2020-03-16 09:47:39', 1, NULL);
+INSERT INTO `sys_contact` VALUES (2101651456, 'lxl', '1', '2020-07-17 18:10:20', '1', '2020-07-17 18:10:20', 0, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact_channel
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact_channel`;
+CREATE TABLE `sys_contact_channel` (
+  `id` int(11) NOT NULL,
+  `kind` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'email,phone,wechat,dingtalk,twitter,facebook---对应com.wl4g.devops.support.notification.NotifierKind',
+  `contact_id` int(11) DEFAULT NULL COMMENT '联系人id',
+  `primary_address` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '具体的联系地址:可能是email,phone,wechat的open_id等',
+  `time_of_freq` int(11) DEFAULT NULL COMMENT '频率时间',
+  `num_of_freq` int(11) DEFAULT NULL COMMENT '频率次数',
+  `enable` int(11) DEFAULT NULL COMMENT '是否启用',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_contact_channel
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact_channel` VALUES (35427, 'AliyunSms', 68259, '13888888888', 1, 1, 1);
+INSERT INTO `sys_contact_channel` VALUES (89084, 'Mail', 68259, '13888888888@qq.com', 1, 1, 1);
+INSERT INTO `sys_contact_channel` VALUES (96824, 'Mail', 2, '983708408@qq.com', 30, 1, 1);
+INSERT INTO `sys_contact_channel` VALUES (1455118336, 'Mail', 2101651456, '3091553379@qq.com', 99, 99, 1);
+INSERT INTO `sys_contact_channel` VALUES (1749353472, 'Mail', 7, '1154635107@qq.com', 30, 1, 1);
+INSERT INTO `sys_contact_channel` VALUES (2063926272, 'AliyunSms', 7, '13660205656', 30, 1, 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact_group
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact_group`;
+CREATE TABLE `sys_contact_group` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '告警分组名称',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='告警联系人分组表';
+
+-- ----------------------------
+-- Records of sys_contact_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact_group` VALUES (1, 'testGroup', '2019-08-05 08:17:14', '1', '2019-08-23 16:34:09', '1', 1, NULL);
+INSERT INTO `sys_contact_group` VALUES (2, 'test2', '2019-08-06 11:42:59', '1', '2019-08-23 16:33:34', '1', 1, NULL);
+INSERT INTO `sys_contact_group` VALUES (3, 'test3', '2019-08-06 11:43:18', '1', '2019-08-23 16:33:33', '1', 1, NULL);
+INSERT INTO `sys_contact_group` VALUES (4, 'test4', '2019-08-06 11:46:52', '1', '2019-08-06 11:48:17', '1', 1, NULL);
+INSERT INTO `sys_contact_group` VALUES (5, 'asdf', '2019-08-06 14:03:51', '1', '2019-08-23 16:33:32', '1', 1, NULL);
+INSERT INTO `sys_contact_group` VALUES (6, '234234', '2019-08-06 14:03:57', '1', '2019-08-23 15:35:22', '1', 1, NULL);
+INSERT INTO `sys_contact_group` VALUES (7, 'test4', '2019-08-23 15:35:09', '1', '2019-08-23 16:33:31', '1', 1, NULL);
+INSERT INTO `sys_contact_group` VALUES (8, 'developer', '2019-08-23 16:34:06', '1', '2019-08-23 16:34:06', '1', 0, NULL);
+INSERT INTO `sys_contact_group` VALUES (9, 'tester', '2019-08-23 16:34:14', '1', '2019-12-09 13:50:51', '1', 0, NULL);
+INSERT INTO `sys_contact_group` VALUES (10, 'Operator', '2019-08-23 16:35:26', '1', '2019-08-23 16:35:26', '1', 0, NULL);
+INSERT INTO `sys_contact_group` VALUES (51061, 'test', '2020-02-25 19:26:37', '1', '2020-02-25 19:30:19', '1', 1, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact_group_ref
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact_group_ref`;
+CREATE TABLE `sys_contact_group_ref` (
+  `id` int(11) NOT NULL,
+  `contact_group_id` int(11) NOT NULL,
+  `contact_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `contact_group_id` (`contact_group_id`) USING BTREE,
+  KEY `contact_id` (`contact_id`) USING BTREE,
+  CONSTRAINT `sys_contact_group_ref_ibfk_1` FOREIGN KEY (`contact_group_id`) REFERENCES `sys_contact_group` (`id`),
+  CONSTRAINT `sys_contact_group_ref_ibfk_2` FOREIGN KEY (`contact_id`) REFERENCES `sys_contact` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_contact_group_ref
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact_group_ref` VALUES (2, 1, 3);
+INSERT INTO `sys_contact_group_ref` VALUES (3, 1, 1);
+INSERT INTO `sys_contact_group_ref` VALUES (4, 2, 3);
+INSERT INTO `sys_contact_group_ref` VALUES (5, 2, 1);
+INSERT INTO `sys_contact_group_ref` VALUES (19003, 9, 68259);
+INSERT INTO `sys_contact_group_ref` VALUES (59879, 8, 2);
+INSERT INTO `sys_contact_group_ref` VALUES (709166080, 9, 7);
+INSERT INTO `sys_contact_group_ref` VALUES (1120207872, 10, 7);
+INSERT INTO `sys_contact_group_ref` VALUES (1401226240, 8, 7);
+INSERT INTO `sys_contact_group_ref` VALUES (1866160128, 8, 2101651456);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_data_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_data_permission`;
+CREATE TABLE `sys_data_permission` (
+  `id` int(11) NOT NULL,
+  `object_id` int(11) NOT NULL COMMENT '数据权限资源对象ID，如ci_task_id,',
+  `org_id` int(11) NOT NULL COMMENT 'sys_organization',
+  `type` int(11) NOT NULL COMMENT '数据权限资源类型，增加字典类型：data_permission_type，字典值使用数字，key使用object_id对应表名缩写',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Table structure for sys_department
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_department`;
+CREATE TABLE `sys_department` (
+  `id` int(11) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  CONSTRAINT `sys_department_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_department
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_department` VALUES (1, 3, NULL, NULL, '18127968606');
+INSERT INTO `sys_department` VALUES (2, 4, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_dict
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dict`;
+CREATE TABLE `sys_dict` (
+  `key` varchar(128) COLLATE utf8_bin NOT NULL COMMENT 'key,唯一',
+  `value` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '数据值',
+  `label` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '标签名',
+  `label_en` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '标签名(EN)',
+  `type` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '类型',
+  `themes` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '主题/样式',
+  `icon` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '图标',
+  `sort` decimal(10,0) NOT NULL DEFAULT '50' COMMENT '排序（升序）',
+  `status` int(1) NOT NULL DEFAULT '1' COMMENT '字典状态（1:均使用 | 2:仅后台使用 | 3:仅前端使用）释：如状态为`2`的字典的值不会返回给前端（登录后返回字典列表给前端缓存）',
+  `enable` int(11) DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '创建者',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_by` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '更新者',
+  `update_date` datetime NOT NULL COMMENT '更新时间',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注信息',
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  PRIMARY KEY (`key`) USING BTREE,
+  KEY `sys_dict_value` (`value`) USING BTREE,
+  KEY `sys_dict_label` (`label`) USING BTREE,
+  KEY `sys_dict_del_flag` (`del_flag`) USING BTREE,
+  KEY `key` (`key`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='字典表\r\ndict系统管理（界面）： key、type不可变（只能开发人员修改数据库，因key、type会在代码硬编码)\r\n只可修改 value、themes、icon、lable、sort、status、description';
+
+-- ----------------------------
+-- Records of sys_dict
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_dict` VALUES ('aggre_oper_type@avg', 'avg', '平均值', 'avg', 'agg_oper_type', '', '', 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-21 10:40:08', '聚合运算符（平均值） ', 0);
+INSERT INTO `sys_dict` VALUES ('aggre_oper_type@latest', 'latest', '最新值', 'latest', 'agg_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '聚合运算符（最新值）', 0);
+INSERT INTO `sys_dict` VALUES ('aggre_oper_type@max', 'max', '最大值', 'max', 'agg_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-09-15 13:55:21', '聚合运算符（最大值）', 0);
+INSERT INTO `sys_dict` VALUES ('aggre_oper_type@min', 'min', '最小值', 'min', 'agg_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '聚合运算符（最小值）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@dev', 'dev', '开发环境', 'Development Environment', 'app_ns_type', '', '', 10, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:07:15', '开发环境，用于开发者调试使用（Development environment）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@fat', 'fat', '测试环境', 'Testing Environment', 'app_ns_type', '', '', 20, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:08:43', '功能验收测试环境，用于软件测试使用（Feature Acceptance Test environment）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@pro', 'pro', '生产环境', 'Production Environment', 'app_ns_type', '', '', 40, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:14:10', '线上生产环境（Production environment）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@uat', 'uat', '验收环境', 'User Verify Environment', 'app_ns_type', '', '', 30, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:12:17', '用户验收测试环境，用于生产环境下的软件灰度测试使用（User Acceptance Test environment）', 0);
+INSERT INTO `sys_dict` VALUES ('arith_oper_type@add', 'add', '加', 'add', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:19', '算术运算符（加）', 0);
+INSERT INTO `sys_dict` VALUES ('arith_oper_type@div', 'div', '除', 'div', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:06', '算术运算符（除）', 0);
+INSERT INTO `sys_dict` VALUES ('arith_oper_type@mul', 'mul', '乘', 'mul', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:18', '算术运算符（乘）', 0);
+INSERT INTO `sys_dict` VALUES ('arith_oper_type@subtr', 'subtr', '减', 'subtr', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:20', '算术运算符（减）', 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@analyzing', '4', 'Analyzing', 'Analyzing', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@done', '5', 'Done', 'Done', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@new', '1', 'New', 'New', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:28:55', '1', '2019-12-16 17:28:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@scan', '3', 'Scan', 'Scan', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@waiting', '2', 'Waiting', 'Waiting', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_orchestration_type@k8s', '2', 'K8s编排', 'K8s layout', 'ci_orchestration_type', NULL, NULL, 50, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_orchestration_type@native', '1', '原生编排', 'Native layout', 'ci_orchestration_type', NULL, NULL, 49, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@DockerNative', 'DockerNative', 'DockerNative', 'DockerNative', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@Golang', 'Golang', 'Golang', 'Golang', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-11-22 11:22:03', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@MvnAssTar', 'MvnAssTar', 'MvnAssTar', 'MvnAssTar', 'ci_provider_kind', 'primary', NULL, 1, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@NpmTar', 'NpmTar', 'NpmTar', 'NpmTar', 'ci_provider_kind', 'primary', NULL, 2, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@Python3', 'Python3', 'Python3', 'Python3', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@RktNative', 'RktNative', 'RktNative', 'RktNative', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@SpringExecJar', 'SpringExecJar', 'SpringExecJar', 'SpringExecJar', 'ci_provider_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@ViewNative', 'ViewNative', 'ViewNative', 'ViewNative', 'ci_provider_kind', 'primary', NULL, 2, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_task_type@failed', '3', '失败', 'Failed', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_task_type@new', '0', '新建', 'New', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_task_type@part_success', '6', '部分成功', 'Part Success', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_task_type@running', '1', '运行中', 'Running', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_task_type@stoping', '7', '停止中', 'Stoping', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_task_type@stopped', '5', '停止', 'Stopped', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_task_type@success', '2', '成功', 'Success', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_task_type@timeout', '4', '超时', 'Timeout', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_track_type@bug', '2', '漏洞', 'Bug', 'ci_track_type', NULL, NULL, 2, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_track_type@feedback', '4', '反馈', 'Feedback', 'ci_track_type', NULL, NULL, 4, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_track_type@iteration', '3', '迭代', 'Iteration', 'ci_track_type', NULL, NULL, 3, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_track_type@new', '1', '新建', 'New', 'ci_track_type', NULL, NULL, 1, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_vcs_type@VcsWithGithub', 'VcsWithGithub', 'VcsWithGithub', 'VcsWithGithub', 'ci_vcs_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_vcs_type@VcsWithGitlab', 'VcsWithGitlab', 'VcsWithGitlab', 'VcsWithGitlab', 'ci_vcs_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('common_enable_status@disable', '0', '停用', 'Disable', 'common_enable_status', 'danger', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', 'common_enable_status', 0);
+INSERT INTO `sys_dict` VALUES ('common_enable_status@enable', '1', '启用', 'Enable', 'common_enable_status', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', 'common_enable_status', 0);
+INSERT INTO `sys_dict` VALUES ('coss_provider@aliyunoss', 'aliyunoss', 'aliyunoss', 'aliyunoss', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('coss_provider@awss3', 'awss3', 'awss3', 'awss3', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('coss_provider@glusterfs', 'glusterfs', 'glusterfs', 'glusterfs', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('coss_provider@hdfs', 'hdfs', 'hdfs', 'hdfs', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('coss_provider@nativefs', 'nativefs', 'nativefs', 'nativefs', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('ctl_switch_type@off', 'off', '关', 'off', 'switch_type', 'gray', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（关）', 0);
+INSERT INTO `sys_dict` VALUES ('ctl_switch_type@on', 'on', '开', 'on', 'switch_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（开）', 0);
+INSERT INTO `sys_dict` VALUES ('doc_file_type@md', 'md', 'Md', 'Md', 'doc_file_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_file_type@txt', 'Txt', 'Txt', 'Txt', 'doc_file_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@en_US', 'en_US', 'US English Edition', 'US English Edition', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@ja_JP', 'ja_JP', '日陰勢', '日陰勢', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_CN', 'zh_CN', '简体中文版', '简体中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_HK', 'zh_HK', '繁體中文版', '繁體中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('dts_config_option@gen.basedon.adminui', 'gen.basedon.adminui', 'gen.basedon.adminui', 'gen.basedon.adminui', 'dts_config_option', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', 'codegen.provider.vue.compression提示', 0);
+INSERT INTO `sys_dict` VALUES ('dts_config_option@gen.build.assets-type', 'gen.build.assets-type', 'gen.build.assets-type', 'gen.build.assets-type', 'dts_config_option', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', 'codegen.provider.springcloudmvn.build-assets-type提示', 0);
+INSERT INTO `sys_dict` VALUES ('dts_config_option@gen.compression', 'gen.compression', 'gen.compression', 'gen.compression', 'dts_config_option', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', 'codegen.provider.vue.compression提示', 0);
+INSERT INTO `sys_dict` VALUES ('dts_gen_category@DaoServiceController', 'DaoServiceController', 'DaoServiceController', 'DaoServiceController', 'dts_gen_category', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('dts_gen_category@DaoServiceControllerVueJS', 'DaoServiceControllerVueJS', 'DaoServiceControllerVueJS', 'DaoServiceControllerVueJS', 'dts_gen_category', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('dts_gen_category@JustNgJS', 'JustNgJS', 'JustNgJS', 'JustNgJS', 'dts_gen_category', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('dts_gen_category@JustVueJS', 'JustVueJS', 'JustVueJS', 'JustVueJS', 'dts_gen_category', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@blacklist', '1', '黑名单', 'BlackList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@whitelist', '2', '白名单', 'WhiteList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_kind@AliyunDc', 'AliyunDc', 'AliyunDc', 'AliyunDc', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_kind@AwsDc', 'AwsDc', 'AwsDc', 'AwsDc', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_kind@Cndns', 'Cndns', 'Cndns', 'Cndns', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@a', 'a', 'A', 'A', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@aaaa', 'aaaa', 'AAAA', 'AAAA', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@cname', 'cname', 'CNAME', 'CNAME', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@mx', 'mx', 'MX', 'MX', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@ns', 'ns', 'NS', 'NS', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@soa', 'soa', 'SOA', 'SOA', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@srv', 'srv', 'SRV', 'SRV', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@txt', 'txt', 'TXT', 'TXT', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_server_type@coss', '4', 'Coss', 'Coss', 'erm_server_type', NULL, NULL, 52, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_server_type@docker', '2', 'Docker', 'Docker', 'erm_server_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_server_type@host', '1', 'Host', 'Host', 'erm_server_type', NULL, NULL, 49, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_server_type@k8s', '3', 'K8s', 'K8s', 'erm_server_type', NULL, NULL, 51, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_ssh_auth_type@password', '1', '账号密码', 'Password', 'erm_ssh_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_ssh_auth_type@ssh', '2', '私钥', 'Ssh', 'erm_ssh_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@host', '1', 'Host', 'Host', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@openvpn', '2', 'Openvpn', 'Openvpn', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@pptp', '3', 'Pptp', 'Pptp', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@aliyun', '1', '阿里云', 'Aliyun Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@aws', '2', '亚马逊云', 'Aws Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@azure', '3', '微软云', 'Azure Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@baidu', '4', '百度云', 'Baidu Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@ctyun', '5', '天翼云', 'Ctyun Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@google', '6', 'Google云', 'Google Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@qingcloud', '7', '青云', 'Qing Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@tencent', '8', '腾讯云', 'Tencent Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('logical_oper_type@and', 'and', '与', 'and', 'logical_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:21', '逻辑运算符（与）', 0);
+INSERT INTO `sys_dict` VALUES ('logical_oper_type@not', 'not', '非', 'not', 'logical_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:21', '逻辑运算符（非）', 0);
+INSERT INTO `sys_dict` VALUES ('logical_oper_type@or', 'or', '或', 'or', 'logical_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:21', '逻辑运算符（或）', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyA', 'classifyA', 'CI/CD', 'CI/CD', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyB', 'classifyB', '监控', 'Monitors', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:00', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyC', 'classifyC', '网络', 'Networks', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:05:35', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyD', 'classifyD', '安全', 'Securitys', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-24 12:08:49', '1', '2020-07-24 12:08:49', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyE', 'classifyE', '基础', 'Foundations', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyF', 'classifyF', '存储', 'Storages', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyG', 'classifyG', '配置', 'Configurations', 'menu_classify_type', '', '', 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyH', 'classifyH', '文档', 'Docs', 'menu_classify_type', '', '', 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_type@button', '3', '按钮', 'Button', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_type@dynamic', '2', '动态菜单', 'Dynamic Menu', 'menu_type', NULL, NULL, 50, 1, NULL, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('menu_type@static', '1', '静态菜单', 'Static Menu', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@basic', 'basic', 'basic', 'basic', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 16:55:57', '1', '2019-08-23 16:55:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@docker', 'docker', 'docker', 'docker', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 16:58:11', '1', '2019-08-23 16:58:11', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@kafka', 'kafka', 'kafka', 'kafka', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 17:01:14', '1', '2019-08-23 17:01:14', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@redis', 'redis', 'redis', 'redis', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 16:58:47', '1', '2019-08-23 16:58:47', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@zookeeper', 'zookeeper', 'zookeeper', 'zookeeper', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 17:02:01', '1', '2019-08-23 17:02:01', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('pcm_auth_type@key', '2', 'key', 'key', 'pcm_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('pcm_auth_type@password', '1', 'password', 'password', 'pcm_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('pcm_provider@jira', 'jira', 'Jira', 'Jira', 'pcm_provider', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('pcm_provider@redmine', 'redmine', 'Redmine', 'Redmine', 'pcm_provider', 'primary', NULL, 49, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@gt', 'gt', '大于', 'gt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于）', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@gte', 'gte', '大于等于', 'gte', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于等于）', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@lt', 'lt', '小于', 'lt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（小于）', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@lte', 'lte', '小于等于', 'lte', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '关系运算符（小于等于）', 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@AliyunSms', 'AliyunSms', 'Aliyun短信', 'AliyunSms', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@AliyunVms', 'AliyunVms', 'Aliyun电话', 'AliyunVms', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@dingtalk', 'Dingtalk', '钉钉', 'Dingtalk', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@email', 'Mail', '邮件', 'Email', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@facebook', 'Facebook', '脸书', 'Facebook', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@twitter', 'Twitter', '推特', 'Twitter', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@wechat', 'WechatMp', '微信', 'Wechat', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_group_type@company', '2', 'Company', 'Company', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_group_type@department', '3', 'Department', 'Department', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_group_type@park', '1', 'Park', 'Park', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_menu_type@dynamic', '2', '动态菜单', 'DynamicMenu', 'sys_menu_type', '', '', 50, 1, 1, '1', '2019-12-11 14:49:36', '1', '2019-12-11 14:49:40', '动态菜单类型（sys_menu表）', 0);
+INSERT INTO `sys_dict` VALUES ('sys_menu_type@static', '1', '静态菜单', 'StaticMenu', 'sys_menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-11 14:49:36', '1', '2019-12-11 14:49:40', '静态菜单类型（sys_menu表）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@danger', 'danger', '严重', 'danger', 'theme_type', 'danger', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '皮肤主题（严重）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@gray', 'gray', '灰色', 'gray', 'theme_type', 'gray', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（灰色）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@primary', 'primary', '主要', 'primary', 'theme_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（主要）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@success', 'success', '成功', 'success', 'theme_type', 'success', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（成功）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@warning', 'warning', '警告', 'warning', 'theme_type', 'warning', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（警告）', 0);
+INSERT INTO `sys_dict` VALUES ('umc_engine_status@running', '2', '运行中', 'Running', 'umc_engine_status', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('umc_engine_status@stop', '0', '停止', 'Stop', 'umc_engine_status', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('umc_engine_status@wait', '1', '等待', 'Wait', 'umc_engine_status', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('vcs_auth_type@password', '1', 'Password', 'Password', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('vcs_auth_type@ssh', '2', 'Ssh', 'Ssh', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@alicode', 'alicode', 'Alicode', 'Alicode', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@bitbucket', 'bitbucket', 'Bitbucket', 'Bitbucket', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@coding', 'coding', 'Coding', 'Coding', 'vcs_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@gitee', 'gitee', 'Gitee', 'Gitee', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@github', 'github', 'Github', 'Github', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@gitlab', 'gitlab', 'Gitlab', 'Gitlab', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_group
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group`;
+CREATE TABLE `sys_group` (
+  `id` int(11) NOT NULL,
+  `name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '用户分租(customer）名，与displayName灵活应用',
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '用户分租(customer）展示名',
+  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '唯一标识',
+  `type` int(1) DEFAULT '0' COMMENT '用户分组类型（预留）1park,2company,3department',
+  `parent_id` int(11) DEFAULT NULL COMMENT '父级id',
+  `parent_ids` varchar(512) COLLATE utf8_bin DEFAULT NULL COMMENT '父级路径id列表, 为减少使用时计算量提高性能(逗号分隔)',
+  `area_id` int(11) DEFAULT NULL COMMENT '区域id',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户组启用状态（0:禁用/1:启用）',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户组状态（预留）',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0:正常/1:删除）',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `parent_id` (`parent_id`) USING BTREE,
+  FULLTEXT KEY `parent_ids` (`parent_ids`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统用户组表';
+
+-- ----------------------------
+-- Records of sys_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_group` VALUES (1, 'PanYuEnergyParkCenter', '番禺节能科技园中心', 'PanYuEnergyParkCenter', 1, NULL, NULL, 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:04:16', 0);
+INSERT INTO `sys_group` VALUES (2, 'Shangmaikeji-GZ', '广州商脉科技网络科技有限公司', 'Shangmaikeji-GZ', 2, 1, '1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:05:05', 0);
+INSERT INTO `sys_group` VALUES (3, 'BigdataDepartment', '大数据研发部', 'BigdataDepartment', 3, 2, '2,1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:09:55', 0);
+INSERT INTO `sys_group` VALUES (4, 'BizDepartment', '应用研发部', 'BizDepartment', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:06:18', 0);
+INSERT INTO `sys_group` VALUES (5, 'DevSecOpsFramework', 'DevSecOps+系统架构部', 'DevSecOpsFramework', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-31 15:46:29', 1, '2019-11-26 14:10:19', 0);
+INSERT INTO `sys_group` VALUES (7, 'test', 'test', 'test', 2, NULL, NULL, 110000, 1, 0, 1, '2019-11-19 14:56:44', 1, '2019-11-19 14:56:44', 1);
+INSERT INTO `sys_group` VALUES (8, 'test', 'test', 'test', 3, 2, '2,1', 110000, 1, 0, 1, '2019-11-26 10:56:34', 1, '2019-11-26 10:56:34', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_group_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group_menu`;
+CREATE TABLE `sys_group_menu` (
+  `id` int(11) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `menu_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  KEY `menu_id` (`menu_id`) USING BTREE,
+  CONSTRAINT `sys_group_menu_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
+  CONSTRAINT `sys_group_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-menu中间表';
+
+-- ----------------------------
+-- Records of sys_group_menu
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_group_menu` VALUES (46, 7, 1, 1, '2019-11-19 14:56:44');
+INSERT INTO `sys_group_menu` VALUES (47, 7, 7, 1, '2019-11-19 14:56:44');
+INSERT INTO `sys_group_menu` VALUES (127, 1, 1, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (128, 1, 2, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (130, 1, 4, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (131, 1, 5, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (132, 1, 6, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (133, 1, 7, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (134, 1, 8, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (135, 1, 9, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (136, 1, 10, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (137, 1, 11, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (138, 1, 12, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (139, 1, 13, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (140, 1, 14, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (141, 1, 15, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (142, 1, 16, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (143, 1, 17, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (144, 1, 18, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (145, 1, 19, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (146, 1, 20, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (147, 1, 21, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (148, 1, 22, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (149, 1, 23, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (150, 1, 24, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (151, 1, 25, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (152, 1, 26, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (153, 1, 27, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (154, 1, 28, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (166, 2, 1, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (167, 2, 33, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (168, 2, 34, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (169, 2, 7, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (170, 2, 8, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (171, 2, 9, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (172, 2, 10, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (328, 3, 1, 1, '2019-11-26 14:09:56');
+INSERT INTO `sys_group_menu` VALUES (329, 3, 7, 1, '2019-11-26 14:09:56');
+INSERT INTO `sys_group_menu` VALUES (330, 5, 1, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (331, 5, 2, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (333, 5, 4, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (334, 5, 5, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (335, 5, 6, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (336, 5, 7, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (337, 5, 8, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (338, 5, 11, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (339, 5, 12, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (340, 5, 13, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (341, 5, 14, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (342, 5, 15, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (343, 5, 16, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (344, 5, 17, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (345, 5, 18, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (346, 5, 19, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (347, 5, 20, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (348, 5, 21, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (349, 5, 22, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (350, 5, 23, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (351, 5, 24, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (352, 5, 25, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (353, 5, 26, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (354, 5, 27, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (355, 5, 28, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (358, 5, 31, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (359, 5, 33, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (360, 5, 34, 1, '2019-11-26 14:10:19');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_group_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group_role`;
+CREATE TABLE `sys_group_role` (
+  `id` int(11) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  KEY `role_id` (`role_id`) USING BTREE,
+  CONSTRAINT `sys_group_role_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
+  CONSTRAINT `sys_group_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-role中间表';
+
+-- ----------------------------
+-- Records of sys_group_role
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_group_role` VALUES (1875447208, 4, 1, 1, '2020-06-12 10:04:24');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_group_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group_user`;
+CREATE TABLE `sys_group_user` (
+  `id` int(11) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  KEY `user_id` (`user_id`) USING BTREE,
+  CONSTRAINT `sys_group_user_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
+  CONSTRAINT `sys_group_user_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-user中间表';
+
+-- ----------------------------
+-- Records of sys_group_user
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_group_user` VALUES (2, 4, 1, 1, '2019-10-29 14:56:07');
+INSERT INTO `sys_group_user` VALUES (18, 2, 1, 1, '2019-10-30 18:29:40');
+INSERT INTO `sys_group_user` VALUES (20, 1, 1, 1, '2019-11-05 13:58:00');
+INSERT INTO `sys_group_user` VALUES (23, 4, 5, 1, '2019-11-26 14:10:52');
+INSERT INTO `sys_group_user` VALUES (26, 3, 8, 1, '2019-11-26 14:11:11');
+INSERT INTO `sys_group_user` VALUES (27, 5, 8, 1, '2019-11-26 14:11:11');
+INSERT INTO `sys_group_user` VALUES (1310465345, 5, 7, 1, '2020-06-12 10:03:53');
+INSERT INTO `sys_group_user` VALUES (2073858682, 3, 7, 1, '2020-06-12 10:03:53');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_menu`;
+CREATE TABLE `sys_menu` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
+  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
+  `type` int(1) DEFAULT NULL COMMENT '菜单类型, (e.g 1静态菜单,2动态菜单,3按钮...参考字典)',
+  `classify` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '分类类型',
+  `level` int(1) NOT NULL DEFAULT '1' COMMENT '级别,顶级=1 , 菜单为0级',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '菜单状态(e.g 启用,禁用)',
+  `parent_id` int(11) NOT NULL COMMENT '父级菜单ID ,顶级的父级id为0',
+  `parent_ids` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '树形父级菜单ID列表（如：1,11,22）',
+  `permission` varchar(500) COLLATE utf8_bin NOT NULL COMMENT '权限标识（如：sys:user:edit,sys:user:view），用于如shiro-aop方法及权限校验',
+  `page_location` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '页面地址,(例如静态菜单:/ci/task/xx.vue文件路径(不包含.vue后缀),动态菜单www.baidu.com)',
+  `route_path` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '路由地址,例如/ci/task (#号后面的部分)',
+  `render_target` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '渲染目标 （_self, _blank），注：当type=2动态菜单时有值',
+  `icon` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '图标',
+  `sort` int(11) DEFAULT NULL COMMENT '排序',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0:正常/1:删除）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统菜单（权限）表';
+
+-- ----------------------------
+-- Records of sys_menu
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_menu` VALUES (1, 'CI/CD Deliverys', '集成交付', 1, 'classifyA', 1, 0, 0, NULL, 'ci', '/ci', '/ci', NULL, 'icon-ziyuanguanli', 300, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:51:02', 0);
+INSERT INTO `sys_menu` VALUES (2, 'Monitoring Services', '监控中心', 1, 'classifyB', 1, 0, 0, NULL, 'umc', '/umc', '/umc', NULL, 'icon-jiankong', 200, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:52:04', 0);
+INSERT INTO `sys_menu` VALUES (4, 'Distributed Configuration', '配置中心', 1, 'classifyG', 1, 0, 0, NULL, 'scm', '/scm', '/scm', NULL, 'icon-peizhizhongxin', 500, 1, '2019-10-31 17:25:49', 1, '2020-08-26 12:54:34', 0);
+INSERT INTO `sys_menu` VALUES (5, 'System Settings', '系统设置', 1, NULL, 1, 0, 0, NULL, 'iam', '/iam', '/iam', NULL, 'icon-xitongshezhi', 900, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:49:57', 0);
+INSERT INTO `sys_menu` VALUES (6, 'CMDB Management', '资产管理', 1, 'classifyE', 1, 0, 0, NULL, 'erm', '/erm', '/erm', NULL, 'icon-zichanguanli', 800, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:51:36', 0);
+INSERT INTO `sys_menu` VALUES (7, 'Pipelines', '任务流水线', 1, 'classifyA', 2, 0, 1, NULL, 'ci:pipeline', '/ci/pipeline/Pipeline', '/ci/pipeline', NULL, 'icon-liushuixian', 301, 1, '2019-10-31 10:01:57', 1, '2020-08-26 13:00:21', 0);
+INSERT INTO `sys_menu` VALUES (8, 'Building Scheduler', '构建计划', 1, 'classifyA', 2, 0, 1, NULL, 'ci:trigger', '/ci/trigger/Trigger', '/ci/trigger', NULL, 'icon-zhixingjihua', 304, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:12:18', 0);
+INSERT INTO `sys_menu` VALUES (9, 'Run Records', '运行记录', 1, 'classifyA', 2, 0, 1, NULL, 'ci:pipehis', '', '', NULL, 'icon-yunxingrizhi', 303, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:00:51', 0);
+INSERT INTO `sys_menu` VALUES (10, 'Project Configuration', '项目配置', 1, 'classifyA', 2, 0, 1, NULL, 'ci:projectconfig', '', '', NULL, 'icon-chakanyilaiguanxishu', 306, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:40:45', 0);
+INSERT INTO `sys_menu` VALUES (11, 'Online Users', '在线用户', 1, NULL, 2, 0, 5, NULL, 'iam:online', '/iam/online/Online', '/iam/online', NULL, 'icon-zaixianyonghu', 902, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:55:12', 0);
+INSERT INTO `sys_menu` VALUES (12, 'Users', '用户管理', 1, NULL, 2, 0, 5, NULL, 'iam:user', '/iam/user/User', '/iam/user', NULL, 'icon-yonghuguanli', 903, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:58', 0);
+INSERT INTO `sys_menu` VALUES (13, 'Menus', '菜单配置', 1, NULL, 2, 0, 5, NULL, 'iam:menu', '/iam/menu/Menu', '/iam/menu', NULL, 'icon-caidan', 906, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:13', 0);
+INSERT INTO `sys_menu` VALUES (14, 'Organizations', '组织机构', 1, NULL, 2, 0, 5, NULL, 'iam:group', '/iam/group/Group', '/iam/group', NULL, 'icon-organization', 905, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:07', 0);
+INSERT INTO `sys_menu` VALUES (15, 'Roles', '角色管理', 1, NULL, 2, 0, 5, NULL, 'iam:role', '/iam/role/Role', '/iam/role', NULL, 'icon-jiaoseguanli', 904, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:03', 0);
+INSERT INTO `sys_menu` VALUES (16, 'Configure', '配置列表', 1, 'classifyG', 2, 0, 4, NULL, 'scm:configuration', '/scm/configuration/Configuration', '/scm/configuration', NULL, 'icon-yonghupeizhi', 801, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:27', 0);
+INSERT INTO `sys_menu` VALUES (17, 'Historical Versions', '发布版本', 1, 'classifyG', 2, 0, 4, NULL, 'scm:historic', '/scm/historic/Historic', '/scm/historic', NULL, 'icon-fabu', 802, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:34', 0);
+INSERT INTO `sys_menu` VALUES (18, 'Push Tracks', '推送轨迹', 1, 'classifyG', 2, 0, 4, NULL, 'scm:track', '/scm/track/Track', '/scm/track', NULL, 'icon-bianpaixin', 803, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:40', 0);
+INSERT INTO `sys_menu` VALUES (19, 'APP Cluster', '集群管理', 1, 'classifyE', 3, 0, 52752528, NULL, 'erm:cluster', '/erm/cluster/Cluster', '/erm/cluster', NULL, 'icon-jiqun', 5021, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:34:50', 0);
+INSERT INTO `sys_menu` VALUES (20, 'Dictionaries', '字典配置', 1, NULL, 2, 0, 5, NULL, 'iam:dict', '/iam/dict/Dict', '/iam/dict', NULL, 'icon-zidianguanli', 907, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:18', 0);
+INSERT INTO `sys_menu` VALUES (21, 'Notifications', '通知设置', 1, NULL, 2, 0, 5, NULL, 'iam:contact', '/iam/contact/Contact', '/iam/contact', NULL, 'icon-lianxiren', 901, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:52', 0);
+INSERT INTO `sys_menu` VALUES (22, 'Log Console', '日志控制台', 1, 'classifyE', 3, 0, 18148396, NULL, 'erm:console', '/erm/console/Console', '/erm/console', NULL, 'icon-yunxingrizhi', 5011, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:33:41', 0);
+INSERT INTO `sys_menu` VALUES (23, 'SBA Monitor', 'SBA监控', 2, 'classifyB', 2, 0, 2, NULL, 'umc:sbamonitor', 'http://www.baidu.com', '/umc/sbamonitor', NULL, 'icon-jiankong', 201, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:24:47', 0);
+INSERT INTO `sys_menu` VALUES (24, 'Biz Traffic', '业务流量', 1, 'classifyB', 2, 0, 2, NULL, 'umc:biztraffic', '/umc/biztraffic/Biztraffic', '/umc/biztraffic', NULL, 'icon-liuliang', 202, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:24:54', 0);
+INSERT INTO `sys_menu` VALUES (25, 'Alarm Logs', '告警事件', 1, 'classifyB', 2, 0, 61481, NULL, 'umc:record', '/umc/record/Record', '/umc/record', NULL, 'icon-alarm', 2041, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:27:59', 0);
+INSERT INTO `sys_menu` VALUES (26, 'Rules Config', '规则配置', 1, 'classifyB', 2, 0, 61481, NULL, 'umc:config', '/umc/config/Config', '/umc/config', NULL, 'icon-gaojingshezhi', 2042, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:28:03', 0);
+INSERT INTO `sys_menu` VALUES (27, 'Alarm Template', '规则模板', 1, 'classifyB', 2, 0, 61481, NULL, 'umc:templat', '/umc/templat/Templat', '/umc/templat', NULL, 'icon-moban', 2043, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:28:06', 0);
+INSERT INTO `sys_menu` VALUES (28, 'Metric Template', '度量字典', 1, 'classifyB', 2, 0, 61481, NULL, 'umc:metrictemplate', '/umc/metrictemplate/MetricTemplate', '/umc/metrictemplate', NULL, 'icon-duliang', 2044, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:28:10', 0);
+INSERT INTO `sys_menu` VALUES (31, 'Alarm Config list', '告警配置列表', 3, 'classifyB', 0, 0, 26, NULL, 'umc:config:list', 'http://10.0.0.161:3000/', '/umc/config/list', NULL, '', 20421, 1, '2019-11-05 17:03:05', 1, '2020-08-26 12:28:18', 0);
+INSERT INTO `sys_menu` VALUES (32, 'Repositorys', '源码仓库', 1, 'classifyE', 2, 0, 54, NULL, 'vcs:vcs', '/vcs/vcs/Vcs', '/vcs/vcs', NULL, 'icon-cangku', 401, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:47:16', 0);
+INSERT INTO `sys_menu` VALUES (33, 'Home', '主页', 1, NULL, 1, 0, 0, NULL, 'home', '', '/home', NULL, 'icon-zhuye', 100, 1, '2019-11-26 10:42:01', 1, '2020-08-26 12:23:21', 0);
+INSERT INTO `sys_menu` VALUES (34, 'Overview', '概览', 1, NULL, 2, 0, 33, NULL, 'home:overview', '/home/overview/Overview', '/home/overview', NULL, 'icon-gailan', 101, 1, '2019-11-26 10:42:33', 1, '2020-08-26 12:24:40', 0);
+INSERT INTO `sys_menu` VALUES (35, 'Hosts', '主机管理', 1, 'classifyE', 3, 0, 18148395, NULL, 'erm:host', '/erm/host/Host', '/erm/host', NULL, 'icon-host', 5051, 1, '2019-11-26 18:10:09', 1, '2020-08-26 12:37:46', 0);
+INSERT INTO `sys_menu` VALUES (36, 'Safety Quality', '安全与质量', 1, 'classifyD', 2, 0, 1, NULL, 'ci:analysis', '', '/analysis', NULL, 'icon-zhiliang', 309, 1, '2019-12-04 11:21:38', 1, '2020-08-26 13:01:22', 0);
+INSERT INTO `sys_menu` VALUES (40, 'PackageAnalyzer', '安装包分析', 2, 'classifyD', 3, 0, 36, NULL, 'ci:analysis:package', 'https://www.baidu.com/', '/ci/analysis/package', NULL, '', 3042, 1, '2019-12-17 10:00:05', 1, '2020-08-26 12:26:46', 0);
+INSERT INTO `sys_menu` VALUES (41, 'CodeAnalyzer', '源码分析', 2, 'classifyD', 3, 0, 36, NULL, 'ci:analysis:code', 'https://fanyi.baidu.com/', '/ci/analysis/code', NULL, '', 3043, 1, '2019-12-17 10:00:32', 1, '2020-08-26 12:26:53', 0);
+INSERT INTO `sys_menu` VALUES (45, 'btntest', '按钮权限测试', 3, 'classifyE', 0, 0, 36, NULL, 'ci:btntest', '', '', NULL, '', 3041, 1, '2020-01-03 15:06:19', 1, '2020-08-26 12:26:35', 0);
+INSERT INTO `sys_menu` VALUES (46, 'Project Coordinations', '项目协作', 1, 'classifyA', 2, 0, 1, NULL, 'ci:pcm', '/ci/pcm/Pcm', '/ci/pcm', NULL, 'icon-pcm', 307, 1, '2019-10-31 10:01:57', 1, '2020-08-26 13:04:05', 0);
+INSERT INTO `sys_menu` VALUES (47, 'Docs Management', '文档管理', 1, 'classifyH', 1, 0, 0, NULL, 'doc', '/doc', '/doc', NULL, 'icon-wendangguanli-xiangmuleiwendang', 600, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:50:33', 0);
+INSERT INTO `sys_menu` VALUES (48, 'Documents', '文档管理', 1, 'classifyH', 2, 0, 47, NULL, 'doc:file', '/doc/file/File', '/doc/file', NULL, 'icon-wendangguanli-xiangmuleiwendang', 601, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:47:42', 0);
+INSERT INTO `sys_menu` VALUES (49, 'Shares', '分享管理', 1, 'classifyH', 2, 0, 47, NULL, 'doc:share', '/doc/share/Share', '/doc/share', NULL, 'icon-fenxiang3', 602, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:39:03', 0);
+INSERT INTO `sys_menu` VALUES (50, 'Labels', '标签管理', 1, 'classifyH', 2, 0, 47, NULL, 'doc:label', '/doc/label/Label', '/doc/label', NULL, 'icon-clip', 603, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:39:07', 0);
+INSERT INTO `sys_menu` VALUES (51, 'Orchestrations', '任务编排', 1, 'classifyA', 2, 0, 1, NULL, 'ci:orchestration', '/ci/orchestration/Orchestration', '/ci/orchestration', NULL, 'icon-yonghupeizhi', 302, 1, '2019-10-31 10:01:57', 1, '2020-08-26 13:43:02', 0);
+INSERT INTO `sys_menu` VALUES (52, 'Object Storage Management', '对象存储', 1, 'classifyE', 1, 0, 0, NULL, 'coss', '/coss', '/coss', NULL, 'icon-duixiangcunchuOSS', 700, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:59:14', 0);
+INSERT INTO `sys_menu` VALUES (53, 'Buckets', 'Bucket管理', 1, 'classifyF', 2, 0, 52, NULL, 'coss:bucket', '/coss/bucket/Bucket', '/coss/bucket', NULL, 'icon-Bucket', 701, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:47:27', 0);
+INSERT INTO `sys_menu` VALUES (54, 'VCS Manangement', '仓库管理', 1, 'classifyE', 1, 0, 0, NULL, 'vcs', '/vcs', '/vcs', NULL, 'icon-gailan', 701, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:58:06', 0);
+INSERT INTO `sys_menu` VALUES (101, 'Project Dependencies', '依赖关系', 1, 'classifyA', 3, 0, 10, NULL, 'ci:project', '/ci/project/Project', '/ci/project', NULL, 'icon-chakanyilaiguanxishu', 3032, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:09:47', 0);
+INSERT INTO `sys_menu` VALUES (102, 'ClusterExtension', '集群配置', 1, 'classifyA', 3, 0, 10, NULL, 'ci:clusterextension', '/ci/clusterextension/ClusterExtension', '/ci/clusterextension', NULL, 'icon-jiqun', 3031, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:09:50', 0);
+INSERT INTO `sys_menu` VALUES (103, 'Developers Suite', '开发者套件', 1, 'classifyA', 1, 0, 0, NULL, 'dts', '/dts', '/dts', NULL, 'icon-ziyuanguanli', 400, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:51:02', 0);
+INSERT INTO `sys_menu` VALUES (13582, 'Rule Engine', '规则引擎', 1, 'classifyB', 3, 0, 85782, NULL, 'umc:custom:rule', '/umc/engine/Engine', '/umc/custom/engine', '_self', 'icon-wenjian', 2031, 1, '2020-03-27 12:59:53', 1, '2020-08-26 12:27:24', 0);
+INSERT INTO `sys_menu` VALUES (36327, 'DataSource', '数据源配置', 1, 'classifyB', 3, 0, 85782, NULL, 'umc:custom:datasource', '/umc/datasource/DataSource', '/umc/custom/datasource', '_self', 'icon-lishiguiji', 2035, 1, '2020-03-27 12:54:38', 1, '2020-08-26 12:27:43', 0);
+INSERT INTO `sys_menu` VALUES (36328, 'Event', '触发事件', 1, 'classifyB', 3, 0, 85782, NULL, 'umc:alarm:event', '/umc/alarmevent/AlarmEvent', '/umc/custom/event', '_self', 'icon-lishiguiji', 2033, 1, '2020-03-27 12:54:38', 1, '2020-08-26 12:27:40', 0);
+INSERT INTO `sys_menu` VALUES (36329, 'History', '监控记录', 1, 'classifyB', 3, 0, 85782, NULL, 'umc:custom:history', '/umc/history/History', '/umc/custom/history', '_self', 'icon-lishiguiji', 2032, 1, '2020-03-27 12:54:38', 1, '2020-08-26 12:27:35', 0);
+INSERT INTO `sys_menu` VALUES (61481, 'Service Monitoring', '服务监控', 1, 'classifyB', 2, 0, 2, NULL, 'umc:service', '', '', '_self', 'icon-host', 204, 1, '2020-03-27 13:01:40', 1, '2020-08-26 12:25:07', 0);
+INSERT INTO `sys_menu` VALUES (85782, 'Custom Monitoring', '自定义监控', 1, 'classifyB', 2, 0, 2, NULL, 'umc:custom', '', '', '_self', 'icon-zidianguanli', 203, 1, '2020-03-27 12:50:42', 1, '2020-08-26 12:25:02', 0);
+INSERT INTO `sys_menu` VALUES (85783, 'Netcards', '网卡管理', 1, 'classifyE', 3, 0, 18148395, NULL, 'erm:netcard', '/erm/hostnetcard/HostNetcard', '/erm/hostnetcard', NULL, 'icon-yunxingrizhi', 5052, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:49:08', 0);
+INSERT INTO `sys_menu` VALUES (85784, 'IDC', 'IDC管理', 1, 'classifyE', 3, 0, 18148395, NULL, 'erm:idc', '/erm/idc/Idc', '/erm/idc', NULL, 'icon-IDCjifang', 5054, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:37:58', 0);
+INSERT INTO `sys_menu` VALUES (85785, 'SSH Keys', 'SSH密钥', 1, 'classifyE', 3, 0, 18148395, NULL, 'erm:ssh', '/erm/ssh/Ssh', '/erm/ssh', NULL, 'icon-miyao42', 5053, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:37:54', 0);
+INSERT INTO `sys_menu` VALUES (85786, 'Docker Clusters', 'Docker集群', 1, 'classifyE', 2, 0, 9425589, NULL, 'erm:dockercluster', '/erm/dockercluster/DockerCluster', '/erm/dockercluster', NULL, 'icon-docker', 5031, 1, '2019-11-01 15:54:37', 1, '2020-09-02 11:21:24', 0);
+INSERT INTO `sys_menu` VALUES (85787, 'K8s Clusters', 'K8s集群', 1, 'classifyE', 2, 0, 9425589, NULL, 'erm:k8scluster', '/erm/k8scluster/K8sCluster', '/erm/k8scluster', NULL, 'icon-application', 5033, 1, '2019-11-01 15:54:37', 1, '2020-09-02 11:21:41', 0);
+INSERT INTO `sys_menu` VALUES (85788, 'APP Instances', '实例配置', 1, 'classifyB', 3, 0, 52752528, NULL, 'erm:instance', '/erm/instance/Instance', '/erm/instance', NULL, 'icon-yunxingrizhi', 5022, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:34:54', 0);
+INSERT INTO `sys_menu` VALUES (185786, 'Image Repositorys', '镜像仓库', 1, 'classifyE', 2, 0, 9425589, NULL, 'erm:dockerrepository', '/erm/dockerrepository/DockerRepository', '/erm/dockerrepository', NULL, 'icon-docker', 5032, 1, '2019-11-01 15:54:37', 1, '2020-09-02 11:21:33', 0);
+INSERT INTO `sys_menu` VALUES (1857861, 'PriivateZone', '私有域名', 1, 'classifyC', 2, 0, 18148397, NULL, 'erm:dnsprivatedomain', '/erm/dnsprivatedomain/DnsPrivateDomain', '/erm/dnsprivatedomain', NULL, 'icon-docker', 5061, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:10', 0);
+INSERT INTO `sys_menu` VALUES (1857862, 'Cluster', '网关集群', 1, 'classifyC', 2, 0, 18148398, NULL, 'gw:gateway', '/gw/gateway/Gateway', '/gw/gateway', NULL, 'icon-docker', 5071, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:26', 0);
+INSERT INTO `sys_menu` VALUES (1857863, 'Upsterm', '上游', 3, 'classifyC', 2, 0, 1857864, NULL, 'gw:upstream', '/gw/upstream/Upstream', '/gw/upstream', NULL, 'icon-docker', 50721, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:37', 0);
+INSERT INTO `sys_menu` VALUES (1857864, 'Upsterm Servers', '服务器分组', 1, 'classifyC', 2, 0, 18148398, NULL, 'gw:upstreamgroup', '/gw/upstreamgroup/UpstreamGroup', '/gw/upstreamgroup', NULL, 'icon-docker', 5072, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:31', 0);
+INSERT INTO `sys_menu` VALUES (9425555, 'Orchestration History', 'Flow运行记录', 1, 'classifyA', 3, 0, 9, NULL, 'ci:orchestrationhistory', '/ci/orchestrationhistory/OrchestrationHistory', '/ci/orchestrationhistory', NULL, 'icon-yunxingrizhi', 304, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:00:51', 0);
+INSERT INTO `sys_menu` VALUES (9425556, 'Run Records', '运行记录', 1, 'classifyA', 3, 0, 9, NULL, 'ci:pipehis', '/ci/pipehis/PipeHistory', '/ci/pipehis', NULL, 'icon-yunxingrizhi', 303, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:00:51', 0);
+INSERT INTO `sys_menu` VALUES (9425589, 'Services Cluster', '中间件服务', 1, 'classifyE', 2, 0, 6, NULL, 'erm:servercluster', '', '', '_self', 'icon-ziyuan', 503, 1, '2020-06-05 15:44:28', 1, '2020-09-02 11:20:56', 0);
+INSERT INTO `sys_menu` VALUES (18148395, 'Host', '主机资产', 1, 'classifyE', 2, 0, 6, NULL, 'erm:cmdb', '', '', '_self', 'icon-wenjian', 505, 1, '2020-05-13 11:57:45', 1, '2020-08-26 12:49:31', 0);
+INSERT INTO `sys_menu` VALUES (18148396, 'Logging', '日志服务', 1, 'classifyE', 2, 0, 6, NULL, 'erm:log', '', '', '_self', 'icon-log', 501, 1, '2020-05-13 11:57:45', 1, '2020-08-26 12:33:33', 0);
+INSERT INTO `sys_menu` VALUES (18148397, 'Cloud DNS', '云解析DNS', 1, 'classifyE', 2, 0, 6, NULL, 'erm:domain', '', '', '_self', 'icon-log', 506, 1, '2020-05-13 11:57:45', 1, '2020-08-26 12:34:14', 0);
+INSERT INTO `sys_menu` VALUES (18148398, 'Gateway', '网关', 1, 'classifyE', 2, 0, 6, NULL, 'gw', '', '', '_self', 'icon-log', 507, 1, '2020-05-13 11:57:45', 1, '2020-08-26 12:34:19', 0);
+INSERT INTO `sys_menu` VALUES (18578611, 'PublicZone', '公有域名', 1, 'classifyC', 2, 0, 18148397, NULL, 'erm:dnspublicdomain', '/erm/dnspublicdomain/DnsPublicDomain', '/erm/dnspublicdomain', NULL, 'icon-docker', 5062, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:15', 0);
+INSERT INTO `sys_menu` VALUES (52752528, 'Application Cluster', '应用集群', 1, 'classifyE', 2, 0, 6, NULL, 'erm:app', '', '', '_self', 'icon-Bucket', 502, 1, '2020-05-13 11:49:07', 1, '2020-08-26 12:48:04', 0);
+INSERT INTO `sys_menu` VALUES (323144704, 'Database', '数据源', 1, 'classifyE', 3, 0, 1046376448, NULL, 'dts:codegen:database', '/dts/database/Database', '/dts/database', '_self', 'icon-shujuyuan', 302, 1, '2020-09-08 14:50:41', 1, '2020-09-21 19:58:09', 0);
+INSERT INTO `sys_menu` VALUES (323144705, 'Projects', '项目配置', 1, 'classifyE', 3, 0, 1046376448, NULL, 'dts:codegen:project', '/dts/project/Project', '/dts/project', '_self', 'icon-wendangguanli-xiangmuleiwendang', 301, 1, '2020-09-08 14:50:41', 1, '2020-09-21 20:04:45', 0);
+INSERT INTO `sys_menu` VALUES (1046376448, 'Code Generators', '代码生成器', 1, 'classifyE', 2, 0, 103, NULL, 'dts:codegen', '', '', '_self', 'icon-codeoptimizatio', 300, 1, '2020-09-08 14:45:51', 1, '2020-09-21 20:01:08', 0);
+INSERT INTO `sys_menu` VALUES (1046376449, 'Code Studio', '代码开发', 2, 'classifyE', 2, 0, 103, NULL, 'dts:codeedit', 'https://www.baidu.com', '/dts/ide', '_self', 'icon-weibiaoti46', 400, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:58:52', 0);
+INSERT INTO `sys_menu` VALUES (1046376450, 'Online Tools', '在线工具', 2, 'classifyE', 2, 0, 103, NULL, 'dts:onlinetool', 'https://www.baidu.com', '/dts/tools', '_self', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_notification_contact
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_notification_contact`;
+CREATE TABLE `sys_notification_contact` (
+  `id` int(11) NOT NULL,
+  `record_id` int(11) DEFAULT NULL COMMENT '信息id',
+  `contact_id` int(11) DEFAULT NULL COMMENT '联系人',
+  `status` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'send , unsend , accepted , unaccepted ',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `notification_id` (`record_id`) USING BTREE,
+  KEY `contact_id` (`contact_id`) USING BTREE,
+  CONSTRAINT `sys_notification_contact_ibfk_1` FOREIGN KEY (`contact_id`) REFERENCES `sys_contact` (`id`),
+  CONSTRAINT `sys_notification_contact_ibfk_2` FOREIGN KEY (`record_id`) REFERENCES `umc_alarm_record` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_notification_contact
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_notification_contact` VALUES (162, 123, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (163, 123, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (164, 124, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (165, 124, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (166, 125, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (167, 125, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (168, 126, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (169, 126, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (170, 127, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (171, 128, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (172, 127, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (173, 128, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (174, 129, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (175, 130, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (176, 129, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (177, 130, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (178, 131, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (179, 132, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (180, 132, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (181, 133, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (182, 131, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (183, 133, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (184, 134, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (185, 134, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (186, 135, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (187, 135, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (188, 136, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (189, 136, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (190, 137, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (191, 138, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (192, 137, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (193, 138, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (194, 139, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (195, 140, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (196, 139, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (197, 140, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (198, 141, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (199, 141, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (200, 142, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (201, 142, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (202, 143, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (203, 143, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (204, 144, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (205, 144, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (206, 145, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (207, 145, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (208, 146, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (209, 146, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (210, 147, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (211, 147, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (212, 148, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (213, 148, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (214, 149, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (215, 150, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (216, 150, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (217, 149, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (218, 151, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (219, 151, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (220, 153, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (221, 154, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (222, 152, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (223, 153, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (224, 152, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (225, 154, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (226, 155, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (227, 155, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (228, 156, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (229, 156, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (230, 157, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (231, 157, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (232, 158, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (233, 158, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (234, 159, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (235, 159, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (236, 160, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (237, 161, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (238, 160, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (239, 161, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (240, 162, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (241, 162, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (242, 163, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (243, 163, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (244, 164, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (245, 164, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (246, 165, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (247, 165, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (248, 166, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (249, 166, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (250, 167, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (251, 167, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (252, 168, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (253, 168, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (254, 169, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (255, 169, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (256, 170, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (257, 170, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (258, 171, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (259, 171, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (260, 172, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (261, 172, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (262, 173, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (263, 173, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (264, 174, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (265, 174, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (266, 175, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (267, 175, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (268, 176, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (269, 176, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (270, 177, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (271, 177, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (272, 178, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (273, 178, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (274, 179, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (275, 179, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (276, 180, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (277, 180, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (278, 181, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (279, 181, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (280, 182, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (281, 182, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (282, 183, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (283, 183, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (284, 184, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (285, 184, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (286, 185, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (287, 185, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (288, 186, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (289, 186, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (290, 187, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (291, 187, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (292, 188, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (293, 188, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (294, 189, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (295, 189, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (296, 190, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (297, 190, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (298, 191, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (299, 191, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (300, 192, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (301, 192, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (302, 193, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (303, 193, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (304, 194, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (305, 194, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (306, 195, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (307, 195, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (308, 196, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (309, 196, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (310, 197, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (311, 197, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (312, 198, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (313, 198, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (314, 199, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (315, 199, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (316, 200, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (317, 200, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (318, 201, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (319, 201, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (320, 202, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (321, 202, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (322, 203, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (323, 203, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (324, 204, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (325, 204, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (326, 205, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (327, 205, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (328, 206, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (329, 206, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (330, 207, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (331, 207, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (332, 208, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (333, 208, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (334, 209, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (335, 209, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (336, 210, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (337, 210, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (338, 211, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (339, 211, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (340, 212, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (341, 212, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (342, 213, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (343, 213, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (344, 214, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (345, 214, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (346, 215, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (347, 215, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (348, 216, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (349, 216, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (350, 217, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (351, 217, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (352, 218, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (353, 218, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (354, 219, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (355, 219, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (356, 220, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (357, 220, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (358, 221, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (359, 221, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (360, 222, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (361, 222, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (362, 223, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (363, 223, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (364, 224, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (365, 224, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (366, 225, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (367, 225, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (368, 226, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (369, 226, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (370, 227, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (371, 227, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (372, 228, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (373, 228, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (374, 229, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (375, 229, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (376, 230, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (377, 230, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (378, 231, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (379, 231, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (380, 232, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (381, 232, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (382, 233, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (383, 233, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (384, 234, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (385, 234, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (386, 235, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (387, 235, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (388, 236, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (389, 236, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (390, 237, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (391, 237, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (392, 238, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (393, 238, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (394, 239, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (395, 239, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (396, 240, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (397, 240, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (398, 241, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (399, 241, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (400, 242, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (401, 242, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (402, 243, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (403, 243, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (404, 244, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (405, 244, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (406, 246, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (407, 245, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (408, 246, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (409, 245, 7, '1', NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_park
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_park`;
+CREATE TABLE `sys_park` (
+  `id` int(11) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  CONSTRAINT `sys_park_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_park
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_park` VALUES (1, 1, NULL, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role`;
+CREATE TABLE `sys_role` (
+  `id` int(11) NOT NULL,
+  `role_code` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
+  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
+  `type` int(1) DEFAULT NULL COMMENT '用户角色类型（预留）',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户角色启用状态（0:禁用/1:启用）',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户角色状态（预留）',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL COMMENT '删除状态（0:正常/1:删除）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统角色表';
+
+-- ----------------------------
+-- Records of sys_role
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role` VALUES (1, 'coder', '普通开发角色', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2020-06-12 10:04:24', 0);
+INSERT INTO `sys_role` VALUES (2, 'test', '普通测试角色', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:11:58', 0);
+INSERT INTO `sys_role` VALUES (3, 'devops', '系统运维研发', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:12:27', 0);
+INSERT INTO `sys_role` VALUES (4, 'test1', 'test1', NULL, 1, 0, 1, '2019-11-04 17:00:59', 1, '2019-11-04 17:02:42', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_menu`;
+CREATE TABLE `sys_role_menu` (
+  `id` int(11) NOT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `menu_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `role_id` (`role_id`) USING BTREE,
+  KEY `menu_id` (`menu_id`) USING BTREE,
+  CONSTRAINT `sys_role_menu_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`),
+  CONSTRAINT `sys_role_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统role-menu中间表';
+
+-- ----------------------------
+-- Records of sys_role_menu
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role_menu` VALUES (33, 4, NULL, 1, '2019-11-04 17:02:43');
+INSERT INTO `sys_role_menu` VALUES (34, 4, 1, 1, '2019-11-04 17:02:43');
+INSERT INTO `sys_role_menu` VALUES (35, 4, 2, 1, '2019-11-04 17:02:43');
+INSERT INTO `sys_role_menu` VALUES (36, 4, 7, 1, '2019-11-04 17:02:43');
+INSERT INTO `sys_role_menu` VALUES (37, 4, 23, 1, '2019-11-04 17:02:43');
+INSERT INTO `sys_role_menu` VALUES (364754385, 1, 51, 1, '2020-06-12 10:04:24');
+INSERT INTO `sys_role_menu` VALUES (568139182, 1, 1, 1, '2020-06-12 10:04:24');
+INSERT INTO `sys_role_menu` VALUES (799980647, 1, 8, 1, '2020-06-12 10:04:24');
+INSERT INTO `sys_role_menu` VALUES (1432331382, 1, 34, 1, '2020-06-12 10:04:24');
+INSERT INTO `sys_role_menu` VALUES (1506352582, 1, 9, 1, '2020-06-12 10:04:24');
+INSERT INTO `sys_role_menu` VALUES (1553354132, 1, 46, 1, '2020-06-12 10:04:24');
+INSERT INTO `sys_role_menu` VALUES (1667944794, 1, 7, 1, '2020-06-12 10:04:24');
+INSERT INTO `sys_role_menu` VALUES (2081932093, 1, 33, 1, '2020-06-12 10:04:24');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_user`;
+CREATE TABLE `sys_role_user` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `user_id` (`user_id`) USING BTREE,
+  KEY `role_id` (`role_id`) USING BTREE,
+  CONSTRAINT `sys_role_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`),
+  CONSTRAINT `sys_role_user_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统user-role中间表';
+
+-- ----------------------------
+-- Records of sys_role_user
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role_user` VALUES (15, 1, 1, 1, '2019-11-01 10:44:13');
+INSERT INTO `sys_role_user` VALUES (18, 5, 2, 1, '2019-11-26 14:10:52');
+INSERT INTO `sys_role_user` VALUES (1254127976, 7, 1, 1, '2020-06-12 10:03:53');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_user`;
+CREATE TABLE `sys_user` (
+  `id` int(11) NOT NULL,
+  `user_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '登录账号名(唯一）',
+  `display_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '显示名称',
+  `password` varchar(768) COLLATE utf8_bin NOT NULL COMMENT '密文密码',
+  `user_type` int(1) NOT NULL DEFAULT '0' COMMENT '用户类型（保留字段）',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '启用状态（0:禁止/1:启用）',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户状态（预留）',
+  `email` varchar(48) COLLATE utf8_bin DEFAULT NULL,
+  `phone` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `wechat_open_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `wechat_union_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `facebook_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `google_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `twitter_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `linkedin_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `alipay_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `github_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `aws_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `remark` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `update_by` int(11) DEFAULT '0',
+  `update_date` datetime DEFAULT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统用户表';
+
+-- ----------------------------
+-- Records of sys_user
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_user` VALUES (1, 'root', '系统根超级管理员', 'b68bac90602f8800a51282243c7405afff8a9a0dd8e412d238c89970a221669ae13f67e3c997cac35162a88e0234ca1b345384456c3e9ac1358f953a58128f2b', 0, 1, 0, '983708408@qq.com', '18127968606', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '商物云系统管理员1', NULL, NULL, NULL, '2019-11-17 18:13:34', 0);
+INSERT INTO `sys_user` VALUES (5, 'liuxl', '刘兴龙', '145acd2247e905cd1fb5f66f2f39ba6e92ea63b7575beff1c6344f37e4eefd59fe4363b754b3dab37412f69a33e7de5f220e2dda65806971432eaf643a6a4368', 0, 1, 0, 'zhangsan@gmail.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '测试人员-刘兴龙', 1, '2019-10-30 11:16:05', 1, '2019-11-26 14:10:52', 0);
+INSERT INTO `sys_user` VALUES (7, 'hwjie', '何伟杰', 'b18a81966458eadba9ba94a07c16f41ff4152de438963728b9e38e887179af0a', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 15:01:05', 1, '2020-06-12 10:03:53', 0);
+INSERT INTO `sys_user` VALUES (8, 'wanglsir', 'wanglsir', '6810ae5a577b26dd4916468fe5b21519', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 18:11:00', 1, '2019-11-26 14:11:10', 0);
+INSERT INTO `sys_user` VALUES (9, 'zhangsan', '张三', '534e207105a443d66ce84fe20c53bc1b98b33d3aac11ca6bfe4d2b7a56ccc0e9', 0, 1, 0, 'zhangsan@163.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-27 17:53:32', 1, '2019-11-27 17:53:32', 0);
+INSERT INTO `sys_user` VALUES (10, 'lisi', '李四', 'e006e8d3f251ec5eca396907c60d1c2473f15ffa30f9b2fa668ab468d29e9c96', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-28 14:59:30', 1, '2019-11-28 15:15:27', 0);
+INSERT INTO `sys_user` VALUES (11, 'wangwu', '王五', 'c91cb62f88fa25d36e33ead6da8fa361', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-28 15:21:12', 1, '2019-11-28 15:21:12', 0);
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 1;
