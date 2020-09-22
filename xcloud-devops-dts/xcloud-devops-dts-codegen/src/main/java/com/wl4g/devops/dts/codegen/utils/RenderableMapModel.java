@@ -16,11 +16,15 @@
 package com.wl4g.devops.dts.codegen.utils;
 
 import static com.wl4g.components.common.lang.Assert2.isNull;
+import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.nonNull;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.wl4g.components.common.log.SmartLogger;
 
@@ -32,8 +36,7 @@ import com.wl4g.components.common.log.SmartLogger;
  * @sine v1.0.0
  * @see
  */
-public class RenderableMapModel extends HashMap<String, Object> {
-	private static final long serialVersionUID = -3984465155412592192L;
+public class RenderableMapModel implements Map<String, Object>, Cloneable {
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -42,22 +45,41 @@ public class RenderableMapModel extends HashMap<String, Object> {
 	 */
 	protected final boolean overridable;
 
+	/**
+	 * Data model saved orig.
+	 */
+	protected final Map<String, Object> orig = new HashMap<>(16);
+
+	/**
+	 * Is it allowed to modifiy elements.
+	 */
+	protected AtomicBoolean isModifiable = new AtomicBoolean(true);
+
+	/**
+	 * Construtors.
+	 * 
+	 * @param overridable
+	 */
 	public RenderableMapModel(boolean overridable) {
 		this.overridable = overridable;
 	}
 
 	@Override
 	public Object put(String key, Object value) {
+		checkModifiable();
+
 		log.debug("Put rendering data model of key: {}, value: {}", key, value);
 		if (!overridable) {
-			isNull(super.put(key, value), CannotOverrideRenderingModelException.class,
+			isNull(orig.put(key, value), CannotOverrideRenderingModelException.class,
 					"Cannot override rendering data model of key: %s", key);
 		}
-		return super.put(key, value);
+		return orig.put(key, value);
 	}
 
 	@Override
 	public void putAll(Map<? extends String, ? extends Object> m) {
+		checkModifiable();
+
 		if (nonNull(m)) {
 			m.forEach((key, value) -> put(key, value));
 		}
@@ -65,24 +87,109 @@ public class RenderableMapModel extends HashMap<String, Object> {
 
 	@Override
 	public Object putIfAbsent(String key, Object value) {
+		checkModifiable();
 		return put(key, value);
 	}
 
 	@Override
 	public Object remove(Object key) {
+		checkModifiable();
+
 		log.debug("Removing rendering data model of key: {}", key);
-		return super.remove(key);
+		return orig.remove(key);
 	}
 
 	@Override
 	public boolean remove(Object key, Object value) {
+		checkModifiable();
+
 		log.debug("Removing rendering data model of key: {}, value: {}", key, value);
-		return super.remove(key, value);
+		return orig.remove(key, value);
 	}
 
 	@Override
-	public RenderableMapModel clone() {
-		return (RenderableMapModel) super.clone();
+	public int size() {
+		return orig.size();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return orig.isEmpty();
+	}
+
+	@Override
+	public boolean containsKey(Object key) {
+		return orig.containsKey(key);
+	}
+
+	@Override
+	public boolean containsValue(Object value) {
+		return orig.containsValue(value);
+	}
+
+	@Override
+	public Object get(Object key) {
+		return orig.get(key);
+	}
+
+	@Override
+	public void clear() {
+		checkModifiable();
+		this.orig.clear();
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return orig.keySet();
+	}
+
+	@Override
+	public Collection<Object> values() {
+		return orig.values();
+	}
+
+	@Override
+	public Set<Entry<String, Object>> entrySet() {
+		return orig.entrySet();
+	}
+
+	/**
+	 * As converint to readonly map.
+	 * 
+	 * @return
+	 */
+	@Override
+	public final RenderableMapModel clone() {
+		RenderableMapModel clone = new RenderableMapModel(overridable);
+		clone.orig.putAll(this.orig);
+		return clone;
+	}
+
+	/**
+	 * Sets allowed modifiable to elements.
+	 * 
+	 * @return
+	 */
+	public final RenderableMapModel enableModifiable() {
+		this.isModifiable.set(true);
+		return this;
+	}
+
+	/**
+	 * Sets not allowed modifiable to elements.
+	 * 
+	 * @return
+	 */
+	public final RenderableMapModel disableModifiable() {
+		this.isModifiable.set(false);
+		return this;
+	}
+
+	/**
+	 * Check whether modification of rendering model elements is allowed.
+	 */
+	protected final void checkModifiable() {
+		isTrue(isModifiable.get(), () -> "Rendering data model modifiable state is currently disabled");
 	}
 
 }

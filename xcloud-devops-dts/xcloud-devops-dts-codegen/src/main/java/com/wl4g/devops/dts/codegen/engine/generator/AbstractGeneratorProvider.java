@@ -83,8 +83,14 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 */
 	protected final GenerateContext context;
 
+	/**
+	 * Generate primary {@link RenderableMapModel}.
+	 */
+	protected final RenderableMapModel primaryModel;
+
 	public AbstractGeneratorProvider(GenerateContext context) {
 		this.context = notNullOf(context, "context");
+		this.primaryModel = initPrimaryRenderingModel();
 	}
 
 	@Override
@@ -130,16 +136,12 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 */
 	protected void handleRenderingTemplates(List<RenderingResourceWrapper> resources, GenProject project, String writeBasePath)
 			throws Exception {
-		for (RenderingResourceWrapper resource : resources) {
-			log.info("Rendering generate for - {}", resource.getPath());
+		for (RenderingResourceWrapper res : resources) {
+			log.info("Rendering generate for - {}", res.getPath());
 
-			// Create rendering model.
-			RenderableMapModel primaryModel = createRenderingModel(resource, project);
-			primaryModel.put("datasource", convertToRenderingModel(context.getGenDataSource()));
-
-			if (resource.isTemplate()) {
-				// Foreach template
-				if (resource.isForeachTemplate()) {
+			if (res.isTemplate()) {
+				// Foreach generate(for example: entity/bean)
+				if (res.isForeachTemplate()) {
 					for (GenTable tab : project.getGenTables()) {
 						context.setGenTable(tab); // Set current genTable
 
@@ -148,37 +150,37 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 						// cloned to prevent it from being covered.
 						RenderableMapModel model = primaryModel.clone();
 
-						// Add table model attributes.
+						// Add rendering model of GenTable.
 						model.putAll(convertToRenderingModel(tab));
 
-						// Add customization model attibutes.
-						customizeRenderingModel(resource, model);
+						// Add customization rendering model.
+						customizeRenderingModel(res, model);
 
 						// Rendering source templates.
-						String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(resource.getPath(), model));
-						String renderedString = doHandleRenderingTemplateToString(resource, model);
+						String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(res.getPath(), model));
+						String renderedString = doHandleRenderingTemplateToString(res, model);
 
 						// Call post rendered.
-						postRenderingComplete(resource, renderedString, writePath);
+						postRenderingComplete(res, renderedString, writePath);
 					}
 				}
 				// Simple template.
 				else {
-					// Add customization model attibutes.
-					customizeRenderingModel(resource, primaryModel);
+					// Add customization rendering model.
+					customizeRenderingModel(res, primaryModel);
 
 					// Rendering source templates.
-					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(resource.getPath(), primaryModel));
-					String renderedString = doHandleRenderingTemplateToString(resource, primaryModel);
+					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(res.getPath(), primaryModel));
+					String renderedString = doHandleRenderingTemplateToString(res, primaryModel);
 
 					// Call post rendered.
-					postRenderingComplete(resource, renderedString, writePath);
+					postRenderingComplete(res, renderedString, writePath);
 				}
 			}
 			// e.g: static resources files
 			else {
-				String targetPath = writeBasePath + "/" + resolveSpelExpression(resource.getPath(), primaryModel);
-				writeFile(new File(targetPath), resource.getContent(), false);
+				String targetPath = writeBasePath + "/" + resolveSpelExpression(res.getPath(), primaryModel);
+				writeFile(new File(targetPath), res.getContent(), false);
 			}
 		}
 	}
@@ -272,32 +274,6 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	}
 
 	/**
-	 * Create rendering model
-	 *
-	 * @param resource
-	 * @param project
-	 * @param table
-	 * @return
-	 * @throws Exception
-	 */
-	private RenderableMapModel createRenderingModel(RenderingResourceWrapper resource, Object... innerRequiresBeans)
-			throws Exception {
-		RenderableMapModel model = new RenderableMapModel(config.isAllowRenderingCustomizeModelOverride());
-
-		// Add requires rendering parameters.
-		if (!isNull(innerRequiresBeans)) {
-			for (Object bean : innerRequiresBeans) {
-				model.putAll(convertToRenderingModel(bean));
-			}
-		}
-
-		// Add variable of watermark.
-		model.put(VAR_WATERMARK, TPL_WATERMARK);
-
-		return model;
-	}
-
-	/**
 	 * Resolving path SPEL expression
 	 *
 	 * @param expression
@@ -338,6 +314,34 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// Primary rendering
 		Template template = new Template(resource.getName(), renderedString, defaultGenConfigurer);
 		return renderingTemplateToString(template, model);
+	}
+
+	/**
+	 * Initialization primary rendering model.
+	 *
+	 * @return
+	 */
+	private RenderableMapModel initPrimaryRenderingModel() {
+		RenderableMapModel model = new RenderableMapModel(config.isAllowRenderingCustomizeModelOverride());
+
+		try {
+			// Add rendering model of GenProject.
+			model.putAll(convertToRenderingModel(context.getGenProject()));
+
+			// Add rendering model of GenDataSource.
+			Map<String, Object> datasource = convertToRenderingModel(context.getGenDataSource());
+			// Gen DB version.
+			datasource.put("dbVersion", context.getMetadataResolver().findDBVersion());
+			model.put("datasource", datasource);
+
+			// Add rendering model of watermark.
+			model.put(VAR_WATERMARK, TPL_WATERMARK);
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+
+		return model.disableModifiable();
 	}
 
 	/**

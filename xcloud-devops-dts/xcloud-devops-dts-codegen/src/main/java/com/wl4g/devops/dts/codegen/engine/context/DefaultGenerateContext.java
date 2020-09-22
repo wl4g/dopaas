@@ -19,6 +19,7 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
+import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 import javax.validation.constraints.NotNull;
@@ -43,54 +44,65 @@ public class DefaultGenerateContext implements GenerateContext {
 	 */
 	protected final GenTemplateLocator locator;
 
+	/**
+	 * {@link GenTemplateLocator}
+	 */
+	protected final MetadataResolver resolver;
+
 	/** Generating job workspace directory. */
 	protected final File jobDir;
 
 	/** {@link GenProject} */
-	protected final GenProject genProject;
-
-	/** {@link GenTable} */
-	protected GenTable genTable;
+	protected final GenProject project;
 
 	/** {@link GenDataSource} */
-	protected GenDataSource genDataSource;
+	protected final GenDataSource dataSource;
+
+	/** Currently rendering of {@link GenTable} */
+	protected GenTable genTable;
 
 	public DefaultGenerateContext(@NotNull CodegenProperties config, @NotNull GenTemplateLocator locator,
-			@NotNull GenProject project,@NotNull GenDataSource genDataSource) {
+			@NotNull MetadataResolver resolver, @NotNull GenProject project, @NotNull GenDataSource dataSource) {
 		this.config = notNullOf(config, "config");
 		this.locator = notNullOf(locator, "locator");
-		this.genProject = notNullOf(project, "genProject");
+		this.resolver = notNullOf(resolver, "resolver");
+		this.project = notNullOf(project, "genProject");
 		this.jobDir = config.getJobDir(project.getId());
-		this.genDataSource = notNullOf(genDataSource, "genDataSource");
+		this.dataSource = notNullOf(dataSource, "genDataSource");
 	}
 
 	@Override
-	public GenTemplateLocator getLocator() {
+	public final GenTemplateLocator getLocator() {
 		return locator;
 	}
 
 	@Override
-	public File getJobDir() {
+	public final MetadataResolver getMetadataResolver() {
+		return resolver;
+	}
+
+	@Override
+	public final File getJobDir() {
 		return jobDir;
 	}
 
 	@Override
-	public GenProject getGenProject() {
-		return genProject;
+	public final GenProject getGenProject() {
+		return project;
 	}
 
 	@Override
-	public GenTable getGenTable() {
+	public final GenDataSource getGenDataSource() {
+		return dataSource;
+	}
+
+	@Override
+	public final GenTable getGenTable() {
 		return genTable;
 	}
 
 	@Override
-	public GenDataSource getGenDataSource() {
-		return genDataSource;
-	}
-
-	@Override
-	public void setGenTable(GenTable genTable) {
+	public final void setGenTable(GenTable genTable) {
 		this.genTable = notNullOf(genTable, "genTable");
 	}
 

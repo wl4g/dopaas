@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs.underlineToHump;
 
@@ -70,7 +71,7 @@ public class GenerateServiceImpl implements GenerateService {
 	protected GenerateEngine genManager;
 
 	@Autowired
-	protected GenDataSourceDao genDatabaseDao;
+	protected GenDataSourceDao genDataSourceDao;
 
 	@Autowired
 	protected GenProjectDao genProjectDao;
@@ -86,29 +87,34 @@ public class GenerateServiceImpl implements GenerateService {
 		notNullOf(projectId, "projectId");
 		GenProject genProject = genProjectDao.selectByPrimaryKey(projectId);
 		notNullOf(genProject, "genProject");
-		GenDataSource genDatabase = genDatabaseDao.selectByPrimaryKey(genProject.getDatasourceId());
-		notNullOf(genDatabase, "genDatabase");
-		MetadataResolver resolver = getMetadataPaser(genDatabase);
+
+		GenDataSource dataSource = genDataSourceDao.selectByPrimaryKey(genProject.getDatasourceId());
+		notNullOf(dataSource, "genDatabase");
+
+		MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);
 		return resolver.findTablesAll();
 	}
 
 	@Override
 	public GenTable loadMetadata(Integer projectId, String tableName) {
+		// Gets gen project
 		notNullOf(projectId, "projectId");
-		GenProject genProject = genProjectDao.selectByPrimaryKey(projectId);
-		notNullOf(genProject, "genProject");
-		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(genProject.getDatasourceId());
-		notNullOf(genDS, "genDatabase");
+		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
+		notNullOf(project, "genProject");
 
-		// GenProject project = genProjectDao.selectByPrimaryKey(projectId);
+		// Gets gen datasource
+		GenDataSource dataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
+		notNullOf(dataSource, "genDataSource");
 
-		MetadataResolver resolver = getMetadataPaser(genDS);
+		// Gets gen table
+		MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);
 		TableMetadata metadata = resolver.findTableDescribe(tableName);
 		notNullOf(metadata, "tableMetadata");
 
-		metadata.setColumns(resolver.findTableColumns(tableName));
+		// Gets gen table columns
+		metadata.setColumns(notEmptyOf(resolver.findTableColumns(tableName), "genTableColumns"));
 
-		// TableMetadata to GenTable
+		// To {@link GenTable}
 		GenTable tab = new GenTable();
 		tab.setEntityName(JavaSpecs.tableName2ClassName(metadata.getTableName()));
 		tab.setTableName(metadata.getTableName());
@@ -124,7 +130,7 @@ public class GenerateServiceImpl implements GenerateService {
 			col.setAttrName(underlineToHump(colmd.getColumnName()));
 			// TODO
 			// Converting java type
-			DbTypeConverter conv = converter.forOperator(genDS.getType());
+			DbTypeConverter conv = converter.forOperator(dataSource.getType());
 			col.setAttrType(conv.convertBy(CodeLanguage.JAVA, MappedMatcher.Column2Lang, col.getSimpleColumnType()));
 
 			// Sets defaults
@@ -206,7 +212,7 @@ public class GenerateServiceImpl implements GenerateService {
 	public void saveGenConfig(GenTable genTable) {
 
 		GenProject genProject = notNullOf(genProjectDao.selectByPrimaryKey(genTable.getProjectId()), "genProject");
-		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(genProject.getDatasourceId());
+		GenDataSource genDS = genDataSourceDao.selectByPrimaryKey(genProject.getDatasourceId());
 
 		for (GenTableColumn column : genTable.getGenTableColumns()) {
 			DbTypeConverter conv = converter.forOperator(genDS.getType());
@@ -260,16 +266,6 @@ public class GenerateServiceImpl implements GenerateService {
 	@Override
 	public String generate(Integer tableId) {
 		return genManager.execute(new GenericParameter(tableId));
-	}
-
-	/**
-	 * Gets {@link MetadataResolver}
-	 * 
-	 * @param gen
-	 * @return
-	 */
-	private MetadataResolver getMetadataPaser(GenDataSource gen) {
-		return beanFactory.getPrototypeBean(gen.getType(), gen);
 	}
 
 }

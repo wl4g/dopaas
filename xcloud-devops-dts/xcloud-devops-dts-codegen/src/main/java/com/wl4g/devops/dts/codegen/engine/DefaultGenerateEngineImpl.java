@@ -31,6 +31,7 @@ import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.BeanUtils;
@@ -89,13 +90,16 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 
 	@Override
 	public String execute(GenericParameter param) {
-		// Gets project generates configuration.
+		// Gets gen project.
 		GenProject project = genProjectService.detail(param.getProjectId());
 
-		GenDataSource genDataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
+		// Gets gen datasource.
+		GenDataSource dataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
 
+		// Gets gen table.
 		List<GenTable> tabs = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tabs) {
+			// Gets gen table columns.
 			List<GenTableColumn> cols = genColumnDao.selectByTableId(tab.getId());
 			tab.setGenTableColumns(cols);
 			BeanUtils.copyProperties(project, tab, "id", "genTables");
@@ -103,8 +107,10 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		}
 		project.setGenTables(tabs);
 
+		// Gen project metadata resolver.
+		MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);
 		// Create context.
-		GenerateContext context = new DefaultGenerateContext(config, locator, project, genDataSource);
+		GenerateContext context = new DefaultGenerateContext(config, locator, resolver, project, dataSource);
 
 		// Gets Generate of providers.
 		List<String> providers = getProviders(project.getProviderSet());

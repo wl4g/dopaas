@@ -19,6 +19,7 @@ import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 import javax.validation.constraints.NotNull;
@@ -42,6 +43,14 @@ public interface GenerateContext {
 	GenTemplateLocator getLocator();
 
 	/**
+	 * Gets {@link MetadataResolver}
+	 * 
+	 * @return
+	 */
+	@NotNull
+	MetadataResolver getMetadataResolver();
+
+	/**
 	 * Gets generate workspace job directory.
 	 * 
 	 * @return
@@ -58,20 +67,20 @@ public interface GenerateContext {
 	GenProject getGenProject();
 
 	/**
+	 * Gets current generating for {@link GenDataSource}
+	 *
+	 * @return
+	 */
+	@NotNull
+	GenDataSource getGenDataSource();
+
+	/**
 	 * Gets current generating for {@link GenTable}
 	 * 
 	 * @return
 	 */
 	@Nullable
 	GenTable getGenTable();
-
-	/**
-	 * Gets current generating for {@link GenDataSource}
-	 *
-	 * @return
-	 */
-	@Nullable
-	GenDataSource getGenDataSource();
 
 	/**
 	 * Sets current generating for {@link GenTable}
