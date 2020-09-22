@@ -31,6 +31,7 @@ import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static java.lang.ThreadLocal.withInitial;
 import static java.util.Objects.isNull;
 import static java.util.regex.Pattern.compile;
+import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 
@@ -143,11 +144,30 @@ public class JavaSpecs extends BaseSpecs {
 		return newCopyright.toString();
 	}
 
-	public static String durlWithBlankString(String sqlType,String attrName){
-		if(StringUtils.equalsAnyIgnoreCase(sqlType,"VARCHAR","LONGVARCHAR")){
-			return " and "+ attrName +" != ''";
+	/**
+	 * Generate mybatis mapper if test expression. </br>
+	 * </br>
+	 * 
+	 * for example generated:
+	 * 
+	 * <pre>
+	 * &lt;if test="myAttrName != null and myAttrName != ''" >
+	 * ...
+	 * &lt;/if&gt;
+	 * </pre>
+	 * 
+	 * @param sqlType
+	 * @param attrName
+	 * @return
+	 */
+	public static String genMapperIfTestExpression(@NotBlank String sqlType, @NotBlank String attrName) {
+		hasTextOf(sqlType, "sqlType");
+		hasTextOf(attrName, "attrName");
+
+		if (equalsAnyIgnoreCase(sqlType, "VARCHAR", "LONGVARCHAR")) {
+			return attrName.concat(" != null and ").concat(attrName).concat(" != ''");
 		}
-		return "";
+		return attrName.concat(" != null");
 	}
 
 	/**
