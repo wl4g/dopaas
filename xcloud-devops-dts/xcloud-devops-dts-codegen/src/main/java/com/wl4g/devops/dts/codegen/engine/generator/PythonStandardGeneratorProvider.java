@@ -32,7 +32,7 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	public PythonStandardGeneratorProvider(GenerateContext context) {
-		super(context);
+		super(context, PythonSpecs.class);
 	}
 
 	@Override

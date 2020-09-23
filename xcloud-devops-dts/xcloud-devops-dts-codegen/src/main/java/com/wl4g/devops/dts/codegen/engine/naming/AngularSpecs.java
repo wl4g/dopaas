@@ -13,28 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine.generator;
-
-import javax.validation.constraints.NotNull;
-
-import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+package com.wl4g.devops.dts.codegen.engine.naming;
 
 /**
- * SpringMVC service, serviceImpl and controller generator.
+ * AngularJS project naming specification {@link AngularSpecs}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-09-07
+ * @author vjay
+ * @version v1.0 2020-09-23
  * @since
  */
-public class SpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvider {
-
-	public SpringCloudMvnGeneratorProvider(@NotNull GenerateContext context) {
-		super(context);
-	}
-
-	@Override
-	public void doGenerate() throws Exception {
-		processGenerateWithTemplates(GenProviderAlias.SPINGCLOUD_MVN);
-	}
+public class AngularSpecs extends BaseSpecs {
 
 }

@@ -38,8 +38,8 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
  */
 public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvider {
 
-	public BasedJvmGeneratorProvider(GenerateContext context) {
-		super(context);
+	public BasedJvmGeneratorProvider(@NotNull GenerateContext context) {
+		super(context, JavaSpecs.class);
 	}
 
 	@Override

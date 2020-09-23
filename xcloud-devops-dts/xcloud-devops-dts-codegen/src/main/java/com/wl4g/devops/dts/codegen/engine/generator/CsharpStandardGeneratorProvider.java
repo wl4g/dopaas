@@ -32,7 +32,7 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	public CsharpStandardGeneratorProvider(GenerateContext context) {
-		super(context);
+		super(context, CSharpSpecs.class);
 	}
 
 	@Override
