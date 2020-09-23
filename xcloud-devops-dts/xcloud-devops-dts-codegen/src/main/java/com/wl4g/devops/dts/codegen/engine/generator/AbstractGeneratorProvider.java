@@ -136,9 +136,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 		for (RenderingResourceWrapper res : resources) {
 			log.info("Rendering generate for - {}", res.getPath());
 
-			// When traversing the rendering table (entity), it
-			// needs to share the item information and must be
-			// cloned to prevent it from being covered.
+			// Clone rendering from primary model.
 			MapRenderModel model = primaryModel.clone();
 
 			if (res.isTemplate()) {
@@ -147,15 +145,21 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 					for (GenTable tab : project.getGenTables()) {
 						context.setGenTable(tab); // Set current genTable
 
+						// When traversing the rendering table (entity), it
+						// needs to share the item information and must be
+						// cloned to prevent it from being covered.
+						MapRenderModel tableModel = primaryModel.clone();
+
 						// Add rendering model of GenTable.
-						model.putAll(convertToRenderingModel(tab));
+						tableModel.putAll(convertToRenderingModel(tab));
 
 						// Add customization rendering model.
-						customizeRenderingModel(res, model);
+						customizeRenderingModel(res, tableModel);
 
 						// Rendering source templates.
-						String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPath(), model));
-						String renderedString = doHandleRenderingTemplateToString(res, model);
+						String writePath = writeBasePath.concat(separator)
+								.concat(resolveSpelExpression(res.getPath(), tableModel));
+						String renderedString = doHandleRenderingTemplateToString(res, tableModel);
 
 						// Call post rendered.
 						postRenderingComplete(res, renderedString, writePath);
