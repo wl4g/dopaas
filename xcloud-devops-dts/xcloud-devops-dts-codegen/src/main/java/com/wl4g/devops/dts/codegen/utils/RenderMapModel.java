@@ -29,14 +29,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.wl4g.components.common.log.SmartLogger;
 
 /**
- * {@link RenderableMapModel}
+ * {@link RenderMapModel}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-09-20
  * @sine v1.0.0
  * @see
  */
-public class RenderableMapModel implements Map<String, Object>, Cloneable {
+public class RenderMapModel implements Map<String, Object>, Cloneable {
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -51,26 +51,26 @@ public class RenderableMapModel implements Map<String, Object>, Cloneable {
 	protected final Map<String, Object> orig = new HashMap<>(16);
 
 	/**
-	 * Is it allowed to modifiy elements.
+	 * Is it readonly elements.
 	 */
-	protected AtomicBoolean isModifiable = new AtomicBoolean(true);
+	protected AtomicBoolean readonly = new AtomicBoolean(false);
 
 	/**
 	 * Construtors.
 	 * 
 	 * @param overridable
 	 */
-	public RenderableMapModel(boolean overridable) {
+	public RenderMapModel(boolean overridable) {
 		this.overridable = overridable;
 	}
 
 	@Override
 	public Object put(String key, Object value) {
-		checkModifiable();
+		checkReadonly();
 
 		log.debug("Put rendering data model of key: {}, value: {}", key, value);
 		if (!overridable) {
-			isNull(orig.put(key, value), CannotOverrideRenderingModelException.class,
+			isNull(orig.put(key, value), CannotOverridePropertyException.class,
 					"Cannot override rendering data model of key: %s", key);
 		}
 		return orig.put(key, value);
@@ -78,7 +78,7 @@ public class RenderableMapModel implements Map<String, Object>, Cloneable {
 
 	@Override
 	public void putAll(Map<? extends String, ? extends Object> m) {
-		checkModifiable();
+		checkReadonly();
 
 		if (nonNull(m)) {
 			m.forEach((key, value) -> put(key, value));
@@ -87,13 +87,13 @@ public class RenderableMapModel implements Map<String, Object>, Cloneable {
 
 	@Override
 	public Object putIfAbsent(String key, Object value) {
-		checkModifiable();
+		checkReadonly();
 		return put(key, value);
 	}
 
 	@Override
 	public Object remove(Object key) {
-		checkModifiable();
+		checkReadonly();
 
 		log.debug("Removing rendering data model of key: {}", key);
 		return orig.remove(key);
@@ -101,7 +101,7 @@ public class RenderableMapModel implements Map<String, Object>, Cloneable {
 
 	@Override
 	public boolean remove(Object key, Object value) {
-		checkModifiable();
+		checkReadonly();
 
 		log.debug("Removing rendering data model of key: {}, value: {}", key, value);
 		return orig.remove(key, value);
@@ -134,7 +134,7 @@ public class RenderableMapModel implements Map<String, Object>, Cloneable {
 
 	@Override
 	public void clear() {
-		checkModifiable();
+		checkReadonly();
 		this.orig.clear();
 	}
 
@@ -159,37 +159,27 @@ public class RenderableMapModel implements Map<String, Object>, Cloneable {
 	 * @return
 	 */
 	@Override
-	public final RenderableMapModel clone() {
-		RenderableMapModel clone = new RenderableMapModel(overridable);
+	public final RenderMapModel clone() {
+		RenderMapModel clone = new RenderMapModel(overridable);
 		clone.orig.putAll(this.orig);
 		return clone;
 	}
-
-	// /**
-	// * Sets allowed modifiable to elements.
-	// *
-	// * @return
-	// */
-	// public final RenderableMapModel enableModifiable() {
-	// this.isModifiable.set(true);
-	// return this;
-	// }
 
 	/**
 	 * Sets not allowed modifiable to elements.
 	 * 
 	 * @return
 	 */
-	public final RenderableMapModel disableModifiable() {
-		this.isModifiable.set(false);
+	public final RenderMapModel readonly() {
+		this.readonly.set(true);
 		return this;
 	}
 
 	/**
 	 * Check whether modification of rendering model elements is allowed.
 	 */
-	protected final void checkModifiable() {
-		isTrue(isModifiable.get(), () -> "Rendering data model modifiable state is currently disabled");
+	protected final void checkReadonly() {
+		isTrue(!readonly.get(), () -> "Rendering data model modifiable state is currently disabled");
 	}
 
 }

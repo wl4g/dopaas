@@ -16,14 +16,14 @@
 package com.wl4g.devops.dts.codegen.utils;
 
 /**
- * {@link CannotOverrideRenderingModelException}
+ * {@link CannotOverridePropertyException}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-09-20
  * @sine v1.0.0
  * @see
  */
-public class CannotOverrideRenderingModelException extends RuntimeException {
+public class CannotOverridePropertyException extends RuntimeException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -31,7 +31,7 @@ public class CannotOverrideRenderingModelException extends RuntimeException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public CannotOverrideRenderingModelException() {
+	public CannotOverridePropertyException() {
 		super();
 	}
 
@@ -44,7 +44,7 @@ public class CannotOverrideRenderingModelException extends RuntimeException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public CannotOverrideRenderingModelException(String message) {
+	public CannotOverridePropertyException(String message) {
 		super(message);
 	}
 
@@ -65,7 +65,7 @@ public class CannotOverrideRenderingModelException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public CannotOverrideRenderingModelException(String message, Throwable cause) {
+	public CannotOverridePropertyException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -83,7 +83,7 @@ public class CannotOverrideRenderingModelException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public CannotOverrideRenderingModelException(Throwable cause) {
+	public CannotOverridePropertyException(Throwable cause) {
 		super(cause);
 	}
 

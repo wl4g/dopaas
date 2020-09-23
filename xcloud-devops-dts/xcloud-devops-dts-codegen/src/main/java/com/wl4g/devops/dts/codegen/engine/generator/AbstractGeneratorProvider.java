@@ -15,10 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.reflect.ReflectionUtils2.*;
-import com.wl4g.components.common.reflect.TypeUtils2;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
@@ -29,42 +26,30 @@ import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
-import com.wl4g.devops.dts.codegen.utils.RenderableMapModel;
+import com.wl4g.devops.dts.codegen.utils.RenderMapModel;
+
 import freemarker.template.Template;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.File;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.common.lang.StringUtils2.isTrue;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.reflect.ReflectionUtils2.*;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
 import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
 import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -90,9 +75,9 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	protected final GenerateContext context;
 
 	/**
-	 * Generate primary {@link RenderableMapModel}.
+	 * Generate primary {@link RenderMapModel}.
 	 */
-	protected RenderableMapModel primaryModel;
+	protected RenderMapModel primaryModel;
 
 	public AbstractGeneratorProvider(GenerateContext context) {
 		this.context = notNullOf(context, "context");
@@ -158,7 +143,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 						// When traversing the rendering table (entity), it
 						// needs to share the item information and must be
 						// cloned to prevent it from being covered.
-						RenderableMapModel model = primaryModel.clone();
+						RenderMapModel model = primaryModel.clone();
 
 						// Add rendering model of GenTable.
 						model.putAll(convertToRenderingModel(tab));
@@ -241,53 +226,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @param model
 	 * @return
 	 */
-	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull RenderableMapModel model) {
-	}
-
-	/**
-	 * Converting object to flat map model
-	 *
-	 * @param bean
-	 * @return
-	 * @throws Exception
-	 */
-	protected final Map<String, Object> convertToRenderingModel(final @NotNull Object bean,
-			@Nullable final String... includeFieldNames) throws Exception {
-		notNullOf(bean, "bean");
-		final List<String> includes = isNull(includeFieldNames) ? emptyList() : asList(includeFieldNames);
-
-		final Map<String, Object> model = new HashMap<>();
-		doFullWithFields(bean, new FieldFilter() {
-			@Override
-			public boolean matches(Field field) {
-				if(CollectionUtils.isEmpty(includes)){
-					return isGenericModifier(field.getModifiers());
-				}else{
-					return isGenericModifier(field.getModifiers()) && includes.contains(field.getName());
-				}
-			}
-
-			@Override
-			public boolean describeForObjField(Field field) {
-				RenderingProperty rp = field.getDeclaredAnnotation(RenderingProperty.class);
-				return nonNull(rp) && isTrue(rp.describeForObjField());
-			}
-		}, (field, objOfField) -> {
-			if (Objects.isNull(objOfField)) {
-				objOfField = TypeUtils2.instantiate(null, field.getType());
-			}
-			RenderingProperty rp = field.getDeclaredAnnotation(RenderingProperty.class);
-			if (nonNull(rp)) {
-				Object modelAttrVal = getField(field, objOfField);
-				// Note: Combined with FreeMarker script, no value is saved when
-				// there is no available value.
-				if (!isNull(modelAttrVal) || (modelAttrVal instanceof String && !isBlank((String) modelAttrVal))) {
-					model.put(field.getName(), modelAttrVal);
-				}
-			}
-		});
-
-		return model;
+	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull RenderMapModel model) {
 	}
 
 	/**
@@ -298,7 +237,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private String resolveSpelExpression(String expression, final Map<String, Object> model) {
+	protected final String resolveSpelExpression(String expression, final Map<String, Object> model) {
 		if (expression.endsWith(DEFAULT_TPL_SUFFIX)) {
 			expression = expression.substring(0, expression.length() - DEFAULT_TPL_SUFFIX.length());
 		}
@@ -316,8 +255,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @return
 	 * @throws Exception
 	 */
-	private String doHandleRenderingTemplateToString(RenderingResourceWrapper resource, RenderableMapModel model)
-			throws Exception {
+	private String doHandleRenderingTemplateToString(RenderingResourceWrapper resource, RenderMapModel model) throws Exception {
 		notNullOf(resource, "resource");
 		notEmptyOf(model, "model");
 		resource.validate();
@@ -338,8 +276,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 *
 	 * @return
 	 */
-	private RenderableMapModel initPrimaryRenderingModel() {
-		RenderableMapModel model = new RenderableMapModel(config.isAllowRenderingCustomizeModelOverride());
+	private RenderMapModel initPrimaryRenderingModel() {
+		RenderMapModel model = new RenderMapModel(config.isAllowRenderingCustomizeModelOverride());
 
 		try {
 			// Add rendering model of GenProject.
@@ -352,42 +290,18 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 			model.put("datasource", datasource);
 
 			// Add rendering model of watermark.
-			model.put(VAR_WATERMARK, TPL_WATERMARK);
+			model.put(MODEL_FOR_WATERMARK, MODEL_FOR_WATERMARK_VALUE);
 
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 
-		return model.disableModifiable();
-	}
-
-	/**
-	 * Whether the property fields of the annotation system bean will be
-	 * serialized to the rendering model.
-	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version 2020-09-20
-	 * @sine v1.0.0
-	 * @see
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ ElementType.FIELD })
-	public static @interface RenderingProperty {
-
-		/**
-		 * It is used to control whether to continue to reflect the structure of
-		 * the field recursively if the field traversed by reflection is of
-		 * object type.
-		 * 
-		 * @return
-		 */
-		String describeForObjField() default "Yes";
-
+		return model.readonly();
 	}
 
 	// Definition of special variables.
-	public static final String VAR_WATERMARK = "watermark";
-	public static final String TPL_WATERMARK = readFullyResourceString(TPL_BASEPATH.concat("/watermark.txt"));
+	public static final String MODEL_FOR_WATERMARK = "watermark";
+	public static final String MODEL_FOR_WATERMARK_VALUE = readFullyResourceString(TPL_BASEPATH.concat("/watermark.txt"));
 
 	/**
 	 * {@link SpelExpressions}

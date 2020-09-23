@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
-import com.wl4g.devops.dts.codegen.utils.RenderableMapModel;
+import com.wl4g.devops.dts.codegen.utils.RenderMapModel;
 
 /**
  * Golang standard generator provider.
@@ -41,7 +41,7 @@ public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull RenderableMapModel model) {
+	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull RenderMapModel model) {
 		// Add variable of naming utils.
 		model.put("golangSpecs", new GolangSpecs());
 	}

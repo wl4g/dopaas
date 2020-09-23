@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.wl4g.components.common.view.Freemarkers;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
+import com.wl4g.devops.dts.codegen.utils.FreemarkerUtils;
 
 /**
  * {@link FreemarkerUtilsTests}

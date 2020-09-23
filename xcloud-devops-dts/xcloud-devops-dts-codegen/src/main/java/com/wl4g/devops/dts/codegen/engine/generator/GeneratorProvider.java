@@ -80,7 +80,7 @@ public interface GeneratorProvider extends Runnable {
 		public static final String NGJS = "ngjsProvider";
 
 		/** List of field values of class {@link GenProviderAlias}. */
-		public static final String[] VALUES = getFieldValues(GenProviderAlias.class, "VALUES").toArray(new String[] {});
+		public static final String[] VALUES = getFieldValues(GenProviderAlias.class, null, "VALUES").toArray(new String[] {});
 
 	}
 
