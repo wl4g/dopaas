@@ -34,6 +34,7 @@ import freemarker.template.Template;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -259,7 +260,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 		doFullWithFields(bean, new FieldFilter() {
 			@Override
 			public boolean matches(Field field) {
-				return isGenericModifier(field.getModifiers()) && includes.contains(field.getName());
+				if(CollectionUtils.isEmpty(includes)){
+					return isGenericModifier(field.getModifiers());
+				}else{
+					return isGenericModifier(field.getModifiers()) && includes.contains(field.getName());
+				}
 			}
 
 			@Override
@@ -338,7 +343,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 
 		try {
 			// Add rendering model of GenProject.
-			model.putAll(convertToRenderingModel(context.getGenProject(), "remark"));
+			model.putAll(convertToRenderingModel(context.getGenProject()));
 
 			// Add rendering model of GenDataSource.
 			Map<String, Object> datasource = convertToRenderingModel(context.getGenDataSource());
