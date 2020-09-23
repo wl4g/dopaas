@@ -38,7 +38,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${r'${'}X_DB_URL:${topDomain}:3306}/${r'${'}X_DB_NAME:${projectName?lower_case}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://${r'${'}X_DB_URL:${topDomain}:3306}/${r'${'}X_DB_NAME:${datasource.database}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: ${r'${'}X_DB_USER:gzsm}
       password: ${r'${'}X_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
