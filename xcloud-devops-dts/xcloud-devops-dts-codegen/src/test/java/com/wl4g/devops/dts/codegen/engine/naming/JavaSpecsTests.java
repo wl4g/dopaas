@@ -57,6 +57,12 @@ public class JavaSpecsTests {
 	}
 
 	public static void main(String[] args) {
+		System.out.println(JavaSpecs.tableName2className("sys_user"));
+		System.out.println(JavaSpecs.tableName2ClassName("sys_user"));
+		System.out.println(JavaSpecs.underlineToHump("sys_user"));
+		System.out.println(JavaSpecs.firstUCase("user"));
+		System.out.println(JavaSpecs.firstLCase("USER"));
+
 		System.out.println("------- Input copyright: --------");
 		System.out.println(copyright);
 

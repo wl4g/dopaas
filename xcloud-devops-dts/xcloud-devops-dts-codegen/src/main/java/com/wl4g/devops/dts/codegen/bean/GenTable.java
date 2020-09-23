@@ -16,7 +16,8 @@
 package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.engine.generator.AbstractGeneratorProvider.RenderingProperty;
+import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderingProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 

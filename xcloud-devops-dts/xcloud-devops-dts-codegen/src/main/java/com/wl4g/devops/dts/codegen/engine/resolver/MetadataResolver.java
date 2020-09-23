@@ -113,7 +113,7 @@ public interface MetadataResolver {
 		public static final String POSTGRESQLV10 = "postgresqlv10";
 
 		/** List of field values of class {@link ResolverAlias}. */
-		public static final String[] VALUES = getFieldValues(ResolverAlias.class, "VALUES").toArray(new String[] {});
+		public static final String[] VALUES = getFieldValues(ResolverAlias.class, null, "VALUES").toArray(new String[] {});
 
 	}
 
