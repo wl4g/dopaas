@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionSupport.ConfigOption;
-import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderingProperty;
+import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,38 +34,38 @@ import java.util.List;
  */
 @Getter
 @Setter
-@RenderingProperty(includeFieldNames = { "remark" })
+@RenderProperty(includeFieldNames = { "remark" })
 public class GenProject extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
-	@RenderingProperty
+	@RenderProperty
 	private String projectName;
 
-	@RenderingProperty
+	@RenderProperty
 	private Integer datasourceId;
 
-	@RenderingProperty
+	@RenderProperty
 	private String organType;
 
-	@RenderingProperty
+	@RenderProperty
 	private String organName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String providerSet;
 
-	@RenderingProperty
+	@RenderProperty
 	private String version;
 
-	@RenderingProperty
+	@RenderProperty
 	private String author;
 
-	@RenderingProperty
+	@RenderProperty
 	private String since;
 
-	@RenderingProperty
+	@RenderProperty
 	private String copyright;
 
-	@RenderingProperty
+	@RenderProperty
 	private List<GenTable> genTables;
 
 	private String extraOptionsJson;
@@ -75,7 +75,7 @@ public class GenProject extends BaseBean {
 	/**
 	 * Configured extra options.
 	 */
-	@RenderingProperty
+	@RenderProperty
 	private ConfigOptions extraOptions;
 
 	/**

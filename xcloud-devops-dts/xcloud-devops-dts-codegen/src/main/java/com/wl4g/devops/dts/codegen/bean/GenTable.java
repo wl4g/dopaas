@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderingProperty;
+import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,47 +37,47 @@ public class GenTable extends BaseBean {
 
 	private Integer projectId;
 
-	@RenderingProperty
+	@RenderProperty
 	private String tableName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String entityName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String comments;
 
-	@RenderingProperty
+	@RenderProperty
 	private String parentTableName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String parentTableFkName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String moduleName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String subModuleName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String functionName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String functionNameSimple;
 
-	@RenderingProperty
+	@RenderProperty
 	private String functionAuthor;
 
-	@RenderingProperty
+	@RenderProperty
 	private String options;
 
-	@RenderingProperty
+	@RenderProperty
 	private String status;
 
 	// Extends
-	@RenderingProperty
+	@RenderProperty
 	private List<GenTableColumn> genTableColumns;
 
-	@RenderingProperty(describeForObjField = "No")
+	@RenderProperty(describeForObjField = "No")
 	private GenTableColumn pk;
 
 }

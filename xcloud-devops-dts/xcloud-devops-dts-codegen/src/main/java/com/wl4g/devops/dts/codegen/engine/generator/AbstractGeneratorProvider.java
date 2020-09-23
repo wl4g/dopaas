@@ -26,7 +26,7 @@ import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
-import com.wl4g.devops.dts.codegen.utils.RenderMapModel;
+import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import freemarker.template.Template;
 
@@ -75,9 +75,9 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	protected final GenerateContext context;
 
 	/**
-	 * Generate primary {@link RenderMapModel}.
+	 * Generate primary {@link MapRenderModel}.
 	 */
-	protected RenderMapModel primaryModel;
+	protected MapRenderModel primaryModel;
 
 	public AbstractGeneratorProvider(GenerateContext context) {
 		this.context = notNullOf(context, "context");
@@ -134,16 +134,16 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 		for (RenderingResourceWrapper res : resources) {
 			log.info("Rendering generate for - {}", res.getPath());
 
+			// When traversing the rendering table (entity), it
+			// needs to share the item information and must be
+			// cloned to prevent it from being covered.
+			MapRenderModel model = primaryModel.clone();
+
 			if (res.isTemplate()) {
 				// Foreach generate(for example: entity/bean)
 				if (res.isForeachTemplate()) {
 					for (GenTable tab : project.getGenTables()) {
 						context.setGenTable(tab); // Set current genTable
-
-						// When traversing the rendering table (entity), it
-						// needs to share the item information and must be
-						// cloned to prevent it from being covered.
-						RenderMapModel model = primaryModel.clone();
 
 						// Add rendering model of GenTable.
 						model.putAll(convertToRenderingModel(tab));
@@ -162,11 +162,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 				// Simple template.
 				else {
 					// Add customization rendering model.
-					customizeRenderingModel(res, primaryModel);
+					customizeRenderingModel(res, model);
 
 					// Rendering source templates.
-					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(res.getPath(), primaryModel));
-					String renderedString = doHandleRenderingTemplateToString(res, primaryModel);
+					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(res.getPath(), model));
+					String renderedString = doHandleRenderingTemplateToString(res, model);
 
 					// Call post rendered.
 					postRenderingComplete(res, renderedString, writePath);
@@ -174,7 +174,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 			}
 			// e.g: static resources files
 			else {
-				String targetPath = writeBasePath + "/" + resolveSpelExpression(res.getPath(), primaryModel);
+				String targetPath = writeBasePath + "/" + resolveSpelExpression(res.getPath(), model);
 				writeFile(new File(targetPath), res.getContent(), false);
 			}
 		}
@@ -226,7 +226,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @param model
 	 * @return
 	 */
-	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull RenderMapModel model) {
+	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull MapRenderModel model) {
 	}
 
 	/**
@@ -237,7 +237,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected final String resolveSpelExpression(String expression, final Map<String, Object> model) {
+	protected final String resolveSpelExpression(String expression, final MapRenderModel model) {
 		if (expression.endsWith(DEFAULT_TPL_SUFFIX)) {
 			expression = expression.substring(0, expression.length() - DEFAULT_TPL_SUFFIX.length());
 		}
@@ -255,7 +255,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @return
 	 * @throws Exception
 	 */
-	private String doHandleRenderingTemplateToString(RenderingResourceWrapper resource, RenderMapModel model) throws Exception {
+	private String doHandleRenderingTemplateToString(RenderingResourceWrapper resource, MapRenderModel model) throws Exception {
 		notNullOf(resource, "resource");
 		notEmptyOf(model, "model");
 		resource.validate();
@@ -276,8 +276,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 *
 	 * @return
 	 */
-	private RenderMapModel initPrimaryRenderingModel() {
-		RenderMapModel model = new RenderMapModel(config.isAllowRenderingCustomizeModelOverride());
+	private MapRenderModel initPrimaryRenderingModel() {
+		MapRenderModel model = new MapRenderModel(config.isAllowRenderingCustomizeModelOverride());
 
 		try {
 			// Add rendering model of GenProject.

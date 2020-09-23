@@ -64,7 +64,7 @@ public abstract class RenderPropertyUtils {
 		notNullOf(bean, "bean");
 
 		// Resolve type annotation
-		RenderingProperty rp1 = findAnnotation(bean.getClass(), RenderingProperty.class);
+		RenderProperty rp1 = findAnnotation(bean.getClass(), RenderProperty.class);
 		final List<String> includes = isNull(rp1) ? emptyList() : asList(rp1.includeFieldNames());
 
 		final Map<String, Object> model = new HashMap<>();
@@ -76,7 +76,7 @@ public abstract class RenderPropertyUtils {
 
 			@Override
 			public boolean describeForObjField(Field field) {
-				RenderingProperty rp = field.getDeclaredAnnotation(RenderingProperty.class);
+				RenderProperty rp = field.getDeclaredAnnotation(RenderProperty.class);
 				return nonNull(rp) && isTrue(rp.describeForObjField());
 			}
 		}, (field, objOfField) -> {
@@ -84,7 +84,7 @@ public abstract class RenderPropertyUtils {
 				objOfField = TypeUtils2.instantiate(null, field.getType());
 			}
 			// Resolve field annotation
-			RenderingProperty rp2 = field.getDeclaredAnnotation(RenderingProperty.class);
+			RenderProperty rp2 = field.getDeclaredAnnotation(RenderProperty.class);
 			if (nonNull(rp2)) {
 				Object modelAttrVal = getField(field, objOfField);
 				// Note: Combined with FreeMarker script, no value is saved when
@@ -110,7 +110,7 @@ public abstract class RenderPropertyUtils {
 	@Inherited
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.FIELD, ElementType.TYPE })
-	public static @interface RenderingProperty {
+	public static @interface RenderProperty {
 
 		/**
 		 * A list of field names that will be serialized as a rendered data
