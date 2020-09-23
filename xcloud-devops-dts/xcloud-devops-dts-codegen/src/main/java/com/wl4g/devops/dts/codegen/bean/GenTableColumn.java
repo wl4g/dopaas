@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderingProperty;
+import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,61 +37,61 @@ public class GenTableColumn extends BaseBean {
 
 	private Integer tableId;
 
-	@RenderingProperty
+	@RenderProperty
 	private String columnName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String columnType;
 
-	@RenderingProperty
+	@RenderProperty
 	private String simpleColumnType;
 
-	@RenderingProperty
+	@RenderProperty
 	private String sqlType;
 
-	@RenderingProperty
+	@RenderProperty
 	private String columnComment;
 
-	@RenderingProperty
+	@RenderProperty
 	private Integer columnSort;
 
-	@RenderingProperty
+	@RenderProperty
 	private String attrType;
 
-	@RenderingProperty
+	@RenderProperty
 	private String attrName;
 
-	@RenderingProperty
+	@RenderProperty
 	private String queryType;
 
-	@RenderingProperty
+	@RenderProperty
 	private String showType;
 
-	@RenderingProperty
+	@RenderProperty
 	private String dictType;
 
-	@RenderingProperty
+	@RenderProperty
 	private String validRule; // form valid rule
 
-	@RenderingProperty
+	@RenderProperty
 	private String isPk;
 
-	@RenderingProperty
+	@RenderProperty
 	private String noNull;
 
-	@RenderingProperty
+	@RenderProperty
 	private String isInsert;
 
-	@RenderingProperty
+	@RenderProperty
 	private String isUpdate;
 
-	@RenderingProperty
+	@RenderProperty
 	private String isList;
 
-	@RenderingProperty
+	@RenderProperty
 	private String isQuery;
 
-	@RenderingProperty
+	@RenderProperty
 	private String isEdit;
 
 }

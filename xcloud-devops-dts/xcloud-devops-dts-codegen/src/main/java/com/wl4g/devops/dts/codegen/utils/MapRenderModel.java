@@ -29,14 +29,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.wl4g.components.common.log.SmartLogger;
 
 /**
- * {@link RenderMapModel}
+ * {@link MapRenderModel}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-09-20
  * @sine v1.0.0
  * @see
  */
-public class RenderMapModel implements Map<String, Object>, Cloneable {
+public class MapRenderModel implements Map<String, Object>, Cloneable {
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -60,7 +60,7 @@ public class RenderMapModel implements Map<String, Object>, Cloneable {
 	 * 
 	 * @param overridable
 	 */
-	public RenderMapModel(boolean overridable) {
+	public MapRenderModel(boolean overridable) {
 		this.overridable = overridable;
 	}
 
@@ -70,8 +70,8 @@ public class RenderMapModel implements Map<String, Object>, Cloneable {
 
 		log.debug("Put rendering data model of key: {}, value: {}", key, value);
 		if (!overridable) {
-			isNull(orig.put(key, value), CannotOverridePropertyException.class,
-					"Cannot override rendering data model of key: %s", key);
+			isNull(orig.put(key, value), CannotOverridePropertyException.class, "Cannot override rendering data model of key: %s",
+					key);
 		}
 		return orig.put(key, value);
 	}
@@ -159,9 +159,10 @@ public class RenderMapModel implements Map<String, Object>, Cloneable {
 	 * @return
 	 */
 	@Override
-	public final RenderMapModel clone() {
-		RenderMapModel clone = new RenderMapModel(overridable);
+	public final MapRenderModel clone() {
+		MapRenderModel clone = new MapRenderModel(overridable);
 		clone.orig.putAll(this.orig);
+		clone.readonly.set(false);
 		return clone;
 	}
 
@@ -170,7 +171,7 @@ public class RenderMapModel implements Map<String, Object>, Cloneable {
 	 * 
 	 * @return
 	 */
-	public final RenderMapModel readonly() {
+	public final MapRenderModel readonly() {
 		this.readonly.set(true);
 		return this;
 	}

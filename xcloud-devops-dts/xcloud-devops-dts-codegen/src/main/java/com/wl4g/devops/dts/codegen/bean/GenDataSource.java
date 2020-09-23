@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderingProperty;
+import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,19 +33,19 @@ import lombok.Setter;
 public class GenDataSource extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
-	@RenderingProperty
+	@RenderProperty
 	private String name;
 
-	@RenderingProperty
+	@RenderProperty
 	private String type;
 
-	@RenderingProperty
+	@RenderProperty
 	private String host;
 
-	@RenderingProperty
+	@RenderProperty
 	private String port;
 
-	@RenderingProperty
+	@RenderProperty
 	private String database;
 
 	private String username;

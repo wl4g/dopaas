@@ -26,7 +26,7 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
-import com.wl4g.devops.dts.codegen.utils.RenderMapModel;
+import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 /**
  * {@link BasedJvmGeneratorProvider}
@@ -43,14 +43,14 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull RenderMapModel model) {
+	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull MapRenderModel model) {
 		GenProject project = context.getGenProject();
 		GenTable table = context.getGenTable();
 
-		// Add variable of naming utils.
+		// Add model for naming utils.
 		model.put("javaSpecs", new JavaSpecs());
 
-		// Add variable of java/scala/groovy/kotlin packageName
+		// Add model for java/scala/groovy/kotlin packageName
 		// e.g: {organType}.{organName}.{projectName}.{moduleName}
 		// => com.mycompany.myproject.sys
 		StringBuffer packageName = new StringBuffer(project.getOrganType());
@@ -61,7 +61,7 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 		}
 		model.put("packageName", packageName.toString().toLowerCase(US));
 
-		// Add variable of sub module packageName.
+		// Add model for sub module packageName.
 		// e.g: bean.order, dao.order, service.order, controller.order
 		if (nonNull(table)) { // If there
 			String beanSubModulePackageName = "bean";
