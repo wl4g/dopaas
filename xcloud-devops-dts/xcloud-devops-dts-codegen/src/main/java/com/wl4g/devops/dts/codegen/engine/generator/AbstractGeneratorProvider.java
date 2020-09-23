@@ -36,9 +36,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import static java.io.File.separator;
 
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
@@ -152,7 +154,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 						customizeRenderingModel(res, model);
 
 						// Rendering source templates.
-						String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(res.getPath(), model));
+						String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPath(), model));
 						String renderedString = doHandleRenderingTemplateToString(res, model);
 
 						// Call post rendered.
@@ -165,7 +167,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 					customizeRenderingModel(res, model);
 
 					// Rendering source templates.
-					String writePath = writeBasePath.concat("/").concat(resolveSpelExpression(res.getPath(), model));
+					String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPath(), model));
 					String renderedString = doHandleRenderingTemplateToString(res, model);
 
 					// Call post rendered.
@@ -174,8 +176,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 			}
 			// e.g: static resources files
 			else {
-				String targetPath = writeBasePath + "/" + resolveSpelExpression(res.getPath(), model);
-				writeFile(new File(targetPath), res.getContent(), false);
+				String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPath(), model));
+				writeFile(new File(writePath), res.getContent(), false);
 			}
 		}
 	}
