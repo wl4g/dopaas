@@ -15,17 +15,8 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import com.wl4g.devops.dts.codegen.bean.GenProject;
-import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
-import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
-
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.wl4g.devops.dts.codegen.engine.naming.VueSpecs;
 
 /**
  * {@link VueGeneratorProvider}
@@ -34,10 +25,10 @@ import java.util.Map;
  * @version v1.0 2020-09-07
  * @since
  */
-public class VueGeneratorProvider extends AbstractGeneratorProvider {
+public class VueGeneratorProvider extends ModularGeneratorProvider {
 
 	public VueGeneratorProvider(GenerateContext context) {
-		super(context);
+		super(context, VueSpecs.class);
 	}
 
 	@Override
@@ -45,21 +36,4 @@ public class VueGeneratorProvider extends AbstractGeneratorProvider {
 		processGenerateWithTemplates(GenProviderAlias.VUEJS);
 	}
 
-	@Override
-	protected void customizeRenderingModel(GenTemplateLocator.@NotNull RenderingResourceWrapper resource, @NotNull MapRenderModel model) {
-		GenProject genProject = context.getGenProject();
-		List<GenTable> genTables = genProject.getGenTables();
-
-		Map<String,List<String>> moduleMap = new HashMap<>();
-		for(GenTable genTable : genTables){
-			String moduleName = genTable.getModuleName();
-			List<String> entityNames = moduleMap.get(moduleName);
-			if(null == entityNames){
-				entityNames = new ArrayList<>();
-			}
-			entityNames.add(genTable.getEntityName());
-			moduleMap.put(moduleName,entityNames);
-		}
-		model.put("moduleMap",moduleMap);
-	}
 }

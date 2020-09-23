@@ -15,16 +15,14 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
-import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
-import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
-import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
+import com.wl4g.devops.dts.codegen.engine.naming.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
@@ -41,7 +39,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import static java.io.File.separator;
-
+import static java.util.Arrays.asList;
+import static com.wl4g.components.common.collection.Collections2.safeArray;
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
@@ -66,23 +65,33 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	protected final SmartLogger log = getLogger(getClass());
 
 	/**
+	 * {@link GenerateContext}
+	 */
+	protected final GenerateContext context;
+
+	/**
+	 * {@link SpelExpressions}
+	 */
+	protected final SpelExpressions spelExpr;
+
+	/**
 	 * {@link CodegenProperties}
 	 */
 	@Autowired
 	protected CodegenProperties config;
 
 	/**
-	 * {@link GenerateContext}
-	 */
-	protected final GenerateContext context;
-
-	/**
 	 * Generate primary {@link MapRenderModel}.
 	 */
 	protected MapRenderModel primaryModel;
 
-	public AbstractGeneratorProvider(GenerateContext context) {
+	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Class<?>... spelUtilClasses) {
 		this.context = notNullOf(context, "context");
+
+		// Add SPEL utils classes
+		List<Class<?>> classes = asList(safeArray(Class.class, spelUtilClasses));
+		classes.add(BaseSpecs.class);
+		this.spelExpr = create(classes.toArray(new Class[0]));
 	}
 
 	@Override
@@ -247,10 +256,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 		if (expression.endsWith(DEFAULT_TPL_SUFFIX)) {
 			expression = expression.substring(0, expression.length() - DEFAULT_TPL_SUFFIX.length());
 		}
-		final String spelExpr = expression;
-		log.debug("Resolving SPEL for expression: {}, model: {}", () -> spelExpr, () -> model);
+		final String expr = expression;
+		log.debug("Resolving SPEL for expression: {}, model: {}", () -> expr, () -> model);
 
-		return defaultExpressions.resolve(spelExpr, model);
+		return spelExpr.resolve(expr, model);
 	}
 
 	/**
@@ -308,11 +317,5 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	// Definition of special variables.
 	public static final String MODEL_FOR_WATERMARK = "watermark";
 	public static final String MODEL_FOR_WATERMARK_VALUE = readFullyResourceString(TPL_BASEPATH.concat("/watermark.txt"));
-
-	/**
-	 * {@link SpelExpressions}
-	 */
-	private static final SpelExpressions defaultExpressions = create(CSharpSpecs.class, GolangSpecs.class, JavaSpecs.class,
-			PythonSpecs.class);
 
 }

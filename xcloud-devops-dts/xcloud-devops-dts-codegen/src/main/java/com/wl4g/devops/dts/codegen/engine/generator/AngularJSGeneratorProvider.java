@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import javax.validation.constraints.NotNull;
+
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.naming.AngularSpecs;
 
 /**
  * {@link AngularJSGeneratorProvider}
@@ -24,10 +27,10 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
  * @version v1.0 2020-09-07
  * @since
  */
-public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
+public class AngularJSGeneratorProvider extends ModularGeneratorProvider {
 
-	public AngularJSGeneratorProvider(GenerateContext context) {
-		super(context);
+	public AngularJSGeneratorProvider(@NotNull GenerateContext context) {
+		super(context, AngularSpecs.class);
 	}
 
 	@Override

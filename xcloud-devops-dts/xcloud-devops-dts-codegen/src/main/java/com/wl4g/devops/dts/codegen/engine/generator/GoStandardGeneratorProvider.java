@@ -31,8 +31,8 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
  */
 public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
 
-	public GoStandardGeneratorProvider(GenerateContext context) {
-		super(context);
+	public GoStandardGeneratorProvider(@NotNull GenerateContext context) {
+		super(context, GolangSpecs.class);
 	}
 
 	@Override
