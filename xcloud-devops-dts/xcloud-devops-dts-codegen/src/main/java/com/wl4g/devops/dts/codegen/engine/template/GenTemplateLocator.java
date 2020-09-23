@@ -15,12 +15,11 @@
  */
 package com.wl4g.devops.dts.codegen.engine.template;
 
-import java.io.Serializable;
-import java.util.List;
+import com.wl4g.components.common.annotation.Nullable;
 
 import javax.validation.constraints.NotBlank;
-
-import com.wl4g.components.common.annotation.Nullable;
+import java.io.Serializable;
+import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -78,7 +77,7 @@ public interface GenTemplateLocator {
 			this.name = name;
 			this.content = isBlank(content) ? EMPTY : content; // By default
 			this.isTemplate = name.endsWith(DEFAULT_TPL_SUFFIX);
-			this.isForeachTemplate = name.contains(DEFAULT_VARIABLE_ENTITY_NAME);
+			this.isForeachTemplate = path.contains(DEFAULT_VARIABLE_ENTITY_NAME);
 		}
 
 		public String getPath() {
