@@ -25,7 +25,7 @@ import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 /**
@@ -43,7 +43,7 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
 		GenProject project = context.getGenProject();
 		GenTable table = context.getGenTable();
 

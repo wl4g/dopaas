@@ -49,7 +49,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	/**
 	 * Generate template {@link Template} cache.
 	 */
-	private final Map<String, List<RenderingResourceWrapper>> templatesCache = new HashMap<>();
+	private final Map<String, List<TemplateResourceWrapper>> templatesCache = new HashMap<>();
 
 	/**
 	 * Load generate template suffixs.
@@ -126,8 +126,8 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	}
 
 	@Override
-	public List<RenderingResourceWrapper> locate(String provider) throws Exception {
-		List<RenderingResourceWrapper> tpls = templatesCache.get(provider);
+	public List<TemplateResourceWrapper> locate(String provider) throws Exception {
+		List<TemplateResourceWrapper> tpls = templatesCache.get(provider);
 		if (isJVMDebugging || isNull(tpls)) {
 			synchronized (this) {
 				tpls = templatesCache.get(provider);
@@ -181,7 +181,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	 * @return
 	 * @throws Exception
 	 */
-	private static RenderingResourceWrapper wrapTemplate(StreamResource res, String provider) throws Exception {
+	private static TemplateResourceWrapper wrapTemplate(StreamResource res, String provider) throws Exception {
 		/**
 		 * e.g: res.getURI().toString()
 		 * 
@@ -190,20 +190,19 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 		 * libs/xcloud-devops-dts-codegen-master.jar!/generate-config/project-
 		 * templates/springCloudMvnProvider/%23%7bT(JavaSpecs).lCase(organName)%
 		 * 7d-%23%7bT(JavaSpecs).lCase(projectName)%7d/%23%7bT(JavaSpecs).lCase(
-		 * organName)%7d-%23%7bT(JavaSpecs).lCase(projectName)%7d-dao/pom.xml.
-		 * ftl
+		 * organName)%7d-%23%7bT(JavaSpecs).lCase(projectName)%7d-dao/pom.xml.ftl
 		 * </pre>
 		 * 
 		 * Note: The original path (need decoded) is used here.
 		 */
-		String path = res.getURI().toString();
-		path = new String(URLCodec.decodeUrl(path.getBytes(UTF_8)));
+		String pathname = res.getURI().toString();
+		pathname = new String(URLCodec.decodeUrl(pathname.getBytes(UTF_8)));
 		String projectRootPathPart = TPL_PROJECT_PATH.concat("/").concat(provider).concat("/");
-		int i = path.indexOf(projectRootPathPart);
+		int i = pathname.indexOf(projectRootPathPart);
 		if (i >= 0) {
-			path = path.substring(i + projectRootPathPart.length());
+			pathname = pathname.substring(i + projectRootPathPart.length());
 		}
-		return new RenderingResourceWrapper(path, res.getFilename(), readFullyToString(res.getInputStream()));
+		return new TemplateResourceWrapper(pathname, res.getFilename(), readFullyToString(res.getInputStream()));
 	}
 
 	// Template configuration.

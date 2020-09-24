@@ -23,7 +23,7 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.BaseSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import freemarker.template.Template;
@@ -36,8 +36,12 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import static java.io.File.separator;
 import static java.util.Arrays.asList;
 import static com.wl4g.components.common.collection.Collections2.safeArray;
@@ -126,30 +130,27 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 		GenProject project = context.getGenProject();
 
 		// Load templates.
-		List<RenderingResourceWrapper> tpls = context.getLocator().locate(provider);
+		List<TemplateResourceWrapper> tpls = context.getLocator().locate(provider);
 
 		// Handling generate
-		handleRenderingTemplates(tpls, project, context.getJobDir().getAbsolutePath());
+		handleCoreRenderingTemplates(tpls, project, context.getJobDir().getAbsolutePath());
 	}
 
 	/**
-	 * Handling rendering templates generate and save.
+	 * Handling core rendering templates generate and save.
 	 *
 	 * @param resources
 	 * @param project
 	 * @param writeBasePath
 	 * @throws Exception
 	 */
-	protected void handleRenderingTemplates(List<RenderingResourceWrapper> resources, GenProject project, String writeBasePath)
+	protected void handleCoreRenderingTemplates(List<TemplateResourceWrapper> resources, GenProject project, String writeBasePath)
 			throws Exception {
-		for (RenderingResourceWrapper res : resources) {
-			log.info("Rendering generate for - {}", res.getPath());
+		for (TemplateResourceWrapper res : resources) {
+			log.info("Rendering generate for - {}", res.getPathname());
 
-			// Clone rendering from primary model.
-			MapRenderModel model = primaryModel.clone();
-
-			if (res.isTemplate()) {
-				// Foreach generate(for example: entity/bean)
+			if (res.isRender()) {
+				// Foreach rendering entitys(tables)
 				if (res.isForeachTemplate()) {
 					for (GenTable tab : project.getGenTables()) {
 						context.setGenTable(tab); // Set current genTable
@@ -167,32 +168,73 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 
 						// Rendering source templates.
 						String writePath = writeBasePath.concat(separator)
-								.concat(resolveSpelExpression(res.getPath(), tableModel));
+								.concat(resolveSpelExpression(res.getPathname(), tableModel));
 						String renderedString = doHandleRenderingTemplateToString(res, tableModel);
 
 						// Call post rendered.
 						postRenderingComplete(res, renderedString, writePath);
 					}
 				}
-				// Simple template.
+				// Foreach rendering module
+				else if (res.isForeachModule()) {
+					// Target: moduleMap{moduleName => entityNames[]}
+					Map<String, List<GenTable>> modules = new HashMap<>();
+					for (GenTable tab : project.getGenTables()) {
+						String moduleName = tab.getModuleName();
+						List<GenTable> tablesOfModule = modules.getOrDefault(moduleName, new ArrayList<>());
+						tablesOfModule.add(tab);
+						modules.put(moduleName, tablesOfModule);
+					}
+
+					// Rendering of module.
+					for (Entry<String, List<GenTable>> ent : modules.entrySet()) {
+						String moduleName = ent.getKey();
+						List<GenTable> tablesOfModule = ent.getValue();
+
+						// When traversing the rendering module, it
+						// needs to share the item information and must be
+						// cloned to prevent it from being covered.
+						MapRenderModel moduleModel = primaryModel.clone();
+
+						// Add rendering model of module tables.
+						moduleModel.putAll(convertToRenderingModel(tablesOfModule));
+						moduleModel.put("moduleName", moduleName);
+
+						// Add customization rendering model.
+						customizeRenderingModel(res, moduleModel);
+
+						// Rendering source templates.
+						String writePath = writeBasePath.concat(separator)
+								.concat(resolveSpelExpression(res.getPathname(), moduleModel));
+						String renderedString = doHandleRenderingTemplateToString(res, moduleModel);
+
+						// Call post rendered.
+						postRenderingComplete(res, renderedString, writePath);
+					}
+				}
+				// Simple template rendering.
 				else {
+					// Clone the primary model to customize the model.
+					MapRenderModel model = primaryModel.clone();
+
 					// Add customization rendering model.
 					customizeRenderingModel(res, model);
 
 					// Rendering source templates.
-					String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPath(), model));
+					String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPathname(), model));
 					String renderedString = doHandleRenderingTemplateToString(res, model);
 
 					// Call post rendered.
 					postRenderingComplete(res, renderedString, writePath);
 				}
 			}
-			// e.g: static resources files
+			// Static resource no-render.
 			else {
-				String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPath(), model));
+				String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPathname(), primaryModel));
 				writeFile(new File(writePath), res.getContent(), false);
 			}
 		}
+
 	}
 
 	/**
@@ -202,7 +244,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @param model
 	 * @return
 	 */
-	protected String preRendering(@NotNull RenderingResourceWrapper resource, @NotEmpty Map<String, Object> model) {
+	protected String preRendering(@NotNull TemplateResourceWrapper resource, @NotEmpty Map<String, Object> model) {
 		notNullOf(resource, "resource");
 		notEmptyOf(model, "model");
 
@@ -224,7 +266,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @param renderedString
 	 * @param writePath
 	 */
-	protected void postRenderingComplete(@NotNull RenderingResourceWrapper resource, @NotBlank String renderedString,
+	protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotBlank String renderedString,
 			@NotBlank String writePath) {
 		notNullOf(resource, "resource");
 		hasTextOf(renderedString, "renderedString");
@@ -241,7 +283,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @param model
 	 * @return
 	 */
-	protected void customizeRenderingModel(@NotNull RenderingResourceWrapper resource, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
 	}
 
 	/**
@@ -270,7 +312,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	 * @return
 	 * @throws Exception
 	 */
-	private String doHandleRenderingTemplateToString(RenderingResourceWrapper resource, MapRenderModel model) throws Exception {
+	private String doHandleRenderingTemplateToString(TemplateResourceWrapper resource, MapRenderModel model) throws Exception {
 		notNullOf(resource, "resource");
 		notEmptyOf(model, "model");
 		resource.validate();
