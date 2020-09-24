@@ -100,9 +100,11 @@ public class GenerateController extends BaseController {
 	}
 
 	@RequestMapping("setEnable")
-	public void setEnable(Integer id, String enable) {
+	public RespBase<?> setEnable(Integer id, String status) {
+		RespBase<Object> resp = RespBase.create();
 		notNullOf(id, "id");
-		generateService.setEnable(id, enable);
+		generateService.setEnable(id, status);
+		return resp;
 	}
 
 }
