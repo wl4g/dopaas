@@ -39,16 +39,14 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvider {
 
 	public BasedJvmGeneratorProvider(@NotNull GenerateContext context) {
-		super(context, JavaSpecs.class);
+		// Add model for naming utils.
+		super(context, new JavaSpecs());
 	}
 
 	@Override
 	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
 		GenProject project = context.getGenProject();
 		GenTable table = context.getGenTable();
-
-		// Add model for naming utils.
-		model.put("javaSpecs", new JavaSpecs());
 
 		// Add model for java/scala/groovy/kotlin packageName
 		// e.g: {organType}.{organName}.{projectName}.{moduleName}

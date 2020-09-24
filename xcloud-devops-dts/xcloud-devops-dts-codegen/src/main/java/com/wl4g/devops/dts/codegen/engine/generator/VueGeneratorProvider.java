@@ -28,7 +28,7 @@ import com.wl4g.devops.dts.codegen.engine.naming.VueSpecs;
 public class VueGeneratorProvider extends ModularGeneratorProvider {
 
 	public VueGeneratorProvider(GenerateContext context) {
-		super(context, VueSpecs.class);
+		super(context, new VueSpecs());
 	}
 
 	@Override

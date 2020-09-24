@@ -30,7 +30,7 @@ import com.wl4g.devops.dts.codegen.engine.naming.AngularSpecs;
 public class AngularJSGeneratorProvider extends ModularGeneratorProvider {
 
 	public AngularJSGeneratorProvider(@NotNull GenerateContext context) {
-		super(context, AngularSpecs.class);
+		super(context, new AngularSpecs());
 	}
 
 	@Override
