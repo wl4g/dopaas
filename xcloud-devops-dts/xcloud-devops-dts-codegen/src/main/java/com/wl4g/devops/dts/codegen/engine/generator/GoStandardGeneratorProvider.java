@@ -17,7 +17,6 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
@@ -32,8 +31,8 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
  */
 public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
 
-	public GoStandardGeneratorProvider(@NotNull CodegenProperties config, @NotNull GenerateContext context) {
-		super(config, context, new GolangSpecs());
+	public GoStandardGeneratorProvider(@NotNull GenerateContext context) {
+		super(context, new GolangSpecs());
 	}
 
 	@Override

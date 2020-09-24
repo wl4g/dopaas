@@ -17,7 +17,6 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
@@ -32,8 +31,8 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
  */
 public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
 
-	public PythonStandardGeneratorProvider(@NotNull CodegenProperties config, @NotNull GenerateContext context) {
-		super(config, context, new PythonSpecs());
+	public PythonStandardGeneratorProvider(@NotNull GenerateContext context) {
+		super(context, new PythonSpecs());
 	}
 
 	@Override

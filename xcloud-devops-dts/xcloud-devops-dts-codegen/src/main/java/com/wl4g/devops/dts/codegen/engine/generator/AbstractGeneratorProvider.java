@@ -64,11 +64,6 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	protected final SmartLogger log = getLogger(getClass());
 
 	/**
-	 * {@link CodegenProperties}
-	 */
-	protected final CodegenProperties config;
-
-	/**
 	 * {@link GenerateContext}
 	 */
 	protected final GenerateContext context;
@@ -83,13 +78,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 */
 	protected final SpelExpressions spelExpr = SpelExpressions.create();
 
-	public AbstractGeneratorProvider(@NotNull CodegenProperties config, @NotNull GenerateContext context,
-			@Nullable Object... addModels) {
-		this.config = notNullOf(config, "config");
+	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Object... addModels) {
 		this.context = notNullOf(context, "context");
-
 		// Primary rendering model.
-		this.primaryModel = initPrimaryRenderingModel(config, context, addModels);
+		this.primaryModel = initPrimaryRenderingModel(context.getConfiguration(), context, addModels);
 	}
 
 	@Override
