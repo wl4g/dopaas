@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.lang.Integer.valueOf;
 
 /**
@@ -96,6 +97,12 @@ public class GenerateController extends BaseController {
 		hasTextOf(id, "id");
 		String jobPath = generateService.generate(valueOf(id));
 		ZipIOUtils.zip(jobPath, response);
+	}
+
+	@RequestMapping("setEnable")
+	public void setEnable(Integer id, String enable) {
+		notNullOf(id, "id");
+		generateService.setEnable(id, enable);
 	}
 
 }

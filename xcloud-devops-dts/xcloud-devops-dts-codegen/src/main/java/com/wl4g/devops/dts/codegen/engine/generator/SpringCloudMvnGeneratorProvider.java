@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import javax.validation.constraints.NotNull;
-
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * SpringMVC service, serviceImpl and controller generator.
@@ -29,7 +29,7 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 public class SpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvider {
 
 	public SpringCloudMvnGeneratorProvider(@NotNull GenerateContext context) {
-		super(config, context);
+		super(context);
 	}
 
 	@Override
