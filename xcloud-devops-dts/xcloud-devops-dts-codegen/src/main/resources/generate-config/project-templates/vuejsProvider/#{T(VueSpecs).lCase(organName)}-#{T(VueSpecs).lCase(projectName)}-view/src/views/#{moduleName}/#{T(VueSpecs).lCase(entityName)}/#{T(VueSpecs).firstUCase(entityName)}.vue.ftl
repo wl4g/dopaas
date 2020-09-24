@@ -1,10 +1,6 @@
 <template>
     <section id="configuration" class="configuration">
         <el-form :inline="true" :model="searchParams" class="searchbar" @keyup.enter.native="onSubmit()">
-            <el-form-item :label="$t('message.common.name')">
-                <el-input v-model="searchParams.name" placeholder="e.g. localhost" style="width:165px"></el-input>
-            </el-form-item>
-
 <#list genTableColumns as param>
     <#if param.isQuery == '1'>
             <el-form-item label="${param.attrName}">
