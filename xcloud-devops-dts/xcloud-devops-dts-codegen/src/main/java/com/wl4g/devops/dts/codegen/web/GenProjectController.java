@@ -37,7 +37,7 @@ import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.Gen
  * @Date 2020-09-11
  */
 @RestController
-@RequestMapping("/genProject")
+@RequestMapping("/gen/project")
 public class GenProjectController extends BaseController {
 
 	@Autowired

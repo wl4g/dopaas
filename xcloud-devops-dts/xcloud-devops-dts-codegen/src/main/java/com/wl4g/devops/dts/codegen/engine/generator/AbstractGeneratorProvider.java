@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import com.google.common.collect.Lists;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
@@ -25,21 +26,17 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.RenderingResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
-
 import freemarker.template.Template;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import static java.io.File.separator;
-import static java.util.Arrays.asList;
+
 import static com.wl4g.components.common.collection.Collections2.safeArray;
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
@@ -51,6 +48,7 @@ import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLo
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
+import static java.io.File.separator;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -89,7 +87,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 		this.context = notNullOf(context, "context");
 
 		// Add SPEL utils classes
-		List<Class<?>> classes = asList(safeArray(Class.class, spelUtilClasses));
+		List<Class<?>> classes = Lists.newArrayList(safeArray(Class.class, spelUtilClasses));
 		classes.add(BaseSpecs.class);
 		this.spelExpr = create(classes.toArray(new Class[0]));
 	}
