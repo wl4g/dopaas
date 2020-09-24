@@ -72,6 +72,11 @@ public class DefaultGenerateContext implements GenerateContext {
 	}
 
 	@Override
+	public CodegenProperties getConfiguration() {
+		return config;
+	}
+
+	@Override
 	public final GenTemplateLocator getLocator() {
 		return locator;
 	}

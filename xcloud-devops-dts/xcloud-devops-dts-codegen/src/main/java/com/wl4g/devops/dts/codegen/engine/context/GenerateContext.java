@@ -19,6 +19,7 @@ import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
@@ -33,6 +34,13 @@ import java.io.File;
  * @since
  */
 public interface GenerateContext {
+
+	/**
+	 * {@link CodegenProperties}
+	 * 
+	 * @return
+	 */
+	CodegenProperties getConfiguration();
 
 	/**
 	 * Gets generate template locator {@link GenTemplateLocator}
