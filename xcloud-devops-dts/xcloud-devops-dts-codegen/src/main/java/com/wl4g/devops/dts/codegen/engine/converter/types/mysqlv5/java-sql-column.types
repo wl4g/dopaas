@@ -30,20 +30,14 @@ Date                     TIMESTAMP                        DATE
 Date                     TIMESTAMP                        TIMESTAMP
 String                   VARCHAR                          TEXT
 
-
-Integer                  INTEGER                          tinyint
-Integer                  INTEGER                          smallint
-byte[]                   BLOB                             bit
-
-                                                        numberic
-                                                        char
-                                                        varchar
-                                                        date
-                                                        time
-                                                        timestamp
-                                                        datetime
-                                                        tinytext
-                                                        text
-                                                        longtext
-                                                        enum
-                                                        binary
+# uncheck
+Integer                  INTEGER                          TINYINT
+Integer                  INTEGER                          SMALLINT
+byte[]                   BLOB                             BIT
+BigDecimal               DECIMAL                          NUMBERIC
+String                   VARCHAR                          CHAR
+Date                     TIMESTAMP                        TIME
+String                   VARCHAR                          TINYTEXT
+String                   VARCHAR                          LONGTEXT
+enum                     VARCHAR                          ENUM
+byte[]                   BLOB                             BINARY
