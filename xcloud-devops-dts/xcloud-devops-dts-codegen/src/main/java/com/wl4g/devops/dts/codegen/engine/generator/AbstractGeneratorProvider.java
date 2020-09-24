@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import static com.google.common.collect.Lists.newArrayList;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
@@ -22,19 +23,14 @@ import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.naming.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
-
 import freemarker.template.Template;
-
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,16 +39,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import static java.io.File.separator;
-import static java.util.Arrays.asList;
+
 import static com.wl4g.components.common.collection.Collections2.safeArray;
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
-import static com.wl4g.components.core.utils.expression.SpelExpressions.create;
 import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
+import static com.wl4g.devops.dts.codegen.engine.naming.BaseSpecs.firstLCase;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -64,7 +60,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0 2020-09-07
  * @since
  */
-public abstract class AbstractGeneratorProvider implements GeneratorProvider, InitializingBean {
+public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -74,9 +70,14 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	protected final GenerateContext context;
 
 	/**
+	 * Generate primary {@link MapRenderModel}.
+	 */
+	protected final MapRenderModel primaryModel;
+
+	/**
 	 * {@link SpelExpressions}
 	 */
-	protected final SpelExpressions spelExpr;
+	protected final SpelExpressions spelExpr = SpelExpressions.create();
 
 	/**
 	 * {@link CodegenProperties}
@@ -84,23 +85,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 	@Autowired
 	protected CodegenProperties config;
 
-	/**
-	 * Generate primary {@link MapRenderModel}.
-	 */
-	protected MapRenderModel primaryModel;
-
-	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Class<?>... spelUtilClasses) {
+	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Object... addModels) {
 		this.context = notNullOf(context, "context");
 
-		// Add SPEL utils classes
-		List<Class<?>> classes = asList(safeArray(Class.class, spelUtilClasses));
-		classes.add(BaseSpecs.class);
-		this.spelExpr = create(classes.toArray(new Class[0]));
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		this.primaryModel = initPrimaryRenderingModel();
+		// Primary rendering model.
+		this.primaryModel = initPrimaryRenderingModel(config, context, addModels);
 	}
 
 	@Override
@@ -330,10 +319,14 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 
 	/**
 	 * Initialization primary rendering model.
-	 *
+	 * 
+	 * @param config
+	 * @param context
+	 * @param addModels
 	 * @return
 	 */
-	private MapRenderModel initPrimaryRenderingModel() {
+	private MapRenderModel initPrimaryRenderingModel(CodegenProperties config, GenerateContext context,
+			@Nullable Object... addModels) {
 		MapRenderModel model = new MapRenderModel(config.isAllowRenderingCustomizeModelOverride());
 
 		try {
@@ -348,6 +341,17 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider, In
 
 			// Add rendering model of watermark.
 			model.put(MODEL_FOR_WATERMARK, MODEL_FOR_WATERMARK_VALUE);
+
+			// Add SPEL utils model.
+			newArrayList(safeArray(Object.class, addModels)).forEach(addModel -> {
+				if (addModel instanceof Class) {
+					// e.g: JavaSpecs => JavaSpecs.class
+					model.put(addModel.getClass().getSimpleName(), addModel);
+				} else {
+					// e.g: javaSpecs => new JavaSpecs()
+					model.put(firstLCase(addModel.getClass().getSimpleName()), addModel);
+				}
+			});
 
 		} catch (Exception e) {
 			throw new IllegalStateException(e);

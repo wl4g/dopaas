@@ -38,8 +38,8 @@ import java.util.Map;
  */
 public abstract class ModularGeneratorProvider extends AbstractGeneratorProvider {
 
-	public ModularGeneratorProvider(@NotNull GenerateContext context, @Nullable Class<?>... spelUtilClasses) {
-		super(context, spelUtilClasses);
+	public ModularGeneratorProvider(@NotNull GenerateContext context, @Nullable Object... addModels) {
+		super(context, addModels);
 	}
 
 	@Override
