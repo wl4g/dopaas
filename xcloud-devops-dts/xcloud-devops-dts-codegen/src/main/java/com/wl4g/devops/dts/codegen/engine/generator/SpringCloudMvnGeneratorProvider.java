@@ -29,7 +29,7 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 public class SpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvider {
 
 	public SpringCloudMvnGeneratorProvider(@NotNull GenerateContext context) {
-		super(config, context);
+		super(context);
 	}
 
 	@Override
