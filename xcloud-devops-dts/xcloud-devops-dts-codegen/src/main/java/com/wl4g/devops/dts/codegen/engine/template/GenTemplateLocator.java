@@ -154,17 +154,17 @@ public interface GenTemplateLocator {
 			boolean isForeachTpl = false, isForeachMod = false;
 
 			// Entitys:
-			int eindex = realPathname.indexOf(SYNTAX_FOREACH_TEMPLATE);
+			int eindex = realPathname.toLowerCase().indexOf(SYNTAX_FOREACH_TEMPLATE);
 			if (eindex >= 0) {
 				isForeachTpl = true;
-				realPathname = new StringBuffer(realPathname).delete(eindex, SYNTAX_FOREACH_TEMPLATE.length()).toString();
+				realPathname = new StringBuffer(realPathname).delete(eindex, eindex + SYNTAX_FOREACH_TEMPLATE.length()).toString();
 			}
 
 			// Modules:
-			int mindex = pathname.indexOf(SYNTAX_FOREACH_MODULE);
+			int mindex = realPathname.toLowerCase().indexOf(SYNTAX_FOREACH_MODULE);
 			if (mindex >= 0) {
 				isForeachMod = true;
-				realPathname = new StringBuffer(realPathname).delete(mindex, SYNTAX_FOREACH_MODULE.length()).toString();
+				realPathname = new StringBuffer(realPathname).delete(mindex, mindex + SYNTAX_FOREACH_MODULE.length()).toString();
 			}
 
 			return new Object[] { realPathname, isForeachTpl, isForeachMod };
