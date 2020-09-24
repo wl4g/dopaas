@@ -24,8 +24,6 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
 
-import static java.util.Objects.isNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,20 +43,17 @@ public abstract class ModularGeneratorProvider extends AbstractGeneratorProvider
 	}
 
 	@Override
-	protected void customizeRenderingModel(GenTemplateLocator.@NotNull RenderingResourceWrapper resource,
+	protected void customizeRenderingModel(GenTemplateLocator.@NotNull TemplateResourceWrapper resource,
 			@NotNull MapRenderModel model) {
 
 		GenProject project = context.getGenProject();
 		List<GenTable> tables = project.getGenTables();
 
-		// Target: moduleMap{moduleName => entityNames}
+		// Target: moduleMap{moduleName => entityNames[]}
 		Map<String, List<String>> modules = new HashMap<>();
 		for (GenTable tab : tables) {
 			String moduleName = tab.getModuleName();
-			List<String> entityNames = modules.get(moduleName);
-			if (isNull(entityNames)) {
-				entityNames = new ArrayList<>();
-			}
+			List<String> entityNames = modules.getOrDefault(moduleName, new ArrayList<>());
 			entityNames.add(tab.getEntityName());
 			modules.put(moduleName, entityNames);
 		}
