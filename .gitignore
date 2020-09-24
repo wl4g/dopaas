@@ -9,14 +9,14 @@ pom.properties
 .gradle
 /local.properties
 .DS_Store
-/build
+
 /captures
 .classpath
 bin/
 logs/
 *.log
 .gradle/
-build/
+
 out/
 *.ipr
 *.iws

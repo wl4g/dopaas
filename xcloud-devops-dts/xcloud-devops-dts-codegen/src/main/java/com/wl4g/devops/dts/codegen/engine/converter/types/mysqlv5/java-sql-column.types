@@ -26,5 +26,6 @@ Float                    FLOAT                            FLOAT
 Double                   DOUBLE                      	  DOUBLE
 BigDecimal               DECIMAL                          DECIMAL
 Date                     TIMESTAMP                        DATETIME
+Date                     TIMESTAMP                        DATE
 Date                     TIMESTAMP                        TIMESTAMP
 String                   VARCHAR                          TEXT
