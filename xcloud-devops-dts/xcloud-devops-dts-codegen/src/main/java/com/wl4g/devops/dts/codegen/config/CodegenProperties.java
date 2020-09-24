@@ -87,14 +87,14 @@ public class CodegenProperties implements InitializingBean {
 	 * e.g. </br>
 	 * ~/.codegen-workspace/jobs/job.root-1000001-1599726930000/
 	 * 
-	 * @param genConfId
+	 * @param confId
 	 * @return
 	 */
-	public File getJobDir(Integer genConfId) {
-		notNullOf(genConfId, "genConfigId");
+	public File getJobDir(Integer confId) {
+		notNullOf(confId, "genConfigId");
 		String principalName = getPrincipal();
 		return new File(getWorkspace().concat("/").concat(DEFUALT_JOB_BASEDIR).concat("/job.").concat(principalName).concat("-")
-				.concat(valueOf(genConfId)).concat("-").concat(valueOf(currentTimeMillis())));
+				.concat(valueOf(confId)).concat("-").concat(valueOf(currentTimeMillis())));
 	}
 
 	final public static String DEFUALT_JOB_BASEDIR = "jobs";

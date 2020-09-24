@@ -20,6 +20,7 @@ import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * {@link GenDataSource}
@@ -30,6 +31,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class GenDataSource extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 

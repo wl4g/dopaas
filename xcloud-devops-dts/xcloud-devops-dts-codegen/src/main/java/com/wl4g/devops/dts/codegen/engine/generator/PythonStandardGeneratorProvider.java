@@ -37,7 +37,7 @@ public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	@Override
 	public void doGenerate() throws Exception {
-		processGenerateWithTemplates(GenProviderAlias.PYTHON_STANDARD);
+		doGenerateWithTemplates(GenProviderAlias.PYTHON_STANDARD);
 	}
 
 	@Override

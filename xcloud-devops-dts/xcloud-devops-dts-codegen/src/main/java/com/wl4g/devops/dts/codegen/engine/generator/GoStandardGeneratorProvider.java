@@ -37,7 +37,7 @@ public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	@Override
 	public void doGenerate() throws Exception {
-		processGenerateWithTemplates(GenProviderAlias.GO_STANDARD);
+		doGenerateWithTemplates(GenProviderAlias.GO_STANDARD);
 	}
 
 	@Override

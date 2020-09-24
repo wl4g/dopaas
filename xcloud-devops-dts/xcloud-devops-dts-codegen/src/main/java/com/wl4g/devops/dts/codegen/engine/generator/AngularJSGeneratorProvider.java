@@ -27,15 +27,15 @@ import com.wl4g.devops.dts.codegen.engine.naming.AngularSpecs;
  * @version v1.0 2020-09-07
  * @since
  */
-public class AngularJSGeneratorProvider extends ModularGeneratorProvider {
+public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
 
 	public AngularJSGeneratorProvider(@NotNull GenerateContext context) {
 		super(context, new AngularSpecs());
 	}
 
 	@Override
-	protected void doGenerate() throws Exception {
-		processGenerateWithTemplates(GenProviderAlias.NGJS);
+	public void doGenerate() throws Exception {
+		doGenerateWithTemplates(GenProviderAlias.NGJS);
 	}
 
 }
