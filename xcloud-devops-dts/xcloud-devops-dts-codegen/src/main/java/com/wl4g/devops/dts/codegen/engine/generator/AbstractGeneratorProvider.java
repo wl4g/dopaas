@@ -26,7 +26,6 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 import freemarker.template.Template;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -65,6 +64,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	protected final SmartLogger log = getLogger(getClass());
 
 	/**
+	 * {@link CodegenProperties}
+	 */
+	protected final CodegenProperties config;
+
+	/**
 	 * {@link GenerateContext}
 	 */
 	protected final GenerateContext context;
@@ -79,13 +83,9 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 */
 	protected final SpelExpressions spelExpr = SpelExpressions.create();
 
-	/**
-	 * {@link CodegenProperties}
-	 */
-	@Autowired
-	protected CodegenProperties config;
-
-	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Object... addModels) {
+	public AbstractGeneratorProvider(@NotNull CodegenProperties config, @NotNull GenerateContext context,
+			@Nullable Object... addModels) {
+		this.config = notNullOf(config, "config");
 		this.context = notNullOf(context, "context");
 
 		// Primary rendering model.

@@ -130,38 +130,38 @@ public class CodegenAutoConfiguration {
 
 	@Bean
 	@NamingPrototype({ GO_STANDARD })
-	public GoStandardGeneratorProvider goStandardGeneratorProvider(GenerateContext context) {
-		return new GoStandardGeneratorProvider(context);
+	public GoStandardGeneratorProvider goStandardGeneratorProvider(CodegenProperties config, GenerateContext context) {
+		return new GoStandardGeneratorProvider(config, context);
 	}
 
 	@Bean
 	@NamingPrototype({ PYTHON_STANDARD })
-	public PythonStandardGeneratorProvider pythonStandardGeneratorProvider(GenerateContext context) {
-		return new PythonStandardGeneratorProvider(context);
+	public PythonStandardGeneratorProvider pythonStandardGeneratorProvider(CodegenProperties config, GenerateContext context) {
+		return new PythonStandardGeneratorProvider(config, context);
 	}
 
 	@Bean
 	@NamingPrototype({ CSHARP_STANDARD })
-	public CsharpStandardGeneratorProvider csharpStandardGeneratorProvider(GenerateContext context) {
-		return new CsharpStandardGeneratorProvider(context);
+	public CsharpStandardGeneratorProvider csharpStandardGeneratorProvider(CodegenProperties config, GenerateContext context) {
+		return new CsharpStandardGeneratorProvider(config, context);
 	}
 
 	@Bean
 	@NamingPrototype({ SPINGCLOUD_MVN })
-	public SpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
-		return new SpringCloudMvnGeneratorProvider(context);
+	public SpringCloudMvnGeneratorProvider springMvcGeneratorProvider(CodegenProperties config, GenerateContext context) {
+		return new SpringCloudMvnGeneratorProvider(config, context);
 	}
 
 	@Bean
 	@NamingPrototype({ VUEJS })
-	public VueGeneratorProvider vueGeneratorProvider(GenerateContext context) {
-		return new VueGeneratorProvider(context);
+	public VueGeneratorProvider vueGeneratorProvider(CodegenProperties config, GenerateContext context) {
+		return new VueGeneratorProvider(config, context);
 	}
 
 	@Bean
 	@NamingPrototype({ NGJS })
-	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context) {
-		return new AngularJSGeneratorProvider(context);
+	public AngularJSGeneratorProvider angularJSGeneratorProvider(CodegenProperties config, GenerateContext context) {
+		return new AngularJSGeneratorProvider(config, context);
 	}
 
 }

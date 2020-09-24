@@ -18,6 +18,7 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
@@ -38,8 +39,9 @@ import java.util.Map;
  */
 public abstract class ModularGeneratorProvider extends AbstractGeneratorProvider {
 
-	public ModularGeneratorProvider(@NotNull GenerateContext context, @Nullable Object... addModels) {
-		super(context, addModels);
+	public ModularGeneratorProvider(@NotNull CodegenProperties config, @NotNull GenerateContext context,
+			@Nullable Object... addModels) {
+		super(config, context, addModels);
 	}
 
 	@Override

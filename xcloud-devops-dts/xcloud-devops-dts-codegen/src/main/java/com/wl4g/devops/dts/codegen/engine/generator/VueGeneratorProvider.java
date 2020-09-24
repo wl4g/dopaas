@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import javax.validation.constraints.NotNull;
+
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.VueSpecs;
 
@@ -27,8 +30,8 @@ import com.wl4g.devops.dts.codegen.engine.naming.VueSpecs;
  */
 public class VueGeneratorProvider extends ModularGeneratorProvider {
 
-	public VueGeneratorProvider(GenerateContext context) {
-		super(context, new VueSpecs());
+	public VueGeneratorProvider(@NotNull CodegenProperties config, @NotNull GenerateContext context) {
+		super(config, context, new VueSpecs());
 	}
 
 	@Override
