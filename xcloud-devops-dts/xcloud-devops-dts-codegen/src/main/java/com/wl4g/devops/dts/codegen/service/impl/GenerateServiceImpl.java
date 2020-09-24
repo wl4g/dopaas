@@ -145,15 +145,35 @@ public class GenerateServiceImpl implements GenerateService {
 			if (colmd.isPk()) {
 				col.setIsPk("1");
 				col.setIsList("0");
+				col.setIsEdit("0");
 				col.setNoNull("0");
 			} else {
 				col.setIsPk("0");
 			}
+			setDefaultQueryType(colmd, col);
 			cols.add(col);
 		}
 		tab.setGenTableColumns(cols);
 
 		return tab;
+	}
+
+	/**
+	 * Set Default Query Type
+	 *
+	 * @param colmd
+	 * @param col
+	 */
+	private void setDefaultQueryType(ColumnMetadata colmd, GenTableColumn col) {
+		if (StringUtils.equalsAnyIgnoreCase(colmd.getSimpleColumnType(), "DATE")) {
+			col.setQueryType("7");//Date
+		} else if (StringUtils.equalsAnyIgnoreCase(colmd.getSimpleColumnType(), "DATETIME", "TIMESTAMP")) {
+			col.setQueryType("8");//DateTime
+		} else if (StringUtils.equalsAnyIgnoreCase(colmd.getSimpleColumnType(), "TEXT")) {
+			col.setQueryType("2");//textarea
+		} else {
+			col.setQueryType("1");//normal input
+		}
 	}
 
 	@Override
