@@ -29,3 +29,21 @@ Date                     TIMESTAMP                        DATETIME
 Date                     TIMESTAMP                        DATE
 Date                     TIMESTAMP                        TIMESTAMP
 String                   VARCHAR                          TEXT
+
+
+Integer                  INTEGER                          tinyint
+Integer                  INTEGER                          smallint
+byte[]                   BLOB                             bit
+
+                                                        numberic
+                                                        char
+                                                        varchar
+                                                        date
+                                                        time
+                                                        timestamp
+                                                        datetime
+                                                        tinytext
+                                                        text
+                                                        longtext
+                                                        enum
+                                                        binary
