@@ -17,6 +17,7 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 
 import javax.validation.constraints.NotNull;
 
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
@@ -31,8 +32,8 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
  */
 public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 
-	public CsharpStandardGeneratorProvider(GenerateContext context) {
-		super(context, new CSharpSpecs());
+	public CsharpStandardGeneratorProvider(@NotNull CodegenProperties config, GenerateContext context) {
+		super(config, context, new CSharpSpecs());
 	}
 
 	@Override

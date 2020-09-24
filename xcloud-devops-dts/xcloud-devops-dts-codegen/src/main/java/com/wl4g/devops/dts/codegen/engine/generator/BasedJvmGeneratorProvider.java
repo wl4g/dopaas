@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
@@ -38,9 +39,9 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
  */
 public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvider {
 
-	public BasedJvmGeneratorProvider(@NotNull GenerateContext context) {
+	public BasedJvmGeneratorProvider(@NotNull CodegenProperties config, @NotNull GenerateContext context) {
 		// Add model for naming utils.
-		super(context, new JavaSpecs());
+		super(config, context, new JavaSpecs());
 	}
 
 	@Override
