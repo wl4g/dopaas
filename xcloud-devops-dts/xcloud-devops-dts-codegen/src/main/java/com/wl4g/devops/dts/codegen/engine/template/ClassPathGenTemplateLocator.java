@@ -168,7 +168,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 
 		List<String> locations = new ArrayList<>();
 		for (String suffix : loadTplSuffixs) {
-			locations.add(format(LOAD_PATTERN, provider, suffix));
+			locations.add(format(TPL_LOCATION, provider, suffix));
 		}
 		return locations;
 	}
@@ -202,22 +202,18 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 		if (i >= 0) {
 			pathname = pathname.substring(i + projectRootPathPart.length());
 		}
-		return new TemplateResourceWrapper(pathname, res.getFilename(), readFullyToString(res.getInputStream()));
+		return new TemplateResourceWrapper(pathname, readFullyToString(res.getInputStream()));
 	}
 
 	// Template configuration.
 	public static final String TPL_BASEPATH = "generate-config";
 	public static final String TPL_PROJECT_PATH = TPL_BASEPATH.concat("/project-templates");
-	// e.g: classpath:/templates/xxGenProvider/**/*/.ftl
-	public static final String LOAD_PATTERN = "classpath:/".concat(TPL_PROJECT_PATH).concat("/%s/**/*%s");
+	// e.g: classpath:/templates/xxxGenProvider/**/*/.ftl
+	public static final String TPL_LOCATION = "classpath:/".concat(TPL_PROJECT_PATH).concat("/%s/**/*%s");
 
 	/**
 	 * {@link ClassPathResourcePatternResolver}
 	 */
 	private static final ClassPathResourcePatternResolver defaultResolver = new ClassPathResourcePatternResolver();
-
-	static {
-
-	}
 
 }

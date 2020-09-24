@@ -46,6 +46,22 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public interface GeneratorProvider extends Runnable {
 
+	@Override
+	default public void run() {
+		try {
+			doGenerate();
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	/**
+	 * Do execution generate.
+	 *
+	 * @throws Exception
+	 */
+	void doGenerate() throws Exception;
+
 	/**
 	 * {@link GenProviderAlias}
 	 */

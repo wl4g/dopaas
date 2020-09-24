@@ -8,8 +8,6 @@
     <result column="table_name" property="tableName" jdbcType="VARCHAR" />
     <result column="entity_name" property="entityName" jdbcType="VARCHAR" />
     <result column="comments" property="comments" jdbcType="VARCHAR" />
-    <result column="parent_table_name" property="parentTableName" jdbcType="VARCHAR" />
-    <result column="parent_table_fk_name" property="parentTableFkName" jdbcType="VARCHAR" />
     <result column="module_name" property="moduleName" jdbcType="VARCHAR" />
     <result column="sub_module_name" property="subModuleName" jdbcType="VARCHAR" />
     <result column="function_name" property="functionName" jdbcType="VARCHAR" />
@@ -26,7 +24,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, project_id, table_name, entity_name, comments, parent_table_name, parent_table_fk_name,
+    id, project_id, table_name, entity_name, comments,
     module_name, sub_module_name, function_name, 
     function_name_simple, function_author, options, status, remark, create_date,
     create_by, update_date, update_by, del_flag
@@ -53,16 +51,14 @@
 
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
     insert into dts_gen_table (id, project_id, table_name,
-      entity_name, comments, parent_table_name,
-      parent_table_fk_name,
+      entity_name, comments,
       module_name, sub_module_name, 
       function_name, function_name_simple, function_author, 
       gen_base_dir, options, status, remark,
       del_flag, create_date, create_by, 
       update_date, update_by)
     values (#{id,jdbcType=INTEGER},  #{projectId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR},
-      #{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{parentTableName,jdbcType=VARCHAR},
-      #{parentTableFkName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
+      #{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
       #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR}, #{functionAuthor,jdbcType=VARCHAR}, 
       #{options,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER})
@@ -85,12 +81,6 @@
       </if>
       <if test="comments != null" >
         comments,
-      </if>
-      <if test="parentTableName != null" >
-        parent_table_name,
-      </if>
-      <if test="parentTableFkName != null" >
-        parent_table_fk_name,
       </if>
       <if test="moduleName != null" >
         module_name,
@@ -147,12 +137,6 @@
       </if>
       <if test="comments != null" >
         #{comments,jdbcType=VARCHAR},
-      </if>
-      <if test="parentTableName != null" >
-        #{parentTableName,jdbcType=VARCHAR},
-      </if>
-      <if test="parentTableFkName != null" >
-        #{parentTableFkName,jdbcType=VARCHAR},
       </if>
       <if test="moduleName != null" >
         #{moduleName,jdbcType=VARCHAR},
@@ -211,12 +195,6 @@
       <if test="comments != null" >
         comments = #{comments,jdbcType=VARCHAR},
       </if>
-      <if test="parentTableName != null" >
-        parent_table_name = #{parentTableName,jdbcType=VARCHAR},
-      </if>
-      <if test="parentTableFkName != null" >
-        parent_table_fk_name = #{parentTableFkName,jdbcType=VARCHAR},
-      </if>
       <if test="moduleName != null" >
         module_name = #{moduleName,jdbcType=VARCHAR},
       </if>
@@ -266,8 +244,6 @@
       table_name = #{tableName,jdbcType=VARCHAR},
       entity_name = #{entityName,jdbcType=VARCHAR},
       comments = #{comments,jdbcType=VARCHAR},
-      parent_table_name = #{parentTableName,jdbcType=VARCHAR},
-      parent_table_fk_name = #{parentTableFkName,jdbcType=VARCHAR},
       module_name = #{moduleName,jdbcType=VARCHAR},
       sub_module_name = #{subModuleName,jdbcType=VARCHAR},
       function_name = #{functionName,jdbcType=VARCHAR},

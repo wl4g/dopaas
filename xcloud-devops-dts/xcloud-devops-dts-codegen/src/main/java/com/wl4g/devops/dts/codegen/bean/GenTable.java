@@ -20,6 +20,8 @@ import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Wither;
 
 import java.util.List;
 
@@ -32,6 +34,8 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Wither
+@ToString
 public class GenTable extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
@@ -45,12 +49,6 @@ public class GenTable extends BaseBean {
 
 	@RenderProperty
 	private String comments;
-
-	@RenderProperty
-	private String parentTableName;
-
-	@RenderProperty
-	private String parentTableFkName;
 
 	@RenderProperty
 	private String moduleName;
@@ -79,5 +77,28 @@ public class GenTable extends BaseBean {
 
 	@RenderProperty(describeForObjField = "No")
 	private GenTableColumn pk;
+
+	public GenTable() {
+		super();
+	}
+
+	public GenTable(Integer projectId, String tableName, String entityName, String comments, String moduleName,
+			String subModuleName, String functionName, String functionNameSimple, String functionAuthor, String options,
+			String status, List<GenTableColumn> genTableColumns, GenTableColumn pk) {
+		super();
+		this.projectId = projectId;
+		this.tableName = tableName;
+		this.entityName = entityName;
+		this.comments = comments;
+		this.moduleName = moduleName;
+		this.subModuleName = subModuleName;
+		this.functionName = functionName;
+		this.functionNameSimple = functionNameSimple;
+		this.functionAuthor = functionAuthor;
+		this.options = options;
+		this.status = status;
+		this.genTableColumns = genTableColumns;
+		this.pk = pk;
+	}
 
 }

@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.utils;
 
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.isNull;
 import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
@@ -26,6 +27,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.validation.constraints.NotBlank;
+
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 
 /**
@@ -151,6 +155,41 @@ public class MapRenderModel implements Map<String, Object>, Cloneable {
 	@Override
 	public Set<Entry<String, Object>> entrySet() {
 		return orig.entrySet();
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName().concat("-")
+				.concat("[overridable=" + overridable + ", readonly=" + readonly + ", orig=" + orig + "]");
+	}
+
+	//
+	// --- Funcation's. ---
+	//
+
+	/**
+	 * Gets model attribute of key.
+	 * 
+	 * @param <T>
+	 * @param key
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getElement(final @NotBlank String key) {
+		return (T) get(hasTextOf(key, "key"));
+	}
+
+	/**
+	 * Gets model attribute of key.
+	 * 
+	 * @param <T>
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getElement(final @NotBlank String key, final @Nullable Object defaultValue) {
+		return (T) getOrDefault(hasTextOf(key, "key"), defaultValue);
 	}
 
 	/**

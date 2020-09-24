@@ -37,7 +37,7 @@ public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	@Override
 	public void doGenerate() throws Exception {
-		processGenerateWithTemplates(GenProviderAlias.CSHARP_STANDARD);
+		doGenerateWithTemplates(GenProviderAlias.CSHARP_STANDARD);
 	}
 
 	@Override

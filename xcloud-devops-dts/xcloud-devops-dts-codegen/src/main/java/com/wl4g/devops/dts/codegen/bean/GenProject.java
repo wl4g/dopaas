@@ -21,6 +21,7 @@ import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Wither;
 
 import java.util.List;
@@ -34,6 +35,8 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Wither
+@ToString
 @RenderProperty(includeFieldNames = { "remark" })
 public class GenProject extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
@@ -77,6 +80,28 @@ public class GenProject extends BaseBean {
 	 */
 	@RenderProperty
 	private ConfigOptions extraOptions;
+
+	public GenProject() {
+		super();
+	}
+
+	public GenProject(String projectName, Integer datasourceId, String organType, String organName, String providerSet,
+			String version, String author, String since, String copyright, List<GenTable> genTables, String extraOptionsJson,
+			ConfigOptions extraOptions) {
+		super();
+		this.projectName = projectName;
+		this.datasourceId = datasourceId;
+		this.organType = organType;
+		this.organName = organName;
+		this.providerSet = providerSet;
+		this.version = version;
+		this.author = author;
+		this.since = since;
+		this.copyright = copyright;
+		this.genTables = genTables;
+		this.extraOptionsJson = extraOptionsJson;
+		this.extraOptions = extraOptions;
+	}
 
 	/**
 	 * {@link ConfigOptions}

@@ -27,15 +27,15 @@ import com.wl4g.devops.dts.codegen.engine.naming.VueSpecs;
  * @version v1.0 2020-09-07
  * @since
  */
-public class VueGeneratorProvider extends ModularGeneratorProvider {
+public class VueGeneratorProvider extends AbstractGeneratorProvider {
 
 	public VueGeneratorProvider(@NotNull GenerateContext context) {
 		super(context, new VueSpecs());
 	}
 
 	@Override
-	protected void doGenerate() throws Exception {
-		processGenerateWithTemplates(GenProviderAlias.VUEJS);
+	public void doGenerate() throws Exception {
+		doGenerateWithTemplates(GenProviderAlias.VUEJS);
 	}
 
 }

@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.StringUtils2.getFilename;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -97,9 +98,9 @@ public interface GenTemplateLocator {
 		/**
 		 * Constructor
 		 */
-		protected TemplateResourceWrapper(@NotBlank String pathname, @NotBlank String name, @Nullable String content) {
+		public TemplateResourceWrapper(@NotBlank String pathname, @Nullable String content) {
 			hasTextOf(pathname, "pathname");
-			this.name = hasTextOf(name, "name");
+			this.name = getFilename(pathname);
 			this.content = isBlank(content) ? EMPTY : content; // By default
 			this.isRender = name.endsWith(DEFAULT_TPL_SUFFIX);
 
@@ -157,7 +158,8 @@ public interface GenTemplateLocator {
 			int eindex = realPathname.toLowerCase().indexOf(SYNTAX_FOREACH_TEMPLATE);
 			if (eindex >= 0) {
 				isForeachTpl = true;
-				realPathname = new StringBuffer(realPathname).delete(eindex, eindex + SYNTAX_FOREACH_TEMPLATE.length()).toString();
+				realPathname = new StringBuffer(realPathname).delete(eindex, eindex + SYNTAX_FOREACH_TEMPLATE.length())
+						.toString();
 			}
 
 			// Modules:

@@ -62,13 +62,13 @@ public class DefaultGenerateContext implements GenerateContext {
 	protected GenTable genTable;
 
 	public DefaultGenerateContext(@NotNull CodegenProperties config, @NotNull GenTemplateLocator locator,
-			@NotNull MetadataResolver resolver, @NotNull GenProject project, @NotNull GenDataSource dataSource) {
+			@NotNull MetadataResolver resolver, @NotNull GenProject project, @NotNull GenDataSource datasource) {
 		this.config = notNullOf(config, "config");
 		this.locator = notNullOf(locator, "locator");
 		this.resolver = notNullOf(resolver, "resolver");
 		this.project = notNullOf(project, "genProject");
 		this.jobDir = config.getJobDir(project.getId());
-		this.dataSource = notNullOf(dataSource, "genDataSource");
+		this.dataSource = notNullOf(datasource, "genDataSource");
 	}
 
 	@Override
