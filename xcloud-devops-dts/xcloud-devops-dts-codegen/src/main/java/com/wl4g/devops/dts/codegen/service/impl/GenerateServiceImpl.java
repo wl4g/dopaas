@@ -288,4 +288,13 @@ public class GenerateServiceImpl implements GenerateService {
 		return genManager.execute(new GenericParameter(tableId));
 	}
 
+	@Override
+	public void setEnable(Integer id, String status) {
+		GenTable genTable = new GenTable();
+		genTable.preUpdate();
+		genTable.setId(id);
+		genTable.setStatus(status);
+		genTableDao.updateByPrimaryKeySelective(genTable);
+	}
+
 }
