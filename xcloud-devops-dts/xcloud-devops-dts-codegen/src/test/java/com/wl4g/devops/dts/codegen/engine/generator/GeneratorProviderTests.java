@@ -26,12 +26,12 @@ import javax.validation.constraints.NotNull;
 
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
-import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
@@ -48,57 +48,7 @@ public class GeneratorProviderTests {
 
 	@Test
 	@SuppressWarnings("serial")
-	public void crossForeachRenderingCase1() {
-		CodegenProperties config = new CodegenProperties() {
-			@Override
-			public File getJobDir(Integer confId) {
-				return new File("test_job_dir");
-			}
-		};
-
-		GenTemplateLocator locator1 = new GenTemplateLocator() {
-			@Override
-			public List<TemplateResourceWrapper> locate(String provider) throws Exception {
-				return new ArrayList<TemplateResourceWrapper>() {
-					{
-						add(new TemplateResourceWrapper(
-								"src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/@eforeach@#{javaSpecs.firstUCase(entityName)}.java.ftl",
-								"test template content"));
-					}
-				};
-			}
-
-			@Override
-			public boolean cleanAll() {
-				return false;
-			}
-		};
-
-		GenTemplateLocator locator2 = new GenTemplateLocator() {
-			@Override
-			public List<TemplateResourceWrapper> locate(String provider) throws Exception {
-				return new ArrayList<TemplateResourceWrapper>() {
-					{
-						add(new TemplateResourceWrapper(
-								"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/@eforeach@#{vueSpecs.firstUCase(entityName)}.vue.ftl",
-								"test template content"));
-					}
-				};
-			}
-
-			@Override
-			public boolean cleanAll() {
-				return false;
-			}
-		};
-
-		MetadataResolver resolver = new MetadataResolver() {
-			@Override
-			public String findDBVersion() throws Exception {
-				return "test_db_v0.0.0";
-			}
-		};
-
+	public void crossForeachRenderingCase() {
 		GenProject project = new GenProject();
 		project.setOrganType("com");
 		project.setOrganName("wl4g");
@@ -110,30 +60,75 @@ public class GeneratorProviderTests {
 		genTables.add(new GenTable().withEntityName("RoleBean").withModuleName("systemModule"));
 		project.setGenTables(genTables);
 
-		GenDataSource datasource = new GenDataSource();
+		List<String> generatedFiles = Lists.newArrayList();
 
-		GenerateContext context1 = new DefaultGenerateContext(config, locator1, resolver, project, datasource);
-		new SpringCloudMvnGeneratorProvider(context1) {
+		// For case1
+		GenTemplateLocator locator1 = newGenTemplateLocator(new ArrayList<TemplateResourceWrapper>() {
+			{
+				add(new TemplateResourceWrapper(
+						"src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/@eforeach@#{javaSpecs.firstUCase(entityName)}.java.ftl",
+						"test template content"));
+			}
+		});
+
+		new SpringCloudMvnGeneratorProvider(new DefaultGenerateContext(config, locator1, resolver, project, datasource)) {
 			@Override
 			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotBlank String renderedString,
 					@NotBlank String writePath) {
-				out.println("===============");
-				out.println("For test generated file: " + writePath);
-				out.println("===============");
+				generatedFiles.add(writePath);
 			}
 		}.run();
 
-		GenerateContext context2 = new DefaultGenerateContext(config, locator2, resolver, project, datasource);
-		new VueGeneratorProvider(context2) {
+		// For case2
+		GenTemplateLocator locator2 = newGenTemplateLocator(new ArrayList<TemplateResourceWrapper>() {
+			{
+				add(new TemplateResourceWrapper(
+						"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/@eforeach@#{vueSpecs.firstUCase(entityName)}.vue.ftl",
+						"test template content"));
+			}
+		});
+
+		new VueGeneratorProvider(new DefaultGenerateContext(config, locator2, resolver, project, datasource)) {
 			@Override
 			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotBlank String renderedString,
 					@NotBlank String writePath) {
-				out.println("===============");
-				out.println("For test generated file: " + writePath);
-				out.println("===============");
+				generatedFiles.add(writePath);
 			}
 		}.run();
+
+		out.println("======= For test generated files: ======");
+		generatedFiles.forEach(f -> out.println(f));
 
 	}
+
+	static GenTemplateLocator newGenTemplateLocator(List<TemplateResourceWrapper> templates) {
+		return new GenTemplateLocator() {
+			@Override
+			public List<TemplateResourceWrapper> locate(String provider) throws Exception {
+				return templates;
+			}
+
+			@Override
+			public boolean cleanAll() {
+				return false;
+			}
+		};
+	}
+
+	static CodegenProperties config = new CodegenProperties() {
+		@Override
+		public File getJobDir(Integer confId) {
+			return new File("test_job_dir");
+		}
+	};
+
+	static MetadataResolver resolver = new MetadataResolver() {
+		@Override
+		public String findDBVersion() throws Exception {
+			return "test_db_v0.0.0";
+		}
+	};
+
+	static GenDataSource datasource = new GenDataSource();
 
 }
