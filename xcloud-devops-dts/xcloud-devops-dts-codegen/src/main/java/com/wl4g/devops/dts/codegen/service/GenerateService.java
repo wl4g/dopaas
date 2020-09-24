@@ -50,4 +50,6 @@ public interface GenerateService {
 
 	String generate(Integer tableId);
 
+	void setEnable(Integer id, String status);
+
 }
