@@ -1,7 +1,7 @@
 # ${organName?cap_first} ${projectName?cap_first}
 
 #### 简介
-${remark}
+${projectDescription}
 
 #### 软件架构
 软件架构说明

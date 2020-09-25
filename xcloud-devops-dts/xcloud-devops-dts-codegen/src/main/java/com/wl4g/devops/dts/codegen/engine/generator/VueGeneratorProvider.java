@@ -15,10 +15,15 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_COMMON_VUESPECS;
+
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.engine.naming.VueSpecs;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
+import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 /**
  * {@link VueGeneratorProvider}
@@ -36,6 +41,12 @@ public class VueGeneratorProvider extends AbstractGeneratorProvider {
 	@Override
 	public void doGenerate() throws Exception {
 		doGenerateWithTemplates(GenProviderAlias.VUEJS);
+	}
+
+	@Override
+	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
+		// Add variable of naming utils.
+		model.put(GEN_COMMON_VUESPECS, new PythonSpecs());
 	}
 
 }

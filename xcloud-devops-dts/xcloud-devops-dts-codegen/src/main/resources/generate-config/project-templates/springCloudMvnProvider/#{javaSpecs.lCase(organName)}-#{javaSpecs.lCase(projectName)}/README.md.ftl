@@ -1,7 +1,7 @@
 # ${organName?cap_first} ${projectName?cap_first}
 
 #### Description
-${remark}
+${projectDescription}
 
 #### Architecture
 System architecture description ...

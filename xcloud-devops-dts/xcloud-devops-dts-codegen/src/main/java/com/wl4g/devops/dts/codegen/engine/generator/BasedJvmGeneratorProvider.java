@@ -16,6 +16,7 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import static java.util.Locale.US;
+
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -28,6 +29,7 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 /**
  * {@link BasedJvmGeneratorProvider}
@@ -58,7 +60,7 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 		if (nonNull(table)) { // If there
 			packageName.append(".").append(table.getModuleName());
 		}
-		model.put("packageName", packageName.toString().toLowerCase(US));
+		model.put(GEN_TABLE_PACKAGENAME, packageName.toString().toLowerCase(US));
 
 		// Add model for sub module packageName.
 		// e.g: bean.order, dao.order, service.order, controller.order
@@ -73,10 +75,10 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 				serviceSubModulePackageName = serviceSubModulePackageName.concat(".").concat(table.getSubModuleName());
 				controllerSubModulePackageName = controllerSubModulePackageName.concat(".").concat(table.getSubModuleName());
 			}
-			model.put("beanSubModulePackageName", beanSubModulePackageName);
-			model.put("daoSubModulePackageName", daoSubModulePackageName);
-			model.put("serviceSubModulePackageName", serviceSubModulePackageName);
-			model.put("controllerSubModulePackageName", controllerSubModulePackageName);
+			model.put(GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME, beanSubModulePackageName);
+			model.put(GEN_TABLE_DAO_SUBMODULE_PACKAGENAME, daoSubModulePackageName);
+			model.put(GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME, serviceSubModulePackageName);
+			model.put(GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME, controllerSubModulePackageName);
 		}
 
 	}

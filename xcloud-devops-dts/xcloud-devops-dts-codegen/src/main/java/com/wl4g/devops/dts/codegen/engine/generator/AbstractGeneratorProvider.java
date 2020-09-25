@@ -48,6 +48,7 @@ import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEF
 import static com.wl4g.devops.dts.codegen.engine.naming.BaseSpecs.firstLCase;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -149,7 +150,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 						// Add rendering model of module tables.
 						moduleModel.putAll(convertToRenderingModel(tablesOfModule));
-						moduleModel.put("moduleName", moduleName);
+						moduleModel.put(GEN_MODULE_NAME, moduleName);
 
 						// Add customization rendering model.
 						customizeRenderingModel(res, moduleModel);
@@ -303,13 +304,13 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			//
 			Map<String, Object> datasource = convertToRenderingModel(context.getGenDataSource());
 			// Gen DB version.
-			datasource.put("dbVersion", context.getMetadataResolver().findDBVersion());
-			model.put("datasource", datasource);
+			datasource.put(GEN_DB_VERSION, context.getMetadataResolver().findDBVersion());
+			model.put(GEN_DB, datasource);
 
 			//
 			// 3. --- Add model of watermark.
 			//
-			model.put("watermark", context.getConfiguration().getWatermarkContent());
+			model.put(GEN_COMMON_WATERMARK, context.getConfiguration().getWatermarkContent());
 
 			//
 			// 4. --- Add model of moduleMap.
@@ -322,10 +323,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 				tablesOfModule.add(tab);
 				moduleMap.put(moduleName, tablesOfModule);
 			}
-			model.put("moduleMap", moduleMap);
+			model.put(GEN_MODULE_MAP, moduleMap);
 
 			//
-			// 5. --- Add model of SPEL utilitiys.
+			// 5. --- Add extra models.
 			//
 			newArrayList(safeArray(Object.class, addModels)).forEach(addModel -> {
 				if (addModel instanceof Class) {

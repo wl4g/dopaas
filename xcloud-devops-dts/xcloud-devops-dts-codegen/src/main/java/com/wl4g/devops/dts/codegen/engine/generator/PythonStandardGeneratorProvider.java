@@ -21,6 +21,7 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 /**
  * Python standard generator provider.
@@ -32,7 +33,7 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	public PythonStandardGeneratorProvider(@NotNull GenerateContext context) {
-		super(context, new PythonSpecs());
+		super(context);
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
 	@Override
 	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
 		// Add variable of naming utils.
-		model.put("pythonSpecs", new PythonSpecs());
+		model.put(GEN_COMMON_PYTHONSPECS, new PythonSpecs());
 	}
 
 }

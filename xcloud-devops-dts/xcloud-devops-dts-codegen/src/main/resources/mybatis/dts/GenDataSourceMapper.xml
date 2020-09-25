@@ -10,7 +10,6 @@
     <result column="database" property="database" jdbcType="VARCHAR" />
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
-    <result column="url" property="url" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
@@ -20,7 +19,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, `name`, `type`, host, port, `database`, username, password, url, remark, del_flag,
+    id, `name`, `type`, host, port, `database`, username, password, remark, del_flag,
     create_date, create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -36,13 +35,13 @@
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
     insert into dts_gen_datasource (id, name, `type`,
       host, port, `database`,
-      username, password, url, 
+      username, password, 
       remark, del_flag, create_date, 
       create_by, update_date, update_by
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
       #{host,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, #{database,jdbcType=VARCHAR}, 
-      #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
+      #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
       )
@@ -73,9 +72,6 @@
       </if>
       <if test="password != null" >
         password,
-      </if>
-      <if test="url != null" >
-        url,
       </if>
       <if test="remark != null" >
         remark,
@@ -120,9 +116,6 @@
       </if>
       <if test="password != null" >
         #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="url != null" >
-        #{url,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
@@ -169,9 +162,6 @@
       <if test="password != null" >
         password = #{password,jdbcType=VARCHAR},
       </if>
-      <if test="url != null" >
-        url = #{url,jdbcType=VARCHAR},
-      </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
@@ -203,7 +193,6 @@
       `database` = #{database,jdbcType=VARCHAR},
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
-      url = #{url,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},

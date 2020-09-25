@@ -21,6 +21,7 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 /**
  * C_sharp standard generator provider.
@@ -32,7 +33,7 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	public CsharpStandardGeneratorProvider(GenerateContext context) {
-		super(context, new CSharpSpecs());
+		super(context);
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 	@Override
 	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
 		// Add variable of naming utils.
-		model.put("csharpSpecs", new CSharpSpecs());
+		model.put(GEN_COMMON_CSHARPSPECS, new CSharpSpecs());
 	}
 
 }

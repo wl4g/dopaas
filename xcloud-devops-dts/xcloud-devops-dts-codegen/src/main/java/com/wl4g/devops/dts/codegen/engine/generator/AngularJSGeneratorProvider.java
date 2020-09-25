@@ -17,8 +17,11 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 
 import javax.validation.constraints.NotNull;
 
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.AngularSpecs;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
+import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 /**
  * {@link AngularJSGeneratorProvider}
@@ -30,12 +33,18 @@ import com.wl4g.devops.dts.codegen.engine.naming.AngularSpecs;
 public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
 
 	public AngularJSGeneratorProvider(@NotNull GenerateContext context) {
-		super(context, new AngularSpecs());
+		super(context);
 	}
 
 	@Override
 	public void doGenerate() throws Exception {
 		doGenerateWithTemplates(GenProviderAlias.NGJS);
+	}
+
+	@Override
+	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
+		// Add variable of naming utils.
+		model.put(GEN_COMMON_NGSPECS, new AngularSpecs());
 	}
 
 }
