@@ -90,7 +90,9 @@ public abstract class RenderPropertyUtils {
 				// Note: Combined with FreeMarker script, no value is saved when
 				// there is no available value.
 				if (!isNull(modelAttrVal) || (modelAttrVal instanceof String && !isBlank((String) modelAttrVal))) {
-					model.put(field.getName(), modelAttrVal);
+					String attrName = rp2.propertyName();
+					attrName = isBlank(attrName) ? field.getName() : attrName; // fallback
+					model.put(attrName, modelAttrVal);
 				}
 			}
 		});
@@ -111,6 +113,14 @@ public abstract class RenderPropertyUtils {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.FIELD, ElementType.TYPE })
 	public static @interface RenderProperty {
+
+		/**
+		 * Serialized property name. When it is empty, the JavaBean field name
+		 * is used by default.
+		 * 
+		 * @return
+		 */
+		String propertyName() default "";
 
 		/**
 		 * A list of field names that will be serialized as a rendered data
