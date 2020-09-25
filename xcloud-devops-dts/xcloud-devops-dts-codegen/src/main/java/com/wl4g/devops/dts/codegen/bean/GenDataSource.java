@@ -17,7 +17,8 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
@@ -28,7 +29,8 @@ import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
  * @version v1.0 2020-09-10
  * @since
  */
-@Data
+@Getter
+@Setter
 public class GenDataSource extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
@@ -91,7 +93,5 @@ public class GenDataSource extends BaseBean {
 		this.password = password;
 		return this;
 	}
-
-
 
 }

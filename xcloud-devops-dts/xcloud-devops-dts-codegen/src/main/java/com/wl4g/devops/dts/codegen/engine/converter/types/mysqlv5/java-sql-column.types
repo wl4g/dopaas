@@ -16,28 +16,31 @@
 # ----------------------------------------------------------------------
 #    AttrType			 SqlType                 DbColumnType
 # ----------------------------------------------------------------------
-java.lang.String         VARCHAR                 VARCHAR
-byte[]                   BLOB                    BLOB
-java.lang.Boolean        BIT                     BIT
-java.lang.Long           INTEGER                 INTEGER
-java.lang.Integer        INTEGER                 INT
+java.lang.Boolean        BIT           	         BIT
 java.lang.Long           BIGINT           	     BIGINT
-java.lang.Float          FLOAT                   FLOAT
+java.lang.Byte           TINYINT                 TINYINT
+java.lang.Short          SMALLINT                SMALLINT
+java.lang.Integer        INTEGER                 MEDIUMINT
+java.lang.Long           INTEGER                 INT
+java.lang.Long           INTEGER                 INTEGER
+java.lang.Float          REAL                    FLOAT
 java.lang.Double         DOUBLE             	 DOUBLE
 java.math.BigDecimal     DECIMAL                 DECIMAL
-java.util.Date           TIMESTAMP               DATETIME
-java.util.Date           TIMESTAMP               DATE
-java.util.Date           TIMESTAMP               TIMESTAMP
-java.lang.String         VARCHAR                 TEXT
-
-# uncheck
-java.lang.Integer        INTEGER                 TINYINT
-java.lang.Integer        INTEGER                 SMALLINT
-byte[]                   BLOB                    BIT
 java.math.BigDecimal     DECIMAL                 NUMBERIC
-java.lang.String         VARCHAR                 CHAR
-java.util.Date           TIMESTAMP               TIME
+java.lang.String         CHAR                    CHAR
+java.lang.String         VARCHAR                 VARCHAR
+java.lang.String         LONGVARCHAR             TEXT
 java.lang.String         VARCHAR                 TINYTEXT
-java.lang.String         VARCHAR                 LONGTEXT
-enum                     VARCHAR                 ENUM
-byte[]                   BLOB                    BINARY
+java.lang.String         LONGVARCHAR             MEDIUMTEXT
+java.lang.String         LONGVARCHAR             LONGTEXT
+java.lang.Byte[]         BLOB                    BLOB
+#java.lang.Byte[]         BINARY                  TINYBLOB
+#java.lang.Byte[]         LONGVARBINARY           LONGBLOB
+#java.lang.Byte[]         LONGVARBINARY           MEDIUMBLOB
+java.util.Date           DATE                    DATE
+#java.sql.Date           DATE                    DATE
+java.util.Date           DATETIME                DATETIME
+#java.util.Timestamp      DATETIME                DATETIME
+java.sql.Time            TIME                    TIME
+java.sql.Timestamp       TIMESTAMP               TIMESTAMP
+java.sql.Date            YEAR                    YEAR

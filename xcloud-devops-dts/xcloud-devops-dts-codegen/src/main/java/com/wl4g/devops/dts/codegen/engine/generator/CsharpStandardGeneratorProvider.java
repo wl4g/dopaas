@@ -18,7 +18,7 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
+import com.wl4g.devops.dts.codegen.engine.specs.CSharpSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;

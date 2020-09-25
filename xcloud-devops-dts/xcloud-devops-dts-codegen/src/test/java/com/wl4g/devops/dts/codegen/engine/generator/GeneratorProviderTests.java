@@ -66,7 +66,7 @@ public class GeneratorProviderTests {
 		GenTemplateLocator locator1 = newGenTemplateLocator(new ArrayList<TemplateResourceWrapper>() {
 			{
 				add(new TemplateResourceWrapper(
-						"src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/@eforeach@#{javaSpecs.firstUCase(entityName)}.java.ftl",
+						"src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/#{javaSpecs.firstUCase(entityName)}.java.ftl",
 						"test template content"));
 			}
 		});
@@ -83,7 +83,7 @@ public class GeneratorProviderTests {
 		GenTemplateLocator locator2 = newGenTemplateLocator(new ArrayList<TemplateResourceWrapper>() {
 			{
 				add(new TemplateResourceWrapper(
-						"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/@eforeach@#{vueSpecs.firstUCase(entityName)}.vue.ftl",
+						"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/#{vueSpecs.firstUCase(entityName)}.vue.ftl",
 						"test template content"));
 			}
 		});

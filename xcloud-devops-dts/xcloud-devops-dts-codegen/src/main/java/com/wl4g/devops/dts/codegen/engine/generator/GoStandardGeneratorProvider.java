@@ -20,7 +20,7 @@ import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_CO
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
+import com.wl4g.devops.dts.codegen.engine.specs.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 

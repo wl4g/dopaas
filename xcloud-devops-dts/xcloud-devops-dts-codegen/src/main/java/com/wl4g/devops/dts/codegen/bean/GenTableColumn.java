@@ -58,9 +58,23 @@ public class GenTableColumn extends BaseBean {
 	@RenderProperty(propertyName = GEN_COLUMN_SORT)
 	private Integer columnSort;
 
+	/**
+	 * The property type of the class or structure of the generated project
+	 * source code (for example, the property type of JavaBean or the field type
+	 * of the golang structure).
+	 * 
+	 * @see {@link #attrName}
+	 */
 	@RenderProperty(propertyName = GEN_COLUMN_ATTRTYPE)
 	private String attrType;
 
+	/**
+	 * The property name of the class or structure of the generated project
+	 * source code (for example, the property name of JavaBean or the field name
+	 * of the golang structure).
+	 * 
+	 * @see {@link #attrType}
+	 */
 	@RenderProperty(propertyName = GEN_COLUMN_ATTRNAME)
 	private String attrName;
 
@@ -73,8 +87,11 @@ public class GenTableColumn extends BaseBean {
 	@RenderProperty(propertyName = GEN_COLUMN_DICTTYPE)
 	private String dictType;
 
+	/**
+	 * Front form valid rule.
+	 */
 	@RenderProperty(propertyName = GEN_COLUMN_VALIDRULE)
-	private String validRule; // form valid rule
+	private String validRule;
 
 	@RenderProperty(propertyName = GEN_COLUMN_ISPK)
 	private String isPk;

@@ -206,7 +206,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	}
 
 	// Template configuration.
-	public static final String TPL_PROJECT_PATH = "generate-config/project-templates";
+	public static final String TPL_PROJECT_PATH = "generate-templates";
 	// e.g: classpath:/templates/xxxGenProvider/**/*/.ftl
 	public static final String TPL_LOCATION = "classpath:/".concat(TPL_PROJECT_PATH).concat("/%s/**/*%s");
 
