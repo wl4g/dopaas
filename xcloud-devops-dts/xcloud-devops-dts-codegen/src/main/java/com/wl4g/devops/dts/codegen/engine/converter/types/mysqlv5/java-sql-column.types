@@ -13,31 +13,31 @@
 # limitations under the License.
 #
 
-# -------------------------------------------------------------------------------
-#    AttrType			 SqlType                          DbColumnType
-# -------------------------------------------------------------------------------
-String                   VARCHAR                          VARCHAR
-byte[]                   BLOB                             BLOB
-Boolean                  BIT                              BIT
-Long                     INTEGER                          INTEGER
-Integer                  INTEGER                          INT
-Long                     BIGINT                    	      BIGINT
-Float                    FLOAT                            FLOAT
-Double                   DOUBLE                      	  DOUBLE
-BigDecimal               DECIMAL                          DECIMAL
-Date                     TIMESTAMP                        DATETIME
-Date                     TIMESTAMP                        DATE
-Date                     TIMESTAMP                        TIMESTAMP
-String                   VARCHAR                          TEXT
+# ----------------------------------------------------------------------
+#    AttrType			 SqlType                 DbColumnType
+# ----------------------------------------------------------------------
+java.lang.String         VARCHAR                 VARCHAR
+byte[]                   BLOB                    BLOB
+java.lang.Boolean        BIT                     BIT
+java.lang.Long           INTEGER                 INTEGER
+java.lang.Integer        INTEGER                 INT
+java.lang.Long           BIGINT           	     BIGINT
+java.lang.Float          FLOAT                   FLOAT
+java.lang.Double         DOUBLE             	 DOUBLE
+java.math.BigDecimal     DECIMAL                 DECIMAL
+java.util.Date           TIMESTAMP               DATETIME
+java.util.Date           TIMESTAMP               DATE
+java.util.Date           TIMESTAMP               TIMESTAMP
+java.lang.String         VARCHAR                 TEXT
 
 # uncheck
-Integer                  INTEGER                          TINYINT
-Integer                  INTEGER                          SMALLINT
-byte[]                   BLOB                             BIT
-BigDecimal               DECIMAL                          NUMBERIC
-String                   VARCHAR                          CHAR
-Date                     TIMESTAMP                        TIME
-String                   VARCHAR                          TINYTEXT
-String                   VARCHAR                          LONGTEXT
-enum                     VARCHAR                          ENUM
-byte[]                   BLOB                             BINARY
+java.lang.Integer        INTEGER                 TINYINT
+java.lang.Integer        INTEGER                 SMALLINT
+byte[]                   BLOB                    BIT
+java.math.BigDecimal     DECIMAL                 NUMBERIC
+java.lang.String         VARCHAR                 CHAR
+java.util.Date           TIMESTAMP               TIME
+java.lang.String         VARCHAR                 TINYTEXT
+java.lang.String         VARCHAR                 LONGTEXT
+enum                     VARCHAR                 ENUM
+byte[]                   BLOB                    BINARY

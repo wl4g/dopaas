@@ -181,7 +181,13 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			}
 			// Static resource no-render.
 			else {
-				String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPathname(), primaryModel));
+				// Clone the primary model to customize the model.
+				MapRenderModel model = primaryModel.clone();
+
+				// Add customization rendering model.
+				customizeRenderingModel(res, model);
+
+				String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPathname(), model));
 				writeFile(new File(writePath), res.getContent(), false);
 			}
 		}

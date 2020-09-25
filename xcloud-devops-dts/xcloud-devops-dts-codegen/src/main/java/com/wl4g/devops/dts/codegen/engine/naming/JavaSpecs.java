@@ -170,6 +170,16 @@ public class JavaSpecs extends BaseSpecs {
 		return attrName.concat(" != null");
 	}
 
+
+	public static String toSimpleAttrType(@NotBlank String attrType) {
+		hasTextOf(attrType, "attrType");
+		int i = attrType.lastIndexOf(".");
+		if (i >= 0) {
+			return attrType.substring(i + 1);
+		}
+		return attrType;
+	}
+
 	/**
 	 * Generate java bean serialVersionUID
 	 * 
