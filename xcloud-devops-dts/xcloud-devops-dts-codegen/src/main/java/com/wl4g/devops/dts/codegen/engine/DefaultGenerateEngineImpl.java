@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
@@ -43,6 +45,9 @@ import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionSupport.ConfigOption;
+
+;
 
 /**
  * {@link DefaultGenerateEngineImpl}
@@ -92,6 +97,10 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 	public String execute(GenericParameter param) {
 		// Gets gen project.
 		GenProject project = genProjectService.detail(param.getProjectId());
+
+		String extraOptionsJson = project.getExtraOptionsJson();
+
+		project.setExtraOptions(JacksonUtils.parseJSON(extraOptionsJson, new TypeReference<List<ConfigOption>>() {}));
 
 		// Gets gen datasource.
 		GenDataSource dataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());

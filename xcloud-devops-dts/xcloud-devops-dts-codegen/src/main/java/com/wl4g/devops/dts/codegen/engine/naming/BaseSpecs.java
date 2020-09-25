@@ -16,7 +16,12 @@
 package com.wl4g.devops.dts.codegen.engine.naming;
 
 import com.wl4g.components.common.annotation.Nullable;
+import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionSupport.ConfigOption;
 import static java.lang.String.valueOf;
 import static java.util.Locale.US;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -77,6 +82,15 @@ public abstract class BaseSpecs {
             return str;
         }
         return str.toLowerCase(US);
+    }
+
+    public boolean checkConfigured(@NotEmpty List<ConfigOption> configuredOptions, String name, String value) {
+        for(ConfigOption configOption : configuredOptions){
+            if(StringUtils.equalsIgnoreCase(configOption.getName(),name) && StringUtils.equalsIgnoreCase(configOption.getSelectedValue(),value)){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
