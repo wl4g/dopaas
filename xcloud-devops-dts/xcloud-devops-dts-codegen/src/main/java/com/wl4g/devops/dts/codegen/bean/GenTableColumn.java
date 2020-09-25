@@ -17,6 +17,7 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -39,61 +40,61 @@ public class GenTableColumn extends BaseBean {
 
 	private Integer tableId;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_NAME)
 	private String columnName;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_TYPE)
 	private String columnType;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_SIMPLE_TYPE)
 	private String simpleColumnType;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_SQLTYPE)
 	private String sqlType;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_COMMENT)
 	private String columnComment;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_SORT)
 	private Integer columnSort;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_ATTRTYPE)
 	private String attrType;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_ATTRNAME)
 	private String attrName;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_QUERYTYPE)
 	private String queryType;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_SHOWTYPE)
 	private String showType;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_DICTTYPE)
 	private String dictType;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_VALIDRULE)
 	private String validRule; // form valid rule
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_ISPK)
 	private String isPk;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_NONULL)
 	private String noNull;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_ISINSERT)
 	private String isInsert;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_ISUPDATE)
 	private String isUpdate;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_ISLIST)
 	private String isList;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_ISQUERY)
 	private String isQuery;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_COLUMN_ISEDIT)
 	private String isEdit;
 
 }

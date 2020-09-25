@@ -18,6 +18,7 @@ package com.wl4g.devops.dts.codegen.bean;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionSupport.ConfigOption;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,34 +42,33 @@ import java.util.List;
 public class GenProject extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
-	@RenderProperty
-	private String projectName;
-
-	@RenderProperty
 	private Integer datasourceId;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_PROJECT_PROVIDER_SET)
+	private String projectName;
+
+	@RenderProperty(propertyName = GEN_PROJECT_ORGAN_TYPE)
 	private String organType;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_PROJECT_ORGAN_NAME)
 	private String organName;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_PROJECT_PROVIDER_SET)
 	private String providerSet;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_PROJECT_VERSION)
 	private String version;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_PROJECT_AUTHOR)
 	private String author;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_PROJECT_SINCE)
 	private String since;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_PROJECT_COPYRIGHT)
 	private String copyright;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_PROJECT_GEN_TABLES, describeForObjField = "No")
 	private List<GenTable> genTables;
 
 	private String extraOptionsJson;
@@ -78,19 +78,19 @@ public class GenProject extends BaseBean {
 	/**
 	 * Configured extra options.
 	 */
-	@RenderProperty
-	private ConfigOptions extraOptions;
+	@RenderProperty(propertyName = GEN_PROJECT_EXTRA_OPTIONS, describeForObjField = "No")
+	private List<ConfigOption> extraOptions;
 
 	public GenProject() {
 		super();
 	}
 
-	public GenProject(String projectName, Integer datasourceId, String organType, String organName, String providerSet,
+	public GenProject(Integer datasourceId, String projectName, String organType, String organName, String providerSet,
 			String version, String author, String since, String copyright, List<GenTable> genTables, String extraOptionsJson,
-			ConfigOptions extraOptions) {
+			List<ConfigOption> extraOptions) {
 		super();
-		this.projectName = projectName;
 		this.datasourceId = datasourceId;
+		this.projectName = projectName;
 		this.organType = organType;
 		this.organName = organName;
 		this.providerSet = providerSet;
@@ -101,30 +101,6 @@ public class GenProject extends BaseBean {
 		this.genTables = genTables;
 		this.extraOptionsJson = extraOptionsJson;
 		this.extraOptions = extraOptions;
-	}
-
-	/**
-	 * {@link ConfigOptions}
-	 *
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2020-09-17
-	 * @since
-	 */
-	@Getter
-	@Setter
-	@Wither
-	public static class ConfigOptions {
-
-		private List<ConfigOption> options;
-
-		public ConfigOptions() {
-		}
-
-		public ConfigOptions(List<ConfigOption> options) {
-			super();
-			this.options = options;
-		}
-
 	}
 
 }

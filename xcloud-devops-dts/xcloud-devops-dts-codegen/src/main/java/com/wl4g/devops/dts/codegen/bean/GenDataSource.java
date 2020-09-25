@@ -17,10 +17,12 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Wither;
 
 /**
  * {@link GenDataSource}
@@ -31,72 +33,45 @@ import lombok.ToString;
  */
 @Getter
 @Setter
+@Wither
 @ToString
 public class GenDataSource extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_DB_NAME)
 	private String name;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_DB_TYPE)
 	private String type;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_DB_HOST)
 	private String host;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_DB_PORT)
 	private String port;
 
-	@RenderProperty
+	@RenderProperty(propertyName = GEN_DB_DATABAES)
 	private String database;
 
+	@RenderProperty(propertyName = GEN_DB_USERNAME)
 	private String username;
 
+	@RenderProperty(propertyName = GEN_DB_PASSWORD)
 	private String password;
-
-	private String url;
 
 	public GenDataSource() {
 		super();
 	}
 
-	public GenDataSource withName(String name) {
+	public GenDataSource(String name, String type, String host, String port, String database, String username, String password) {
+		super();
 		this.name = name;
-		return this;
-	}
-
-	public GenDataSource withType(String type) {
 		this.type = type;
-		return this;
-	}
-
-	public GenDataSource withHost(String host) {
 		this.host = host;
-		return this;
-	}
-
-	public GenDataSource withPort(String port) {
 		this.port = port;
-		return this;
-	}
-
-	public GenDataSource withDatabase(String database) {
 		this.database = database;
-		return this;
-	}
-
-	public GenDataSource withUsername(String username) {
 		this.username = username;
-		return this;
-	}
-
-	public GenDataSource withPassword(String password) {
 		this.password = password;
-		return this;
 	}
 
-	public GenDataSource withUrl(String url) {
-		this.url = url;
-		return this;
-	}
 }
