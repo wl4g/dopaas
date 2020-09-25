@@ -15,24 +15,26 @@
  */
 package com.wl4g.devops.dts.codegen.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
-import com.wl4g.devops.dts.codegen.bean.GenProject.ConfigOptions;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionSupport.ConfigOption;
 
 /**
  * GenProjectServiceImpl
@@ -79,8 +81,7 @@ public class GenProjectServiceImpl implements GenProjectService {
 
 		GenProject project = genProjectDao.selectByPrimaryKey(id);
 		if (isNotBlank(project.getExtraOptionsJson())) {
-			ConfigOptions configuredOptions = parseJSON(project.getExtraOptionsJson(), ConfigOptions.class);
-			project.setExtraOptions(configuredOptions);
+			project.setExtraOptions(JacksonUtils.parseJSON(project.getExtraOptionsJson(), new TypeReference<List<ConfigOption>>() {}));
 		}
 
 		return project;

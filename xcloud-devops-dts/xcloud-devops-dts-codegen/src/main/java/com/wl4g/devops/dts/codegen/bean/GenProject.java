@@ -18,14 +18,14 @@ package com.wl4g.devops.dts.codegen.bean;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionSupport.ConfigOption;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Wither;
 
 import java.util.List;
+
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 /**
  * {@link GenProject}
@@ -38,13 +38,13 @@ import java.util.List;
 @Setter
 @Wither
 @ToString
-@RenderProperty(includeFieldNames = { "remark" })
+@RenderProperty(includeFieldNames = {GEN_PROJECT_DESCRIPTION})
 public class GenProject extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
 	private Integer datasourceId;
 
-	@RenderProperty(propertyName = GEN_PROJECT_PROVIDER_SET)
+	@RenderProperty(propertyName = GEN_PROJECT_NAME)
 	private String projectName;
 
 	@RenderProperty(propertyName = GEN_PROJECT_ORGAN_TYPE)

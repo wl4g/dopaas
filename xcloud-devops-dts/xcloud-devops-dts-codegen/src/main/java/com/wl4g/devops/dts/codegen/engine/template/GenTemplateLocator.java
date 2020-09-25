@@ -112,11 +112,11 @@ public interface GenTemplateLocator {
 			/**
 			 * {@link com.wl4g.devops.dts.codegen.bean.GenTable#moduleName}
 			 */
-			this.isForeachModule = contains(pathname, GEN_TABLE_ENTITY_NAME); // Modules
+			this.isForeachModule = contains(pathname, GEN_MODULE_NAME); // Modules
 			/**
 			 * {@link com.wl4g.devops.dts.codegen.bean.GenTable#entityName}
 			 */
-			this.isForeachTemplate = contains(pathname, GEN_MODULE_NAME); // Entitys
+			this.isForeachTemplate = contains(pathname, GEN_TABLE_ENTITY_NAME); // Entitys
 		}
 
 		public final String getPathname() {
