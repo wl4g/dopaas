@@ -39,6 +39,7 @@ import com.wl4g.devops.dts.codegen.engine.resolver.PostgreSQLV10MetadataResolver
 import com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -58,6 +59,7 @@ import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.Resol
 public class CodegenAutoConfiguration {
 
 	@Bean
+	@ConfigurationProperties(prefix = "spring.cloud.xcloud.dts.codegen")
 	public CodegenProperties codegenProperties() {
 		return new CodegenProperties();
 	}

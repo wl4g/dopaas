@@ -134,7 +134,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 				if (isJVMDebugging || isNull(tpls)) {
 					tpls = new ArrayList<>();
 
-					// Scanning templates resources.
+					// Scan templates resource.
 					String[] locations = getResourceLocations(provider).toArray(new String[0]);
 					Set<StreamResource> resources = defaultResolver.getResources(locations);
 
@@ -206,8 +206,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	}
 
 	// Template configuration.
-	public static final String TPL_BASEPATH = "generate-config";
-	public static final String TPL_PROJECT_PATH = TPL_BASEPATH.concat("/project-templates");
+	public static final String TPL_PROJECT_PATH = "generate-config/project-templates";
 	// e.g: classpath:/templates/xxxGenProvider/**/*/.ftl
 	public static final String TPL_LOCATION = "classpath:/".concat(TPL_PROJECT_PATH).concat("/%s/**/*%s");
 
