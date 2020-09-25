@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import static com.google.common.collect.Lists.newArrayList;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
@@ -37,18 +36,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static java.io.File.separator;
-
+import static com.google.common.collect.Lists.newArrayList;
 import static com.wl4g.components.common.collection.Collections2.safeArray;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
-import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.engine.naming.BaseSpecs.firstLCase;
+import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
-import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
+import static java.io.File.separator;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -137,7 +136,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 				// Foreach rendering module
 				else if (res.isForeachModule()) {
 					// Rendering of moduleMap.
-					Map<String, List<GenTable>> moduleMap = primaryModel.getElement("moduleMap");
+					Map<String, List<GenTable>> moduleMap = primaryModel.getElement(GEN_MODULE_MAP);
 
 					for (Entry<String, List<GenTable>> ent : moduleMap.entrySet()) {
 						String moduleName = ent.getKey();

@@ -19,7 +19,8 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
-import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition;
+import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,8 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.getOptions;
 
 /**
  * {@link GenProjectController}
@@ -72,11 +71,10 @@ public class GenProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getConfigOption")
-	public RespBase<?> getConfigOption(String genProviderGroup) {
+	public RespBase<?> getConfigOption(String providerSet) {
 		RespBase<Object> resp = RespBase.create();
-		List<String> providers = GeneratorProvider.GenProviderSet.getProviders(genProviderGroup);
-		List<GeneratorProvider.GenExtraOptionDefinition.ConfigOption> options = getOptions(providers.toArray(new String[0]));
-		resp.setData(options);
+		List<String> providers = GenProviderSet.getProviders(providerSet);
+		resp.setData(GenExtraOptionDefinition.getOptions(providers.toArray(new String[0])));
 		return resp;
 	}
 

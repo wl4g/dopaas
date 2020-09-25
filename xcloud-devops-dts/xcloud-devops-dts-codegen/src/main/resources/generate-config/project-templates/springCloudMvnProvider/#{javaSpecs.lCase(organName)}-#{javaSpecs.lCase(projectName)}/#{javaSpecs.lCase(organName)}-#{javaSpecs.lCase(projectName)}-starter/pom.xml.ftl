@@ -84,6 +84,7 @@
 				</executions>
 			</plugin>
 			<#-- TODO Follow up configuration judgment using MvnAssTar/SpringExecJar -->
+		<#if checkConfigured(extraOptions,"gen.build.assets-type","MvnAssTar")>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -105,6 +106,16 @@
 					</execution>
 				</executions>
 			</plugin>
+		<#elseif checkConfigured(extraOptions,"gen.build.assets-type","SpringExecJar")>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>${organType?lower_case}.${organName?lower_case}.${projecName?cap_first}Server</mainClass>
+				</configuration>
+			</plugin>
+		</#if>
+
 		</plugins>
 	</build>
 </project>
