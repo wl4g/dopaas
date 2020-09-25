@@ -40,12 +40,10 @@ import java.util.Map.Entry;
 import static java.io.File.separator;
 
 import static com.wl4g.components.common.collection.Collections2.safeArray;
-import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
-import static com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator.TPL_BASEPATH;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.engine.naming.BaseSpecs.firstLCase;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;

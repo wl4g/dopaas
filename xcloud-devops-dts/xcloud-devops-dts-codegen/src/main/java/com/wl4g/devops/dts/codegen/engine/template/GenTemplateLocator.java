@@ -107,7 +107,13 @@ public interface GenTemplateLocator {
 
 			// Analysis of special syntax identification.
 			this.pathname = pathname;
+			/**
+			 * {@link com.wl4g.devops.dts.codegen.bean.GenTable#moduleName}
+			 */
 			this.isForeachModule = contains(pathname, MODEL_FOR_ENTITYNAME); // Modules
+			/**
+			 * {@link com.wl4g.devops.dts.codegen.bean.GenTable#entityName}
+			 */
 			this.isForeachTemplate = contains(pathname, MODEL_FOR_MODULENAME); // Entitys
 		}
 
