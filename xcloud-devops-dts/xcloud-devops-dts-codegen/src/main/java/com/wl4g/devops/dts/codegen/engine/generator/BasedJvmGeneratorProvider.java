@@ -17,21 +17,21 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
-import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
+import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 import static java.util.Locale.US;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
  * {@link BasedJvmGeneratorProvider}
@@ -84,19 +84,24 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 			model.put(GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME, serviceSubModulePackageName);
 			model.put(GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME, controllerSubModulePackageName);
 
-			duplicationCollectAttrTypes(model);
+			// Distinct imports
+			distinctImportAttrTypes(model, table);
 		}
 	}
 
-
-	private void duplicationCollectAttrTypes(@NotNull MapRenderModel model) {
-		GenTable table = context.getGenTable();
-		List<GenTableColumn> genTableColumns = table.getGenTableColumns();
-		Set<String> imports = new HashSet<>();
-		for (GenTableColumn genTableColumn : genTableColumns) {
-			imports.add(genTableColumn.getAttrType());
-		}
-		model.put(GEN_TABLE_ATTRTYPES, imports);
+	/**
+	 * Distinct javacodes import types. </br>
+	 * </br>
+	 * 
+	 * @param model
+	 * @param table
+	 */
+	private void distinctImportAttrTypes(MapRenderModel model, GenTable table) {
+		// Note: Java is automatically imported by default java.lang Classes
+		// under packages.
+		Set<String> importTypes = safeList(table.getGenTableColumns()).stream()
+				.filter(col -> !startsWith(col.getAttrType(), "java.lang")).map(col -> col.getAttrType()).collect(toSet());
+		model.put(GEN_TABLE_ATTRTYPES, importTypes);
 	}
 
 }

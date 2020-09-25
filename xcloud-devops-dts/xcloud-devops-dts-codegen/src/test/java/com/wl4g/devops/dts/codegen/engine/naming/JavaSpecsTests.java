@@ -17,6 +17,8 @@ package com.wl4g.devops.dts.codegen.engine.naming;
 
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 
+import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
+
 /**
  * {@link JavaSpecsTests}
  *

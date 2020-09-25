@@ -42,7 +42,7 @@ import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
-import static com.wl4g.devops.dts.codegen.engine.naming.BaseSpecs.firstLCase;
+import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.firstLCase;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
