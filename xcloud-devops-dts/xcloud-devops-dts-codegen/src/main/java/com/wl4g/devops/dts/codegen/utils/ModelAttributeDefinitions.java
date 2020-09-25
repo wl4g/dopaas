@@ -93,6 +93,8 @@ public abstract class ModelAttributeDefinitions {
 	public static final String GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME = "serviceSubModulePackageName";
 	public static final String GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME = "controllerSubModulePackageName";
 
+	public static final String GEN_TABLE_ATTRTYPES = "attrTypes";
+
 	// --- Gen Table Columns. ---
 
 	public static final String GEN_COLUMN_NAME = "columnName";

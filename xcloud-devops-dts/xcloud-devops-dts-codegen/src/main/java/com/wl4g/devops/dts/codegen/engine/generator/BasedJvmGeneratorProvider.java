@@ -15,21 +15,23 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import static java.util.Locale.US;
-
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
-import javax.validation.constraints.NotNull;
-
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
-
+import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
+
+import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static java.util.Locale.US;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * {@link BasedJvmGeneratorProvider}
@@ -43,11 +45,13 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 
 	public BasedJvmGeneratorProvider(@NotNull GenerateContext context) {
 		// Add model for naming utils.
-		super(context, new JavaSpecs());
+		super(context);
 	}
 
 	@Override
 	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
+		model.put(GEN_COMMON_JAVASPECS, new JavaSpecs());
+
 		GenProject project = context.getGenProject();
 		GenTable table = context.getGenTable();
 
@@ -79,8 +83,20 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 			model.put(GEN_TABLE_DAO_SUBMODULE_PACKAGENAME, daoSubModulePackageName);
 			model.put(GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME, serviceSubModulePackageName);
 			model.put(GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME, controllerSubModulePackageName);
-		}
 
+			duplicationCollectAttrTypes(model);
+		}
+	}
+
+
+	private void duplicationCollectAttrTypes(@NotNull MapRenderModel model) {
+		GenTable table = context.getGenTable();
+		List<GenTableColumn> genTableColumns = table.getGenTableColumns();
+		Set<String> imports = new HashSet<>();
+		for (GenTableColumn genTableColumn : genTableColumns) {
+			imports.add(genTableColumn.getAttrType());
+		}
+		model.put(GEN_TABLE_ATTRTYPES, imports);
 	}
 
 }

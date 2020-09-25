@@ -17,12 +17,9 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Wither;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 /**
  * {@link GenDataSource}
@@ -31,10 +28,7 @@ import lombok.experimental.Wither;
  * @version v1.0 2020-09-10
  * @since
  */
-@Getter
-@Setter
-@Wither
-@ToString
+@Data
 public class GenDataSource extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
@@ -63,15 +57,41 @@ public class GenDataSource extends BaseBean {
 		super();
 	}
 
-	public GenDataSource(String name, String type, String host, String port, String database, String username, String password) {
-		super();
+	public GenDataSource withName(String name) {
 		this.name = name;
-		this.type = type;
-		this.host = host;
-		this.port = port;
-		this.database = database;
-		this.username = username;
-		this.password = password;
+		return this;
 	}
+
+	public GenDataSource withType(String type) {
+		this.type = type;
+		return this;
+	}
+
+	public GenDataSource withHost(String host) {
+		this.host = host;
+		return this;
+	}
+
+	public GenDataSource withPort(String port) {
+		this.port = port;
+		return this;
+	}
+
+	public GenDataSource withDatabase(String database) {
+		this.database = database;
+		return this;
+	}
+
+	public GenDataSource withUsername(String username) {
+		this.username = username;
+		return this;
+	}
+
+	public GenDataSource withPassword(String password) {
+		this.password = password;
+		return this;
+	}
+
+
 
 }

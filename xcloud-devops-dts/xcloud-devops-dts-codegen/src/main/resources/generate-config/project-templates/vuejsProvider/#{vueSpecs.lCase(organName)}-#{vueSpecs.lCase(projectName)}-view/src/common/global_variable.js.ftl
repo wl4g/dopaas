@@ -62,6 +62,15 @@ export default {
         defaultContextPath: '/dts-manager',
         defaultPort: '14080',
     },
+    <#list moduleMap?keys as moduleName>
+    ${moduleName}: {
+        cluster: '${projectName?lower_case}-server',
+        twoDomain: '${projectName?lower_case}',
+        defaultContextPath: '/${projectName?lower_case}-server',
+        defaultPort: '8080',
+    },
+    </#list>
+
     getBaseUrl: function (app, usedefault) {
         if (!app) {
             return;

@@ -7,9 +7,9 @@ import user from './user/'
 import system from './system/'
 import iam from './iam/'
 <#if moduleMap?exists>
-    <#list moduleMap?keys as key>
-        <#list moduleMap[key] as value>
-import ${value?uncap_first} from './${key?lower_case}/${value?uncap_first}.js'
+    <#list moduleMap?keys as moduleName>
+        <#list moduleMap[moduleName] as table>
+import ${table.entityName?uncap_first} from './${moduleName?lower_case}/${table.entityName?uncap_first}.js'
         </#list>
     </#list>
 </#if>
@@ -30,11 +30,11 @@ export default [
     },
 
 <#if moduleMap?exists>
-    <#list moduleMap?keys as key>
+    <#list moduleMap?keys as moduleName>
      {
-        module: '${key?lower_case}',
+        module: '${moduleName?lower_case}',
         name: '权限管理',
-        list: []<#list moduleMap[key] as value>.concat(${value?uncap_first})</#list>
+        list: []<#list moduleMap[moduleName] as table>.concat(${table.entityName?uncap_first})</#list>
      },
     </#list>
 </#if>

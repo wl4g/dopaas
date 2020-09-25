@@ -439,9 +439,11 @@ public interface GeneratorProvider extends Runnable {
 				List<ConfigOption> defineOptions = safeList(GenExtraOptionDefinition.getOptions(provider));
 				// Validate name & value.
 				for (ConfigOption opt : options) {
-					isTrue(defineOptions.stream().filter(
-							dopt -> dopt.getName().equals(opt.getName()) && dopt.getValues().contains(opt.getSelectedValue()))
-							.count() > 0, "Invalid option name: '%s' of provider: '%s'", opt.getName(), provider);
+					if (provider.equals(opt.getProvider())) {
+						isTrue(defineOptions.stream().filter(
+								dopt -> dopt.getName().equals(opt.getName()) && dopt.getValues().contains(opt.getSelectedValue()))
+								.count() > 0, "Invalid option name: '%s' of provider: '%s'", opt.getName(), provider);
+					}
 				}
 			});
 
