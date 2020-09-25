@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
@@ -31,6 +32,7 @@ import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
@@ -41,6 +43,7 @@ import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
 
@@ -92,6 +95,9 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 	public String execute(GenericParameter param) {
 		// Gets gen project.
 		GenProject project = genProjectService.detail(param.getProjectId());
+
+		project.setExtraOptions(parseJSON(project.getExtraOptionsJson(), new TypeReference<List<ConfigOption>>() {
+		}));
 
 		// Gets gen datasource.
 		GenDataSource dataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
