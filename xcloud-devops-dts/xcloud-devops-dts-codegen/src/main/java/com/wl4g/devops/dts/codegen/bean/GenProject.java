@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionSupport.ConfigOption;
+import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
@@ -38,7 +38,6 @@ import java.util.List;
 @Setter
 @Wither
 @ToString
-@RenderProperty(includeFieldNames = { "remark" })
 public class GenProject extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
@@ -101,6 +100,12 @@ public class GenProject extends BaseBean {
 		this.genTables = genTables;
 		this.extraOptionsJson = extraOptionsJson;
 		this.extraOptions = extraOptions;
+	}
+
+	@RenderProperty(propertyName = GEN_PROJECT_DESCRIPTION)
+	@Override
+	public String getRemark() {
+		return super.getRemark();
 	}
 
 }

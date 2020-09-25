@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionSupport.getOptions;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.getOptions;
 
 /**
  * {@link GenProjectController}
@@ -75,7 +75,7 @@ public class GenProjectController extends BaseController {
 	public RespBase<?> getConfigOption(String genProviderGroup) {
 		RespBase<Object> resp = RespBase.create();
 		List<String> providers = GeneratorProvider.GenProviderSet.getProviders(genProviderGroup);
-		List<GeneratorProvider.GenExtraOptionSupport.ConfigOption> options = getOptions(providers.toArray(new String[0]));
+		List<GeneratorProvider.GenExtraOptionDefinition.ConfigOption> options = getOptions(providers.toArray(new String[0]));
 		resp.setData(options);
 		return resp;
 	}

@@ -18,14 +18,13 @@ package com.wl4g.devops.dts.codegen.utils;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.StringUtils2.isTrue;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.doFullWithFields;
+import static com.wl4g.components.common.reflect.ReflectionUtils2.doWithMethods;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getField;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.isGenericModifier;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
+import static org.springframework.util.ReflectionUtils.invokeMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -33,8 +32,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,6 +41,7 @@ import javax.validation.constraints.NotNull;
 
 import com.wl4g.components.common.reflect.TypeUtils2;
 import com.wl4g.components.common.reflect.ReflectionUtils2.FieldFilter;
+import com.wl4g.components.common.reflect.ReflectionUtils2.MethodCallback;
 
 /**
  * {@link RenderPropertyUtils}
@@ -63,15 +63,13 @@ public abstract class RenderPropertyUtils {
 	public static final Map<String, Object> convertToRenderingModel(final @NotNull Object bean) throws Exception {
 		notNullOf(bean, "bean");
 
-		// Resolve type annotation
-		RenderProperty rp1 = findAnnotation(bean.getClass(), RenderProperty.class);
-		final List<String> includes = isNull(rp1) ? emptyList() : asList(rp1.includeFieldNames());
-
 		final Map<String, Object> model = new HashMap<>();
+
+		// Populate model by fields.
 		doFullWithFields(bean, new FieldFilter() {
 			@Override
 			public boolean matches(Field field) {
-				return isGenericModifier(field.getModifiers()) || includes.contains(field.getName());
+				return isGenericModifier(field.getModifiers());
 			}
 
 			@Override
@@ -97,6 +95,21 @@ public abstract class RenderPropertyUtils {
 			}
 		});
 
+		// Populate model by methods.
+		doWithMethods(bean.getClass(), new MethodCallback() {
+			@Override
+			public void doWith(Method method) {
+				// Resolve method annotation
+				RenderProperty rp3 = method.getAnnotation(RenderProperty.class);
+				if (nonNull(rp3) && method.getName().startsWith("get") && method.getReturnType() != Void.class
+						&& method.getParameterCount() == 0) {
+					String attrName = rp3.propertyName();
+					attrName = isBlank(attrName) ? method.getName().substring(3) : attrName; // fallback
+					model.put(attrName, invokeMethod(method, bean));
+				}
+			}
+		});
+
 		return model;
 	}
 
@@ -111,7 +124,7 @@ public abstract class RenderPropertyUtils {
 	 */
 	@Inherited
 	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ ElementType.FIELD, ElementType.TYPE })
+	@Target({ ElementType.FIELD, ElementType.METHOD })
 	public static @interface RenderProperty {
 
 		/**
@@ -121,16 +134,6 @@ public abstract class RenderPropertyUtils {
 		 * @return
 		 */
 		String propertyName() default "";
-
-		/**
-		 * A list of field names that will be serialized as a rendered data
-		 * model, whether it is the current class or a superclass. Note: this
-		 * value is combined with the field of the compiled annotation (take its
-		 * union).
-		 * 
-		 * @return
-		 */
-		String[] includeFieldNames() default {};
 
 		/**
 		 * It is used to control whether to continue to reflect the structure of
