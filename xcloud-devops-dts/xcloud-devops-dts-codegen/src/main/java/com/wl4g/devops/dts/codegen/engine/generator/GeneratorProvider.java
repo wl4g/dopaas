@@ -17,8 +17,7 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
-
-import org.apache.commons.lang3.StringUtils;
+import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -101,15 +100,14 @@ public interface GeneratorProvider extends Runnable {
 	}
 
 	/**
-	 * An extensible configuration options {@link GenExtraOptionSupport} which
-	 * is supported by itself, If NULL is returned, there is no extensible
-	 * configuration item.
+	 * An extensible configuration options definitions, which is supported by
+	 * itself, If NULL is returned, there is no extensible configuration item.
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020-09-16
 	 * @since
 	 */
-	public static enum GenExtraOptionSupport {
+	public static enum GenExtraOptionDefinition {
 
 		ExtSpringCloudMvnBuildAssetsType(new ConfigOption(SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
 
@@ -123,7 +121,7 @@ public interface GeneratorProvider extends Runnable {
 		@NotNull
 		private final ConfigOption option;
 
-		private GenExtraOptionSupport(@NotNull ConfigOption option) {
+		private GenExtraOptionDefinition(@NotNull ConfigOption option) {
 			notNullOf(option, "option");
 			this.option = option.validate();
 		}
@@ -146,46 +144,6 @@ public interface GeneratorProvider extends Runnable {
 			return asList(values()).stream()
 					.filter(o -> (isEmpty(conditions) || conditions.contains(o.getOption().getProvider())))
 					.map(o -> o.getOption()).collect(toList());
-		}
-
-		/**
-		 * Validation {@link ConfigOption} name and values invalid?
-		 * 
-		 * @param option
-		 */
-		public static void validateOption(@NotBlank String provider, @NotBlank String name, @NotBlank String value) {
-			hasTextOf(provider, "provider");
-			hasTextOf(name, "name");
-			hasTextOf(value, "value");
-
-			// Validate option name & values.
-			List<ConfigOption> options = safeList(getOptions(provider));
-			isTrue(options.stream().filter(o -> o.getName().equals(name)).count() > 0,
-					"Invalid option name: '%s' of provider: '%s'", name, provider);
-			isTrue(options.stream().filter(o -> o.getValues().contains(value)).count() > 0,
-					"Invalid option name: '%s', value: '%s' of provider: '%s'", name, value, provider);
-		}
-
-		/**
-		 * Check whether the current configured items match the additional
-		 * configuration items of the specified service provider.
-		 * 
-		 * @param provider
-		 * @param configuredOptions
-		 * @return
-		 */
-		public static boolean checkConfigured(@NotBlank String provider, @NotEmpty List<ConfigOption> configuredOptions) {
-			hasTextOf(provider, "provider");
-			notEmptyOf(configuredOptions, "configuredOptions");
-			for (ConfigOption defineOption : safeList(getOptions(provider))) {
-				for (ConfigOption configuredOption : configuredOptions) {
-					if (defineOption.getName().equals(configuredOption.getName())
-							&& defineOption.getValues().contains(configuredOption.getSelectedValue())) {
-						return true;
-					}
-				}
-			}
-			return false;
 		}
 
 		/**
@@ -382,16 +340,15 @@ public interface GeneratorProvider extends Runnable {
 	 */
 	public static enum GenProviderSet {
 
-		DaoServiceController(asList(SPINGCLOUD_MVN), CodeLanguage.JAVA, "Mybatis/Spring Cloud/XCloud Iam"),
+		DaoServiceController(asList(SPINGCLOUD_MVN), CodeLanguage.JAVA),
 
-		DaoServiceControllerVueJS(asList(SPINGCLOUD_MVN, VUEJS), CodeLanguage.JAVA,
-				"Mybatis/Spring Cloud/XCloud Iam/ElementUI Vue"),
-
-		// Nothing to do with DAO layer
-		JustVueJS(asList(VUEJS), null, "ElementUI Vue"),
+		DaoServiceControllerVueJS(asList(SPINGCLOUD_MVN, VUEJS), CodeLanguage.JAVA),
 
 		// Nothing to do with DAO layer
-		JustNgJS(asList(NGJS), null, "AngularJS");
+		JustVueJS(asList(VUEJS), null),
+
+		// Nothing to do with DAO layer
+		JustNgJS(asList(NGJS), null);
 
 		/** {@link GenProviderAlias} */
 		@NotEmpty
@@ -406,13 +363,9 @@ public interface GeneratorProvider extends Runnable {
 		@Nullable
 		private final CodeLanguage language;
 
-		@Nullable
-		private final String description;
-
-		private GenProviderSet(@NotEmpty List<String> providers, @Nullable CodeLanguage language, @Nullable String description) {
+		private GenProviderSet(@NotEmpty List<String> providers, @Nullable CodeLanguage language) {
 			this.providers = notEmptyOf(providers, "providers");
 			this.language = language;
-			this.description = description;
 		}
 
 		/**
@@ -420,7 +373,7 @@ public interface GeneratorProvider extends Runnable {
 		 * 
 		 * @return
 		 */
-		public final List<String> getProviders() {
+		public final List<String> providers() {
 			return providers;
 		}
 
@@ -429,24 +382,20 @@ public interface GeneratorProvider extends Runnable {
 		 * 
 		 * @return
 		 */
-		public final CodeLanguage getLanguage() {
+		public final CodeLanguage language() {
 			return language;
-		}
-
-		public String getDescription() {
-			return description;
 		}
 
 		/**
 		 * Gets providers by group name.
 		 * 
-		 * @param group
+		 * @param providerSet
 		 * @return
 		 */
-		public static List<String> getProviders(@Nullable String group) {
+		public static List<String> getProviders(@Nullable String providerSet) {
 			for (GenProviderSet en : values()) {
-				if (StringUtils.equalsIgnoreCase(en.name(), group)) {
-					return en.getProviders();
+				if (equalsIgnoreCase(en.name(), providerSet)) {
+					return en.providers();
 				}
 			}
 			return emptyList();
@@ -455,12 +404,12 @@ public interface GeneratorProvider extends Runnable {
 		/**
 		 * Parse {@link GenProviderSet} name.
 		 * 
-		 * @param group
+		 * @param providerSet
 		 * @return
 		 */
-		public static GenProviderSet safeOf(@NotBlank String group) {
+		public static GenProviderSet safeOf(@NotBlank String providerSet) {
 			for (GenProviderSet gpg : values()) {
-				if (equalsIgnoreCase(gpg.name(), group)) {
+				if (equalsIgnoreCase(gpg.name(), providerSet)) {
 					return gpg;
 				}
 			}
@@ -470,11 +419,32 @@ public interface GeneratorProvider extends Runnable {
 		/**
 		 * Parse {@link GenProviderSet} name.
 		 * 
-		 * @param group
+		 * @param providerSet
 		 * @return
 		 */
-		public static GenProviderSet of(@NotBlank String group) {
-			return notNull(safeOf(group), "Cannot parse gen provider group of '%s'", group);
+		public static GenProviderSet of(@NotBlank String providerSet) {
+			return notNull(safeOf(providerSet), "Cannot parse gen providerSet of '%s'", providerSet);
+		}
+
+		/**
+		 * Validation {@link ConfigOption} name and values invalid?
+		 * 
+		 * @param option
+		 */
+		public static void validateOption(@NotBlank String providerSet, @NotNull List<ConfigOption> options) {
+			hasTextOf(providerSet, "providerSet");
+			notNullOf(options, "options");
+
+			safeList(of(providerSet).providers()).stream().forEach(provider -> {
+				List<ConfigOption> defineOptions = safeList(GenExtraOptionDefinition.getOptions(provider));
+				// Validate name & value.
+				for (ConfigOption opt : options) {
+					isTrue(defineOptions.stream().filter(
+							dopt -> dopt.getName().equals(opt.getName()) && dopt.getValues().contains(opt.getSelectedValue()))
+							.count() > 0, "Invalid option name: '%s' of provider: '%s'", opt.getName(), provider);
+				}
+			});
+
 		}
 
 	}
