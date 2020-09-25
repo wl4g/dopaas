@@ -271,13 +271,13 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		notEmptyOf(model, "model");
 		tplResource.validate();
 
-		log.debug("Generate rendering model: {}", model);
+		log.debug("Gen rendering of model: {}", model);
 
-		// Preparing rendering
+		// Preparing rendering.
 		String renderedString = preRendering(tplResource, model);
 		renderedString = isBlank(renderedString) ? tplResource.getContent() : renderedString; // Fallback
 
-		// Primary rendering
+		// Core rendering templates.
 		Template template = new Template(tplResource.getName(), renderedString, defaultGenConfigurer);
 		return renderingTemplateToString(template, model);
 	}
@@ -311,7 +311,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			//
 			// 3. --- Add model of watermark.
 			//
-			model.put("watermark", MODEL_WATERMARK_VALUE);
+			model.put("watermark", context.getConfiguration().getWatermarkContent());
 
 			//
 			// 4. --- Add model of moduleMap.
@@ -345,9 +345,6 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 		return model.readonly();
 	}
-
-	// Rendering model for watermark.
-	public static final String MODEL_WATERMARK_VALUE = readFullyResourceString(TPL_BASEPATH.concat("/watermark.txt"));
 
 	/**
 	 * {@link SpelExpressions}
