@@ -17,6 +17,8 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
+import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.MODEL_FOR_MODULENAME;
+import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.MODEL_FOR_ENTITYNAME;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,13 +46,13 @@ public class GenTable extends BaseBean {
 	@RenderProperty
 	private String tableName;
 
-	@RenderProperty
+	@RenderProperty(propertyName = MODEL_FOR_ENTITYNAME)
 	private String entityName;
 
 	@RenderProperty
 	private String comments;
 
-	@RenderProperty
+	@RenderProperty(propertyName = MODEL_FOR_MODULENAME)
 	private String moduleName;
 
 	@RenderProperty
