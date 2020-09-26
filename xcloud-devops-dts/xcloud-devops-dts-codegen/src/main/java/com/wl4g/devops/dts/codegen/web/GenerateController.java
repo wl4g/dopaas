@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.web;
 
+import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
@@ -29,10 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
+import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.lang.Integer.valueOf;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -96,8 +99,13 @@ public class GenerateController extends BaseController {
 	@RequestMapping("generate")
 	public void generate(String id, HttpServletResponse response) throws IOException {
 		hasTextOf(id, "id");
-		String jobPath = generateService.generate(valueOf(id));
-		writeZip(response, jobPath, "codegen-".concat(id));
+
+		String generatedDir = generateService.generate(valueOf(id));
+
+		// Add generated readme
+		FileIOUtils.writeFile(new File(generatedDir, "GENERATED_README.md"), GENERATED_README, false);
+
+		writeZip(response, generatedDir, "codegen-".concat(id));
 	}
 
 	@RequestMapping("setEnable")
@@ -107,5 +115,10 @@ public class GenerateController extends BaseController {
 		generateService.setEnable(id, status);
 		return resp;
 	}
+
+	/**
+	 * Generated watermark readme.
+	 */
+	public static final String GENERATED_README = readFullyResourceString("generated/GENERATED_README.md");
 
 }

@@ -85,7 +85,7 @@ public interface GenTemplateLocator {
 		/**
 		 * Do you want fill rendering?
 		 */
-		private final boolean isTemplate;
+		private final boolean isRender;
 
 		/**
 		 * Is it necessary to traverse the entity to generate the syntax
@@ -106,7 +106,7 @@ public interface GenTemplateLocator {
 			hasTextOf(pathname, "pathname");
 			this.name = getFilename(pathname);
 			this.content = isBlank(content) ? EMPTY : content; // By default
-			this.isTemplate = name.endsWith(DEFAULT_TPL_SUFFIX);
+			this.isRender = name.endsWith(DEFAULT_TPL_SUFFIX);
 
 			// Analysis of special syntax identification.
 			this.pathname = pathname;
@@ -132,8 +132,8 @@ public interface GenTemplateLocator {
 			return content;
 		}
 
-		public final boolean isTemplate() {
-			return isTemplate;
+		public final boolean isRender() {
+			return isRender;
 		}
 
 		public final boolean isForeachEntitys() {
@@ -156,7 +156,7 @@ public interface GenTemplateLocator {
 		@Override
 		public String toString() {
 			return getClass().getSimpleName().concat(" - ").concat("pathname: ").concat(pathname).concat(", isTemplate: ")
-					.concat(valueOf(isTemplate)).concat(", isForeachEntitys: ").concat(valueOf(isForeachEntitys))
+					.concat(valueOf(isRender)).concat(", isForeachEntitys: ").concat(valueOf(isForeachEntitys))
 					.concat(", isForeachModules: ").concat(valueOf(isForeachModules));
 		}
 
