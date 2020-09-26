@@ -5,7 +5,7 @@
 #### 构建项目
 
 ```
-# 构建前置依赖项目
+# 首先构建前置依赖项目
 git clone https://github.com/wl4g/xcloud-parent.git
 cd xcloud-parent
 mvn clean install -DskipTests -T 2C
@@ -63,7 +63,7 @@ mvn clean install -DskipTests -T 2C
 
 
 #### 开发步骤
-step1: 新建模版工程，[参考(G) springCloudMvnProvider](src/main/java/generate-templates/springCloudMvnProvider)
+step1: 新建模版工程，[参考(G) springCloudMvnProvider](src/main/resources/generate-templates/springCloudMvnProvider)
 
 step2: 新建生成处理器，[参考( C) SpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/generator/SpringCloudMvnGeneratorProvider.java)
 

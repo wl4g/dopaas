@@ -84,19 +84,19 @@ public interface GenTemplateLocator {
 		/**
 		 * Do you want fill rendering?
 		 */
-		private final boolean isRender;
+		private final boolean isTemplate;
 
 		/**
 		 * Is it necessary to traverse the entity to generate the syntax
 		 * identifier of multiple files.
 		 */
-		private final boolean isForeachTemplate;
+		private final boolean isForeachEntitys;
 
 		/**
 		 * Do you need to traverse the module to generate syntax identifiers for
 		 * multiple directories.
 		 */
-		private final boolean isForeachModule;
+		private final boolean isForeachModules;
 
 		/**
 		 * Constructor
@@ -105,18 +105,18 @@ public interface GenTemplateLocator {
 			hasTextOf(pathname, "pathname");
 			this.name = getFilename(pathname);
 			this.content = isBlank(content) ? EMPTY : content; // By default
-			this.isRender = name.endsWith(DEFAULT_TPL_SUFFIX);
+			this.isTemplate = name.endsWith(DEFAULT_TPL_SUFFIX);
 
 			// Analysis of special syntax identification.
 			this.pathname = pathname;
 			/**
 			 * {@link com.wl4g.devops.dts.codegen.bean.GenTable#moduleName}
 			 */
-			this.isForeachModule = contains(pathname, GEN_MODULE_NAME); // Modules
+			this.isForeachModules = contains(pathname, GEN_MODULE_NAME); // Modules
 			/**
 			 * {@link com.wl4g.devops.dts.codegen.bean.GenTable#entityName}
 			 */
-			this.isForeachTemplate = contains(pathname, GEN_TABLE_ENTITY_NAME); // Entitys
+			this.isForeachEntitys = contains(pathname, GEN_TABLE_ENTITY_NAME); // Entitys
 		}
 
 		public final String getPathname() {
@@ -131,16 +131,16 @@ public interface GenTemplateLocator {
 			return content;
 		}
 
-		public final boolean isRender() {
-			return isRender;
+		public final boolean isTemplate() {
+			return isTemplate;
 		}
 
-		public final boolean isForeachTemplate() {
-			return isForeachTemplate;
+		public final boolean isForeachEntitys() {
+			return isForeachEntitys;
 		}
 
-		public final boolean isForeachModule() {
-			return isForeachModule;
+		public final boolean isForeachModules() {
+			return isForeachModules;
 		}
 
 		/**

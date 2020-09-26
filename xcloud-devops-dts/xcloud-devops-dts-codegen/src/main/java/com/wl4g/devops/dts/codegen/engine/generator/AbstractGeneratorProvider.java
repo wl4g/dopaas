@@ -90,106 +90,80 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// Locate load templates.
 		List<TemplateResourceWrapper> tplResources = context.getLocator().locate(provider);
 
-		// Core processing generate.
-		coreRenderingTemplates(tplResources, project, context.getJobDir().getAbsolutePath());
+		// Rendering templates
+		for (TemplateResourceWrapper res : tplResources) {
+			// Core generate processing.
+			coreRenderingGenerate(res, project);
+		}
+
 	}
 
 	/**
 	 * Handling core rendering templates generate and save.
 	 *
-	 * @param tplResources
+	 * @param tplResource
 	 * @param project
-	 * @param writeBasePath
 	 * @throws Exception
 	 */
-	protected void coreRenderingTemplates(List<TemplateResourceWrapper> tplResources, GenProject project, String writeBasePath)
-			throws Exception {
-		for (TemplateResourceWrapper res : tplResources) {
-			log.info("Rendering generate for - {}", res.getPathname());
+	protected void coreRenderingGenerate(TemplateResourceWrapper tplResource, GenProject project) throws Exception {
+		log.info("Rendering generate for - {}", tplResource.getPathname());
 
-			if (res.isRender()) {
-				// Foreach rendering entitys(tables)
-				if (res.isForeachTemplate()) {
-					for (GenTable tab : project.getGenTables()) {
-						context.setGenTable(tab); // Set current genTable
+		if (tplResource.isTemplate()) {
+			// Foreach rendering entitys. (Note: included resolve moduleName)
+			if (tplResource.isForeachEntitys()) {
+				for (GenTable tab : project.getGenTables()) {
+					context.setGenTable(tab); // Set current genTable
 
-						// When traversing the rendering table (entity), it
-						// needs to share the item information and must be
-						// cloned to prevent it from being covered.
-						MapRenderModel tableModel = primaryModel.clone();
+					// When traversing the rendering table (entity), it
+					// needs to share the item information and must be
+					// cloned to prevent it from being covered.
+					MapRenderModel tableModel = primaryModel.clone();
 
-						// Add rendering model of GenTable.
-						tableModel.putAll(convertToRenderingModel(tab));
+					// Add rendering model of GenTable.
+					tableModel.putAll(convertToRenderingModel(tab));
 
-						// Add customization rendering model.
-						customizeRenderingModel(res, tableModel);
-
-						// Rendering source templates.
-						String writePath = writeBasePath.concat(separator)
-								.concat(resolveSpelExpression(res.getPathname(), tableModel));
-						String renderedString = processRenderingTemplateToString(res, tableModel);
-
-						// Call post rendered.
-						postRenderingComplete(res, renderedString, writePath);
-					}
-				}
-				// Foreach rendering module
-				else if (res.isForeachModule()) {
-					// Rendering of moduleMap.
-					Map<String, List<GenTable>> moduleMap = primaryModel.getElement(GEN_MODULE_MAP);
-
-					for (Entry<String, List<GenTable>> ent : moduleMap.entrySet()) {
-						String moduleName = ent.getKey();
-						List<GenTable> tablesOfModule = ent.getValue();
-
-						// When traversing the rendering module, it
-						// needs to share the item information and must be
-						// cloned to prevent it from being covered.
-						MapRenderModel moduleModel = primaryModel.clone();
-
-						// Add rendering model of module tables.
-						moduleModel.putAll(convertToRenderingModel(tablesOfModule));
-						moduleModel.put(GEN_MODULE_NAME, moduleName);
-
-						// Add customization rendering model.
-						customizeRenderingModel(res, moduleModel);
-
-						// Rendering source templates.
-						String writePath = writeBasePath.concat(separator)
-								.concat(resolveSpelExpression(res.getPathname(), moduleModel));
-						String renderedString = processRenderingTemplateToString(res, moduleModel);
-
-						// Call post rendered.
-						postRenderingComplete(res, renderedString, writePath);
-					}
-				}
-				// Simple template rendering.
-				else {
-					// Clone the primary model to customize the model.
-					MapRenderModel model = primaryModel.clone();
-
-					// Add customization rendering model.
-					customizeRenderingModel(res, model);
-
-					// Rendering source templates.
-					String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPathname(), model));
-					String renderedString = processRenderingTemplateToString(res, model);
-
-					// Call post rendered.
-					postRenderingComplete(res, renderedString, writePath);
+					// Rendering.
+					processRenderingTemplateToString(tplResource, tableModel);
 				}
 			}
-			// Static resource no-render.
+			// Foreach rendering modules. (Note: no-include resolve entityName)
+			else if (tplResource.isForeachModules()) {
+				// Rendering of moduleMap.
+				Map<String, List<GenTable>> moduleMap = primaryModel.getElement(GEN_MODULE_MAP);
+
+				for (Entry<String, List<GenTable>> ent : moduleMap.entrySet()) {
+					String moduleName = ent.getKey();
+					List<GenTable> tablesOfModule = ent.getValue();
+
+					// When traversing the rendering module, it
+					// needs to share the item information and must be
+					// cloned to prevent it from being covered.
+					MapRenderModel moduleModel = primaryModel.clone();
+
+					// Add rendering model of module tables.
+					moduleModel.putAll(convertToRenderingModel(tablesOfModule));
+					moduleModel.put(GEN_MODULE_NAME, moduleName);
+
+					// Rendering.
+					processRenderingTemplateToString(tplResource, moduleModel);
+				}
+			}
+			// Simple template rendering.
 			else {
 				// Clone the primary model to customize the model.
 				MapRenderModel model = primaryModel.clone();
 
-				// Add customization rendering model.
-				customizeRenderingModel(res, model);
-
-				String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(res.getPathname(), model));
-				writeFile(new File(writePath), res.getContent(), false);
+				// Rendering.
+				processRenderingTemplateToString(tplResource, model);
 			}
+		}
+		// Static resource no-render content.
+		else {
+			// Clone the primary model to customize the model.
+			MapRenderModel model = primaryModel.clone();
+
+			// Rendering.
+			processRenderingTemplateToString(tplResource, model);
 		}
 
 	}
@@ -266,7 +240,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * 
 	 * @param tplResource
 	 * @param model
-	 * @return
+	 * @return Return rendered source codes file path.
 	 * @throws Exception
 	 */
 	private final String processRenderingTemplateToString(TemplateResourceWrapper tplResource, MapRenderModel model)
@@ -277,13 +251,25 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 		log.debug("Gen rendering of model: {}", model);
 
-		// Preparing rendering.
+		// Step1: Add customize model.
+		customizeRenderingModel(tplResource, model);
+
+		// Step2: Preparing rendering.
 		String renderedString = preRendering(tplResource, model);
 		renderedString = isBlank(renderedString) ? tplResource.getContent() : renderedString; // Fallback
 
-		// Core rendering templates.
+		// Step3: Core rendering.
 		Template template = new Template(tplResource.getName(), renderedString, defaultGenConfigurer);
-		return renderingTemplateToString(template, model);
+		renderedString = renderingTemplateToString(template, model);
+
+		// Step4: Resolve SPEL template path.
+		String writeBasePath = context.getJobDir().getAbsolutePath();
+		String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(tplResource.getPathname(), model));
+
+		// Step5: Call post rendered.
+		postRenderingComplete(tplResource, renderedString, writePath);
+
+		return writePath;
 	}
 
 	/**
