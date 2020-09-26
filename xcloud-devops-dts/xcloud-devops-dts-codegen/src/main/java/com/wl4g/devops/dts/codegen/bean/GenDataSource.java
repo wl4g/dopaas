@@ -55,6 +55,9 @@ public class GenDataSource extends BaseBean {
 	@RenderProperty(propertyName = GEN_DB_PASSWORD)
 	private String password;
 
+	@RenderProperty(propertyName = GEN_DB_VERSION)
+	private String dbversion;
+
 	public GenDataSource() {
 		super();
 	}
@@ -91,6 +94,11 @@ public class GenDataSource extends BaseBean {
 
 	public GenDataSource withPassword(String password) {
 		this.password = password;
+		return this;
+	}
+
+	public GenDataSource withDbversion(String dbversion) {
+		this.dbversion = dbversion;
 		return this;
 	}
 

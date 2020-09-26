@@ -71,10 +71,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 */
 	protected final MapRenderModel primaryModel;
 
-	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Object... addModels) {
+	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Object... defaultSubModels) {
 		this.context = notNullOf(context, "context");
 		// Primary rendering model.
-		this.primaryModel = initPrimaryRenderingModel(context.getConfiguration(), context, addModels);
+		this.primaryModel = initPrimaryRenderingModel(context.getConfiguration(), context, defaultSubModels);
 	}
 
 	/**
@@ -277,35 +277,30 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * 
 	 * @param config
 	 * @param context
-	 * @param addModels
+	 * @param defaultSubModels
 	 * @return
 	 */
 	private final MapRenderModel initPrimaryRenderingModel(CodegenProperties config, GenerateContext context,
-			@Nullable Object... addModels) {
+			@Nullable Object... defaultSubModels) {
 		MapRenderModel model = new MapRenderModel(config.isAllowRenderingCustomizeModelOverride());
 
 		try {
-			//
-			// 1. --- Add model of GenProject.
+			// Step1: Add model of GenProject.
 			//
 			model.putAll(convertToRenderingModel(context.getGenProject()));
 
-			//
-			// 2. --- Add model of GenDataSource.
+			// Step2: Add model of GenDataSource.
 			//
 			Map<String, Object> datasource = convertToRenderingModel(context.getGenDataSource());
 			// Gen DB version.
-			datasource.put(GEN_DB_VERSION, context.getMetadataResolver().findDBVersion());
+			datasource.put(GEN_DB_VERSION, context.getGenDataSource().getDbversion());
 			model.put(GEN_DB, datasource);
 
-			//
-			// 3. --- Add model of watermark.
+			// Step3: Add model of watermark.
 			//
 			model.put(GEN_COMMON_WATERMARK, context.getConfiguration().getWatermarkContent());
 
-			//
-			// 4. --- Add model of moduleMap.
-			// moduleMap{moduleName => tables}
+			// Step4: Add model of moduleMap. moduleMap{moduleName => tables}
 			//
 			Map<String, List<GenTable>> moduleMap = new HashMap<>();
 			for (GenTable tab : context.getGenProject().getGenTables()) {
@@ -316,16 +311,15 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			}
 			model.put(GEN_MODULE_MAP, moduleMap);
 
+			// Step5: Add default models.
 			//
-			// 5. --- Add extra models.
-			//
-			newArrayList(safeArray(Object.class, addModels)).forEach(addModel -> {
-				if (addModel instanceof Class) {
+			newArrayList(safeArray(Object.class, defaultSubModels)).forEach(subModel -> {
+				if (subModel instanceof Class) {
 					// e.g: JavaSpecs => JavaSpecs.class
-					model.put(addModel.getClass().getSimpleName(), addModel);
+					model.put(subModel.getClass().getSimpleName(), subModel);
 				} else {
 					// e.g: javaSpecs => new JavaSpecs()
-					model.put(firstLCase(addModel.getClass().getSimpleName()), addModel);
+					model.put(firstLCase(subModel.getClass().getSimpleName()), subModel);
 				}
 			});
 
