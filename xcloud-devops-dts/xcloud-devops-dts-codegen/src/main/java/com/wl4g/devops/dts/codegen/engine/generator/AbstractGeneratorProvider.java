@@ -23,6 +23,7 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
+import com.wl4g.devops.dts.codegen.exception.RenderingGenerateException;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 import freemarker.template.Template;
 
@@ -48,6 +49,7 @@ import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfig
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
 import static java.io.File.separator;
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -92,8 +94,12 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 		// Rendering templates
 		for (TemplateResourceWrapper res : tplResources) {
-			// Core generate processing.
-			coreRenderingGenerate(res, project);
+			try {
+				// Core generate processing.
+				coreRenderingGenerate(res, project);
+			} catch (Exception e) {
+				throw new RenderingGenerateException(format("Cannot rendering template for %s", res), e);
+			}
 		}
 
 	}
@@ -106,7 +112,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @throws Exception
 	 */
 	protected void coreRenderingGenerate(TemplateResourceWrapper tplResource, GenProject project) throws Exception {
-		log.info("Rendering generate for - {}", tplResource.getPathname());
+		log.debug("Rendering generate for - {}", tplResource.getPathname());
 
 		if (tplResource.isTemplate()) {
 			// Foreach rendering entitys. (Note: included resolve moduleName)
@@ -162,8 +168,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			// Clone the primary model to customize the model.
 			MapRenderModel model = primaryModel.clone();
 
-			// Rendering.
-			processRenderingTemplateToString(tplResource, model);
+			// Add customize model.
+			customizeRenderingModel(tplResource, model);
+
+			// Call post rendered.
+			postRenderingComplete(tplResource, tplResource.getContent(), resolveTemplatePath(tplResource, model));
 		}
 
 	}
@@ -218,25 +227,34 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	}
 
 	/**
-	 * Resolving path SPEL expression
-	 *
-	 * @param expression
+	 * Processing resolving template path.
+	 * 
+	 * @param tplResource
 	 * @param model
-	 * @return
+	 * @return Return resolved template resource canonical path.
+	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
-	protected final String resolveSpelExpression(String expression, final MapRenderModel model) {
-		if (expression.endsWith(DEFAULT_TPL_SUFFIX)) {
-			expression = expression.substring(0, expression.length() - DEFAULT_TPL_SUFFIX.length());
-		}
-		final String expr = expression;
-		log.debug("Resolving SPEL for expression: {}, model: {}", () -> expr, () -> model);
+	protected final String resolveTemplatePath(TemplateResourceWrapper tplResource, MapRenderModel model) throws Exception {
+		notNullOf(tplResource, "tplResource");
+		notEmptyOf(model, "model");
+		tplResource.validate();
 
-		return spelExpr.resolve(expr, model);
+		String pathname = tplResource.getPathname();
+
+		// Resolve SPEL template path.
+		String writeBasePath = context.getJobDir().getAbsolutePath();
+
+		if (pathname.endsWith(DEFAULT_TPL_SUFFIX)) {
+			pathname = pathname.substring(0, pathname.length() - DEFAULT_TPL_SUFFIX.length());
+		}
+
+		log.debug("Resolving template path for pathname: {}, model: {}", pathname, model);
+		return writeBasePath.concat(separator).concat(spelExpr.resolve(pathname, model));
+
 	}
 
 	/**
-	 * Do processing template rendering to string.
+	 * Processing template rendering to string.
 	 * 
 	 * @param tplResource
 	 * @param model
@@ -262,9 +280,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		Template template = new Template(tplResource.getName(), renderedString, defaultGenConfigurer);
 		renderedString = renderingTemplateToString(template, model);
 
-		// Step4: Resolve SPEL template path.
-		String writeBasePath = context.getJobDir().getAbsolutePath();
-		String writePath = writeBasePath.concat(separator).concat(resolveSpelExpression(tplResource.getPathname(), model));
+		// Step4: Resolve template path.
+		String writePath = resolveTemplatePath(tplResource, model);
 
 		// Step5: Call post rendered.
 		postRenderingComplete(tplResource, renderedString, writePath);

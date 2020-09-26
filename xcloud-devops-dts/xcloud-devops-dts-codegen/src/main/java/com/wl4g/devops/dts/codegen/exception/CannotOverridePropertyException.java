@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.utils;
+package com.wl4g.devops.dts.codegen.exception;
 
 /**
  * {@link CannotOverridePropertyException}
@@ -23,8 +23,9 @@ package com.wl4g.devops.dts.codegen.utils;
  * @sine v1.0.0
  * @see
  */
-public class CannotOverridePropertyException extends RuntimeException {
-	static final long serialVersionUID = -7034833390745766939L;
+public class CannotOverridePropertyException extends GenerateException {
+
+	public static final long serialVersionUID = -703121390745766939L;
 
 	/**
 	 * Constructs a new runtime exception with {@code null} as its detail

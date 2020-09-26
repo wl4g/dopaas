@@ -46,13 +46,13 @@
     	  #{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
 	      #{host,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, #{database,jdbcType=VARCHAR}, 
 	      #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{dbversion,jdbcType=VARCHAR}, 
-	      #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
-	      #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
+	      #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
+	      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}
     )
   </insert>
 
   <insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
-    insert into dts_gen_datasource
+    INSERT INTO dts_gen_datasource
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -84,9 +84,6 @@
       <if test="remark != null" >
         remark,
       </if>
-      <if test="delFlag != null" >
-        del_flag,
-      </if>
       <if test="createDate != null" >
         create_date,
       </if>
@@ -98,6 +95,9 @@
       </if>
       <if test="updateBy != null" >
         update_by,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >

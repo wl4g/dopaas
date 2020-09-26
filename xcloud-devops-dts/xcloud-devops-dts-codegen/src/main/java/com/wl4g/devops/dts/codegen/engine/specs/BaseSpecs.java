@@ -16,18 +16,17 @@
 package com.wl4g.devops.dts.codegen.engine.specs;
 
 import com.wl4g.components.common.annotation.Nullable;
+import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
 
-import org.apache.commons.lang3.StringUtils;
-
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static java.lang.String.valueOf;
 import static java.util.Locale.US;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -97,16 +96,23 @@ public abstract class BaseSpecs {
 	 * @return
 	 * @see {@link GenExtraOptionDefinition}
 	 */
-	public boolean checkConfigured(@NotEmpty List<ConfigOption> configuredOptions, String name, String value) {
-		notEmptyOf(configuredOptions, "configuredOptions");
+	public boolean checkConfigured(@Nullable List<ConfigOption> configuredOptions, @NotBlank String name,
+			@NotBlank String value) {
 		hasTextOf(name, "name");
 		hasTextOf(value, "value");
-		for (ConfigOption configOption : configuredOptions) {
-			if (StringUtils.equalsIgnoreCase(configOption.getName(), name)
-					&& StringUtils.equalsIgnoreCase(configOption.getSelectedValue(), value)) {
+
+		// Extra config optional
+		if (CollectionUtils2.isEmpty(configuredOptions)) {
+			return false;
+		}
+
+		// Verify name and value contains in options.
+		for (ConfigOption opt : configuredOptions) {
+			if (equalsIgnoreCase(opt.getName(), name) && equalsIgnoreCase(opt.getSelectedValue(), value)) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 

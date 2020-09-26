@@ -35,22 +35,22 @@ public class ${entityName?cap_first} extends BaseBean {
 	 * ${param.columnComment}
 	 */
     @ApiModelProperty("${param.columnComment}")<#--TODO 解决换行和双引号 写在basespecs用javaspecs-->
-	private ${javaSpecs.toSimpleAttrType(param.attrType)} ${param.attrName};
+	private ${javaSpecs.toSimpleJavaType(param.attrType)} ${param.attrName};
 	</#if>
 </#list>
 
 <#--<#list genTableColumns as param>
 	&lt;#&ndash; Ignore BaseBean fields&ndash;&gt;
 	<#if param.attrName != 'id' && param.attrName != 'createBy' && param.attrName != 'updateDate' && param.attrName != 'updateBy' && param.attrName != 'organizationCode'>
-	public ${javaSpecs.toSimpleAttrType(param.attrType)} get${param.attrName?cap_first}(){
+	public ${javaSpecs.toSimpleJavaType(param.attrType)} get${param.attrName?cap_first}(){
 		return ${param.attrName};
 	}
 
-	public void set${param.attrName?cap_first}(${javaSpecs.toSimpleAttrType(param.attrType)?cap_first} ${param.attrName?uncap_first}){
+	public void set${param.attrName?cap_first}(${javaSpecs.toSimpleJavaType(param.attrType)?cap_first} ${param.attrName?uncap_first}){
 		this.${param.attrName} = ${param.attrName};
 	}
 
-	public ${entityName?cap_first} with${param.attrName?cap_first}(${javaSpecs.toSimpleAttrType(param.attrType)?cap_first} ${param.attrName?uncap_first}){
+	public ${entityName?cap_first} with${param.attrName?cap_first}(${javaSpecs.toSimpleJavaType(param.attrType)?cap_first} ${param.attrName?uncap_first}){
 		set${param.attrName?cap_first}(${param.attrName?uncap_first});
 		return this;
 	}
