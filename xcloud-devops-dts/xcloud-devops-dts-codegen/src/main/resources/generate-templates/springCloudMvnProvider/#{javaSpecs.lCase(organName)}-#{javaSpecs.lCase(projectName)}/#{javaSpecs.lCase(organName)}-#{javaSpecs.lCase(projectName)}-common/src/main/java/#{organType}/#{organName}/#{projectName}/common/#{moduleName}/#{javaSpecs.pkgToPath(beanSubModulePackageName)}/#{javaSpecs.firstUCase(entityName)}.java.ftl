@@ -15,7 +15,6 @@ import lombok.Data;
 import ${attrType};
 </#list>
 
-
 /**
  * {@link ${entityName?cap_first}}
  *

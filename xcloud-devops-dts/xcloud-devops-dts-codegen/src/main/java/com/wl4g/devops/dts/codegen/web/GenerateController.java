@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.web;
 
-import com.wl4g.components.common.io.ZipIOUtils;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
@@ -33,6 +32,8 @@ import java.util.List;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.lang.Integer.valueOf;
+
+import java.io.IOException;
 
 /**
  * {@link GenerateController}
@@ -93,10 +94,10 @@ public class GenerateController extends BaseController {
 	}
 
 	@RequestMapping("generate")
-	public void generate(String id, HttpServletResponse response) {
+	public void generate(String id, HttpServletResponse response) throws IOException {
 		hasTextOf(id, "id");
 		String jobPath = generateService.generate(valueOf(id));
-		ZipIOUtils.zip(jobPath, response);
+		writeZip(response, jobPath, "codegen-".concat(id));
 	}
 
 	@RequestMapping("setEnable")
