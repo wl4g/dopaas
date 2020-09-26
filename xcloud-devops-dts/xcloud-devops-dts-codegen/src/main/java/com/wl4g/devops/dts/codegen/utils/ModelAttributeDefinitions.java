@@ -43,9 +43,9 @@ public abstract class ModelAttributeDefinitions {
 	public static final String GEN_DB_HOST = "dbhost";
 	public static final String GEN_DB_PORT = "dbport";
 	public static final String GEN_DB_DATABAES = "databaseName";
-	public static final String GEN_DB_VERSION = "dbversion";
 	public static final String GEN_DB_USERNAME = "dbusername";
 	public static final String GEN_DB_PASSWORD = "dbpassword";
+	public static final String GEN_DB_VERSION = "dbversion";
 
 	// --- Gen Project. ---
 

@@ -10,6 +10,7 @@
     <result column="database" property="database" jdbcType="VARCHAR" />
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="db_version" property="dbversion" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
@@ -19,59 +20,66 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, `name`, `type`, host, port, `database`, username, password, remark, del_flag,
+    id, `name`, `type`, host, port, `database`, username, password, db_version, remark, del_flag,
     create_date, create_by, update_date, update_by
   </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from dts_gen_datasource
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from dts_gen_datasource
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
-    insert into dts_gen_datasource (id, name, `type`,
-      host, port, `database`,
-      username, password, 
-      remark, del_flag, create_date, 
-      create_by, update_date, update_by
-      )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
-      #{host,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, #{database,jdbcType=VARCHAR}, 
-      #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
-      )
+    INSERT INTO dts_gen_datasource (id, name, `type`,
+	      host, port, `database`,
+	      username, password, db_version,
+	      remark, del_flag, create_date, 
+	      create_by, update_date, update_by
+    ) VALUES (
+    	  #{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+	      #{host,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, #{database,jdbcType=VARCHAR}, 
+	      #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{dbversion,jdbcType=VARCHAR}, 
+	      #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+	      #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
+    )
   </insert>
+
   <insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
     insert into dts_gen_datasource
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="name != null" >
+      <if test="name != null and name != ''" >
         name,
       </if>
       <if test="type != null" >
         `type`,
       </if>
-      <if test="host != null" >
+      <if test="host != null and host != ''" >
         host,
       </if>
       <if test="port != null" >
         port,
       </if>
-      <if test="database != null" >
+      <if test="database != null and database != ''" >
         `database`,
       </if>
-      <if test="username != null" >
+      <if test="username != null and username != ''" >
         username,
       </if>
-      <if test="password != null" >
+      <if test="password != null and password != ''" >
         password,
+      </if>
+      <if test="dbversion != null and dbversion != ''" >
+        db_version,
       </if>
       <if test="remark != null" >
         remark,
@@ -117,11 +125,11 @@
       <if test="password != null" >
         #{password,jdbcType=VARCHAR},
       </if>
+      <if test="dbversion != null and dbversion != ''" >
+        #{dbversion,jdbcType=VARCHAR},
+      </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="delFlag != null" >
-        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null" >
         #{createDate,jdbcType=TIMESTAMP},
@@ -135,11 +143,14 @@
       <if test="updateBy != null" >
         #{updateBy,jdbcType=VARCHAR},
       </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
 
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
-    update dts_gen_datasource
+    UPDATE dts_gen_datasource
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -162,11 +173,11 @@
       <if test="password != null" >
         password = #{password,jdbcType=VARCHAR},
       </if>
+      <if test="dbversion != null and dbversion != ''" >
+        db_version = #{dbversion,jdbcType=VARCHAR},
+      </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null" >
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -180,12 +191,15 @@
       <if test="updateBy != null" >
         update_by = #{updateBy,jdbcType=VARCHAR},
       </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
 
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
-    update dts_gen_datasource
+    UPDATE dts_gen_datasource
     set name = #{name,jdbcType=VARCHAR},
       `type` = #{type,jdbcType=VARCHAR},
       host = #{host,jdbcType=VARCHAR},
@@ -193,6 +207,7 @@
       `database` = #{database,jdbcType=VARCHAR},
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
+      db_version = #{dbversion,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -211,4 +226,5 @@
       AND `name` LIKE CONCAT('%','${name}','%')
     </if>
   </select>
+
 </mapper>
