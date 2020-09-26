@@ -25,6 +25,7 @@ import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.StringUtils2.getFilename;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_MODULE_NAME;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_TABLE_ENTITY_NAME;
+import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -150,6 +151,13 @@ public interface GenTemplateLocator {
 			hasTextOf(pathname, "tplPath");
 			hasTextOf(name, "fileName");
 			hasTextOf(content, "fileContent");
+		}
+
+		@Override
+		public String toString() {
+			return getClass().getSimpleName().concat(" - ").concat("pathname: ").concat(pathname).concat(", isTemplate: ")
+					.concat(valueOf(isTemplate)).concat(", isForeachEntitys: ").concat(valueOf(isForeachEntitys))
+					.concat(", isForeachModules: ").concat(valueOf(isForeachModules));
 		}
 
 	}

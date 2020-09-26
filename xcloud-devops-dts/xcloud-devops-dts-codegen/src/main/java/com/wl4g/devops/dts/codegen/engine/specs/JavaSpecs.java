@@ -31,6 +31,7 @@ import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static java.lang.ThreadLocal.withInitial;
 import static java.util.Objects.isNull;
 import static java.util.regex.Pattern.compile;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
@@ -119,8 +120,10 @@ public class JavaSpecs extends BaseSpecs {
 	 * @param copyright
 	 * @return
 	 */
-	public static String escapeCopyright(@NotBlank String copyright) {
-		hasTextOf(copyright, "copyright");
+	public static String escapeCopyright(@Nullable String copyright) {
+		if (isBlank(copyright)) { // Copyright is optional
+			return EMPTY;
+		}
 
 		// Nothing do
 		if (copyright.contains("/*") && copyright.contains("*/")) {
@@ -170,8 +173,19 @@ public class JavaSpecs extends BaseSpecs {
 		return attrName.concat(" != null");
 	}
 
-
-	public static String toSimpleAttrType(@NotBlank String attrType) {
+	/**
+	 * Convert generated attr type to simple. </br>
+	 * 
+	 * for example:
+	 * 
+	 * <pre>
+	 * java.util.Date => Date
+	 * </pre>
+	 * 
+	 * @param attrType
+	 * @return
+	 */
+	public static String toSimpleJavaType(@NotBlank String attrType) {
 		hasTextOf(attrType, "attrType");
 		int i = attrType.lastIndexOf(".");
 		if (i >= 0) {
