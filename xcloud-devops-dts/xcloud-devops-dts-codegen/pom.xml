@@ -69,6 +69,7 @@
 					<include>**/*.properties</include>
 					<include>**/*.sql</include>
 					<include>**/*.types</include>
+					<include>**/*.md</include>
 				</includes>
 				<excludes>
 					<exclude>**/*.java</exclude>

@@ -114,7 +114,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	protected void coreRenderingGenerate(TemplateResourceWrapper tplResource, GenProject project) throws Exception {
 		log.debug("Rendering generate for - {}", tplResource.getPathname());
 
-		if (tplResource.isTemplate()) {
+		if (tplResource.isRender()) {
 			// Foreach rendering entitys. (Note: included resolve moduleName)
 			if (tplResource.isForeachEntitys()) {
 				for (GenTable tab : project.getGenTables()) {
