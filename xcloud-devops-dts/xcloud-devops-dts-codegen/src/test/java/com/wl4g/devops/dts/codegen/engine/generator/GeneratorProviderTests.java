@@ -68,6 +68,12 @@ public class GeneratorProviderTests {
 				add(new TemplateResourceWrapper(
 						"src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/#{javaSpecs.firstUCase(entityName)}.java.ftl",
 						"test template content"));
+				add(new TemplateResourceWrapper(
+						"src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/@has-{entityName}@#{javaSpecs.firstUCase(entityName)}Service.java.ftl",
+						"test template content"));
+				add(new TemplateResourceWrapper(
+						"src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@has-{aaa}@#{javaSpecs.firstUCase(entityName)}ServiceImpl.java.ftl",
+						"test template content"));
 			}
 		});
 

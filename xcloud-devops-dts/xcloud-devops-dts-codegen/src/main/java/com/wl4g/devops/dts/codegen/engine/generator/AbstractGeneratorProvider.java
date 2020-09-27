@@ -272,7 +272,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		customizeRenderingModel(tplResource, model);
 
 		// Step2: Process internal 'has' directive.
-		if (tplResource.isHasDirective() && !model.containsKey(tplResource.getHasDirective())) {
+		if (tplResource.isHasDirective() && !model.containsKey(tplResource.getHasDirectiveVar())) {
 			// If the 'has' directive is enabled, but there is no corresponding
 			// variable in the model, the file will not be rendered and saved.
 			return null;

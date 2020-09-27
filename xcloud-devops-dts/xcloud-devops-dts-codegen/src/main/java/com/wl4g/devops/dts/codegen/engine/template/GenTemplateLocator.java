@@ -101,9 +101,9 @@ public interface GenTemplateLocator {
 		private final boolean isForeachModules;
 
 		/**
-		 * 'has' directive.
+		 * 'has' directive variable name.
 		 */
-		private final String hasDirective;
+		private final String hasDirectiveVar;
 
 		/**
 		 * Constructor
@@ -115,7 +115,6 @@ public interface GenTemplateLocator {
 			this.isRender = name.endsWith(DEFAULT_TPL_SUFFIX);
 
 			// Analysis of special syntax identification.
-			this.pathname = pathname;
 			/**
 			 * {@link com.wl4g.devops.dts.codegen.bean.GenTable#moduleName}
 			 */
@@ -135,9 +134,11 @@ public interface GenTemplateLocator {
 					DIRECTIVE_HAS_PREFIX, DIRECTIVE_HAS_SUFFIX);
 
 			if (pindex1 > 0 && pindex1 < sindex1) { // e.g: @has-{isPageEdit}@
-				this.hasDirective = pathname.substring(pindex1 + DIRECTIVE_HAS_PREFIX.length(), sindex1);
+				this.hasDirectiveVar = pathname.substring(pindex1 + DIRECTIVE_HAS_PREFIX.length(), sindex1);
+				this.pathname = new StringBuffer(pathname).delete(pindex1, sindex1 + 2).toString();
 			} else {
-				this.hasDirective = null;
+				this.hasDirectiveVar = null;
+				this.pathname = pathname;
 			}
 		}
 
@@ -165,8 +166,8 @@ public interface GenTemplateLocator {
 			return isForeachModules;
 		}
 
-		public String getHasDirective() {
-			return hasDirective;
+		public String getHasDirectiveVar() {
+			return hasDirectiveVar;
 		}
 
 		/**
@@ -175,7 +176,7 @@ public interface GenTemplateLocator {
 		 * @return
 		 */
 		public boolean isHasDirective() {
-			return !isBlank(hasDirective);
+			return !isBlank(hasDirectiveVar);
 		}
 
 		/**
@@ -192,7 +193,7 @@ public interface GenTemplateLocator {
 			return getClass().getSimpleName().concat(" - ").concat("pathname: ").concat(pathname).concat(", isTemplate: ")
 					.concat(valueOf(isRender)).concat(", isForeachEntitys: ").concat(valueOf(isForeachEntitys))
 					.concat(", isForeachModules: ")
-					.concat(valueOf(isForeachModules).concat(", hasDirective: ").concat(valueOf(hasDirective)));
+					.concat(valueOf(isForeachModules).concat(", hasDirective: ").concat(valueOf(hasDirectiveVar)));
 		}
 
 	}
