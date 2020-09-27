@@ -86,6 +86,10 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 				"No such mapped type of lang: %s, matcher: %s, fromType: %s", lang, matcher, fromType);
 	}
 
+	public List<TypeMappedWrapper> getTypeMappedWrappers(CodeLanguage codeLanguage){
+		return typesCache.get(codeLanguage);
+	}
+
 	/**
 	 * Load the {@code xxx-sql-column.types} file found in the resources.
 	 * 

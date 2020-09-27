@@ -20,6 +20,7 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * {@link GenerateService}
@@ -49,6 +50,8 @@ public interface GenerateService {
 	void delete(Integer tableId);
 
 	String generate(Integer tableId);
+
+	Set<String> getAttrTypes(Integer projectId);
 
 	void setEnable(Integer id, String status);
 

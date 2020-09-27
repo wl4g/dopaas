@@ -1026,7 +1026,7 @@ INSERT INTO `sys_menu` VALUES (34, 'Overview', '概览', 1, NULL, 2, 0, 33, NULL
         <#assign moduleMuneId = javaSpecs.genId()>
 INSERT INTO `sys_menu` VALUES (${moduleMuneId}, '${moduleName}', '${moduleName}', 1, 'classifyA', 1, 0, 0, NULL, '${moduleName}', '', '/${moduleName}', 'NULL', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
         <#list moduleMap[moduleName] as table>
-INSERT INTO `sys_menu` VALUES (${javaSpecs.genId()}, '${table.entityName}', '${table.entityName}', 1, 'classifyA', 2, 0, ${moduleMuneId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${moduleName}/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+INSERT INTO `sys_menu` VALUES (${javaSpecs.genId()}, '${table.entityName}', '${table.functionNameSimple}', 1, 'classifyA', 2, 0, ${moduleMuneId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${moduleName}/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
         </#list>
     </#list>
 </#if>
