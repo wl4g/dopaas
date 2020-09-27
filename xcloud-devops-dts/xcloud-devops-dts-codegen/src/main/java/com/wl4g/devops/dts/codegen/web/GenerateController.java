@@ -104,11 +104,14 @@ public class GenerateController extends BaseController {
 	public void generate(String id, HttpServletResponse response) throws IOException {
 		hasTextOf(id, "id");
 
+		// Execution generate
 		String generatedDir = generateService.generate(valueOf(id));
 
-		// Add generated readme
+		// Add generated README
 		FileIOUtils.writeFile(new File(generatedDir, "GENERATED_README.md"), GENERATED_README, false);
+		FileIOUtils.writeFile(new File(generatedDir, "GENERATED_README_CN.md"), GENERATED_README_CN, false);
 
+		// ZIP download
 		writeZip(response, generatedDir, "codegen-".concat(id));
 	}
 
@@ -131,5 +134,6 @@ public class GenerateController extends BaseController {
 	 * Generated watermark readme.
 	 */
 	public static final String GENERATED_README = readFullyResourceString("generated/GENERATED_README.md");
+	public static final String GENERATED_README_CN = readFullyResourceString("generated/GENERATED_README_CN.md");
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine.naming;
+package com.wl4g.devops.dts.codegen.engine.specs;
 
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 

@@ -1,4 +1,7 @@
-# XCloud 代码生成引擎 (Code Generate Engine)
+# 跨平台代码生成引擎 (XCloud Cross Platform Code Generate Engine)
+
+> 跨平台代码生成引擎（与开发语言、框架和技术架构无关）
+
 
 ## 开发指南
 

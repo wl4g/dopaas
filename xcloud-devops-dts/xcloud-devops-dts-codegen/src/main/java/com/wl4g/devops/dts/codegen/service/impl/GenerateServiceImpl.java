@@ -51,7 +51,6 @@ import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeM
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
 import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
 
-
 /**
  * {@link GenerateServiceImpl}
  *
@@ -123,14 +122,13 @@ public class GenerateServiceImpl implements GenerateService {
 
 		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
 
-
 		List<GenTableColumn> cols = new ArrayList<>();
 		for (ColumnMetadata colmd : metadata.getColumns()) {
 			GenTableColumn col = new GenTableColumn();
 			col.setColumnName(colmd.getColumnName());
 			// ColumnComment replace \n to space
-			if(StringUtils.isNotBlank(colmd.getComments())){
-				col.setColumnComment(colmd.getComments().replaceAll("\n","  "));
+			if (StringUtils.isNotBlank(colmd.getComments())) {
+				col.setColumnComment(colmd.getComments().replaceAll("\n", "  "));
 			}
 			col.setColumnType(colmd.getColumnType());
 			col.setSimpleColumnType(colmd.getSimpleColumnType());
@@ -173,13 +171,13 @@ public class GenerateServiceImpl implements GenerateService {
 	 */
 	private void setDefaultShowType(ColumnMetadata colmd, GenTableColumn col) {
 		if (StringUtils.equalsAnyIgnoreCase(colmd.getSimpleColumnType(), "DATE")) {
-			col.setShowType("7");//Date
+			col.setShowType("7");// Date
 		} else if (StringUtils.equalsAnyIgnoreCase(colmd.getSimpleColumnType(), "DATETIME", "TIMESTAMP")) {
-			col.setShowType("8");//DateTime
+			col.setShowType("8");// DateTime
 		} else if (StringUtils.equalsAnyIgnoreCase(colmd.getSimpleColumnType(), "TEXT")) {
-			col.setShowType("2");//textarea
+			col.setShowType("2");// textarea
 		} else {
-			col.setShowType("1");//normal input
+			col.setShowType("1");// normal input
 		}
 	}
 
@@ -299,12 +297,13 @@ public class GenerateServiceImpl implements GenerateService {
 	public Set<String> getAttrTypes(Integer projectId) {
 		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
 		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
-		GenDataSource genDataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
-		DbTypeConverter conv = converter.forOperator(genDataSource.getType());
-		List<TypeMappedWrapper> typeMappedWrappers = conv.getTypeMappedWrappers(providerSet.language());
+		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
+
+		DbTypeConverter conv = converter.forOperator(datasource.getType());
+		List<TypeMappedWrapper> mappings = conv.getTypeMappedWrappers(providerSet.language());
 		Set<String> attrTypes = new HashSet<>();
-		for(TypeMappedWrapper typeMappedWrapper : typeMappedWrappers){
-			attrTypes.add(typeMappedWrapper.getAttrType());
+		for (TypeMappedWrapper map : mappings) {
+			attrTypes.add(map.getAttrType());
 		}
 		return attrTypes;
 	}

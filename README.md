@@ -1,20 +1,20 @@
 ![SuperDevops](shots/logo.jpg)
 ## One stop Micoservice + DevoSecOps Cloud platform(SaaS) developed based on spring cloud. Its main function modules are: continuous delivery of CI/CD(Support distributed compilation, pptpvpn/OpenVPN/SSH tunnel deployment), certification center, monitoring center, configuration center, resource management center, scheduling center, elastic scaling, shell tools, various tool components (such as HBase/OSS operation and maintenance), document management, timely communication, lightweight risk control, private object storage, version control, etc
 
-[![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
+[![Build Status](https://travis-ci.org/wl4g/xcloud-devops.svg)](https://travis-ci.org/wl4g/xcloud-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
-[![Maven](https://img.shields.io/badge/Maven-3.5+-green.svg)](https://github.com/wl4g/super-devops)
-[![JDK](https://img.shields.io/badge/JDK-1.8+-green.svg)](https://github.com/wl4g/super-devops)
-[![MySQL](https://img.shields.io/badge/MySQL-5.6+-green.svg)](https://github.com/wl4g/super-devops)
-[![Redis](https://img.shields.io/badge/RedisCluster-3+-green.svg)](https://github.com/wl4g/super-devops)
-[![Kafka](https://img.shields.io/badge/Kafka-0.10.0+-green.svg)](https://github.com/wl4g/super-devops)
-[![Zookeeper](https://img.shields.io/badge/Zookeeper-3.4.6+-green.svg)](https://github.com/wl4g/super-devops)
-[![Docker-ce](https://img.shields.io/badge/DockerCE-18.06+-green.svg)](https://github.com/wl4g/super-devops)
+[![Maven](https://img.shields.io/badge/Maven-3.5+-green.svg)](https://github.com/wl4g/xcloud-devops)
+[![JDK](https://img.shields.io/badge/JDK-1.8+-green.svg)](https://github.com/wl4g/xcloud-devops)
+[![MySQL](https://img.shields.io/badge/MySQL-5.6+-green.svg)](https://github.com/wl4g/xcloud-devops)
+[![Redis](https://img.shields.io/badge/RedisCluster-3+-green.svg)](https://github.com/wl4g/xcloud-devops)
+[![Kafka](https://img.shields.io/badge/Kafka-0.10.0+-green.svg)](https://github.com/wl4g/xcloud-devops)
+[![Zookeeper](https://img.shields.io/badge/Zookeeper-3.4.6+-green.svg)](https://github.com/wl4g/xcloud-devops)
+[![Docker-ce](https://img.shields.io/badge/DockerCE-18.06+-green.svg)](https://github.com/wl4g/xcloud-devops)
 [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)
-[![GithubStars](https://img.shields.io/github/stars/wl4g/super-devops)](https://github.com/wl4g/super-devops)
-[![GiteeStars](https://gitee.com/wl4g/super-devops/badge/star.svg)](https://gitee.com/wl4g/super-devops)
-[![Ubuntu](https://img.shields.io/badge/Ubuntu-16+-green.svg)](https://gitee.com/wl4g/super-devops)
-[![CentOS](https://img.shields.io/badge/CentOS-6.5+-green.svg)](https://gitee.com/wl4g/super-devops)
+[![GithubStars](https://img.shields.io/github/stars/wl4g/xcloud-devops)](https://github.com/wl4g/xcloud-devops)
+[![GiteeStars](https://gitee.com/wl4g/xcloud-devops/badge/star.svg)](https://gitee.com/wl4g/xcloud-devops)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-16+-green.svg)](https://gitee.com/wl4g/xcloud-devops)
+[![CentOS](https://img.shields.io/badge/CentOS-6.5+-green.svg)](https://gitee.com/wl4g/xcloud-devops)
 
 
 [中文文档](README_CN.md)
@@ -29,10 +29,10 @@ For the sake of brevity, each service only deploys a single node to the same phy
 
 - step1：Compile
 ```
-cd super-cloudops
+cd xcloud-devops
 mvn -U clean install -DskipTests -T 2C
 ```
-- step2, Initialize the db, First prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8/utf8_bin), and then use [Initial SQL script](../../../super-cloudops-data/tree/master/db) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest)
+- step2, Initialize the db, First prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8/utf8_bin), and then use [Initial SQL script](../../../xcloud-devops-data/tree/master/db) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest)
 - step3, Configure hosts, Add local domain name resolution.（C:\Windows\System32\drivers\etc or vim /etc/hosts）：
 ```
 10.0.0.160	wl4g.debug # Corresponding to sys_cluster_config.extranet_base_uri
@@ -74,25 +74,25 @@ sudo systemctl restart docker
 
 
 ### Docs
-- [CI](super-devops-ci/README.md)             &nbsp;&nbsp;    Continuous integration deployment(Continuous iteration), CICD build flow, etc.
-- [ESM](super-devops-esm/README.md)           &nbsp;&nbsp;    Flexible scalability management, integrated K8s, Docker, management based on CPU, network traffic automatic or manual container scaling.
-- [SCM](super-devops-scm/README.md)           &nbsp;&nbsp;    Configure the service center to support online configuration of hot updates such as DataSource, RedisClient, etc.
-- [ERM](super-devops-erm/README_CN.md)        &nbsp;&nbsp;    Basic resource and environment management, such as elk log analysis, binary product repository, gateway, PrivateZone DNS resolution, etc
-- [DJOB](super-devops-djob/README_CN.md)      &nbsp;&nbsp;    Based on spring cloud distributed scheduling platform, the default is based on elastic-job enhanced implementation
-- [COSS](super-devops-coss/README_CN.md)      &nbsp;&nbsp;    Based on the spring cloud composite object storage service, it supports NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
-- [SHELL](super-devops-shell/README.md)       &nbsp;&nbsp;    Shell Cli, adding a hbase-shell-like console to your app
-- [DOC](super-devops-doc/README.md)           &nbsp;&nbsp;    API documentation service, online API documentation
-- [IAM](super-devops-iam/README.md)           &nbsp;&nbsp;    Unified identity and access management services, supporting SSO/CAS, oauth2, opensaml, etc.
-- [IM](super-devops-im/README.md)             &nbsp;&nbsp;    Instant messaging system, project personnel communicate in a timely manner, internal data distribution.
-- [UMC](super-devops-umc/README.md)           &nbsp;&nbsp;    Unified monitoring and operation center, providing real-time application health monitoring, real-time tracking, real-time alarms, etc.
-- [VCS](super-devops-vcs/README.md)           &nbsp;&nbsp;    Version control service, software source code, release package version management.
-- [Gateway](super-devops-gateway/README.md)   &nbsp;&nbsp;    Enterprise microservice gateway based on spring cloud gateway, Can integrate with CI to realize Canary deployment.
+- [CI](xcloud-devops-ci/README.md)                  Continuous integration deployment(Continuous iteration), CICD build flow, etc.
+- [UMC](xcloud-devops-umc/README.md)                Unified monitoring and operation center, providing real-time application health monitoring, real-time tracking, real-time alarms, etc.
+- [VCS](xcloud-devops-vcs/README.md)                Version control service, software source code, release package version management.
+- [SCM](xcloud-devops-scm/README.md)                Configure the service center to support online configuration of hot updates such as DataSource, RedisClient, etc.
+- [ERM](xcloud-devops-erm/README_CN.md)             Basic resource and environment management, such as elk log analysis, binary product repository, gateway, PrivateZone DNS resolution, etc
+- [ESM](xcloud-devops-esm/README.md)                Flexible scalability management, integrated K8s, Docker, management based on CPU, network traffic automatic or manual container scaling.
+- [DOC](xcloud-devops-doc/README.md)                API documentation service, online API documentation
+- [DJOB](xcloud-djob/README_CN.md)           Based on spring cloud distributed scheduling platform, the default is based on elastic-job enhanced implementation
+- [COSS](xcloud-coss/README_CN.md)           Based on the spring cloud composite object storage service, it supports NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
+- [SHELL](xcloud-shell/README.md)            Shell Cli, adding a hbase-shell-like console to your app
+- [IAM](xcloud-iam/README.md)                Unified identity and access management services, support SSO/CAS/oauth2/opensaml etc, It also supports multiple deployment modes(local/cluster/gateway)
+- [Gateway](xcloud-gateway/README.md)        Enterprise microservice gateway based on spring cloud gateway, Can integrate with CI to realize Canary deployment.
+- [IM](xcloud-im/README.md)                  Instant messaging system, project personnel communicate in a timely manner, internal data distribution.
 
 ### Communicate, feedback and contribute?
 - Click add to group [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)
 - ![q855349515](shots/q855349515.jpg)
-- GitHub: https://github.com/wl4g/super-devops
-- OS China: https://gitee.com/wl4g/super-devops
+- GitHub: https://github.com/wl4g/xcloud-devops
+- OS China: https://gitee.com/wl4g/xcloud-devops
 - No matter how strong a person's personal ability is, he can't defeat a team. He hopes that his brothers and sisters can support him and contribute some of his own code to improve it together (^_^).
 
 [Share Code?](https://www.cnblogs.com/wenber/p/3630921.html)
