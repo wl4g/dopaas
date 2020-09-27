@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
@@ -187,32 +188,28 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		notNullOf(tplResource, "tplResource");
 		notEmptyOf(model, "model");
 
-		// It is recommended to use FreeMarker to call Java methods.
+		// Customizable pre rendering:
+		// ...
 
-		// // Rendering with spel ahead of time
-		// //
-		// // Note: After testing, we found that we should use spel to render
-		// // first, otherwise FreeMarker will report an error.
-		// //
-		// return defaultExpressions.resolve(tpl.getFileContent(), model);
-		return tplResource.getContent();
+		// Default nothing do
+		return tplResource.getContentAsString();
 	}
 
 	/**
 	 * Post rendering complete processing.
 	 * 
 	 * @param tplResource
-	 * @param renderedString
+	 * @param renderedBytes
 	 * @param writePath
 	 */
-	protected void postRenderingComplete(@NotNull TemplateResourceWrapper tplResource, @NotBlank String renderedString,
+	protected void postRenderingComplete(@NotNull TemplateResourceWrapper tplResource, @NotNull byte[] renderedBytes,
 			@NotBlank String writePath) {
 		notNullOf(tplResource, "tplResource");
-		hasTextOf(renderedString, "renderedString");
+		notNullOf(renderedBytes, "renderedBytes");
 		hasTextOf(writePath, "writePath");
 
 		// Default by write to local disk
-		writeFile(new File(writePath), renderedString, false);
+		writeFile(new File(writePath), renderedBytes, false);
 	}
 
 	/**
@@ -280,7 +277,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 		// Step3: Preparing rendering.
 		String renderedString = preRendering(tplResource, model);
-		renderedString = isBlank(renderedString) ? tplResource.getContent() : renderedString; // Fallback
+		renderedString = isBlank(renderedString) ? tplResource.getContentAsString() : renderedString; // Fallback
 
 		// Step4: Core rendering.
 		Template template = new Template(tplResource.getName(), renderedString, defaultGenConfigurer);
@@ -290,7 +287,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		String writePath = resolveTemplatePath(tplResource, model);
 
 		// Step6: Call post rendered.
-		postRenderingComplete(tplResource, renderedString, writePath);
+		postRenderingComplete(tplResource, renderedString.getBytes(UTF_8), writePath);
 
 		return writePath;
 	}

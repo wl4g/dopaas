@@ -21,13 +21,14 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.StringUtils2.getFilename;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_MODULE_NAME;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_TABLE_ENTITY_NAME;
 import static java.lang.String.valueOf;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -79,9 +80,9 @@ public interface GenTemplateLocator {
 		private final String name;
 
 		/**
-		 * Template file content.
+		 * Template file content bytes.
 		 */
-		private final String content;
+		private final byte[] content;
 
 		/**
 		 * Do you want fill rendering?
@@ -108,10 +109,10 @@ public interface GenTemplateLocator {
 		/**
 		 * Constructor
 		 */
-		public TemplateResourceWrapper(@NotBlank String pathname, @Nullable String content) {
+		public TemplateResourceWrapper(@NotBlank String pathname, @Nullable byte[] content) {
 			hasTextOf(pathname, "pathname");
-			this.name = getFilename(pathname);
-			this.content = isBlank(content) ? EMPTY : content; // By default
+			this.name = hasTextOf(getFilename(pathname), "name");
+			this.content = content;
 			this.isRender = name.endsWith(DEFAULT_TPL_SUFFIX);
 
 			// Analysis of special syntax identification.
@@ -142,16 +143,24 @@ public interface GenTemplateLocator {
 			}
 		}
 
+		@NotBlank
 		public final String getPathname() {
 			return pathname;
 		}
 
+		@NotBlank
 		public final String getName() {
 			return name;
 		}
 
-		public final String getContent() {
+		@Nullable
+		public final byte[] getContent() {
 			return content;
+		}
+
+		@Nullable
+		public final String getContentAsString() {
+			return isNull(content) ? null : new String(content, UTF_8);
 		}
 
 		public final boolean isRender() {
@@ -166,6 +175,7 @@ public interface GenTemplateLocator {
 			return isForeachModules;
 		}
 
+		@Nullable
 		public String getHasDirectiveVar() {
 			return hasDirectiveVar;
 		}
@@ -183,9 +193,8 @@ public interface GenTemplateLocator {
 		 * Validation
 		 */
 		public final void validate() {
-			hasTextOf(pathname, "tplPath");
-			hasTextOf(name, "fileName");
-			hasTextOf(content, "fileContent");
+			hasTextOf(pathname, "templatePath");
+			hasTextOf(name, "templateName");
 		}
 
 		@Override

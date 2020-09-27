@@ -32,11 +32,13 @@
 			<artifactId>${organName?uncap_first}-${projectName?uncap_first}-service</artifactId>
 			<version>${version?uncap_first}</version>
 		</dependency>
+		<#if javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "cluster")>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		</#if>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -83,8 +85,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			<#-- TODO Follow up configuration judgment using MvnAssTar/SpringExecJar -->
-		<#if javaSpecs.checkConfigured(extraOptions,"gen.build.assets-type","MvnAssTar")>
+		<#-- Build artifact package type.(MvnAssTar/SpringExecJar) -->
+		<#if javaSpecs.checkConfigured(extraOptions, "gen.build.assets-type", "MvnAssTar")>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -106,7 +108,7 @@
 					</execution>
 				</executions>
 			</plugin>
-		<#elseif javaSpecs.checkConfigured(extraOptions,"gen.build.assets-type","SpringExecJar")>
+		<#elseif javaSpecs.checkConfigured(extraOptions, "gen.build.assets-type", "SpringExecJar")>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -115,7 +117,6 @@
 				</configuration>
 			</plugin>
 		</#if>
-
 		</plugins>
 	</build>
 </project>

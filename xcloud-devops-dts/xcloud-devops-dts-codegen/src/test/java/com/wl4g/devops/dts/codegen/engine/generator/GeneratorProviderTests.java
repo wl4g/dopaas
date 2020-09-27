@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static java.lang.System.out;
 
 import java.io.File;
@@ -67,19 +68,19 @@ public class GeneratorProviderTests {
 			{
 				add(new TemplateResourceWrapper(
 						"src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/#{javaSpecs.firstUCase(entityName)}.java.ftl",
-						"test template content"));
+						TEST_TPL_CONTENT));
 				add(new TemplateResourceWrapper(
 						"src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/@has-{entityName}@#{javaSpecs.firstUCase(entityName)}Service.java.ftl",
-						"test template content"));
+						TEST_TPL_CONTENT));
 				add(new TemplateResourceWrapper(
 						"src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@has-{aaa}@#{javaSpecs.firstUCase(entityName)}ServiceImpl.java.ftl",
-						"test template content"));
+						TEST_TPL_CONTENT));
 			}
 		});
 
 		new SpringCloudMvnGeneratorProvider(new DefaultGenerateContext(config, locator1, resolver, project, datasource)) {
 			@Override
-			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotBlank String renderedString,
+			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
 				generatedFiles.add(writePath);
 			}
@@ -90,13 +91,13 @@ public class GeneratorProviderTests {
 			{
 				add(new TemplateResourceWrapper(
 						"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/#{vueSpecs.firstUCase(entityName)}.vue.ftl",
-						"test template content"));
+						TEST_TPL_CONTENT));
 			}
 		});
 
 		new VueGeneratorProvider(new DefaultGenerateContext(config, locator2, resolver, project, datasource)) {
 			@Override
-			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotBlank String renderedString,
+			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
 				generatedFiles.add(writePath);
 			}
@@ -136,5 +137,7 @@ public class GeneratorProviderTests {
 	};
 
 	static GenDataSource datasource = new GenDataSource();
+
+	static byte[] TEST_TPL_CONTENT = "test template content".getBytes(UTF_8);
 
 }
