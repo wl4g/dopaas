@@ -16,6 +16,7 @@
 package com.wl4g.devops.dts.codegen.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
@@ -26,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
@@ -91,6 +94,39 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 		gen.setId(id);
 		gen.setDelFlag(BaseBean.DEL_FLAG_DELETE);
 		genDSDao.updateByPrimaryKeySelective(gen);
+	}
+
+	public void testConnectDb(GenDataSource genDataSource) throws SQLException {
+		Assert2.notNullOf(genDataSource, "genDataSource");
+		if(isNull(genDataSource.getHost())){
+			genDataSource = genDSDao.selectByPrimaryKey(genDataSource.getId());
+		}
+		String className = null;
+		String url = null;
+		//TODO
+		switch (genDataSource.getType()){
+			case "mysqlv5":
+				className = "com.mysql.jdbc.Driver";//com.mysql.cj.jdbc.Driver  for new version
+				url = "jdbc:mysql://" + genDataSource.getHost() +":" + genDataSource.getPort() + "/" +genDataSource.getDatabase() + "?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8";
+				break;
+			case "oracle":
+				//TODO
+				break;
+			case "postgresql":
+				//TODO
+				break;
+			default: throw new UnsupportedOperationException("Unsupported this db type: "+ genDataSource.getType());
+		}
+
+		Assert2.notNullOf(className, "className");
+		Assert2.notNullOf(url, "url");
+
+		try {
+			Class.forName(className);
+			DriverManager.getConnection(url,genDataSource.getUsername(),genDataSource.getPassword());
+		} catch (ClassNotFoundException | SQLException e) {
+			throw new SQLException("connect fail",e);
+		}
 	}
 
 }

@@ -17,6 +17,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
+
 <#list attrTypes as attrType>
 import ${attrType};
 </#list>
@@ -34,6 +37,7 @@ import ${attrType};
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 //@RequiredArgsConstructor(access = AccessLevel.PUBLIC, staticName = "new${entityName?cap_first}")
 @ApiModel("${comments}")<#--TODO 解决换行和双引号 写在basespecs用javaspecs-->
+@ColumnWidth(40)
 public class ${entityName?cap_first} extends BaseBean {
 	private static final long serialVersionUID = ${javaSpecs.genSerialVersionUID()}L;
 <#list genTableColumns as param>
@@ -43,6 +47,7 @@ public class ${entityName?cap_first} extends BaseBean {
 	 * ${param.columnComment}
 	 */
     @ApiModelProperty("${param.columnComment}")<#--TODO 解决换行和双引号 写在basespecs用javaspecs-->
+    @ExcelProperty(value = { "${param.columnComment}" })
 	private ${javaSpecs.toSimpleJavaType(param.attrType)} ${param.attrName};
 	</#if>
 </#list>

@@ -18,6 +18,7 @@ package com.wl4g.devops.dts.codegen.service;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -34,4 +35,6 @@ public interface GenDataSourceService {
 	GenDataSource detail(Integer id);
 
 	void del(Integer id);
+
+	void testConnectDb(GenDataSource genDataSource) throws SQLException;
 }

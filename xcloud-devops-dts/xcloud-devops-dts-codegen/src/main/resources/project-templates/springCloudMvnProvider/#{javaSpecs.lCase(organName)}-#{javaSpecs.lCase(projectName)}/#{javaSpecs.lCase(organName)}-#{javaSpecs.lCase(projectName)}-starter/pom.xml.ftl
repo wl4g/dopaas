@@ -66,8 +66,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					${r'<source>${java.version}</source>'}
+					${r'<target>${java.version}</target>'}
 				</configuration>
 			</plugin>
 			<plugin>
@@ -89,7 +89,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<finalName>${final.name}-${project.version}-bin</finalName>
+					${r'<finalName>${final.name}-${project.version}-bin</finalName>'}
 					<!-- not append assembly id in release file name -->
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>

@@ -30,6 +30,14 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-components-core</artifactId>
 		</dependency>
+		<dependency> <!-- https://github.com/springfox/springfox-demos -->
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -37,8 +45,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					${r'<source>${java.version}</source>'}
+					${r'<target>${java.version}</target>'}
 				</configuration>
 			</plugin>
 			<plugin>

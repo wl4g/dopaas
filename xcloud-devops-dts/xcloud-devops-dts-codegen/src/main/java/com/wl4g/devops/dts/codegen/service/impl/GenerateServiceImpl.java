@@ -51,6 +51,9 @@ import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
 
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
+
+
 /**
  * {@link GenerateServiceImpl}
  *
@@ -120,18 +123,24 @@ public class GenerateServiceImpl implements GenerateService {
 		tab.setTableName(metadata.getTableName());
 		tab.setComments(metadata.getComments());
 
+		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
+
+
 		List<GenTableColumn> cols = new ArrayList<>();
 		for (ColumnMetadata colmd : metadata.getColumns()) {
 			GenTableColumn col = new GenTableColumn();
 			col.setColumnName(colmd.getColumnName());
-			col.setColumnComment(colmd.getComments());
+			// ColumnComment replace \n to space
+			if(StringUtils.isNotBlank(colmd.getComments())){
+				col.setColumnComment(colmd.getComments().replaceAll("\n","  "));
+			}
 			col.setColumnType(colmd.getColumnType());
 			col.setSimpleColumnType(colmd.getSimpleColumnType());
 			col.setAttrName(underlineToHump(colmd.getColumnName()));
-			// TODO
+
 			// Converting java type
 			DbTypeConverter conv = converter.forOperator(dataSource.getType());
-			col.setAttrType(conv.convertBy(CodeLanguage.JAVA, MappedMatcher.Column2Lang, col.getSimpleColumnType()));
+			col.setAttrType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Lang, col.getSimpleColumnType()));
 
 			// Sets defaults
 			col.setIsInsert("1");
@@ -150,7 +159,7 @@ public class GenerateServiceImpl implements GenerateService {
 			} else {
 				col.setIsPk("0");
 			}
-			setDefaultQueryType(colmd, col);
+			setDefaultShowType(colmd, col);
 			cols.add(col);
 		}
 		tab.setGenTableColumns(cols);
@@ -164,15 +173,15 @@ public class GenerateServiceImpl implements GenerateService {
 	 * @param colmd
 	 * @param col
 	 */
-	private void setDefaultQueryType(ColumnMetadata colmd, GenTableColumn col) {
+	private void setDefaultShowType(ColumnMetadata colmd, GenTableColumn col) {
 		if (StringUtils.equalsAnyIgnoreCase(colmd.getSimpleColumnType(), "DATE")) {
-			col.setQueryType("7");//Date
+			col.setShowType("7");//Date
 		} else if (StringUtils.equalsAnyIgnoreCase(colmd.getSimpleColumnType(), "DATETIME", "TIMESTAMP")) {
-			col.setQueryType("8");//DateTime
+			col.setShowType("8");//DateTime
 		} else if (StringUtils.equalsAnyIgnoreCase(colmd.getSimpleColumnType(), "TEXT")) {
-			col.setQueryType("2");//textarea
+			col.setShowType("2");//textarea
 		} else {
-			col.setQueryType("1");//normal input
+			col.setShowType("1");//normal input
 		}
 	}
 
