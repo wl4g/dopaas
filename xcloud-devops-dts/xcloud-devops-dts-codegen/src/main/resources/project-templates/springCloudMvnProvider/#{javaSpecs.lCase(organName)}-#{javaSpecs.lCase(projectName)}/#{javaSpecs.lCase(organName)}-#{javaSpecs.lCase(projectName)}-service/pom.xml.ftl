@@ -36,22 +36,34 @@
 			<artifactId>${organName?uncap_first}-${projectName?uncap_first}-dao</artifactId>
 			<version>${version?uncap_first}</version>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-shell-cli</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-shell-springboot</artifactId> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-components-support</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-cli</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-springboot</artifactId>
-		</dependency> -->
+		<#-- refer: Run entry: XxxServer.java -->
+		<#if javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "cluster")>
+		<#-- Authentication center services and business applications are deployed separately and 
+			run in different JVM processes.(e.g: Microservice cluster architecture) -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-client</artifactId>
 		</dependency>
+		<#elseif javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "local")>
+		<#-- Authentication logic and business application depend on deployment and are coupled in 
+			the same JVM process.(e.g: Local monomer application) -->
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-core</artifactId>
+		</dependency>
+		</#if>
 	</dependencies>
 	<build>
 		<plugins>

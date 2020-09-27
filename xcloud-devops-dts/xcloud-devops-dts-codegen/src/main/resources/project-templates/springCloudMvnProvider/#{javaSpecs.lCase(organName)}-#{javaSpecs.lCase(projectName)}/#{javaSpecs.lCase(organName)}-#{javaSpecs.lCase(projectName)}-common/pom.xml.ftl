@@ -30,6 +30,10 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-components-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-common</artifactId>
+		</dependency>
 		<dependency> <!-- https://github.com/springfox/springfox-demos -->
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>

@@ -111,6 +111,9 @@ public interface GeneratorProvider extends Runnable {
 
 		ExtSpringCloudMvnBuildAssetsType(new ConfigOption(SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
 
+		ExtSpringCloudMvnIamSecurityMode(
+				new ConfigOption(SPINGCLOUD_MVN, "gen.iam.security-mode", "local", "cluster", "gateway")),
+
 		ExtVueJSCompression(new ConfigOption(VUEJS, "gen.compression", "true", "false")),
 
 		ExtVueJSBasedOnAdminUi(new ConfigOption(VUEJS, "gen.basedon.adminui", "true", "false")),

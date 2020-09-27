@@ -24,8 +24,8 @@ import org.apache.commons.codec.net.URLCodec;
 import javax.validation.constraints.NotBlank;
 import java.util.*;
 
+import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.io.ByteStreamUtils.readFullyToString;
 import static com.wl4g.components.common.jvm.JvmRuntimeKit.isJVMDebugging;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
@@ -202,7 +202,12 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 		if (i >= 0) {
 			pathname = pathname.substring(i + projectRootPathPart.length());
 		}
-		return new TemplateResourceWrapper(pathname, readFullyToString(res.getInputStream()));
+
+		try {
+			return new TemplateResourceWrapper(pathname, toByteArray(res.getInputStream()));
+		} finally {
+			res.getInputStream().close();
+		}
 	}
 
 	// Template configuration.
