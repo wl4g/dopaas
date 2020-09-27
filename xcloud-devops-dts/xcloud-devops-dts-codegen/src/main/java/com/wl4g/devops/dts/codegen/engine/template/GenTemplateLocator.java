@@ -191,7 +191,8 @@ public interface GenTemplateLocator {
 		public String toString() {
 			return getClass().getSimpleName().concat(" - ").concat("pathname: ").concat(pathname).concat(", isTemplate: ")
 					.concat(valueOf(isRender)).concat(", isForeachEntitys: ").concat(valueOf(isForeachEntitys))
-					.concat(", isForeachModules: ").concat(valueOf(isForeachModules));
+					.concat(", isForeachModules: ")
+					.concat(valueOf(isForeachModules).concat(", hasDirective: ").concat(valueOf(hasDirective)));
 		}
 
 	}

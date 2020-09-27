@@ -34,6 +34,7 @@ import static java.util.regex.Pattern.compile;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 
 /**
@@ -109,7 +110,7 @@ public class JavaSpecs extends BaseSpecs {
 		if (isBlank(str)) {
 			return str;
 		}
-		return str.replaceAll("\\.", File.separator);
+		return replace(str, ".", File.separator);
 	}
 
 	/**
