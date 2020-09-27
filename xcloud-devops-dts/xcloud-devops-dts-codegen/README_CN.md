@@ -49,7 +49,7 @@ mvn clean install -DskipTests -T 2C
                     │   │   ├── MySQLV5MetadataResolver.java // (D)多种数据库表元数据解析器(支持MySQL/Oracle/PostgreSQL)
                     // 省略无关代码...
                     │   ├── specs
-                    │   │   ├── JavaSpecs.java // (E)多种语言项目生成，需要有不同的代码规范处理工具类(支持Java/Golang/Python/Csharp/Vue)
+                    │   │   ├── JavaSpecs.java // (E)多种语言项目生成，需要有特定不同的规范处理工具类(支持Java/Golang/Python/Csharp/Vue)
                     │   └── template
                     │       ├── ClassPathGenTemplateLocator.java // (F)多种方式的模版工程加载器
                     // 省略无关代码...

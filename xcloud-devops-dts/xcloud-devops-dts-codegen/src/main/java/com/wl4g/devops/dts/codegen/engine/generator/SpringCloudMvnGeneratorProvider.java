@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 public class SpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvider {
 
 	public SpringCloudMvnGeneratorProvider(@NotNull GenerateContext context) {
-		super(context);
+		super(context, null);
 	}
 
 	@Override

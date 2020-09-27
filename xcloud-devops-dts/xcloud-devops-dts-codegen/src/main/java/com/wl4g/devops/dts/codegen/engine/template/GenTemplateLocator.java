@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.StringUtils2.getFilename;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_MODULE_NAME;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_TABLE_ENTITY_NAME;
@@ -100,6 +101,11 @@ public interface GenTemplateLocator {
 		private final boolean isForeachModules;
 
 		/**
+		 * 'has' directive.
+		 */
+		private final String hasDirective;
+
+		/**
 		 * Constructor
 		 */
 		public TemplateResourceWrapper(@NotBlank String pathname, @Nullable String content) {
@@ -118,6 +124,21 @@ public interface GenTemplateLocator {
 			 * {@link com.wl4g.devops.dts.codegen.bean.GenTable#entityName}
 			 */
 			this.isForeachEntitys = contains(pathname, GEN_TABLE_ENTITY_NAME); // Entitys
+
+			// 'has' directive.
+			int pindex1 = pathname.indexOf(DIRECTIVE_HAS_PREFIX);
+			int pindex2 = pathname.indexOf(DIRECTIVE_HAS_PREFIX);
+			int sindex1 = pathname.indexOf(DIRECTIVE_HAS_SUFFIX);
+			int sindex2 = pathname.indexOf(DIRECTIVE_HAS_SUFFIX);
+			isTrue((pindex1 == pindex2 && sindex1 == sindex2),
+					"Syntax of illegal directive: %s{variable}%s, same template path can only be used once.",
+					DIRECTIVE_HAS_PREFIX, DIRECTIVE_HAS_SUFFIX);
+
+			if (pindex1 > 0 && pindex1 < sindex1) { // e.g: @has-{isPageEdit}@
+				this.hasDirective = pathname.substring(pindex1 + DIRECTIVE_HAS_PREFIX.length(), sindex1);
+			} else {
+				this.hasDirective = null;
+			}
 		}
 
 		public final String getPathname() {
@@ -144,6 +165,19 @@ public interface GenTemplateLocator {
 			return isForeachModules;
 		}
 
+		public String getHasDirective() {
+			return hasDirective;
+		}
+
+		/**
+		 * Check if the 'has' command is used
+		 * 
+		 * @return
+		 */
+		public boolean isHasDirective() {
+			return !isBlank(hasDirective);
+		}
+
 		/**
 		 * Validation
 		 */
@@ -166,5 +200,27 @@ public interface GenTemplateLocator {
 	 * Default load template suffix.
 	 */
 	public static final String DEFAULT_TPL_SUFFIX = ".ftl";
+
+	/**
+	 * Used to dynamically control whether to render and write code files.
+	 * 
+	 * <p>
+	 * for example:
+	 * 
+	 * <pre>
+	 * Template File: src/views/moduleName1/@has-isPageEdit@entityName1Edit.vue
+	 * 
+	 * <b>Case1: (When variable 'isPageEdit' is not empty)</b>
+	 * Result: WriteFile(src/views/moduleName1/@has-{isPageEdit}@entityName1Edit.vue)</br>
+	 * 
+	 * <b>Case2: (When variable 'isPageEdit' is empty)</b>
+	 * Result: The template is not rendered and output.
+	 * 
+	 * </pre>
+	 * 
+	 * </p>
+	 */
+	public static final String DIRECTIVE_HAS_PREFIX = "@has-{";
+	public static final String DIRECTIVE_HAS_SUFFIX = "}@";
 
 }

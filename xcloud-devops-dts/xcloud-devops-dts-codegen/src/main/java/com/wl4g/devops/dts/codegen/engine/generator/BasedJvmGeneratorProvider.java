@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
@@ -23,6 +24,8 @@ import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateRe
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
+
+import java.util.Map;
 import java.util.Set;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
@@ -43,9 +46,9 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
  */
 public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvider {
 
-	public BasedJvmGeneratorProvider(@NotNull GenerateContext context) {
+	public BasedJvmGeneratorProvider(@NotNull GenerateContext context, @Nullable Map<String, Object> defaultSubModels) {
 		// Add model for naming utils.
-		super(context);
+		super(context, defaultSubModels);
 	}
 
 	@Override

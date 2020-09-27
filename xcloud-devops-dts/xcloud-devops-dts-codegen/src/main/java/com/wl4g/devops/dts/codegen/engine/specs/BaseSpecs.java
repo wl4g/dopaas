@@ -30,13 +30,13 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * Common base language specification of {@link BaseSpecs}
+ * Generic base specification utility.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-16
  * @since
  */
-public abstract class BaseSpecs {
+public class BaseSpecs {
 
 	/**
 	 * Gets the string that converts the first letter to uppercase

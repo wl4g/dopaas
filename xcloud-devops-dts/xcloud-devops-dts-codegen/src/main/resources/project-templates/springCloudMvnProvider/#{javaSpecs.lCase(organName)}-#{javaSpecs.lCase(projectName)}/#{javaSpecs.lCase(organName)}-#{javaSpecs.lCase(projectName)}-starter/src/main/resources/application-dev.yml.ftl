@@ -9,7 +9,7 @@
 # limitations under the License.
 #
 
-<#assign topDomain =  organName?lower_case + '.debug' />
+<#assign topDomain = organName?lower_case + '.debug' />
 
 # #### Environment(Dev) configuration. ####
 #
@@ -38,7 +38,7 @@ spring:
           # logic is in global_variable.js:55, related database table: app_cluster_config
           server-uri: http://${topDomain}:14040/iam-server
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://${topDomain}:8080/#/umc/config
+          success-uri: http://${topDomain}:8080/#/home
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
