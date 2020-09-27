@@ -33,7 +33,7 @@ import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	public PythonStandardGeneratorProvider(@NotNull GenerateContext context) {
-		super(context);
+		super(context, null);
 	}
 
 	@Override

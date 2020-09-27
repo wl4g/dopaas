@@ -46,12 +46,12 @@ public class CodegenConsole {
 	@Autowired
 	protected GenTemplateLocator locator;
 
-	@ShellMethod(keys = { "refreshTpl" }, group = DEF_CONSOLE_GROUP, help = "Refresh generators templates cache.")
+	@ShellMethod(keys = { "refreshTplCache" }, group = DEF_CONSOLE_GROUP, help = "Refresh generators templates cache.")
 	public void refreshTemplateCache(SimpleShellContext context) {
 		context.printf("Cleaning generate templates cache...");
 		locator.cleanAll();
 
-		context.printf("Cleaned generate templates.");
+		context.printf("Cleaned generate templates cache.");
 		context.completed();
 	}
 

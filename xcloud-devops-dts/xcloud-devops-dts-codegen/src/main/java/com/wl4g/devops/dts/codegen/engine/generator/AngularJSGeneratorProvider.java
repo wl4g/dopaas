@@ -33,7 +33,7 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
 
 	public AngularJSGeneratorProvider(@NotNull GenerateContext context) {
-		super(context);
+		super(context, null);
 	}
 
 	@Override

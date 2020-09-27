@@ -22,6 +22,7 @@ import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.exception.RenderingGenerateException;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
@@ -37,13 +38,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.wl4g.components.common.collection.Collections2.safeArray;
+import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
-import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.firstLCase;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
@@ -73,10 +72,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 */
 	protected final MapRenderModel primaryModel;
 
-	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Object... defaultSubModels) {
+	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Map<String, Object> defaultFlatModel) {
 		this.context = notNullOf(context, "context");
 		// Primary rendering model.
-		this.primaryModel = initPrimaryRenderingModel(context.getConfiguration(), context, defaultSubModels);
+		this.primaryModel = initPrimaryRenderingModel(context.getConfiguration(), context, defaultFlatModel);
 	}
 
 	/**
@@ -272,18 +271,25 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// Step1: Add customize model.
 		customizeRenderingModel(tplResource, model);
 
-		// Step2: Preparing rendering.
+		// Step2: Process internal 'has' directive.
+		if (tplResource.isHasDirective() && !model.containsKey(tplResource.getHasDirective())) {
+			// If the 'has' directive is enabled, but there is no corresponding
+			// variable in the model, the file will not be rendered and saved.
+			return null;
+		}
+
+		// Step3: Preparing rendering.
 		String renderedString = preRendering(tplResource, model);
 		renderedString = isBlank(renderedString) ? tplResource.getContent() : renderedString; // Fallback
 
-		// Step3: Core rendering.
+		// Step4: Core rendering.
 		Template template = new Template(tplResource.getName(), renderedString, defaultGenConfigurer);
 		renderedString = renderingTemplateToString(template, model);
 
-		// Step4: Resolve template path.
+		// Step5: Resolve template path.
 		String writePath = resolveTemplatePath(tplResource, model);
 
-		// Step5: Call post rendered.
+		// Step6: Call post rendered.
 		postRenderingComplete(tplResource, renderedString, writePath);
 
 		return writePath;
@@ -294,11 +300,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * 
 	 * @param config
 	 * @param context
-	 * @param defaultSubModels
+	 * @param defaultFlatModel
 	 * @return
 	 */
 	private final MapRenderModel initPrimaryRenderingModel(CodegenProperties config, GenerateContext context,
-			@Nullable Object... defaultSubModels) {
+			@Nullable Map<String, Object> defaultFlatModel) {
 		MapRenderModel model = new MapRenderModel(config.isAllowRenderingCustomizeModelOverride());
 
 		try {
@@ -328,17 +334,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			}
 			model.put(GEN_MODULE_MAP, moduleMap);
 
-			// Step5: Add default models.
+			// Step5: Merge and add default model.
 			//
-			newArrayList(safeArray(Object.class, defaultSubModels)).forEach(subModel -> {
-				if (subModel instanceof Class) {
-					// e.g: JavaSpecs => JavaSpecs.class
-					model.put(subModel.getClass().getSimpleName(), subModel);
-				} else {
-					// e.g: javaSpecs => new JavaSpecs()
-					model.put(firstLCase(subModel.getClass().getSimpleName()), subModel);
-				}
-			});
+			Map<String, Object> mergeDefaultModel = ensureMap(defaultFlatModel);
+			mergeDefaultModel.put(GEN_COMMON_BASESPECS, new BaseSpecs());
+			mergeDefaultModel.forEach((key, value) -> model.put(key, value));
 
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
