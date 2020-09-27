@@ -59,8 +59,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					${r'<source>${java.version}</source>'}
+					${r'<target>${java.version}</target>'}
 				</configuration>
 			</plugin>
 			<plugin>

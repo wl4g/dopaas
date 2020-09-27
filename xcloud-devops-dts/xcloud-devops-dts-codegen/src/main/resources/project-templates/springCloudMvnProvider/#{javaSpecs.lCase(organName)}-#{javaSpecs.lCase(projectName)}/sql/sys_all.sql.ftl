@@ -548,14 +548,6 @@ CREATE TABLE `sys_company` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Records of sys_company
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_company` VALUES (2, 7, 'adsf', 'asdf', 'adsf', 'asdf');
-INSERT INTO `sys_company` VALUES (3, 2, NULL, NULL, NULL, NULL);
-COMMIT;
-
--- ----------------------------
 -- Table structure for sys_contact
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_contact`;
@@ -946,77 +938,7 @@ CREATE TABLE `sys_group_menu` (
   CONSTRAINT `sys_group_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-menu中间表';
 
--- ----------------------------
--- Records of sys_group_menu
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_group_menu` VALUES (46, 7, 1, 1, '2019-11-19 14:56:44');
-INSERT INTO `sys_group_menu` VALUES (47, 7, 7, 1, '2019-11-19 14:56:44');
-INSERT INTO `sys_group_menu` VALUES (127, 1, 1, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (128, 1, 2, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (130, 1, 4, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (131, 1, 5, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (132, 1, 6, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (133, 1, 7, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (134, 1, 8, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (135, 1, 9, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (136, 1, 10, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (137, 1, 11, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (138, 1, 12, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (139, 1, 13, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (140, 1, 14, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (141, 1, 15, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (142, 1, 16, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (143, 1, 17, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (144, 1, 18, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (145, 1, 19, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (146, 1, 20, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (147, 1, 21, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (148, 1, 22, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (149, 1, 23, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (150, 1, 24, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (151, 1, 25, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (152, 1, 26, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (153, 1, 27, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (154, 1, 28, 1, '2019-11-26 14:04:16');
-INSERT INTO `sys_group_menu` VALUES (166, 2, 1, 1, '2019-11-26 14:05:06');
-INSERT INTO `sys_group_menu` VALUES (167, 2, 33, 1, '2019-11-26 14:05:06');
-INSERT INTO `sys_group_menu` VALUES (168, 2, 34, 1, '2019-11-26 14:05:06');
-INSERT INTO `sys_group_menu` VALUES (169, 2, 7, 1, '2019-11-26 14:05:06');
-INSERT INTO `sys_group_menu` VALUES (170, 2, 8, 1, '2019-11-26 14:05:06');
-INSERT INTO `sys_group_menu` VALUES (171, 2, 9, 1, '2019-11-26 14:05:06');
-INSERT INTO `sys_group_menu` VALUES (172, 2, 10, 1, '2019-11-26 14:05:06');
-INSERT INTO `sys_group_menu` VALUES (328, 3, 1, 1, '2019-11-26 14:09:56');
-INSERT INTO `sys_group_menu` VALUES (329, 3, 7, 1, '2019-11-26 14:09:56');
-INSERT INTO `sys_group_menu` VALUES (330, 5, 1, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (331, 5, 2, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (333, 5, 4, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (334, 5, 5, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (335, 5, 6, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (336, 5, 7, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (337, 5, 8, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (338, 5, 11, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (339, 5, 12, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (340, 5, 13, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (341, 5, 14, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (342, 5, 15, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (343, 5, 16, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (344, 5, 17, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (345, 5, 18, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (346, 5, 19, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (347, 5, 20, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (348, 5, 21, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (349, 5, 22, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (350, 5, 23, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (351, 5, 24, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (352, 5, 25, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (353, 5, 26, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (354, 5, 27, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (355, 5, 28, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (358, 5, 31, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (359, 5, 33, 1, '2019-11-26 14:10:19');
-INSERT INTO `sys_group_menu` VALUES (360, 5, 34, 1, '2019-11-26 14:10:19');
-COMMIT;
+
 
 -- ----------------------------
 -- Table structure for sys_group_role
@@ -1035,12 +957,7 @@ CREATE TABLE `sys_group_role` (
   CONSTRAINT `sys_group_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-role中间表';
 
--- ----------------------------
--- Records of sys_group_role
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_group_role` VALUES (1875447208, 4, 1, 1, '2020-06-12 10:04:24');
-COMMIT;
+
 
 -- ----------------------------
 -- Table structure for sys_group_user
@@ -1059,19 +976,6 @@ CREATE TABLE `sys_group_user` (
   CONSTRAINT `sys_group_user_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-user中间表';
 
--- ----------------------------
--- Records of sys_group_user
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_group_user` VALUES (2, 4, 1, 1, '2019-10-29 14:56:07');
-INSERT INTO `sys_group_user` VALUES (18, 2, 1, 1, '2019-10-30 18:29:40');
-INSERT INTO `sys_group_user` VALUES (20, 1, 1, 1, '2019-11-05 13:58:00');
-INSERT INTO `sys_group_user` VALUES (23, 4, 5, 1, '2019-11-26 14:10:52');
-INSERT INTO `sys_group_user` VALUES (26, 3, 8, 1, '2019-11-26 14:11:11');
-INSERT INTO `sys_group_user` VALUES (27, 5, 8, 1, '2019-11-26 14:11:11');
-INSERT INTO `sys_group_user` VALUES (1310465345, 5, 7, 1, '2020-06-12 10:03:53');
-INSERT INTO `sys_group_user` VALUES (2073858682, 3, 7, 1, '2020-06-12 10:03:53');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -1105,85 +1009,31 @@ CREATE TABLE `sys_menu` (
 -- Records of sys_menu
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_menu` VALUES (1, 'CI/CD Deliverys', '集成交付', 1, 'classifyA', 1, 0, 0, NULL, 'ci', '/ci', '/ci', NULL, 'icon-ziyuanguanli', 300, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:51:02', 0);
-INSERT INTO `sys_menu` VALUES (2, 'Monitoring Services', '监控中心', 1, 'classifyB', 1, 0, 0, NULL, 'umc', '/umc', '/umc', NULL, 'icon-jiankong', 200, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:52:04', 0);
-INSERT INTO `sys_menu` VALUES (4, 'Distributed Configuration', '配置中心', 1, 'classifyG', 1, 0, 0, NULL, 'scm', '/scm', '/scm', NULL, 'icon-peizhizhongxin', 500, 1, '2019-10-31 17:25:49', 1, '2020-08-26 12:54:34', 0);
 INSERT INTO `sys_menu` VALUES (5, 'System Settings', '系统设置', 1, NULL, 1, 0, 0, NULL, 'iam', '/iam', '/iam', NULL, 'icon-xitongshezhi', 900, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:49:57', 0);
-INSERT INTO `sys_menu` VALUES (6, 'CMDB Management', '资产管理', 1, 'classifyE', 1, 0, 0, NULL, 'erm', '/erm', '/erm', NULL, 'icon-zichanguanli', 800, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:51:36', 0);
-INSERT INTO `sys_menu` VALUES (7, 'Pipelines', '任务流水线', 1, 'classifyA', 2, 0, 1, NULL, 'ci:pipeline', '/ci/pipeline/Pipeline', '/ci/pipeline', NULL, 'icon-liushuixian', 301, 1, '2019-10-31 10:01:57', 1, '2020-08-26 13:00:21', 0);
-INSERT INTO `sys_menu` VALUES (8, 'Building Scheduler', '构建计划', 1, 'classifyA', 2, 0, 1, NULL, 'ci:trigger', '/ci/trigger/Trigger', '/ci/trigger', NULL, 'icon-zhixingjihua', 304, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:12:18', 0);
-INSERT INTO `sys_menu` VALUES (9, 'Run Records', '运行记录', 1, 'classifyA', 2, 0, 1, NULL, 'ci:pipehis', '', '', NULL, 'icon-yunxingrizhi', 303, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:00:51', 0);
-INSERT INTO `sys_menu` VALUES (10, 'Project Configuration', '项目配置', 1, 'classifyA', 2, 0, 1, NULL, 'ci:projectconfig', '', '', NULL, 'icon-chakanyilaiguanxishu', 306, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:40:45', 0);
 INSERT INTO `sys_menu` VALUES (11, 'Online Users', '在线用户', 1, NULL, 2, 0, 5, NULL, 'iam:online', '/iam/online/Online', '/iam/online', NULL, 'icon-zaixianyonghu', 902, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:55:12', 0);
 INSERT INTO `sys_menu` VALUES (12, 'Users', '用户管理', 1, NULL, 2, 0, 5, NULL, 'iam:user', '/iam/user/User', '/iam/user', NULL, 'icon-yonghuguanli', 903, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:58', 0);
 INSERT INTO `sys_menu` VALUES (13, 'Menus', '菜单配置', 1, NULL, 2, 0, 5, NULL, 'iam:menu', '/iam/menu/Menu', '/iam/menu', NULL, 'icon-caidan', 906, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:13', 0);
 INSERT INTO `sys_menu` VALUES (14, 'Organizations', '组织机构', 1, NULL, 2, 0, 5, NULL, 'iam:group', '/iam/group/Group', '/iam/group', NULL, 'icon-organization', 905, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:07', 0);
 INSERT INTO `sys_menu` VALUES (15, 'Roles', '角色管理', 1, NULL, 2, 0, 5, NULL, 'iam:role', '/iam/role/Role', '/iam/role', NULL, 'icon-jiaoseguanli', 904, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:03', 0);
-INSERT INTO `sys_menu` VALUES (16, 'Configure', '配置列表', 1, 'classifyG', 2, 0, 4, NULL, 'scm:configuration', '/scm/configuration/Configuration', '/scm/configuration', NULL, 'icon-yonghupeizhi', 801, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:27', 0);
-INSERT INTO `sys_menu` VALUES (17, 'Historical Versions', '发布版本', 1, 'classifyG', 2, 0, 4, NULL, 'scm:historic', '/scm/historic/Historic', '/scm/historic', NULL, 'icon-fabu', 802, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:34', 0);
-INSERT INTO `sys_menu` VALUES (18, 'Push Tracks', '推送轨迹', 1, 'classifyG', 2, 0, 4, NULL, 'scm:track', '/scm/track/Track', '/scm/track', NULL, 'icon-bianpaixin', 803, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:40', 0);
-INSERT INTO `sys_menu` VALUES (19, 'APP Cluster', '集群管理', 1, 'classifyE', 3, 0, 52752528, NULL, 'erm:cluster', '/erm/cluster/Cluster', '/erm/cluster', NULL, 'icon-jiqun', 5021, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:34:50', 0);
 INSERT INTO `sys_menu` VALUES (20, 'Dictionaries', '字典配置', 1, NULL, 2, 0, 5, NULL, 'iam:dict', '/iam/dict/Dict', '/iam/dict', NULL, 'icon-zidianguanli', 907, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:18', 0);
 INSERT INTO `sys_menu` VALUES (21, 'Notifications', '通知设置', 1, NULL, 2, 0, 5, NULL, 'iam:contact', '/iam/contact/Contact', '/iam/contact', NULL, 'icon-lianxiren', 901, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:52', 0);
-INSERT INTO `sys_menu` VALUES (22, 'Log Console', '日志控制台', 1, 'classifyE', 3, 0, 18148396, NULL, 'erm:console', '/erm/console/Console', '/erm/console', NULL, 'icon-yunxingrizhi', 5011, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:33:41', 0);
-INSERT INTO `sys_menu` VALUES (23, 'SBA Monitor', 'SBA监控', 2, 'classifyB', 2, 0, 2, NULL, 'umc:sbamonitor', 'http://www.baidu.com', '/umc/sbamonitor', NULL, 'icon-jiankong', 201, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:24:47', 0);
-INSERT INTO `sys_menu` VALUES (24, 'Biz Traffic', '业务流量', 1, 'classifyB', 2, 0, 2, NULL, 'umc:biztraffic', '/umc/biztraffic/Biztraffic', '/umc/biztraffic', NULL, 'icon-liuliang', 202, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:24:54', 0);
-INSERT INTO `sys_menu` VALUES (25, 'Alarm Logs', '告警事件', 1, 'classifyB', 2, 0, 61481, NULL, 'umc:record', '/umc/record/Record', '/umc/record', NULL, 'icon-alarm', 2041, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:27:59', 0);
-INSERT INTO `sys_menu` VALUES (26, 'Rules Config', '规则配置', 1, 'classifyB', 2, 0, 61481, NULL, 'umc:config', '/umc/config/Config', '/umc/config', NULL, 'icon-gaojingshezhi', 2042, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:28:03', 0);
-INSERT INTO `sys_menu` VALUES (27, 'Alarm Template', '规则模板', 1, 'classifyB', 2, 0, 61481, NULL, 'umc:templat', '/umc/templat/Templat', '/umc/templat', NULL, 'icon-moban', 2043, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:28:06', 0);
-INSERT INTO `sys_menu` VALUES (28, 'Metric Template', '度量字典', 1, 'classifyB', 2, 0, 61481, NULL, 'umc:metrictemplate', '/umc/metrictemplate/MetricTemplate', '/umc/metrictemplate', NULL, 'icon-duliang', 2044, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:28:10', 0);
-INSERT INTO `sys_menu` VALUES (31, 'Alarm Config list', '告警配置列表', 3, 'classifyB', 0, 0, 26, NULL, 'umc:config:list', 'http://10.0.0.161:3000/', '/umc/config/list', NULL, '', 20421, 1, '2019-11-05 17:03:05', 1, '2020-08-26 12:28:18', 0);
-INSERT INTO `sys_menu` VALUES (32, 'Repositorys', '源码仓库', 1, 'classifyE', 2, 0, 54, NULL, 'vcs:vcs', '/vcs/vcs/Vcs', '/vcs/vcs', NULL, 'icon-cangku', 401, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:47:16', 0);
 INSERT INTO `sys_menu` VALUES (33, 'Home', '主页', 1, NULL, 1, 0, 0, NULL, 'home', '', '/home', NULL, 'icon-zhuye', 100, 1, '2019-11-26 10:42:01', 1, '2020-08-26 12:23:21', 0);
 INSERT INTO `sys_menu` VALUES (34, 'Overview', '概览', 1, NULL, 2, 0, 33, NULL, 'home:overview', '/home/overview/Overview', '/home/overview', NULL, 'icon-gailan', 101, 1, '2019-11-26 10:42:33', 1, '2020-08-26 12:24:40', 0);
-INSERT INTO `sys_menu` VALUES (35, 'Hosts', '主机管理', 1, 'classifyE', 3, 0, 18148395, NULL, 'erm:host', '/erm/host/Host', '/erm/host', NULL, 'icon-host', 5051, 1, '2019-11-26 18:10:09', 1, '2020-08-26 12:37:46', 0);
-INSERT INTO `sys_menu` VALUES (36, 'Safety Quality', '安全与质量', 1, 'classifyD', 2, 0, 1, NULL, 'ci:analysis', '', '/analysis', NULL, 'icon-zhiliang', 309, 1, '2019-12-04 11:21:38', 1, '2020-08-26 13:01:22', 0);
-INSERT INTO `sys_menu` VALUES (40, 'PackageAnalyzer', '安装包分析', 2, 'classifyD', 3, 0, 36, NULL, 'ci:analysis:package', 'https://www.baidu.com/', '/ci/analysis/package', NULL, '', 3042, 1, '2019-12-17 10:00:05', 1, '2020-08-26 12:26:46', 0);
-INSERT INTO `sys_menu` VALUES (41, 'CodeAnalyzer', '源码分析', 2, 'classifyD', 3, 0, 36, NULL, 'ci:analysis:code', 'https://fanyi.baidu.com/', '/ci/analysis/code', NULL, '', 3043, 1, '2019-12-17 10:00:32', 1, '2020-08-26 12:26:53', 0);
-INSERT INTO `sys_menu` VALUES (45, 'btntest', '按钮权限测试', 3, 'classifyE', 0, 0, 36, NULL, 'ci:btntest', '', '', NULL, '', 3041, 1, '2020-01-03 15:06:19', 1, '2020-08-26 12:26:35', 0);
-INSERT INTO `sys_menu` VALUES (46, 'Project Coordinations', '项目协作', 1, 'classifyA', 2, 0, 1, NULL, 'ci:pcm', '/ci/pcm/Pcm', '/ci/pcm', NULL, 'icon-pcm', 307, 1, '2019-10-31 10:01:57', 1, '2020-08-26 13:04:05', 0);
-INSERT INTO `sys_menu` VALUES (47, 'Docs Management', '文档管理', 1, 'classifyH', 1, 0, 0, NULL, 'doc', '/doc', '/doc', NULL, 'icon-wendangguanli-xiangmuleiwendang', 600, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:50:33', 0);
-INSERT INTO `sys_menu` VALUES (48, 'Documents', '文档管理', 1, 'classifyH', 2, 0, 47, NULL, 'doc:file', '/doc/file/File', '/doc/file', NULL, 'icon-wendangguanli-xiangmuleiwendang', 601, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:47:42', 0);
-INSERT INTO `sys_menu` VALUES (49, 'Shares', '分享管理', 1, 'classifyH', 2, 0, 47, NULL, 'doc:share', '/doc/share/Share', '/doc/share', NULL, 'icon-fenxiang3', 602, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:39:03', 0);
-INSERT INTO `sys_menu` VALUES (50, 'Labels', '标签管理', 1, 'classifyH', 2, 0, 47, NULL, 'doc:label', '/doc/label/Label', '/doc/label', NULL, 'icon-clip', 603, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:39:07', 0);
-INSERT INTO `sys_menu` VALUES (51, 'Orchestrations', '任务编排', 1, 'classifyA', 2, 0, 1, NULL, 'ci:orchestration', '/ci/orchestration/Orchestration', '/ci/orchestration', NULL, 'icon-yonghupeizhi', 302, 1, '2019-10-31 10:01:57', 1, '2020-08-26 13:43:02', 0);
-INSERT INTO `sys_menu` VALUES (52, 'Object Storage Management', '对象存储', 1, 'classifyE', 1, 0, 0, NULL, 'coss', '/coss', '/coss', NULL, 'icon-duixiangcunchuOSS', 700, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:59:14', 0);
-INSERT INTO `sys_menu` VALUES (53, 'Buckets', 'Bucket管理', 1, 'classifyF', 2, 0, 52, NULL, 'coss:bucket', '/coss/bucket/Bucket', '/coss/bucket', NULL, 'icon-Bucket', 701, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:47:27', 0);
-INSERT INTO `sys_menu` VALUES (54, 'VCS Manangement', '仓库管理', 1, 'classifyE', 1, 0, 0, NULL, 'vcs', '/vcs', '/vcs', NULL, 'icon-gailan', 701, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:58:06', 0);
-INSERT INTO `sys_menu` VALUES (101, 'Project Dependencies', '依赖关系', 1, 'classifyA', 3, 0, 10, NULL, 'ci:project', '/ci/project/Project', '/ci/project', NULL, 'icon-chakanyilaiguanxishu', 3032, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:09:47', 0);
-INSERT INTO `sys_menu` VALUES (102, 'ClusterExtension', '集群配置', 1, 'classifyA', 3, 0, 10, NULL, 'ci:clusterextension', '/ci/clusterextension/ClusterExtension', '/ci/clusterextension', NULL, 'icon-jiqun', 3031, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:09:50', 0);
-INSERT INTO `sys_menu` VALUES (103, 'Developers Suite', '开发者套件', 1, 'classifyA', 1, 0, 0, NULL, 'dts', '/dts', '/dts', NULL, 'icon-ziyuanguanli', 400, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:51:02', 0);
-INSERT INTO `sys_menu` VALUES (13582, 'Rule Engine', '规则引擎', 1, 'classifyB', 3, 0, 85782, NULL, 'umc:custom:rule', '/umc/engine/Engine', '/umc/custom/engine', '_self', 'icon-wenjian', 2031, 1, '2020-03-27 12:59:53', 1, '2020-08-26 12:27:24', 0);
-INSERT INTO `sys_menu` VALUES (36327, 'DataSource', '数据源配置', 1, 'classifyB', 3, 0, 85782, NULL, 'umc:custom:datasource', '/umc/datasource/DataSource', '/umc/custom/datasource', '_self', 'icon-lishiguiji', 2035, 1, '2020-03-27 12:54:38', 1, '2020-08-26 12:27:43', 0);
-INSERT INTO `sys_menu` VALUES (36328, 'Event', '触发事件', 1, 'classifyB', 3, 0, 85782, NULL, 'umc:alarm:event', '/umc/alarmevent/AlarmEvent', '/umc/custom/event', '_self', 'icon-lishiguiji', 2033, 1, '2020-03-27 12:54:38', 1, '2020-08-26 12:27:40', 0);
-INSERT INTO `sys_menu` VALUES (36329, 'History', '监控记录', 1, 'classifyB', 3, 0, 85782, NULL, 'umc:custom:history', '/umc/history/History', '/umc/custom/history', '_self', 'icon-lishiguiji', 2032, 1, '2020-03-27 12:54:38', 1, '2020-08-26 12:27:35', 0);
-INSERT INTO `sys_menu` VALUES (61481, 'Service Monitoring', '服务监控', 1, 'classifyB', 2, 0, 2, NULL, 'umc:service', '', '', '_self', 'icon-host', 204, 1, '2020-03-27 13:01:40', 1, '2020-08-26 12:25:07', 0);
-INSERT INTO `sys_menu` VALUES (85782, 'Custom Monitoring', '自定义监控', 1, 'classifyB', 2, 0, 2, NULL, 'umc:custom', '', '', '_self', 'icon-zidianguanli', 203, 1, '2020-03-27 12:50:42', 1, '2020-08-26 12:25:02', 0);
-INSERT INTO `sys_menu` VALUES (85783, 'Netcards', '网卡管理', 1, 'classifyE', 3, 0, 18148395, NULL, 'erm:netcard', '/erm/hostnetcard/HostNetcard', '/erm/hostnetcard', NULL, 'icon-yunxingrizhi', 5052, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:49:08', 0);
-INSERT INTO `sys_menu` VALUES (85784, 'IDC', 'IDC管理', 1, 'classifyE', 3, 0, 18148395, NULL, 'erm:idc', '/erm/idc/Idc', '/erm/idc', NULL, 'icon-IDCjifang', 5054, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:37:58', 0);
-INSERT INTO `sys_menu` VALUES (85785, 'SSH Keys', 'SSH密钥', 1, 'classifyE', 3, 0, 18148395, NULL, 'erm:ssh', '/erm/ssh/Ssh', '/erm/ssh', NULL, 'icon-miyao42', 5053, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:37:54', 0);
-INSERT INTO `sys_menu` VALUES (85786, 'Docker Clusters', 'Docker集群', 1, 'classifyE', 2, 0, 9425589, NULL, 'erm:dockercluster', '/erm/dockercluster/DockerCluster', '/erm/dockercluster', NULL, 'icon-docker', 5031, 1, '2019-11-01 15:54:37', 1, '2020-09-02 11:21:24', 0);
-INSERT INTO `sys_menu` VALUES (85787, 'K8s Clusters', 'K8s集群', 1, 'classifyE', 2, 0, 9425589, NULL, 'erm:k8scluster', '/erm/k8scluster/K8sCluster', '/erm/k8scluster', NULL, 'icon-application', 5033, 1, '2019-11-01 15:54:37', 1, '2020-09-02 11:21:41', 0);
-INSERT INTO `sys_menu` VALUES (85788, 'APP Instances', '实例配置', 1, 'classifyB', 3, 0, 52752528, NULL, 'erm:instance', '/erm/instance/Instance', '/erm/instance', NULL, 'icon-yunxingrizhi', 5022, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:34:54', 0);
-INSERT INTO `sys_menu` VALUES (185786, 'Image Repositorys', '镜像仓库', 1, 'classifyE', 2, 0, 9425589, NULL, 'erm:dockerrepository', '/erm/dockerrepository/DockerRepository', '/erm/dockerrepository', NULL, 'icon-docker', 5032, 1, '2019-11-01 15:54:37', 1, '2020-09-02 11:21:33', 0);
-INSERT INTO `sys_menu` VALUES (1857861, 'PriivateZone', '私有域名', 1, 'classifyC', 2, 0, 18148397, NULL, 'erm:dnsprivatedomain', '/erm/dnsprivatedomain/DnsPrivateDomain', '/erm/dnsprivatedomain', NULL, 'icon-docker', 5061, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:10', 0);
-INSERT INTO `sys_menu` VALUES (1857862, 'Cluster', '网关集群', 1, 'classifyC', 2, 0, 18148398, NULL, 'gw:gateway', '/gw/gateway/Gateway', '/gw/gateway', NULL, 'icon-docker', 5071, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:26', 0);
-INSERT INTO `sys_menu` VALUES (1857863, 'Upsterm', '上游', 3, 'classifyC', 2, 0, 1857864, NULL, 'gw:upstream', '/gw/upstream/Upstream', '/gw/upstream', NULL, 'icon-docker', 50721, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:37', 0);
-INSERT INTO `sys_menu` VALUES (1857864, 'Upsterm Servers', '服务器分组', 1, 'classifyC', 2, 0, 18148398, NULL, 'gw:upstreamgroup', '/gw/upstreamgroup/UpstreamGroup', '/gw/upstreamgroup', NULL, 'icon-docker', 5072, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:31', 0);
-INSERT INTO `sys_menu` VALUES (9425555, 'Orchestration History', 'Flow运行记录', 1, 'classifyA', 3, 0, 9, NULL, 'ci:orchestrationhistory', '/ci/orchestrationhistory/OrchestrationHistory', '/ci/orchestrationhistory', NULL, 'icon-yunxingrizhi', 304, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:00:51', 0);
-INSERT INTO `sys_menu` VALUES (9425556, 'Run Records', '运行记录', 1, 'classifyA', 3, 0, 9, NULL, 'ci:pipehis', '/ci/pipehis/PipeHistory', '/ci/pipehis', NULL, 'icon-yunxingrizhi', 303, 1, '2019-11-01 15:54:37', 1, '2020-08-26 13:00:51', 0);
-INSERT INTO `sys_menu` VALUES (9425589, 'Services Cluster', '中间件服务', 1, 'classifyE', 2, 0, 6, NULL, 'erm:servercluster', '', '', '_self', 'icon-ziyuan', 503, 1, '2020-06-05 15:44:28', 1, '2020-09-02 11:20:56', 0);
-INSERT INTO `sys_menu` VALUES (18148395, 'Host', '主机资产', 1, 'classifyE', 2, 0, 6, NULL, 'erm:cmdb', '', '', '_self', 'icon-wenjian', 505, 1, '2020-05-13 11:57:45', 1, '2020-08-26 12:49:31', 0);
-INSERT INTO `sys_menu` VALUES (18148396, 'Logging', '日志服务', 1, 'classifyE', 2, 0, 6, NULL, 'erm:log', '', '', '_self', 'icon-log', 501, 1, '2020-05-13 11:57:45', 1, '2020-08-26 12:33:33', 0);
-INSERT INTO `sys_menu` VALUES (18148397, 'Cloud DNS', '云解析DNS', 1, 'classifyE', 2, 0, 6, NULL, 'erm:domain', '', '', '_self', 'icon-log', 506, 1, '2020-05-13 11:57:45', 1, '2020-08-26 12:34:14', 0);
-INSERT INTO `sys_menu` VALUES (18148398, 'Gateway', '网关', 1, 'classifyE', 2, 0, 6, NULL, 'gw', '', '', '_self', 'icon-log', 507, 1, '2020-05-13 11:57:45', 1, '2020-08-26 12:34:19', 0);
-INSERT INTO `sys_menu` VALUES (18578611, 'PublicZone', '公有域名', 1, 'classifyC', 2, 0, 18148397, NULL, 'erm:dnspublicdomain', '/erm/dnspublicdomain/DnsPublicDomain', '/erm/dnspublicdomain', NULL, 'icon-docker', 5062, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:38:15', 0);
-INSERT INTO `sys_menu` VALUES (52752528, 'Application Cluster', '应用集群', 1, 'classifyE', 2, 0, 6, NULL, 'erm:app', '', '', '_self', 'icon-Bucket', 502, 1, '2020-05-13 11:49:07', 1, '2020-08-26 12:48:04', 0);
-INSERT INTO `sys_menu` VALUES (323144704, 'Database', '数据源', 1, 'classifyE', 3, 0, 1046376448, NULL, 'dts:codegen:database', '/dts/database/Database', '/dts/database', '_self', 'icon-shujuyuan', 302, 1, '2020-09-08 14:50:41', 1, '2020-09-21 19:58:09', 0);
-INSERT INTO `sys_menu` VALUES (323144705, 'Projects', '项目配置', 1, 'classifyE', 3, 0, 1046376448, NULL, 'dts:codegen:project', '/dts/project/Project', '/dts/project', '_self', 'icon-wendangguanli-xiangmuleiwendang', 301, 1, '2020-09-08 14:50:41', 1, '2020-09-21 20:04:45', 0);
-INSERT INTO `sys_menu` VALUES (1046376448, 'Code Generators', '代码生成器', 1, 'classifyE', 2, 0, 103, NULL, 'dts:codegen', '', '', '_self', 'icon-codeoptimizatio', 300, 1, '2020-09-08 14:45:51', 1, '2020-09-21 20:01:08', 0);
-INSERT INTO `sys_menu` VALUES (1046376449, 'Code Studio', '代码开发', 2, 'classifyE', 2, 0, 103, NULL, 'dts:codeedit', 'https://www.baidu.com', '/dts/ide', '_self', 'icon-weibiaoti46', 400, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:58:52', 0);
-INSERT INTO `sys_menu` VALUES (1046376450, 'Online Tools', '在线工具', 2, 'classifyE', 2, 0, 103, NULL, 'dts:onlinetool', 'https://www.baidu.com', '/dts/tools', '_self', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+
+<#--TODO-->
+<#if moduleMap?exists>
+    <#list moduleMap?keys as moduleName>
+        <#assign moduleMuneId = javaSpecs.genId()>
+INSERT INTO `sys_menu` VALUES (${moduleMuneId}, '${moduleName}', '${moduleName}', 1, 'classifyA', 1, 0, 0, NULL, '${moduleName}', '', '/${moduleName}', 'NULL', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+        <#list moduleMap[moduleName] as table>
+INSERT INTO `sys_menu` VALUES (${javaSpecs.genId()}, '${table.entityName}', '${table.entityName}', 1, 'classifyA', 2, 0, ${moduleMuneId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${moduleName}/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+        </#list>
+    </#list>
+</#if>
+
+
+
+
 COMMIT;
 
 -- ----------------------------
@@ -1204,260 +1054,6 @@ CREATE TABLE `sys_notification_contact` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Records of sys_notification_contact
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_notification_contact` VALUES (162, 123, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (163, 123, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (164, 124, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (165, 124, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (166, 125, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (167, 125, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (168, 126, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (169, 126, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (170, 127, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (171, 128, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (172, 127, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (173, 128, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (174, 129, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (175, 130, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (176, 129, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (177, 130, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (178, 131, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (179, 132, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (180, 132, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (181, 133, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (182, 131, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (183, 133, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (184, 134, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (185, 134, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (186, 135, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (187, 135, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (188, 136, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (189, 136, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (190, 137, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (191, 138, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (192, 137, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (193, 138, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (194, 139, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (195, 140, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (196, 139, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (197, 140, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (198, 141, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (199, 141, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (200, 142, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (201, 142, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (202, 143, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (203, 143, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (204, 144, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (205, 144, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (206, 145, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (207, 145, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (208, 146, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (209, 146, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (210, 147, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (211, 147, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (212, 148, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (213, 148, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (214, 149, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (215, 150, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (216, 150, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (217, 149, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (218, 151, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (219, 151, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (220, 153, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (221, 154, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (222, 152, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (223, 153, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (224, 152, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (225, 154, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (226, 155, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (227, 155, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (228, 156, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (229, 156, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (230, 157, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (231, 157, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (232, 158, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (233, 158, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (234, 159, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (235, 159, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (236, 160, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (237, 161, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (238, 160, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (239, 161, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (240, 162, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (241, 162, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (242, 163, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (243, 163, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (244, 164, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (245, 164, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (246, 165, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (247, 165, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (248, 166, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (249, 166, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (250, 167, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (251, 167, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (252, 168, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (253, 168, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (254, 169, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (255, 169, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (256, 170, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (257, 170, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (258, 171, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (259, 171, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (260, 172, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (261, 172, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (262, 173, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (263, 173, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (264, 174, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (265, 174, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (266, 175, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (267, 175, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (268, 176, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (269, 176, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (270, 177, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (271, 177, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (272, 178, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (273, 178, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (274, 179, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (275, 179, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (276, 180, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (277, 180, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (278, 181, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (279, 181, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (280, 182, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (281, 182, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (282, 183, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (283, 183, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (284, 184, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (285, 184, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (286, 185, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (287, 185, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (288, 186, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (289, 186, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (290, 187, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (291, 187, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (292, 188, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (293, 188, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (294, 189, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (295, 189, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (296, 190, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (297, 190, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (298, 191, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (299, 191, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (300, 192, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (301, 192, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (302, 193, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (303, 193, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (304, 194, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (305, 194, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (306, 195, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (307, 195, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (308, 196, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (309, 196, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (310, 197, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (311, 197, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (312, 198, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (313, 198, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (314, 199, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (315, 199, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (316, 200, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (317, 200, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (318, 201, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (319, 201, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (320, 202, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (321, 202, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (322, 203, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (323, 203, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (324, 204, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (325, 204, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (326, 205, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (327, 205, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (328, 206, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (329, 206, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (330, 207, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (331, 207, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (332, 208, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (333, 208, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (334, 209, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (335, 209, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (336, 210, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (337, 210, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (338, 211, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (339, 211, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (340, 212, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (341, 212, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (342, 213, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (343, 213, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (344, 214, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (345, 214, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (346, 215, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (347, 215, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (348, 216, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (349, 216, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (350, 217, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (351, 217, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (352, 218, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (353, 218, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (354, 219, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (355, 219, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (356, 220, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (357, 220, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (358, 221, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (359, 221, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (360, 222, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (361, 222, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (362, 223, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (363, 223, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (364, 224, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (365, 224, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (366, 225, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (367, 225, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (368, 226, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (369, 226, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (370, 227, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (371, 227, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (372, 228, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (373, 228, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (374, 229, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (375, 229, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (376, 230, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (377, 230, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (378, 231, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (379, 231, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (380, 232, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (381, 232, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (382, 233, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (383, 233, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (384, 234, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (385, 234, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (386, 235, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (387, 235, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (388, 236, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (389, 236, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (390, 237, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (391, 237, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (392, 238, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (393, 238, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (394, 239, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (395, 239, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (396, 240, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (397, 240, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (398, 241, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (399, 241, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (400, 242, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (401, 242, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (402, 243, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (403, 243, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (404, 244, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (405, 244, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (406, 246, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (407, 245, 2, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (408, 246, 7, '1', NULL);
-INSERT INTO `sys_notification_contact` VALUES (409, 245, 7, '1', NULL);
-COMMIT;
-
--- ----------------------------
 -- Table structure for sys_park
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_park`;
@@ -1473,12 +1069,6 @@ CREATE TABLE `sys_park` (
   CONSTRAINT `sys_park_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
--- ----------------------------
--- Records of sys_park
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_park` VALUES (1, 1, NULL, NULL, NULL, NULL);
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_role

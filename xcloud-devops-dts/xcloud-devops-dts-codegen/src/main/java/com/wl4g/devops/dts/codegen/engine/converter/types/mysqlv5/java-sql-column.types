@@ -39,8 +39,8 @@ java.lang.Byte[]         BLOB                    BLOB
 #java.lang.Byte[]         LONGVARBINARY           MEDIUMBLOB
 java.util.Date           DATE                    DATE
 #java.sql.Date           DATE                    DATE
-java.util.Date           DATETIME                DATETIME
-#java.util.Timestamp      DATETIME                DATETIME
+java.util.Date           TIMESTAMP                DATETIME
+#java.util.Timestamp      TIMESTAMP                DATETIME
 java.sql.Time            TIME                    TIME
 java.sql.Timestamp       TIMESTAMP               TIMESTAMP
 java.sql.Date            YEAR                    YEAR

@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.SQLException;
+
 /**
  * {@link GenDataSourceController}
  *
@@ -73,6 +75,13 @@ public class GenDataSourceController extends BaseController {
 	public RespBase<?> getForSelect() {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(genDatabaseService.getForSelect());
+		return resp;
+	}
+
+	@RequestMapping(value = "/testConnectDb")
+	public RespBase<?> testConnectDb(@ RequestBody GenDataSource dataSource) throws SQLException {
+		RespBase<Object> resp = RespBase.create();
+		genDatabaseService.testConnectDb(dataSource);
 		return resp;
 	}
 }
