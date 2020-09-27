@@ -43,15 +43,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
-
+import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
+import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
 
 
 /**
@@ -295,6 +293,20 @@ public class GenerateServiceImpl implements GenerateService {
 	@Override
 	public String generate(Integer tableId) {
 		return genManager.execute(new GenericParameter(tableId));
+	}
+
+	@Override
+	public Set<String> getAttrTypes(Integer projectId) {
+		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
+		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
+		GenDataSource genDataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
+		DbTypeConverter conv = converter.forOperator(genDataSource.getType());
+		List<TypeMappedWrapper> typeMappedWrappers = conv.getTypeMappedWrappers(providerSet.language());
+		Set<String> attrTypes = new HashSet<>();
+		for(TypeMappedWrapper typeMappedWrapper : typeMappedWrappers){
+			attrTypes.add(typeMappedWrapper.getAttrType());
+		}
+		return attrTypes;
 	}
 
 	@Override

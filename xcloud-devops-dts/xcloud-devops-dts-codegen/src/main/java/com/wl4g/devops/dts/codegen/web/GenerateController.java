@@ -17,9 +17,11 @@ package com.wl4g.devops.dts.codegen.web;
 
 import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +30,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.lang.Integer.valueOf;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * {@link GenerateController}
@@ -48,6 +49,9 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/gen/configure")
 public class GenerateController extends BaseController {
+
+	@Autowired
+	protected GenericOperatorAdapter<DbTypeConverter.ConverterKind, DbTypeConverter> converter;
 
 	@Autowired
 	private GenerateService generateService;
@@ -113,6 +117,13 @@ public class GenerateController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		notNullOf(id, "id");
 		generateService.setEnable(id, status);
+		return resp;
+	}
+
+	@RequestMapping("getAttrTypes")
+	public RespBase<?> getAttrTypes(Integer projectId) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(generateService.getAttrTypes(projectId));
 		return resp;
 	}
 
