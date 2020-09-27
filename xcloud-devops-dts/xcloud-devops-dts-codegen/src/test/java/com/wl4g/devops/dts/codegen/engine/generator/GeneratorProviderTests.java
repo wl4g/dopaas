@@ -48,37 +48,37 @@ import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateRe
 public class GeneratorProviderTests {
 
 	@Test
-	@SuppressWarnings("serial")
 	public void crossForeachRenderingCase() {
 		GenProject project = new GenProject();
 		project.setOrganType("com");
 		project.setOrganName("wl4g");
-		project.setProjectName("ElectronicStore");
+		project.setProjectName("myshop");
 		List<GenTable> genTables = new ArrayList<>();
-		genTables.add(new GenTable().withEntityName("OrderBean").withModuleName("marketModule"));
-		genTables.add(new GenTable().withEntityName("StoreBean").withModuleName("marketModule"));
-		genTables.add(new GenTable().withEntityName("UserBean").withModuleName("systemModule"));
-		genTables.add(new GenTable().withEntityName("RoleBean").withModuleName("systemModule"));
+		genTables.add(new GenTable().withEntityName("OrderBean").withModuleName("portalModule"));
+		genTables.add(new GenTable().withEntityName("StockBean").withModuleName("portalModule"));
+		genTables.add(new GenTable().withEntityName("UserBean").withModuleName("sysModule"));
+		genTables.add(new GenTable().withEntityName("RoleBean").withModuleName("sysModule"));
 		project.setGenTables(genTables);
 
 		List<String> generatedFiles = Lists.newArrayList();
 
+		//
 		// For case1
-		GenTemplateLocator locator1 = newGenTemplateLocator(new ArrayList<TemplateResourceWrapper>() {
-			{
-				add(new TemplateResourceWrapper(
-						"src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/#{javaSpecs.firstUCase(entityName)}.java.ftl",
-						TEST_TPL_CONTENT));
-				add(new TemplateResourceWrapper(
-						"src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/@has-{entityName}@#{javaSpecs.firstUCase(entityName)}Service.java.ftl",
-						TEST_TPL_CONTENT));
-				add(new TemplateResourceWrapper(
-						"src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@has-{aaa}@#{javaSpecs.firstUCase(entityName)}ServiceImpl.java.ftl",
-						TEST_TPL_CONTENT));
-			}
-		});
+		//
 
-		new SpringCloudMvnGeneratorProvider(new DefaultGenerateContext(config, locator1, resolver, project, datasource)) {
+		List<TemplateResourceWrapper> tpls1 = Lists.newArrayList();
+		tpls1.add(new TemplateResourceWrapper(
+				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-common/src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/#{javaSpecs.firstUCase(entityName)}.java.ftl",
+				TEST_TPL_CONTENT));
+		tpls1.add(new TemplateResourceWrapper(
+				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/@has-{entityName}@#{javaSpecs.firstUCase(entityName)}Service.java.ftl",
+				TEST_TPL_CONTENT));
+		tpls1.add(new TemplateResourceWrapper(
+				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@has-{aaa}@#{javaSpecs.firstUCase(entityName)}ServiceImpl.java.ftl",
+				TEST_TPL_CONTENT));
+
+		new SpringCloudMvnGeneratorProvider(
+				new DefaultGenerateContext(config, newGenTemplateLocator(tpls1), resolver, project, datasource)) {
 			@Override
 			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
@@ -86,16 +86,17 @@ public class GeneratorProviderTests {
 			}
 		}.run();
 
+		//
 		// For case2
-		GenTemplateLocator locator2 = newGenTemplateLocator(new ArrayList<TemplateResourceWrapper>() {
-			{
-				add(new TemplateResourceWrapper(
-						"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/#{vueSpecs.firstUCase(entityName)}.vue.ftl",
-						TEST_TPL_CONTENT));
-			}
-		});
+		//
 
-		new VueGeneratorProvider(new DefaultGenerateContext(config, locator2, resolver, project, datasource)) {
+		List<TemplateResourceWrapper> tpls2 = Lists.newArrayList();
+		tpls2.add(new TemplateResourceWrapper(
+				"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/#{vueSpecs.firstUCase(entityName)}.vue.ftl",
+				TEST_TPL_CONTENT));
+
+		new VueGeneratorProvider(
+				new DefaultGenerateContext(config, newGenTemplateLocator(tpls2), resolver, project, datasource)) {
 			@Override
 			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
@@ -125,7 +126,7 @@ public class GeneratorProviderTests {
 	static CodegenProperties config = new CodegenProperties() {
 		@Override
 		public File getJobDir(Integer confId) {
-			return new File("test_job_dir");
+			return new File("/root/.codegen-workspace/job.100/");
 		}
 	};
 
