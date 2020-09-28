@@ -58,7 +58,7 @@ public class CodegenConsole {
 	@ShellMethod(keys = { "cleanGeneratedJobs" }, group = DEF_CONSOLE_GROUP, help = "Clean Generated Job temp Files.")
 	public void cleanGeneratedJobs(SimpleShellContext context) {
 		context.printf("Cleaning generate templates cache...");
-		FileDeletionUtils.delete(config.getWorkspace());
+		FileDeletionUtils.delete(config.getWorkspace().concat("/**"));
 		context.printf("Cleaned generate templates cache.");
 	}
 
