@@ -39,20 +39,21 @@
     <div class="bottom-layer" v-show="lightBoxVisible" @click="parentLevelMenuClick"></div>
 
     <transition name="mask-fade">
-        <div class="menu-list-mask" v-show="maskVisible">
-            <div class="list-mask-search-bar" :class="isKeyWordFocus ? 'active': ''">
-                <el-input class="list-mask-search-input" v-model="keyword" placeholder="请输入关键字搜索" prefix-icon="el-icon-search" @keyup.native="handleKeyWordSearch" @focus="isKeyWordFocus=true" @blur="isKeyWordFocus=false" autofocus=true aria-autocomplete="none" maxlength="32"></el-input>
-            </div>
-            <div class="mask-list">
-                <div class="mask-list-item" v-for="(item,name) of routerGroupByClassify">
-                    <p class="mask-list-item-title">{{name}}</p>
-                    <ul class="mask-list-item-ul">
-                        <li v-for="n of item">
-                            <span class="mask-list-item-link" @click="handleRouteLinkClick(n.routePath)"> {{n.displayName}}</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+
+      <div class="menu-list-mask" v-show="maskVisible">
+        <div class="list-mask-search-bar" :class="isKeyWordFocus ? 'active': ''">
+          <el-input class="list-mask-search-input" ref="maskSearchInput" v-model="keyword" placeholder="请输入关键字搜索" prefix-icon="el-icon-search" @keydown.native.enter="handleKeyWordSearch" @focus="isKeyWordFocus=true" @blur="isKeyWordFocus=false"></el-input>
+        </div>
+        <div class="mask-list">
+          <div class="mask-list-item" v-for="(item,name) of routerGroupByClassify">
+            <p class="mask-list-item-title">{{name}}</p>
+            <ul class="mask-list-item-ul">
+              <li v-for="n of item">
+                <span class="mask-list-item-link" @click="handleRouteLinkClick(n.routePath)"> {{n.displayName}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
 
             <i class="mask-close-btn el-icon-close" @click="parentLevelMenuClick"></i>
         </div>

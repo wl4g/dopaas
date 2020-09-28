@@ -25,7 +25,7 @@ export default {
     }
   },
   mounted(){
-    if(new Date().getHours() > 19 || new Date().getHours() < 6) {
+    if(new Date().getHours() >= 19 || new Date().getHours() < 6) {
       this.theme = '#191c23';
       this.setTheme( this.theme);
     }else {

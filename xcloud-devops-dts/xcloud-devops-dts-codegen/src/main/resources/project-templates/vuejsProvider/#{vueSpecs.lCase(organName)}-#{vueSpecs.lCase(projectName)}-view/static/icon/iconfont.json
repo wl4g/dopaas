@@ -6,6 +6,139 @@
   "description": "https://github.com/wl4g/super-devops or https://gitee.com/wl4g/super-devops 官方账号",
   "glyphs": [
     {
+      "icon_id": "397886",
+      "name": "开发，代码",
+      "font_class": "kaifa",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "605457",
+      "name": "代码生成",
+      "font_class": "weibiaoti46",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "741075",
+      "name": "数据源",
+      "font_class": "shujuyuan",
+      "unicode": "e857",
+      "unicode_decimal": 59479
+    },
+    {
+      "icon_id": "1181181",
+      "name": "工具",
+      "font_class": "gongju",
+      "unicode": "e6ad",
+      "unicode_decimal": 59053
+    },
+    {
+      "icon_id": "1181190",
+      "name": "工具1",
+      "font_class": "gongju1",
+      "unicode": "e6ae",
+      "unicode_decimal": 59054
+    },
+    {
+      "icon_id": "1635114",
+      "name": "14-配置数据源",
+      "font_class": "-peizhishujuyuan",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "2199755",
+      "name": "代码优化",
+      "font_class": "codeoptimizatio",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "3854424",
+      "name": "开发",
+      "font_class": "kaifa1",
+      "unicode": "e67e",
+      "unicode_decimal": 59006
+    },
+    {
+      "icon_id": "5318180",
+      "name": "生成代码",
+      "font_class": "shengchengdaima",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "5327422",
+      "name": "代码-分支",
+      "font_class": "daima-fenzhi",
+      "unicode": "e6e9",
+      "unicode_decimal": 59113
+    },
+    {
+      "icon_id": "5483226",
+      "name": "工具",
+      "font_class": "gongju2",
+      "unicode": "e6bf",
+      "unicode_decimal": 59071
+    },
+    {
+      "icon_id": "5703282",
+      "name": "开发",
+      "font_class": "zhongguohangtiantubiaoheji-weizhuanlunkuo-",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "6246291",
+      "name": "工具",
+      "font_class": "gongju3",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
+      "icon_id": "10033412",
+      "name": "开发",
+      "font_class": "kaifa___",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "12791522",
+      "name": "工具",
+      "font_class": "gongju4",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "15160655",
+      "name": "代码",
+      "font_class": "daima",
+      "unicode": "e69a",
+      "unicode_decimal": 59034
+    },
+    {
+      "icon_id": "15360667",
+      "name": "代码集",
+      "font_class": "daimaji",
+      "unicode": "e6b0",
+      "unicode_decimal": 59056
+    },
+    {
+      "icon_id": "16375907",
+      "name": "工具",
+      "font_class": "biaoqianA01_gongju-264",
+      "unicode": "ea83",
+      "unicode_decimal": 60035
+    },
+    {
+      "icon_id": "16375912",
+      "name": "工具",
+      "font_class": "biaoqianA01_gongju-269",
+      "unicode": "ea88",
+      "unicode_decimal": 60040
+    },
+    {
       "icon_id": "1080339",
       "name": "next",
       "font_class": "next",

@@ -1,8 +1,8 @@
 {
-  "name": "${organName?uncap_first}-${projectName?uncap_first}",
-  "version": "${version}",
-  "description": "${remark}",
-  "author": "${author}, <wanglsir@gmail.com>",
+  "name": "super-devops-view",
+  "version": "v0.1.1",
+  "description": "Super devops view",
+  "author": "<wanglsir@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
@@ -30,6 +30,7 @@
     "vue-i18n": "^8.15.1",
     "vue-router": "^2.7.0",
     "vuex": "^2.4.0",
+    "nprogress": "0.2.0",
     "wangeditor": "^3.0.9",
     "xterm": "^4.3.0",
     "xterm-addon-fit": "^0.3.0",
