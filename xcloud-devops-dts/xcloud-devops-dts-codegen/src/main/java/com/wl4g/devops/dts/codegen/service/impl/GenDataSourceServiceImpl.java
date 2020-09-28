@@ -16,11 +16,8 @@
 package com.wl4g.devops.dts.codegen.service.impl;
 
 import com.github.pagehelper.PageHelper;
-
-import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.log.SmartLoggerFactory;
-
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.data.page.PageModel;
@@ -49,90 +46,87 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class GenDataSourceServiceImpl implements GenDataSourceService {
 
-	final private static SmartLogger log = SmartLoggerFactory.getLogger(GenDataSourceServiceImpl.class);
+    final private static SmartLogger log = SmartLoggerFactory.getLogger(GenDataSourceServiceImpl.class);
 
-	@Autowired
-	protected NamingPrototypeBeanFactory beanFactory;
+    @Autowired
+    protected NamingPrototypeBeanFactory beanFactory;
 
-	@Autowired
-	private GenDataSourceDao genDSDao;
+    @Autowired
+    private GenDataSourceDao genDSDao;
 
-	@Autowired
-	protected NamingPrototypeBeanFactory beanFactory;
+    @Override
+    public PageModel page(PageModel pm, String name) {
+        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+        // desensitization
+        List<GenDataSource> records = safeList(genDSDao.list(name)).stream().map(ds -> ds.withPassword("******"))
+                .collect(toList());
+        pm.setRecords(records);
+        return pm;
+    }
 
-	@Override
-	public PageModel page(PageModel pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		// desensitization
-		List<GenDataSource> records = safeList(genDSDao.list(name)).stream().map(ds -> ds.withPassword("******"))
-				.collect(toList());
-		pm.setRecords(records);
-		return pm;
-	}
+    @Override
+    public List<GenDataSource> getForSelect() {
+        // desensitization
+        return safeList(genDSDao.list(null)).stream().map(ds -> ds.withPassword("******")).collect(toList());
+    }
 
-	@Override
-	public List<GenDataSource> getForSelect() {
-		// desensitization
-		return safeList(genDSDao.list(null)).stream().map(ds -> ds.withPassword("******")).collect(toList());
-	}
+    public void save(GenDataSource gen) {
 
-	public void save(GenDataSource gen) {
+        try {
+            MetadataResolver resolver = beanFactory.getPrototypeBean(gen.getType(), gen);
+            gen.setDbversion(resolver.findDBVersion());
+        } catch (Exception e) {
+            log.error("can not get db version", e);
+        }
 
-		try {
-			MetadataResolver resolver = beanFactory.getPrototypeBean(gen.getType(), gen);
-			gen.setDbversion(resolver.findDBVersion());
-		} catch (Exception e) {
-			log.error("can not get db version", e);
-		}
+        if (isNull(gen.getId())) {
+            gen.preInsert(getRequestOrganizationCode());
+            insert(gen);
+        } else {
+            gen.preUpdate();
+            update(gen);
+        }
+    }
 
-		if (isNull(gen.getId())) {
-			gen.preInsert(getRequestOrganizationCode());
-			insert(gen);
-		} else {
-			gen.preUpdate();
-			update(gen);
-		}
-	}
+    private void insert(GenDataSource gen) {
+        genDSDao.insertSelective(gen);
+    }
 
-	private void insert(GenDataSource gen) {
-		genDSDao.insertSelective(gen);
-	}
+    private void update(GenDataSource gen) {
+        if (StringUtils.equals("******", gen.getPassword())) {
+            gen.setPassword(null);
+        }
+        genDSDao.updateByPrimaryKeySelective(gen);
+    }
 
-	private void update(GenDataSource gen) {
-		if (StringUtils.equals("******", gen.getPassword())) {
-			gen.setPassword(null);
-		}
-		genDSDao.updateByPrimaryKeySelective(gen);
-	}
+    public GenDataSource detail(Integer id) {
+        Assert.notNull(id, "id is null");
+        return genDSDao.selectByPrimaryKey(id);
+    }
 
-	public GenDataSource detail(Integer id) {
-		Assert.notNull(id, "id is null");
-		return genDSDao.selectByPrimaryKey(id);
-	}
+    public void del(Integer id) {
+        Assert.notNull(id, "id is null");
+        GenDataSource gen = new GenDataSource();
+        gen.setId(id);
+        gen.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        genDSDao.updateByPrimaryKeySelective(gen);
+    }
 
-	public void del(Integer id) {
-		Assert.notNull(id, "id is null");
-		GenDataSource gen = new GenDataSource();
-		gen.setId(id);
-		gen.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		genDSDao.updateByPrimaryKeySelective(gen);
-	}
+    public void testConnectDb(GenDataSource datasource) throws Exception {
+        notNullOf(datasource, "genDataSource");
+        hasTextOf(datasource.getType(), "dbType");
 
-	public void testConnectDb(GenDataSource datasource) throws Exception {
-		notNullOf(datasource, "genDataSource");
-		hasTextOf(datasource.getType(), "dbType");
+        // Test the connect directly before editing and saving
+        if (isNull(datasource.getHost())) {
+            // Use testing connect on the list after saving
+            datasource = genDSDao.selectByPrimaryKey(datasource.getId());
+        }
 
-		// Test the connect directly before editing and saving
-		if (isNull(datasource.getHost())) {
-			// Use testing connect on the list after saving
-			datasource = genDSDao.selectByPrimaryKey(datasource.getId());
-		}
+        MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
+        // Only need to check whether it can be queried, and no results are
+        // needed.
+        resolver.findDBVersion();
 
-		MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
-		// Only need to check whether it can be queried, and no results are
-		// needed.
-		resolver.findDBVersion();
-
-	}
+    }
 
 }
