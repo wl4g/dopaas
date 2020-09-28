@@ -74,6 +74,9 @@ step3: 新建源码规范工具类 (可选)，[参考(E) SpringCloudMvnGenerator
 
 step4: 使新建处理器生效，[参考(A) CodegenAutoConfiguration#springMvcGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/config/CodegenAutoConfiguration.java#springMvcGeneratorProvider)
 
+step5: 准备在您的IDE上启动服务，入口类：  xcloud-devops-dts-starter/src/main/java/com/wl4g/DtsManager.java
+
+> 提示：默认debugger模式启动时，模板目录和mybatis mapper文件更新不需重启，系统会自动热加载。
 
 #### 模版开发规则说明：
 

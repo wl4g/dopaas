@@ -25,7 +25,6 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static java.lang.Math.abs;
 import static java.lang.String.valueOf;
 import static java.util.Locale.US;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -98,7 +97,7 @@ public class BaseSpecs {
 	 * @return
 	 * @see {@link GenExtraOptionDefinition}
 	 */
-	public boolean checkConfigured(@Nullable List<ConfigOption> configuredOptions, @NotBlank String name,
+	public static boolean checkConfigured(@Nullable List<ConfigOption> configuredOptions, @NotBlank String name,
 			@NotBlank String value) {
 		hasTextOf(name, "name");
 		hasTextOf(value, "value");
@@ -118,9 +117,13 @@ public class BaseSpecs {
 		return false;
 	}
 
-
-	public long genId(){
-		return abs((int) (SnowflakeIdGenerator.getDefault().nextId() % 10_000_000_000L));
+	/**
+	 * Generate next ID.
+	 * 
+	 * @return
+	 */
+	public static long genNextId() {
+		return SnowflakeIdGenerator.getDefault().nextId() % 100_000_000_000L;
 	}
 
 }
