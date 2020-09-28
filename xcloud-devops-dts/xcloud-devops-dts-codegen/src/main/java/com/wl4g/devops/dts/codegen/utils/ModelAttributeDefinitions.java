@@ -86,6 +86,8 @@ public abstract class ModelAttributeDefinitions {
 	public static final String GEN_TABLE_FUNC_AUTHOR = "functionAuthor";
 	public static final String GEN_TABLE_COLUMNS = "genTableColumns";
 	public static final String GEN_TABLE_PRIMARY = "pk";
+	public static final String GEN_TABLE_OPTION_MAP = "optionMap";
+
 
 	public static final String GEN_TABLE_PACKAGENAME = "packageName";
 	public static final String GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME = "beanSubModulePackageName";

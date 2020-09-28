@@ -96,7 +96,9 @@
                     <el-table-column :label="$t('message.common.operation')" min-width="120">
                         <template slot-scope="scope">
                             <el-button type="text" icon="el-icon-edit" @click="editData(scope.row)" :title="$t('message.common.edit')"></el-button>
+<#if optionMap.isDeletable != 'deleteWithNone'>
                             <el-button type="text" icon="el-icon-delete" @click="delData(scope.row)" :title="$t('message.common.del')"></el-button>
+</#if>
                         </template>
                     </el-table-column>
                 </el-table>

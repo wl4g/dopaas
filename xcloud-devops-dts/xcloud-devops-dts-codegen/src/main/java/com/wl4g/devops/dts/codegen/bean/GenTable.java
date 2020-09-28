@@ -17,14 +17,15 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Wither;
 
 import java.util.List;
+import java.util.Map;
+
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 /**
  * {@link GenTable}
@@ -67,6 +68,9 @@ public class GenTable extends BaseBean {
 	private String functionAuthor;
 
 	private String options;
+
+	@RenderProperty(propertyName = GEN_TABLE_OPTION_MAP)
+	private Map<String, Object> optionMap;
 
 	private String status;
 
