@@ -15,6 +15,7 @@ import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.iam.annotation.EnableIamServer;
 </#if>
 
+<#assign basePackagePrefix = organType?uncap_first +'.'+ organName?uncap_first +'.'+ projectName?uncap_first>
 /**
  * {@link ${projectName?cap_first}Server}
  *
@@ -29,7 +30,8 @@ import com.wl4g.iam.annotation.EnableIamServer;
 <#elseif javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "local")>
 @EnableIamServer
 </#if>
-@MapperScan(basePackages = {"${organType?uncap_first}.${organName?uncap_first}.${projectName?uncap_first}.*.dao", "${organType?uncap_first}.${organName?uncap_first}.${projectName?uncap_first}.*.dao.*"})
+<#-- TODO migration com.wl4g.devops.dao => com.wl4g.iam.dao -->
+@MapperScan(basePackages = { "${basePackagePrefix}.*.dao", "${organType?uncap_first}.${basePackagePrefix}.*.dao.*", "com.wl4g.devops.dao" })
 @AutoConfigureComponentsDataSource
 @SpringBootApplication(scanBasePackages = { "com.wl4g", "${organType?uncap_first}.${organName?uncap_first}" })
 public class ${projectName?cap_first}Server {

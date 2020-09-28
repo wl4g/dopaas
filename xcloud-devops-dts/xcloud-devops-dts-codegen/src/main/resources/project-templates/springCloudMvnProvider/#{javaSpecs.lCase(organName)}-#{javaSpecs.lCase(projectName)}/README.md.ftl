@@ -1,20 +1,28 @@
 # ${organName?cap_first} ${projectName?cap_first}
 
-#### Description
+#### Introduction
 ${projectDescription}
 
-#### Architecture
-System architecture description ...
 
-#### Installation tutorial
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Instructions
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## Documentation
+- [中文文档](README_CN.md)
 
 
->								${watermark}
+## Features
+<#if moduleMap??>
+    <#list moduleMap?keys as moduleName>
+- ${moduleName}
+	</#list>
+</#if>
+
+
+## Quick start
+```
+mvn clean install -DskipTests -T 2C
+```
+
+
+<p align="center">
+</br>
+${watermark}
+</p>
