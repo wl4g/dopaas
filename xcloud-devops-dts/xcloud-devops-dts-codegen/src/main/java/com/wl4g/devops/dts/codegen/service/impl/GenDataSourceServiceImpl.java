@@ -16,22 +16,23 @@
 package com.wl4g.devops.dts.codegen.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
+import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.service.GenDataSourceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -42,6 +43,9 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class GenDataSourceServiceImpl implements GenDataSourceService {
+
+	@Autowired
+	protected NamingPrototypeBeanFactory beanFactory;
 
 	@Autowired
 	private GenDataSourceDao genDSDao;
@@ -77,7 +81,7 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 	}
 
 	private void update(GenDataSource gen) {
-		if(StringUtils.equals("******",gen.getPassword())){
+		if (StringUtils.equals("******", gen.getPassword())) {
 			gen.setPassword(null);
 		}
 		genDSDao.updateByPrimaryKeySelective(gen);
@@ -96,37 +100,21 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 		genDSDao.updateByPrimaryKeySelective(gen);
 	}
 
-	public void testConnectDb(GenDataSource genDataSource) throws SQLException {
-		Assert2.notNullOf(genDataSource, "genDataSource");
-		if(isNull(genDataSource.getHost())){
-			genDataSource = genDSDao.selectByPrimaryKey(genDataSource.getId());
-		}
-		String className = null;
-		String url = null;
-		//TODO
-		switch (genDataSource.getType()){
-			case "mysqlv5":
-				className = "com.mysql.jdbc.Driver";//com.mysql.cj.jdbc.Driver  for new version
-				url = "jdbc:mysql://" + genDataSource.getHost() +":" + genDataSource.getPort() + "/" +genDataSource.getDatabase() + "?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8";
-				break;
-			case "oracle":
-				//TODO
-				break;
-			case "postgresql":
-				//TODO
-				break;
-			default: throw new UnsupportedOperationException("Unsupported this db type: "+ genDataSource.getType());
+	public void testConnectDb(GenDataSource datasource) throws Exception {
+		notNullOf(datasource, "genDataSource");
+		hasTextOf(datasource.getType(), "dbType");
+
+		// Test the connect directly before editing and saving
+		if (isNull(datasource.getHost())) {
+			// Use testing connect on the list after saving
+			datasource = genDSDao.selectByPrimaryKey(datasource.getId());
 		}
 
-		Assert2.notNullOf(className, "className");
-		Assert2.notNullOf(url, "url");
+		MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
+		// Only need to check whether it can be queried, and no results are
+		// needed.
+		resolver.findDBVersion();
 
-		try {
-			Class.forName(className);
-			DriverManager.getConnection(url,genDataSource.getUsername(),genDataSource.getPassword());
-		} catch (ClassNotFoundException | SQLException e) {
-			throw new SQLException("connect fail",e);
-		}
 	}
 
 }
