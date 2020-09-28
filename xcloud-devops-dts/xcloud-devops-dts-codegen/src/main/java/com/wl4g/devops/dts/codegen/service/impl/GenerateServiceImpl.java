@@ -50,6 +50,8 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
 import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * {@link GenerateServiceImpl}
@@ -135,8 +137,10 @@ public class GenerateServiceImpl implements GenerateService {
 			col.setAttrName(underlineToHump(colmd.getColumnName()));
 
 			// Converting java type
-			DbTypeConverter conv = converter.forOperator(dataSource.getType());
-			col.setAttrType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Lang, col.getSimpleColumnType()));
+			if(nonNull(providerSet.language())){
+				DbTypeConverter conv = converter.forOperator(dataSource.getType());
+				col.setAttrType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Lang, col.getSimpleColumnType()));
+			}
 
 			// Sets defaults
 			col.setIsInsert("1");
@@ -297,6 +301,9 @@ public class GenerateServiceImpl implements GenerateService {
 	public Set<String> getAttrTypes(Integer projectId) {
 		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
 		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
+		if(isNull(providerSet.language())){
+			return null;
+		}
 		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
 
 		DbTypeConverter conv = converter.forOperator(datasource.getType());
@@ -315,6 +322,20 @@ public class GenerateServiceImpl implements GenerateService {
 		genTable.setId(id);
 		genTable.setStatus(status);
 		genTableDao.updateByPrimaryKeySelective(genTable);
+	}
+
+	@Override
+	public void synchronizeTable(Integer id,boolean focus){
+		if(focus){
+			GenTable genTable = genTableDao.selectByPrimaryKey(id);
+			GenTable genTableNew = loadMetadata(genTable.getProjectId(), genTable.getTableName());
+			genTable.setGenTableColumns(genTableNew.getGenTableColumns());
+			saveGenConfig(genTable);
+		}else{
+			GenTable genTable = detail(id);
+			saveGenConfig(genTable);
+		}
+
 	}
 
 }

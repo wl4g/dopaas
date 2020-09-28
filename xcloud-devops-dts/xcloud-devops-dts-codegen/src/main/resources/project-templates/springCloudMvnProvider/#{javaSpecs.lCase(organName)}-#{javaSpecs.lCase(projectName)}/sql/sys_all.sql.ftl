@@ -892,7 +892,7 @@ INSERT INTO `sys_menu` VALUES (20, 'Dictionaries', '字典配置', 1, NULL, 2, 0
 INSERT INTO `sys_menu` VALUES (21, 'Notifications', '通知设置', 1, NULL, 2, 0, 5, NULL, 'iam:contact', '/iam/contact/Contact', '/iam/contact', NULL, 'icon-lianxiren', 901, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:52', 0);
 INSERT INTO `sys_menu` VALUES (33, 'Home', '主页', 1, NULL, 1, 0, 0, NULL, 'home', '', '/home', NULL, 'icon-zhuye', 100, 1, '2019-11-26 10:42:01', 1, '2020-08-26 12:23:21', 0);
 INSERT INTO `sys_menu` VALUES (34, 'Overview', '概览', 1, NULL, 2, 0, 33, NULL, 'home:overview', '/home/overview/Overview', '/home/overview', NULL, 'icon-gailan', 101, 1, '2019-11-26 10:42:33', 1, '2020-08-26 12:24:40', 0);
-<#if moduleMap?exists>
+<#if moduleMap??>
     <#list moduleMap?keys as moduleName>
         <#assign moduleMuneId = javaSpecs.genId()>
 INSERT INTO `sys_menu` VALUES (${moduleMuneId}, '${moduleName}', '${moduleName}', 1, 'classifyA', 1, 0, 0, NULL, '${moduleName}', '', '/${moduleName}', 'NULL', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);

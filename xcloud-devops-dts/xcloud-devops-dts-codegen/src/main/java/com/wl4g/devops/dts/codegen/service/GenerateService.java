@@ -55,4 +55,5 @@ public interface GenerateService {
 
 	void setEnable(Integer id, String status);
 
+	void synchronizeTable(Integer id,boolean focus);
 }
