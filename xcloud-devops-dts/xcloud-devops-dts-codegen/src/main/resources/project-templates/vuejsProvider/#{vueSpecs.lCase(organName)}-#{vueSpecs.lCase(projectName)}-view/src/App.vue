@@ -391,5 +391,21 @@ aside {
             color: rgb(69, 169, 255);
         }
     }
+
+    #organization_container {
+        width: 700px;
+        height: 500px;
+        position: absolute;
+        margin-top: 60px;
+
+
+    }
+
+    .organization-popover[x-placement^=bottom] .popper__arrow::after {
+        border-bottom-color: #092a47 !important;
+    }
+}
+#nprogress .bar{
+    z-index: 9999!important;
 }
 </style>

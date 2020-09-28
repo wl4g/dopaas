@@ -50,6 +50,14 @@ const createRouter = () => new Router({
         }
       ]
     },
+    //Function,
+    // Home,
+    // Umc,
+    // Srm,
+    // Ci,
+    // Scm,
+    // Iam,
+    // Share,
   ]
 })
 

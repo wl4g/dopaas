@@ -32,6 +32,41 @@ module.exports = {
     cacheBusting: false,
     // @Deprecated
     proxyTable: {
+      /*'/scm-server': {
+        target: 'http://localhost:14043',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/scm': 'scm-server'
+        }
+      },
+      '/ci-server': {
+        target: 'http://localhost:14046',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/ci-server': 'ci-server'
+        }
+      },
+      '/umc-manager': {
+        target: 'http://localhost:14048',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/umc-manager': 'umc-manager'
+        }
+      },
+      '/share-manager': {
+        target: 'http://localhost:14051',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/share-manager': 'share-manager'
+        }
+      },
+      '/srm': {
+        target: 'http://localhost:15050',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/srm': 'srm-manager'
+        }
+      },*/
     },
 
     // CSS Sourcemaps off by default because relative paths are "buggy"

@@ -1,6 +1,8 @@
 import router from '../../router'
 import store from '../../store'
 import { Message } from 'element-ui'
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css' // progress bar style
 import { getUserName } from '@/utils/security/iamutil' // get token from cookie
 import webView from '@/views/webview.vue'
 import Layout from 'layout/routeview/Home.vue'
@@ -9,6 +11,19 @@ import promise from "../../views/login/promise";
 import {
   store as utilstore,
 } from '../../utils/'
+
+function getPageTitle(target){
+  var lang = sessionStorage.getItem("authzPrincipalLangAttributeName");
+
+  if(lang == null || lang == 'zh_CN'){
+    return target.displayName + '-XCloud DevOps'
+  } else {
+    return target.name + '-XCloud DevOps'
+  }
+}
+
+
+NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 // 路由懒加载
 const loadView = (view) => {
@@ -66,6 +81,11 @@ function transformTreeData(list) {
 const whiteList = ['/login'] // no redirect whitelist
 
 router.beforeEach(async (to, from, next) => {
+  // start progress bar
+  NProgress.start()
+
+  document.title = getPageTitle(to.meta);
+
   // determine whether the user has logged in
   const hasLogin = getUserName()
 
@@ -73,6 +93,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next()
+      NProgress.done()
     } else {
       // determine whether the user has obtained his permission roles through getInfo
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
@@ -129,6 +150,12 @@ router.beforeEach(async (to, from, next) => {
 
               }
 
+              // 处理标签栏标题显示
+              if(!item.meta){
+                item.meta = {}
+              }
+              item.meta.displayName = item.displayName;
+              item.meta.name = item.name;
             })
           })(res);
 
@@ -144,139 +171,6 @@ router.beforeEach(async (to, from, next) => {
 
           // 特殊处理newpipeline页面
           highLevel.forEach(n => {
-            /*if (n.permission === 'ci') {
-              n.children.push({
-                path: '/ci/pipelineedit',
-                component: require("@/views/ci/pipelineedit/PipelineEdit.vue"),
-                name: 'pipelineedit',
-                icon: '',
-                hidden: true
-              })
-              n.children.push({
-                path: '/ci/pipehisdetail',
-                component: require("@/views/ci/pipehisdetail/PipeHisDetail.vue"),
-                name: 'pipehisdetail',
-                icon: '',
-                hidden: true
-              })
-            }
-            if (n.permission === 'doc') {
-              n.children.push({
-                path: '/doc/diff',
-                component: require("@/views/doc/diff/Diff.vue"),
-                name: 'docDiff',
-                icon: '',
-                hidden: true
-              })
-              n.children.push({
-                path: '/doc/mdEdit',
-                component: require("@/views/doc/mdedit/MdEdit.vue"),
-                name: 'mdEdit',
-                icon: '',
-                hidden: true
-              })
-            }
-            if (n.permission === 'erm') {
-              n.children.push({
-                path: '/erm/clusteredit',
-                component: require("@/views/erm/clusteredit/ClusterEdit.vue"),
-                name: 'clusteredit',
-                icon: '',
-                hidden: true
-              })
-              n.children.push({
-                path: '/erm/dnsprivateresolution',
-                component: require("@/views/erm/dnsprivateresolution/DnsPrivateResolution.vue"),
-                name: 'dnsprivateresolution',
-                icon: '',
-                hidden: true
-              })
-              n.children.push({
-                path: '/erm/dnsprivateblacklist',
-                component: require("@/views/erm/dnsprivateblacklist/DnsPrivateBlacklist.vue"),
-                name: 'dnsprivateblacklist',
-                icon: '',
-                hidden: true
-              })
-              n.children.push({
-                path: '/gw/gatewayDetail',
-                component: require("@/views/gw/gatewaydetail/GatewayDetail.vue"),
-                name: 'gatewayDetail',
-                icon: '',
-                hidden: true
-              });
-            }
-            if (n.permission === 'coss') {
-              n.children.push({
-                path: '/coss/bucketdetail',
-                component: require("@/views/coss/bucketdetail/BucketDetail.vue"),
-                name: 'bucketdetail',
-                icon: '',
-                hidden: true
-              });
-              n.children.push({
-                path: '/coss/fs',
-                component: require("@/views/coss/fs/Fs.vue"),
-                name: 'fs',
-                icon: '',
-                hidden: true
-              })
-            }
-            if (n.permission === 'umc') {
-              n.children.push({
-                path: '/umc/custom/engineedit',
-                component: require("@/views/umc/engineedit/EngineEdit.vue"),
-                name: 'engineedit',
-                icon: '',
-                hidden: true
-              });
-              n.children.push({
-                path: '/umc/custom/mysqldatasource',
-                component: require("@/views/umc/mysqldatasource/MysqlDataSource.vue"),
-                name: 'mysqldatasource',
-                icon: '',
-                hidden: true
-              });
-            }
-            if (n.permission === 'vcs') {
-              n.children.push({
-                path: '/vcs/project',
-                component: require("@/views/vcs/project/Project.vue"),
-                name: 'project',
-                icon: '',
-                hidden: true
-              });
-              n.children.push({
-                path: '/vcs/projectdetail',
-                component: require("@/views/vcs/projectdetail/ProjectDetail.vue"),
-                name: 'projectdetail',
-                icon: '',
-                hidden: true
-              });
-            }
-            if (n.permission === 'dts') {
-              n.children.push({
-                path: '/dts/tableedit',
-                component: require("@/views/dts/tableedit/TableEdit.vue"),
-                name: 'tableedit',
-                icon: '',
-                hidden: true
-              })
-              n.children.push({
-                path: '/dts/table',
-                component: require("@/views/dts/table/Table.vue"),
-                name: 'table',
-                icon: '',
-                hidden: true
-              })
-              n.children.push({
-                path: '/dts/projectedit',
-                component: require("@/views/dts/projectedit/ProjectEdit.vue"),
-                name: 'projectedit',
-                icon: '',
-                hidden: true
-              })
-            }*/
           });
 
           utilstore.set('allRouter',res);
@@ -293,6 +187,7 @@ router.beforeEach(async (to, from, next) => {
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
+          NProgress.done()
         }
       }
     }
@@ -303,10 +198,12 @@ router.beforeEach(async (to, from, next) => {
     } else {
       // other pages that do not have permission to access are redirected to the login page.
       next(`/login?redirect=${to.path}`)
+      NProgress.done()
     }
   }
 })
 
 router.afterEach(() => {
-
+  // finish progress bar
+  NProgress.done()
 })

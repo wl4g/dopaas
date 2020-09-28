@@ -56,6 +56,26 @@ body .el-textarea__inner{
     background-color: #2b303b;
     border: 1px solid #2d313e;
 }
+#app .el-input-group__append,
+#app .el-input-group__prepend,
+body .el-input-group__append,
+body .el-input-group__prepend {
+    color: rgba(255,255,255,.4);
+    background-color: #1e1f22;
+    border: 1px solid #2d313e;
+}
+#app .el-transfer-panel {
+    background-color: #22262f;
+    border-color: #22262f;
+}
+#app .el-transfer-panel__header,
+#app .el-transfer-panel__footer{
+    background-color: #191c25;
+    border-color: #191c25;
+}
+#app .el-transfer-panel__header .el-checkbox__label {
+    color: #20a1ff;
+}
 
 #app .el-table {
     color: rgba(255,255,255,.6);
@@ -163,4 +183,24 @@ body .el-dialog__title{
 }
 #app .mask-list-item-link {
     color: #666;
+}
+#app .custom-menu-demo,
+#app .custom-menu-demo .el-menu {
+    background-color: #232730;
+    border-right: 0 none;
+}
+#app .custom-menu-demo .el-menu-item:focus,
+#app .custom-menu-demo .el-menu-item:hover,
+#app .custom-menu-demo .el-menu-item.is-active {
+    background-color: #2b2f3a;
+}
+#app .custom-menu-demo .el-menu-item.is-active {
+    color: #20a1ff;
+}
+#app .custom-menu-demo .el-menu-item,
+#app .custom-menu-demo .el-submenu__title {
+    color: rgba(255,255,255,.4);
+}
+#app .custom-menu-demo .el-submenu__title:hover {
+    background-color: #2b2f3a;
 }

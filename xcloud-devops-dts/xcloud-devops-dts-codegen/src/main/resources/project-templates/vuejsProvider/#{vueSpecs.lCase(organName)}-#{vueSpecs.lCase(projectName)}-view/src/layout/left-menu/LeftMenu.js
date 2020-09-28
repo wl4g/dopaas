@@ -94,6 +94,9 @@ export default {
     openMaskLayer() {
       document.documentElement.addEventListener("click", this.handleDocElmClick)
       this.maskVisible = true;
+      this.$nextTick(function(){
+        this.$refs.maskSearchInput.$refs['input'].focus()
+      })
     },
     resetMaskLayer() {
       this.timer && clearTimeout(this.timer);

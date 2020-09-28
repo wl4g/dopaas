@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Help Select Detail</title>
+    <style>
+
+        .body-text {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 24px;
+            color: #333;
+        }
+
+
+    </style>
+</head>
+<body>
+<hr/>
+<h3>
+    选取内容（COSS Select)
+</h3>
+<p class="body-text">
+    利用 COSS Select(MinIO/S3)，您可以使用简单的SQL语句从COSS的单个文件中选取内容，仅获取所需要的数据，从而减少从COSS传输的数据量，提升您获取数据的效率。
+</p>
+
+<h4>前提条件</h4>
+<p class="body-text">
+    目前支持RFC 4180标准的CSV（包括TSV等类CSV文件，文件的行列分隔符以及Quote字符都可自定义）和JSON文件，且文件编码为UTF-8。
+    通过控制台可以对128MB以下的文件提取40MB以下的数据记录。如果您需要处理更大的文件或返回更多的记录，请使用 API：
+    <a target="_blank" href="https://docs.min.io/docs/java-client-api-reference.html#selectObjectContent">SelectObjectContent</a>。
+</p>
+
+<h4>操作步骤</h4>
+<ul class="body-text">
+    <li>
+        登录<a target="_blank" href="../../../../../#/coss/bucket">COSS管理控制台</a>。
+    </li>
+    <li>单击Bucket列表，之后单击目标Bucket名称。</li>
+    <li>单击文件管理页签。</li>
+    <li>件对应的更多 > 选取内容。</li>
+    <li>在选取内容页面设置相关参数。</li>
+    <li>文件类型：按文件实际情况选择文件的类型，可选项为：CSV/JSON和Parquet。</li>
+    <li>分隔符（针对CSV文件）：选择逗号（,）或自定义分隔符。</li>
+    <li>标题行（针对CSV文件）：选择文件第一行是否包含列标题。</li>
+    <li>JSON格式符（针对JSON文件）：选择您的JSON文件对应的格式。</li>
+    <li>压缩格式：选择您当前的文件是否为压缩文件。目前压缩文件仅支持GZIP文件。</li>
+    <li>标准的Parquet格式，<a target="_blank" href="https://parquet.apache.org/documentation/latest/">参考Apache Parquet官网</a>。</li>
+</ul>
+
+</body>
+</html>

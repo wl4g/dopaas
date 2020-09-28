@@ -3,10 +3,11 @@
     <div class="bottomPanel-background" />
     <div class="bottomPanel">
       <div class="handle-button"  @click="show=!show">
-        <span class="handle-button-panel">搜索条件</span>
-        <svg  aria-hidden="true"  style="cursor:pointer;width: 1.1em;height: 1.1em;float:right;margin: 10px 10px 3px 0">
-          <use :xlink:href="show?'#icon-lunbo-next-copy1':'#icon-lunbo-next-copy'"></use>
-        </svg>
+        <p class="handle-button-panel">搜索条件</p>
+
+        <!--<svg  aria-hidden="true"  style="cursor:pointer;width: 1.1em;height: 1.1em;float:right;margin: 10px 10px 3px 0">-->
+          <!--<use :xlink:href="show?'#icon-lunbo-next-copy1':'#icon-lunbo-next-copy'"></use>-->
+        <!--</svg>-->
       </div>
       <div class="bottomPanel-items">
         <slot />
@@ -108,19 +109,17 @@ export default {
 }
 
 .bottomPanel {
-
   position: fixed;
-  width: 81vw;
+  top: 0;
+  right: 0;
   bottom: 0;
-  /*box-shadow: 0px 2px 2px 2px rgba(242, 239, 237, 0.7);*/
+  max-width: 260px;
   transition: all 0.25s cubic-bezier(0.7, 0.3, 0.1, 1);
-  transform: translate(0, 100%);
-  background: #f8f8f8;
+  transform: translate(100%);
+  background: #fff;
   z-index: 1000;
-  /*border: 1px solid #eee;*/
-  left: 16vw;
   font-family: Consolas,Menlo,Courier,monospace;
-  border: 1px solid #DCDFE6;
+  box-shadow: 0px 0px 15px 0px rgba(0,0,0,.05);
 }
 
 .show {
@@ -139,24 +138,19 @@ export default {
 }
 
 .handle-button {
-  /*position:relative;*/
-  position:absolute;
-  margin-left: -1px;
-  margin-right: -1px;
-  width: 81vw;
-  height: 34px;
-  top: -34px;
+  width: 38px;
+  position: absolute;
+  left: -38px;
+  top: 250px;
+  background-color: rgb(24, 144, 255);
+  text-align: center;
   font-size: 24px;
-  /*box-shadow: 0px 2px 2px 2px rgba(242, 239, 237, 0.7);*/
-
-  border: 1px solid #DCDFE6;
-  border-radius: 2px 2px 0 0 !important;
+  border-radius: 6px 0 0 6px !important;
   z-index: 0;
   pointer-events: auto;
   cursor: pointer;
   color: #fff;
-  line-height: 34px;
-  background-color: #fff;
+  line-height: 48px;
 
   i {
     font-size: 24px;
@@ -165,19 +159,12 @@ export default {
 }
 
   .handle-button-panel {
-    margin: 0 10px;
-    padding: 0 8px;
-    border-left: 1px solid #DCDFE6;
-    border-right: 1px solid #DCDFE6;
-    border-top: 3px solid rgb(32, 161, 255);
-    display: inline-block;
-    height: 33px;
-    color: rgb(32, 161, 255);
-    line-height: 28px;
-    vertical-align: top;
-    background: #f8f8f8;
+    padding: 12px 8px;
+    width: 38px;
+    color: #fff;
+    line-height: 16px;
   }
   .bottomPanel-items {
-    padding: 8px 8px 0;
+    padding: 72px 8px 0;
   }
 </style>
