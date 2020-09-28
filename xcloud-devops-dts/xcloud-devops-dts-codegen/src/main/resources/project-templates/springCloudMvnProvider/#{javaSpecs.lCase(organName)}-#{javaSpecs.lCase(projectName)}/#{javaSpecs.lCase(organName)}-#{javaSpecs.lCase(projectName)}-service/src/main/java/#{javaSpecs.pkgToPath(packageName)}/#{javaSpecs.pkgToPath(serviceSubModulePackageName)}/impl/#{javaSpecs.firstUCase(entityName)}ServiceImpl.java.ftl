@@ -65,6 +65,7 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
         return ${entityName?uncap_first}Dao.selectByPrimaryKey(id);
     }
 
+<#if optionMap.isDeletable == 'deleteWithLogical'>
     public int del(Integer id) {
         notNullOf(id, "${entityName?uncap_first}Id");
         ${entityName} ${entityName?uncap_first} = new ${entityName}();
@@ -72,4 +73,11 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
         ${entityName?uncap_first}.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         return ${entityName?uncap_first}Dao.updateByPrimaryKeySelective(${entityName?uncap_first});
     }
+<#else >
+    public int del(Integer id) {
+        notNullOf(id, "${entityName?uncap_first}Id");
+        return ${entityName?uncap_first}Dao.deleteByPrimaryKey(id);
+    }
+</#if>
+
 }

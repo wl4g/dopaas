@@ -101,19 +101,27 @@ public class GenerateController extends BaseController {
 	}
 
 	@RequestMapping("generate")
-	public void generate(String id, HttpServletResponse response) throws IOException {
+	public RespBase<?> generate(String id, HttpServletResponse response) throws IOException {
+		RespBase<Object> resp = RespBase.create();
 		hasTextOf(id, "id");
 
 		// Execution generate
-		String generatedDir = generateService.generate(valueOf(id));
+		resp.setData(generateService.generate(valueOf(id)));
+		return resp;
+	}
+
+	@RequestMapping("download")
+	public void download(String generatedDir, HttpServletResponse response) throws IOException {
+		hasTextOf(generatedDir, "generatedDir");
 
 		// Add generated README
 		FileIOUtils.writeFile(new File(generatedDir, "GENERATED_README.md"), GENERATED_README, false);
 		FileIOUtils.writeFile(new File(generatedDir, "GENERATED_README_CN.md"), GENERATED_README_CN, false);
 
 		// ZIP download
-		writeZip(response, generatedDir, "codegen-".concat(id));
+		writeZip(response, generatedDir, "codegen");
 	}
+
 
 	@RequestMapping("setEnable")
 	public RespBase<?> setEnable(Integer id, String status) {
