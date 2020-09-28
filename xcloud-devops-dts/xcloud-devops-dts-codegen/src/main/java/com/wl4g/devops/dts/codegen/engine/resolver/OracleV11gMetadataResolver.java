@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.dts.codegen.engine.resolver;
 
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 
 /**
@@ -32,13 +34,13 @@ public class OracleV11gMetadataResolver extends AbstractMetadataResolver {
 	 * @param genDS
 	 */
 	public OracleV11gMetadataResolver(GenDataSource genDS) {
-		// TODO
-		this("TODO", genDS.getUsername(), genDS.getPassword());
+		this("jdbc:oracle:thin@//".concat(hasTextOf(genDS.getHost(), "dbHost")).concat(":")
+				.concat(hasTextOf(genDS.getPort(), "dbPort")).concat("/").concat(hasTextOf(genDS.getDatabase(), "dbName")),
+				genDS.getUsername(), genDS.getPassword());
 	}
 
 	protected OracleV11gMetadataResolver(String url, String username, String password) {
-		// TODO
-		super("TODO", url, username, password);
+		super("oracle.jdbc.OracleDriver", url, username, password);
 	}
 
 }

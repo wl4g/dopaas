@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.SQLException;
-
 /**
  * {@link GenDataSourceController}
  *
@@ -41,47 +39,48 @@ import java.sql.SQLException;
 public class GenDataSourceController extends BaseController {
 
 	@Autowired
-	private GenDataSourceService genDatabaseService;
+	private GenDataSourceService genDSService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(genDatabaseService.page(pm, name));
+		resp.setData(genDSService.page(pm, name));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
 	public RespBase<?> save(@RequestBody GenDataSource gen) {
 		RespBase<Object> resp = RespBase.create();
-		genDatabaseService.save(gen);
+		genDSService.save(gen);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(genDatabaseService.detail(id));
+		resp.setData(genDSService.detail(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		genDatabaseService.del(id);
+		genDSService.del(id);
 		return resp;
 	}
 
 	@RequestMapping(value = "/getForSelect")
 	public RespBase<?> getForSelect() {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(genDatabaseService.getForSelect());
+		resp.setData(genDSService.getForSelect());
 		return resp;
 	}
 
 	@RequestMapping(value = "/testConnectDb")
-	public RespBase<?> testConnectDb(@ RequestBody GenDataSource dataSource) throws SQLException {
+	public RespBase<?> testConnectDb(@RequestBody GenDataSource dataSource) throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		genDatabaseService.testConnectDb(dataSource);
+		genDSService.testConnectDb(dataSource);
 		return resp;
 	}
+
 }

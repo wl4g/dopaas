@@ -51,8 +51,8 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 	 * @param genDS
 	 */
 	public MySQLV5MetadataResolver(GenDataSource genDS) {
-		this("jdbc:mysql://".concat(genDS.getHost()).concat(":").concat(genDS.getPort()).concat("/").concat(genDS.getDatabase()),
-				genDS.getUsername(), genDS.getPassword());
+		this("jdbc:mysql://".concat(hasTextOf(genDS.getHost(), "dbHost")).concat(":").concat(hasTextOf(genDS.getPort(), "dbPort"))
+				.concat("/").concat(hasTextOf(genDS.getDatabase(), "dbName")), genDS.getUsername(), genDS.getPassword());
 	}
 
 	/**

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.dts.codegen.engine.resolver;
 
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 
 /**
@@ -32,13 +34,13 @@ public class PostgreSQLV10MetadataResolver extends AbstractMetadataResolver {
 	 * @param genDS
 	 */
 	public PostgreSQLV10MetadataResolver(GenDataSource genDS) {
-		// TODO
-		this("TODO", genDS.getUsername(), genDS.getPassword());
+		this("jdbc:postgresql://".concat(hasTextOf(genDS.getHost(), "dbHost")).concat(":")
+				.concat(hasTextOf(genDS.getPort(), "dbPort")).concat("/").concat(hasTextOf(genDS.getDatabase(), "dbName")),
+				genDS.getUsername(), genDS.getPassword());
 	}
 
 	protected PostgreSQLV10MetadataResolver(String url, String username, String password) {
-		// TODO
-		super("TODO", url, username, password);
+		super("org.postgresql.Driver", url, username, password);
 	}
 
 }
