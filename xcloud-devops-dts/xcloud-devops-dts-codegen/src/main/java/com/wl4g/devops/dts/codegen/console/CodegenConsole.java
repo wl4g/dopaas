@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.console;
 
-import com.wl4g.components.common.io.FileIOUtils;
+import com.wl4g.components.common.io.FileDeletionUtils;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.shell.common.annotation.ShellMethod;
@@ -58,13 +58,11 @@ public class CodegenConsole {
 	@ShellMethod(keys = { "cleanGeneratedJobs" }, group = DEF_CONSOLE_GROUP, help = "Clean Generated Job temp Files.")
 	public void cleanGeneratedJobs(SimpleShellContext context) {
 		context.printf("Cleaning generate templates cache...");
-		FileIOUtils.deleteDir(config.getWorkspace());
+		FileDeletionUtils.deleteDir(config.getWorkspace());
 		context.printf("Cleaned generate templates cache.");
 	}
 
 	/** Codegen shell console group default name. */
 	public static final String DEF_CONSOLE_GROUP = "Codegen command-line console";
-
-
 
 }
