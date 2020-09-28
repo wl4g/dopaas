@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.dts.codegen.console;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
+import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.shell.common.annotation.ShellMethod;
 import com.wl4g.shell.core.handler.SimpleShellContext;
 import com.wl4g.shell.springboot.annotation.ShellComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * {@link CodegenConsole}
@@ -55,7 +55,16 @@ public class CodegenConsole {
 		context.completed();
 	}
 
+	@ShellMethod(keys = { "cleanGeneratedJobs" }, group = DEF_CONSOLE_GROUP, help = "Clean Generated Job temp Files.")
+	public void cleanGeneratedJobs(SimpleShellContext context) {
+		context.printf("Cleaning generate templates cache...");
+		FileIOUtils.deleteDir(config.getWorkspace());
+		context.printf("Cleaned generate templates cache.");
+	}
+
 	/** Codegen shell console group default name. */
 	public static final String DEF_CONSOLE_GROUP = "Codegen command-line console";
+
+
 
 }
