@@ -16,6 +16,11 @@
 package com.wl4g.devops.dts.codegen.service.impl;
 
 import com.github.pagehelper.PageHelper;
+
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.components.common.log.SmartLoggerFactory;
+
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.data.page.PageModel;
@@ -44,11 +49,16 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class GenDataSourceServiceImpl implements GenDataSourceService {
 
+	final private static SmartLogger log = SmartLoggerFactory.getLogger(GenDataSourceServiceImpl.class);
+
 	@Autowired
 	protected NamingPrototypeBeanFactory beanFactory;
 
 	@Autowired
 	private GenDataSourceDao genDSDao;
+
+	@Autowired
+	protected NamingPrototypeBeanFactory beanFactory;
 
 	@Override
 	public PageModel page(PageModel pm, String name) {
@@ -67,6 +77,14 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 	}
 
 	public void save(GenDataSource gen) {
+
+		try {
+			MetadataResolver resolver = beanFactory.getPrototypeBean(gen.getType(), gen);
+			gen.setDbversion(resolver.findDBVersion());
+		} catch (Exception e) {
+			log.error("can not get db version", e);
+		}
+
 		if (isNull(gen.getId())) {
 			gen.preInsert(getRequestOrganizationCode());
 			insert(gen);
