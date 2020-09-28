@@ -17,14 +17,15 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Wither;
 
 import java.util.List;
+import java.util.Map;
+
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 
 /**
  * {@link GenTable}
@@ -68,6 +69,9 @@ public class GenTable extends BaseBean {
 
 	private String options;
 
+	@RenderProperty(propertyName = GEN_TABLE_OPTION_MAP)
+	private Map<String, Object> optionMap;
+
 	private String status;
 
 	// --- Temporary fields. ---
@@ -83,7 +87,7 @@ public class GenTable extends BaseBean {
 	}
 
 	public GenTable(Integer projectId, String tableName, String entityName, String comments, String moduleName,
-			String subModuleName, String functionName, String functionNameSimple, String functionAuthor, String options,
+			String subModuleName, String functionName, String functionNameSimple, String functionAuthor, String options,Map<String, Object> optionMap,
 			String status, List<GenTableColumn> genTableColumns, GenTableColumn pk) {
 		super();
 		this.projectId = projectId;
@@ -96,6 +100,7 @@ public class GenTable extends BaseBean {
 		this.functionNameSimple = functionNameSimple;
 		this.functionAuthor = functionAuthor;
 		this.options = options;
+		this.optionMap = optionMap;
 		this.status = status;
 		this.genTableColumns = genTableColumns;
 		this.pk = pk;

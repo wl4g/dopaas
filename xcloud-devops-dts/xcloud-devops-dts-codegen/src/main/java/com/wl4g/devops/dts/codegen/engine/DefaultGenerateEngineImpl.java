@@ -18,6 +18,7 @@ package com.wl4g.devops.dts.codegen.engine;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
@@ -40,6 +41,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
@@ -105,6 +107,10 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		// Gets gen table.
 		List<GenTable> tabs = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tabs) {
+			// Get Table optionMap
+			Map<String, Object> optionMap = JacksonUtils.parseJSON(tab.getOptions(), new TypeReference<Map<String, Object>>() {});
+			tab.setOptionMap(optionMap);
+
 			// Gets gen table columns.
 			List<GenTableColumn> cols = genColumnDao.selectByTableId(tab.getId());
 			tab.setGenTableColumns(cols);
