@@ -493,42 +493,11 @@ CREATE TABLE `sys_cluster_config` (
 -- Records of sys_cluster_config
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_cluster_config` VALUES (1, 84, 'ci-server', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14046/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14040/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (3, 79, 'scm-server', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14043/scm-server', 'http://localhost:14043/scm-server', 'Scm platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (4, 76, 'erm-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14051/erm-manager', 'http://localhost:14051/erm-manager', 'Erm platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (6, 77, 'umc-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14048/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (7, 84, 'ci-server', 2, 'fat', 'http://localhost:8080', 'http://ci.sunwuu.fat/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://localhost:8080', 'http://iam.sunwuu.fat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (9, 79, 'scm-server', 2, 'fat', 'http://localhost:8080', 'http://scm.sunwuu.fat/scm-server', 'http://localhost:14043/scm-server', 'Share platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (10, 76, 'erm-manager', 2, 'fat', 'http://localhost:8080', 'http://erm.sunwuu.fat/erm-manager', 'http://localhost:14051/erm-manager', 'Erm platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (12, 77, 'umc-manager', 2, 'fat', 'http://localhost:8080', 'http://umc.sunwuu.fat/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (13, 84, 'ci-server', 2, 'pro', 'http://localhost:8080', 'https://ci.sunwuu.com/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'pro', 'http://localhost:8080', 'https://iam.sunwuu.com/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (15, 79, 'scm-server', 2, 'pro', 'http://localhost:8080', 'https://scm.sunwuu.com/scm-server', 'http://localhost:14043/scm-server', 'Share platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (16, 76, 'erm-manager', 2, 'pro', 'http://localhost:8080', 'https://erm.sunwuu.com/erm-manager', 'http://localhost:14051/erm-manager', 'Erm platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (17, 77, 'umc-manager', 2, 'pro', 'http://localhost:8080', 'https://umc.sunwuu.com/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (18, 94, 'doc-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14060/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (19, 94, 'doc-manager', 2, 'fat', 'http://localhost:8080', 'http://doc.sunwuu.fat/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (20, 94, 'doc-manager', 2, 'pro', 'http://localhost:8080', 'https://doc.sunwuu.com/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (21, 57995, 'coss-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14062/coss-manager', 'http://localhost:14062/coss-manager', 'Coss platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (22, 57995, 'coss-manager', 2, 'fat', 'http://localhost:8080', 'http://coss-console.sunwuu.fat/coss-manager', 'http://localhost:14062/coss-manager', 'Coss platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (23, 57995, 'coss-manager', 2, 'pro', 'http://localhost:8080', 'https://coss-console.sunwuu.com/coss-manager', 'http://localhost:14062/coss-manager', 'Coss platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (24, 57996, 'vcs-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14063/vcs-manager', 'http://localhost:14063/vcs-manager', 'vcs platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (25, 57996, 'vcs-manager', 2, 'fat', 'http://localhost:8080', 'http://vcs.sunwuu.fat/vcs-manager', 'http://localhost:14063/vcs-manager', 'vcs platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (26, 57996, 'vcs-manager', 2, 'pro', 'http://localhost:8080', 'https://vcs.sunwuu.com/vcs-manager', 'http://localhost:14063/vcs-manager', 'vcs platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (27, 84, 'ci-server', 2, 'uat', 'http://localhost:8080', 'http://ci.sunwuu.uat/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'uat', 'http://localhost:8080', 'http://iam.sunwuu.uat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (29, 79, 'scm-server', 2, 'uat', 'http://localhost:8080', 'http://scm.sunwuu.uat/scm-server', 'http://localhost:14043/scm-server', 'Scm platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (30, 76, 'erm-manager', 2, 'uat', 'http://localhost:8080', 'http://erm.sunwuu.uat/erm-manager', 'http://localhost:14051/erm-manager', 'Erm platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (31, 77, 'umc-manager', 2, 'uat', 'http://localhost:8080', 'http://umc-manager.sunwuu.uat/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (32, 57996, 'vcs-manager', 2, 'uat', 'http://localhost:8080', 'http://vcs.sunwuu.uat/vcs-manager', 'http://localhost:14063/vcs-manager', 'vcs platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (33, 57995, 'coss-manager', 2, 'uat', 'http://localhost:8080', 'http://coss-console.sunwuu.uat/coss-manager', 'http://localhost:14062/coss-manager', 'Coss platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (34, 94, 'doc-manager', 2, 'uat', 'http://localhost:8080', 'http://doc.sunwuu.uat/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (35, 95, 'dts-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14080/dts-manager', 'http://localhost:14080/dts-manager', 'Dts platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (36, 95, 'dts-manager', 2, 'fat', 'http://localhost:8080', 'http://dts.sunwuu.fat/dts-manager', 'http://localhost:14080/dts-manager', 'Dts platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (37, 95, 'dts-manager', 2, 'uat', 'http://localhost:8080', 'http://dts.sunwuu.uat/dts-manager', 'http://localhost:14080/dts-manager', 'Dts platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (38, 95, 'dts-manager', 2, 'pro', 'http://localhost:8080', 'http://dts.sunwuu.com/dts-manager', 'http://localhost:14080/dts-manager', 'Dts platform', NULL, NULL, NULL, NULL, 0);
+
 COMMIT;
 
 -- ----------------------------
@@ -567,11 +536,8 @@ CREATE TABLE `sys_contact` (
 -- Records of sys_contact
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_contact` VALUES (1, 'test1', '1', '2019-08-05 06:45:17', '1', '2019-08-05 17:22:41', 1, NULL);
 INSERT INTO `sys_contact` VALUES (2, 'wangsir', '1', '2019-08-05 06:45:17', '1', '2020-04-10 14:44:22', 0, NULL);
-INSERT INTO `sys_contact` VALUES (3, 'testuser', '1', '2019-08-05 16:40:58', '1', '2019-08-23 16:33:01', 1, NULL);
 INSERT INTO `sys_contact` VALUES (7, 'hwj', '1', '2019-08-23 15:16:39', '1', '2020-07-24 15:43:11', 0, NULL);
-INSERT INTO `sys_contact` VALUES (68259, 'testuser', '1', '2020-03-16 09:47:26', '1', '2020-03-16 09:47:39', 1, NULL);
 INSERT INTO `sys_contact` VALUES (2101651456, 'lxl', '1', '2020-07-17 18:10:20', '1', '2020-07-17 18:10:20', 0, NULL);
 COMMIT;
 
@@ -594,12 +560,9 @@ CREATE TABLE `sys_contact_channel` (
 -- Records of sys_contact_channel
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_contact_channel` VALUES (35427, 'AliyunSms', 68259, '13888888888', 1, 1, 1);
-INSERT INTO `sys_contact_channel` VALUES (89084, 'Mail', 68259, '13888888888@qq.com', 1, 1, 1);
 INSERT INTO `sys_contact_channel` VALUES (96824, 'Mail', 2, '983708408@qq.com', 30, 1, 1);
 INSERT INTO `sys_contact_channel` VALUES (1455118336, 'Mail', 2101651456, '3091553379@qq.com', 99, 99, 1);
 INSERT INTO `sys_contact_channel` VALUES (1749353472, 'Mail', 7, '1154635107@qq.com', 30, 1, 1);
-INSERT INTO `sys_contact_channel` VALUES (2063926272, 'AliyunSms', 7, '13660205656', 30, 1, 0);
 COMMIT;
 
 -- ----------------------------
@@ -622,17 +585,10 @@ CREATE TABLE `sys_contact_group` (
 -- Records of sys_contact_group
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_contact_group` VALUES (1, 'testGroup', '2019-08-05 08:17:14', '1', '2019-08-23 16:34:09', '1', 1, NULL);
-INSERT INTO `sys_contact_group` VALUES (2, 'test2', '2019-08-06 11:42:59', '1', '2019-08-23 16:33:34', '1', 1, NULL);
-INSERT INTO `sys_contact_group` VALUES (3, 'test3', '2019-08-06 11:43:18', '1', '2019-08-23 16:33:33', '1', 1, NULL);
-INSERT INTO `sys_contact_group` VALUES (4, 'test4', '2019-08-06 11:46:52', '1', '2019-08-06 11:48:17', '1', 1, NULL);
-INSERT INTO `sys_contact_group` VALUES (5, 'asdf', '2019-08-06 14:03:51', '1', '2019-08-23 16:33:32', '1', 1, NULL);
-INSERT INTO `sys_contact_group` VALUES (6, '234234', '2019-08-06 14:03:57', '1', '2019-08-23 15:35:22', '1', 1, NULL);
-INSERT INTO `sys_contact_group` VALUES (7, 'test4', '2019-08-23 15:35:09', '1', '2019-08-23 16:33:31', '1', 1, NULL);
 INSERT INTO `sys_contact_group` VALUES (8, 'developer', '2019-08-23 16:34:06', '1', '2019-08-23 16:34:06', '1', 0, NULL);
 INSERT INTO `sys_contact_group` VALUES (9, 'tester', '2019-08-23 16:34:14', '1', '2019-12-09 13:50:51', '1', 0, NULL);
 INSERT INTO `sys_contact_group` VALUES (10, 'Operator', '2019-08-23 16:35:26', '1', '2019-08-23 16:35:26', '1', 0, NULL);
-INSERT INTO `sys_contact_group` VALUES (51061, 'test', '2020-02-25 19:26:37', '1', '2020-02-25 19:30:19', '1', 1, NULL);
+
 COMMIT;
 
 -- ----------------------------
@@ -654,29 +610,12 @@ CREATE TABLE `sys_contact_group_ref` (
 -- Records of sys_contact_group_ref
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_contact_group_ref` VALUES (2, 1, 3);
-INSERT INTO `sys_contact_group_ref` VALUES (3, 1, 1);
-INSERT INTO `sys_contact_group_ref` VALUES (4, 2, 3);
-INSERT INTO `sys_contact_group_ref` VALUES (5, 2, 1);
-INSERT INTO `sys_contact_group_ref` VALUES (19003, 9, 68259);
 INSERT INTO `sys_contact_group_ref` VALUES (59879, 8, 2);
 INSERT INTO `sys_contact_group_ref` VALUES (709166080, 9, 7);
 INSERT INTO `sys_contact_group_ref` VALUES (1120207872, 10, 7);
 INSERT INTO `sys_contact_group_ref` VALUES (1401226240, 8, 7);
 INSERT INTO `sys_contact_group_ref` VALUES (1866160128, 8, 2101651456);
 COMMIT;
-
--- ----------------------------
--- Table structure for sys_data_permission
--- ----------------------------
-DROP TABLE IF EXISTS `sys_data_permission`;
-CREATE TABLE `sys_data_permission` (
-  `id` int(11) NOT NULL,
-  `object_id` int(11) NOT NULL COMMENT '数据权限资源对象ID，如ci_task_id,',
-  `org_id` int(11) NOT NULL COMMENT 'sys_organization',
-  `type` int(11) NOT NULL COMMENT '数据权限资源类型，增加字典类型：data_permission_type，字典值使用数字，key使用object_id对应表名缩写',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
 -- Table structure for sys_department
@@ -733,54 +672,12 @@ CREATE TABLE `sys_dict` (
 -- Records of sys_dict
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_dict` VALUES ('aggre_oper_type@avg', 'avg', '平均值', 'avg', 'agg_oper_type', '', '', 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-21 10:40:08', '聚合运算符（平均值） ', 0);
-INSERT INTO `sys_dict` VALUES ('aggre_oper_type@latest', 'latest', '最新值', 'latest', 'agg_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '聚合运算符（最新值）', 0);
-INSERT INTO `sys_dict` VALUES ('aggre_oper_type@max', 'max', '最大值', 'max', 'agg_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-09-15 13:55:21', '聚合运算符（最大值）', 0);
-INSERT INTO `sys_dict` VALUES ('aggre_oper_type@min', 'min', '最小值', 'min', 'agg_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '聚合运算符（最小值）', 0);
 INSERT INTO `sys_dict` VALUES ('app_ns_type@dev', 'dev', '开发环境', 'Development Environment', 'app_ns_type', '', '', 10, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:07:15', '开发环境，用于开发者调试使用（Development environment）', 0);
 INSERT INTO `sys_dict` VALUES ('app_ns_type@fat', 'fat', '测试环境', 'Testing Environment', 'app_ns_type', '', '', 20, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:08:43', '功能验收测试环境，用于软件测试使用（Feature Acceptance Test environment）', 0);
 INSERT INTO `sys_dict` VALUES ('app_ns_type@pro', 'pro', '生产环境', 'Production Environment', 'app_ns_type', '', '', 40, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:14:10', '线上生产环境（Production environment）', 0);
 INSERT INTO `sys_dict` VALUES ('app_ns_type@uat', 'uat', '验收环境', 'User Verify Environment', 'app_ns_type', '', '', 30, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:12:17', '用户验收测试环境，用于生产环境下的软件灰度测试使用（User Acceptance Test environment）', 0);
-INSERT INTO `sys_dict` VALUES ('arith_oper_type@add', 'add', '加', 'add', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:19', '算术运算符（加）', 0);
-INSERT INTO `sys_dict` VALUES ('arith_oper_type@div', 'div', '除', 'div', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:06', '算术运算符（除）', 0);
-INSERT INTO `sys_dict` VALUES ('arith_oper_type@mul', 'mul', '乘', 'mul', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:18', '算术运算符（乘）', 0);
-INSERT INTO `sys_dict` VALUES ('arith_oper_type@subtr', 'subtr', '减', 'subtr', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:20', '算术运算符（减）', 0);
-INSERT INTO `sys_dict` VALUES ('ci_analysis_state@analyzing', '4', 'Analyzing', 'Analyzing', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_analysis_state@done', '5', 'Done', 'Done', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_analysis_state@new', '1', 'New', 'New', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:28:55', '1', '2019-12-16 17:28:57', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_analysis_state@scan', '3', 'Scan', 'Scan', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_analysis_state@waiting', '2', 'Waiting', 'Waiting', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_orchestration_type@k8s', '2', 'K8s编排', 'K8s layout', 'ci_orchestration_type', NULL, NULL, 50, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_orchestration_type@native', '1', '原生编排', 'Native layout', 'ci_orchestration_type', NULL, NULL, 49, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_provider_kind@DockerNative', 'DockerNative', 'DockerNative', 'DockerNative', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_provider_kind@Golang', 'Golang', 'Golang', 'Golang', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-11-22 11:22:03', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_provider_kind@MvnAssTar', 'MvnAssTar', 'MvnAssTar', 'MvnAssTar', 'ci_provider_kind', 'primary', NULL, 1, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_provider_kind@NpmTar', 'NpmTar', 'NpmTar', 'NpmTar', 'ci_provider_kind', 'primary', NULL, 2, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_provider_kind@Python3', 'Python3', 'Python3', 'Python3', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_provider_kind@RktNative', 'RktNative', 'RktNative', 'RktNative', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_provider_kind@SpringExecJar', 'SpringExecJar', 'SpringExecJar', 'SpringExecJar', 'ci_provider_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_provider_kind@ViewNative', 'ViewNative', 'ViewNative', 'ViewNative', 'ci_provider_kind', 'primary', NULL, 2, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_task_type@failed', '3', '失败', 'Failed', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_task_type@new', '0', '新建', 'New', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_task_type@part_success', '6', '部分成功', 'Part Success', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_task_type@running', '1', '运行中', 'Running', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_task_type@stoping', '7', '停止中', 'Stoping', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_task_type@stopped', '5', '停止', 'Stopped', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_task_type@success', '2', '成功', 'Success', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_task_type@timeout', '4', '超时', 'Timeout', 'ci_task_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_track_type@bug', '2', '漏洞', 'Bug', 'ci_track_type', NULL, NULL, 2, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_track_type@feedback', '4', '反馈', 'Feedback', 'ci_track_type', NULL, NULL, 4, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_track_type@iteration', '3', '迭代', 'Iteration', 'ci_track_type', NULL, NULL, 3, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_track_type@new', '1', '新建', 'New', 'ci_track_type', NULL, NULL, 1, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_vcs_type@VcsWithGithub', 'VcsWithGithub', 'VcsWithGithub', 'VcsWithGithub', 'ci_vcs_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('ci_vcs_type@VcsWithGitlab', 'VcsWithGitlab', 'VcsWithGitlab', 'VcsWithGitlab', 'ci_vcs_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('common_enable_status@disable', '0', '停用', 'Disable', 'common_enable_status', 'danger', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', 'common_enable_status', 0);
 INSERT INTO `sys_dict` VALUES ('common_enable_status@enable', '1', '启用', 'Enable', 'common_enable_status', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', 'common_enable_status', 0);
-INSERT INTO `sys_dict` VALUES ('coss_provider@aliyunoss', 'aliyunoss', 'aliyunoss', 'aliyunoss', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('coss_provider@awss3', 'awss3', 'awss3', 'awss3', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('coss_provider@glusterfs', 'glusterfs', 'glusterfs', 'glusterfs', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('coss_provider@hdfs', 'hdfs', 'hdfs', 'hdfs', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('coss_provider@nativefs', 'nativefs', 'nativefs', 'nativefs', 'coss_provider', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
 INSERT INTO `sys_dict` VALUES ('ctl_switch_type@off', 'off', '关', 'off', 'switch_type', 'gray', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（关）', 0);
 INSERT INTO `sys_dict` VALUES ('ctl_switch_type@on', 'on', '开', 'on', 'switch_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（开）', 0);
 INSERT INTO `sys_dict` VALUES ('doc_file_type@md', 'md', 'Md', 'Md', 'doc_file_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
@@ -789,13 +686,6 @@ INSERT INTO `sys_dict` VALUES ('doc_lang_type@en_US', 'en_US', 'US English Editi
 INSERT INTO `sys_dict` VALUES ('doc_lang_type@ja_JP', 'ja_JP', '日陰勢', '日陰勢', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_CN', 'zh_CN', '简体中文版', '简体中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_HK', 'zh_HK', '繁體中文版', '繁體中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('dts_config_option@gen.basedon.adminui', 'gen.basedon.adminui', 'gen.basedon.adminui', 'gen.basedon.adminui', 'dts_config_option', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', 'codegen.provider.vue.compression提示', 0);
-INSERT INTO `sys_dict` VALUES ('dts_config_option@gen.build.assets-type', 'gen.build.assets-type', 'gen.build.assets-type', 'gen.build.assets-type', 'dts_config_option', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', 'codegen.provider.springcloudmvn.build-assets-type提示', 0);
-INSERT INTO `sys_dict` VALUES ('dts_config_option@gen.compression', 'gen.compression', 'gen.compression', 'gen.compression', 'dts_config_option', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', 'codegen.provider.vue.compression提示', 0);
-INSERT INTO `sys_dict` VALUES ('dts_gen_category@DaoServiceController', 'DaoServiceController', 'DaoServiceController', 'DaoServiceController', 'dts_gen_category', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('dts_gen_category@DaoServiceControllerVueJS', 'DaoServiceControllerVueJS', 'DaoServiceControllerVueJS', 'DaoServiceControllerVueJS', 'dts_gen_category', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('dts_gen_category@JustNgJS', 'JustNgJS', 'JustNgJS', 'JustNgJS', 'dts_gen_category', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('dts_gen_category@JustVueJS', 'JustVueJS', 'JustVueJS', 'JustVueJS', 'dts_gen_category', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
 INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@blacklist', '1', '黑名单', 'BlackList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@whitelist', '2', '白名单', 'WhiteList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('erm_dns_kind@AliyunDc', 'AliyunDc', 'AliyunDc', 'AliyunDc', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
@@ -826,9 +716,6 @@ INSERT INTO `sys_dict` VALUES ('idc_provider@ctyun', '5', '天翼云', 'Ctyun Cl
 INSERT INTO `sys_dict` VALUES ('idc_provider@google', '6', 'Google云', 'Google Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
 INSERT INTO `sys_dict` VALUES ('idc_provider@qingcloud', '7', '青云', 'Qing Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('idc_provider@tencent', '8', '腾讯云', 'Tencent Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('logical_oper_type@and', 'and', '与', 'and', 'logical_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:21', '逻辑运算符（与）', 0);
-INSERT INTO `sys_dict` VALUES ('logical_oper_type@not', 'not', '非', 'not', 'logical_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:21', '逻辑运算符（非）', 0);
-INSERT INTO `sys_dict` VALUES ('logical_oper_type@or', 'or', '或', 'or', 'logical_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:21', '逻辑运算符（或）', 0);
 INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyA', 'classifyA', 'CI/CD', 'CI/CD', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
 INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyB', 'classifyB', '监控', 'Monitors', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:00', '', 0);
 INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyC', 'classifyC', '网络', 'Networks', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:05:35', '', 0);
@@ -840,15 +727,6 @@ INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyH', 'classifyH', '文
 INSERT INTO `sys_dict` VALUES ('menu_type@button', '3', '按钮', 'Button', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
 INSERT INTO `sys_dict` VALUES ('menu_type@dynamic', '2', '动态菜单', 'Dynamic Menu', 'menu_type', NULL, NULL, 50, 1, NULL, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('menu_type@static', '1', '静态菜单', 'Static Menu', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
-INSERT INTO `sys_dict` VALUES ('metric_classify@basic', 'basic', 'basic', 'basic', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 16:55:57', '1', '2019-08-23 16:55:57', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('metric_classify@docker', 'docker', 'docker', 'docker', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 16:58:11', '1', '2019-08-23 16:58:11', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('metric_classify@kafka', 'kafka', 'kafka', 'kafka', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 17:01:14', '1', '2019-08-23 17:01:14', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('metric_classify@redis', 'redis', 'redis', 'redis', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 16:58:47', '1', '2019-08-23 16:58:47', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('metric_classify@zookeeper', 'zookeeper', 'zookeeper', 'zookeeper', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 17:02:01', '1', '2019-08-23 17:02:01', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('pcm_auth_type@key', '2', 'key', 'key', 'pcm_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('pcm_auth_type@password', '1', 'password', 'password', 'pcm_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('pcm_provider@jira', 'jira', 'Jira', 'Jira', 'pcm_provider', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('pcm_provider@redmine', 'redmine', 'Redmine', 'Redmine', 'pcm_provider', 'primary', NULL, 49, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
 INSERT INTO `sys_dict` VALUES ('relate_oper_type@gt', 'gt', '大于', 'gt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于）', 0);
 INSERT INTO `sys_dict` VALUES ('relate_oper_type@gte', 'gte', '大于等于', 'gte', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于等于）', 0);
 INSERT INTO `sys_dict` VALUES ('relate_oper_type@lt', 'lt', '小于', 'lt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（小于）', 0);
@@ -870,9 +748,6 @@ INSERT INTO `sys_dict` VALUES ('theme_type@gray', 'gray', '灰色', 'gray', 'the
 INSERT INTO `sys_dict` VALUES ('theme_type@primary', 'primary', '主要', 'primary', 'theme_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（主要）', 0);
 INSERT INTO `sys_dict` VALUES ('theme_type@success', 'success', '成功', 'success', 'theme_type', 'success', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（成功）', 0);
 INSERT INTO `sys_dict` VALUES ('theme_type@warning', 'warning', '警告', 'warning', 'theme_type', 'warning', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（警告）', 0);
-INSERT INTO `sys_dict` VALUES ('umc_engine_status@running', '2', '运行中', 'Running', 'umc_engine_status', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('umc_engine_status@stop', '0', '停止', 'Stop', 'umc_engine_status', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('umc_engine_status@wait', '1', '等待', 'Wait', 'umc_engine_status', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('vcs_auth_type@password', '1', 'Password', 'Password', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('vcs_auth_type@ssh', '2', 'Ssh', 'Ssh', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
 INSERT INTO `sys_dict` VALUES ('vcs_provider@alicode', 'alicode', 'Alicode', 'Alicode', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
@@ -917,8 +792,6 @@ INSERT INTO `sys_group` VALUES (2, 'Shangmaikeji-GZ', '广州商脉科技网络�
 INSERT INTO `sys_group` VALUES (3, 'BigdataDepartment', '大数据研发部', 'BigdataDepartment', 3, 2, '2,1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:09:55', 0);
 INSERT INTO `sys_group` VALUES (4, 'BizDepartment', '应用研发部', 'BizDepartment', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:06:18', 0);
 INSERT INTO `sys_group` VALUES (5, 'DevSecOpsFramework', 'DevSecOps+系统架构部', 'DevSecOpsFramework', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-31 15:46:29', 1, '2019-11-26 14:10:19', 0);
-INSERT INTO `sys_group` VALUES (7, 'test', 'test', 'test', 2, NULL, NULL, 110000, 1, 0, 1, '2019-11-19 14:56:44', 1, '2019-11-19 14:56:44', 1);
-INSERT INTO `sys_group` VALUES (8, 'test', 'test', 'test', 3, 2, '2,1', 110000, 1, 0, 1, '2019-11-26 10:56:34', 1, '2019-11-26 10:56:34', 1);
 COMMIT;
 
 -- ----------------------------
@@ -1019,9 +892,7 @@ INSERT INTO `sys_menu` VALUES (20, 'Dictionaries', '字典配置', 1, NULL, 2, 0
 INSERT INTO `sys_menu` VALUES (21, 'Notifications', '通知设置', 1, NULL, 2, 0, 5, NULL, 'iam:contact', '/iam/contact/Contact', '/iam/contact', NULL, 'icon-lianxiren', 901, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:52', 0);
 INSERT INTO `sys_menu` VALUES (33, 'Home', '主页', 1, NULL, 1, 0, 0, NULL, 'home', '', '/home', NULL, 'icon-zhuye', 100, 1, '2019-11-26 10:42:01', 1, '2020-08-26 12:23:21', 0);
 INSERT INTO `sys_menu` VALUES (34, 'Overview', '概览', 1, NULL, 2, 0, 33, NULL, 'home:overview', '/home/overview/Overview', '/home/overview', NULL, 'icon-gailan', 101, 1, '2019-11-26 10:42:33', 1, '2020-08-26 12:24:40', 0);
-
-<#--TODO-->
-<#if moduleMap?exists>
+<#if moduleMap??>
     <#list moduleMap?keys as moduleName>
         <#assign moduleMuneId = javaSpecs.genId()>
 INSERT INTO `sys_menu` VALUES (${moduleMuneId}, '${moduleName}', '${moduleName}', 1, 'classifyA', 1, 0, 0, NULL, '${moduleName}', '', '/${moduleName}', 'NULL', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
@@ -1030,10 +901,6 @@ INSERT INTO `sys_menu` VALUES (${javaSpecs.genId()}, '${table.entityName}', '${t
         </#list>
     </#list>
 </#if>
-
-
-
-
 COMMIT;
 
 -- ----------------------------
@@ -1093,10 +960,9 @@ CREATE TABLE `sys_role` (
 -- Records of sys_role
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_role` VALUES (1, 'coder', '普通开发角色', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2020-06-12 10:04:24', 0);
-INSERT INTO `sys_role` VALUES (2, 'test', '普通测试角色', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:11:58', 0);
-INSERT INTO `sys_role` VALUES (3, 'devops', '系统运维研发', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:12:27', 0);
-INSERT INTO `sys_role` VALUES (4, 'test1', 'test1', NULL, 1, 0, 1, '2019-11-04 17:00:59', 1, '2019-11-04 17:02:42', 1);
+INSERT INTO `sys_role` VALUES (1, 'manager', '管理者', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2020-06-12 10:04:24', 0);
+INSERT INTO `sys_role` VALUES (2, 'groupleader', '组长', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:11:58', 0);
+
 COMMIT;
 
 -- ----------------------------
@@ -1116,24 +982,6 @@ CREATE TABLE `sys_role_menu` (
   CONSTRAINT `sys_role_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统role-menu中间表';
 
--- ----------------------------
--- Records of sys_role_menu
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_role_menu` VALUES (33, 4, NULL, 1, '2019-11-04 17:02:43');
-INSERT INTO `sys_role_menu` VALUES (34, 4, 1, 1, '2019-11-04 17:02:43');
-INSERT INTO `sys_role_menu` VALUES (35, 4, 2, 1, '2019-11-04 17:02:43');
-INSERT INTO `sys_role_menu` VALUES (36, 4, 7, 1, '2019-11-04 17:02:43');
-INSERT INTO `sys_role_menu` VALUES (37, 4, 23, 1, '2019-11-04 17:02:43');
-INSERT INTO `sys_role_menu` VALUES (364754385, 1, 51, 1, '2020-06-12 10:04:24');
-INSERT INTO `sys_role_menu` VALUES (568139182, 1, 1, 1, '2020-06-12 10:04:24');
-INSERT INTO `sys_role_menu` VALUES (799980647, 1, 8, 1, '2020-06-12 10:04:24');
-INSERT INTO `sys_role_menu` VALUES (1432331382, 1, 34, 1, '2020-06-12 10:04:24');
-INSERT INTO `sys_role_menu` VALUES (1506352582, 1, 9, 1, '2020-06-12 10:04:24');
-INSERT INTO `sys_role_menu` VALUES (1553354132, 1, 46, 1, '2020-06-12 10:04:24');
-INSERT INTO `sys_role_menu` VALUES (1667944794, 1, 7, 1, '2020-06-12 10:04:24');
-INSERT INTO `sys_role_menu` VALUES (2081932093, 1, 33, 1, '2020-06-12 10:04:24');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_role_user
@@ -1152,14 +1000,6 @@ CREATE TABLE `sys_role_user` (
   CONSTRAINT `sys_role_user_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统user-role中间表';
 
--- ----------------------------
--- Records of sys_role_user
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_role_user` VALUES (15, 1, 1, 1, '2019-11-01 10:44:13');
-INSERT INTO `sys_role_user` VALUES (18, 5, 2, 1, '2019-11-26 14:10:52');
-INSERT INTO `sys_role_user` VALUES (1254127976, 7, 1, 1, '2020-06-12 10:03:53');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -1201,9 +1041,6 @@ INSERT INTO `sys_user` VALUES (1, 'root', '系统根超级管理员', 'b68bac906
 INSERT INTO `sys_user` VALUES (5, 'liuxl', '刘兴龙', '145acd2247e905cd1fb5f66f2f39ba6e92ea63b7575beff1c6344f37e4eefd59fe4363b754b3dab37412f69a33e7de5f220e2dda65806971432eaf643a6a4368', 0, 1, 0, 'zhangsan@gmail.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '测试人员-刘兴龙', 1, '2019-10-30 11:16:05', 1, '2019-11-26 14:10:52', 0);
 INSERT INTO `sys_user` VALUES (7, 'hwjie', '何伟杰', 'b18a81966458eadba9ba94a07c16f41ff4152de438963728b9e38e887179af0a', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 15:01:05', 1, '2020-06-12 10:03:53', 0);
 INSERT INTO `sys_user` VALUES (8, 'wanglsir', 'wanglsir', '6810ae5a577b26dd4916468fe5b21519', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 18:11:00', 1, '2019-11-26 14:11:10', 0);
-INSERT INTO `sys_user` VALUES (9, 'zhangsan', '张三', '534e207105a443d66ce84fe20c53bc1b98b33d3aac11ca6bfe4d2b7a56ccc0e9', 0, 1, 0, 'zhangsan@163.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-27 17:53:32', 1, '2019-11-27 17:53:32', 0);
-INSERT INTO `sys_user` VALUES (10, 'lisi', '李四', 'e006e8d3f251ec5eca396907c60d1c2473f15ffa30f9b2fa668ab468d29e9c96', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-28 14:59:30', 1, '2019-11-28 15:15:27', 0);
-INSERT INTO `sys_user` VALUES (11, 'wangwu', '王五', 'c91cb62f88fa25d36e33ead6da8fa361', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-28 15:21:12', 1, '2019-11-28 15:21:12', 0);
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

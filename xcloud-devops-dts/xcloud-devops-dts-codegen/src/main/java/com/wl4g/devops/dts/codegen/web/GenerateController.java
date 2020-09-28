@@ -130,6 +130,13 @@ public class GenerateController extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping("synchronizeTable")
+	public RespBase<?> getAttrTypes(Integer id,boolean focus) {
+		RespBase<Object> resp = RespBase.create();
+		generateService.synchronizeTable(id, focus);
+		return resp;
+	}
+
 	/**
 	 * Generated watermark readme.
 	 */
