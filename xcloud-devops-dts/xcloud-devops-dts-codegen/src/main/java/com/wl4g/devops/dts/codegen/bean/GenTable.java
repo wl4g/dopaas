@@ -87,7 +87,7 @@ public class GenTable extends BaseBean {
 	}
 
 	public GenTable(Integer projectId, String tableName, String entityName, String comments, String moduleName,
-			String subModuleName, String functionName, String functionNameSimple, String functionAuthor, String options,
+			String subModuleName, String functionName, String functionNameSimple, String functionAuthor, String options,Map<String, Object> optionMap,
 			String status, List<GenTableColumn> genTableColumns, GenTableColumn pk) {
 		super();
 		this.projectId = projectId;
@@ -100,6 +100,7 @@ public class GenTable extends BaseBean {
 		this.functionNameSimple = functionNameSimple;
 		this.functionAuthor = functionAuthor;
 		this.options = options;
+		this.optionMap = optionMap;
 		this.status = status;
 		this.genTableColumns = genTableColumns;
 		this.pk = pk;
