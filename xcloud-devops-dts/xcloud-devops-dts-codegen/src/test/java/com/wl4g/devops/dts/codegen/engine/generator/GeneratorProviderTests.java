@@ -71,10 +71,10 @@ public class GeneratorProviderTests {
 				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-common/src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/#{javaSpecs.firstUCase(entityName)}.java.ftl",
 				TEST_TPL_CONTENT));
 		tpls1.add(new TemplateResourceWrapper(
-				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/@has-{entityName}@#{javaSpecs.firstUCase(entityName)}Service.java.ftl",
+				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/@if-entityName!#{javaSpecs.firstUCase(entityName)}Service.java.ftl",
 				TEST_TPL_CONTENT));
 		tpls1.add(new TemplateResourceWrapper(
-				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@has-{aaa}@#{javaSpecs.firstUCase(entityName)}ServiceImpl.java.ftl",
+				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@if-aaa!#{javaSpecs.firstUCase(entityName)}ServiceImpl.java.ftl",
 				TEST_TPL_CONTENT));
 
 		new IamSpringCloudMvnGeneratorProvider(

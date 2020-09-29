@@ -136,13 +136,13 @@ public interface GenTemplateLocator {
 
 			/**
 			 * <pre>
-			 * for example1: @if-{isEdit}@
-			 * for example2: @if-{javaSpecs.isConf(extraOptions,'gen.xx','true')}@
+			 * for example1: @if-{isEdit}!
+			 * for example2: @if-{javaSpecs.isConf(extraOptions,'gen.xx','true')}!
 			 * </pre>
 			 */
 			if (pindex1 > 0 && pindex1 < sindex1) {
 				this.ifDirectivesExpr = pathname.substring(pindex1 + DIRECTIVE_IF_PREFIX.length(), sindex1);
-				this.pathname = new StringBuffer(pathname).delete(pindex1, sindex1 + 2).toString();
+				this.pathname = new StringBuffer(pathname).delete(pindex1, sindex1 + DIRECTIVE_IF_SUFFIX.length()).toString();
 			} else {
 				this.ifDirectivesExpr = null;
 				this.pathname = pathname;
@@ -210,10 +210,10 @@ public interface GenTemplateLocator {
 
 		@Override
 		public String toString() {
-			return getClass().getSimpleName().concat(" - ").concat("pathname: ").concat(pathname).concat(", isTemplate: ")
+			return getClass().getSimpleName().concat(" - ").concat("pathname: ").concat(pathname).concat(", isRender: ")
 					.concat(valueOf(isRender)).concat(", isForeachEntitys: ").concat(valueOf(isForeachEntitys))
 					.concat(", isForeachModules: ")
-					.concat(valueOf(isForeachModules).concat(", ifDirectives: ").concat(valueOf(ifDirectivesExpr)));
+					.concat(valueOf(isForeachModules).concat(", ifDirectivesExpr: ").concat(valueOf(ifDirectivesExpr)));
 		}
 
 	}
@@ -230,7 +230,7 @@ public interface GenTemplateLocator {
 	 * for example:
 	 * 
 	 * <pre>
-	 * Template File: src/views/moduleName1/@if-{isEdit}@#{entityName}Edit.vue
+	 * Template File: src/views/moduleName1/@if-isEdit!#{entityName}Edit.vue
 	 * 
 	 * <b>Case1: (When expression 'isEdit'==true , entityName=='myentity')</b>
 	 * Result: WriteFile(src/views/moduleName1/myentityEdit.vue)</br>
@@ -243,6 +243,6 @@ public interface GenTemplateLocator {
 	 * </p>
 	 */
 	public static final String DIRECTIVE_IF_PREFIX = "@if-";
-	public static final String DIRECTIVE_IF_SUFFIX = "@";
+	public static final String DIRECTIVE_IF_SUFFIX = "!";
 
 }
