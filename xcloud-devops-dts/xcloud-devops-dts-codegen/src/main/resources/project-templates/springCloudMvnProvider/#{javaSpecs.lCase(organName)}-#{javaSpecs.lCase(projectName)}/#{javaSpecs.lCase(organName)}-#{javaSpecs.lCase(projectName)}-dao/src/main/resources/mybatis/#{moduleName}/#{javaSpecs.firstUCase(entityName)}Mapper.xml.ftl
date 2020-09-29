@@ -83,7 +83,9 @@
 			<include refid="Base_Column_List"/>
 		FROM ${tableName}
 		<where>
-        	1=1
+			<#if optionMap.tableDeleteType == 'deleteWithLogical'>
+				AND del_flag != 1
+			</#if>
 			<#list genTableColumns as param>
 			<#if param.isQuery == 1>
                 <#if param.queryType == 1>

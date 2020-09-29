@@ -65,7 +65,7 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
         return ${entityName?uncap_first}Dao.selectByPrimaryKey(id);
     }
 
-<#if optionMap.isDeletable == 'deleteWithLogical'>
+<#if optionMap.tableDeleteType == 'deleteWithLogical'>
     public int del(Integer id) {
         notNullOf(id, "${entityName?uncap_first}Id");
         ${entityName} ${entityName?uncap_first} = new ${entityName}();

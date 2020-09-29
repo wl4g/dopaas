@@ -16,8 +16,13 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
+import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
+
+import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.checkConfigured;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_PROJECT_EXTRA_IAM_SECURITY_MODE_CLUSTER;
 
 /**
  * SpringMVC service, serviceImpl and controller generator.
@@ -28,13 +33,24 @@ import javax.validation.constraints.NotNull;
  */
 public class SpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvider {
 
-	public SpringCloudMvnGeneratorProvider(@NotNull GenerateContext context) {
-		super(context, null);
-	}
+    public SpringCloudMvnGeneratorProvider(@NotNull GenerateContext context) {
+        super(context, null);
+    }
 
-	@Override
-	public void doGenerate() throws Exception {
-		doGenerateWithTemplates(GenProviderAlias.SPINGCLOUD_MVN);
-	}
+    @Override
+    public void doGenerate() throws Exception {
+        doGenerateWithTemplates(GenProviderAlias.SPINGCLOUD_MVN);
+    }
 
+    @Override
+    protected void customizeRenderingModel(GenTemplateLocator.@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
+        super.customizeRenderingModel(resource, model);
+
+        //check enable iam security-mode = cluster
+        if (checkConfigured(context.getGenProject().getExtraOptions(), "gen.iam.security-mode", "cluster")) {
+            model.put(GEN_PROJECT_EXTRA_IAM_SECURITY_MODE_CLUSTER, true);
+        }
+
+
+    }
 }

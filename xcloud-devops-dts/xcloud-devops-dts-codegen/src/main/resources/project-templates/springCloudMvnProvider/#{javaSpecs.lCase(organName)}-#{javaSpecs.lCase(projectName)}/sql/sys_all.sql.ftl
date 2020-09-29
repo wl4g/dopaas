@@ -467,6 +467,44 @@ INSERT INTO `sys_area` VALUES (900000101, 900000100, '大叻', '大叻', 108.827
 COMMIT;
 
 -- ----------------------------
+-- Table structure for erm_app_cluster
+-- ----------------------------
+DROP TABLE IF EXISTS `erm_app_cluster`;
+CREATE TABLE `erm_app_cluster` (
+`id` int(11) NOT NULL,
+`name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '应用名称',
+`type` int(11) DEFAULT NULL COMMENT '应用集群的子类类型:(比docker_cluster和k8s_cluster的分类级别低)\n1如springboot app 或vue app,\n2,如umc-agent进程\n\n注:ci发布时,过滤掉type=2(不带端口的进程,如agent)',
+`endpoint` varchar(16) COLLATE utf8_bin NOT NULL COMMENT '端点:像sso这种则使用 port,  像agent则使用addr',
+`ssh_id` int(11) DEFAULT NULL,
+`deploy_type` int(2) NOT NULL COMMENT '1:host代表当部署在物理机;2:docker代表部署在docker集群;3:k8s代表部署在k8s集群;4:coss代表上传至coss',
+`enable` int(1) NOT NULL DEFAULT '1' COMMENT '启用状态（0:禁止/1:启用）',
+`remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+`create_by` int(11) NOT NULL,
+`create_date` datetime NOT NULL,
+`update_by` int(11) NOT NULL,
+`update_date` datetime NOT NULL,
+`del_flag` int(1) NOT NULL DEFAULT '0',
+`organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
+PRIMARY KEY (`id`) USING BTREE,
+KEY `update_by` (`update_by`) USING BTREE,
+KEY `create_by` (`create_by`) USING BTREE,
+CONSTRAINT `erm_app_cluster_ibfk_1` FOREIGN KEY (`update_by`) REFERENCES `sys_user` (`id`),
+CONSTRAINT `erm_app_cluster_ibfk_2` FOREIGN KEY (`create_by`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用集群（组）定义表';
+
+
+<#assign clusterId = javaSpecs.genNextId()>
+-- ----------------------------
+-- Records of erm_app_cluster
+-- ----------------------------
+BEGIN;
+INSERT INTO `erm_app_cluster` VALUES (75, 'iam-server', NULL, '80', NULL, 1, 1, 'Iam-server cluster', 1, '2019-09-20 16:54:41', 1, '2019-09-20 16:54:41', 0, 'BizDepartment');
+INSERT INTO `erm_app_cluster` VALUES (${clusterId}, '${projectName?lower_case}-server', NULL, '80', NULL, 1, 1, '${projectName?lower_case}-server', 1, '2020-08-06 19:25:49', 1, '2020-08-06 19:25:49', 0, 'BigdataDepartment');
+COMMIT;
+
+
+
+-- ----------------------------
 -- Table structure for sys_cluster_config
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_cluster_config`;
@@ -493,11 +531,14 @@ CREATE TABLE `sys_cluster_config` (
 -- Records of sys_cluster_config
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14040/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://localhost:8080', 'http://iam.sunwuu.fat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'pro', 'http://localhost:8080', 'https://iam.sunwuu.com/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'uat', 'http://localhost:8080', 'http://iam.sunwuu.uat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
-
+-- INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14040/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+-- INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://localhost:8080', 'http://iam.sunwuu.fat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+-- INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'pro', 'http://localhost:8080', 'https://iam.sunwuu.com/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+-- INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'uat', 'http://localhost:8080', 'http://iam.sunwuu.uat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (39, ${clusterId}, '${projectName?lower_case}-server', 2, 'dev', 'http://localhost:8080', 'http://${organName?lower_case}.debug:8080/${projectName?lower_case}-server', 'http://localhost:8080/${projectName?lower_case}-server', '${projectName?lower_case} platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (40, ${clusterId}, '${projectName?lower_case}-server', 2, 'fat', 'http://localhost:8080', 'http://${projectName?lower_case}.shangmai.fat/${projectName?lower_case}-server', 'http://localhost:8080/${projectName?lower_case}-server', '${projectName?lower_case} platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (41, ${clusterId}, '${projectName?lower_case}-server', 2, 'uat', 'http://localhost:8080', 'http://${projectName?lower_case}.shangmai.uat/${projectName?lower_case}-server', 'http://localhost:8080/${projectName?lower_case}-server', '${projectName?lower_case} platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (42, ${clusterId}, '${projectName?lower_case}-server', 2, 'pro', 'http://localhost:8080', 'http://${projectName?lower_case}.shangmai.com/${projectName?lower_case}-server', 'http://localhost:8080/${projectName?lower_case}-server', '${projectName?lower_case} platform', NULL, NULL, NULL, NULL, 0);
 COMMIT;
 
 -- ----------------------------
