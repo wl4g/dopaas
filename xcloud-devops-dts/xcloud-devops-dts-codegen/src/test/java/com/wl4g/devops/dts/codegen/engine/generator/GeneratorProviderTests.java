@@ -80,7 +80,7 @@ public class GeneratorProviderTests {
 		new IamSpringCloudMvnGeneratorProvider(
 				new DefaultGenerateContext(config, newGenTemplateLocator(tpls1), resolver, project, datasource)) {
 			@Override
-			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
+			protected void afterRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
 				generatedFiles.add(writePath);
 			}
@@ -98,7 +98,7 @@ public class GeneratorProviderTests {
 		new VueGeneratorProvider(
 				new DefaultGenerateContext(config, newGenTemplateLocator(tpls2), resolver, project, datasource)) {
 			@Override
-			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
+			protected void afterRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
 				generatedFiles.add(writePath);
 			}
