@@ -113,7 +113,7 @@
     <#if param.isEdit == '1'>
                 <el-row>
                     <el-col :span="24">
-                        <el-form-item label="${param.attrName}">
+                        <el-form-item label="${param.attrName}" prop="${param.attrName}">
                             <span slot="label">
                                 <span>${param.attrName}</span>
                             <#if param.columnComment != ''>

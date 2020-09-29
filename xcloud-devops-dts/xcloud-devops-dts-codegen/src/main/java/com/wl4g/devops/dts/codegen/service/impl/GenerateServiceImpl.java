@@ -197,6 +197,9 @@ public class GenerateServiceImpl implements GenerateService {
 					if(equalsIgnoreCase(genTableColumn.getColumnName(),"id")) hasId = true;
 					if(equalsIgnoreCase(genTableColumn.getColumnName(),"del_flag")) hasDelflag = true;
 				}
+				if(hasCreateDate && hasCreateBy && hasUpdateDate && hasUpdateBy && hasId && hasDelflag){
+					return null;
+				}
 				StringBuilder stringBuilder = new StringBuilder();
 				stringBuilder.append("没有包含部分特定字段，部分功能可能不可用：");
 				if(!hasCreateDate) stringBuilder.append("create_date, ");
