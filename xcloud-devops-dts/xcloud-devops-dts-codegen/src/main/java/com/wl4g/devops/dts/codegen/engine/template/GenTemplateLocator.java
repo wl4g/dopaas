@@ -102,9 +102,9 @@ public interface GenTemplateLocator {
 		private final boolean isForeachModules;
 
 		/**
-		 * 'has' directive variable name.
+		 * 'if' directives expression.
 		 */
-		private final String hasDirectiveVar;
+		private final String ifDirectivesExpr;
 
 		/**
 		 * Constructor
@@ -125,20 +125,26 @@ public interface GenTemplateLocator {
 			 */
 			this.isForeachEntitys = contains(pathname, GEN_TABLE_ENTITY_NAME); // Entitys
 
-			// 'has' directive.
-			int pindex1 = pathname.indexOf(DIRECTIVE_HAS_PREFIX);
-			int pindex2 = pathname.indexOf(DIRECTIVE_HAS_PREFIX);
-			int sindex1 = pathname.indexOf(DIRECTIVE_HAS_SUFFIX);
-			int sindex2 = pathname.indexOf(DIRECTIVE_HAS_SUFFIX);
+			// 'if' directives.
+			int pindex1 = pathname.indexOf(DIRECTIVE_IF_PREFIX);
+			int pindex2 = pathname.indexOf(DIRECTIVE_IF_PREFIX);
+			int sindex1 = pathname.indexOf(DIRECTIVE_IF_SUFFIX);
+			int sindex2 = pathname.indexOf(DIRECTIVE_IF_SUFFIX);
 			isTrue((pindex1 == pindex2 && sindex1 == sindex2),
-					"Syntax of illegal directive: %s{variable}%s, same template path can only be used once.",
-					DIRECTIVE_HAS_PREFIX, DIRECTIVE_HAS_SUFFIX);
+					"Syntax of illegal directive: %s{ifDirectivesExpr}%s, same template path can only be used once.",
+					DIRECTIVE_IF_PREFIX, DIRECTIVE_IF_SUFFIX);
 
-			if (pindex1 > 0 && pindex1 < sindex1) { // e.g: @has-{isPageEdit}@
-				this.hasDirectiveVar = pathname.substring(pindex1 + DIRECTIVE_HAS_PREFIX.length(), sindex1);
+			/**
+			 * <pre>
+			 * for example1: @if-{isEdit}@
+			 * for example2: @if-{javaSpecs.isConf(extraOptions,'gen.xx','true')}@
+			 * </pre>
+			 */
+			if (pindex1 > 0 && pindex1 < sindex1) {
+				this.ifDirectivesExpr = pathname.substring(pindex1 + DIRECTIVE_IF_PREFIX.length(), sindex1);
 				this.pathname = new StringBuffer(pathname).delete(pindex1, sindex1 + 2).toString();
 			} else {
-				this.hasDirectiveVar = null;
+				this.ifDirectivesExpr = null;
 				this.pathname = pathname;
 			}
 		}
@@ -175,18 +181,23 @@ public interface GenTemplateLocator {
 			return isForeachModules;
 		}
 
-		@Nullable
-		public String getHasDirectiveVar() {
-			return hasDirectiveVar;
-		}
-
 		/**
-		 * Check if the 'has' command is used
+		 * Gets 'if' directives expression.
 		 * 
 		 * @return
 		 */
-		public boolean isHasDirective() {
-			return !isBlank(hasDirectiveVar);
+		@Nullable
+		public String getIfDirectivesExpr() {
+			return ifDirectivesExpr;
+		}
+
+		/**
+		 * Check if the 'if' directives is used.
+		 * 
+		 * @return
+		 */
+		public boolean isIfDirectives() {
+			return !isBlank(ifDirectivesExpr);
 		}
 
 		/**
@@ -202,7 +213,7 @@ public interface GenTemplateLocator {
 			return getClass().getSimpleName().concat(" - ").concat("pathname: ").concat(pathname).concat(", isTemplate: ")
 					.concat(valueOf(isRender)).concat(", isForeachEntitys: ").concat(valueOf(isForeachEntitys))
 					.concat(", isForeachModules: ")
-					.concat(valueOf(isForeachModules).concat(", hasDirective: ").concat(valueOf(hasDirectiveVar)));
+					.concat(valueOf(isForeachModules).concat(", ifDirectives: ").concat(valueOf(ifDirectivesExpr)));
 		}
 
 	}
@@ -219,19 +230,19 @@ public interface GenTemplateLocator {
 	 * for example:
 	 * 
 	 * <pre>
-	 * Template File: src/views/moduleName1/@has-isPageEdit@entityName1Edit.vue
+	 * Template File: src/views/moduleName1/@if-{isEdit}@#{entityName}Edit.vue
 	 * 
-	 * <b>Case1: (When variable 'isPageEdit' is not empty)</b>
-	 * Result: WriteFile(src/views/moduleName1/@has-{isPageEdit}@entityName1Edit.vue)</br>
+	 * <b>Case1: (When expression 'isEdit'==true , entityName=='myentity')</b>
+	 * Result: WriteFile(src/views/moduleName1/myentityEdit.vue)</br>
 	 * 
-	 * <b>Case2: (When variable 'isPageEdit' is empty)</b>
+	 * <b>Case2: (When expression 'isEdit'==false)</b>
 	 * Result: The template is not rendered and output.
 	 * 
 	 * </pre>
 	 * 
 	 * </p>
 	 */
-	public static final String DIRECTIVE_HAS_PREFIX = "@has-{";
-	public static final String DIRECTIVE_HAS_SUFFIX = "}@";
+	public static final String DIRECTIVE_IF_PREFIX = "@if-";
+	public static final String DIRECTIVE_IF_SUFFIX = "@";
 
 }

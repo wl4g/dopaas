@@ -21,7 +21,7 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.checkConfigured;
+import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.isConf;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_PROJECT_EXTRA_IAM_MODE_CLUSTER;
 
 /**
@@ -50,7 +50,7 @@ public class IamSpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvide
 		super.customizeRenderingModel(resource, model);
 
 		// Sets IAM run mode for 'has' directive.
-		if (checkConfigured(context.getGenProject().getExtraOptions(), "gen.iam.security-mode", "cluster")) {
+		if (isConf(context.getGenProject().getExtraOptions(), "gen.iam.security-mode", "cluster")) {
 			model.put(GEN_PROJECT_EXTRA_IAM_MODE_CLUSTER, true);
 		}
 

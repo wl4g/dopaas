@@ -32,7 +32,7 @@
 			<artifactId>${organName?uncap_first}-${projectName?uncap_first}-service</artifactId>
 			<version>${version?uncap_first}</version>
 		</dependency>
-		<#if javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "cluster")>
+		<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-test</artifactId>
@@ -86,7 +86,7 @@
 				</executions>
 			</plugin>
 		<#-- Build artifact package type.(MvnAssTar/SpringExecJar) -->
-		<#if javaSpecs.checkConfigured(extraOptions, "gen.build.assets-type", "MvnAssTar")>
+		<#if javaSpecs.isConf(extraOptions, "gen.build.assets-type", "MvnAssTar")>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -108,7 +108,7 @@
 					</execution>
 				</executions>
 			</plugin>
-		<#elseif javaSpecs.checkConfigured(extraOptions, "gen.build.assets-type", "SpringExecJar")>
+		<#elseif javaSpecs.isConf(extraOptions, "gen.build.assets-type", "SpringExecJar")>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
