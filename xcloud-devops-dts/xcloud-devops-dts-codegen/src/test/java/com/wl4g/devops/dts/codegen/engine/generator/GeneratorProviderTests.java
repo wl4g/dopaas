@@ -77,7 +77,7 @@ public class GeneratorProviderTests {
 				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@has-{aaa}@#{javaSpecs.firstUCase(entityName)}ServiceImpl.java.ftl",
 				TEST_TPL_CONTENT));
 
-		new SpringCloudMvnGeneratorProvider(
+		new IamSpringCloudMvnGeneratorProvider(
 				new DefaultGenerateContext(config, newGenTemplateLocator(tpls1), resolver, project, datasource)) {
 			@Override
 			protected void postRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,

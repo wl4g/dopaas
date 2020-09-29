@@ -9,9 +9,10 @@
 # limitations under the License.
 #
 
-<#assign topDomain =  organName?lower_case + '.'+ organType?lower_case />
+<#assign topDomain = organName?lower_case + '.uat' />
+<#assign redisHost = 'redis.' + topDomain />
 
-# #### Environment(PRO) configuration. ####
+# #### Environment(UAT Test) configuration. ####
 #
 spring:
   cloud:
@@ -30,17 +31,17 @@ spring:
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
           denyIpRange: ${r'${'}X_IAM_ACL_DENY}
         client:
-          server-uri: ${r'${'}X_SERVICE_SCHEMA:https}://iam.${r'${'}X_SERVICE_ZONE:${topDomain}}/iam-server
+          server-uri: http://iam.${r'${'}X_SERVICE_ZONE:${topDomain}}/iam-server
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: ${r'${'}X_SERVICE_SCHEMA:https}://devops.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/share
+          success-uri: http://devops.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/share
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${r'${'}X_DB_URL:${datasource.database}.mysql.rds.aliyuncs.com:3306}/${r'${'}X_DB_NAME:${datasource.database}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: ${r'${'}X_DB_USER:devops}
-      password: ${r'${'}X_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
+      url: jdbc:mysql://${r'${'}X_DB_URL:${topDomain}:3306}/${r'${'}X_DB_NAME:${datasource.database}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: ${r'${'}X_DB_USER:gzsm}
+      password: ${r'${'}X_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10
@@ -58,8 +59,8 @@ spring:
 
 # Redis configuration.
 redis:
-  passwd: zzx!@#$%
+  passwd: ${r'${'}X_REDIS_PASSWD:zzx!@#$%}
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${r'${'}X_REDIS_NODES:${topDomain}:6379,${topDomain}:6380,${topDomain}:6381,${topDomain}:7379,${topDomain}:7380,${topDomain}:7381}
+  nodes: ${r'${'}X_REDIS_NODES:${redisHost}:6379,${redisHost}:6380,${redisHost}:6381,${redisHost}:7379,${redisHost}:7380,${redisHost}:7381}
