@@ -9,9 +9,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
-<#if javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "cluster")>
+<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
 import com.wl4g.iam.client.annotation.EnableIamClient;
-<#elseif javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "local")>
+<#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
 import com.wl4g.iam.annotation.EnableIamServer;
 </#if>
 
@@ -25,9 +25,9 @@ import com.wl4g.iam.annotation.EnableIamServer;
  * @since ${since}
  */
 <#-- refer: service/pom.xml -->
-<#if javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "cluster")>
+<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
 @EnableIamClient
-<#elseif javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "local")>
+<#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
 @EnableIamServer
 </#if>
 <#-- TODO migration com.wl4g.devops.dao => com.wl4g.iam.dao -->

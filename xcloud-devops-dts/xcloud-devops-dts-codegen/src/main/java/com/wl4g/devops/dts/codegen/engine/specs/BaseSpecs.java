@@ -89,7 +89,7 @@ public class BaseSpecs {
 	}
 
 	/**
-	 * Check configured extra options.
+	 * Check if the configured items match.
 	 * 
 	 * @param configuredOptions
 	 * @param name
@@ -97,8 +97,7 @@ public class BaseSpecs {
 	 * @return
 	 * @see {@link GenExtraOptionDefinition}
 	 */
-	public static boolean checkConfigured(@Nullable List<ConfigOption> configuredOptions, @NotBlank String name,
-			@NotBlank String value) {
+	public static boolean isConf(@Nullable List<ConfigOption> configuredOptions, @NotBlank String name, @NotBlank String value) {
 		hasTextOf(name, "name");
 		hasTextOf(value, "value");
 
