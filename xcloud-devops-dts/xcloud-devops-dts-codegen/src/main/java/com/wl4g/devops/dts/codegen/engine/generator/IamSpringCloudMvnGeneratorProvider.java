@@ -41,7 +41,7 @@ public class IamSpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvide
 
 	@Override
 	public void doGenerate() throws Exception {
-		doGenerateWithTemplates(GenProviderAlias.SPINGCLOUD_MVN);
+		doGenerateWithTemplates(GenProviderAlias.IAM_SPINGCLOUD_MVN);
 	}
 
 	@Override

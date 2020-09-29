@@ -5,10 +5,9 @@
 
 <mapper namespace="${packageName}.${daoSubModulePackageName}.${entityName?cap_first}Dao">
     <resultMap id="BaseResultMap" type="${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first}">
+		<id column="${pk.columnName}" jdbcType="${pk.sqlType}" property="${pk.attrName}" />
         <#list genTableColumns as param>
-            <#if param.isPk == 1>
-        <id column="${param.columnName}" jdbcType="${param.sqlType}" property="${param.attrName}" />
-            <#else>
+            <#if param.isPk != 1>
         <result column="${param.columnName}" jdbcType="${param.sqlType}" property="${param.attrName}" />
             </#if>
         </#list>

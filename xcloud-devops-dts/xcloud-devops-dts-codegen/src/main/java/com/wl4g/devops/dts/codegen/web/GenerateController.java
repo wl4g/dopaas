@@ -66,10 +66,7 @@ public class GenerateController extends BaseController {
 
 	@RequestMapping("loadMetadata")
 	public RespBase<?> loadMetadata(Integer projectId, String tableName) {
-		RespBase<Object> resp = RespBase.create();
-		GenTable genTable = generateService.loadMetadata(projectId, tableName);
-		resp.setData(genTable);
-		return resp;
+		return generateService.loadMetadata(projectId, tableName);
 	}
 
 	@RequestMapping(value = "/list")
@@ -88,9 +85,7 @@ public class GenerateController extends BaseController {
 
 	@RequestMapping("detail")
 	public RespBase<?> detail(Integer tableId) {
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(generateService.detail(tableId));
-		return resp;
+		return generateService.detail(tableId);
 	}
 
 	@RequestMapping("del")

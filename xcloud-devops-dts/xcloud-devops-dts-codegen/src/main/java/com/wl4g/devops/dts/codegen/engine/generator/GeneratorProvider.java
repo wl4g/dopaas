@@ -69,7 +69,7 @@ public interface GeneratorProvider extends Runnable {
 		/**
 		 * Standard spring cloud + maven projecs gen provider.
 		 */
-		public static final String SPINGCLOUD_MVN = "springCloudMvnProvider";
+		public static final String IAM_SPINGCLOUD_MVN = "iamSpringCloudMvnProvider";
 
 		/**
 		 * Standard golang(mod) projecs gen provider.
@@ -109,10 +109,10 @@ public interface GeneratorProvider extends Runnable {
 	 */
 	public static enum GenExtraOptionDefinition {
 
-		ExtSpringCloudMvnBuildAssetsType(new ConfigOption(SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
+		ExtSpringCloudMvnBuildAssetsType(new ConfigOption(IAM_SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
 
 		ExtSpringCloudMvnIamSecurityMode(
-				new ConfigOption(SPINGCLOUD_MVN, "gen.iam.security-mode", "local", "cluster", "gateway")),
+				new ConfigOption(IAM_SPINGCLOUD_MVN, "gen.iam.security-mode", "local", "cluster", "gateway")),
 
 		ExtVueJSCompression(new ConfigOption(VUEJS, "gen.compression", "true", "false")),
 
@@ -343,9 +343,9 @@ public interface GeneratorProvider extends Runnable {
 	 */
 	public static enum GenProviderSet {
 
-		DaoServiceController(asList(SPINGCLOUD_MVN), CodeLanguage.JAVA),
+		DaoServiceController(asList(IAM_SPINGCLOUD_MVN), CodeLanguage.JAVA),
 
-		DaoServiceControllerVueJS(asList(SPINGCLOUD_MVN, VUEJS), CodeLanguage.JAVA),
+		DaoServiceControllerVueJS(asList(IAM_SPINGCLOUD_MVN, VUEJS), CodeLanguage.JAVA),
 
 		// Nothing to do with DAO layer
 		JustVueJS(asList(VUEJS), null),

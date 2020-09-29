@@ -33,5 +33,4 @@ logging:
     org:
       springframework: INFO
       apache: INFO
-    com:
-      wl4g.devops.dao: DEBUG
+    ${packageName}.${daoSubModulePackageName}: DEBUG
