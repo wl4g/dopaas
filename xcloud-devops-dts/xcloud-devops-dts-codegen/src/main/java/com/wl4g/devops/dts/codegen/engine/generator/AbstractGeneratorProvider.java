@@ -274,7 +274,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 		// Step2: If the 'if' directives is enabled and returns false, the
 		// template is not rendered.
-		if (parseIfDirectives(tplResource, model)) {
+		if (!parseIfDirectives(tplResource, model)) {
 			return null;
 		}
 
