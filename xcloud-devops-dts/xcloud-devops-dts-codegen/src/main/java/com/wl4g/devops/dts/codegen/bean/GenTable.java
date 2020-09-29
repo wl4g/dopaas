@@ -70,7 +70,7 @@ public class GenTable extends BaseBean {
 	private String options;
 
 	@RenderProperty(propertyName = GEN_TABLE_OPTION_MAP)
-	private Map<String, Object> optionMap;
+	private Map<String, String> optionMap;
 
 	private String status;
 
@@ -87,7 +87,7 @@ public class GenTable extends BaseBean {
 	}
 
 	public GenTable(Integer projectId, String tableName, String entityName, String comments, String moduleName,
-			String subModuleName, String functionName, String functionNameSimple, String functionAuthor, String options,Map<String, Object> optionMap,
+			String subModuleName, String functionName, String functionNameSimple, String functionAuthor, String options,Map<String, String> optionMap,
 			String status, List<GenTableColumn> genTableColumns, GenTableColumn pk) {
 		super();
 		this.projectId = projectId;

@@ -18,7 +18,6 @@ package com.wl4g.devops.dts.codegen.engine;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
@@ -48,6 +47,7 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * {@link DefaultGenerateEngineImpl}
@@ -108,11 +108,17 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		List<GenTable> tabs = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tabs) {
 			// Get Table optionMap
-			Map<String, Object> optionMap = JacksonUtils.parseJSON(tab.getOptions(), new TypeReference<Map<String, Object>>() {});
+			Map<String, String> optionMap = parseJSON(tab.getOptions(), new TypeReference<Map<String, String>>() {});
 			tab.setOptionMap(optionMap);
 
 			// Gets gen table columns.
 			List<GenTableColumn> cols = genColumnDao.selectByTableId(tab.getId());
+			// Deal with saved column coments
+			for(GenTableColumn column : cols){
+				if(isNotBlank(column.getColumnComment())){
+					column.setColumnComment(column.getColumnComment().replaceAll("\n"," "));
+				}
+			}
 			tab.setGenTableColumns(cols);
 			BeanUtils.copyProperties(project, tab, "id", "genTables");
 			tab.setPk(getGenColumnsPrimaryKey(cols));
