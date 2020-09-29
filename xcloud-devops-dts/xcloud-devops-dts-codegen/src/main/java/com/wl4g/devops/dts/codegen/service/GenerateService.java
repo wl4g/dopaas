@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.service;
 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
@@ -39,11 +40,11 @@ public interface GenerateService {
 	 * @param databaseId
 	 * @param tableName
 	 */
-	GenTable loadMetadata(Integer projectId, String tableName);
+	RespBase<Object> loadMetadata(Integer projectId, String tableName);
 
 	PageModel page(PageModel pm, String tableName, Integer projectId);
 
-	GenTable detail(Integer tableId);
+	RespBase<Object> detail(Integer tableId);
 
 	void saveGenConfig(GenTable genTable);
 

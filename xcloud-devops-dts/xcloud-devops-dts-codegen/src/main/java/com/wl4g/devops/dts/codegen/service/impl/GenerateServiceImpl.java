@@ -16,6 +16,7 @@
 package com.wl4g.devops.dts.codegen.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
@@ -48,10 +49,14 @@ import java.util.*;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
 import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * {@link GenerateServiceImpl}
@@ -98,7 +103,8 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public GenTable loadMetadata(Integer projectId, String tableName) {
+	public RespBase<Object> loadMetadata(Integer projectId, String tableName) {
+		RespBase<Object> resp = RespBase.create();
 		// Gets gen project
 		notNullOf(projectId, "projectId");
 		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
@@ -164,7 +170,45 @@ public class GenerateServiceImpl implements GenerateService {
 		}
 		tab.setGenTableColumns(cols);
 
-		return tab;
+		String warningTip = getWarningTip(project, tab);
+		if(isNotBlank(warningTip)){
+			resp.setStatus("warningTip");
+			resp.setMessage(warningTip);
+		}
+
+		resp.setData(tab);
+		return resp;
+	}
+
+	/**
+	 * TODO just for now: getWarningTip
+	 */
+	private String getWarningTip(GenProject project, GenTable tab){
+		List<String> providers = getProviders(project.getProviderSet());
+		for(String provider : providers){
+			if(equalsIgnoreCase(provider, IAM_SPINGCLOUD_MVN)){
+				boolean hasCreateDate = false,hasCreateBy = false,hasUpdateBy = false,
+						hasUpdateDate = false,hasId = false,hasDelflag = false;
+				for(GenTableColumn genTableColumn : tab.getGenTableColumns()){
+					if(equalsIgnoreCase(genTableColumn.getColumnName(),"create_date")) hasCreateDate = true;
+					if(equalsIgnoreCase(genTableColumn.getColumnName(),"create_by")) hasCreateBy = true;
+					if(equalsIgnoreCase(genTableColumn.getColumnName(),"update_date")) hasUpdateDate = true;
+					if(equalsIgnoreCase(genTableColumn.getColumnName(),"update_by")) hasUpdateBy = true;
+					if(equalsIgnoreCase(genTableColumn.getColumnName(),"id")) hasId = true;
+					if(equalsIgnoreCase(genTableColumn.getColumnName(),"del_flag")) hasDelflag = true;
+				}
+				StringBuilder stringBuilder = new StringBuilder();
+				stringBuilder.append("没有包含部分特定字段，部分功能可能不可用：");
+				if(!hasCreateDate) stringBuilder.append("create_date, ");
+				if(!hasCreateBy) stringBuilder.append("create_by, ");
+				if(!hasUpdateDate) stringBuilder.append("update_date, ");
+				if(!hasUpdateBy) stringBuilder.append("update_by, ");
+				if(!hasId) stringBuilder.append("id, ");
+				if(!hasDelflag) stringBuilder.append("del_flag, ");
+				return stringBuilder.toString();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -193,17 +237,21 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public GenTable detail(Integer tableId) {
+	public RespBase<Object> detail(Integer tableId) {
+		RespBase<Object> resp = RespBase.create();
 		notNullOf(tableId, "tableId");
 
 		GenTable oldGenTab = notNullOf(genTableDao.selectByPrimaryKey(tableId), "genTable");
+
+		GenProject project = genProjectDao.selectByPrimaryKey(oldGenTab.getProjectId());
+		notNullOf(project, "genProject");
 
 		List<GenTableColumn> oldGenCols = genColumnDao.selectByTableId(tableId);
 		oldGenTab.setGenTableColumns(oldGenCols);
 
 		// Reload the latest table/columns metadata (sure you get the
 		// latest information)
-		GenTable newGenTab = loadMetadata(oldGenTab.getProjectId(), oldGenTab.getTableName());
+		GenTable newGenTab = (GenTable) loadMetadata(oldGenTab.getProjectId(), oldGenTab.getTableName()).getData();
 		List<GenTableColumn> newGenCols = newGenTab.getGenTableColumns();
 
 		List<GenTableColumn> needAdd = new ArrayList<>();
@@ -225,7 +273,15 @@ public class GenerateServiceImpl implements GenerateService {
 		oldGenCols.addAll(needAdd);
 
 		oldGenTab.setGenTableColumns(oldGenCols);
-		return oldGenTab;
+
+		String warningTip = getWarningTip(project, oldGenTab);
+		if(isNotBlank(warningTip)){
+			resp.setStatus("warningTip");
+			resp.setMessage(warningTip);
+		}
+
+		resp.setData(oldGenTab);
+		return resp;
 	}
 
 	private GenTableColumn genTableColumnByName(List<GenTableColumn> genTableColumns, String name) {
@@ -328,11 +384,11 @@ public class GenerateServiceImpl implements GenerateService {
 	public void synchronizeTable(Integer id,boolean focus){
 		if(focus){
 			GenTable genTable = genTableDao.selectByPrimaryKey(id);
-			GenTable genTableNew = loadMetadata(genTable.getProjectId(), genTable.getTableName());
+			GenTable genTableNew = (GenTable) loadMetadata(genTable.getProjectId(), genTable.getTableName()).getData();
 			genTable.setGenTableColumns(genTableNew.getGenTableColumns());
 			saveGenConfig(genTable);
 		}else{
-			GenTable genTable = detail(id);
+			GenTable genTable = (GenTable) detail(id).getData();
 			saveGenConfig(genTable);
 		}
 

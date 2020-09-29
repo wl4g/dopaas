@@ -149,7 +149,7 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@NamingPrototype({ SPINGCLOUD_MVN })
+	@NamingPrototype({IAM_SPINGCLOUD_MVN})
 	public IamSpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
 		return new IamSpringCloudMvnGeneratorProvider(context);
 	}
