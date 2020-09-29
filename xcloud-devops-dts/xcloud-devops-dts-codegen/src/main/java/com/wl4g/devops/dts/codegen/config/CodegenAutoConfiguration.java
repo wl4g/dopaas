@@ -27,7 +27,7 @@ import com.wl4g.devops.dts.codegen.engine.generator.AngularJSGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.CsharpStandardGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.GoStandardGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.PythonStandardGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.generator.SpringCloudMvnGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.IamSpringCloudMvnGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5TypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.OracleV11gTypeConverter;
@@ -150,8 +150,8 @@ public class CodegenAutoConfiguration {
 
 	@Bean
 	@NamingPrototype({ SPINGCLOUD_MVN })
-	public SpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
-		return new SpringCloudMvnGeneratorProvider(context);
+	public IamSpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
+		return new IamSpringCloudMvnGeneratorProvider(context);
 	}
 
 	@Bean

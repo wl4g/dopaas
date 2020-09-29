@@ -9,11 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
 import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
-<#if javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "cluster")>
-import com.wl4g.iam.client.annotation.EnableIamClient;
-<#elseif javaSpecs.checkConfigured(extraOptions, "gen.iam.security-mode", "local")>
-import com.wl4g.iam.annotation.EnableIamServer;
-</#if>
 
 <#assign basePackagePrefix = organType?uncap_first +'.'+ organName?uncap_first +'.'+ projectName?uncap_first>
 /**

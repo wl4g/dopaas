@@ -61,7 +61,7 @@ public abstract class ModelAttributeDefinitions {
 	public static final String GEN_PROJECT_EXTRA_OPTIONS = "extraOptions";
 	public static final String GEN_PROJECT_DESCRIPTION = "projectDescription";
 
-	public static final String GEN_PROJECT_EXTRA_IAM_SECURITY_MODE_CLUSTER = "hasIamSecurityModeWithCluster";
+	public static final String GEN_PROJECT_EXTRA_IAM_MODE_CLUSTER = "iamModeOfCluster";
 
 	// --- Gen Module. ---
 
@@ -89,7 +89,6 @@ public abstract class ModelAttributeDefinitions {
 	public static final String GEN_TABLE_COLUMNS = "genTableColumns";
 	public static final String GEN_TABLE_PRIMARY = "pk";
 	public static final String GEN_TABLE_OPTION_MAP = "optionMap";
-
 
 	public static final String GEN_TABLE_PACKAGENAME = "packageName";
 	public static final String GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME = "beanSubModulePackageName";

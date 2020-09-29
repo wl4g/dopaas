@@ -9,7 +9,8 @@
 # limitations under the License.
 #
 
-<#assign topDomain =  organName?lower_case + '.'+ organType?lower_case />
+<#assign topDomain = organName?lower_case + '.'+ organType?lower_case />
+<#assign redisHost = 'redis.' + topDomain />
 
 # #### Environment(PRO) configuration. ####
 #
@@ -62,4 +63,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${r'${'}X_REDIS_NODES:${topDomain}:6379,${topDomain}:6380,${topDomain}:6381,${topDomain}:7379,${topDomain}:7380,${topDomain}:7381}
+  nodes: ${r'${'}X_REDIS_NODES:${redisHost}:6379,${redisHost}:6380,${redisHost}:6381,${redisHost}:7379,${redisHost}:7380,${redisHost}:7381}
