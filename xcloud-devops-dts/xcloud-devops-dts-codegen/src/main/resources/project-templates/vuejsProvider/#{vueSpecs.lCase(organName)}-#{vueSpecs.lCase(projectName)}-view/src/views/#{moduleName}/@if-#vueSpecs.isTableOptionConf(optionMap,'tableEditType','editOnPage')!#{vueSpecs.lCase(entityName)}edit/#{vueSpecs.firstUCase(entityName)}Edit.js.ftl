@@ -2,22 +2,11 @@
 import {transDate, getDay} from 'utils/'
 
 export default {
-    name: '${entityName?uncap_first}',
+    name: '${entityName?uncap_first}Edit',
     data() {
         return {
-            //查询条件
-            searchParams: {
-<#list genTableColumns as param>
-    <#if param.isQuery == '1'>
-                ${param.attrName}: '',
-    </#if>
-</#list>
-            },
-
-            //分页信息
-            total: 0,
-            pageNum: 1,
-            pageSize: 10,
+            id: '',
+            isEdit: false,
 
             //弹窗表单
             saveForm: {
@@ -28,11 +17,7 @@ export default {
 </#list>
             },
 
-            dialogVisible: false,
-            dialogTitle: '',
-            dialogLoading: false,
-
-            tableData: [],
+            loading: false,
 
             // 表单规则
             rules: {
@@ -87,8 +72,21 @@ export default {
     </#if>
 </#list>
             },
-            loading: false
+
         }
+    },
+
+    activated() {
+        this.cleanSaveForm();
+        const id = this.$route.query.id;
+        this.saveForm.id = id;
+        if(id){//edit
+            this.isEdit = true;
+            this.editData();
+        }else{//add
+            this.isEdit = false;
+        }
+
     },
 
     mounted() {
@@ -96,43 +94,6 @@ export default {
     },
 
     methods: {
-
-        onSubmit() {
-            this.getData();
-        },
-
-        currentChange(i) {
-            this.pageNum = i;
-            this.getData();
-        },
-
-        addData() {
-<#if optionMap.tableEditType == 'editOnPage'>
-            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit'})
-<#else>
-            this.cleanSaveForm();
-            this.dialogVisible = true;
-            this.dialogTitle = 'Add';
-</#if>
-        },
-
-        // 获取列表数据
-        getData() {
-            this.loading = true;
-            this.searchParams.pageNum = this.pageNum;
-            this.searchParams.pageSize = this.pageSize;
-            this.$$api_${moduleName?lower_case}_${entityName?uncap_first}List({
-                data: this.searchParams,
-                fn: data => {
-                    this.loading = false;
-                    this.total = data.data.total;
-                    this.tableData = data.data.records;
-                },
-                errFn: () => {
-                    this.loading = false;
-                }
-            })
-        },
 
         cleanSaveForm() {
             this.saveForm = {
@@ -145,75 +106,45 @@ export default {
         },
 
         saveData() {
-            this.dialogLoading = true;
+            this.loading = true;
             this.saveForm.hostId = this.searchParams.hostId;
             this.$refs['saveForm'].validate((valid) => {
                 if (valid) {
                     this.$$api_${moduleName?lower_case}_save${entityName?cap_first}({
                         data: this.saveForm,
                         fn: data => {
-                            this.dialogLoading = false;
-                            this.dialogVisible = false;
-                            this.getData();
+                            this.back();
                             this.cleanSaveForm();
                         },
                         errFn: () => {
-                            this.dialogLoading = false;
+                            this.loading = false;
                         }
                     });
                 }else {
-                    this.dialogLoading = false;
+                    this.loading = false;
                 }
             });
         },
 
-        editData(row) {
-<#if optionMap.tableEditType == 'editOnPage'>
-            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit'}, query: {id: row.id}})
-<#else>
-            if (!row.id) {
+        editData() {
+            if (!this.id) {
                 return;
             }
             this.cleanSaveForm();
             this.$$api_${moduleName?lower_case}_${entityName?uncap_first}Detail({
                 data: {
-                    id: row.id,
+                    id: this.id,
                 },
                 fn: data => {
                     this.saveForm = data.data;
                 },
             });
-            this.dialogVisible = true;
-            this.dialogTitle = 'Edit';
-</#if>
         },
 
+        back(){
+            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}')
+        }
 
-        delData(row) {
-            if (!row.id) {
-                return;
-            }
-            this.$confirm('Confirm?', 'warning', {
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
-                type: 'warning'
-            }).then(() => {
-                this.$$api_${moduleName?lower_case}_del${entityName?cap_first}({
-                    data: {
-                        id: row.id,
-                    },
-                    fn: data => {
-                        this.$message({
-                            message: 'Success',
-                            type: 'success'
-                        });
-                        this.getData();
-                    },
-                })
-            }).catch(() => {
-                //do nothing
-            });
-        },
 
     }
 }
