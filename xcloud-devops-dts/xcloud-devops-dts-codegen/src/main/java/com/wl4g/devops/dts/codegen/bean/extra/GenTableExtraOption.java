@@ -23,29 +23,29 @@ import javax.validation.constraints.NotEmpty;
 import com.wl4g.components.common.bean.ConfigOption;
 
 /**
- * {@link TableExtraOption}
+ * {@link GenTableExtraOption}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-16
  * @since
  */
-public class TableExtraOption extends ConfigOption {
+public class GenTableExtraOption extends ConfigOption {
 
-	public TableExtraOption() {
+	public GenTableExtraOption() {
 		super();
 	}
 
-	public TableExtraOption(@NotBlank String name, @NotEmpty String... values) {
+	public GenTableExtraOption(@NotBlank String name, @NotEmpty String... values) {
 		super(name, values);
 	}
 
-	public TableExtraOption(@NotBlank String name, @NotEmpty List<String> values) {
+	public GenTableExtraOption(@NotBlank String name, @NotEmpty List<String> values) {
 		super(name, values);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public TableExtraOption validate() {
+	public GenTableExtraOption validate() {
 		return super.validate();
 	}
 

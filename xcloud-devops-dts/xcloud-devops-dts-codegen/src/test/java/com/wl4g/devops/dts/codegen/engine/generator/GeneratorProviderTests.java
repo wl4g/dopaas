@@ -20,7 +20,7 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenProject.ExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
-import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
@@ -54,8 +54,8 @@ public class GeneratorProviderTests {
 		project.setOrganName("wl4g");
 		project.setProjectName("myshop");
 
-		List<ProjectExtraOption> configOptions = new ArrayList<>();
-		ProjectExtraOption option = ExtraOptionDefinition.SpringCloudMvnBuildAssetsType.getOption();
+		List<GenProjectExtraOption> configOptions = new ArrayList<>();
+		GenProjectExtraOption option = ExtraOptionDefinition.SpringCloudMvnBuildAssetsType.getOption();
 		option.setSelectedValue("MvnAssTar");
 		configOptions.add(option);
 		project.setExtraOptions(configOptions);

@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.components.common.annotation.Nullable;
-import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
 import com.wl4g.devops.dts.codegen.bean.GenProject.ExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
 
@@ -97,7 +97,7 @@ public interface GeneratorProvider extends Runnable {
 	}
 
 	/**
-	 * {@link GeneratorProvider} group set.
+	 * {@link GeneratorProvider} group collection.
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020-09-16
@@ -192,18 +192,18 @@ public interface GeneratorProvider extends Runnable {
 		}
 
 		/**
-		 * Validation {@link ProjectExtraOption} name and values invalid?
+		 * Validation {@link GenProjectExtraOption} name and values invalid?
 		 * 
 		 * @param option
 		 */
-		public static void validateOption(@NotBlank String providerSet, @NotNull List<ProjectExtraOption> options) {
+		public static void validateOption(@NotBlank String providerSet, @NotNull List<GenProjectExtraOption> options) {
 			hasTextOf(providerSet, "providerSet");
 			notNullOf(options, "options");
 
 			safeList(of(providerSet).providers()).stream().forEach(provider -> {
-				List<ProjectExtraOption> defineOptions = safeList(ExtraOptionDefinition.getOptions(provider));
+				List<GenProjectExtraOption> defineOptions = safeList(ExtraOptionDefinition.getOptions(provider));
 				// Validate name & value.
-				for (ProjectExtraOption opt : options) {
+				for (GenProjectExtraOption opt : options) {
 					if (provider.equals(opt.getProvider())) {
 						isTrue(defineOptions.stream().filter(
 								dopt -> dopt.getName().equals(opt.getName()) && dopt.getValues().contains(opt.getSelectedValue()))

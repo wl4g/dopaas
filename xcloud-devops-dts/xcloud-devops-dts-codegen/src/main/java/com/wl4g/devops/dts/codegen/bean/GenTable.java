@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -172,32 +172,32 @@ public class GenTable extends BaseBean {
 	 */
 	public static enum ExtraOptionDefinition {
 
-		ExtTableDeleteType(new TableExtraOption("gen.compression", "true", "false")),
+		TableDeleteType(new GenTableExtraOption("gen.tab.del-type", "true", "false")),
 
-		ExtTableEditType(new TableExtraOption("gen.basedon.adminui", "true", "false")),
+		TableEditType(new GenTableExtraOption("gen.tab.edit-type", "editOnDialog", "editOnPage")),
 
-		ExtIsExportExcel(new TableExtraOption("gen.compression", "true", "false"));
+		IsExportExcel(new GenTableExtraOption("gen.tab.export-excel", "true", "false"));
 
-		/** Gen provider extra option of {@link TableExtraOption} . */
+		/** Gen provider extra option of {@link GenTableExtraOption} . */
 		@NotNull
-		private final TableExtraOption option;
+		private final GenTableExtraOption option;
 
-		private ExtraOptionDefinition(@NotNull TableExtraOption option) {
+		private ExtraOptionDefinition(@NotNull GenTableExtraOption option) {
 			notNullOf(option, "option");
 			this.option = option.validate();
 		}
 
-		public final TableExtraOption getOption() {
+		public final GenTableExtraOption getOption() {
 			return option;
 		}
 
 		/**
-		 * Gets {@link TableExtraOption} by names.
+		 * Gets {@link GenTableExtraOption} by names.
 		 * 
 		 * @param provider
 		 * @return
 		 */
-		public static List<TableExtraOption> getOptions(@Nullable String... names) {
+		public static List<GenTableExtraOption> getOptions(@Nullable String... names) {
 			final List<String> conditions = new ArrayList<>();
 			if (!isEmptyArray(names)) {
 				conditions.addAll(asList(names));

@@ -102,12 +102,11 @@ public class GenerateServiceImpl implements GenerateService {
 		MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);
 		List<TableMetadata> tableMetadatas = resolver.findTablesAll();
 
-
 		List<GenTable> genTables = genTableDao.selectByProjectId(projectId);
 		List<TableMetadata> needRemove = new ArrayList<>();
-		for(TableMetadata tableMetadata : tableMetadatas){
-			for(GenTable genTable : genTables){
-				if(StringUtils.equalsIgnoreCase(tableMetadata.getTableName(),genTable.getTableName())){
+		for (TableMetadata tableMetadata : tableMetadatas) {
+			for (GenTable genTable : genTables) {
+				if (StringUtils.equalsIgnoreCase(tableMetadata.getTableName(), genTable.getTableName())) {
 					needRemove.add(tableMetadata);
 				}
 			}
@@ -160,7 +159,7 @@ public class GenerateServiceImpl implements GenerateService {
 			col.setAttrName(underlineToHump(colmd.getColumnName()));
 
 			// Converting java type
-			if(nonNull(providerSet.language())){
+			if (nonNull(providerSet.language())) {
 				DbTypeConverter conv = converter.forOperator(dataSource.getType());
 				col.setAttrType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Lang, col.getSimpleColumnType()));
 			}
@@ -188,7 +187,7 @@ public class GenerateServiceImpl implements GenerateService {
 		tab.setGenTableColumns(cols);
 
 		String warningTip = getWarningTip(project, tab);
-		if(isNotBlank(warningTip)){
+		if (isNotBlank(warningTip)) {
 			resp.setStatus("warningTip");
 			resp.setMessage(warningTip);
 		}
@@ -200,32 +199,44 @@ public class GenerateServiceImpl implements GenerateService {
 	/**
 	 * TODO just for now: getWarningTip
 	 */
-	private String getWarningTip(GenProject project, GenTable tab){
+	private String getWarningTip(GenProject project, GenTable tab) {
 		List<String> providers = getProviders(project.getProviderSet());
-		for(String provider : providers){
-			if(equalsIgnoreCase(provider, IAM_SPINGCLOUD_MVN)){
-				boolean hasCreateDate = false,hasCreateBy = false,hasUpdateBy = false,
-						hasUpdateDate = false,hasId = false,hasDelflag = false;
-				for(GenTableColumn genTableColumn : tab.getGenTableColumns()){
-					if(equalsIgnoreCase(genTableColumn.getColumnName(),"create_date")) hasCreateDate = true;
-					if(equalsIgnoreCase(genTableColumn.getColumnName(),"create_by")) hasCreateBy = true;
-					if(equalsIgnoreCase(genTableColumn.getColumnName(),"update_date")) hasUpdateDate = true;
-					if(equalsIgnoreCase(genTableColumn.getColumnName(),"update_by")) hasUpdateBy = true;
-					if(equalsIgnoreCase(genTableColumn.getColumnName(),"id")) hasId = true;
-					if(equalsIgnoreCase(genTableColumn.getColumnName(),"del_flag")) hasDelflag = true;
+		for (String provider : providers) {
+			if (equalsIgnoreCase(provider, IAM_SPINGCLOUD_MVN)) {
+				boolean hasCreateDate = false, hasCreateBy = false, hasUpdateBy = false, hasUpdateDate = false, hasId = false,
+						hasDelflag = false;
+				for (GenTableColumn col : tab.getGenTableColumns()) {
+					if (equalsIgnoreCase(col.getColumnName(), "create_date"))
+						hasCreateDate = true;
+					if (equalsIgnoreCase(col.getColumnName(), "create_by"))
+						hasCreateBy = true;
+					if (equalsIgnoreCase(col.getColumnName(), "update_date"))
+						hasUpdateDate = true;
+					if (equalsIgnoreCase(col.getColumnName(), "update_by"))
+						hasUpdateBy = true;
+					if (equalsIgnoreCase(col.getColumnName(), "id"))
+						hasId = true;
+					if (equalsIgnoreCase(col.getColumnName(), "del_flag"))
+						hasDelflag = true;
 				}
-				if(hasCreateDate && hasCreateBy && hasUpdateDate && hasUpdateBy && hasId && hasDelflag){
+				if (hasCreateDate && hasCreateBy && hasUpdateDate && hasUpdateBy && hasId && hasDelflag) {
 					return null;
 				}
-				StringBuilder stringBuilder = new StringBuilder();
-				stringBuilder.append("没有包含部分特定字段，部分功能可能不可用：");
-				if(!hasCreateDate) stringBuilder.append("create_date, ");
-				if(!hasCreateBy) stringBuilder.append("create_by, ");
-				if(!hasUpdateDate) stringBuilder.append("update_date, ");
-				if(!hasUpdateBy) stringBuilder.append("update_by, ");
-				if(!hasId) stringBuilder.append("id, ");
-				if(!hasDelflag) stringBuilder.append("del_flag, ");
-				return stringBuilder.toString();
+				StringBuilder warnTip = new StringBuilder();
+				warnTip.append("检测到当前表无以下通用字段，可能导致部分功能不可用：\n");
+				if (!hasCreateDate)
+					warnTip.append("create_date, ");
+				if (!hasCreateBy)
+					warnTip.append("create_by, ");
+				if (!hasUpdateDate)
+					warnTip.append("update_date, ");
+				if (!hasUpdateBy)
+					warnTip.append("update_by, ");
+				if (!hasId)
+					warnTip.append("id, ");
+				if (!hasDelflag)
+					warnTip.append("del_flag, ");
+				return warnTip.toString();
 			}
 		}
 		return null;
@@ -295,7 +306,7 @@ public class GenerateServiceImpl implements GenerateService {
 		oldGenTab.setGenTableColumns(oldGenCols);
 
 		String warningTip = getWarningTip(project, oldGenTab);
-		if(isNotBlank(warningTip)){
+		if (isNotBlank(warningTip)) {
 			resp.setStatus("warningTip");
 			resp.setMessage(warningTip);
 		}
@@ -379,7 +390,7 @@ public class GenerateServiceImpl implements GenerateService {
 	public Set<String> getAttrTypes(Integer projectId) {
 		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
 		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
-		if(isNull(providerSet.language())){
+		if (isNull(providerSet.language())) {
 			return null;
 		}
 		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
@@ -403,13 +414,13 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public void synchronizeTable(Integer id,boolean focus){
-		if(focus){
+	public void synchronizeTable(Integer id, boolean focus) {
+		if (focus) {
 			GenTable genTable = genTableDao.selectByPrimaryKey(id);
 			GenTable genTableNew = (GenTable) loadMetadata(genTable.getProjectId(), genTable.getTableName()).getData();
 			genTable.setGenTableColumns(genTableNew.getGenTableColumns());
 			saveGenConfig(genTable);
-		}else{
+		} else {
 			GenTable genTable = (GenTable) detail(id).getData();
 			saveGenConfig(genTable);
 		}

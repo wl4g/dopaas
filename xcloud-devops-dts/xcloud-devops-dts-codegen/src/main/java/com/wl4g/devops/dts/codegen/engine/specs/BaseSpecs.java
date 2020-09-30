@@ -18,7 +18,7 @@ package com.wl4g.devops.dts.codegen.engine.specs;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.components.common.id.SnowflakeIdGenerator;
-import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -97,7 +97,7 @@ public class BaseSpecs {
 	 * @return
 	 * @see {@link ExtraOptionDefinition}
 	 */
-	public static boolean isConf(@Nullable List<ProjectExtraOption> configuredOptions, @NotBlank String name, @NotBlank String value) {
+	public static boolean isConf(@Nullable List<GenProjectExtraOption> configuredOptions, @NotBlank String name, @NotBlank String value) {
 		hasTextOf(name, "name");
 		hasTextOf(value, "value");
 
@@ -107,7 +107,7 @@ public class BaseSpecs {
 		}
 
 		// Verify name and value contains in options.
-		for (ProjectExtraOption opt : configuredOptions) {
+		for (GenProjectExtraOption opt : configuredOptions) {
 			if (equalsIgnoreCase(opt.getName(), name) && equalsIgnoreCase(opt.getSelectedValue(), value)) {
 				return true;
 			}

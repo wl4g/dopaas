@@ -23,7 +23,7 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
@@ -98,7 +98,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		// Gets gen project.
 		GenProject project = genProjectService.detail(param.getProjectId());
 
-		project.setExtraOptions(parseJSON(project.getExtraOptionsJson(), new TypeReference<List<ProjectExtraOption>>() {
+		project.setExtraOptions(parseJSON(project.getExtraOptionsJson(), new TypeReference<List<GenProjectExtraOption>>() {
 		}));
 
 		// Gets gen datasource.
