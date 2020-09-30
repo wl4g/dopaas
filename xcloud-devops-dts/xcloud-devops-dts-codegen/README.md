@@ -63,7 +63,7 @@ mvn clean install -DskipTests -T 2C
                     // Ignore irrelevant code...
     └── resources
         ├── generate-templates
-            ├── springCloudMvnProvider // (G) Template project corresponding to different frame combination generators
+            ├── iamSpringCloudMvnProvider // (G) Template project corresponding to different frame combination generators
                 └── #{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}
                     // Ignore irrelevant code...
 
@@ -71,15 +71,15 @@ mvn clean install -DskipTests -T 2C
 
 
 #### Development steps
-step1: New template project, [refer(G) springCloudMvnProvider](src/main/resources/generate-templates/springCloudMvnProvider)
+step1: New template project, [refer(G) iamSpringCloudMvnProvider](src/main/resources/generate-templates/iamSpringCloudMvnProvider)
 
-step2: New generator, [refer( C) SpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/generator/SpringCloudMvnGeneratorProvider.java)
+step2: New generator, [refer( C) IamSpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/generator/IamSpringCloudMvnGeneratorProvider.java)
 
 step3: New code specification tools (Optional)，[refer(E) SpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/naming/SpringCloudMvnGeneratorProvider.java)
 
 step4: Configure to create a new generator[refer(A) CodegenAutoConfiguration#springMvcGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/config/CodegenAutoConfiguration.java#springMvcGeneratorProvider)
 
-step5: Startup the service on your IDE, the entr y class: xcloud-devops-dts-starter/src/main/java/com/wl4g/DtsManager.java
+step5: Startup the service on your IDE, the entry class: xcloud-devops-dts-starter/src/main/java/com/wl4g/DtsManager.java
 
 > Tip: when the default debugger mode is started, the template directory and mybatis mapper file do not need to be restarted, and the system will automatically hot load.
 
@@ -101,7 +101,7 @@ step5: Startup the service on your IDE, the entr y class: xcloud-devops-dts-star
 |/#{entityName}/#{moduleName}.ftl|√|√|
 |/#{moduleName}/#{moduleName}.ftl|√||
 
-- Template with 'if' instruction uses:
+- Template with 'if' directive uses:
 
 > 1. Usage1 (simple variable): there is  @if-entityName! On the template path. When the variable entityName exists in the rendering model, the template will generate the corresponding file.
 
@@ -114,3 +114,12 @@ For example: com/myproject/example/@if-entityName!#{entityName}Controller.java.f
 ```
 For example: com/myproject/example/@if-#{javaSpecs.isConf(extraOption,'gen.build.assets-type','MvnAssTar')}!#{entityName}Controller.java.ftl
 ```
+
+
+
+##### <font color=red>Note:</font>
+> <font color=red>Write code in template path as long as possible, because the operating system has restrictions on file directory and path, such as the maximum directory name length of Linux is 255 characters, the maximum length of file path is 4096 characters, usually only 1 to 2 expressions will exist on one template path, which is generally enough.</font>
+
+> <font color=red>If it is too long, the following measures can be used to optimize:</font>
+> - <font color=red>a. When the directory name expression is too long, it is recommended to split it into multi-level directories;</font>
+> - <font color=red>b. When the overall path is too long, it is recommended to use relevant tool classes such as javaspecs;</font>
