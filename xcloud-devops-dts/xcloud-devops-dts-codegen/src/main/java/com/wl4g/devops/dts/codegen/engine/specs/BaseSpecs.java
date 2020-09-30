@@ -18,8 +18,7 @@ package com.wl4g.devops.dts.codegen.engine.specs;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.components.common.id.SnowflakeIdGenerator;
-import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition;
-import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
+import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -96,9 +95,9 @@ public class BaseSpecs {
 	 * @param name
 	 * @param value
 	 * @return
-	 * @see {@link GenExtraOptionDefinition}
+	 * @see {@link ExtraOptionDefinition}
 	 */
-	public static boolean isConf(@Nullable List<ConfigOption> configuredOptions, @NotBlank String name, @NotBlank String value) {
+	public static boolean isConf(@Nullable List<ProjectExtraOption> configuredOptions, @NotBlank String name, @NotBlank String value) {
 		hasTextOf(name, "name");
 		hasTextOf(value, "value");
 
@@ -108,7 +107,7 @@ public class BaseSpecs {
 		}
 
 		// Verify name and value contains in options.
-		for (ConfigOption opt : configuredOptions) {
+		for (ProjectExtraOption opt : configuredOptions) {
 			if (equalsIgnoreCase(opt.getName(), name) && equalsIgnoreCase(opt.getSelectedValue(), value)) {
 				return true;
 			}
@@ -117,9 +116,10 @@ public class BaseSpecs {
 		return false;
 	}
 
-	public static boolean isTableOptionConf(@Nullable Map<String, String> optionMap, @NotBlank String name, @NotBlank String value){
-		for(Map.Entry<String, String> entry : optionMap.entrySet()){
-			if(equalsIgnoreCase(entry.getKey(), name) && equalsIgnoreCase(entry.getValue(),value)){
+	public static boolean isTableOptionConf(@Nullable Map<String, String> optionMap, @NotBlank String name,
+			@NotBlank String value) {
+		for (Map.Entry<String, String> entry : optionMap.entrySet()) {
+			if (equalsIgnoreCase(entry.getKey(), name) && equalsIgnoreCase(entry.getValue(), value)) {
 				return true;
 			}
 		}

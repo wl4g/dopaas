@@ -20,8 +20,8 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
+import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
-import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 
@@ -85,7 +85,7 @@ public class GenProjectServiceImpl implements GenProjectService {
 
 		GenProject project = genProjectDao.selectByPrimaryKey(id);
 		if (isNotBlank(project.getExtraOptionsJson())) {
-			List<ConfigOption> extraOptions = parseJSON(project.getExtraOptionsJson(), new TypeReference<List<ConfigOption>>() {
+			List<ProjectExtraOption> extraOptions = parseJSON(project.getExtraOptionsJson(), new TypeReference<List<ProjectExtraOption>>() {
 			});
 			project.setExtraOptions(extraOptions);
 		}

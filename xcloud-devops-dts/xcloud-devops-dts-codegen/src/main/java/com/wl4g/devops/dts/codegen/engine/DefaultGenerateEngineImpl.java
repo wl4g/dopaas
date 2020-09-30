@@ -23,6 +23,7 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
+import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
@@ -32,7 +33,6 @@ import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
@@ -98,7 +98,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		// Gets gen project.
 		GenProject project = genProjectService.detail(param.getProjectId());
 
-		project.setExtraOptions(parseJSON(project.getExtraOptionsJson(), new TypeReference<List<ConfigOption>>() {
+		project.setExtraOptions(parseJSON(project.getExtraOptionsJson(), new TypeReference<List<ProjectExtraOption>>() {
 		}));
 
 		// Gets gen datasource.
@@ -108,15 +108,16 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		List<GenTable> tabs = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tabs) {
 			// Get Table optionMap
-			Map<String, String> optionMap = parseJSON(tab.getOptions(), new TypeReference<Map<String, String>>() {});
+			Map<String, String> optionMap = parseJSON(tab.getOptions(), new TypeReference<Map<String, String>>() {
+			});
 			tab.setOptionMap(optionMap);
 
 			// Gets gen table columns.
 			List<GenTableColumn> cols = genColumnDao.selectByTableId(tab.getId());
 			// Deal with saved column coments
-			for(GenTableColumn column : cols){
-				if(isNotBlank(column.getColumnComment())){
-					column.setColumnComment(column.getColumnComment().replaceAll("\n"," "));
+			for (GenTableColumn column : cols) {
+				if (isNotBlank(column.getColumnComment())) {
+					column.setColumnComment(column.getColumnComment().replaceAll("\n", " "));
 				}
 			}
 			tab.setGenTableColumns(cols);

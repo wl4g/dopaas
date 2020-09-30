@@ -18,7 +18,9 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 import com.google.common.collect.Lists;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
+import com.wl4g.devops.dts.codegen.bean.GenProject.ExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
@@ -33,9 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ExtSpringCloudMvnBuildAssetsType;
 import static java.lang.System.out;
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
 
 /**
  * {@link GeneratorProviderTests}
@@ -54,8 +54,8 @@ public class GeneratorProviderTests {
 		project.setOrganName("wl4g");
 		project.setProjectName("myshop");
 
-		List<ConfigOption> configOptions = new ArrayList<>();
-		ConfigOption option = ExtSpringCloudMvnBuildAssetsType.getOption();
+		List<ProjectExtraOption> configOptions = new ArrayList<>();
+		ProjectExtraOption option = ExtraOptionDefinition.SpringCloudMvnBuildAssetsType.getOption();
 		option.setSelectedValue("MvnAssTar");
 		configOptions.add(option);
 		project.setExtraOptions(configOptions);

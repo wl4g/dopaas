@@ -15,17 +15,28 @@
  */
 package com.wl4g.devops.dts.codegen.bean;
 
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
+import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Wither;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
+import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.NGJS;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.VUEJS;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * {@link GenProject}
@@ -36,8 +47,6 @@ import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
  */
 @Getter
 @Setter
-@Wither
-@ToString
 public class GenProject extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
@@ -78,34 +87,128 @@ public class GenProject extends BaseBean {
 	 * Configured extra options.
 	 */
 	@RenderProperty(propertyName = GEN_PROJECT_EXTRA_OPTIONS, describeForObjField = "No")
-	private List<ConfigOption> extraOptions;
+	private List<ProjectExtraOption> extraOptions;
 
 	public GenProject() {
 		super();
-	}
-
-	public GenProject(Integer datasourceId, String projectName, String organType, String organName, String providerSet,
-			String version, String author, String since, String copyright, List<GenTable> genTables, String extraOptionsJson,
-			List<ConfigOption> extraOptions) {
-		super();
-		this.datasourceId = datasourceId;
-		this.projectName = projectName;
-		this.organType = organType;
-		this.organName = organName;
-		this.providerSet = providerSet;
-		this.version = version;
-		this.author = author;
-		this.since = since;
-		this.copyright = copyright;
-		this.genTables = genTables;
-		this.extraOptionsJson = extraOptionsJson;
-		this.extraOptions = extraOptions;
 	}
 
 	@RenderProperty(propertyName = GEN_PROJECT_DESCRIPTION)
 	@Override
 	public String getRemark() {
 		return super.getRemark();
+	}
+
+	public GenProject withDatasourceId(Integer datasourceId) {
+		setDatasourceId(datasourceId);
+		return this;
+	}
+
+	public GenProject withProjectName(String projectName) {
+		setProjectName(projectName);
+		return this;
+	}
+
+	public GenProject withOrganType(String organType) {
+		setOrganType(organType);
+		return this;
+	}
+
+	public GenProject withOrganName(String organName) {
+		setOrganName(organName);
+		return this;
+	}
+
+	public GenProject withProviderSet(String providerSet) {
+		setProviderSet(providerSet);
+		return this;
+	}
+
+	public GenProject withVersion(String version) {
+		setVersion(version);
+		return this;
+	}
+
+	public GenProject withAuthor(String author) {
+		setAuthor(author);
+		return this;
+	}
+
+	public GenProject withSince(String since) {
+		setSince(since);
+		return this;
+	}
+
+	public GenProject withCopyright(String copyright) {
+		setCopyright(copyright);
+		return this;
+	}
+
+	public GenProject withGenTables(List<GenTable> genTables) {
+		setGenTables(genTables);
+		return this;
+	}
+
+	public GenProject withExtraOptionsJson(String extraOptionsJson) {
+		setExtraOptionsJson(extraOptionsJson);
+		return this;
+	}
+
+	public GenProject withExtraOptions(List<ProjectExtraOption> extraOptions) {
+		setExtraOptions(extraOptions);
+		return this;
+	}
+
+	/**
+	 * {@link GenProject} extensible configuration options definitions.
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020-09-16
+	 * @since
+	 */
+	public static enum ExtraOptionDefinition {
+
+		SpringCloudMvnBuildAssetsType(
+				new ProjectExtraOption(IAM_SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
+
+		SpringCloudMvnIamSecurityMode(
+				new ProjectExtraOption(IAM_SPINGCLOUD_MVN, "gen.iam.security-mode", "local", "cluster", "gateway")),
+
+		VueJSCompression(new ProjectExtraOption(VUEJS, "gen.compression", "true", "false")),
+
+		VueJSBasedOnAdminUi(new ProjectExtraOption(VUEJS, "gen.basedon.adminui", "true", "false")),
+
+		NgJSCompression(new ProjectExtraOption(NGJS, "gen.compression", "true", "false"));
+
+		/** Gen provider extra option of {@link ProjectExtraOption} . */
+		@NotNull
+		private final ProjectExtraOption option;
+
+		private ExtraOptionDefinition(@NotNull ProjectExtraOption option) {
+			notNullOf(option, "option");
+			this.option = option.validate();
+		}
+
+		public final ProjectExtraOption getOption() {
+			return option;
+		}
+
+		/**
+		 * Gets {@link ProjectExtraOption} by providers.
+		 * 
+		 * @param provider
+		 * @return
+		 */
+		public static List<ProjectExtraOption> getOptions(@Nullable String... providers) {
+			final List<String> conditions = new ArrayList<>();
+			if (!isEmptyArray(providers)) {
+				conditions.addAll(asList(providers));
+			}
+			return asList(values()).stream()
+					.filter(o -> (isEmpty(conditions) || conditions.contains(o.getOption().getProvider())))
+					.map(o -> o.getOption()).collect(toList());
+		}
+
 	}
 
 }
