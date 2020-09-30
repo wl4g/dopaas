@@ -16,6 +16,7 @@
 package com.wl4g.devops.dts.codegen.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
@@ -99,7 +100,20 @@ public class GenerateServiceImpl implements GenerateService {
 		notNullOf(dataSource, "genDatabase");
 
 		MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);
-		return resolver.findTablesAll();
+		List<TableMetadata> tableMetadatas = resolver.findTablesAll();
+
+
+		List<GenTable> genTables = genTableDao.selectByProjectId(projectId);
+		List<TableMetadata> needRemove = new ArrayList<>();
+		for(TableMetadata tableMetadata : tableMetadatas){
+			for(GenTable genTable : genTables){
+				if(StringUtils.equalsIgnoreCase(tableMetadata.getTableName(),genTable.getTableName())){
+					needRemove.add(tableMetadata);
+				}
+			}
+		}
+		tableMetadatas.removeAll(needRemove);
+		return tableMetadatas;
 	}
 
 	@Override
@@ -320,6 +334,8 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	private void insert(GenTable genTable) {
+		int count = genTableDao.countByProjectIdAndTableName(genTable.getProjectId(), genTable.getTableName());
+		Assert2.isTrue(count <= 0, "can not add the same table");
 
 		List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
 		int i = 0;
