@@ -15,18 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static java.lang.System.out;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
@@ -36,6 +24,18 @@ import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
+import org.junit.Test;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ExtSpringCloudMvnBuildAssetsType;
+import static java.lang.System.out;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOptionDefinition.ConfigOption;
 
 /**
  * {@link GeneratorProviderTests}
@@ -53,6 +53,12 @@ public class GeneratorProviderTests {
 		project.setOrganType("com");
 		project.setOrganName("wl4g");
 		project.setProjectName("myshop");
+
+		List<ConfigOption> configOptions = new ArrayList<>();
+		ConfigOption option = ExtSpringCloudMvnBuildAssetsType.getOption();
+		option.setSelectedValue("MvnAssTar");
+		configOptions.add(option);
+		project.setExtraOptions(configOptions);
 		List<GenTable> genTables = new ArrayList<>();
 		genTables.add(new GenTable().withEntityName("OrderBean").withModuleName("portalModule"));
 		genTables.add(new GenTable().withEntityName("StockBean").withModuleName("portalModule"));
@@ -75,6 +81,12 @@ public class GeneratorProviderTests {
 				TEST_TPL_CONTENT));
 		tpls1.add(new TemplateResourceWrapper(
 				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@if-aaa!#{javaSpecs.firstUCase(entityName)}ServiceImpl.java.ftl",
+				TEST_TPL_CONTENT));
+		tpls1.add(new TemplateResourceWrapper(
+				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(controllerSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.assets-type','MvnAssTar')}!#{javaSpecs.firstUCase(entityName)}Controller.java.ftl",
+				TEST_TPL_CONTENT));
+		tpls1.add(new TemplateResourceWrapper(
+				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(daoSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.assets-type','SpringExecJar')}!#{javaSpecs.firstUCase(entityName)}Dao.java.ftl",
 				TEST_TPL_CONTENT));
 
 		new IamSpringCloudMvnGeneratorProvider(
