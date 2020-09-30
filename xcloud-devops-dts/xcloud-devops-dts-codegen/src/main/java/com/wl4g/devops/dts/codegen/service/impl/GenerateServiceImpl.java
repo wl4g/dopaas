@@ -127,6 +127,9 @@ public class GenerateServiceImpl implements GenerateService {
 		tab.setEntityName(JavaSpecs.tableName2ClassName(metadata.getTableName()));
 		tab.setTableName(metadata.getTableName());
 		tab.setComments(metadata.getComments());
+		// Set Table default
+		tab.setFunctionAuthor("unascribed");
+		tab.setRemark(metadata.getComments());
 
 		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
 

@@ -26,6 +26,19 @@ import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.exception.RenderingGenerateException;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
+import freemarker.template.Template;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
@@ -36,21 +49,6 @@ import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEF
 import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
 import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
-
-import freemarker.template.Template;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static com.google.common.base.Charsets.UTF_8;
 import static java.io.File.separator;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -176,7 +174,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 			// If the 'if' directives is enabled and returns false, the
 			// template is not rendered.
-			if (processIfDirectives(tplResource, model)) {
+			if (!processIfDirectives(tplResource, model)) {
 				return;
 			}
 
