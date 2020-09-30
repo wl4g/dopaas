@@ -185,21 +185,25 @@ public class GenerateServiceImpl implements GenerateService {
 			cols.add(col);
 		}
 		tab.setGenTableColumns(cols);
-
-		String warningTip = getWarningTip(project, tab);
+		// Check table struct specification.
+		String warningTip = checkTableNormalize(project, tab);
 		if (isNotBlank(warningTip)) {
 			resp.setStatus("warningTip");
 			resp.setMessage(warningTip);
 		}
-
 		resp.setData(tab);
 		return resp;
 	}
 
 	/**
-	 * TODO just for now: getWarningTip
+	 * Check the normalization of the table structure, otherwise output warning
+	 * prompt.
+	 * 
+	 * @param project
+	 * @param tab
+	 * @return
 	 */
-	private String getWarningTip(GenProject project, GenTable tab) {
+	private String checkTableNormalize(GenProject project, GenTable tab) {
 		List<String> providers = getProviders(project.getProviderSet());
 		for (String provider : providers) {
 			if (equalsIgnoreCase(provider, IAM_SPINGCLOUD_MVN)) {
@@ -305,7 +309,7 @@ public class GenerateServiceImpl implements GenerateService {
 
 		oldGenTab.setGenTableColumns(oldGenCols);
 
-		String warningTip = getWarningTip(project, oldGenTab);
+		String warningTip = checkTableNormalize(project, oldGenTab);
 		if (isNotBlank(warningTip)) {
 			resp.setStatus("warningTip");
 			resp.setMessage(warningTip);
