@@ -26,6 +26,17 @@ import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.exception.RenderingGenerateException;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
+import static com.wl4g.components.common.collection.Collections2.ensureMap;
+import static com.wl4g.components.common.io.FileIOUtils.writeFile;
+import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
+import static com.wl4g.components.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
+import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
+import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
+
 import freemarker.template.Template;
 
 import javax.validation.constraints.NotBlank;
@@ -40,15 +51,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.collection.Collections2.ensureMap;
-import static com.wl4g.components.common.io.FileIOUtils.writeFile;
-import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
-import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
-import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
-import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
 import static java.io.File.separator;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -174,7 +176,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 			// If the 'if' directives is enabled and returns false, the
 			// template is not rendered.
-			if (parseIfDirectives(tplResource, model)) {
+			if (processIfDirectives(tplResource, model)) {
 				return;
 			}
 
@@ -274,7 +276,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 		// Step2: If the 'if' directives is enabled and returns false, the
 		// template is not rendered.
-		if (!parseIfDirectives(tplResource, model)) {
+		if (!processIfDirectives(tplResource, model)) {
 			return null;
 		}
 
@@ -302,17 +304,20 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param model
 	 * @return
 	 */
-	private final boolean parseIfDirectives(TemplateResourceWrapper tplResource, MapRenderModel model) {
+	private final boolean processIfDirectives(TemplateResourceWrapper tplResource, MapRenderModel model) {
 		if (tplResource.isIfDirectives()) {
-			// 1. Direct match.
+			// 1. Match checks against the key of the data model.
 			if (model.containsKey(tplResource.getIfDirectivesExpr())) {
 				return true;
 			}
-			// 2. Expression match with SPEL.
-			if (SpelExpressions.isSpelExpr(tplResource.getIfDirectivesExpr())) {
+			// 2. Match the check according to the spel expression.
+			if (hasSpelTemplateExpr(tplResource.getIfDirectivesExpr())) {
 				return spelExpr.resolve(tplResource.getIfDirectivesExpr(), model);
 			}
+			// 3. If there is no match, the result is false
+			return false;
 		}
+		// Direct pass without 'if' directives.
 		return true;
 	}
 
