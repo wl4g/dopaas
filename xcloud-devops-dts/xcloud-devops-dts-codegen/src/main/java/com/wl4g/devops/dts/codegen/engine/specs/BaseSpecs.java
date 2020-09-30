@@ -23,6 +23,7 @@ import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenExtraOp
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Map;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static java.lang.String.valueOf;
@@ -113,6 +114,15 @@ public class BaseSpecs {
 			}
 		}
 
+		return false;
+	}
+
+	public static boolean isTableOptionConf(@Nullable Map<String, String> optionMap, @NotBlank String name, @NotBlank String value){
+		for(Map.Entry<String, String> entry : optionMap.entrySet()){
+			if(equalsIgnoreCase(entry.getKey(), name) && equalsIgnoreCase(entry.getValue(),value)){
+				return true;
+			}
+		}
 		return false;
 	}
 
