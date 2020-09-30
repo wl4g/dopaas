@@ -169,7 +169,7 @@ export default {
 
         editData(row) {
 <#if optionMap.tableEditType == 'editOnPage'>
-            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit'}, query: {id: row.id}})
+            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit', query: {id: row.id}})
 <#else>
             if (!row.id) {
                 return;
