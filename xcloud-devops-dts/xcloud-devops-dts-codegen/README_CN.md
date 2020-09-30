@@ -9,24 +9,29 @@
 
 ```
 # 首先构建前置依赖项目
-git clone https://github.com/wl4g/xcloud-parent.git
+git clone https://github.com/wl4g/xcloud-parent.git # 上游最新
+#git clone https://gitee.com/wl4g/xcloud-parent.git # 大陆较快
 cd xcloud-parent
 mvn clean install -DskipTests -T 2C
 
-git clone https://github.com/wl4g/xcloud-components.git
+git clone https://github.com/wl4g/xcloud-components.git # 上游最新
+#git clone https://gitee.com/wl4g/xcloud-components.git # 大陆较快
 cd xcloud-components
 mvn clean install -DskipTests -T 2C
 
-git clone https://github.com/wl4g/xcloud-shell.git
+git clone https://github.com/wl4g/xcloud-shell.git # 上游最新
+#git clone https://gitee.com/wl4g/xcloud-shell.git # 大陆较快
 cd xcloud-shell
 mvn clean install -DskipTests -T 2C
 
-git clone https://github.com/wl4g/xcloud-iam.git
+git clone https://github.com/wl4g/xcloud-iam.git # 上游最新
+#git clone https://gitee.com/wl4g/xcloud-iam.git # 大陆较快
 cd xcloud-iam
 mvn clean install -DskipTests -T 2C
 
 # 构建
-git clone https://github.com/wl4g/xcloud-devops.git
+git clone https://github.com/wl4g/xcloud-devops.git # 上游最新
+#git clone https://gitee.com/wl4g/xcloud-devops.git # 大陆较快
 cd xcloud-devops
 mvn clean install -DskipTests -T 2C
 ```
@@ -80,7 +85,10 @@ step5: 准备在您的IDE上启动服务，入口类：  xcloud-devops-dts-start
 
 #### 模版开发规则说明：
 
-|模板用法|会生成多个{moduleName}目录或文件|会生成多个{entityName}目录或文件|
+- 有遍历性质的模板使用：
+> 例如，模板路径上存在 #{entityName}这个变量，渲染时会生成多个文件
+
+|示例用法|会生成多个{moduleName}目录或文件|会生成多个{entityName}目录或文件|
 |-|-|-|
 |#{moduleName}.ftl|√||
 |/#{moduleName}/|√||
@@ -90,3 +98,16 @@ step5: 准备在您的IDE上启动服务，入口类：  xcloud-devops-dts-start
 |/#{entityName}/#{entityName}.ftl||√|
 |/#{entityName}/#{moduleName}.ftl|√|√|
 |/#{moduleName}/#{moduleName}.ftl|√||
+
+
+- 带 'if' 指令的模板使用：
+> 1. 用法1（简单变量）：模板路径上存在 @if-entityName!，当渲染model中存在 entityName 这个变量时此模板才会生成对应的文件。
+```
+例如：com/myproject/example/@if-entityName!#{entityName}Controller.java.ftl
+```
+
+> 2. 用法2（SPEL表达式）：模板路径上存在 @if-#{javaSpecs.isConf(extraOption,'gen.build.assets-type','MvnAssTar')}，当表达式返回true时此模板才会生成对应的文件。
+
+```
+例如：com/myproject/example/@if-#{javaSpecs.isConf(extraOption,'gen.build.assets-type','MvnAssTar')}!#{entityName}Controller.java.ftl
+```
