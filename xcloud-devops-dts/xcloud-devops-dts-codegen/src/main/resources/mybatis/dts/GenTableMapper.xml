@@ -44,6 +44,13 @@
     where project_id = #{id,jdbcType=INTEGER} and del_flag!=1
   </select>
 
+  <select id="countByProjectIdAndTableName" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    count(1)
+    from dts_gen_table
+    where project_id = #{projectId,jdbcType=INTEGER} and `table_name` = #{tableName,jdbcType=INTEGER} and del_flag!=1
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from dts_gen_table
     where id = #{id,jdbcType=INTEGER}

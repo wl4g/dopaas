@@ -30,7 +30,7 @@ const loadView = (view) => {
   // '@/views/home/overview/Overview.vue'
   try {
     if (view && view !== '') {
-      return require(`@/views${view}.vue`)
+      ${r'return require(`@/views${view}.vue`)'}
     }
   } catch (err) {
     console.error('No found routing page vue file path of: ' + view)
@@ -171,6 +171,23 @@ router.beforeEach(async (to, from, next) => {
 
           // 特殊处理newpipeline页面
           highLevel.forEach(n => {
+<#if moduleMap?exists>
+  <#list moduleMap?keys as moduleName>
+            if (n.permission === '${moduleName}') {
+    <#list moduleMap[moduleName] as table>
+      <#if table.optionMap.tableEditType == 'editOnPage'>
+              n.children.push({
+                path: '/${moduleName}/${table.entityName?lower_case}edit',
+                component: require("@/views/${moduleName}/${table.entityName?lower_case}edit/${table.entityName?cap_first}Edit.vue"),
+                name: '${table.entityName?lower_case}edit',
+                icon: '',
+                hidden: true
+              })
+      </#if>
+    </#list>
+            }
+  </#list>
+</#if>
           });
 
           utilstore.set('allRouter',res);
@@ -186,7 +203,8 @@ router.beforeEach(async (to, from, next) => {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           Message.error(error || 'Has Error')
-          next(`/login?redirect=${to.path}`)
+          ${r'next(`/login?redirect=${to.path}`)'}
+
           NProgress.done()
         }
       }
@@ -197,7 +215,7 @@ router.beforeEach(async (to, from, next) => {
       next()
     } else {
       // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`)
+      ${r'next(`/login?redirect=${to.path}`)'}
       NProgress.done()
     }
   }

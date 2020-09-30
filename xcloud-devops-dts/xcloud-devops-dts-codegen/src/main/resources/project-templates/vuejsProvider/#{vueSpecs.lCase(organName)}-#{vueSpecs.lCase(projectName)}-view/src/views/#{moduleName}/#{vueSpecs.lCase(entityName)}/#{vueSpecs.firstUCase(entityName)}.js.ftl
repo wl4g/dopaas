@@ -44,43 +44,43 @@ export default {
         </#if>
         <#if param.validRule??>
             <#if param.validRule == '1'>
-                    { pattern: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/, message: '不合法的邮件地址' },<!--电子邮件-->
+                    { pattern: /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/, message: '不合法的邮件地址' },//电子邮件
             </#if>
             <#if param.validRule == '2'>
-                    { pattern: /[a-zA-z]+://[^\s]*/, message: '不合法的网址' },<!--网址-->
+                    { pattern: /[a-zA-z]+://[^\s]*/, message: '不合法的网址' },//网址
             </#if>
             <#if param.validRule == '3'>
-                    { pattern: /^\d{4}-\d{1,2}-\d{1,2}/, message: '不合法的日期格式' },<!--日期-->
+                    { pattern: /^\d{4}-\d{1,2}-\d{1,2}/, message: '不合法的日期格式' },//日期
             </#if>
             <#if param.validRule == '4'>
-                    { pattern: /^(\-|\+)?\d+(\.\d+)?$/, message: '请输入数字' },<!--数字-->
+                    { pattern: /^(\-|\+)?\d+(\.\d+)?$/, message: '请输入数字' },//数字
             </#if>
             <#if param.validRule == '5'>
-                    { pattern: /^-?[1-9]\d*$/, message: '请输入整数' },<!--整数-->
+                    { pattern: /^-?[1-9]\d*$/, message: '请输入整数' },//整数
             </#if>
             <#if param.validRule == '6'>
-                    { pattern: /^\d+$/, message: '请输入正整数' },<!--正整数-->
+                    { pattern: /^\d+$/, message: '请输入正整数' },//正整数
             </#if>
             <#if param.validRule == '7'>
-                    { pattern: /^\w+$/, message: '请输入字母数字下划线' },<!--字母数字下划线-->
+                    { pattern: /^\w+$/, message: '请输入字母数字下划线' },//字母数字下划线
             </#if>
             <#if param.validRule == '8'>
-                    { pattern: /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/, message: '不合法的手机号码' },<!--手机电话-->
+                    { pattern: /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/, message: '不合法的手机号码' },//手机电话
             </#if>
             <#if param.validRule == '9'>
-                    { pattern: /[1-9]\d{5}(?!\d)/, message: '不合法的邮政编码' },<!--邮政编码-->
+                    { pattern: /[1-9]\d{5}(?!\d)/, message: '不合法的邮政编码' },//邮政编码
             </#if>
             <#if param.validRule == '10'>
-                    { pattern: /^((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))$/, message: '不合法的ipv4' },<!--Ipv4-->
+                    { pattern: /^((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))$/, message: '不合法的ipv4' },//Ipv4
             </#if>
             <#if param.validRule == '11'>
-                    { pattern: /^(([\da-fA-F]{1,4}):){8}$/, message: '不合法的ipv6' },<!--Ipv6-->
+                    { pattern: /^(([\da-fA-F]{1,4}):){8}$/, message: '不合法的ipv6' },//Ipv6
             </#if>
             <#if param.validRule == '12'>
-                    { pattern: /[1-9][0-9]{4,}/, message: '不合法的qq' },<!--QQ-->
+                    { pattern: /[1-9][0-9]{4,}/, message: '不合法的qq' },//QQ
             </#if>
             <#if param.validRule == '13'>
-                    { pattern: /^\d{15}|\d{18}$/, message: '不合法的身份证' },<!--身份证-->
+                    { pattern: /^\d{15}|\d{18}$/, message: '不合法的身份证' },//身份证
             </#if>
         </#if>
                 ],
@@ -91,9 +91,15 @@ export default {
         }
     },
 
+<#if optionMap.tableEditType == 'editOnPage'>
+    activated() {
+        this.getData();
+    },
+<#else>
     mounted() {
         this.getData();
     },
+</#if>
 
     methods: {
 
