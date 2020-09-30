@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.bean.extra.ProjectExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -87,7 +87,7 @@ public class GenProject extends BaseBean {
 	 * Configured extra options.
 	 */
 	@RenderProperty(propertyName = GEN_PROJECT_EXTRA_OPTIONS, describeForObjField = "No")
-	private List<ProjectExtraOption> extraOptions;
+	private List<GenProjectExtraOption> extraOptions;
 
 	public GenProject() {
 		super();
@@ -154,7 +154,7 @@ public class GenProject extends BaseBean {
 		return this;
 	}
 
-	public GenProject withExtraOptions(List<ProjectExtraOption> extraOptions) {
+	public GenProject withExtraOptions(List<GenProjectExtraOption> extraOptions) {
 		setExtraOptions(extraOptions);
 		return this;
 	}
@@ -169,37 +169,37 @@ public class GenProject extends BaseBean {
 	public static enum ExtraOptionDefinition {
 
 		SpringCloudMvnBuildAssetsType(
-				new ProjectExtraOption(IAM_SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
+				new GenProjectExtraOption(IAM_SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
 
 		SpringCloudMvnIamSecurityMode(
-				new ProjectExtraOption(IAM_SPINGCLOUD_MVN, "gen.iam.security-mode", "local", "cluster", "gateway")),
+				new GenProjectExtraOption(IAM_SPINGCLOUD_MVN, "gen.iam.security-mode", "local", "cluster", "gateway")),
 
-		VueJSCompression(new ProjectExtraOption(VUEJS, "gen.compression", "true", "false")),
+		VueJSCompression(new GenProjectExtraOption(VUEJS, "gen.compression", "true", "false")),
 
-		VueJSBasedOnAdminUi(new ProjectExtraOption(VUEJS, "gen.basedon.adminui", "true", "false")),
+		VueJSBasedOnAdminUi(new GenProjectExtraOption(VUEJS, "gen.basedon.adminui", "true", "false")),
 
-		NgJSCompression(new ProjectExtraOption(NGJS, "gen.compression", "true", "false"));
+		NgJSCompression(new GenProjectExtraOption(NGJS, "gen.compression", "true", "false"));
 
-		/** Gen provider extra option of {@link ProjectExtraOption} . */
+		/** Gen provider extra option of {@link GenProjectExtraOption} . */
 		@NotNull
-		private final ProjectExtraOption option;
+		private final GenProjectExtraOption option;
 
-		private ExtraOptionDefinition(@NotNull ProjectExtraOption option) {
+		private ExtraOptionDefinition(@NotNull GenProjectExtraOption option) {
 			notNullOf(option, "option");
 			this.option = option.validate();
 		}
 
-		public final ProjectExtraOption getOption() {
+		public final GenProjectExtraOption getOption() {
 			return option;
 		}
 
 		/**
-		 * Gets {@link ProjectExtraOption} by providers.
+		 * Gets {@link GenProjectExtraOption} by providers.
 		 * 
 		 * @param provider
 		 * @return
 		 */
-		public static List<ProjectExtraOption> getOptions(@Nullable String... providers) {
+		public static List<GenProjectExtraOption> getOptions(@Nullable String... providers) {
 			final List<String> conditions = new ArrayList<>();
 			if (!isEmptyArray(providers)) {
 				conditions.addAll(asList(providers));

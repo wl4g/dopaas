@@ -25,27 +25,27 @@ import static com.wl4g.components.common.lang.Assert2.*;
 import static java.util.Arrays.asList;
 
 /**
- * {@link ProjectExtraOption}
+ * {@link GenProjectExtraOption}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-16
  * @since
  */
-public class ProjectExtraOption extends ConfigOption {
+public class GenProjectExtraOption extends ConfigOption {
 
 	/** {@link GeneratorProvider} alias. */
 	@NotBlank
 	private String provider;
 
-	public ProjectExtraOption() {
+	public GenProjectExtraOption() {
 		super();
 	}
 
-	public ProjectExtraOption(@NotBlank String provider, @NotBlank String name, @NotEmpty String... values) {
+	public GenProjectExtraOption(@NotBlank String provider, @NotBlank String name, @NotEmpty String... values) {
 		this(provider, name, asList(notEmptyOf(values, "values")));
 	}
 
-	public ProjectExtraOption(@NotBlank String provider, @NotBlank String name, @NotEmpty List<String> values) {
+	public GenProjectExtraOption(@NotBlank String provider, @NotBlank String name, @NotEmpty List<String> values) {
 		setProvider(provider);
 		setName(name);
 		setValues(values);
@@ -75,7 +75,7 @@ public class ProjectExtraOption extends ConfigOption {
 	 * 
 	 * @param provider
 	 */
-	public ProjectExtraOption withProvider(@NotBlank String provider) {
+	public GenProjectExtraOption withProvider(@NotBlank String provider) {
 		setProvider(provider);
 		return this;
 	}
@@ -86,7 +86,7 @@ public class ProjectExtraOption extends ConfigOption {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public final ProjectExtraOption validate() {
+	public final GenProjectExtraOption validate() {
 		hasTextOf(getProvider(), "provider");
 		super.validate();
 		return this;
