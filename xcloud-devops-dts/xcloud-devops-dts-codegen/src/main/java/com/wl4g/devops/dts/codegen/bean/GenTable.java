@@ -15,17 +15,26 @@
  */
 package com.wl4g.devops.dts.codegen.bean;
 
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOption;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Wither;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
+import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * {@link GenTable}
@@ -36,8 +45,6 @@ import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
  */
 @Getter
 @Setter
-@Wither
-@ToString
 public class GenTable extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
@@ -86,24 +93,119 @@ public class GenTable extends BaseBean {
 		super();
 	}
 
-	public GenTable(Integer projectId, String tableName, String entityName, String comments, String moduleName,
-			String subModuleName, String functionName, String functionNameSimple, String functionAuthor, String options,Map<String, String> optionMap,
-			String status, List<GenTableColumn> genTableColumns, GenTableColumn pk) {
-		super();
-		this.projectId = projectId;
-		this.tableName = tableName;
-		this.entityName = entityName;
-		this.comments = comments;
-		this.moduleName = moduleName;
-		this.subModuleName = subModuleName;
-		this.functionName = functionName;
-		this.functionNameSimple = functionNameSimple;
-		this.functionAuthor = functionAuthor;
-		this.options = options;
-		this.optionMap = optionMap;
-		this.status = status;
-		this.genTableColumns = genTableColumns;
-		this.pk = pk;
+	public GenTable withProjectId(Integer projectId) {
+		setProjectId(projectId);
+		return this;
+	}
+
+	public GenTable withTableName(String tableName) {
+		setTableName(tableName);
+		return this;
+	}
+
+	public GenTable withEntityName(String entityName) {
+		setEntityName(entityName);
+		return this;
+	}
+
+	public GenTable withComments(String comments) {
+		setComments(comments);
+		return this;
+	}
+
+	public GenTable withModuleName(String moduleName) {
+		setModuleName(moduleName);
+		return this;
+	}
+
+	public GenTable withSubModuleName(String subModuleName) {
+		setSubModuleName(subModuleName);
+		return this;
+	}
+
+	public GenTable withFunctionName(String functionName) {
+		setFunctionName(functionName);
+		return this;
+	}
+
+	public GenTable withFunctionNameSimple(String functionNameSimple) {
+		setFunctionNameSimple(functionNameSimple);
+		return this;
+	}
+
+	public GenTable withFunctionAuthor(String functionAuthor) {
+		setFunctionAuthor(functionAuthor);
+		return this;
+	}
+
+	public GenTable withOptions(String options) {
+		setOptions(options);
+		return this;
+	}
+
+	public GenTable withOptionMap(Map<String, String> optionMap) {
+		setOptionMap(optionMap);
+		return this;
+	}
+
+	public GenTable withStatus(String status) {
+		setStatus(status);
+		return this;
+	}
+
+	public GenTable withGenTableColumns(List<GenTableColumn> genTableColumns) {
+		setGenTableColumns(genTableColumns);
+		return this;
+	}
+
+	public GenTable withPk(GenTableColumn pk) {
+		setPk(pk);
+		return this;
+	}
+
+	/**
+	 * {@link GenTable} extensible configuration options definitions.
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020-09-16
+	 * @since
+	 */
+	public static enum ExtraOptionDefinition {
+
+		ExtTableDeleteType(new TableExtraOption("gen.compression", "true", "false")),
+
+		ExtTableEditType(new TableExtraOption("gen.basedon.adminui", "true", "false")),
+
+		ExtIsExportExcel(new TableExtraOption("gen.compression", "true", "false"));
+
+		/** Gen provider extra option of {@link TableExtraOption} . */
+		@NotNull
+		private final TableExtraOption option;
+
+		private ExtraOptionDefinition(@NotNull TableExtraOption option) {
+			notNullOf(option, "option");
+			this.option = option.validate();
+		}
+
+		public final TableExtraOption getOption() {
+			return option;
+		}
+
+		/**
+		 * Gets {@link TableExtraOption} by names.
+		 * 
+		 * @param provider
+		 * @return
+		 */
+		public static List<TableExtraOption> getOptions(@Nullable String... names) {
+			final List<String> conditions = new ArrayList<>();
+			if (!isEmptyArray(names)) {
+				conditions.addAll(asList(names));
+			}
+			return asList(values()).stream().filter(o -> (isEmpty(conditions) || conditions.contains(o.getOption().getName())))
+					.map(o -> o.getOption()).collect(toList());
+		}
+
 	}
 
 }
