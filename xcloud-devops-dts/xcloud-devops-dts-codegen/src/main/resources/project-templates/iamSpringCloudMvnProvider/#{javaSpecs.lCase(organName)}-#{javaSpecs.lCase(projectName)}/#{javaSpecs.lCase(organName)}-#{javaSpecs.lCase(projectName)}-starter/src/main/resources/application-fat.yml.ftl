@@ -34,7 +34,7 @@ spring:
         client:
           server-uri: http://iam.${r'${'}X_SERVICE_ZONE:${topDomain}}/iam-server
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://devops.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/share
+          success-uri: http://${projectName}.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/share
 <#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
       iam: # IAM server configuration.
         cors:
@@ -46,7 +46,7 @@ spring:
                 - https://*.${r'${'}X_SERVICE_ZONE:wl4g.fat}
                 - http://*.${r'${'}X_SERVICE_ZONE:wl4g.fat}
         #login-uri: /view/login.html
-        login-uri: http://devops.${r'${'}X_SERVICE_ZONE:wl4g.fat}/#/login
+        login-uri: http://${projectName}.${r'${'}X_SERVICE_ZONE:wl4g.fat}/#/login
         unauthorized-uri: /view/403.html
         success-endpoint: umc-manager@http://umc.${r'${'}X_SERVICE_ZONE:wl4g.fat}/umc-manager
         acl:
@@ -78,9 +78,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${r'${'}X_DB_URL:${topDomain}:3306}/${r'${'}X_DB_NAME:${datasource.database}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: ${r'${'}X_DB_USER:gzsm}
-      password: ${r'${'}X_DB_PASSWD:gzsm@%#jh?}
+      url: jdbc:mysql://${r'${'}X_DB_URL:${topDomain}:3306}/${r'${'}X_DB_NAME:${datasource.databaseName}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: ${r'${'}X_DB_USER:${projectName}}
+      password: ${r'${'}X_DB_PASSWD:123456}
       initial-size: 10
       max-active: 100
       min-idle: 10

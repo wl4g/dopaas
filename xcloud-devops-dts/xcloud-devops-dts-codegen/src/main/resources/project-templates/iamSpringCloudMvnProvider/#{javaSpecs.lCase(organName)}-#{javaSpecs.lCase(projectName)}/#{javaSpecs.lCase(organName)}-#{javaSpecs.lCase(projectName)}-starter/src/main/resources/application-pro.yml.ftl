@@ -77,8 +77,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${r'${'}X_DB_URL:${datasource.database}.mysql.rds.aliyuncs.com:3306}/${r'${'}X_DB_NAME:${datasource.database}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: ${r'${'}X_DB_USER:devops}
+      url: jdbc:mysql://${r'${'}X_DB_URL:${datasource.databaseName}.mysql.rds.aliyuncs.com:3306}/${r'${'}X_DB_NAME:${datasource.databaseName}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: ${r'${'}X_DB_USER:${projectName}}
       password: ${r'${'}X_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       initial-size: 10
       max-active: 100
