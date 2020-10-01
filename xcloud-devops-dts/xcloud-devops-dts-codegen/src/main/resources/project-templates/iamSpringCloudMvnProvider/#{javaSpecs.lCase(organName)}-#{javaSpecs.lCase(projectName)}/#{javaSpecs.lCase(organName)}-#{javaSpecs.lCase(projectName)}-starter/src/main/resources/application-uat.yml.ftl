@@ -17,6 +17,7 @@
 spring:
   cloud:
     devops:
+<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
       iam:
         cors:
           rules:
@@ -34,6 +35,44 @@ spring:
           server-uri: http://iam.${r'${'}X_SERVICE_ZONE:${topDomain}}/iam-server
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://devops.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/share
+<#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
+      iam: # IAM server configuration.
+        cors:
+          rules:
+            '[/**]':
+              allows-origins:
+                - https://${r'${'}X_SERVICE_ZONE:wl4g.uat}
+                - http://${r'${'}X_SERVICE_ZONE:wl4g.uat}
+                - https://*.${r'${'}X_SERVICE_ZONE:wl4g.uat}
+                - http://*.${r'${'}X_SERVICE_ZONE:wl4g.uat}
+        #login-uri: /view/login.html
+        login-uri: http://devops.${r'${'}X_SERVICE_ZONE:wl4g.uat}/#/login
+        unauthorized-uri: /view/403.html
+        success-endpoint: umc-manager@http://umc.${r'${'}X_SERVICE_ZONE:wl4g.uat}/umc-manager
+        acl:
+          secure: false # Turn off protection will trust any same intranet IP.
+          allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${r'${'}X_IAM_ACL_DENY}
+        captcha:
+          #jigsaw:
+            #source-dir: ${r'${'}server.tomcat.basedir}/data/jigsaw-maternal
+        sns: # SNS configuration.
+          oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
+          wechat-mp:
+            app-id: yourappid
+            app-secret: yoursecret
+            redirect-url: https://iam.${r'${'}X_SERVICE_ZONE:wl4g.com}${r'${'}server.servlet.contextPath}/sns/wechatmp/callback
+          wechat:
+            app-id: yourappid
+            app-secret: yoursecret
+            redirect-url: http://passport.wl4g.com${r'${'}server.servlet.contextPath}/sns/wechat/callback
+            href: https://${r'${'}X_SERVICE_ZONE:wl4g.com}/${r'${'}server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+          qq:
+            app-id: 101542056
+            app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
+            redirect-url: http://passport.wl4g.com${r'${'}server.servlet.contextPath}/sns/qq/callback
+</#if>
+
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

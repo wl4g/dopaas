@@ -16,11 +16,12 @@ spring:
     include: common,support,util
     active: dev
   cloud:
-    devops:
+    xcloud:
       embedded-webapps:
-        enabled: true # Default false
+        enable: true # Default false
         base-uri: /view
         webapp-location: classpath*:/default-webapps
+    devops:
       support:
         cli:
           enable: true
