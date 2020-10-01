@@ -4,7 +4,6 @@ ${javaSpecs.escapeCopyright(copyright)}
 
 <#assign aDateTime = .now>
 <#assign now = aDateTime?date>
-
 package ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName};
 
 import io.swagger.annotations.ApiModel;
@@ -13,7 +12,7 @@ import com.wl4g.components.core.bean.BaseBean;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-//import lombok.RequiredArgsConstructor;
+<#-- import lombok.RequiredArgsConstructor; -->
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +20,6 @@ import lombok.Setter;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 </#if>
-
 
 <#list attrTypes as attrType>
 import ${attrType};
@@ -38,7 +36,7 @@ import ${attrType};
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-//@RequiredArgsConstructor(access = AccessLevel.PUBLIC, staticName = "new${entityName?cap_first}")
+<#-- @RequiredArgsConstructor(access = AccessLevel.PUBLIC, staticName = "new${entityName?cap_first}")  -->
 @ApiModel("${comments}")<#--TODO 解决换行和双引号 写在basespecs用javaspecs-->
 <#if optionObj.isExportExcel==true>
 @ColumnWidth(40)

@@ -70,6 +70,26 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<configLocation>${basedir}/../checkstyle/google_checks.xml</configLocation>
+				</configuration>
+				<executions>
+					<!-- Solutions to maven checkstyle errors in Eclipse: https://gitee.com/wl4g/xcloud-blogs/blob/master/articles/maven.checkstyle-eclipse-error/README_CN.md -->
+					<!-- <execution> -->
+					<!-- <id>checkstyle</id> -->
+					<!-- <phase>validate</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>check</goal> -->
+					<!-- </goals> -->
+					<!-- <configuration> -->
+					<!-- <failOnViolation>true</failOnViolation> -->
+					<!-- </configuration> -->
+					<!-- </execution> -->
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
