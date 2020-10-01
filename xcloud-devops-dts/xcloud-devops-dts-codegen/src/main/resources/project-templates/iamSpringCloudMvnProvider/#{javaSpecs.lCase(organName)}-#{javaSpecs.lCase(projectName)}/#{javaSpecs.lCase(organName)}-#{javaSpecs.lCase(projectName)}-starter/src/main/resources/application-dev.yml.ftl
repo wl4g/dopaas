@@ -96,9 +96,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${r'${'}X_DB_URL:${datasource.host}:${datasource.port}}/${r'${'}X_DB_NAME:${datasource.database}}?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
-      username: ${r'${'}X_DB_USER:${datasource.username}}
-      password: ${r'${'}X_DB_PASSWD:${datasource.password}}
+      url: jdbc:mysql://${r'${'}X_DB_URL:${datasource.dbhost}:${datasource.dbport}}/${r'${'}X_DB_NAME:${datasource.databaseName}}?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      username: ${r'${'}X_DB_USER:${datasource.dbusername}}
+      password: ${r'${'}X_DB_PASSWD:${datasource.dbpassword}}
       initial-size: 10
       max-active: 100
       min-idle: 10
