@@ -33,7 +33,7 @@ public interface GenTableDao {
 
 	List<GenTable> selectByProjectId(Integer projectId);
 
-	int countByProjectIdAndTableName(@Param("projectId") Integer projectId, @Param("tableName") String tableName);
+	Integer countByProjectIdAndTableName(@Param("projectId") Integer projectId, @Param("tableName") String tableName);
 
 	int updateByPrimaryKeySelective(GenTable record);
 

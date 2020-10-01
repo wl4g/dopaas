@@ -117,7 +117,6 @@ public class GenerateController extends BaseController {
 		writeZip(response, generatedDir, "codegen");
 	}
 
-
 	@RequestMapping("setEnable")
 	public RespBase<?> setEnable(Integer id, String status) {
 		RespBase<Object> resp = RespBase.create();
@@ -134,9 +133,9 @@ public class GenerateController extends BaseController {
 	}
 
 	@RequestMapping("synchronizeTable")
-	public RespBase<?> getAttrTypes(Integer id,boolean focus) {
+	public RespBase<?> synchronizeTable(Integer id, boolean force) {
 		RespBase<Object> resp = RespBase.create();
-		generateService.synchronizeTable(id, focus);
+		generateService.synchronizeTable(id, force);
 		return resp;
 	}
 
