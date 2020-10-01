@@ -31,6 +31,7 @@ import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GenerateEngine;
+import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
@@ -76,7 +77,7 @@ public class GenerateServiceImpl implements GenerateService {
 	protected GenericOperatorAdapter<ConverterKind, DbTypeConverter> converter;
 
 	@Autowired
-	protected GenerateEngine genManager;
+	protected GenerateEngine engine;
 
 	@Autowired
 	protected GenDataSourceDao genDataSourceDao;
@@ -388,8 +389,8 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public String generate(Integer tableId) {
-		return genManager.execute(new GenericParameter(tableId));
+	public GeneratedResult generate(Integer tableId) {
+		return engine.execute(new GenericParameter(tableId));
 	}
 
 	@Override

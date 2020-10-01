@@ -31,6 +31,7 @@ import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
@@ -94,7 +95,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 	protected GenProjectService genProjectService;
 
 	@Override
-	public String execute(GenericParameter param) {
+	public GeneratedResult execute(GenericParameter param) {
 		// Gets gen project.
 		GenProject project = genProjectService.detail(param.getProjectId());
 
@@ -102,7 +103,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		}));
 
 		// Gets gen datasource.
-		GenDataSource dataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
+		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
 
 		// Gets gen table.
 		List<GenTable> tabs = genTableDao.selectByProjectId(param.getProjectId());
@@ -127,10 +128,10 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		project.setGenTables(tabs);
 
 		// Gen project metadata resolver.
-		MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);
+		MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
 
 		// Create context.
-		GenerateContext context = new DefaultGenerateContext(config, locator, resolver, project, dataSource);
+		GenerateContext context = new DefaultGenerateContext(config, locator, resolver, project, datasource);
 
 		// Gets Generate of providers.
 		List<String> providers = getProviders(project.getProviderSet());
@@ -142,7 +143,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		}
 
 		log.info("Generated projec codes successfully. project: {}", toJSONString(project));
-		return context.getJobDir().getAbsolutePath();
+		return new GeneratedResult(project, datasource, context.getJobId());
 	}
 
 	/**

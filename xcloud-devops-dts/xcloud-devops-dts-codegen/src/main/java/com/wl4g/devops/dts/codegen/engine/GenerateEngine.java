@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
+import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 
 /**
@@ -31,6 +32,6 @@ public interface GenerateEngine {
 	 * 
 	 * @param parameter
 	 */
-	String execute(GenericParameter parameter);
+	GeneratedResult execute(GenericParameter parameter);
 
 }

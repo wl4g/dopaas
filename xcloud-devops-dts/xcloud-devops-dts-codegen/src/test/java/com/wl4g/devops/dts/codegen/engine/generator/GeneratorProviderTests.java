@@ -137,7 +137,7 @@ public class GeneratorProviderTests {
 
 	static CodegenProperties config = new CodegenProperties() {
 		@Override
-		public File getJobDir(Integer confId) {
+		public File generateJobDir(String jobId) {
 			return new File("/root/.codegen-workspace/job.100/");
 		}
 	};

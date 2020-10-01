@@ -21,7 +21,10 @@ import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
+import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +54,13 @@ import static java.lang.Integer.valueOf;
 public class GenerateController extends BaseController {
 
 	@Autowired
-	protected GenericOperatorAdapter<DbTypeConverter.ConverterKind, DbTypeConverter> converter;
+	protected GenericOperatorAdapter<ConverterKind, DbTypeConverter> converter;
 
 	@Autowired
-	private GenerateService generateService;
+	protected CodegenProperties config;
+
+	@Autowired
+	protected GenerateService generateService;
 
 	@RequestMapping("loadTables")
 	public RespBase<?> loadTables(Integer projectId) {
@@ -100,21 +106,25 @@ public class GenerateController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		hasTextOf(id, "id");
 
-		// Execution generate
-		resp.setData(generateService.generate(valueOf(id)));
+		// Execution generate.
+		GeneratedResult result = generateService.generate(valueOf(id));
+		resp.setData(result.getJobId());
 		return resp;
 	}
 
 	@RequestMapping("download")
-	public void download(String generatedDir, HttpServletResponse response) throws IOException {
-		hasTextOf(generatedDir, "generatedDir");
+	public void download(String jobId, HttpServletResponse response) throws IOException {
+		hasTextOf(jobId, "jobId");
+
+		// Make generated job dir.
+		File jobDir = config.generateJobDir(jobId);
 
 		// Add generated README
-		FileIOUtils.writeFile(new File(generatedDir, "GENERATED_README.md"), GENERATED_README, false);
-		FileIOUtils.writeFile(new File(generatedDir, "GENERATED_README_CN.md"), GENERATED_README_CN, false);
+		FileIOUtils.writeFile(new File(jobDir, "GENERATED.md"), GENERATED_README, false);
+		FileIOUtils.writeFile(new File(jobDir, "GENERATED_CN.md"), GENERATED_README_CN, false);
 
 		// ZIP download
-		writeZip(response, generatedDir, "codegen");
+		writeZip(response, jobDir.getCanonicalPath(), "codegen-".concat(jobId));
 	}
 
 	@RequestMapping("setEnable")
