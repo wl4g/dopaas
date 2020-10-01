@@ -18,6 +18,7 @@ package com.wl4g.devops.dts.codegen.service;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 
 import java.util.List;
@@ -50,11 +51,11 @@ public interface GenerateService {
 
 	void delete(Integer tableId);
 
-	String generate(Integer tableId);
+	GeneratedResult generate(Integer tableId);
 
 	Set<String> getAttrTypes(Integer projectId);
 
 	void setEnable(Integer id, String status);
 
-	void synchronizeTable(Integer id,boolean focus);
+	void synchronizeTable(Integer id, boolean focus);
 }

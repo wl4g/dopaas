@@ -23,6 +23,9 @@ import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
 import javax.validation.constraints.NotNull;
+
+import static java.lang.String.valueOf;
+
 import java.io.File;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
@@ -49,6 +52,9 @@ public class DefaultGenerateContext implements GenerateContext {
 	 */
 	protected final MetadataResolver resolver;
 
+	/** Generating job ID. */
+	protected final String jobId;
+
 	/** Generating job workspace directory. */
 	protected final File jobDir;
 
@@ -67,7 +73,8 @@ public class DefaultGenerateContext implements GenerateContext {
 		this.locator = notNullOf(locator, "locator");
 		this.resolver = notNullOf(resolver, "resolver");
 		this.project = notNullOf(project, "genProject");
-		this.jobDir = config.getJobDir(project.getId());
+		this.jobId = config.generateJobId(valueOf(project.getId()));
+		this.jobDir = config.generateJobDir(this.jobId);
 		this.dataSource = notNullOf(datasource, "genDataSource");
 	}
 
@@ -84,6 +91,11 @@ public class DefaultGenerateContext implements GenerateContext {
 	@Override
 	public final MetadataResolver getMetadataResolver() {
 		return resolver;
+	}
+
+	@Override
+	public String getJobId() {
+		return jobId;
 	}
 
 	@Override

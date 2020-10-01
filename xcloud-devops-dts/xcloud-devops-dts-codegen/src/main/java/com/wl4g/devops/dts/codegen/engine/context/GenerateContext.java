@@ -24,6 +24,7 @@ import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 
@@ -59,6 +60,14 @@ public interface GenerateContext {
 	@Reserved
 	@NotNull
 	MetadataResolver getMetadataResolver();
+
+	/**
+	 * Gets generate job ID.
+	 * 
+	 * @return
+	 */
+	@NotBlank
+	String getJobId();
 
 	/**
 	 * Gets generate workspace job directory.
