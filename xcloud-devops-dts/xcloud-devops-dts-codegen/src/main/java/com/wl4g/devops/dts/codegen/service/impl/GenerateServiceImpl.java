@@ -349,18 +349,20 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	private void insert(GenTable genTable) {
-		int count = genTableDao.countByProjectIdAndTableName(genTable.getProjectId(), genTable.getTableName());
-		Assert2.isTrue(count <= 0, "can not add the same table");
+		Integer count = genTableDao.countByProjectIdAndTableName(genTable.getProjectId(), genTable.getTableName());
+		if (nonNull(count)) {
+			Assert2.isTrue(count <= 0, "Cannot add the same table");
+		}
 
-		List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
+		List<GenTableColumn> cols = genTable.getGenTableColumns();
 		int i = 0;
-		for (GenTableColumn column : genTableColumns) {
-			column.preInsert();
-			column.setTableId(genTable.getId());
-			column.setColumnSort(i++);
+		for (GenTableColumn col : cols) {
+			col.preInsert();
+			col.setTableId(genTable.getId());
+			col.setColumnSort(i++);
 		}
 		genTableDao.insertSelective(genTable);
-		genColumnDao.insertBatch(genTableColumns);
+		genColumnDao.insertBatch(cols);
 	}
 
 	private void update(GenTable genTable) {

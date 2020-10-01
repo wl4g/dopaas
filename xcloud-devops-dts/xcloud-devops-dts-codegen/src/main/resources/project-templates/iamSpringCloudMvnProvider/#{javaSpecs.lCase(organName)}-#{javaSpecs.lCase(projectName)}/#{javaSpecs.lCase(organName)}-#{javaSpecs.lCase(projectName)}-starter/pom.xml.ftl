@@ -113,7 +113,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>${organType?lower_case}.${organName?lower_case}.${projecName?cap_first}Server</mainClass>
+					<mainClass>${organType?lower_case}.${organName?lower_case}.${projectName?cap_first}Server</mainClass>
 				</configuration>
 			</plugin>
 		</#if>
