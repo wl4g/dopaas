@@ -10,6 +10,7 @@
 #
 
 <#assign topDomain = organName?lower_case + '.debug' />
+<#assign serverName = projectName?lower_case + '-server' />
 <#assign redisHost = 'redis.' + topDomain />
 
 # #### Environment(Dev) configuration. ####
@@ -27,8 +28,8 @@ spring:
                 #- http://${r'${'}X_SERVICE_ZONE:${topDomain}:${r'${'}server.port}}
                 #- http://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
                 #- http://*.${r'${'}X_SERVICE_ZONE:${topDomain}:${r'${'}server.port}}
-                #- http://localhost:8080
-                #- http://127.0.0.1:8080
+                #- http://localhost:28080
+                #- http://127.0.0.1:28080
                 - '*'
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
@@ -38,9 +39,9 @@ spring:
           # To facilitate debugging, it is recommended to configure local hosts, wl4g.debug/wl4g.local/wl4g.dev
           # resolve to 127.0.0.1 (consistent with the server deployment structure), and the relevant front-end
           # logic is in global_variable.js:55, related database table: app_cluster_config
-          server-uri: http://${topDomain}:14040/iam-server
+          server-uri: http://${topDomain}:28080/${projectName?lower_case}
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://${topDomain}:8080/#/home
+          success-uri: http://${topDomain}:28080/#/home
 <#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
       iam: # IAM server configuration.
         cors:
@@ -56,15 +57,15 @@ spring:
                 - http://*.${r'${'}X_SERVICE_ZONE:wl4g.debug}
                 - http://*.${r'${'}X_SERVICE_ZONE:wl4g.debug:${r'${'}server.port}}
                 - http://localhost
-                - http://localhost:14040
+                - http://localhost:28080
                 - http://127.0.0.1
-                - http://127.0.0.1:14040
+                - http://127.0.0.1:28080
                 - '*'
-        login-uri: http://${r'${'}X_SERVICE_ZONE:wl4g.debug}:14040${r'${'}server.servlet.contextPath}/view/login.html
-        #login-uri: http://wl4g.debug/#/login # See: https://github.com/wl4g/xcloud-devops-view
-        unauthorized-uri: http://${r'${'}X_SERVICE_ZONE:wl4g.debug}:14040${r'${'}server.servlet.contextPath}/view/403.html
-        success-endpoint: ${r'${'}spring.application.name}@http://${r'${'}X_SERVICE_ZONE:wl4g.debug}:14040${r'${'}server.servlet.contextPath}/view/index.html
-        #success-endpoint: ci@http://ci.${r'${'}X_SERVICE_ZONE:wl4g.debug}/ci-server
+        login-uri: http://${r'${'}X_SERVICE_ZONE:wl4g.debug}:28080${r'${'}server.servlet.contextPath}/view/login.html # Builtin page
+        #login-uri: http://wl4g.debug/#/login
+        unauthorized-uri: http://${r'${'}X_SERVICE_ZONE:wl4g.debug}:28080${r'${'}server.servlet.contextPath}/view/403.html
+        success-endpoint: ${r'${'}spring.application.name}@http://${r'${'}X_SERVICE_ZONE:wl4g.debug}:28080${r'${'}server.servlet.contextPath}/view/index.html
+        #success-endpoint: ${serverName}@http://${subDomain}.${r'${'}X_SERVICE_ZONE:wl4g.debug}/#/home
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}

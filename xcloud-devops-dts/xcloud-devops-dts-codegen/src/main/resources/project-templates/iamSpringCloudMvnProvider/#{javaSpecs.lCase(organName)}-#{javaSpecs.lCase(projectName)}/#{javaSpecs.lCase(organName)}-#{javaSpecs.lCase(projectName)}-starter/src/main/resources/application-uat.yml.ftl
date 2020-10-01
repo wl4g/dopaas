@@ -10,6 +10,8 @@
 #
 
 <#assign topDomain = organName?lower_case + '.uat' />
+<#assign subDomain = projectName?lower_case />
+<#assign serverName = projectName?lower_case + '-server' />
 <#assign redisHost = 'redis.' + topDomain />
 
 # #### Environment(UAT Test) configuration. ####
@@ -34,7 +36,7 @@ spring:
         client:
           server-uri: http://iam.${r'${'}X_SERVICE_ZONE:${topDomain}}/iam-server
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://devops.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/share
+          success-uri: http://devops.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/home
 <#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
       iam: # IAM server configuration.
         cors:
@@ -45,10 +47,9 @@ spring:
                 - http://${r'${'}X_SERVICE_ZONE:wl4g.uat}
                 - https://*.${r'${'}X_SERVICE_ZONE:wl4g.uat}
                 - http://*.${r'${'}X_SERVICE_ZONE:wl4g.uat}
-        #login-uri: /view/login.html
-        login-uri: http://devops.${r'${'}X_SERVICE_ZONE:wl4g.uat}/#/login
+        login-uri: http://${subDomain}.${r'${'}X_SERVICE_ZONE:wl4g.uat}/#/login
         unauthorized-uri: /view/403.html
-        success-endpoint: umc-manager@http://umc.${r'${'}X_SERVICE_ZONE:wl4g.uat}/umc-manager
+        success-endpoint: ${serverName}@http://${subDomain}.${r'${'}X_SERVICE_ZONE:wl4g.uat}/#/home
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
