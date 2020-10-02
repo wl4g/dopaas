@@ -29,6 +29,7 @@ import static java.lang.String.valueOf;
 import static java.util.Locale.US;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.replacePattern;
 
 /**
  * Generic base specification utility.
@@ -89,15 +90,74 @@ public class BaseSpecs {
 	}
 
 	/**
-	 * Check if the configured items match.
+	 * Generate next ID.
 	 * 
-	 * @param configuredOptions
-	 * @param name
-	 * @param value
 	 * @return
-	 * @see {@link ExtraOptionDefinition}
 	 */
-	public static boolean isConf(@Nullable List<GenProjectExtraOption> configuredOptions, @NotBlank String name, @NotBlank String value) {
+	public static long genNextId() {
+		return SnowflakeIdGenerator.getDefault().nextId() % 100_000_000_000L;
+	}
+
+	/**
+	 * Clean up and normalize comment strings, such as replacing line breaks,
+	 * double quotes, and so on. </br>
+	 * </br>
+	 * 
+	 * for example (unix):
+	 * 
+	 * <pre>
+	 * {@link cleanComment("abcdefgh123456", null, null)} => abcdefgh123456
+	 * {@link cleanComment("abcd\refgh123456", null, null)} => abcd efgh123456
+	 * {@link cleanComment("abcd\nefgh123456", null, null)} => abcd efgh123456
+	 * {@link cleanComment("abcd\r\nefgh123456", null, null)} => abcd efgh123456
+	 * {@link cleanComment("abcd\r\nefgh"jack"123456", null, null)} => abcd efgh'jack'123456
+	 * </pre>
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static String cleanComment(@Nullable String str) {
+		return cleanComment(str, null, null);
+	}
+
+	/**
+	 * Clean up and normalize comment strings, such as replacing line breaks,
+	 * double quotes, and so on. </br>
+	 * </br>
+	 * 
+	 * for example (unix):
+	 * 
+	 * <pre>
+	 * {@link cleanComment("abcdefgh123456", null, null)} => abcdefgh123456
+	 * {@link cleanComment("abcd\refgh123456", null, null)} => abcd efgh123456
+	 * {@link cleanComment("abcd\nefgh123456", null, null)} => abcd efgh123456
+	 * {@link cleanComment("abcd\r\nefgh123456", null, null)} => abcd efgh123456
+	 * {@link cleanComment("abcd\r\nefgh"jack"123456", null, null)} => abcd efgh'jack'123456
+	 * </pre>
+	 * 
+	 * @param str
+	 * @param lineReplacement
+	 * @param doubleQuotesReplacement
+	 * @return
+	 */
+	public static String cleanComment(@Nullable String str, @Nullable String lineReplacement,
+			@Nullable String doubleQuotesReplacement) {
+		if (isBlank(str)) {
+			return str;
+		}
+		lineReplacement = isBlank(lineReplacement) ? " " : lineReplacement;
+		doubleQuotesReplacement = isBlank(doubleQuotesReplacement) ? "'" : doubleQuotesReplacement;
+
+		// Escape line separators.
+		// Match and replace Windows newline character first: '\r\n'
+		str = replacePattern(str, "\r\n|\n|\r", lineReplacement);
+
+		// Escape double quotes.
+		return replacePattern(str, "\"", doubleQuotesReplacement);
+	}
+
+	public static boolean isConf(@Nullable List<GenProjectExtraOption> configuredOptions, @NotBlank String name,
+			@NotBlank String value) {
 		hasTextOf(name, "name");
 		hasTextOf(value, "value");
 
@@ -124,15 +184,6 @@ public class BaseSpecs {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Generate next ID.
-	 * 
-	 * @return
-	 */
-	public static long genNextId() {
-		return SnowflakeIdGenerator.getDefault().nextId() % 100_000_000_000L;
 	}
 
 }
