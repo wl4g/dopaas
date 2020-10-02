@@ -43,13 +43,13 @@ spring:
           rules:
             '[/**]':
               allows-origins:
-                - https://${r'${'}X_SERVICE_ZONE:wl4g.com}
-                - http://${r'${'}X_SERVICE_ZONE:wl4g.com}
-                - https://*.${r'${'}X_SERVICE_ZONE:wl4g.com}
-                - http://*.${r'${'}X_SERVICE_ZONE:wl4g.com}
-        login-uri: ${r'${'}X_SERVICE_SCHEMA:https}://devops.${r'${'}X_SERVICE_ZONE:wl4g.com}/#/login
+                - https://${r'${'}X_SERVICE_ZONE:${topDomain}}
+                - http://${r'${'}X_SERVICE_ZONE:${topDomain}}
+                - https://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
+                - http://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
+        login-uri: ${r'${'}X_SERVICE_SCHEMA:https}://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/login
         unauthorized-uri: /view/403.html
-        success-endpoint: ${serverName}@https://${subDomain}.${r'${'}X_SERVICE_ZONE:wl4g.com}/#/home
+        success-endpoint: ${serverName}@https://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
@@ -62,16 +62,16 @@ spring:
           wechat-mp:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: https://iam.${r'${'}X_SERVICE_ZONE:wl4g.com}${r'${'}server.servlet.contextPath}/sns/wechatmp/callback
+            redirect-url: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}${r'${'}server.servlet.contextPath}/sns/wechatmp/callback
           wechat:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: https://iam.${r'${'}X_SERVICE_ZONE:wl4g.com}${r'${'}server.servlet.contextPath}/sns/wechat/callback
-            href: https://${r'${'}X_SERVICE_ZONE:wl4g.com}/${r'${'}server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            redirect-url: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}${r'${'}server.servlet.contextPath}/sns/wechat/callback
+            href: https://${r'${'}X_SERVICE_ZONE:${topDomain}}/${r'${'}server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
           qq:
-            app-id: 101542056 # Public testing.
+            app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-            redirect-url: https://iam.${r'${'}X_SERVICE_ZONE:wl4g.com}{server.servlet.contextPath}/sns/qq/callback
+            redirect-url: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}${r'${'}server.servlet.contextPath}/sns/qq/callback
 </#if>
 
   # Datasource configuration.

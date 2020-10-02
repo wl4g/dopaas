@@ -10,6 +10,7 @@
 #
 
 <#assign topDomain = organName?lower_case + '.debug' />
+<#assign subDomain = projectName?lower_case />
 <#assign serverName = projectName?lower_case + '-server' />
 <#assign redisHost = 'redis.' + topDomain />
 
@@ -24,21 +25,12 @@ spring:
           rules:
             '[/**]':
               allows-origins:
-                #- http://${r'${'}X_SERVICE_ZONE:${topDomain}}
-                #- http://${r'${'}X_SERVICE_ZONE:${topDomain}:${r'${'}server.port}}
-                #- http://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
-                #- http://*.${r'${'}X_SERVICE_ZONE:${topDomain}:${r'${'}server.port}}
-                #- http://localhost:28080
-                #- http://127.0.0.1:28080
                 - '*'
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
           denyIpRange: ${r'${'}X_IAM_ACL_DENY}
         client:
-          # To facilitate debugging, it is recommended to configure local hosts, wl4g.debug/wl4g.local/wl4g.dev
-          # resolve to 127.0.0.1 (consistent with the server deployment structure), and the relevant front-end
-          # logic is in global_variable.js:55, related database table: app_cluster_config
           server-uri: http://${topDomain}:28080/${projectName?lower_case}
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://${topDomain}:28080/#/home
@@ -48,24 +40,10 @@ spring:
           rules:
             '[/**]':
               allows-origins:
-                - http://${r'${'}X_SERVICE_ZONE:wl4g.dev}
-                - http://${r'${'}X_SERVICE_ZONE:wl4g.dev:${r'${'}server.port}}
-                - http://${r'${'}X_SERVICE_ZONE:wl4g.local}
-                - http://${r'${'}X_SERVICE_ZONE:wl4g.local:${r'${'}server.port}}
-                - http://${r'${'}X_SERVICE_ZONE:wl4g.debug}
-                - http://${r'${'}X_SERVICE_ZONE:wl4g.debug:${r'${'}server.port}}
-                - http://*.${r'${'}X_SERVICE_ZONE:wl4g.debug}
-                - http://*.${r'${'}X_SERVICE_ZONE:wl4g.debug:${r'${'}server.port}}
-                - http://localhost
-                - http://localhost:28080
-                - http://127.0.0.1
-                - http://127.0.0.1:28080
                 - '*'
-        login-uri: http://${r'${'}X_SERVICE_ZONE:wl4g.debug}:28080${r'${'}server.servlet.contextPath}/view/login.html # Builtin page
-        #login-uri: http://wl4g.debug/#/login
-        unauthorized-uri: http://${r'${'}X_SERVICE_ZONE:wl4g.debug}:28080${r'${'}server.servlet.contextPath}/view/403.html
-        success-endpoint: ${r'${'}spring.application.name}@http://${r'${'}X_SERVICE_ZONE:wl4g.debug}:28080${r'${'}server.servlet.contextPath}/view/index.html
-        #success-endpoint: ${serverName}@http://${subDomain}.${r'${'}X_SERVICE_ZONE:wl4g.debug}/#/home
+        login-uri: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/login
+        unauthorized-uri: http://${r'${'}X_SERVICE_ZONE:${topDomain}}:28080${r'${'}server.servlet.contextPath}/view/403.html
+        success-endpoint: ${serverName}@http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
@@ -78,18 +56,16 @@ spring:
           wechat-mp:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: https://iam.${r'${'}X_SERVICE_ZONE:wl4g.com}${r'${'}server.servlet.contextPath}/sns/wechatmp/callback
+            redirect-url: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}${r'${'}server.servlet.contextPath}/sns/wechatmp/callback
           wechat:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: http://passport.wl4g.com${r'${'}server.servlet.contextPath}/sns/wechat/callback
-            href: https://${r'${'}X_SERVICE_ZONE:wl4g.com}/${r'${'}server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            redirect-url: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}${r'${'}server.servlet.contextPath}/sns/wechat/callback
+            href: https://${r'${'}X_SERVICE_ZONE:${topDomain}}/${r'${'}server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
           qq:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-            redirect-url: http://passport.wl4g.com${r'${'}server.servlet.contextPath}/sns/qq/callback
-        session:
-          global-session-timeout: 43200_000
+            redirect-url: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}${r'${'}server.servlet.contextPath}/sns/qq/callback
 </#if>
 
   # Datasource configuration.
