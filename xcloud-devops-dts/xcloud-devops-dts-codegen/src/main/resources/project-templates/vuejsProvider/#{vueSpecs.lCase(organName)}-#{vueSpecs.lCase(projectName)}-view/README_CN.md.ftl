@@ -1,3 +1,7 @@
+<#assign topDomain = organName?lower_case + '.debug' />
+<#assign subDomain = projectName?lower_case />
+<#assign serverName = projectName?lower_case + '-server' />
+<#assign redisHost = 'redis.' + topDomain />
 ## 简介
 ${projectDescription}
 
