@@ -12,21 +12,47 @@ import com.wl4g.components.data.page.PageModel;
 import ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName}.${entityName?cap_first};
 
 /**
-* {@link ${entityName?cap_first}}
-*
-* @author ${author}
-* @version ${version}
-* @Date ${now}
-* @since ${since}
-*/
+ * ${comments} service of {@link ${entityName?cap_first}}
+ *
+ * @author ${author}
+ * @version ${version}
+ * @Date ${now}
+ * @since ${since}
+ */
 public interface ${entityName}Service {
 
+    /**
+     * ${comments} page query.
+     *
+     * @param pm
+     * @param ${entityName?uncap_first}
+     * @return 
+     */
     PageModel page(PageModel pm, ${entityName} ${entityName?uncap_first});
 
+    /**
+     * ${comments} save.
+     *
+     * @param ${entityName?uncap_first}
+     * @return 
+     */
     int save(${entityName} ${entityName?uncap_first});
 
+    /**
+     * ${comments} detail query.
+     *
+     * @param id
+     * @return 
+     */
     ${entityName} detail(Integer id);
 
+    /**
+     * ${comments} delete.
+     *
+     * @param id
+     * @return 
+     */
     int del(Integer id);
+
 }
 

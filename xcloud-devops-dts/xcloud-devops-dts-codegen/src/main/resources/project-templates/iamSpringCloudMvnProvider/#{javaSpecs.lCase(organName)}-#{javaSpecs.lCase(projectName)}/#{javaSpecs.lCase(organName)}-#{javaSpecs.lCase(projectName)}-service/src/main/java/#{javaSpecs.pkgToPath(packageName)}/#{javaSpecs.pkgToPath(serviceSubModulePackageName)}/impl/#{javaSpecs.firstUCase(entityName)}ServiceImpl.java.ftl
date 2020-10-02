@@ -22,13 +22,13 @@ import ${packageName}.${serviceSubModulePackageName}.${entityName?cap_first}Serv
 import static java.util.Objects.isNull;
 
 /**
-* {@link ${entityName?cap_first}}
-*
-* @author ${author}
-* @version ${version}
-* @Date ${now}
-* @since ${since}
-*/
+ * ${comments} service implements of {@link ${entityName?cap_first}}
+ *
+ * @author ${author}
+ * @version ${version}
+ * @Date ${now}
+ * @since ${since}
+ */
 @Service
 public class ${entityName}ServiceImpl implements ${entityName}Service {
 
@@ -42,30 +42,26 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
         return pm;
     }
 
+    @Override
     public int save(${entityName} ${entityName?uncap_first}) {
         if (isNull(${entityName?uncap_first}.getId())) {
         	${entityName?uncap_first}.preInsert();
-			return insert(${entityName?uncap_first});
+            return ${entityName?uncap_first}Dao.insertSelective(${entityName?uncap_first});
         } else {
         	${entityName?uncap_first}.preUpdate();
-			return update(${entityName?uncap_first});
+            return ${entityName?uncap_first}Dao.updateByPrimaryKeySelective(${entityName?uncap_first});
         }
     }
 
-    private int insert(${entityName} ${entityName?uncap_first}) {
-        return ${entityName?uncap_first}Dao.insertSelective(${entityName?uncap_first});
-    }
-
-    private int update(${entityName} ${entityName?uncap_first}) {
-        return ${entityName?uncap_first}Dao.updateByPrimaryKeySelective(${entityName?uncap_first});
-    }
-
+    @Override
     public ${entityName} detail(Integer id) {
         notNullOf(id, "${entityName?uncap_first}Id");
         return ${entityName?uncap_first}Dao.selectByPrimaryKey(id);
     }
 
+<#-- Service delete with logical  -->
 <#if optionMap.tableDeleteType == 'deleteWithLogical'>
+    @Override
     public int del(Integer id) {
         notNullOf(id, "${entityName?uncap_first}Id");
         ${entityName} ${entityName?uncap_first} = new ${entityName}();
@@ -73,7 +69,9 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
         ${entityName?uncap_first}.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         return ${entityName?uncap_first}Dao.updateByPrimaryKeySelective(${entityName?uncap_first});
     }
-<#else >
+<#-- Service delete with physical  -->
+<#else>
+    @Override
     public int del(Integer id) {
         notNullOf(id, "${entityName?uncap_first}Id");
         return ${entityName?uncap_first}Dao.deleteByPrimaryKey(id);
