@@ -15,13 +15,132 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+
+-- ----------------------------
+-- Table structure for sys_dict
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dict`;
+CREATE TABLE `sys_dict` (
+  `key` varchar(128) COLLATE utf8_bin NOT NULL COMMENT 'key,唯一',
+  `value` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '数据值',
+  `label` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '标签名',
+  `label_en` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '标签名(EN)',
+  `type` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '类型',
+  `themes` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '主题/样式',
+  `icon` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '图标',
+  `sort` decimal(10,0) NOT NULL DEFAULT '50' COMMENT '排序（升序）',
+  `status` int(1) NOT NULL DEFAULT '1' COMMENT '字典状态（1:均使用 | 2:仅后台使用 | 3:仅前端使用）释：如状态为`2`的字典的值不会返回给前端（登录后返回字典列表给前端缓存）',
+  `enable` int(11) DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '创建者',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_by` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '更新者',
+  `update_date` datetime NOT NULL COMMENT '更新时间',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注信息',
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  PRIMARY KEY (`key`) USING BTREE,
+  KEY `sys_dict_value` (`value`) USING BTREE,
+  KEY `sys_dict_label` (`label`) USING BTREE,
+  KEY `sys_dict_del_flag` (`del_flag`) USING BTREE,
+  KEY `key` (`key`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='字典表\r\ndict系统管理（界面）： key、type不可变（只能开发人员修改数据库，因key、type会在代码硬编码)\r\n只可修改 value、themes、icon、lable、sort、status、description';
+
+-- ----------------------------
+-- Records of sys_dict
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_dict` VALUES ('app_ns_type@dev', 'dev', '开发环境', 'Development Environment', 'app_ns_type', '', '', 10, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:07:15', '开发环境，用于开发者调试使用（Development environment）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@fat', 'fat', '测试环境', 'Testing Environment', 'app_ns_type', '', '', 20, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:08:43', '功能验收测试环境，用于软件测试使用（Feature Acceptance Test environment）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@pro', 'pro', '生产环境', 'Production Environment', 'app_ns_type', '', '', 40, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:14:10', '线上生产环境（Production environment）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@uat', 'uat', '验收环境', 'User Verify Environment', 'app_ns_type', '', '', 30, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:12:17', '用户验收测试环境，用于生产环境下的软件灰度测试使用（User Acceptance Test environment）', 0);
+INSERT INTO `sys_dict` VALUES ('common_enable_status@disable', '0', '停用', 'Disable', 'common_enable_status', 'danger', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', 'common_enable_status', 0);
+INSERT INTO `sys_dict` VALUES ('common_enable_status@enable', '1', '启用', 'Enable', 'common_enable_status', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', 'common_enable_status', 0);
+INSERT INTO `sys_dict` VALUES ('ctl_switch_type@off', 'off', '关', 'off', 'switch_type', 'gray', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（关）', 0);
+INSERT INTO `sys_dict` VALUES ('ctl_switch_type@on', 'on', '开', 'on', 'switch_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（开）', 0);
+INSERT INTO `sys_dict` VALUES ('doc_file_type@md', 'md', 'Md', 'Md', 'doc_file_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_file_type@txt', 'Txt', 'Txt', 'Txt', 'doc_file_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@en_US', 'en_US', 'US English Edition', 'US English Edition', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@ja_JP', 'ja_JP', '日陰勢', '日陰勢', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_CN', 'zh_CN', '简体中文版', '简体中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_HK', 'zh_HK', '繁體中文版', '繁體中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@blacklist', '1', '黑名单', 'BlackList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@whitelist', '2', '白名单', 'WhiteList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_kind@AliyunDc', 'AliyunDc', 'AliyunDc', 'AliyunDc', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_kind@AwsDc', 'AwsDc', 'AwsDc', 'AwsDc', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_kind@Cndns', 'Cndns', 'Cndns', 'Cndns', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@a', 'a', 'A', 'A', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@aaaa', 'aaaa', 'AAAA', 'AAAA', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@cname', 'cname', 'CNAME', 'CNAME', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@mx', 'mx', 'MX', 'MX', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@ns', 'ns', 'NS', 'NS', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@soa', 'soa', 'SOA', 'SOA', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@srv', 'srv', 'SRV', 'SRV', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@txt', 'txt', 'TXT', 'TXT', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_server_type@coss', '4', 'Coss', 'Coss', 'erm_server_type', NULL, NULL, 52, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_server_type@docker', '2', 'Docker', 'Docker', 'erm_server_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_server_type@host', '1', 'Host', 'Host', 'erm_server_type', NULL, NULL, 49, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_server_type@k8s', '3', 'K8s', 'K8s', 'erm_server_type', NULL, NULL, 51, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_ssh_auth_type@password', '1', '账号密码', 'Password', 'erm_ssh_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_ssh_auth_type@ssh', '2', '私钥', 'Ssh', 'erm_ssh_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@host', '1', 'Host', 'Host', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@openvpn', '2', 'Openvpn', 'Openvpn', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@pptp', '3', 'Pptp', 'Pptp', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@aliyun', '1', '阿里云', 'Aliyun Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@aws', '2', '亚马逊云', 'Aws Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@azure', '3', '微软云', 'Azure Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@baidu', '4', '百度云', 'Baidu Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@ctyun', '5', '天翼云', 'Ctyun Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@google', '6', 'Google云', 'Google Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@qingcloud', '7', '青云', 'Qing Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@tencent', '8', '腾讯云', 'Tencent Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyA', 'classifyA', 'CI/CD', 'CI/CD', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyB', 'classifyB', '监控', 'Monitors', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:00', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyC', 'classifyC', '网络', 'Networks', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:05:35', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyD', 'classifyD', '安全', 'Securitys', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-24 12:08:49', '1', '2020-07-24 12:08:49', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyE', 'classifyE', '基础', 'Foundations', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyF', 'classifyF', '存储', 'Storages', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyG', 'classifyG', '配置', 'Configurations', 'menu_classify_type', '', '', 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyH', 'classifyH', '文档', 'Docs', 'menu_classify_type', '', '', 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_type@button', '3', '按钮', 'Button', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_type@dynamic', '2', '动态菜单', 'Dynamic Menu', 'menu_type', NULL, NULL, 50, 1, NULL, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('menu_type@static', '1', '静态菜单', 'Static Menu', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@gt', 'gt', '大于', 'gt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于）', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@gte', 'gte', '大于等于', 'gte', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于等于）', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@lt', 'lt', '小于', 'lt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（小于）', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@lte', 'lte', '小于等于', 'lte', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '关系运算符（小于等于）', 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@AliyunSms', 'AliyunSms', 'Aliyun短信', 'AliyunSms', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@AliyunVms', 'AliyunVms', 'Aliyun电话', 'AliyunVms', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@dingtalk', 'Dingtalk', '钉钉', 'Dingtalk', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@email', 'Mail', '邮件', 'Email', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@facebook', 'Facebook', '脸书', 'Facebook', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@twitter', 'Twitter', '推特', 'Twitter', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_contact_type@wechat', 'WechatMp', '微信', 'Wechat', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_group_type@company', '2', 'Company', 'Company', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_group_type@department', '3', 'Department', 'Department', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_group_type@park', '1', 'Park', 'Park', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_menu_type@dynamic', '2', '动态菜单', 'DynamicMenu', 'sys_menu_type', '', '', 50, 1, 1, '1', '2019-12-11 14:49:36', '1', '2019-12-11 14:49:40', '动态菜单类型（sys_menu表）', 0);
+INSERT INTO `sys_dict` VALUES ('sys_menu_type@static', '1', '静态菜单', 'StaticMenu', 'sys_menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-11 14:49:36', '1', '2019-12-11 14:49:40', '静态菜单类型（sys_menu表）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@danger', 'danger', '严重', 'danger', 'theme_type', 'danger', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '皮肤主题（严重）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@gray', 'gray', '灰色', 'gray', 'theme_type', 'gray', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（灰色）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@primary', 'primary', '主要', 'primary', 'theme_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（主要）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@success', 'success', '成功', 'success', 'theme_type', 'success', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（成功）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@warning', 'warning', '警告', 'warning', 'theme_type', 'warning', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（警告）', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_auth_type@password', '1', 'Password', 'Password', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('vcs_auth_type@ssh', '2', 'Ssh', 'Ssh', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@alicode', 'alicode', 'Alicode', 'Alicode', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@bitbucket', 'bitbucket', 'Bitbucket', 'Bitbucket', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@coding', 'coding', 'Coding', 'Coding', 'vcs_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@gitee', 'gitee', 'Gitee', 'Gitee', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@github', 'github', 'Github', 'Github', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@gitlab', 'gitlab', 'Gitlab', 'Gitlab', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+COMMIT;
+
 -- ----------------------------
 -- Table structure for sys_area
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_area`;
 CREATE TABLE `sys_area` (
-  `id` int(11) NOT NULL,
-  `parent_id` int(11) NOT NULL DEFAULT '0' COMMENT '父级ID',
+  `id` decimal(20) NOT NULL,
+  `parent_id` decimal(20) NOT NULL DEFAULT '0' COMMENT '父级ID',
   `name` varchar(50) NOT NULL COMMENT '名称',
   `short_name` varchar(50) NOT NULL COMMENT '简称',
   `longitude` float NOT NULL DEFAULT '0' COMMENT '经度',
@@ -469,446 +588,20 @@ INSERT INTO `sys_area` VALUES (900000100, 0, '越南胡志明市', '越南胡志
 INSERT INTO `sys_area` VALUES (900000101, 900000100, '大叻', '大叻', 108.827, 12.1846, 2, 1, 1);
 COMMIT;
 
--- ----------------------------
--- Table structure for erm_app_cluster
--- ----------------------------
-DROP TABLE IF EXISTS `erm_app_cluster`;
-CREATE TABLE `erm_app_cluster` (
-`id` int(11) NOT NULL,
-`name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '应用名称',
-`type` int(11) DEFAULT NULL COMMENT '应用集群的子类类型:(比docker_cluster和k8s_cluster的分类级别低)\n1如springboot app 或vue app,\n2,如umc-agent进程\n\n注:ci发布时,过滤掉type=2(不带端口的进程,如agent)',
-`endpoint` varchar(16) COLLATE utf8_bin NOT NULL COMMENT '端点:像sso这种则使用 port,  像agent则使用addr',
-`ssh_id` int(11) DEFAULT NULL,
-`deploy_type` int(2) NOT NULL COMMENT '1:host代表当部署在物理机;2:docker代表部署在docker集群;3:k8s代表部署在k8s集群;4:coss代表上传至coss',
-`enable` int(1) NOT NULL DEFAULT '1' COMMENT '启用状态（0:禁止/1:启用）',
-`remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
-`create_by` int(11) NOT NULL,
-`create_date` datetime NOT NULL,
-`update_by` int(11) NOT NULL,
-`update_date` datetime NOT NULL,
-`del_flag` int(1) NOT NULL DEFAULT '0',
-`organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
-PRIMARY KEY (`id`) USING BTREE,
-KEY `update_by` (`update_by`) USING BTREE,
-KEY `create_by` (`create_by`) USING BTREE,
-CONSTRAINT `erm_app_cluster_ibfk_1` FOREIGN KEY (`update_by`) REFERENCES `sys_user` (`id`),
-CONSTRAINT `erm_app_cluster_ibfk_2` FOREIGN KEY (`create_by`) REFERENCES `sys_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用集群（组）定义表';
-
--- ----------------------------
--- Records of erm_app_cluster
--- ----------------------------
-BEGIN;
-INSERT INTO `erm_app_cluster` VALUES (75, 'iam-server', NULL, '80', NULL, 1, 1, 'Iam-server cluster', 1, '2019-09-20 16:54:41', 1, '2019-09-20 16:54:41', 0, 'BizDepartment');
-INSERT INTO `erm_app_cluster` VALUES (${clusterId}, '${serverName}', NULL, '80', NULL, 1, 1, '${serverName}', 1, '2020-08-06 19:25:49', 1, '2020-08-06 19:25:49', 0, 'BigdataDepartment');
-COMMIT;
-
-
-
--- ----------------------------
--- Table structure for sys_cluster_config
--- ----------------------------
-DROP TABLE IF EXISTS `sys_cluster_config`;
-CREATE TABLE `sys_cluster_config` (
-  `id` int(11) NOT NULL,
-  `cluster_id` int(11) NOT NULL COMMENT '对应cluster表的id',
-  `display_name` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '应用名称',
-  `type` int(1) DEFAULT '1' COMMENT '应用集群类型（1:iam/sso，2:其他）',
-  `env_type` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '环境类型,字典value',
-  `view_extranet_base_uri` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '前端视图页面外网BaseURI',
-  `extranet_base_uri` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '外网BaseURI',
-  `intranet_base_uri` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '内网BaseURI',
-  `remark` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  `update_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
-  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0：正常，1：删除）',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `cluster_id` (`cluster_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用集群配置表（cluster与环境关联的具体配置，一定程度上也相当于app_cluster的明细子表，注：如，对于公私混合部署时，一个cluster_id/env_id可对应多条记录，iam/online功能会用到）';
-
--- ----------------------------
--- Records of sys_cluster_config
--- ----------------------------
-BEGIN;
-<#assign projectOfClusterType = 2 />
-<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
-<#assign projectOfClusterType = 1 />
-INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://iam.${organName?lower_case}.debug:14040', 'http://iam-services.${organName?lower_case}.debug:14040/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://iam.${organName?lower_case}.fat', 'http://iam-services.${organName?lower_case}.fat/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'uat', 'http://iam.${organName?lower_case}.uat', 'http://iam-services.${organName?lower_case}.uat/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'pro', 'http://iam.${organName?lower_case}.com', 'http://iam-services.${organName?lower_case}.com/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
-</#if>
-INSERT INTO `sys_cluster_config` VALUES (39, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'dev', 'http://${subDomain}.${organName?lower_case}.debug:38080', 'http://${subDomain}-services.${organName?lower_case}.debug:28080/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (40, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'fat', 'http://${subDomain}.${organName?lower_case}.fat', 'http://${subDomain}-services.${organName?lower_case}.fat/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (41, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'uat', 'http://${subDomain}.${organName?lower_case}.uat', 'http://${subDomain}-services.${organName?lower_case}.uat/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (42, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'pro', 'http://${subDomain}.${organName?lower_case}.com', 'http://${subDomain}-services.${organName?lower_case}.com/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_company
--- ----------------------------
-DROP TABLE IF EXISTS `sys_company`;
-CREATE TABLE `sys_company` (
-  `id` int(11) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  CONSTRAINT `sys_company_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- ----------------------------
--- Table structure for sys_contact
--- ----------------------------
-DROP TABLE IF EXISTS `sys_contact`;
-CREATE TABLE `sys_contact` (
-  `id` int(11) NOT NULL,
-  `name` varchar(30) CHARACTER SET utf8 NOT NULL COMMENT '通知分组名称',
-  `create_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  `update_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
-  `del_flag` int(1) DEFAULT '0',
-  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='告警联系人表';
-
--- ----------------------------
--- Records of sys_contact
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_contact` VALUES (2, 'wangsir', '1', '2019-08-05 06:45:17', '1', '2020-04-10 14:44:22', 0, NULL);
-INSERT INTO `sys_contact` VALUES (7, 'hwj', '1', '2019-08-23 15:16:39', '1', '2020-07-24 15:43:11', 0, NULL);
-INSERT INTO `sys_contact` VALUES (2101651456, 'lxl', '1', '2020-07-17 18:10:20', '1', '2020-07-17 18:10:20', 0, NULL);
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_contact_channel
--- ----------------------------
-DROP TABLE IF EXISTS `sys_contact_channel`;
-CREATE TABLE `sys_contact_channel` (
-  `id` int(11) NOT NULL,
-  `kind` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'email,phone,wechat,dingtalk,twitter,facebook---对应com.wl4g.devops.support.notification.NotifierKind',
-  `contact_id` int(11) DEFAULT NULL COMMENT '联系人id',
-  `primary_address` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '具体的联系地址:可能是email,phone,wechat的open_id等',
-  `time_of_freq` int(11) DEFAULT NULL COMMENT '频率时间',
-  `num_of_freq` int(11) DEFAULT NULL COMMENT '频率次数',
-  `enable` int(11) DEFAULT NULL COMMENT '是否启用',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- ----------------------------
--- Records of sys_contact_channel
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_contact_channel` VALUES (96824, 'Mail', 2, '983708408@qq.com', 30, 1, 1);
-INSERT INTO `sys_contact_channel` VALUES (1455118336, 'Mail', 2101651456, '3091553379@qq.com', 99, 99, 1);
-INSERT INTO `sys_contact_channel` VALUES (1749353472, 'Mail', 7, '1154635107@qq.com', 30, 1, 1);
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_contact_group
--- ----------------------------
-DROP TABLE IF EXISTS `sys_contact_group`;
-CREATE TABLE `sys_contact_group` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '告警分组名称',
-  `create_date` datetime DEFAULT NULL,
-  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `update_date` datetime DEFAULT NULL,
-  `update_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `del_flag` int(1) DEFAULT '0',
-  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='告警联系人分组表';
-
--- ----------------------------
--- Records of sys_contact_group
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_contact_group` VALUES (8, 'developer', '2019-08-23 16:34:06', '1', '2019-08-23 16:34:06', '1', 0, NULL);
-INSERT INTO `sys_contact_group` VALUES (9, 'tester', '2019-08-23 16:34:14', '1', '2019-12-09 13:50:51', '1', 0, NULL);
-INSERT INTO `sys_contact_group` VALUES (10, 'Operator', '2019-08-23 16:35:26', '1', '2019-08-23 16:35:26', '1', 0, NULL);
-
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_contact_group_ref
--- ----------------------------
-DROP TABLE IF EXISTS `sys_contact_group_ref`;
-CREATE TABLE `sys_contact_group_ref` (
-  `id` int(11) NOT NULL,
-  `contact_group_id` int(11) NOT NULL,
-  `contact_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `contact_group_id` (`contact_group_id`) USING BTREE,
-  KEY `contact_id` (`contact_id`) USING BTREE,
-  CONSTRAINT `sys_contact_group_ref_ibfk_1` FOREIGN KEY (`contact_group_id`) REFERENCES `sys_contact_group` (`id`),
-  CONSTRAINT `sys_contact_group_ref_ibfk_2` FOREIGN KEY (`contact_id`) REFERENCES `sys_contact` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- ----------------------------
--- Records of sys_contact_group_ref
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_contact_group_ref` VALUES (59879, 8, 2);
-INSERT INTO `sys_contact_group_ref` VALUES (709166080, 9, 7);
-INSERT INTO `sys_contact_group_ref` VALUES (1120207872, 10, 7);
-INSERT INTO `sys_contact_group_ref` VALUES (1401226240, 8, 7);
-INSERT INTO `sys_contact_group_ref` VALUES (1866160128, 8, 2101651456);
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_department
--- ----------------------------
-DROP TABLE IF EXISTS `sys_department`;
-CREATE TABLE `sys_department` (
-  `id` int(11) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  CONSTRAINT `sys_department_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- ----------------------------
--- Records of sys_department
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_department` VALUES (1, 3, NULL, NULL, '18127968606');
-INSERT INTO `sys_department` VALUES (2, 4, NULL, NULL, NULL);
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_dict
--- ----------------------------
-DROP TABLE IF EXISTS `sys_dict`;
-CREATE TABLE `sys_dict` (
-  `key` varchar(128) COLLATE utf8_bin NOT NULL COMMENT 'key,唯一',
-  `value` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '数据值',
-  `label` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '标签名',
-  `label_en` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '标签名(EN)',
-  `type` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '类型',
-  `themes` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '主题/样式',
-  `icon` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '图标',
-  `sort` decimal(10,0) NOT NULL DEFAULT '50' COMMENT '排序（升序）',
-  `status` int(1) NOT NULL DEFAULT '1' COMMENT '字典状态（1:均使用 | 2:仅后台使用 | 3:仅前端使用）释：如状态为`2`的字典的值不会返回给前端（登录后返回字典列表给前端缓存）',
-  `enable` int(11) DEFAULT NULL,
-  `create_by` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '创建者',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
-  `update_by` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '更新者',
-  `update_date` datetime NOT NULL COMMENT '更新时间',
-  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注信息',
-  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-  PRIMARY KEY (`key`) USING BTREE,
-  KEY `sys_dict_value` (`value`) USING BTREE,
-  KEY `sys_dict_label` (`label`) USING BTREE,
-  KEY `sys_dict_del_flag` (`del_flag`) USING BTREE,
-  KEY `key` (`key`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='字典表\r\ndict系统管理（界面）： key、type不可变（只能开发人员修改数据库，因key、type会在代码硬编码)\r\n只可修改 value、themes、icon、lable、sort、status、description';
-
--- ----------------------------
--- Records of sys_dict
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_dict` VALUES ('app_ns_type@dev', 'dev', '开发环境', 'Development Environment', 'app_ns_type', '', '', 10, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:07:15', '开发环境，用于开发者调试使用（Development environment）', 0);
-INSERT INTO `sys_dict` VALUES ('app_ns_type@fat', 'fat', '测试环境', 'Testing Environment', 'app_ns_type', '', '', 20, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:08:43', '功能验收测试环境，用于软件测试使用（Feature Acceptance Test environment）', 0);
-INSERT INTO `sys_dict` VALUES ('app_ns_type@pro', 'pro', '生产环境', 'Production Environment', 'app_ns_type', '', '', 40, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:14:10', '线上生产环境（Production environment）', 0);
-INSERT INTO `sys_dict` VALUES ('app_ns_type@uat', 'uat', '验收环境', 'User Verify Environment', 'app_ns_type', '', '', 30, 1, 1, '1', '2019-06-12 08:00:00', '1', '2020-06-03 15:12:17', '用户验收测试环境，用于生产环境下的软件灰度测试使用（User Acceptance Test environment）', 0);
-INSERT INTO `sys_dict` VALUES ('common_enable_status@disable', '0', '停用', 'Disable', 'common_enable_status', 'danger', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', 'common_enable_status', 0);
-INSERT INTO `sys_dict` VALUES ('common_enable_status@enable', '1', '启用', 'Enable', 'common_enable_status', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', 'common_enable_status', 0);
-INSERT INTO `sys_dict` VALUES ('ctl_switch_type@off', 'off', '关', 'off', 'switch_type', 'gray', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（关）', 0);
-INSERT INTO `sys_dict` VALUES ('ctl_switch_type@on', 'on', '开', 'on', 'switch_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（开）', 0);
-INSERT INTO `sys_dict` VALUES ('doc_file_type@md', 'md', 'Md', 'Md', 'doc_file_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('doc_file_type@txt', 'Txt', 'Txt', 'Txt', 'doc_file_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('doc_lang_type@en_US', 'en_US', 'US English Edition', 'US English Edition', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('doc_lang_type@ja_JP', 'ja_JP', '日陰勢', '日陰勢', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_CN', 'zh_CN', '简体中文版', '简体中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_HK', 'zh_HK', '繁體中文版', '繁體中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@blacklist', '1', '黑名单', 'BlackList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@whitelist', '2', '白名单', 'WhiteList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_kind@AliyunDc', 'AliyunDc', 'AliyunDc', 'AliyunDc', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_kind@AwsDc', 'AwsDc', 'AwsDc', 'AwsDc', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_kind@Cndns', 'Cndns', 'Cndns', 'Cndns', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@a', 'a', 'A', 'A', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@aaaa', 'aaaa', 'AAAA', 'AAAA', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@cname', 'cname', 'CNAME', 'CNAME', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@mx', 'mx', 'MX', 'MX', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@ns', 'ns', 'NS', 'NS', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@soa', 'soa', 'SOA', 'SOA', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@srv', 'srv', 'SRV', 'SRV', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@txt', 'txt', 'TXT', 'TXT', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_server_type@coss', '4', 'Coss', 'Coss', 'erm_server_type', NULL, NULL, 52, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_server_type@docker', '2', 'Docker', 'Docker', 'erm_server_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_server_type@host', '1', 'Host', 'Host', 'erm_server_type', NULL, NULL, 49, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_server_type@k8s', '3', 'K8s', 'K8s', 'erm_server_type', NULL, NULL, 51, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_ssh_auth_type@password', '1', '账号密码', 'Password', 'erm_ssh_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_ssh_auth_type@ssh', '2', '私钥', 'Ssh', 'erm_ssh_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@host', '1', 'Host', 'Host', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@openvpn', '2', 'Openvpn', 'Openvpn', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@pptp', '3', 'Pptp', 'Pptp', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('idc_provider@aliyun', '1', '阿里云', 'Aliyun Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('idc_provider@aws', '2', '亚马逊云', 'Aws Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('idc_provider@azure', '3', '微软云', 'Azure Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('idc_provider@baidu', '4', '百度云', 'Baidu Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('idc_provider@ctyun', '5', '天翼云', 'Ctyun Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('idc_provider@google', '6', 'Google云', 'Google Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('idc_provider@qingcloud', '7', '青云', 'Qing Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('idc_provider@tencent', '8', '腾讯云', 'Tencent Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyA', 'classifyA', 'CI/CD', 'CI/CD', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyB', 'classifyB', '监控', 'Monitors', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:00', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyC', 'classifyC', '网络', 'Networks', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:05:35', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyD', 'classifyD', '安全', 'Securitys', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-24 12:08:49', '1', '2020-07-24 12:08:49', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyE', 'classifyE', '基础', 'Foundations', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyF', 'classifyF', '存储', 'Storages', 'menu_classify_type', NULL, NULL, 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyG', 'classifyG', '配置', 'Configurations', 'menu_classify_type', '', '', 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_classify_type@classifyH', 'classifyH', '文档', 'Docs', 'menu_classify_type', '', '', 50, 1, 1, '1', '2020-07-23 14:52:07', '1', '2020-07-24 12:06:25', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_type@button', '3', '按钮', 'Button', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
-INSERT INTO `sys_dict` VALUES ('menu_type@dynamic', '2', '动态菜单', 'Dynamic Menu', 'menu_type', NULL, NULL, 50, 1, NULL, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('menu_type@static', '1', '静态菜单', 'Static Menu', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
-INSERT INTO `sys_dict` VALUES ('relate_oper_type@gt', 'gt', '大于', 'gt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于）', 0);
-INSERT INTO `sys_dict` VALUES ('relate_oper_type@gte', 'gte', '大于等于', 'gte', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于等于）', 0);
-INSERT INTO `sys_dict` VALUES ('relate_oper_type@lt', 'lt', '小于', 'lt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（小于）', 0);
-INSERT INTO `sys_dict` VALUES ('relate_oper_type@lte', 'lte', '小于等于', 'lte', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '关系运算符（小于等于）', 0);
-INSERT INTO `sys_dict` VALUES ('sys_contact_type@AliyunSms', 'AliyunSms', 'Aliyun短信', 'AliyunSms', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_contact_type@AliyunVms', 'AliyunVms', 'Aliyun电话', 'AliyunVms', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_contact_type@dingtalk', 'Dingtalk', '钉钉', 'Dingtalk', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_contact_type@email', 'Mail', '邮件', 'Email', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_contact_type@facebook', 'Facebook', '脸书', 'Facebook', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_contact_type@twitter', 'Twitter', '推特', 'Twitter', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_contact_type@wechat', 'WechatMp', '微信', 'Wechat', 'sys_contact_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_group_type@company', '2', 'Company', 'Company', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_group_type@department', '3', 'Department', 'Department', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_group_type@park', '1', 'Park', 'Park', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('sys_menu_type@dynamic', '2', '动态菜单', 'DynamicMenu', 'sys_menu_type', '', '', 50, 1, 1, '1', '2019-12-11 14:49:36', '1', '2019-12-11 14:49:40', '动态菜单类型（sys_menu表）', 0);
-INSERT INTO `sys_dict` VALUES ('sys_menu_type@static', '1', '静态菜单', 'StaticMenu', 'sys_menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-11 14:49:36', '1', '2019-12-11 14:49:40', '静态菜单类型（sys_menu表）', 0);
-INSERT INTO `sys_dict` VALUES ('theme_type@danger', 'danger', '严重', 'danger', 'theme_type', 'danger', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '皮肤主题（严重）', 0);
-INSERT INTO `sys_dict` VALUES ('theme_type@gray', 'gray', '灰色', 'gray', 'theme_type', 'gray', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（灰色）', 0);
-INSERT INTO `sys_dict` VALUES ('theme_type@primary', 'primary', '主要', 'primary', 'theme_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（主要）', 0);
-INSERT INTO `sys_dict` VALUES ('theme_type@success', 'success', '成功', 'success', 'theme_type', 'success', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（成功）', 0);
-INSERT INTO `sys_dict` VALUES ('theme_type@warning', 'warning', '警告', 'warning', 'theme_type', 'warning', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（警告）', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_auth_type@password', '1', 'Password', 'Password', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('vcs_auth_type@ssh', '2', 'Ssh', 'Ssh', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@alicode', 'alicode', 'Alicode', 'Alicode', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@bitbucket', 'bitbucket', 'Bitbucket', 'Bitbucket', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@coding', 'coding', 'Coding', 'Coding', 'vcs_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@gitee', 'gitee', 'Gitee', 'Gitee', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@github', 'github', 'Github', 'Github', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@gitlab', 'gitlab', 'Gitlab', 'Gitlab', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_group
--- ----------------------------
-DROP TABLE IF EXISTS `sys_group`;
-CREATE TABLE `sys_group` (
-  `id` int(11) NOT NULL,
-  `name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '用户分租(customer）名，与displayName灵活应用',
-  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '用户分租(customer）展示名',
-  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '唯一标识',
-  `type` int(1) DEFAULT '0' COMMENT '用户分组类型（预留）1park,2company,3department',
-  `parent_id` int(11) DEFAULT NULL COMMENT '父级id',
-  `parent_ids` varchar(512) COLLATE utf8_bin DEFAULT NULL COMMENT '父级路径id列表, 为减少使用时计算量提高性能(逗号分隔)',
-  `area_id` int(11) DEFAULT NULL COMMENT '区域id',
-  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户组启用状态（0:禁用/1:启用）',
-  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户组状态（预留）',
-  `create_by` int(11) NOT NULL,
-  `create_date` datetime NOT NULL,
-  `update_by` int(11) NOT NULL,
-  `update_date` datetime NOT NULL,
-  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0:正常/1:删除）',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `parent_id` (`parent_id`) USING BTREE,
-  FULLTEXT KEY `parent_ids` (`parent_ids`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统用户组表';
-
--- ----------------------------
--- Records of sys_group
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_group` VALUES (1, 'PanYuEnergyParkCenter', '番禺节能科技园中心', 'PanYuEnergyParkCenter', 1, NULL, NULL, 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:04:16', 0);
-INSERT INTO `sys_group` VALUES (2, 'Shangmaikeji-GZ', '广州商脉科技网络科技有限公司', 'Shangmaikeji-GZ', 2, 1, '1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:05:05', 0);
-INSERT INTO `sys_group` VALUES (3, 'BigdataDepartment', '大数据研发部', 'BigdataDepartment', 3, 2, '2,1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:09:55', 0);
-INSERT INTO `sys_group` VALUES (4, 'BizDepartment', '应用研发部', 'BizDepartment', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:06:18', 0);
-INSERT INTO `sys_group` VALUES (5, 'DevSecOpsFramework', 'DevSecOps+系统架构部', 'DevSecOpsFramework', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-31 15:46:29', 1, '2019-11-26 14:10:19', 0);
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_group_menu
--- ----------------------------
-DROP TABLE IF EXISTS `sys_group_menu`;
-CREATE TABLE `sys_group_menu` (
-  `id` int(11) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `menu_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  KEY `menu_id` (`menu_id`) USING BTREE,
-  CONSTRAINT `sys_group_menu_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
-  CONSTRAINT `sys_group_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-menu中间表';
-
-
-
--- ----------------------------
--- Table structure for sys_group_role
--- ----------------------------
-DROP TABLE IF EXISTS `sys_group_role`;
-CREATE TABLE `sys_group_role` (
-  `id` int(11) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `role_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  KEY `role_id` (`role_id`) USING BTREE,
-  CONSTRAINT `sys_group_role_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
-  CONSTRAINT `sys_group_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-role中间表';
-
-
-
--- ----------------------------
--- Table structure for sys_group_user
--- ----------------------------
-DROP TABLE IF EXISTS `sys_group_user`;
-CREATE TABLE `sys_group_user` (
-  `id` int(11) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  KEY `user_id` (`user_id`) USING BTREE,
-  CONSTRAINT `sys_group_user_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
-  CONSTRAINT `sys_group_user_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-user中间表';
-
 
 -- ----------------------------
 -- Table structure for sys_menu
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu` (
-  `id` int(11) NOT NULL,
+  `id` decimal(20) NOT NULL,
   `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
   `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
   `type` int(1) DEFAULT NULL COMMENT '菜单类型, (e.g 1静态菜单,2动态菜单,3按钮...参考字典)',
   `classify` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '分类类型',
   `level` int(1) NOT NULL DEFAULT '1' COMMENT '级别,顶级=1 , 菜单为0级',
   `status` int(1) NOT NULL DEFAULT '0' COMMENT '菜单状态(e.g 启用,禁用)',
-  `parent_id` int(11) NOT NULL COMMENT '父级菜单ID ,顶级的父级id为0',
+  `parent_id` decimal(20) NOT NULL COMMENT '父级菜单ID ,顶级的父级id为0',
   `parent_ids` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '树形父级菜单ID列表（如：1,11,22）',
   `permission` varchar(500) COLLATE utf8_bin NOT NULL COMMENT '权限标识（如：sys:user:edit,sys:user:view），用于如shiro-aop方法及权限校验',
   `page_location` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '页面地址,(例如静态菜单:/ci/task/xx.vue文件路径(不包含.vue后缀),动态菜单www.baidu.com)',
@@ -949,110 +642,13 @@ INSERT INTO `sys_menu` VALUES (${javaSpecs.genNextId()}, '${table.entityName}', 
 </#if>
 COMMIT;
 
--- ----------------------------
--- Table structure for sys_notification_contact
--- ----------------------------
-DROP TABLE IF EXISTS `sys_notification_contact`;
-CREATE TABLE `sys_notification_contact` (
-  `id` int(11) NOT NULL,
-  `record_id` int(11) DEFAULT NULL COMMENT '信息id',
-  `contact_id` int(11) DEFAULT NULL COMMENT '联系人',
-  `status` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'send , unsend , accepted , unaccepted ',
-  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `notification_id` (`record_id`) USING BTREE,
-  KEY `contact_id` (`contact_id`) USING BTREE,
-  CONSTRAINT `sys_notification_contact_ibfk_1` FOREIGN KEY (`contact_id`) REFERENCES `sys_contact` (`id`),
-  CONSTRAINT `sys_notification_contact_ibfk_2` FOREIGN KEY (`record_id`) REFERENCES `umc_alarm_record` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- ----------------------------
--- Table structure for sys_park
--- ----------------------------
-DROP TABLE IF EXISTS `sys_park`;
-CREATE TABLE `sys_park` (
-  `id` int(11) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  CONSTRAINT `sys_park_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
-
--- ----------------------------
--- Table structure for sys_role
--- ----------------------------
-DROP TABLE IF EXISTS `sys_role`;
-CREATE TABLE `sys_role` (
-  `id` int(11) NOT NULL,
-  `role_code` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
-  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
-  `type` int(1) DEFAULT NULL COMMENT '用户角色类型（预留）',
-  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户角色启用状态（0:禁用/1:启用）',
-  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户角色状态（预留）',
-  `create_by` int(11) NOT NULL,
-  `create_date` datetime NOT NULL,
-  `update_by` int(11) NOT NULL,
-  `update_date` datetime NOT NULL,
-  `del_flag` int(1) NOT NULL COMMENT '删除状态（0:正常/1:删除）',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统角色表';
-
--- ----------------------------
--- Records of sys_role
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_role` VALUES (1, 'manager', '管理者', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2020-06-12 10:04:24', 0);
-INSERT INTO `sys_role` VALUES (2, 'groupleader', '组长', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:11:58', 0);
-
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_role_menu
--- ----------------------------
-DROP TABLE IF EXISTS `sys_role_menu`;
-CREATE TABLE `sys_role_menu` (
-  `id` int(11) NOT NULL,
-  `role_id` int(11) DEFAULT NULL,
-  `menu_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `role_id` (`role_id`) USING BTREE,
-  KEY `menu_id` (`menu_id`) USING BTREE,
-  CONSTRAINT `sys_role_menu_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`),
-  CONSTRAINT `sys_role_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统role-menu中间表';
-
-
--- ----------------------------
--- Table structure for sys_role_user
--- ----------------------------
-DROP TABLE IF EXISTS `sys_role_user`;
-CREATE TABLE `sys_role_user` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `role_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `user_id` (`user_id`) USING BTREE,
-  KEY `role_id` (`role_id`) USING BTREE,
-  CONSTRAINT `sys_role_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`),
-  CONSTRAINT `sys_role_user_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统user-role中间表';
-
 
 -- ----------------------------
 -- Table structure for sys_user
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user` (
-  `id` int(11) NOT NULL,
+  `id` decimal(20) NOT NULL,
   `user_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '登录账号名(唯一）',
   `display_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '显示名称',
   `password` varchar(768) COLLATE utf8_bin NOT NULL COMMENT '密文密码',
@@ -1083,10 +679,403 @@ CREATE TABLE `sys_user` (
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` VALUES (1, 'root', '系统根超级管理员', 'b68bac90602f8800a51282243c7405afff8a9a0dd8e412d238c89970a221669ae13f67e3c997cac35162a88e0234ca1b345384456c3e9ac1358f953a58128f2b', 0, 1, 0, '983708408@qq.com', '18127968606', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '商物云系统管理员1', NULL, NULL, NULL, '2019-11-17 18:13:34', 0);
-INSERT INTO `sys_user` VALUES (5, 'liuxl', '刘兴龙', '145acd2247e905cd1fb5f66f2f39ba6e92ea63b7575beff1c6344f37e4eefd59fe4363b754b3dab37412f69a33e7de5f220e2dda65806971432eaf643a6a4368', 0, 1, 0, 'zhangsan@gmail.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '测试人员-刘兴龙', 1, '2019-10-30 11:16:05', 1, '2019-11-26 14:10:52', 0);
-INSERT INTO `sys_user` VALUES (7, 'hwjie', '何伟杰', 'b18a81966458eadba9ba94a07c16f41ff4152de438963728b9e38e887179af0a', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 15:01:05', 1, '2020-06-12 10:03:53', 0);
-INSERT INTO `sys_user` VALUES (8, 'wanglsir', 'wanglsir', '6810ae5a577b26dd4916468fe5b21519', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 18:11:00', 1, '2019-11-26 14:11:10', 0);
+INSERT INTO `sys_user` VALUES (1, 'root', '系统根超级管理员', 'b68bac90602f8800a51282243c7405afff8a9a0dd8e412d238c89970a221669ae13f67e3c997cac35162a88e0234ca1b345384456c3e9ac1358f953a58128f2b', 0, 1, 0, '983708408@qq.com', '18127968606', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '系统根管理员', 1, '2019-11-17 18:11:00', 1, '2019-11-26 14:11:10', 0);
+INSERT INTO `sys_user` VALUES (2, 'administrator', '系统管理员', '6810ae5a577b26dd4916468fe5b21519', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '系统管理员1', 1, '2019-11-17 18:11:00', 1, '2019-11-26 14:11:10', 0);
 COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role`;
+CREATE TABLE `sys_role` (
+  `id` decimal(20) NOT NULL,
+  `role_code` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
+  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
+  `type` int(1) DEFAULT NULL COMMENT '用户角色类型（预留）',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户角色启用状态（0:禁用/1:启用）',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户角色状态（预留）',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL COMMENT '删除状态（0:正常/1:删除）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统角色表';
+
+-- ----------------------------
+-- Records of sys_role
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role` VALUES (1, 'manager', '管理者', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2020-06-12 10:04:24', 0);
+INSERT INTO `sys_role` VALUES (2, 'groupleader', '组长', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:11:58', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_group
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group`;
+CREATE TABLE `sys_group` (
+  `id` decimal(20) NOT NULL,
+  `name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '用户分租(customer）名，与displayName灵活应用',
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '用户分租(customer）展示名',
+  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '唯一标识',
+  `type` int(1) DEFAULT '0' COMMENT '用户分组类型（预留）1park,2company,3department',
+  `parent_id` decimal(20) DEFAULT NULL COMMENT '父级id',
+  `parent_ids` varchar(512) COLLATE utf8_bin DEFAULT NULL COMMENT '父级路径id列表, 为减少使用时计算量提高性能(逗号分隔)',
+  `area_id` int(11) DEFAULT NULL COMMENT '区域id',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户组启用状态（0:禁用/1:启用）',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户组状态（预留）',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0:正常/1:删除）',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `parent_id` (`parent_id`) USING BTREE,
+  FULLTEXT KEY `parent_ids` (`parent_ids`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统用户组表';
+
+-- ----------------------------
+-- Records of sys_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_group` VALUES (1, 'PanYuEnergyParkCenter', 'Xxx科技园中心', 'PanYuEnergyParkCenter', 1, NULL, NULL, 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:04:16', 0);
+INSERT INTO `sys_group` VALUES (2, 'Shangmaikeji-GZ', 'Xxx科技有限公司', 'Shangmaikeji-GZ', 2, 1, '1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:05:05', 0);
+INSERT INTO `sys_group` VALUES (3, 'BigdataDepartment', '大数据研发部', 'BigdataDepartment', 3, 2, '2,1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:09:55', 0);
+INSERT INTO `sys_group` VALUES (4, 'BizDepartment', '应用研发部', 'BizDepartment', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:06:18', 0);
+INSERT INTO `sys_group` VALUES (5, 'DevSecOpsFramework', 'DevSecOps+系统架构部', 'DevSecOpsFramework', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-31 15:46:29', 1, '2019-11-26 14:10:19', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_department
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_department`;
+CREATE TABLE `sys_department` (
+  `id` decimal(20) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  CONSTRAINT `sys_department_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_department
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_department` VALUES (1, 3, NULL, NULL, '18127968606');
+INSERT INTO `sys_department` VALUES (2, 4, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_company
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_company`;
+CREATE TABLE `sys_company` (
+  `id` decimal(20) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  CONSTRAINT `sys_company_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Table structure for sys_group_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group_role`;
+CREATE TABLE `sys_group_role` (
+  `id` decimal(20) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  KEY `role_id` (`role_id`) USING BTREE,
+  CONSTRAINT `sys_group_role_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
+  CONSTRAINT `sys_group_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-role中间表';
+
+-- ----------------------------
+-- Table structure for sys_group_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group_user`;
+CREATE TABLE `sys_group_user` (
+  `id` decimal(20) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  KEY `user_id` (`user_id`) USING BTREE,
+  CONSTRAINT `sys_group_user_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
+  CONSTRAINT `sys_group_user_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-user中间表';
+
+-- ----------------------------
+-- Table structure for sys_role_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_user`;
+CREATE TABLE `sys_role_user` (
+  `id` decimal(20) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `user_id` (`user_id`) USING BTREE,
+  KEY `role_id` (`role_id`) USING BTREE,
+  CONSTRAINT `sys_role_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`),
+  CONSTRAINT `sys_role_user_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统user-role中间表';
+
+-- ----------------------------
+-- Table structure for erm_app_cluster
+-- ----------------------------
+DROP TABLE IF EXISTS `erm_app_cluster`;
+CREATE TABLE `erm_app_cluster` (
+`id` decimal(20) NOT NULL,
+`name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '应用名称',
+`type` int(11) DEFAULT NULL COMMENT '应用集群的子类类型:(比docker_cluster和k8s_cluster的分类级别低)\n1如springboot app 或vue app,\n2,如umc-agent进程\n\n注:ci发布时,过滤掉type=2(不带端口的进程,如agent)',
+`endpoint` varchar(16) COLLATE utf8_bin NOT NULL COMMENT '端点:像sso这种则使用 port,  像agent则使用addr',
+`ssh_id` int(11) DEFAULT NULL,
+`deploy_type` int(2) NOT NULL COMMENT '1:host代表当部署在物理机;2:docker代表部署在docker集群;3:k8s代表部署在k8s集群;4:coss代表上传至coss',
+`enable` int(1) NOT NULL DEFAULT '1' COMMENT '启用状态（0:禁止/1:启用）',
+`remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+`create_by` int(11) NOT NULL,
+`create_date` datetime NOT NULL,
+`update_by` int(11) NOT NULL,
+`update_date` datetime NOT NULL,
+`del_flag` int(1) NOT NULL DEFAULT '0',
+`organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
+PRIMARY KEY (`id`) USING BTREE,
+KEY `update_by` (`update_by`) USING BTREE,
+KEY `create_by` (`create_by`) USING BTREE,
+CONSTRAINT `erm_app_cluster_ibfk_1` FOREIGN KEY (`update_by`) REFERENCES `sys_user` (`id`),
+CONSTRAINT `erm_app_cluster_ibfk_2` FOREIGN KEY (`create_by`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用集群（组）定义表';
+
+-- ----------------------------
+-- Records of erm_app_cluster
+-- ----------------------------
+BEGIN;
+INSERT INTO `erm_app_cluster` VALUES (75, 'iam-server', NULL, '80', NULL, 1, 1, 'Iam-server cluster', 1, '2019-09-20 16:54:41', 1, '2019-09-20 16:54:41', 0, 'BizDepartment');
+INSERT INTO `erm_app_cluster` VALUES (${clusterId}, '${serverName}', NULL, '80', NULL, 1, 1, '${serverName}', 1, '2020-08-06 19:25:49', 1, '2020-08-06 19:25:49', 0, 'BigdataDepartment');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_cluster_config
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_cluster_config`;
+CREATE TABLE `sys_cluster_config` (
+  `id` decimal(20) NOT NULL,
+  `cluster_id` int(11) NOT NULL COMMENT '对应cluster表的id',
+  `display_name` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '应用名称',
+  `type` int(1) DEFAULT '1' COMMENT '应用集群类型（1:iam/sso，2:其他）',
+  `env_type` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '环境类型,字典value',
+  `view_extranet_base_uri` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '前端视图页面外网BaseURI',
+  `extranet_base_uri` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '外网BaseURI',
+  `intranet_base_uri` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '内网BaseURI',
+  `remark` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0：正常，1：删除）',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `cluster_id` (`cluster_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用集群配置表（cluster与环境关联的具体配置，一定程度上也相当于app_cluster的明细子表，注：如，对于公私混合部署时，一个cluster_id/env_id可对应多条记录，iam/online功能会用到）';
+
+-- ----------------------------
+-- Records of sys_cluster_config
+-- ----------------------------
+BEGIN;
+<#assign projectOfClusterType = 2 />
+<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
+<#assign projectOfClusterType = 1 />
+INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://iam.${organName?lower_case}.debug:14040', 'http://iam-services.${organName?lower_case}.debug:14040/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://iam.${organName?lower_case}.fat', 'http://iam-services.${organName?lower_case}.fat/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'uat', 'http://iam.${organName?lower_case}.uat', 'http://iam-services.${organName?lower_case}.uat/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'pro', 'http://iam.${organName?lower_case}.com', 'http://iam-services.${organName?lower_case}.com/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+</#if>
+INSERT INTO `sys_cluster_config` VALUES (39, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'dev', 'http://${subDomain}.${organName?lower_case}.debug:38080', 'http://${subDomain}-services.${organName?lower_case}.debug:28080/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (40, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'fat', 'http://${subDomain}.${organName?lower_case}.fat', 'http://${subDomain}-services.${organName?lower_case}.fat/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (41, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'uat', 'http://${subDomain}.${organName?lower_case}.uat', 'http://${subDomain}-services.${organName?lower_case}.uat/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (42, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'pro', 'http://${subDomain}.${organName?lower_case}.com', 'http://${subDomain}-services.${organName?lower_case}.com/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact`;
+CREATE TABLE `sys_contact` (
+  `id` decimal(20) NOT NULL,
+  `name` varchar(30) CHARACTER SET utf8 NOT NULL COMMENT '通知分组名称',
+  `create_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='告警联系人表';
+
+-- ----------------------------
+-- Records of sys_contact
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact` VALUES (2, 'wangsir', '1', '2019-08-05 06:45:17', '1', '2020-04-10 14:44:22', 0, NULL);
+INSERT INTO `sys_contact` VALUES (7, 'hwj', '1', '2019-08-23 15:16:39', '1', '2020-07-24 15:43:11', 0, NULL);
+INSERT INTO `sys_contact` VALUES (2101651456, 'lxl', '1', '2020-07-17 18:10:20', '1', '2020-07-17 18:10:20', 0, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact_channel
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact_channel`;
+CREATE TABLE `sys_contact_channel` (
+  `id` decimal(20) NOT NULL,
+  `kind` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'email,phone,wechat,dingtalk,twitter,facebook---对应com.wl4g.devops.support.notification.NotifierKind',
+  `contact_id` int(11) DEFAULT NULL COMMENT '联系人id',
+  `primary_address` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '具体的联系地址:可能是email,phone,wechat的open_id等',
+  `time_of_freq` int(11) DEFAULT NULL COMMENT '频率时间',
+  `num_of_freq` int(11) DEFAULT NULL COMMENT '频率次数',
+  `enable` int(11) DEFAULT NULL COMMENT '是否启用',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_contact_channel
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact_channel` VALUES (96824, 'Mail', 2, '983708408@qq.com', 30, 1, 1);
+INSERT INTO `sys_contact_channel` VALUES (1455118336, 'Mail', 2101651456, '3091553379@qq.com', 99, 99, 1);
+INSERT INTO `sys_contact_channel` VALUES (1749353472, 'Mail', 7, '1154635107@qq.com', 30, 1, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact_group
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact_group`;
+CREATE TABLE `sys_contact_group` (
+  `id` decimal(20) NOT NULL,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '告警分组名称',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='告警联系人分组表';
+
+-- ----------------------------
+-- Records of sys_contact_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact_group` VALUES (8, 'developer', '2019-08-23 16:34:06', '1', '2019-08-23 16:34:06', '1', 0, NULL);
+INSERT INTO `sys_contact_group` VALUES (9, 'tester', '2019-08-23 16:34:14', '1', '2019-12-09 13:50:51', '1', 0, NULL);
+INSERT INTO `sys_contact_group` VALUES (10, 'Operator', '2019-08-23 16:35:26', '1', '2019-08-23 16:35:26', '1', 0, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact_group_ref
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact_group_ref`;
+CREATE TABLE `sys_contact_group_ref` (
+  `id` decimal(20) NOT NULL,
+  `contact_group_id` int(11) NOT NULL,
+  `contact_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `contact_group_id` (`contact_group_id`) USING BTREE,
+  KEY `contact_id` (`contact_id`) USING BTREE,
+  CONSTRAINT `sys_contact_group_ref_ibfk_1` FOREIGN KEY (`contact_group_id`) REFERENCES `sys_contact_group` (`id`),
+  CONSTRAINT `sys_contact_group_ref_ibfk_2` FOREIGN KEY (`contact_id`) REFERENCES `sys_contact` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_contact_group_ref
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact_group_ref` VALUES (59879, 8, 2);
+INSERT INTO `sys_contact_group_ref` VALUES (709166080, 9, 7);
+INSERT INTO `sys_contact_group_ref` VALUES (1120207872, 10, 7);
+INSERT INTO `sys_contact_group_ref` VALUES (1401226240, 8, 7);
+INSERT INTO `sys_contact_group_ref` VALUES (1866160128, 8, 2101651456);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_group_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group_menu`;
+CREATE TABLE `sys_group_menu` (
+  `id` decimal(20) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `menu_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  KEY `menu_id` (`menu_id`) USING BTREE,
+  CONSTRAINT `sys_group_menu_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
+  CONSTRAINT `sys_group_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-menu中间表';
+
+-- ----------------------------
+-- Table structure for sys_notification_contact
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_notification_contact`;
+CREATE TABLE `sys_notification_contact` (
+  `id` decimal(20) NOT NULL,
+  `record_id` int(11) DEFAULT NULL COMMENT '信息id',
+  `contact_id` int(11) DEFAULT NULL COMMENT '联系人',
+  `status` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'send , unsend , accepted , unaccepted ',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `notification_id` (`record_id`) USING BTREE,
+  KEY `contact_id` (`contact_id`) USING BTREE,
+  CONSTRAINT `sys_notification_contact_ibfk_1` FOREIGN KEY (`contact_id`) REFERENCES `sys_contact` (`id`),
+  CONSTRAINT `sys_notification_contact_ibfk_2` FOREIGN KEY (`record_id`) REFERENCES `umc_alarm_record` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Table structure for sys_park
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_park`;
+CREATE TABLE `sys_park` (
+  `id` decimal(20) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id` (`group_id`) USING BTREE,
+  CONSTRAINT `sys_park_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Table structure for sys_role_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_menu`;
+CREATE TABLE `sys_role_menu` (
+  `id` decimal(20) NOT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `menu_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `role_id` (`role_id`) USING BTREE,
+  KEY `menu_id` (`menu_id`) USING BTREE,
+  CONSTRAINT `sys_role_menu_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`),
+  CONSTRAINT `sys_role_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统role-menu中间表';
 
 SET FOREIGN_KEY_CHECKS = 1;
