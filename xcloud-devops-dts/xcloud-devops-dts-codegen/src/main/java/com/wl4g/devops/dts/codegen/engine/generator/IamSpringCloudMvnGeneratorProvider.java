@@ -16,13 +16,8 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
-import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
-
-import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.isConf;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_PROJECT_EXTRA_IAM_MODE_CLUSTER;
 
 /**
  * Spring cloud architecture generator based on IAM system, </br>
@@ -42,18 +37,6 @@ public class IamSpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvide
 	@Override
 	public void doGenerate() throws Exception {
 		doGenerateWithTemplates(GenProviderAlias.IAM_SPINGCLOUD_MVN);
-	}
-
-	@Override
-	protected void customizeRenderingModel(GenTemplateLocator.@NotNull TemplateResourceWrapper resource,
-			@NotNull MapRenderModel model) {
-		super.customizeRenderingModel(resource, model);
-
-		// Sets IAM run mode for 'has' directive.
-		if (isConf(context.getGenProject().getExtraOptions(), "gen.iam.security-mode", "cluster")) {
-			model.put(GEN_PROJECT_EXTRA_IAM_MODE_CLUSTER, true);
-		}
-
 	}
 
 }

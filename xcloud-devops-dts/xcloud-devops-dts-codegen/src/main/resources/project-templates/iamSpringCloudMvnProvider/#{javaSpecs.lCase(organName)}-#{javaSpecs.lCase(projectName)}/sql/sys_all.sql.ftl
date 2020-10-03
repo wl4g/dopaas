@@ -1,11 +1,14 @@
+<#assign subDomain = projectName?lower_case />
+<#assign serverName = projectName?lower_case + '-server' />
+<#assign clusterId = javaSpecs.genNextId()>
 /*
  ${watermark}
 
  Generated From Server Type    : ${datasource.type}
  Generated From Server Version : 50645//TODO
- Generated From Host           : ${datasource.host}:${datasource.port}
- Schema                        : ${datasource.database}
- File Encoding                 : 65001
+ Generated From Host           : ${datasource.dbhost}:${datasource.dbport}
+ Schema                        : ${datasource.databaseName}
+ File Encoding                 : UTF-8
  Date: ${.now?string('yyyy-MM-dd hh:mm:ss')}
 */
 
@@ -492,14 +495,12 @@ CONSTRAINT `erm_app_cluster_ibfk_1` FOREIGN KEY (`update_by`) REFERENCES `sys_us
 CONSTRAINT `erm_app_cluster_ibfk_2` FOREIGN KEY (`create_by`) REFERENCES `sys_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用集群（组）定义表';
 
-
-<#assign clusterId = javaSpecs.genNextId()>
 -- ----------------------------
 -- Records of erm_app_cluster
 -- ----------------------------
 BEGIN;
 INSERT INTO `erm_app_cluster` VALUES (75, 'iam-server', NULL, '80', NULL, 1, 1, 'Iam-server cluster', 1, '2019-09-20 16:54:41', 1, '2019-09-20 16:54:41', 0, 'BizDepartment');
-INSERT INTO `erm_app_cluster` VALUES (${clusterId}, '${projectName?lower_case}-server', NULL, '80', NULL, 1, 1, '${projectName?lower_case}-server', 1, '2020-08-06 19:25:49', 1, '2020-08-06 19:25:49', 0, 'BigdataDepartment');
+INSERT INTO `erm_app_cluster` VALUES (${clusterId}, '${serverName}', NULL, '80', NULL, 1, 1, '${serverName}', 1, '2020-08-06 19:25:49', 1, '2020-08-06 19:25:49', 0, 'BigdataDepartment');
 COMMIT;
 
 
@@ -531,14 +532,18 @@ CREATE TABLE `sys_cluster_config` (
 -- Records of sys_cluster_config
 -- ----------------------------
 BEGIN;
--- INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14040/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
--- INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://localhost:8080', 'http://iam.sunwuu.fat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
--- INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'pro', 'http://localhost:8080', 'https://iam.sunwuu.com/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
--- INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'uat', 'http://localhost:8080', 'http://iam.sunwuu.uat/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (39, ${clusterId}, '${projectName?lower_case}-server', 2, 'dev', 'http://localhost:8080', 'http://${organName?lower_case}.debug:8080/${projectName?lower_case}-server', 'http://localhost:8080/${projectName?lower_case}-server', '${projectName?lower_case} platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (40, ${clusterId}, '${projectName?lower_case}-server', 2, 'fat', 'http://localhost:8080', 'http://${projectName?lower_case}.shangmai.fat/${projectName?lower_case}-server', 'http://localhost:8080/${projectName?lower_case}-server', '${projectName?lower_case} platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (41, ${clusterId}, '${projectName?lower_case}-server', 2, 'uat', 'http://localhost:8080', 'http://${projectName?lower_case}.shangmai.uat/${projectName?lower_case}-server', 'http://localhost:8080/${projectName?lower_case}-server', '${projectName?lower_case} platform', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (42, ${clusterId}, '${projectName?lower_case}-server', 2, 'pro', 'http://localhost:8080', 'http://${projectName?lower_case}.shangmai.com/${projectName?lower_case}-server', 'http://localhost:8080/${projectName?lower_case}-server', '${projectName?lower_case} platform', NULL, NULL, NULL, NULL, 0);
+<#assign projectOfClusterType = 2 />
+<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
+<#assign projectOfClusterType = 1 />
+INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://iam.${organName?lower_case}.debug:14040', 'http://iam-services.${organName?lower_case}.debug:14040/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://iam.${organName?lower_case}.fat', 'http://iam-services.${organName?lower_case}.fat/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'uat', 'http://iam.${organName?lower_case}.uat', 'http://iam-services.${organName?lower_case}.uat/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'pro', 'http://iam.${organName?lower_case}.com', 'http://iam-services.${organName?lower_case}.com/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+</#if>
+INSERT INTO `sys_cluster_config` VALUES (39, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'dev', 'http://${subDomain}.${organName?lower_case}.debug:38080', 'http://${subDomain}-services.${organName?lower_case}.debug:28080/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (40, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'fat', 'http://${subDomain}.${organName?lower_case}.fat', 'http://${subDomain}-services.${organName?lower_case}.fat/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (41, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'uat', 'http://${subDomain}.${organName?lower_case}.uat', 'http://${subDomain}-services.${organName?lower_case}.uat/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (42, ${clusterId}, '${serverName}', ${projectOfClusterType}, 'pro', 'http://${subDomain}.${organName?lower_case}.com', 'http://${subDomain}-services.${organName?lower_case}.com/${serverName}', 'http://localhost:28080/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
 COMMIT;
 
 -- ----------------------------

@@ -1,7 +1,7 @@
 {
-  "name": "super-devops-view",
-  "version": "v0.1.1",
-  "description": "Super devops view",
+  "name": "${organName?lower_case}-${projectName?lower_case}",
+  "version": "${version}",
+  "description": "${organName?uncap_first} ${projectName?uncap_first} View",
   "author": "<wanglsir@gmail.com>",
   "private": true,
   "scripts": {
