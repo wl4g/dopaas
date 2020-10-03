@@ -1,5 +1,3 @@
-<#assign topDomain = organName?lower_case + '.debug' />
-<#assign subDomain = projectName?lower_case />
 ## Introduction
 ${projectDescription}
 
@@ -26,10 +24,10 @@ npm run dev
 #npm run build
 ```
 
-Ready to access page after startup：[http://${subDomain}.${topDomain}:38080](http://${subDomain}.${topDomain}:38080)
+Ready to access page after startup：[http://${devViewServiceHost}:${devViewServicePort}/#/](http://${devViewServiceHost}:${devViewServicePort}/#/)
 > Note: before attempting to test access, make sure that the local hosts resolution has been added:
 ```
-127.0.0.1  ${subDomain + '.' + topDomain} # Frontend service domain. (dev dnv, by default local)
+127.0.0.1  ${devViewServiceHost} # Frontend service domain. (dev env, by default local)
 ```
 
 ### Project describe:

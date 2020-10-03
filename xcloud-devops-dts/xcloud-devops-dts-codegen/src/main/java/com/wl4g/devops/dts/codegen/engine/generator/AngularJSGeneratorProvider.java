@@ -30,7 +30,7 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
  * @version v1.0 2020-09-07
  * @since
  */
-public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
+public class AngularJSGeneratorProvider extends DefaultWebConfigurationGeneratorProvider {
 
 	public AngularJSGeneratorProvider(@NotNull GenerateContext context) {
 		super(context, null);
@@ -43,6 +43,8 @@ public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
 
 	@Override
 	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
+		super.customizeRenderingModel(resource, model);
+
 		// Add variable of naming utils.
 		model.put(GEN_COMMON_NGSPECS, new AngularSpecs());
 	}

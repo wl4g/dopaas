@@ -1,8 +1,3 @@
-<#assign topDomain = organName?lower_case + '.debug' />
-<#assign subDomainOfBackend = projectName?lower_case + '-services' />
-<#assign subDomain = projectName?lower_case />
-<#assign serverName = projectName?lower_case + '-server' />
-<#assign redisHost = 'redis.' + topDomain />
 # ${organName?cap_first} ${projectName?cap_first}
 
 ## 简介
@@ -28,12 +23,12 @@ ${projectDescription}
 mvn clean install -DskipTests -T 2C
 ```
 
-启动后准备访问API, 其中baseURI为: [http://${subDomainOfBackend}.${topDomain}:28080/${serverName}](http://${subDomainOfBackend}.${topDomain}:28080/${serverName})
+启动后准备访问API, 其中baseURI为: [http://${devServiceHost}:28080/${entryAppName}](http://${devServiceHost}:${devServicePort}/${entryAppName})
 > 注：在尝试测试访问之前请确保已添加本地hosts解析：
 ```
-127.0.0.1  ${subDomainOfBackend + '.' + topDomain} # 后端服务域名（dev环境，默认本机）
-127.0.0.1  ${subDomain + '.' + topDomain} # 前端服务域名（dev环境，默认本机）
-127.0.0.1  ${redisHost} # redis服务域名（dev环境，默认本机）
+127.0.0.1  ${devServiceHost} # 后端服务域名（dev环境，默认本机）
+127.0.0.1  ${devViewServiceHost} # 前端服务域名（dev环境，默认本机）
+127.0.0.1  ${devRedisHost} # redis服务域名（dev环境，默认本机）
 ```
 
 

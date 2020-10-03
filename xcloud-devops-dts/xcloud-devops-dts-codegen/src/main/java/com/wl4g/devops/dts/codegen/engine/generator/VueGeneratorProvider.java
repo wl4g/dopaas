@@ -31,7 +31,7 @@ import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_CO
  * @version v1.0 2020-09-07
  * @since
  */
-public class VueGeneratorProvider extends AbstractGeneratorProvider {
+public class VueGeneratorProvider extends DefaultWebConfigurationGeneratorProvider {
 
 	public VueGeneratorProvider(@NotNull GenerateContext context) {
 		super(context, null);
@@ -44,6 +44,8 @@ public class VueGeneratorProvider extends AbstractGeneratorProvider {
 
 	@Override
 	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
+		super.customizeRenderingModel(resource, model);
+
 		// Add variable of naming utils.
 		model.put(GEN_COMMON_VUESPECS, new VueSpecs());
 	}

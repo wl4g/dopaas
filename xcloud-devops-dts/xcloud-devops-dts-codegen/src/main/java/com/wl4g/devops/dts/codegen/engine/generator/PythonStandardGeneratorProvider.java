@@ -43,6 +43,8 @@ public class PythonStandardGeneratorProvider extends AbstractGeneratorProvider {
 
 	@Override
 	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
+		super.customizeRenderingModel(resource, model);
+
 		// Add variable of naming utils.
 		model.put(GEN_COMMON_PYTHONSPECS, new PythonSpecs());
 	}

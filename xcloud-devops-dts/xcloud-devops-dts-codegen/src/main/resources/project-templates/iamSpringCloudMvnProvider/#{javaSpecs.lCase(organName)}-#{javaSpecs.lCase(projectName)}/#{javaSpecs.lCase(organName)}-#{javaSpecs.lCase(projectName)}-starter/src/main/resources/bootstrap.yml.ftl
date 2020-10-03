@@ -1,4 +1,5 @@
 # ${watermark}
+
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
 # All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
 #
@@ -12,7 +13,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: ${projectName?lower_case}-server
+  application.name: ${entryAppName}
   profiles:
     include: common,support,util
     active: dev
@@ -117,7 +118,7 @@ server:
   servlet:
     contextPath: /${r'${'}spring.application.name}
   #address: 0.0.0.0
-  port: 28080
+  port: ${entryAppPort}
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8
