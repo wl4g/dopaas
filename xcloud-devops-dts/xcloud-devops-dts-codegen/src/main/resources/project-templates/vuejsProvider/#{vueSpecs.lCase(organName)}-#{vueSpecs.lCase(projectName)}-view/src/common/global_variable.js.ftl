@@ -2,7 +2,7 @@ import { store } from "../utils";
 import iputil from "./iputil";
 
 export default {
-<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
+<#if vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
     iam: {
         cluster: 'iam-server',
         twoDomain: 'iam',

@@ -80,7 +80,7 @@ these variables, So there is no need to judge. -->
         },
 <#-- </#if> -->
     },
-//    ...enLocale
+    ...enLocale
 }
 
 export default en_US
