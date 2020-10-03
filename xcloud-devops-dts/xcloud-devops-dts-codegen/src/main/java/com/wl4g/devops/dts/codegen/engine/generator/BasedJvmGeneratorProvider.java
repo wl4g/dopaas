@@ -44,7 +44,7 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
  * @sine v1.0.0
  * @see
  */
-public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvider {
+public abstract class BasedJvmGeneratorProvider extends DefaultWebConfigurationGeneratorProvider {
 
 	public BasedJvmGeneratorProvider(@NotNull GenerateContext context, @Nullable Map<String, Object> defaultSubModels) {
 		// Add model for naming utils.
@@ -53,6 +53,9 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 
 	@Override
 	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
+		super.customizeRenderingModel(resource, model);
+
+		// Add JavaSpecs
 		model.put(GEN_COMMON_JAVASPECS, new JavaSpecs());
 
 		GenProject project = context.getGenProject();
@@ -90,6 +93,7 @@ public abstract class BasedJvmGeneratorProvider extends AbstractGeneratorProvide
 			// Distinct imports
 			distinctImportAttrTypes(model, table);
 		}
+
 	}
 
 	/**

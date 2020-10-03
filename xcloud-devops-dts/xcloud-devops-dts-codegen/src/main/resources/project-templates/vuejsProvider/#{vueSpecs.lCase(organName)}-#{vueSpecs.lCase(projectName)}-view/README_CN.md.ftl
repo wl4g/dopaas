@@ -1,5 +1,3 @@
-<#assign topDomain = organName?lower_case + '.debug' />
-<#assign subDomain = projectName?lower_case />
 ## 简介
 ${projectDescription}
 
@@ -27,10 +25,10 @@ npm run dev
 #npm run build
 ```
 
-启动完成后开始访问：[http://${subDomain}.${topDomain}:38080](http://${subDomain}.${topDomain}:38080)
+启动完成后开始访问：[http://${devViewServiceHost}:${devViewServicePort}/#/](http://${devViewServiceHost}:${devViewServicePort}/#/)
 > 注：在尝试测试访问之前请确保已添加本地hosts解析：
 ```
-127.0.0.1  ${subDomain + '.' + topDomain} # 前端服务域名（dev环境，默认本机）
+127.0.0.1  ${devViewServiceHost} # 前端服务域名（dev环境，默认本机）
 ```
 
 

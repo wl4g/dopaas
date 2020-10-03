@@ -1,4 +1,5 @@
 # ${watermark}
+
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
 # All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
 #
@@ -9,12 +10,7 @@
 # limitations under the License.
 #
 
-<#assign topDomain = organName?lower_case + '.fat' />
-<#assign subDomain = projectName?lower_case />
-<#assign serverName = projectName?lower_case + '-server' />
-<#assign redisHost = 'redis.' + topDomain />
-
-# #### Environment(FAT Test) configuration. ####
+# #### Environment(FAT) configuration. ####
 #
 spring:
   cloud:
@@ -25,31 +21,33 @@ spring:
           rules:
             '[/**]':
               allows-origins:
-                - https://${r'${'}X_SERVICE_ZONE:${topDomain}}
-                - http://${r'${'}X_SERVICE_ZONE:${topDomain}}
-                - https://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
-                - http://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
+                - https://${fatServiceHost}:${entryAppPort}
+                - http://${fatServiceHost}:${entryAppPort}
+                - https://*.${fatTopDomain}
+                - http://*.${fatTopDomain}
+                #- '*'
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
           denyIpRange: ${r'${'}X_IAM_ACL_DENY}
         client:
-          server-uri: http://iam.${r'${'}X_SERVICE_ZONE:${topDomain}}/iam-server
+          server-uri: http://iam.${fatServiceHost}/iam-server
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/home
+          success-uri: http://${fatViewServiceHost}/#/home
 <#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
       iam: # IAM server configuration.
         cors:
           rules:
             '[/**]':
               allows-origins:
-                - https://${r'${'}X_SERVICE_ZONE:${topDomain}}
-                - http://${r'${'}X_SERVICE_ZONE:${topDomain}}
-                - https://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
-                - http://*.${r'${'}X_SERVICE_ZONE:${topDomain}}
-        login-uri: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/login
-        unauthorized-uri: /view/403.html
-        success-endpoint: ${serverName}@http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}/#/
+                - https://${fatServiceHost}:${entryAppPort}
+                - http://${fatServiceHost}:${entryAppPort}
+                - https://*.${fatTopDomain}
+                - http://*.${fatTopDomain}
+                #- '*'
+        login-uri: http://${fatViewServiceHost}/#/login
+        unauthorized-uri: http://${fatServiceHost}:${entryAppPort}${r'${'}server.servlet.contextPath}/view/403.html
+        success-endpoint: ${serverName}@http://${fatViewServiceHost}/#/
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
@@ -62,16 +60,16 @@ spring:
           wechat-mp:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}${r'${'}server.servlet.contextPath}/sns/wechatmp/callback
+            redirect-url: http://${fatServiceHost}${r'${'}server.servlet.contextPath}/sns/wechatmp/callback
           wechat:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}${r'${'}server.servlet.contextPath}/sns/wechat/callback
-            href: https://${r'${'}X_SERVICE_ZONE:${topDomain}}/${r'${'}server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            redirect-url: http://${fatServiceHost}${r'${'}server.servlet.contextPath}/sns/wechat/callback
+            href: https://${fatServiceHost}${r'${'}server.servlet.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
           qq:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-            redirect-url: http://${subDomain}.${r'${'}X_SERVICE_ZONE:${topDomain}}${r'${'}server.servlet.contextPath}/sns/qq/callback
+            redirect-url: http://${fatServiceHost}${r'${'}server.servlet.contextPath}/sns/qq/callback
 </#if>
 
   # Datasource configuration.
@@ -79,7 +77,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${r'${'}X_DB_URL:${topDomain}:3306}/${r'${'}X_DB_NAME:${datasource.databaseName}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://${r'${'}X_DB_URL:${fatMysqlHost}:3306}/${r'${'}X_DB_NAME:${datasource.databaseName}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: ${r'${'}X_DB_USER:${projectName}}
       password: ${r'${'}X_DB_PASSWD:123456}
       initial-size: 10
@@ -103,4 +101,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${r'${'}X_REDIS_NODES:${redisHost}:6379,${redisHost}:6380,${redisHost}:6381,${redisHost}:7379,${redisHost}:7380,${redisHost}:7381}
+  nodes: ${r'${'}X_REDIS_NODES:${fatRedisHost}:6379,${fatRedisHost}:6380,${fatRedisHost}:6381,${fatRedisHost}:7379,${fatRedisHost}:7380,${fatRedisHost}:7381}

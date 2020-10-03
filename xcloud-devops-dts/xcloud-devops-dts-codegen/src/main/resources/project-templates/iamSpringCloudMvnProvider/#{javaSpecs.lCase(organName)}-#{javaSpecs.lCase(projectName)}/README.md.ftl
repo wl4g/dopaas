@@ -1,8 +1,3 @@
-<#assign topDomain = organName?lower_case + '.debug' />
-<#assign subDomainOfBackend = projectName?lower_case + '-services' />
-<#assign subDomain = projectName?lower_case />
-<#assign serverName = projectName?lower_case + '-server' />
-<#assign redisHost = 'redis.' + topDomain />
 # ${organName?cap_first} ${projectName?cap_first}
 
 #### Introduction
@@ -26,12 +21,12 @@ ${projectDescription}
 mvn clean install -DskipTests -T 2C
 ```
 
-Ready to access API after startup, the baseURI is: [http://${subDomainOfBackend}.${topDomain}:28080/${serverName}](http://${subDomainOfBackend}.${topDomain}:28080/${serverName})
+Ready to access API after startup, the baseURI is: [http://${devServiceHost}:28080/${entryAppName}](http://${devServiceHost}:${devServicePort}/${entryAppName})
 > Note: before attempting to test access, make sure that the local hosts resolution has been added:
 ```
-127.0.0.1  ${subDomainOfBackend + '.' + topDomain} # Backend service domain. (dev dnv, by default local)
-127.0.0.1  ${subDomain + '.' + topDomain} # Frontend service domain. (dev dnv, by default local)
-127.0.0.1  ${redisHost} # Redis service domain. (dev dnv, by default local)
+127.0.0.1  ${devServiceHost} # Backend service domain. (dev dnv, by default local)
+127.0.0.1  ${devViewServiceHost} # Frontend service domain. (dev dnv, by default local)
+127.0.0.1  ${devRedisHost} # Redis service domain. (dev env, by default local)
 ```
 
 
