@@ -80,7 +80,7 @@ these variables, So there is no need to judge. -->
         },
 <#-- </#if> -->
     },
-//    ...zhLocale
+    ...zhLocale
 }
 
 export default zh_CN
