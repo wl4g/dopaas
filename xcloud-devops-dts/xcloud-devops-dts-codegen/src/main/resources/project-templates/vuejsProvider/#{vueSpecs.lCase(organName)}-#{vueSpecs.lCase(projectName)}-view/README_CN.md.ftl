@@ -1,7 +1,5 @@
 <#assign topDomain = organName?lower_case + '.debug' />
 <#assign subDomain = projectName?lower_case />
-<#assign serverName = projectName?lower_case + '-server' />
-<#assign redisHost = 'redis.' + topDomain />
 ## 简介
 ${projectDescription}
 
@@ -32,7 +30,7 @@ npm run dev
 启动完成后开始访问：[http://${subDomain}.${topDomain}:38080](http://${subDomain}.${topDomain}:38080)
 > 注：在尝试测试访问之前请确保已添加本地hosts解析：
 ```
-127.0.0.1  ${topDomain}  ${subDomain +'.'+ topDomain}    ${redisHost}
+127.0.0.1  ${subDomain + '.' + topDomain} # 前端服务域名（dev环境，默认本机）
 ```
 
 

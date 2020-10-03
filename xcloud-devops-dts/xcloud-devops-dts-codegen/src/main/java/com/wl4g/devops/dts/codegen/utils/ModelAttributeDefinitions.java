@@ -61,8 +61,6 @@ public abstract class ModelAttributeDefinitions {
 	public static final String GEN_PROJECT_EXTRA_OPTIONS = "extraOptions";
 	public static final String GEN_PROJECT_DESCRIPTION = "projectDescription";
 
-	public static final String GEN_PROJECT_EXTRA_IAM_MODE_CLUSTER = "iamModeOfCluster";
-
 	// --- Gen Module. ---
 
 	/**

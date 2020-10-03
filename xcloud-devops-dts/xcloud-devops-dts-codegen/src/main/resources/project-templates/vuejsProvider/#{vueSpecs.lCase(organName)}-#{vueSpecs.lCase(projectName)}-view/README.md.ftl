@@ -1,7 +1,5 @@
 <#assign topDomain = organName?lower_case + '.debug' />
 <#assign subDomain = projectName?lower_case />
-<#assign serverName = projectName?lower_case + '-server' />
-<#assign redisHost = 'redis.' + topDomain />
 ## Introduction
 ${projectDescription}
 
@@ -31,7 +29,7 @@ npm run dev
 Ready to access page after startup：[http://${subDomain}.${topDomain}:38080](http://${subDomain}.${topDomain}:38080)
 > Note: before attempting to test access, make sure that the local hosts resolution has been added:
 ```
-127.0.0.1  ${topDomain}  ${subDomain +'.'+ topDomain}    ${redisHost}
+127.0.0.1  ${subDomain + '.' + topDomain} # Frontend service domain. (dev dnv, by default local)
 ```
 
 ### Project describe:
