@@ -61,28 +61,6 @@ INSERT INTO `sys_dict` VALUES ('doc_lang_type@en_US', 'en_US', 'US English Editi
 INSERT INTO `sys_dict` VALUES ('doc_lang_type@ja_JP', 'ja_JP', '日陰勢', '日陰勢', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_CN', 'zh_CN', '简体中文版', '简体中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_HK', 'zh_HK', '繁體中文版', '繁體中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@blacklist', '1', '黑名单', 'BlackList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_blacklist_type@whitelist', '2', '白名单', 'WhiteList', 'erm_dns_blacklist_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_kind@AliyunDc', 'AliyunDc', 'AliyunDc', 'AliyunDc', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_kind@AwsDc', 'AwsDc', 'AwsDc', 'AwsDc', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_kind@Cndns', 'Cndns', 'Cndns', 'Cndns', 'erm_dns_kind', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@a', 'a', 'A', 'A', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@aaaa', 'aaaa', 'AAAA', 'AAAA', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@cname', 'cname', 'CNAME', 'CNAME', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@mx', 'mx', 'MX', 'MX', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@ns', 'ns', 'NS', 'NS', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@soa', 'soa', 'SOA', 'SOA', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@srv', 'srv', 'SRV', 'SRV', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_dns_resolve_type@txt', 'txt', 'TXT', 'TXT', 'erm_dns_resolve_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_server_type@coss', '4', 'Coss', 'Coss', 'erm_server_type', NULL, NULL, 52, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_server_type@docker', '2', 'Docker', 'Docker', 'erm_server_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_server_type@host', '1', 'Host', 'Host', 'erm_server_type', NULL, NULL, 49, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_server_type@k8s', '3', 'K8s', 'K8s', 'erm_server_type', NULL, NULL, 51, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_ssh_auth_type@password', '1', '账号密码', 'Password', 'erm_ssh_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_ssh_auth_type@ssh', '2', '私钥', 'Ssh', 'erm_ssh_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@host', '1', 'Host', 'Host', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@openvpn', '2', 'Openvpn', 'Openvpn', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('erm_vpn_tunnel_type@pptp', '3', 'Pptp', 'Pptp', 'erm_vpn_tunnel_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
 INSERT INTO `sys_dict` VALUES ('idc_provider@aliyun', '1', '阿里云', 'Aliyun Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
 INSERT INTO `sys_dict` VALUES ('idc_provider@aws', '2', '亚马逊云', 'Aws Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
 INSERT INTO `sys_dict` VALUES ('idc_provider@azure', '3', '微软云', 'Azure Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
@@ -123,14 +101,6 @@ INSERT INTO `sys_dict` VALUES ('theme_type@gray', 'gray', '灰色', 'gray', 'the
 INSERT INTO `sys_dict` VALUES ('theme_type@primary', 'primary', '主要', 'primary', 'theme_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（主要）', 0);
 INSERT INTO `sys_dict` VALUES ('theme_type@success', 'success', '成功', 'success', 'theme_type', 'success', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（成功）', 0);
 INSERT INTO `sys_dict` VALUES ('theme_type@warning', 'warning', '警告', 'warning', 'theme_type', 'warning', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（警告）', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_auth_type@password', '1', 'Password', 'Password', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('vcs_auth_type@ssh', '2', 'Ssh', 'Ssh', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@alicode', 'alicode', 'Alicode', 'Alicode', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@bitbucket', 'bitbucket', 'Bitbucket', 'Bitbucket', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@coding', 'coding', 'Coding', 'Coding', 'vcs_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@gitee', 'gitee', 'Gitee', 'Gitee', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@github', 'github', 'Github', 'Github', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
-INSERT INTO `sys_dict` VALUES ('vcs_provider@gitlab', 'gitlab', 'Gitlab', 'Gitlab', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
 COMMIT;
 
 -- ----------------------------
