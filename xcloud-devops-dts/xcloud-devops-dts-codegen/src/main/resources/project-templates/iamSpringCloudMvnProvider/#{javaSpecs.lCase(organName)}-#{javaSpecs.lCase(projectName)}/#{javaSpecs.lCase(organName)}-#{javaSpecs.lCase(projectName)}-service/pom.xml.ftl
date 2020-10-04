@@ -63,6 +63,10 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-captcha</artifactId>
+		</dependency>
 		</#if>
 	</dependencies>
 	<build>

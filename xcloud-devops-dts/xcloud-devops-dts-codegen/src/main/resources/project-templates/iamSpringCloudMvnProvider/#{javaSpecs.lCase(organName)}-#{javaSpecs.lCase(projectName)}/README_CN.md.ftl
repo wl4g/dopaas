@@ -23,7 +23,7 @@ ${projectDescription}
 mvn clean install -DskipTests -T 2C
 ```
 
-启动后准备访问API, 其中baseURI为: [http://${devServiceHost}:28080/${entryAppName}](http://${devServiceHost}:${devServicePort}/${entryAppName})
+启动后准备访问API, 其中baseURI为: [http://${devServiceHost}:${entryAppPort}/${entryAppName}](http://${devServiceHost}:${devServicePort}/${entryAppName})
 > 注：在尝试测试访问之前请确保已添加本地hosts解析：
 ```
 127.0.0.1  ${devServiceHost} # 后端服务域名（dev环境，默认本机）

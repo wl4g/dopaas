@@ -21,7 +21,7 @@ ${projectDescription}
 mvn clean install -DskipTests -T 2C
 ```
 
-Ready to access API after startup, the baseURI is: [http://${devServiceHost}:28080/${entryAppName}](http://${devServiceHost}:${devServicePort}/${entryAppName})
+Ready to access API after startup, the baseURI is: [http://${devServiceHost}:${entryAppPort}/${entryAppName}](http://${devServiceHost}:${devServicePort}/${entryAppName})
 > Note: before attempting to test access, make sure that the local hosts resolution has been added:
 ```
 127.0.0.1  ${devServiceHost} # Backend service domain. (dev dnv, by default local)
