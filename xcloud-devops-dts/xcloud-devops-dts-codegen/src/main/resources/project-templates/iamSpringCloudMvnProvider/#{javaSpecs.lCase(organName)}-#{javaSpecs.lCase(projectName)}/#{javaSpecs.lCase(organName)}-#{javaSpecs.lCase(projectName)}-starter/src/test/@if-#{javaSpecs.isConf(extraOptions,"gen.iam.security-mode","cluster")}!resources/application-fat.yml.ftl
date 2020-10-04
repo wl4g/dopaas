@@ -31,7 +31,7 @@ spring:
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
           denyIpRange: ${r'${'}X_IAM_ACL_DENY}
         client:
-          server-uri: http://iam.${fatServiceHost}/iam-server
+          server-uri: http://iam.${fatTopDomain}/iam-server
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://${fatViewServiceHost}/#/home
 <#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
@@ -47,7 +47,7 @@ spring:
                 #- '*'
         login-uri: http://${fatViewServiceHost}/#/login
         unauthorized-uri: http://${fatServiceHost}:${entryAppPort}${r'${'}server.servlet.contextPath}/view/403.html
-        success-endpoint: ${serverName}@http://${fatViewServiceHost}/#/
+        success-endpoint: ${entryAppName}@http://${fatViewServiceHost}/#/
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
