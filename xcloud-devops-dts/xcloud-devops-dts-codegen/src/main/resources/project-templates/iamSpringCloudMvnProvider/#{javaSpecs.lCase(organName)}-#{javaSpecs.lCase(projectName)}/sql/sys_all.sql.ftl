@@ -5,16 +5,15 @@
  ${watermark}
 
  Generated From Server Type    : ${datasource.type}
- Generated From Server Version : 50645//TODO
+ Generated From Server Version : ${datasource.dbversion}
  Generated From Host           : ${datasource.dbhost}:${datasource.dbport}
  Schema                        : ${datasource.databaseName}
- File Encoding                 : UTF-8
+ File Encoding                 : 65001
  Date: ${.now?string('yyyy-MM-dd hh:mm:ss')}
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
 
 -- ----------------------------
 -- Table structure for sys_dict
@@ -139,8 +138,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_area`;
 CREATE TABLE `sys_area` (
-  `id` decimal(20) NOT NULL,
-  `parent_id` decimal(20) NOT NULL DEFAULT '0' COMMENT '父级ID',
+  `id` bigint(25) NOT NULL,
+  `parent_id` bigint(25) NOT NULL DEFAULT '0' COMMENT '父级ID',
   `name` varchar(50) NOT NULL COMMENT '名称',
   `short_name` varchar(50) NOT NULL COMMENT '简称',
   `longitude` float NOT NULL DEFAULT '0' COMMENT '经度',
@@ -594,14 +593,14 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu` (
-  `id` decimal(20) NOT NULL,
+  `id` bigint(25) NOT NULL,
   `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
   `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
   `type` int(1) DEFAULT NULL COMMENT '菜单类型, (e.g 1静态菜单,2动态菜单,3按钮...参考字典)',
   `classify` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '分类类型',
   `level` int(1) NOT NULL DEFAULT '1' COMMENT '级别,顶级=1 , 菜单为0级',
   `status` int(1) NOT NULL DEFAULT '0' COMMENT '菜单状态(e.g 启用,禁用)',
-  `parent_id` decimal(20) NOT NULL COMMENT '父级菜单ID ,顶级的父级id为0',
+  `parent_id` bigint(25) NOT NULL COMMENT '父级菜单ID ,顶级的父级id为0',
   `parent_ids` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '树形父级菜单ID列表（如：1,11,22）',
   `permission` varchar(500) COLLATE utf8_bin NOT NULL COMMENT '权限标识（如：sys:user:edit,sys:user:view），用于如shiro-aop方法及权限校验',
   `page_location` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '页面地址,(例如静态菜单:/ci/task/xx.vue文件路径(不包含.vue后缀),动态菜单www.baidu.com)',
@@ -609,9 +608,9 @@ CREATE TABLE `sys_menu` (
   `render_target` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '渲染目标 （_self, _blank），注：当type=2动态菜单时有值',
   `icon` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '图标',
   `sort` int(11) DEFAULT NULL COMMENT '排序',
-  `create_by` int(11) NOT NULL,
+  `create_by` bigint(25) NOT NULL,
   `create_date` datetime NOT NULL,
-  `update_by` int(11) NOT NULL,
+  `update_by` bigint(25) NOT NULL,
   `update_date` datetime NOT NULL,
   `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0:正常/1:删除）',
   PRIMARY KEY (`id`) USING BTREE
@@ -648,7 +647,7 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user` (
-  `id` decimal(20) NOT NULL,
+  `id` bigint(25) NOT NULL,
   `user_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '登录账号名(唯一）',
   `display_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '显示名称',
   `password` varchar(768) COLLATE utf8_bin NOT NULL COMMENT '密文密码',
@@ -667,9 +666,9 @@ CREATE TABLE `sys_user` (
   `github_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
   `aws_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
   `remark` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
-  `create_by` int(11) DEFAULT NULL,
+  `create_by` bigint(25) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
-  `update_by` int(11) DEFAULT '0',
+  `update_by` bigint(25) DEFAULT '0',
   `update_date` datetime DEFAULT NULL,
   `del_flag` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`) USING BTREE
@@ -688,15 +687,15 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role` (
-  `id` decimal(20) NOT NULL,
+  `id` bigint(25) NOT NULL,
   `role_code` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
   `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
   `type` int(1) DEFAULT NULL COMMENT '用户角色类型（预留）',
   `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户角色启用状态（0:禁用/1:启用）',
   `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户角色状态（预留）',
-  `create_by` int(11) NOT NULL,
+  `create_by` bigint(25) NOT NULL,
   `create_date` datetime NOT NULL,
-  `update_by` int(11) NOT NULL,
+  `update_by` bigint(25) NOT NULL,
   `update_date` datetime NOT NULL,
   `del_flag` int(1) NOT NULL COMMENT '删除状态（0:正常/1:删除）',
   PRIMARY KEY (`id`) USING BTREE
@@ -715,19 +714,19 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_group`;
 CREATE TABLE `sys_group` (
-  `id` decimal(20) NOT NULL,
+  `id` bigint(25) NOT NULL,
   `name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '用户分租(customer）名，与displayName灵活应用',
   `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '用户分租(customer）展示名',
   `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '唯一标识',
   `type` int(1) DEFAULT '0' COMMENT '用户分组类型（预留）1park,2company,3department',
-  `parent_id` decimal(20) DEFAULT NULL COMMENT '父级id',
+  `parent_id` bigint(25) DEFAULT NULL COMMENT '父级id',
   `parent_ids` varchar(512) COLLATE utf8_bin DEFAULT NULL COMMENT '父级路径id列表, 为减少使用时计算量提高性能(逗号分隔)',
-  `area_id` int(11) DEFAULT NULL COMMENT '区域id',
+  `area_id` bigint(25) DEFAULT NULL COMMENT '区域id',
   `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户组启用状态（0:禁用/1:启用）',
   `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户组状态（预留）',
-  `create_by` int(11) NOT NULL,
+  `create_by` bigint(25) NOT NULL,
   `create_date` datetime NOT NULL,
-  `update_by` int(11) NOT NULL,
+  `update_by` bigint(25) NOT NULL,
   `update_date` datetime NOT NULL,
   `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0:正常/1:删除）',
   PRIMARY KEY (`id`) USING BTREE,
@@ -751,8 +750,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_department`;
 CREATE TABLE `sys_department` (
-  `id` decimal(20) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
+  `id` bigint(25) NOT NULL,
+  `group_id` bigint(25) DEFAULT NULL,
   `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
@@ -774,8 +773,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_company`;
 CREATE TABLE `sys_company` (
-  `id` decimal(20) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
+  `id` bigint(25) NOT NULL,
+  `group_id` bigint(25) DEFAULT NULL,
   `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
@@ -790,10 +789,10 @@ CREATE TABLE `sys_company` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_group_role`;
 CREATE TABLE `sys_group_role` (
-  `id` decimal(20) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `role_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
+  `id` bigint(25) NOT NULL,
+  `group_id` bigint(25) DEFAULT NULL,
+  `role_id` bigint(25) DEFAULT NULL,
+  `create_by` bigint(25) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `group_id` (`group_id`) USING BTREE,
@@ -807,10 +806,10 @@ CREATE TABLE `sys_group_role` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_group_user`;
 CREATE TABLE `sys_group_user` (
-  `id` decimal(20) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
+  `id` bigint(25) NOT NULL,
+  `group_id` bigint(25) DEFAULT NULL,
+  `user_id` bigint(25) DEFAULT NULL,
+  `create_by` bigint(25) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `group_id` (`group_id`) USING BTREE,
@@ -824,10 +823,10 @@ CREATE TABLE `sys_group_user` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role_user`;
 CREATE TABLE `sys_role_user` (
-  `id` decimal(20) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `role_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
+  `id` bigint(25) NOT NULL,
+  `user_id` bigint(25) DEFAULT NULL,
+  `role_id` bigint(25) DEFAULT NULL,
+  `create_by` bigint(25) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `user_id` (`user_id`) USING BTREE,
@@ -841,17 +840,17 @@ CREATE TABLE `sys_role_user` (
 -- ----------------------------
 DROP TABLE IF EXISTS `erm_app_cluster`;
 CREATE TABLE `erm_app_cluster` (
-`id` decimal(20) NOT NULL,
+`id` bigint(25) NOT NULL,
 `name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '应用名称',
 `type` int(11) DEFAULT NULL COMMENT '应用集群的子类类型:(比docker_cluster和k8s_cluster的分类级别低)\n1如springboot app 或vue app,\n2,如umc-agent进程\n\n注:ci发布时,过滤掉type=2(不带端口的进程,如agent)',
 `endpoint` varchar(16) COLLATE utf8_bin NOT NULL COMMENT '端点:像sso这种则使用 port,  像agent则使用addr',
-`ssh_id` int(11) DEFAULT NULL,
+`ssh_id` bigint(25) DEFAULT NULL,
 `deploy_type` int(2) NOT NULL COMMENT '1:host代表当部署在物理机;2:docker代表部署在docker集群;3:k8s代表部署在k8s集群;4:coss代表上传至coss',
 `enable` int(1) NOT NULL DEFAULT '1' COMMENT '启用状态（0:禁止/1:启用）',
 `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
-`create_by` int(11) NOT NULL,
+`create_by` bigint(25) NOT NULL,
 `create_date` datetime NOT NULL,
-`update_by` int(11) NOT NULL,
+`update_by` bigint(25) NOT NULL,
 `update_date` datetime NOT NULL,
 `del_flag` int(1) NOT NULL DEFAULT '0',
 `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '组织编码',
@@ -875,8 +874,8 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_cluster_config`;
 CREATE TABLE `sys_cluster_config` (
-  `id` decimal(20) NOT NULL,
-  `cluster_id` int(11) NOT NULL COMMENT '对应cluster表的id',
+  `id` bigint(25) NOT NULL,
+  `cluster_id` bigint(25) NOT NULL COMMENT '对应cluster表的id',
   `display_name` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '应用名称',
   `type` int(1) DEFAULT '1' COMMENT '应用集群类型（1:iam/sso，2:其他）',
   `env_type` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '环境类型,字典value',
@@ -916,7 +915,7 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_contact`;
 CREATE TABLE `sys_contact` (
-  `id` decimal(20) NOT NULL,
+  `id` bigint(25) NOT NULL,
   `name` varchar(30) CHARACTER SET utf8 NOT NULL COMMENT '通知分组名称',
   `create_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
@@ -941,9 +940,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_contact_channel`;
 CREATE TABLE `sys_contact_channel` (
-  `id` decimal(20) NOT NULL,
+  `id` bigint(25) NOT NULL,
   `kind` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'email,phone,wechat,dingtalk,twitter,facebook---对应com.wl4g.devops.support.notification.NotifierKind',
-  `contact_id` int(11) DEFAULT NULL COMMENT '联系人id',
+  `contact_id` bigint(25) DEFAULT NULL COMMENT '联系人id',
   `primary_address` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '具体的联系地址:可能是email,phone,wechat的open_id等',
   `time_of_freq` int(11) DEFAULT NULL COMMENT '频率时间',
   `num_of_freq` int(11) DEFAULT NULL COMMENT '频率次数',
@@ -965,7 +964,7 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_contact_group`;
 CREATE TABLE `sys_contact_group` (
-  `id` decimal(20) NOT NULL,
+  `id` bigint(25) NOT NULL,
   `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '告警分组名称',
   `create_date` datetime DEFAULT NULL,
   `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -990,9 +989,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_contact_group_ref`;
 CREATE TABLE `sys_contact_group_ref` (
-  `id` decimal(20) NOT NULL,
-  `contact_group_id` int(11) NOT NULL,
-  `contact_id` int(11) NOT NULL,
+  `id` bigint(25) NOT NULL,
+  `contact_group_id` bigint(25) NOT NULL,
+  `contact_id` bigint(25) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `contact_group_id` (`contact_group_id`) USING BTREE,
   KEY `contact_id` (`contact_id`) USING BTREE,
@@ -1016,10 +1015,10 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_group_menu`;
 CREATE TABLE `sys_group_menu` (
-  `id` decimal(20) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
-  `menu_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
+  `id` bigint(25) NOT NULL,
+  `group_id` bigint(25) DEFAULT NULL,
+  `menu_id` bigint(25) DEFAULT NULL,
+  `create_by` bigint(25) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `group_id` (`group_id`) USING BTREE,
@@ -1033,9 +1032,9 @@ CREATE TABLE `sys_group_menu` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_notification_contact`;
 CREATE TABLE `sys_notification_contact` (
-  `id` decimal(20) NOT NULL,
-  `record_id` int(11) DEFAULT NULL COMMENT '信息id',
-  `contact_id` int(11) DEFAULT NULL COMMENT '联系人',
+  `id` bigint(25) NOT NULL,
+  `record_id` bigint(25) DEFAULT NULL COMMENT '信息id',
+  `contact_id` bigint(25) DEFAULT NULL COMMENT '联系人',
   `status` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'send , unsend , accepted , unaccepted ',
   `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
@@ -1050,8 +1049,8 @@ CREATE TABLE `sys_notification_contact` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_park`;
 CREATE TABLE `sys_park` (
-  `id` decimal(20) NOT NULL,
-  `group_id` int(11) DEFAULT NULL,
+  `id` bigint(25) NOT NULL,
+  `group_id` bigint(25) DEFAULT NULL,
   `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
@@ -1066,10 +1065,10 @@ CREATE TABLE `sys_park` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role_menu`;
 CREATE TABLE `sys_role_menu` (
-  `id` decimal(20) NOT NULL,
-  `role_id` int(11) DEFAULT NULL,
-  `menu_id` int(11) DEFAULT NULL,
-  `create_by` int(11) DEFAULT NULL,
+  `id` bigint(25) NOT NULL,
+  `role_id` bigint(25) DEFAULT NULL,
+  `menu_id` bigint(25) DEFAULT NULL,
+  `create_by` bigint(25) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `role_id` (`role_id`) USING BTREE,
