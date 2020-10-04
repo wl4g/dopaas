@@ -72,10 +72,10 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 
 	private void insert(DockerCluster dockerCluster) {
 		dockerClusterDao.insertSelective(dockerCluster);
-		List<Integer> hostIds = dockerCluster.getHostIds();
+		List<Long> hostIds = dockerCluster.getHostIds();
 		if (!CollectionUtils.isEmpty(hostIds)) {
 			List<DockerInstance> dockerInstances = new ArrayList<>();
-			for (Integer hostId : hostIds) {
+			for (Long hostId : hostIds) {
 				DockerInstance dockerInstance = new DockerInstance();
 				dockerInstance.preInsert();
 				dockerInstance.setHostId(hostId);
@@ -89,10 +89,10 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 	private void update(DockerCluster dockerCluster) {
 		dockerClusterDao.updateByPrimaryKeySelective(dockerCluster);
 		dockerInstanceDao.deleteByDockerId(dockerCluster.getId());
-		List<Integer> hostIds = dockerCluster.getHostIds();
+		List<Long> hostIds = dockerCluster.getHostIds();
 		if (!CollectionUtils.isEmpty(hostIds)) {
 			List<DockerInstance> dockerInstances = new ArrayList<>();
-			for (Integer hostId : hostIds) {
+			for (Long hostId : hostIds) {
 				DockerInstance dockerInstance = new DockerInstance();
 				dockerInstance.preInsert();
 				dockerInstance.setHostId(hostId);
@@ -103,15 +103,15 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 		}
 	}
 
-	public DockerCluster detail(Integer id) {
+	public DockerCluster detail(Long id) {
 		Assert.notNull(id, "id is null");
 		DockerCluster dockerCluster = dockerClusterDao.selectByPrimaryKey(id);
-		List<Integer> hostIds = dockerInstanceDao.selectHostIdByDockerId(id);
+		List<Long> hostIds = dockerInstanceDao.selectHostIdByDockerId(id);
 		dockerCluster.setHostIds(hostIds);
 		return dockerCluster;
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		DockerCluster dockerCluster = new DockerCluster();
 		dockerCluster.setId(id);

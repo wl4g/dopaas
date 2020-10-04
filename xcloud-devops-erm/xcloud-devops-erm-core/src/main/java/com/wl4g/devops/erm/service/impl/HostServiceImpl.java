@@ -89,12 +89,12 @@ public class HostServiceImpl implements HostService {
 	final private static String IMPORT_HOST_DATA = "/import_host_data/";
 
 	@Override
-	public List<Host> list(String name, String hostname, Integer idcId) {
+	public List<Host> list(String name, String hostname, Long idcId) {
 		return appHostDao.list(getRequestOrganizationCodes(), name, hostname, idcId);
 	}
 
 	@Override
-	public PageModel page(PageModel pm, String name, String hostname, Integer idcId) {
+	public PageModel page(PageModel pm, String name, String hostname, Long idcId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(appHostDao.list(getRequestOrganizationCodes(), name, hostname, idcId));
 		return pm;
@@ -115,10 +115,10 @@ public class HostServiceImpl implements HostService {
 	@Transactional(rollbackFor = Exception.class)
 	public void insert(Host host) {
 		appHostDao.insertSelective(host);
-		List<Integer> sshIds = host.getSshIds();
+		List<Long> sshIds = host.getSshIds();
 		if (!CollectionUtils.isEmpty(sshIds)) {
 			List<HostSsh> hostSshs = new ArrayList<>();
-			for (Integer sshId : sshIds) {
+			for (Long sshId : sshIds) {
 				HostSsh hostSsh = new HostSsh();
 				hostSsh.preInsert();
 				hostSsh.setHostId(host.getId());
@@ -133,10 +133,10 @@ public class HostServiceImpl implements HostService {
 	public void update(Host host) {
 		appHostDao.updateByPrimaryKeySelective(host);
 		hostSshDao.deleteByHostId(host.getId());
-		List<Integer> sshIds = host.getSshIds();
+		List<Long> sshIds = host.getSshIds();
 		if (!CollectionUtils.isEmpty(sshIds)) {
 			List<HostSsh> hostSshs = new ArrayList<>();
-			for (Integer sshId : sshIds) {
+			for (Long sshId : sshIds) {
 				HostSsh hostSsh = new HostSsh();
 				hostSsh.preInsert();
 				hostSsh.setHostId(host.getId());
@@ -147,15 +147,15 @@ public class HostServiceImpl implements HostService {
 		}
 	}
 
-	public Host detail(Integer id) {
+	public Host detail(Long id) {
 		Assert.notNull(id, "id is null");
 		Host host = appHostDao.selectByPrimaryKey(id);
-		List<Integer> integers = hostSshDao.selectByHostId(id);
+		List<Long> integers = hostSshDao.selectByHostId(id);
 		host.setSshIds(integers);
 		return host;
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		Host host = new Host();
 		host.setId(id);
@@ -164,8 +164,7 @@ public class HostServiceImpl implements HostService {
 	}
 
 	@Override
-	public ResponseEntity<FileSystemResource> createAndDownloadTemplate(Integer idcId, String organizationCode)
-			throws IOException {
+	public ResponseEntity<FileSystemResource> createAndDownloadTemplate(Long idcId, String organizationCode) throws IOException {
 		long now = System.currentTimeMillis();
 		File file = new File(fsProperties.getBaseFilePath() + IMPORT_HOST_TEMPLATE + now + ".csv");
 		String head = "Hostname,SSH Key,username(manager user), password,idcId=" + idcId + ",organizationCode=" + organizationCode
@@ -262,24 +261,24 @@ public class HostServiceImpl implements HostService {
 		host.preInsert();
 		host.setHostname(hostname);
 		host.setName(hostname);
-		List<Integer> sshIds = null;
+		List<Long> sshIds = null;
 		if (StringUtils.isNotBlank(ssh)) {
 			sshIds = createOrGetSSH(ssh, hostname, username, password);
 		}
 
 		host.setSshIds(sshIds);
-		host.setIdcId(Integer.valueOf(idcId));
+		host.setIdcId(Long.valueOf(idcId));
 		host.setOrganizationCode(organizationCode);
 		insert(host);
 
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public List<Integer> createOrGetSSH(String sshCell, String hostname, String username, String password) throws Exception {
+	public List<Long> createOrGetSSH(String sshCell, String hostname, String username, String password) throws Exception {
 		if (StringUtils.isBlank(sshCell)) {
 			return null;
 		}
-		List<Integer> sshIds = new ArrayList<>();
+		List<Long> sshIds = new ArrayList<>();
 		String[] split = sshCell.split("\\|");
 		for (String sshname : split) {
 			Ssh ssh = sshDao.selectByName(sshname);

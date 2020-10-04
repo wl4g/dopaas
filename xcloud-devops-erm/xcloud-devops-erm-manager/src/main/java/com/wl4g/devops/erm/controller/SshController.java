@@ -56,14 +56,14 @@ public class SshController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(sshService.detail(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		sshService.del(id);
 		return resp;
@@ -77,7 +77,7 @@ public class SshController extends BaseController {
 	}
 
 	@RequestMapping(value = "/connectTest")
-	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey, Integer sshId)
+	public RespBase<?> testSSHConnect(Long hostId, String sshUser, String sshKey, Long sshId)
 			throws Exception, InterruptedException {
 		RespBase<Object> resp = RespBase.create();
 		sshService.testSSHConnect(hostId, sshUser, sshKey, sshId);

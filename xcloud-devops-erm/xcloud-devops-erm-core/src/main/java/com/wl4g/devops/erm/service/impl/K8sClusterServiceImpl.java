@@ -72,10 +72,10 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 
 	private void insert(K8sCluster k8sCluster) {
 		k8sClusterDao.insertSelective(k8sCluster);
-		List<Integer> hostIds = k8sCluster.getHostIds();
+		List<Long> hostIds = k8sCluster.getHostIds();
 		if (!CollectionUtils.isEmpty(hostIds)) {
 			List<K8sInstance> k8sInstances = new ArrayList<>();
-			for (Integer hostId : hostIds) {
+			for (Long hostId : hostIds) {
 				K8sInstance k8sInstance = new K8sInstance();
 				k8sInstance.preInsert();
 				k8sInstance.setHostId(hostId);
@@ -90,10 +90,10 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 		k8sClusterDao.updateByPrimaryKeySelective(k8sCluster);
 
 		k8sInstanceDao.deleteByK8sId(k8sCluster.getId());
-		List<Integer> hostIds = k8sCluster.getHostIds();
+		List<Long> hostIds = k8sCluster.getHostIds();
 		if (!CollectionUtils.isEmpty(hostIds)) {
 			List<K8sInstance> k8sInstances = new ArrayList<>();
-			for (Integer hostId : hostIds) {
+			for (Long hostId : hostIds) {
 				K8sInstance k8sInstance = new K8sInstance();
 				k8sInstance.preInsert();
 				k8sInstance.setHostId(hostId);
@@ -104,15 +104,15 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 		}
 	}
 
-	public K8sCluster detail(Integer id) {
+	public K8sCluster detail(Long id) {
 		Assert.notNull(id, "id is null");
 		K8sCluster k8sCluster = k8sClusterDao.selectByPrimaryKey(id);
-		List<Integer> hostIds = k8sInstanceDao.selectHostIdByK8sId(id);
+		List<Long> hostIds = k8sInstanceDao.selectHostIdByK8sId(id);
 		k8sCluster.setHostIds(hostIds);
 		return k8sCluster;
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		K8sCluster k8sCluster = new K8sCluster();
 		k8sCluster.setId(id);

@@ -21,9 +21,9 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface GenTableColumnDao {
-	int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Long id);
 
-	int deleteByTableId(Integer tableId);
+	int deleteByTableId(Long tableId);
 
 	int insert(GenTableColumn record);
 
@@ -31,9 +31,9 @@ public interface GenTableColumnDao {
 
 	int insertSelective(GenTableColumn record);
 
-	GenTableColumn selectByPrimaryKey(Integer id);
+	GenTableColumn selectByPrimaryKey(Long id);
 
-	List<GenTableColumn> selectByTableId(Integer tableId);
+	List<GenTableColumn> selectByTableId(Long tableId);
 
 	int updateByPrimaryKeySelective(GenTableColumn record);
 

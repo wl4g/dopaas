@@ -46,7 +46,7 @@ public class CustomEngineServiceImpl implements CustomEngineService {
 	}
 
 	@Override
-	public CustomEngine detal(Integer id) {
+	public CustomEngine detal(Long id) {
 		CustomEngine customEngine = customEngineDao.selectByPrimaryKey(id);
 		return customEngine;
 	}
@@ -67,7 +67,7 @@ public class CustomEngineServiceImpl implements CustomEngineService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		CustomEngine customEngine = new CustomEngine();
 		customEngine.setId(id);
 		customEngine.setDelFlag(BaseBean.DEL_FLAG_DELETE);

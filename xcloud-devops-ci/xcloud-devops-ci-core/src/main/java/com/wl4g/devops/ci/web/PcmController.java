@@ -43,7 +43,7 @@ public class PcmController {
 	private PcmService pcmService;
 
 	@RequestMapping(value = "/getUsers")
-	public RespBase<?> getUsers(Integer pcmId) {
+	public RespBase<?> getUsers(Long pcmId) {
 		RespBase<Object> resp = RespBase.create();
 		List<SelectionModel> users = pcmService.getUsers(pcmId);
 		resp.setData(users);
@@ -51,7 +51,7 @@ public class PcmController {
 	}
 
 	@RequestMapping(value = "/getProjects")
-	public RespBase<?> getProjects(Integer pcmId) {
+	public RespBase<?> getProjects(Long pcmId) {
 		RespBase<Object> resp = RespBase.create();
 		List<SelectionModel> selectInfos = pcmService.getProjects(pcmId);
 		resp.setData(selectInfos);
@@ -59,16 +59,15 @@ public class PcmController {
 	}
 
 	@RequestMapping(value = "/getProjectsByPcmId")
-	public RespBase<?> getProjectsByPcmId(Integer pcmId) {
+	public RespBase<?> getProjectsByPcmId(Long pcmId) {
 		RespBase<Object> resp = RespBase.create();
 		List<SelectionModel> selectInfos = pcmService.getProjectsByPcmId(pcmId);
 		resp.setData(selectInfos);
 		return resp;
 	}
 
-
 	@RequestMapping(value = "/getIssues")
-	public RespBase<?> getIssues(Integer pcmId, String userId, String projectId, String search) {
+	public RespBase<?> getIssues(Long pcmId, String userId, String projectId, String search) {
 		RespBase<Object> resp = RespBase.create();
 		List<SelectionModel> selectInfos = pcmService.getIssues(pcmId, userId, projectId, search);
 		resp.setData(selectInfos);
@@ -76,7 +75,7 @@ public class PcmController {
 	}
 
 	@RequestMapping(value = "/getStatuses")
-	public RespBase<?> getStatuses(Integer pcmId) {
+	public RespBase<?> getStatuses(Long pcmId) {
 		RespBase<Object> resp = RespBase.create();
 		List<SelectionModel> selectInfos = pcmService.getStatuses(pcmId);
 		resp.setData(selectInfos);
@@ -84,7 +83,7 @@ public class PcmController {
 	}
 
 	@RequestMapping(value = "/getTrackers")
-	public RespBase<?> getTrackers(Integer pcmId) {
+	public RespBase<?> getTrackers(Long pcmId) {
 		RespBase<Object> resp = RespBase.create();
 		List<SelectionModel> selectInfos = pcmService.getTrackers(pcmId);
 		resp.setData(selectInfos);
@@ -92,7 +91,7 @@ public class PcmController {
 	}
 
 	@RequestMapping(value = "/getPriorities")
-	public RespBase<?> getPriorities(Integer pcmId) {
+	public RespBase<?> getPriorities(Long pcmId) {
 		RespBase<Object> resp = RespBase.create();
 		List<SelectionModel> selectInfos = pcmService.getPriorities(pcmId);
 		resp.setData(selectInfos);
@@ -117,7 +116,7 @@ public class PcmController {
 
 	@RequestMapping("/del")
 	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		pcmService.del(id);
 		return resp;
@@ -125,7 +124,7 @@ public class PcmController {
 
 	@RequestMapping("/detail")
 	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Pcm pcm = pcmService.detail(id);
 		resp.setData(pcm);

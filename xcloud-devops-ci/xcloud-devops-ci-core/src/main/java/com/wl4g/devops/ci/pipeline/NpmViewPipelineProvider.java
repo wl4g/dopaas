@@ -55,7 +55,7 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 	}
 
 	@Override
-	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
+	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Long taskId) throws Exception {
 		Project project = getContext().getProject();
 		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(pipelineHistory.getId(), project.getId());

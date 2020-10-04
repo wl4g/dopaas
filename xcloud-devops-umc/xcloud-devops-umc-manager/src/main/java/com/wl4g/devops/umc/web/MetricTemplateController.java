@@ -63,7 +63,7 @@ public class MetricTemplateController extends BaseController {
 
 	@RequestMapping(value = "/detail")
 	@RequiresPermissions(value = { "umc:metrictemplate" })
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		MetricTemplate metricTemplate = metricTemplateService.detal(id);
 		resp.setData(metricTemplate);
@@ -72,7 +72,7 @@ public class MetricTemplateController extends BaseController {
 
 	@RequestMapping(value = "/del")
 	@RequiresPermissions(value = { "umc:metrictemplate" })
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		log.info("into MetricTemplateController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		metricTemplateService.del(id);

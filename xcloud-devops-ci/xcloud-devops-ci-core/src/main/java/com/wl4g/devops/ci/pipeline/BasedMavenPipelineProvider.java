@@ -40,8 +40,6 @@ public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelin
 	final public static String DEFAULT_MVN_CMD = "mvn -f %s/pom.xml -U clean install -Dmaven.test.skip=true -DskipTests -Dmaven.compile.fork=true -T 2C";
 	final public static String DEFAULT_MVN_CMD_TEST = "mvn -f %s/pom.xml -U clean install -Dmaven.compile.fork=true -T 2C";
 
-
-
 	public BasedMavenPipelineProvider(PipelineContext context) {
 		super(context);
 	}
@@ -59,11 +57,11 @@ public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelin
 	 * at the same time.
 	 */
 	@Override
-	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
+	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Long taskId) throws Exception {
 
 		String defaultMvnBuildCmd = format(DEFAULT_MVN_CMD, projectDir);
 		ActionControl actionControl = getContext().getActionControl();
-		if(Objects.nonNull(actionControl) && actionControl.isTest()){
+		if (Objects.nonNull(actionControl) && actionControl.isTest()) {
 			defaultMvnBuildCmd = format(DEFAULT_MVN_CMD_TEST, projectDir);
 		}
 

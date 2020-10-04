@@ -41,9 +41,9 @@ public class PipelineManagerTests {
 
 	@Test
 	public void createTask() throws Exception {
-		int taskId = 152;
+		Long taskId = 152L;
 		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
-		pipeManager.runPipeline(new NewParameter(taskId, null, null, null,null),pipelineModel);
+		pipeManager.runPipeline(new NewParameter(taskId, null, null, null, null), pipelineModel);
 	}
 
 }

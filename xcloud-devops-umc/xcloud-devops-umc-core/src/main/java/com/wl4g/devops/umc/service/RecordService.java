@@ -26,6 +26,6 @@ public interface RecordService {
 
 	PageModel list(PageModel pm, String name, String startDate, String endDate);
 
-	AlarmRecord detail(Integer id);
+	AlarmRecord detail(Long id);
 
 }

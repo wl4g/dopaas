@@ -28,11 +28,11 @@ public interface MetricTemplateService {
 
 	PageModel list(PageModel pm, String metric, String classify);
 
-	MetricTemplate detal(Integer id);
+	MetricTemplate detal(Long id);
 
 	void save(MetricTemplate metricTemplate);
 
-	void del(Integer id);
+	void del(Long id);
 
 	List<MetricTemplate> getByClassify(String classify);
 

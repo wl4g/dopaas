@@ -43,7 +43,7 @@ public class ShareController extends BaseController {
 	}
 
 	@RequestMapping("/cancelShare")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		shareService.cancelShare(id);
 		return resp;

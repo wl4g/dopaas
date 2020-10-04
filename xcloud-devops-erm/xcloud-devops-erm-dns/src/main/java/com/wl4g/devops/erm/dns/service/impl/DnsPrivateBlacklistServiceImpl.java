@@ -92,12 +92,12 @@ public class DnsPrivateBlacklistServiceImpl implements DnsPrivateBlacklistServic
 		dnsPrivateBlacklistDao.updateByPrimaryKeySelective(dnsPrivateBlacklist);
 	}
 
-	public DnsPrivateBlacklist detail(Integer id) {
+	public DnsPrivateBlacklist detail(Long id) {
 		Assert.notNull(id, "id is null");
 		return dnsPrivateBlacklistDao.selectByPrimaryKey(id);
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		DnsPrivateBlacklist dnsPrivateBlacklist = dnsPrivateBlacklistDao.selectByPrimaryKey(id);
 		dnsPrivateBlacklist.setId(id);

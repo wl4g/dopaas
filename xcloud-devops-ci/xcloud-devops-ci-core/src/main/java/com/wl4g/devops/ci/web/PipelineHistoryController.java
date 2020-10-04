@@ -52,6 +52,7 @@ public class PipelineHistoryController extends BaseController {
 
 	/**
 	 * List
+	 * 
 	 * @param groupName
 	 * @param projectName
 	 * @param branchName
@@ -59,7 +60,8 @@ public class PipelineHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm,  String pipeName, String clusterName, String environment, String startDate, String endDate, String providerKind) {
+	public RespBase<?> list(PageModel pm, String pipeName, String clusterName, String environment, String startDate,
+			String endDate, String providerKind) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = pipelineHistoryService.list(pm, pipeName, clusterName, environment, startDate, endDate, providerKind);
 		resp.setData(list);
@@ -68,11 +70,12 @@ public class PipelineHistoryController extends BaseController {
 
 	/**
 	 * Detail by id
+	 * 
 	 * @param taskId
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer pipeHisId) {
+	public RespBase<?> detail(Long pipeHisId) {
 		RespBase<Object> resp = RespBase.create();
 		PipelineHistory detail = pipelineHistoryService.detail(pipeHisId);
 		resp.setData(detail);
@@ -86,15 +89,15 @@ public class PipelineHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/rollback")
-	public RespBase<?> rollback(Integer pipeHisId) {
+	public RespBase<?> rollback(Long pipeHisId) {
 		RespBase<Object> resp = RespBase.create();
 		PipelineModel pipelineModel = flowManager.buildPipeline(pipeHisId);
-		pipe.rollbackPipeline(new RollbackParameter(pipeHisId, "rollback"),pipelineModel);
+		pipe.rollbackPipeline(new RollbackParameter(pipeHisId, "rollback"), pipelineModel);
 		return resp;
 	}
 
 	@RequestMapping(value = "/readLog")
-	public RespBase<?> readLog(Integer pipeHisId, Long startPos, Integer size) {
+	public RespBase<?> readLog(Long pipeHisId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
 		FileIOUtils.ReadResult readResult = pipe.logfile(pipeHisId, startPos, size);
 		resp.forMap().put("data", readResult);
@@ -102,7 +105,7 @@ public class PipelineHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/readDetailLog")
-	public RespBase<?> readDetailLog(Integer pipeHisId, Integer instanceId, Long startPos, Integer size) {
+	public RespBase<?> readDetailLog(Long pipeHisId, Long instanceId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
 		FileIOUtils.ReadResult readResult = pipe.logDetailFile(pipeHisId, instanceId, startPos, size);
 		resp.forMap().put("data", readResult);
@@ -110,7 +113,7 @@ public class PipelineHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/stopTask")
-	public RespBase<?> create(Integer pipeHisId) {
+	public RespBase<?> create(Long pipeHisId) {
 		RespBase<Object> resp = RespBase.create();
 		pipelineHistoryService.stopByPipeHisId(pipeHisId);
 		return resp;

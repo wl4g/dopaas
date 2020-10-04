@@ -64,7 +64,7 @@ public class ShareServiceImpl implements ShareService {
 	}
 
 	@Override
-	public void cancelShare(Integer id) {
+	public void cancelShare(Long id) {
 		Share share = new Share();
 		share.setId(id);
 		share.setDelFlag(1);

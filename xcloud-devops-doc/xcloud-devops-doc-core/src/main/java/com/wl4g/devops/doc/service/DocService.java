@@ -30,23 +30,23 @@ import java.util.Map;
  */
 public interface DocService {
 
-	PageModel list(PageModel pm, String name, String lang, Integer labelId);
+	PageModel list(PageModel pm, String name, String lang, Long labelId);
 
 	void save(FileChanges fileChanges);
 
 	void saveUpload(FileChanges fileChanges);
 
-	FileChanges detail(Integer id);
+	FileChanges detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
 	List<FileChanges> getHistoryByDocCode(String docCode);
 
-	Map<String, FileChanges> compareWith(Integer oldChangesId, Integer newChangesId);
+	Map<String, FileChanges> compareWith(Long oldChangesId, Long newChangesId);
 
 	Map<String, Object> upload(MultipartFile file);
 
-	Share shareDoc(Integer id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime);
+	Share shareDoc(Long id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime);
 
 	FileChanges getLastByDocCode(String docCode);
 

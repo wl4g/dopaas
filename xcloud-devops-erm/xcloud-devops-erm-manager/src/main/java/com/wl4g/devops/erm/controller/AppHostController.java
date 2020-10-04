@@ -70,7 +70,7 @@ public class AppHostController extends BaseController {
 
 	@RequestMapping(value = "/detail")
 	@RequiresPermissions(value = { "erm:host" })
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostService.detail(id));
 		return resp;
@@ -78,14 +78,14 @@ public class AppHostController extends BaseController {
 
 	@RequestMapping(value = "/del")
 	@RequiresPermissions(value = { "erm:host" })
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.del(id);
 		return resp;
 	}
 
 	@RequestMapping(value = "/createAndDownloadTemplate")
-	public ResponseEntity<FileSystemResource> createAndDownloadTemplate(Integer idcId, String organizationCode)
+	public ResponseEntity<FileSystemResource> createAndDownloadTemplate(Long idcId, String organizationCode)
 			throws IOException {
 		return hostService.createAndDownloadTemplate(idcId, organizationCode);
 	}

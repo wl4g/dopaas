@@ -77,7 +77,7 @@ public class CustomEngineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		CustomEngine customEngine = customEngineService.detal(id);
 
@@ -96,7 +96,7 @@ public class CustomEngineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		log.info("into CustomDatasourceController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		customEngineService.del(id);

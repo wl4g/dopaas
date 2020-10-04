@@ -43,20 +43,21 @@ public class NewParameter extends GenericParameter {
 
 	private Integer orchestrationType;
 
-	private Integer orchestrationId;
+	private Long orchestrationId;
 
 	public NewParameter() {
 		super();
 	}
 
-	public NewParameter(Integer pipeId, String remark, String trackId, String trackType, String annex) {
+	public NewParameter(Long pipeId, String remark, String trackId, String trackType, String annex) {
 		super(pipeId, remark);
 		setTrackId(trackId);
 		setTrackType(trackType);
 		setAnnex(annex);
 	}
 
-	public NewParameter(Integer pipeId, String remark, String trackId, String trackType, String annex,Integer orchestrationType,Integer orchestrationId) {
+	public NewParameter(Long pipeId, String remark, String trackId, String trackType, String annex, Integer orchestrationType,
+			Long orchestrationId) {
 		super(pipeId, remark);
 		setTrackId(trackId);
 		setTrackType(trackType);
@@ -99,11 +100,11 @@ public class NewParameter extends GenericParameter {
 		this.orchestrationType = orchestrationType;
 	}
 
-	public Integer getOrchestrationId() {
+	public Long getOrchestrationId() {
 		return orchestrationId;
 	}
 
-	public void setOrchestrationId(Integer orchestrationId) {
+	public void setOrchestrationId(Long orchestrationId) {
 		this.orchestrationId = orchestrationId;
 	}
 }

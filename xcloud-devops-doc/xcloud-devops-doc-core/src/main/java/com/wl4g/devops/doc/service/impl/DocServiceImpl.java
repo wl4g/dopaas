@@ -57,6 +57,7 @@ import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
  */
 @Service
 public class DocServiceImpl implements DocService {
+
 	final protected Logger log = getLogger(getClass());
 
 	@Autowired
@@ -78,7 +79,7 @@ public class DocServiceImpl implements DocService {
 	protected DestroableProcessManager pm;
 
 	@Override
-	public PageModel list(PageModel pm, String name, String lang, Integer labelId) {
+	public PageModel list(PageModel pm, String name, String lang, Long labelId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<FileChanges> list = fileChangesDao.list(name, lang, labelId);
 		pm.setRecords(list);
@@ -104,17 +105,17 @@ public class DocServiceImpl implements DocService {
 		Assert2.hasTextOf(fileChanges.getContent(), "content");
 		IamPrincipalInfo info = getPrincipalInfo();
 		fileChanges.preInsert();
-		fileChanges.setCreateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
-		fileChanges.setUpdateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
+		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
+		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
 		fileChanges.setIsLatest(1);
 		fileChanges.setAction("add");
 		fileChanges.setType("md");
 		fileChangesDao.insertSelective(fileChanges);
 		// label
-		List<Integer> labelIds = fileChanges.getLabelIds();
-		if(!CollectionUtils.isEmpty(labelIds)){
+		List<Long> labelIds = fileChanges.getLabelIds();
+		if (!CollectionUtils.isEmpty(labelIds)) {
 			List<FileLabel> fileLabels = new ArrayList<>();
-			for(Integer labelId : labelIds){
+			for (Long labelId : labelIds) {
 				FileLabel fileLabel = new FileLabel();
 				fileLabel.preInsert();
 				fileLabel.setFileId(fileChanges.getId());
@@ -126,9 +127,9 @@ public class DocServiceImpl implements DocService {
 	}
 
 	@Override
-	public FileChanges detail(Integer id) {
+	public FileChanges detail(Long id) {
 		FileChanges fileChanges = fileChangesDao.selectByPrimaryKey(id);
-		List<Integer> labelIds = labelDao.selectLabelIdsByFileId(fileChanges.getId());
+		List<Long> labelIds = labelDao.selectLabelIdsByFileId(fileChanges.getId());
 		fileChanges.setLabelIds(labelIds);
 		// read content from file
 		file2String(fileChanges);
@@ -138,8 +139,8 @@ public class DocServiceImpl implements DocService {
 	private void insert(FileChanges fileChanges) {
 		IamPrincipalInfo info = getPrincipalInfo();
 		fileChanges.preInsert();
-		fileChanges.setCreateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
-		fileChanges.setUpdateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
+		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
+		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
 		fileChanges.setIsLatest(1);
 		fileChanges.setAction("add");
 		fileChanges.setDocCode(UUID.randomUUID().toString().replaceAll("-", ""));
@@ -147,10 +148,10 @@ public class DocServiceImpl implements DocService {
 		fileChanges.setContent(path);
 		fileChangesDao.insertSelective(fileChanges);
 		// label
-		List<Integer> labelIds = fileChanges.getLabelIds();
-		if(!CollectionUtils.isEmpty(labelIds)){
+		List<Long> labelIds = fileChanges.getLabelIds();
+		if (!CollectionUtils.isEmpty(labelIds)) {
 			List<FileLabel> fileLabels = new ArrayList<>();
-			for(Integer labelId : labelIds){
+			for (Long labelId : labelIds) {
 				FileLabel fileLabel = new FileLabel();
 				fileLabel.preInsert();
 				fileLabel.setFileId(fileChanges.getId());
@@ -160,7 +161,6 @@ public class DocServiceImpl implements DocService {
 			fileLabelDao.insertBatch(fileLabels);
 		}
 	}
-
 
 	private void update(FileChanges fileChanges) {
 		fileChanges.setId(null);
@@ -172,10 +172,10 @@ public class DocServiceImpl implements DocService {
 		fileChangesDao.updateIsLatest(fileChanges.getDocCode());
 		fileChangesDao.insertSelective(fileChanges);
 		// label
-		List<Integer> labelIds = fileChanges.getLabelIds();
-		if(!CollectionUtils.isEmpty(labelIds)){
+		List<Long> labelIds = fileChanges.getLabelIds();
+		if (!CollectionUtils.isEmpty(labelIds)) {
 			List<FileLabel> fileLabels = new ArrayList<>();
-			for(Integer labelId : labelIds){
+			for (Long labelId : labelIds) {
 				FileLabel fileLabel = new FileLabel();
 				fileLabel.preInsert();
 				fileLabel.setFileId(fileChanges.getId());
@@ -196,7 +196,7 @@ public class DocServiceImpl implements DocService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		FileChanges file = new FileChanges();
 		file.setId(id);
 		file.setDelFlag(BaseBean.DEL_FLAG_DELETE);
@@ -216,7 +216,7 @@ public class DocServiceImpl implements DocService {
 	}
 
 	@Override
-	public Map<String, FileChanges> compareWith(Integer oldChangesId, Integer newChangesId) {
+	public Map<String, FileChanges> compareWith(Long oldChangesId, Long newChangesId) {
 		Map<String, FileChanges> result = new HashMap<>();
 		FileChanges oldFileChanges = fileChangesDao.selectByPrimaryKey(oldChangesId);
 		file2String(oldFileChanges);
@@ -270,7 +270,7 @@ public class DocServiceImpl implements DocService {
 	}
 
 	@Override
-	public Share shareDoc(Integer id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime) {
+	public Share shareDoc(Long id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime) {
 		log.info("DocServiceImpl.shareDoc prarms::" + "id = {} , isEncrypt = {} , isForever = {} , day = {} , expireTime = {} ",
 				id, isEncrypt, isForever, day, expireTime);
 		Assert2.notNullOf(id, "id");

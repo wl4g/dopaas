@@ -64,12 +64,12 @@ public class DnsPrivateServerServiceImpl implements DnsPrivateServerService {
 		dnsPrivateServerDao.updateByPrimaryKeySelective(dnsPrivateServer);
 	}
 
-	public DnsPrivateServer detail(Integer id) {
+	public DnsPrivateServer detail(Long id) {
 		Assert.notNull(id, "id is null");
 		return dnsPrivateServerDao.selectByPrimaryKey(id);
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		DnsPrivateServer dnsPrivateServer = new DnsPrivateServer();
 		dnsPrivateServer.setId(id);

@@ -28,10 +28,10 @@ public interface OrchestrationService {
 
 	void save(Orchestration orchestration);
 
-	void del(Integer id);
+	void del(Long id);
 
-	Orchestration detail(Integer id);
+	Orchestration detail(Long id);
 
-	void run(Integer id, String remark, String taskTraceId, String taskTraceType, String annex);
+	void run(Long id, String remark, String taskTraceId, String taskTraceType, String annex);
 
 }

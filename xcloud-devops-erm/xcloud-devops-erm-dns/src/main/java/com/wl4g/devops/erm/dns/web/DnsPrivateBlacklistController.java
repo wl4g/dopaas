@@ -53,14 +53,14 @@ public class DnsPrivateBlacklistController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPrivateBlacklistService.detail(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		dnsPrivateBlacklistService.del(id);
 		return resp;

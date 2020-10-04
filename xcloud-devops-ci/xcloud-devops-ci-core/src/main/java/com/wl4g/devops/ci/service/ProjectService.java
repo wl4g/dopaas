@@ -28,22 +28,22 @@ public interface ProjectService {
 
 	void save(Project project);
 
-	int deleteById(Integer id);
+	int deleteById(Long id);
 
-	int removeById(Integer id);
+	int removeById(Long id);
 
 	PageModel list(PageModel pm, String groupName, String projectName);
 
 	List<Project> getBySelect(Integer isBoot);
 
-	Project selectByPrimaryKey(Integer id);
+	Project selectByPrimaryKey(Long id);
 
-	Project getByAppClusterId(Integer appClusteId);
+	Project getByAppClusterId(Long appClusteId);
 
-	int updateLockStatus(Integer id, Integer lockStatus);
+	int updateLockStatus(Long id, Integer lockStatus);
 
-	List<String> getBranchs(Integer appClusterId, Integer tagOrBranch);
+	List<String> getBranchs(Long appClusterId, Integer tagOrBranch);
 
-	List<String> getBranchsByProjectId(Integer projectId, Integer tagOrBranch);
+	List<String> getBranchsByProjectId(Long projectId, Integer tagOrBranch);
 
 }

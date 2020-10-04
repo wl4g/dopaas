@@ -27,9 +27,9 @@ public interface DnsPrivateZoneService {
 
 	void save(DnsPrivateZone dnsPrivateDomain);
 
-	DnsPrivateZone detail(Integer id);
+	DnsPrivateZone detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
 	void loadDnsAtStart();
 }

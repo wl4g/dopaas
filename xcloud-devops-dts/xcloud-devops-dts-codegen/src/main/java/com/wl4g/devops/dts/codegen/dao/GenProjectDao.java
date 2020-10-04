@@ -22,13 +22,13 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface GenProjectDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Long id);
 
     int insert(GenProject record);
 
     int insertSelective(GenProject record);
 
-    GenProject selectByPrimaryKey(Integer id);
+    GenProject selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(GenProject record);
 

@@ -23,11 +23,11 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface DnsPrivateResolutionService {
 
-	PageModel page(PageModel pm, String host,Integer domainId);
+	PageModel page(PageModel pm, String host, Long domainId);
 
 	void save(DnsPrivateResolution dnsPrivateResolution);
 
-	DnsPrivateResolution detail(Integer id);
+	DnsPrivateResolution detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 }

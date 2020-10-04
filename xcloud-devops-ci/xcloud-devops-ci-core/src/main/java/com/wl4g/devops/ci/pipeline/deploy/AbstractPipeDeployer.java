@@ -95,7 +95,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	/**
 	 * Pipeline taskDetailId.
 	 */
-	final protected Integer pipeHisInstanceId;
+	final protected Long pipeHisInstanceId;
 
 	public AbstractPipeDeployer(P provider, AppInstance instance, List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		notNull(provider, "Pipeline provider must not be null.");
@@ -114,7 +114,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	@Override
 	public void run() {
 		notNull(pipeHisInstanceId, "Transfer job for taskDetailId inmust not be null");
-		Integer projectId = getContext().getProject().getId();
+		Long projectId = getContext().getProject().getId();
 		String projectName = getContext().getProject().getProjectName();
 		AppCluster appCluster = getContext().getAppCluster();
 		Ssh ssh = appCluster.getSsh();

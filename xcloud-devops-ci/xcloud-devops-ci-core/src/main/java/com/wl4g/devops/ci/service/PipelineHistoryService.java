@@ -36,23 +36,23 @@ public interface PipelineHistoryService {
 
 	PipelineHistory createPipelineHistory(RollbackParameter rollbackParameter);
 
-	void updatePipeHisInstanceStatus(int pipeInstanceId, int status);
+	void updatePipeHisInstanceStatus(Long pipeInstanceId, int status);
 
-	void updateStatus(int pipeId, int status);
+	void updateStatus(Long pipeId, int status);
 
-	void updateStatusAndResultAndSha(int pipeId, int status, String sha);
+	void updateStatusAndResultAndSha(Long pipeId, int status, String sha);
 
-	void stopByPipeHisId(Integer taskHisId);
+	void stopByPipeHisId(Long taskHisId);
 
-	void updateCostTime(int taskId, long costTime);
+	void updateCostTime(Long taskId, long costTime);
 
 	PageModel list(PageModel pm, String pipeName, String clusterName, String environment, String startDate, String endDate,
 			String providerKind);
 
-	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Integer pipeHisId);
+	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Long pipeHisId);
 
-	PipelineHistory detail(Integer pipeHisId);
+	PipelineHistory detail(Long pipeHisId);
 
-	PipelineHistory getById(Integer pipeHisId);
+	PipelineHistory getById(Long pipeHisId);
 
 }

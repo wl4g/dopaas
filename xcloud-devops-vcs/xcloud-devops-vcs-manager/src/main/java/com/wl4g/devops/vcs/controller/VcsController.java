@@ -41,7 +41,6 @@ public class VcsController extends BaseController {
 	@Autowired
 	private VcsService vcsService;
 
-
 	@RequestMapping("/list")
 	public RespBase<?> list(PageModel pm, String name, String providerKind, Integer authType) {
 		RespBase<Object> resp = RespBase.create();
@@ -57,14 +56,14 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		vcsService.del(id);
 		return resp;
 	}
 
 	@RequestMapping("/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Vcs vcs = vcsService.detail(id);
 		resp.setData(vcs);
@@ -79,7 +78,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/vcsProjects")
-	public RespBase<?> searchVcsProjects(Integer vcsId, String projectName) {
+	public RespBase<?> searchVcsProjects(Long vcsId, String projectName) {
 		RespBase<Object> resp = RespBase.create();
 		List<CompositeBasicVcsProjectModel> remoteProjects = vcsService.getProjectsToCompositeBasic(vcsId, projectName);
 		resp.setData(remoteProjects);
@@ -87,15 +86,14 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/getGroups")
-	public RespBase<?> getGroups(Integer id, String groupName) {
+	public RespBase<?> getGroups(Long id, String groupName) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(vcsService.getGroups(id, groupName));
 		return resp;
 	}
 
-
 	@RequestMapping(value = "/getProjects")
-	public RespBase<?> getProjects(PageModel pm, Integer vcsId, Integer groupId ,String projectName) {
+	public RespBase<?> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName) {
 		RespBase<Object> resp = RespBase.create();
 		List<VcsProjectModel> projects = vcsService.getProjects(pm, vcsId, groupId, projectName);
 		pm.setRecords(projects);
@@ -104,7 +102,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getProjectById")
-	public RespBase<?> getProjectById(Integer vcsId, Integer projectId) {
+	public RespBase<?> getProjectById(Long vcsId, Long projectId) {
 		RespBase<Object> resp = RespBase.create();
 		VcsProjectModel project = vcsService.getProjectById(vcsId, projectId);
 		resp.setData(project);
@@ -112,7 +110,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getBranchs")
-	public RespBase<?> getBranchs(Integer vcsId, Integer projectId) {
+	public RespBase<?> getBranchs(Long vcsId, Long projectId) {
 		RespBase<Object> resp = RespBase.create();
 		List<VcsBranchModel> branchs = vcsService.getBranchs(vcsId, projectId);
 		resp.setData(branchs);
@@ -120,7 +118,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getTags")
-	public RespBase<?> tags(Integer vcsId, Integer projectId) {
+	public RespBase<?> tags(Long vcsId, Long projectId) {
 		RespBase<Object> resp = RespBase.create();
 		List<VcsTagModel> tags = vcsService.getTags(vcsId, projectId);
 		resp.setData(tags);
@@ -128,7 +126,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/createBranch")
-	public RespBase<?> createBranch(Integer vcsId, Integer projectId,String branch, String ref) {
+	public RespBase<?> createBranch(Long vcsId, Long projectId, String branch, String ref) {
 		RespBase<Object> resp = RespBase.create();
 		VcsBranchModel vcsBranchModel = vcsService.createBranch(vcsId, projectId, branch, ref);
 		resp.setData(vcsBranchModel);
@@ -136,13 +134,11 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/createTag")
-	public RespBase<?> createTag(Integer vcsId, Integer projectId,String tag, String ref,String message,String releaseDescription) {
+	public RespBase<?> createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription) {
 		RespBase<Object> resp = RespBase.create();
 		VcsTagModel vcsServiceTag = vcsService.createTag(vcsId, projectId, tag, ref, message, releaseDescription);
 		resp.setData(vcsServiceTag);
 		return resp;
 	}
-
-
 
 }

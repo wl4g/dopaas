@@ -69,7 +69,7 @@ public class TemplateServiceImpl implements TemplateService {
 	private AppInstanceDao appInstanceDao;
 
 	@Override
-	public PageModel list(PageModel pm, String name, Integer metricId, String classify) {
+	public PageModel list(PageModel pm, String name, Long metricId, String classify) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
 		for (AlarmTemplate alarmTpl : list) {
@@ -154,7 +154,7 @@ public class TemplateServiceImpl implements TemplateService {
 	}
 
 	@Override
-	public AlarmTemplate detail(Integer id) {
+	public AlarmTemplate detail(Long id) {
 		Assert.notNull(id, "AlarmTemplate id must not be null");
 		AlarmTemplate tpl = alarmTemplateDao.selectByPrimaryKey(id);
 		Assert.notNull(tpl, "alarmTemplate is null");
@@ -170,7 +170,7 @@ public class TemplateServiceImpl implements TemplateService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		AlarmTemplate alarmTemplate = new AlarmTemplate();
 		alarmTemplate.setId(id);

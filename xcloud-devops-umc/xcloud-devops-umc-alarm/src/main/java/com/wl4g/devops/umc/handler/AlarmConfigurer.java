@@ -32,11 +32,11 @@ public interface AlarmConfigurer {
 
 	List<AlarmConfig> findAlarmConfigByEndpoint(String host, String endpoint);
 
-	List<AlarmConfig> findAlarmConfig(Integer templateId, String collectId);
+	List<AlarmConfig> findAlarmConfig(Long templateId, String collectId);
 
 	AlarmRecord saveAlarmRecord(AlarmTemplate alarmTemplate, Long gatherTime, List<AlarmRule> rules, String alarmNote);
 
-	List<Contact> getContactByGroupIds(List<Integer> groupIds);
+	List<Contact> getContactByGroupIds(List<Long> groupIds);
 
 	NotificationContact saveNotificationContact(NotificationContact notificationContact);
 

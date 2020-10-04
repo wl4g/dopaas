@@ -43,7 +43,7 @@ import static java.util.Objects.isNull;
 public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionService {
 
 	@Autowired
-	private DnsPrivateResolutionDao dnsPrivateResolutionDao;
+	private DnsPrivateResolutionDao privateResolutionDao;
 
 	@Autowired
 	private DnsZoneHandler dnsServerInterface;
@@ -52,52 +52,49 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
 	private DnsPrivateZoneDao dnsPrivateDomainDao;
 
 	@Override
-	public PageModel page(PageModel pm, String host, Integer domainId) {
+	public PageModel page(PageModel pm, String host, Long domainId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(dnsPrivateResolutionDao.list(getRequestOrganizationCodes(), host, domainId));
+		pm.setRecords(privateResolutionDao.list(getRequestOrganizationCodes(), host, domainId));
 		return pm;
 	}
 
-	public void save(DnsPrivateResolution dnsPrivateResolution) {
+	public void save(DnsPrivateResolution resolution) {
+		DnsPrivateResolution resolution0 = privateResolutionDao.selectByDomainIdAndHost(resolution.getDomainId(),
+				resolution.getHost());
 
-		DnsPrivateResolution dnsPrivateResolutionDB = dnsPrivateResolutionDao
-				.selectByDomainIdAndHost(dnsPrivateResolution.getDomainId(), dnsPrivateResolution.getHost());
-
-		if (isNull(dnsPrivateResolution.getId())) {
-			Assert2.isNull(dnsPrivateResolutionDB, "repeat host");
-			dnsPrivateResolution.preInsert(getRequestOrganizationCode());
-			insert(dnsPrivateResolution);
+		if (isNull(resolution.getId())) {
+			Assert2.isNull(resolution0, "repeat host");
+			resolution.preInsert(getRequestOrganizationCode());
+			insert(resolution);
 		} else {
-			Assert2.isTrue(
-					Objects.isNull(dnsPrivateResolutionDB) || dnsPrivateResolutionDB.getId().equals(dnsPrivateResolution.getId()),
-					"repeat host");
-			dnsPrivateResolution.preUpdate();
-			update(dnsPrivateResolution);
+			Assert2.isTrue(Objects.isNull(resolution0) || resolution0.getId().equals(resolution.getId()), "repeat host");
+			resolution.preUpdate();
+			update(resolution);
 		}
-		DnsPrivateZone dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(dnsPrivateResolution.getDomainId());
-		dnsServerInterface.putHost(dnsPrivateDomain, dnsPrivateResolution);
+		DnsPrivateZone privateZone = dnsPrivateDomainDao.selectByPrimaryKey(resolution.getDomainId());
+		dnsServerInterface.putHost(privateZone, resolution);
 	}
 
 	private void insert(DnsPrivateResolution dnsPrivateResolution) {
-		dnsPrivateResolutionDao.insertSelective(dnsPrivateResolution);
+		privateResolutionDao.insertSelective(dnsPrivateResolution);
 	}
 
 	private void update(DnsPrivateResolution dnsPrivateResolution) {
-		dnsPrivateResolutionDao.updateByPrimaryKeySelective(dnsPrivateResolution);
+		privateResolutionDao.updateByPrimaryKeySelective(dnsPrivateResolution);
 	}
 
-	public DnsPrivateResolution detail(Integer id) {
+	public DnsPrivateResolution detail(Long id) {
 		Assert.notNull(id, "id is null");
-		return dnsPrivateResolutionDao.selectByPrimaryKey(id);
+		return privateResolutionDao.selectByPrimaryKey(id);
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
-		DnsPrivateResolution dnsPrivateResolution = dnsPrivateResolutionDao.selectByPrimaryKey(id);
+		DnsPrivateResolution dnsPrivateResolution = privateResolutionDao.selectByPrimaryKey(id);
 		DnsPrivateZone dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(dnsPrivateResolution.getDomainId());
 		dnsPrivateResolution.setId(id);
 		dnsPrivateResolution.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		dnsPrivateResolutionDao.updateByPrimaryKeySelective(dnsPrivateResolution);
+		privateResolutionDao.updateByPrimaryKeySelective(dnsPrivateResolution);
 		dnsServerInterface.delhost(dnsPrivateDomain.getZone(), dnsPrivateResolution.getHost());
 	}
 

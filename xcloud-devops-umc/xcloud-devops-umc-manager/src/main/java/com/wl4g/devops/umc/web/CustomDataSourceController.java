@@ -61,14 +61,14 @@ public class CustomDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(customDataSourceService.detal(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		log.info("into CustomDatasourceController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		customDataSourceService.del(id);
@@ -90,7 +90,7 @@ public class CustomDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/testConnect")
-	public RespBase<?> testConnect(String provider, String url, String username, String password, Integer id) throws Exception {
+	public RespBase<?> testConnect(String provider, String url, String username, String password, Long id) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		customDataSourceService.testConnect(DataSourceProvide.parse(provider), url, username, password, id);
 		return resp;

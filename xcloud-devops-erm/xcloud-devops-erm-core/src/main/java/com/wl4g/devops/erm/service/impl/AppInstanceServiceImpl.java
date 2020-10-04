@@ -54,7 +54,7 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 	private DestroableProcessManager pm;
 
 	@Override
-	public PageModel list(PageModel pm, String name, Integer instanceId, String envType, Integer deployType) {
+	public PageModel list(PageModel pm, String name, Long instanceId, String envType, Integer deployType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(appInstanceDao.list(getRequestOrganizationCodes(), name, instanceId, envType, deployType));
 		return pm;
@@ -69,12 +69,11 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void insert(AppInstance appInstance) {
 		appInstance.preInsert(getRequestOrganizationCode());
 		if (!CollectionUtils.isEmpty(appInstance.getHosts())) {
 			// instance hosts count
-			for (Integer hostId : appInstance.getHosts()) {
+			for (Long hostId : appInstance.getHosts()) {
 				appInstance.preInsert();
 				appInstance.setHostId(hostId);
 				appInstanceDao.insertSelective(appInstance);
@@ -91,7 +90,7 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 	}
 
 	@Override
-	public void del(Integer instanceId) {
+	public void del(Long instanceId) {
 		AppInstance appInstance = new AppInstance();
 		appInstance.setId(instanceId);
 		appInstance.setDelFlag(DEL_FLAG_DELETE);
@@ -99,21 +98,21 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 	}
 
 	@Override
-	public AppInstance detail(Integer instanceId) {
+	public AppInstance detail(Long instanceId) {
 		Assert.notNull(instanceId, "instanceId is null");
 		AppInstance appInstance = appInstanceDao.selectByPrimaryKey(instanceId);
 		return appInstance;
 	}
 
 	@Override
-	public List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType) {
+	public List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId, String envType) {
 		Assert.notNull(clusterId, "clusterId is null");
 		Assert.notNull(envType, "envType is null");
 		return appInstanceDao.selectByClusterIdAndEnvType(clusterId, envType);
 	}
 
 	@Override
-	public void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception {
+	public void testSSHConnect(Long hostId, String sshUser, String sshKey) throws Exception {
 		Host appHost = appHostDao.selectByPrimaryKey(hostId);
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 		String command = "echo " + uuid;

@@ -54,7 +54,7 @@ public class HostNetcardServiceImpl implements HostNetcardService {
 	private HostTunnelPptpDao hostTunnelPptpDao;
 
 	@Override
-	public PageModel page(PageModel pm, Integer hostId, String name) {
+	public PageModel page(PageModel pm, Long hostId, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(appHostNetCardDao.list(getRequestOrganizationCodes(), hostId, name));
 		return pm;
@@ -79,13 +79,13 @@ public class HostNetcardServiceImpl implements HostNetcardService {
 	}
 
 	@Override
-	public HostNetcard detail(Integer id) {
+	public HostNetcard detail(Long id) {
 		Assert.notNull(id, "id is null");
 		return appHostNetCardDao.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		HostNetcard hostNetcard = new HostNetcard();
 		hostNetcard.setId(id);

@@ -114,7 +114,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public int deleteById(Integer id) {
+	public int deleteById(Long id) {
 		Project project = new Project();
 		project.preUpdate();
 		project.setId(id);
@@ -123,7 +123,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public int removeById(Integer id) {
+	public int removeById(Long id) {
 		return projectDao.deleteByPrimaryKey(id);
 	}
 
@@ -144,7 +144,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public Project selectByPrimaryKey(Integer id) {
+	public Project selectByPrimaryKey(Long id) {
 		Project project = projectDao.selectByPrimaryKey(id);
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(project.getId());
 		project.setDependencies(dependencies);
@@ -152,12 +152,12 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public Project getByAppClusterId(Integer appClusteId) {
+	public Project getByAppClusterId(Long appClusteId) {
 		return projectDao.getByAppClusterId(appClusteId);
 	}
 
 	@Override
-	public int updateLockStatus(Integer id, Integer lockStatus) {
+	public int updateLockStatus(Long id, Integer lockStatus) {
 		Project project = new Project();
 		project.setId(id);
 		project.setLockStatus(lockStatus);
@@ -165,7 +165,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<String> getBranchs(Integer appClusterId, Integer tagOrBranch) {
+	public List<String> getBranchs(Long appClusterId, Integer tagOrBranch) {
 		Assert.notNull(appClusterId, "id can not be null");
 		Project project = projectDao.getByAppClusterId(appClusterId);
 		Assert.notNull(project, "not found project ,please check you project config");
@@ -173,7 +173,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<String> getBranchsByProjectId(Integer projectId, Integer tagOrBranch) {
+	public List<String> getBranchsByProjectId(Long projectId, Integer tagOrBranch) {
 		Assert.notNull(projectId, "id can not be null");
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		Assert.notNull(project, "not found project ,please check you project config");
@@ -185,7 +185,7 @@ public class ProjectServiceImpl implements ProjectService {
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
 		vcsOperator.forOperator(project.getVcs().getProviderKind());
-		Integer vcsProjectId = vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteProjectId(project.getVcs(),
+		Long vcsProjectId = vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteProjectId(project.getVcs(),
 				projectName);
 		notNullOf(vcsProjectId, "vcsProjectId");
 

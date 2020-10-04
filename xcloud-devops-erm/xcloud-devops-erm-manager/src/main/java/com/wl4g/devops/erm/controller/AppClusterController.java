@@ -64,7 +64,7 @@ public class AppClusterController extends BaseController {
 
 	@RequestMapping(value = "/del")
 	@RequiresPermissions(value = { "erm:cluster" })
-	public RespBase<?> del(Integer clusterId) {
+	public RespBase<?> del(Long clusterId) {
 		RespBase<Object> resp = RespBase.create();
 		appClusterService.del(clusterId);
 		return resp;
@@ -72,7 +72,7 @@ public class AppClusterController extends BaseController {
 
 	@RequestMapping(value = "/detail")
 	@RequiresPermissions(value = { "erm:cluster" })
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		AppCluster detail = appClusterService.detail(id);
 		resp.setData(detail);
@@ -88,7 +88,7 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/instances")
-	public RespBase<?> instances(Integer clusterId, String envType) {
+	public RespBase<?> instances(Long clusterId, String envType) {
 		RespBase<Object> resp = RespBase.create();
 		List<AppInstance> instances = appClusterService.getInstancesByClusterIdAndEnvType(clusterId, envType);
 		resp.forMap().put("instances", instances);

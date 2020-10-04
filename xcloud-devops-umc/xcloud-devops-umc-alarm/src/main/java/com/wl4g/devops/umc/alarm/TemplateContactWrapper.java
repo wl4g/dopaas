@@ -28,14 +28,14 @@ import java.util.Map;
  * @date 2019-08-22 15:16:00
  */
 public class TemplateContactWrapper {
-	private int templateId;
+	private long templateId;
 	private AlarmTemplate alarmTemplate;
 	private List<Contact> contacts;
 	private Map<String, String> matchedTag;
 	private List<AlarmRule> matchedRules;
 	private MetricAggregateWrapper aggregateWrap;
 
-	public TemplateContactWrapper(int templateId, AlarmTemplate alarmTemplate, List<Contact> contacts,
+	public TemplateContactWrapper(long templateId, AlarmTemplate alarmTemplate, List<Contact> contacts,
 			Map<String, String> matchedTag, List<AlarmRule> matchedRules, MetricAggregateWrapper aggregateWrap) {
 		this.templateId = templateId;
 		this.alarmTemplate = alarmTemplate;
@@ -45,11 +45,11 @@ public class TemplateContactWrapper {
 		this.aggregateWrap = aggregateWrap;
 	}
 
-	public int getTemplateId() {
+	public long getTemplateId() {
 		return templateId;
 	}
 
-	public void setTemplateId(int templateId) {
+	public void setTemplateId(long templateId) {
 		this.templateId = templateId;
 	}
 

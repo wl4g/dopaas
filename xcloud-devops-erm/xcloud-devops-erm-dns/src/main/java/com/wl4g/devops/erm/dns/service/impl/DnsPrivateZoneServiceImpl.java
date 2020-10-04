@@ -47,7 +47,7 @@ public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
 	private DnsPrivateZoneDao dnsPrivateDomainDao;
 
 	@Autowired
-	private DnsPrivateResolutionDao dnsPrivateResolutionDao;
+	private DnsPrivateResolutionDao privateResolutionDao;
 
 	@Autowired
 	private DnsZoneHandler dnsZoneHandler;
@@ -60,38 +60,38 @@ public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
 		return pm;
 	}
 
-	public void save(DnsPrivateZone dnsPrivateZone) {
-		DnsPrivateZone dnsPrivateZoneDB = dnsPrivateDomainDao.selectByZone(dnsPrivateZone.getZone());
-		if (isNull(dnsPrivateZone.getId())) {
+	public void save(DnsPrivateZone privateZone) {
+		DnsPrivateZone dnsPrivateZoneDB = dnsPrivateDomainDao.selectByZone(privateZone.getZone());
+		if (isNull(privateZone.getId())) {
 			Assert2.isNull(dnsPrivateZoneDB, "repeat zone");
-			dnsPrivateZone.preInsert(getRequestOrganizationCode());
-			dnsPrivateZone.setStatus("RUNNING");
-			insert(dnsPrivateZone);
+			privateZone.preInsert(getRequestOrganizationCode());
+			privateZone.setStatus("RUNNING");
+			insert(privateZone);
 		} else {
-			Assert2.isTrue(Objects.isNull(dnsPrivateZoneDB) || dnsPrivateZoneDB.getId().equals(dnsPrivateZone.getId()),
+			Assert2.isTrue(Objects.isNull(dnsPrivateZoneDB) || dnsPrivateZoneDB.getId().equals(privateZone.getId()),
 					"repeat zone");
-			dnsPrivateZone.preUpdate();
-			update(dnsPrivateZone);
+			privateZone.preUpdate();
+			update(privateZone);
 		}
-		List<DnsPrivateResolution> dnsPrivateResolutions = dnsPrivateResolutionDao.selectByDomainId(dnsPrivateZone.getId());
-		dnsPrivateZone.setDnsPrivateResolutions(dnsPrivateResolutions);
-		dnsZoneHandler.putDomian(dnsPrivateZone);
+		List<DnsPrivateResolution> dnsPrivateResolutions = privateResolutionDao.selectByDomainId(privateZone.getId());
+		privateZone.setDnsPrivateResolutions(dnsPrivateResolutions);
+		dnsZoneHandler.putDomian(privateZone);
 	}
 
-	private void insert(DnsPrivateZone dnsPrivateDomain) {
-		dnsPrivateDomainDao.insertSelective(dnsPrivateDomain);
+	private void insert(DnsPrivateZone privateZone) {
+		dnsPrivateDomainDao.insertSelective(privateZone);
 	}
 
-	private void update(DnsPrivateZone dnsPrivateDomain) {
-		dnsPrivateDomainDao.updateByPrimaryKeySelective(dnsPrivateDomain);
+	private void update(DnsPrivateZone privateZone) {
+		dnsPrivateDomainDao.updateByPrimaryKeySelective(privateZone);
 	}
 
-	public DnsPrivateZone detail(Integer id) {
+	public DnsPrivateZone detail(Long id) {
 		Assert.notNull(id, "id is null");
 		return dnsPrivateDomainDao.selectByPrimaryKey(id);
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		DnsPrivateZone dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(id);
 		dnsPrivateDomain.setDelFlag(BaseBean.DEL_FLAG_DELETE);
@@ -103,7 +103,7 @@ public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
 	public void loadDnsAtStart() {
 		List<DnsPrivateZone> list = dnsPrivateDomainDao.list(null, null);
 		for (DnsPrivateZone dnsPrivateDomain : list) {
-			List<DnsPrivateResolution> dnsPrivateResolutions = dnsPrivateResolutionDao.selectByDomainId(dnsPrivateDomain.getId());
+			List<DnsPrivateResolution> dnsPrivateResolutions = privateResolutionDao.selectByDomainId(dnsPrivateDomain.getId());
 			dnsPrivateDomain.setDnsPrivateResolutions(dnsPrivateResolutions);
 			dnsZoneHandler.putDomian(dnsPrivateDomain);
 		}

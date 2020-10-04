@@ -51,7 +51,7 @@ public class GolangModPipelineProvider extends RestorableDeployPipelineProvider 
 	}
 
 	@Override
-	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
+	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Long taskId) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 

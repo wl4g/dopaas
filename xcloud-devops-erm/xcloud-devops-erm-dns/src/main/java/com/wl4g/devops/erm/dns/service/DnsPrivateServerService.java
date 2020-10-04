@@ -27,7 +27,7 @@ public interface DnsPrivateServerService {
 
 	void save(DnsPrivateServer dnsPrivateServer);
 
-	DnsPrivateServer detail(Integer id);
+	DnsPrivateServer detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 }

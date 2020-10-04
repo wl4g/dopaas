@@ -27,7 +27,7 @@ public interface DnsOperationLogService {
 
 	void save(DnsOperationLog dnsOperationLog);
 
-	DnsOperationLog detail(Integer id);
+	DnsOperationLog detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 }

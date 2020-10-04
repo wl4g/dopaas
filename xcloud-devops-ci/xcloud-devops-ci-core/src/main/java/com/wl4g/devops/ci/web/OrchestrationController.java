@@ -54,14 +54,14 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		orchestrationService.del(id);
 		return resp;
 	}
 
 	@RequestMapping("/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Orchestration orchestration = orchestrationService.detail(id);
 		resp.setData(orchestration);
@@ -69,11 +69,10 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/run")
-	public RespBase<?> run(Integer id, String remark, @NotNull String trackId, @NotNull String trackType, String annex) {
+	public RespBase<?> run(Long id, String remark, @NotNull String trackId, @NotNull String trackType, String annex) {
 		RespBase<Object> resp = RespBase.create();
-		orchestrationService.run(id,remark, trackId, trackType, annex);
+		orchestrationService.run(id, remark, trackId, trackType, annex);
 		return resp;
 	}
-
 
 }

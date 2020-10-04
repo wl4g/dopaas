@@ -33,7 +33,7 @@ import java.util.Set;
  */
 public interface GenerateService {
 
-	List<TableMetadata> loadTables(Integer projectId);
+	List<TableMetadata> loadTables(Long projectId);
 
 	/**
 	 * new gen code
@@ -41,21 +41,21 @@ public interface GenerateService {
 	 * @param databaseId
 	 * @param tableName
 	 */
-	RespBase<Object> loadMetadata(Integer projectId, String tableName);
+	RespBase<Object> loadMetadata(Long projectId, String tableName);
 
-	PageModel page(PageModel pm, String tableName, Integer projectId);
+	PageModel page(PageModel pm, String tableName, Long projectId);
 
-	RespBase<Object> detail(Integer tableId);
+	RespBase<Object> detail(Long tableId);
 
 	void saveGenConfig(GenTable genTable);
 
-	void delete(Integer tableId);
+	void delete(Long tableId);
 
-	GeneratedResult generate(Integer tableId);
+	GeneratedResult generate(Long tableId);
 
-	Set<String> getAttrTypes(Integer projectId);
+	Set<String> getAttrTypes(Long projectId);
 
-	void setEnable(Integer id, String status);
+	void setEnable(Long id, String status);
 
-	void synchronizeTable(Integer id, boolean focus);
+	void synchronizeTable(Long id, boolean focus);
 }

@@ -57,7 +57,7 @@ public class CustomHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		CustomHistory customHistory = customHistoryService.detal(id);
 		resp.setData(customHistory);
@@ -65,7 +65,7 @@ public class CustomHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		log.info("into CustomDatasourceController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		customHistoryService.del(id);

@@ -49,7 +49,7 @@ public class DependencyServiceImpl implements DependencyService {
 	 * @param sets
 	 * @return
 	 */
-	public LinkedHashSet<Dependency> getHierarchyDependencys(Integer projectId, LinkedHashSet<Dependency> sets) {
+	public LinkedHashSet<Dependency> getHierarchyDependencys(Long projectId, LinkedHashSet<Dependency> sets) {
 		if (Objects.isNull(sets)) {
 			sets = new LinkedHashSet<>();
 		}

@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.vcs.operator.alicode;
 
-
 import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
@@ -41,19 +40,19 @@ public class AlicodeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, int projectId) {
+	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, Long projectId) {
 		super.getRemoteBranchs(credentials, projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<VcsTagModel> getRemoteTags(Vcs credentials, int projectId) {
+	public List<VcsTagModel> getRemoteTags(Vcs credentials, Long projectId) {
 		super.getRemoteTags(credentials, projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Integer getRemoteProjectId(Vcs credentials, String projectName) {
+	public Long getRemoteProjectId(Vcs credentials, String projectName) {
 		super.getRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
@@ -62,6 +61,5 @@ public class AlicodeVcsOperator extends GenericBasedGitVcsOperator {
 	protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
 		throw new UnsupportedOperationException();
 	}
-
 
 }

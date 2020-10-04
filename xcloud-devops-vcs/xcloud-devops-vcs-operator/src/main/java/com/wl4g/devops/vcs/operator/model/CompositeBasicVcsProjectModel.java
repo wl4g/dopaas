@@ -37,7 +37,7 @@ public class CompositeBasicVcsProjectModel implements Serializable {
 
 	/** VCS remote project ID. */
 	@NotNull
-	private Integer id;
+	private Long id;
 
 	/** VCS remote project name. */
 	@NotBlank
@@ -57,8 +57,7 @@ public class CompositeBasicVcsProjectModel implements Serializable {
 		super();
 	}
 
-	public CompositeBasicVcsProjectModel(Integer id, String name, String httpUrl, String sshUrl, String pathWithNamespace) {
-		super();
+	public CompositeBasicVcsProjectModel(Long id, String name, String httpUrl, String sshUrl, String pathWithNamespace) {
 		setId(id);
 		setName(name);
 		setHttpUrl(httpUrl);
@@ -66,11 +65,11 @@ public class CompositeBasicVcsProjectModel implements Serializable {
 		setPathWithNamespace(pathWithNamespace);
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		notNull(id, "projectId can't is null.");
 		this.id = id;
 	}

@@ -32,26 +32,26 @@ public interface PcmService {
 
 	void save(Pcm pcm);
 
-	void del(Integer id);
+	void del(Long id);
 
-	Pcm detail(Integer id);
+	Pcm detail(Long id);
 
 	List<Pcm> all();
 
-	List<SelectionModel> getUsers(Integer pcmId);
+	List<SelectionModel> getUsers(Long pcmId);
 
-	List<SelectionModel> getProjects(Integer pcmId);
+	List<SelectionModel> getProjects(Long pcmId);
 
-	List<SelectionModel> getIssues(Integer pcmId, String userId, String projectId, String search);
+	List<SelectionModel> getIssues(Long pcmId, String userId, String projectId, String search);
 
-	List<SelectionModel> getProjectsByPcmId(Integer pcmId);
+	List<SelectionModel> getProjectsByPcmId(Long pcmId);
 
-	List<SelectionModel> getTrackers(Integer pcmId);
+	List<SelectionModel> getTrackers(Long pcmId);
 
-	List<SelectionModel> getStatuses(Integer pcmId);
+	List<SelectionModel> getStatuses(Long pcmId);
 
-	List<SelectionModel> getPriorities(Integer pcmId);
+	List<SelectionModel> getPriorities(Long pcmId);
 
-	void createIssues(Integer pcmId, PipeHistoryPcm pipeHistoryPcm);
+	void createIssues(Long pcmId, PipeHistoryPcm pipeHistoryPcm);
 
 }

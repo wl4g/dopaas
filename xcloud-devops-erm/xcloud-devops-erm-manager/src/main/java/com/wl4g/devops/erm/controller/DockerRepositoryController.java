@@ -57,14 +57,14 @@ public class DockerRepositoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerRepositoryService.detail(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		dockerRepositoryService.del(id);
 		return resp;
@@ -78,7 +78,7 @@ public class DockerRepositoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getRepositoryProjects")
-	public RespBase<?> getRepositoryProjects(Integer id, String address, String name)
+	public RespBase<?> getRepositoryProjects(Long id, String address, String name)
 			throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerRepositoryService.getRepositoryProjects(id, address, name));

@@ -88,8 +88,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 		orchestrationDao.updateByPrimaryKeySelective(orchestration);
 	}
 
-	private void insertOrUpdateOrchestrationPipelines(List<OrchestrationPipeline> orchestrationPipelines,
-			Integer orchestrationId) {
+	private void insertOrUpdateOrchestrationPipelines(List<OrchestrationPipeline> orchestrationPipelines, Long orchestrationId) {
 
 		List<OrchestrationPipeline> oldOrchestrationPipelines = orchestrationPipelineDao.selectByOrchestrationId(orchestrationId);
 		cleanOldOrchestrationPipelines(oldOrchestrationPipelines, orchestrationPipelines);
@@ -142,7 +141,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		Orchestration orchestration = new Orchestration();
 		orchestration.setId(id);
 		orchestration.setDelFlag(BaseBean.DEL_FLAG_DELETE);
@@ -150,12 +149,12 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 	}
 
 	@Override
-	public Orchestration detail(Integer id) {
+	public Orchestration detail(Long id) {
 		return orchestrationDao.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public void run(Integer id, String remark, String taskTraceId, String taskTraceType, String annex) {
+	public void run(Long id, String remark, String taskTraceId, String taskTraceType, String annex) {
 		Assert2.notNullOf(id, "id");
 		Assert2.isTrue(!isMaxRuner(), "Runner is biggest , cant not create any more");
 		Orchestration orchestration = orchestrationDao.selectByPrimaryKey(id);

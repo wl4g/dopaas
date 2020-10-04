@@ -26,14 +26,14 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface TemplateService {
 
-	PageModel list(PageModel pm, String name, Integer metricId, String classify);
+	PageModel list(PageModel pm, String name, Long metricId, String classify);
 
 	List<AlarmTemplate> getByClassify(String classify);
 
 	void save(AlarmTemplate alarmTemplate);
 
-	AlarmTemplate detail(Integer id);
+	AlarmTemplate detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
 }

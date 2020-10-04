@@ -42,7 +42,7 @@ public class CustomAlarmEventServiceImpl implements CustomAlarmEventService {
 	}
 
 	@Override
-	public CustomAlarmEvent detal(Integer id) {
+	public CustomAlarmEvent detal(Long id) {
 		CustomAlarmEvent customAlarmEvent = customAlarmEventDao.selectByPrimaryKey(id);
 		return customAlarmEvent;
 	}
@@ -59,7 +59,7 @@ public class CustomAlarmEventServiceImpl implements CustomAlarmEventService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		CustomAlarmEvent customAlarmEvent = new CustomAlarmEvent();
 		customAlarmEvent.setId(id);
 		customAlarmEvent.setDelFlag(BaseBean.DEL_FLAG_DELETE);

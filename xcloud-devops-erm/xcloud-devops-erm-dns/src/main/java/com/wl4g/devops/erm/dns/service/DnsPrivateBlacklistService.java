@@ -27,9 +27,9 @@ public interface DnsPrivateBlacklistService {
 
 	void save(DnsPrivateBlacklist dnsPrivateBlacklist);
 
-	DnsPrivateBlacklist detail(Integer id);
+	DnsPrivateBlacklist detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
 	void loadBlacklistAtStart();
 }

@@ -43,7 +43,7 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectId) {
+	public List<AlarmConfig> findAlarmConfig(Long templateId, String collectId) {
 		return null;
 	}
 
@@ -53,7 +53,7 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public List<Contact> getContactByGroupIds(List<Integer> groupIds) {
+	public List<Contact> getContactByGroupIds(List<Long> groupIds) {
 		return null;
 	}
 

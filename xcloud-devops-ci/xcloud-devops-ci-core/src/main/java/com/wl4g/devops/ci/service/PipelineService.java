@@ -32,13 +32,13 @@ public interface PipelineService {
 
 	void save(Pipeline pipeline);
 
-	Pipeline detail(Integer id);
+	Pipeline detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
-	List<Pipeline> getByClusterId(Integer clusterId);
+	List<Pipeline> getByClusterId(Long clusterId);
 
-	PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType);
+	PipeStepBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType);
 
 	List<Pipeline> getForSelect(String environment);
 

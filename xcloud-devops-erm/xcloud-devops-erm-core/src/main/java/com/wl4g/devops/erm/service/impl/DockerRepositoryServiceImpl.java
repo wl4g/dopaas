@@ -98,7 +98,7 @@ public class DockerRepositoryServiceImpl implements DockerRepositoryService {
 		dockerRepositoryDao.updateByPrimaryKeySelective(dockerRepository);
 	}
 
-	public DockerRepository detail(Integer id) {
+	public DockerRepository detail(Long id) {
 		Assert.notNull(id, "id is null");
 		DockerRepository dockerRepository = dockerRepositoryDao.selectByPrimaryKey(id);
 		if (StringUtils.isNotBlank(dockerRepository.getAuthConfig())) {
@@ -108,7 +108,7 @@ public class DockerRepositoryServiceImpl implements DockerRepositoryService {
 		return dockerRepository;
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		DockerRepository dockerRepository = new DockerRepository();
 		dockerRepository.setId(id);
@@ -117,7 +117,7 @@ public class DockerRepositoryServiceImpl implements DockerRepositoryService {
 	}
 
 	@Override
-	public List<RepositoryProject> getRepositoryProjects(Integer id, String address, String name)
+	public List<RepositoryProject> getRepositoryProjects(Long id, String address, String name)
 			throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 		if (Objects.nonNull(id) && id != -1) {
 			DockerRepository dockerRepository = dockerRepositoryDao.selectByPrimaryKey(id);

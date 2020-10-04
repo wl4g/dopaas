@@ -36,12 +36,10 @@ public interface AppClusterService {
 
 	List<AppCluster> clusters();
 
-	void del(Integer clusterId);
+	void del(Long clusterId);
 
-	AppCluster detail(Integer clusterId);
+	AppCluster detail(Long clusterId);
 
-	List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
-
-
+	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId, String envType);
 
 }

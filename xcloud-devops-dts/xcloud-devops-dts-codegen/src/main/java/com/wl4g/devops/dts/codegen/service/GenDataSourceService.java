@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.service;
 
-import com.wl4g.components.data.page.PageModel; 
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 
 import java.util.List;
@@ -31,9 +31,9 @@ public interface GenDataSourceService {
 
 	void save(GenDataSource genDatabase);
 
-	GenDataSource detail(Integer id);
+	GenDataSource detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
 	void testConnectDb(GenDataSource datasource) throws Exception;
 

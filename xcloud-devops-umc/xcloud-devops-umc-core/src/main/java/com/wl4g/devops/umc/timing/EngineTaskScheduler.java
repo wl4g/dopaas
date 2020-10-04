@@ -60,7 +60,6 @@ public class EngineTaskScheduler implements ApplicationRunner {
 	@Autowired
 	private CustomEngineDao customEngineDao;
 
-
 	@Override
 	public void run(ApplicationArguments args) {
 		refreshAll();
@@ -70,7 +69,8 @@ public class EngineTaskScheduler implements ApplicationRunner {
 	 * Refresh timing pipeline job all.
 	 */
 	private void refreshAll() {
-		List<CustomEngine> customEngines = customEngineDao.list(null);//select all
+		List<CustomEngine> customEngines = customEngineDao.list(null);// select
+																		// all
 		for (CustomEngine customEngine : customEngines) {
 			refreshTimingPipeline(customEngine);
 		}
@@ -85,7 +85,8 @@ public class EngineTaskScheduler implements ApplicationRunner {
 	 */
 	public void refreshTimingPipeline(CustomEngine customEngine) {
 		if (log.isInfoEnabled()) {
-			log.info("Refresh timing pipeline for customEngineId:'{}', expression: '{}'", customEngine.getId(), customEngine.getCron());
+			log.info("Refresh timing pipeline for customEngineId:'{}', expression: '{}'", customEngine.getId(),
+					customEngine.getCron());
 		}
 		customEngine = customEngineDao.selectByPrimaryKey(customEngine.getId());
 		stopTimingPipeline(customEngine);
@@ -103,17 +104,18 @@ public class EngineTaskScheduler implements ApplicationRunner {
 	 * @param taskInstances
 	 */
 	private void startupTimingPipeline(CustomEngine customEngine) {
-		log.info("Startup timing pipeline for customEngineId: {}, expression: '{}'", customEngine.getId(), customEngine.getCron());
+		log.info("Startup timing pipeline for customEngineId: {}, expression: '{}'", customEngine.getId(),
+				customEngine.getCron());
 		stopTimingPipeline(customEngine);
-		if (Objects.isNull(customEngine.getStatus()) ||  customEngine.getStatus() == 0) {
+		if (Objects.isNull(customEngine.getStatus()) || customEngine.getStatus() == 0) {
 			return;
 		}
 		CronTrigger cronTrigger = checkCron(customEngine.getCron());
-		if(Objects.isNull(cronTrigger)){
-			log.error("cron is error, cron={}",customEngine.getCron());
+		if (Objects.isNull(cronTrigger)) {
+			log.error("cron is error, cron={}", customEngine.getCron());
 			return;
 		}
-		TimingEngineProvider provider = beanFactory.getBean(TimingEngineProvider.class, new Object[] {customEngine});
+		TimingEngineProvider provider = beanFactory.getBean(TimingEngineProvider.class, new Object[] { customEngine });
 		ScheduledFuture<?> future = taskScheduler.schedule(provider, new CronTrigger(customEngine.getCron()));
 		EngineTaskScheduler.map.put(getTimingPipelineKey(customEngine.getId()), future);
 	}
@@ -131,7 +133,7 @@ public class EngineTaskScheduler implements ApplicationRunner {
 			boolean cancel = future.cancel(true);
 			if (cancel) {
 				map.remove(key);
-			}else{
+			} else {
 				throw new IllegalStateException(String.format("Failed to stopped timing pipeline of '%s'", key));
 			}
 		}
@@ -143,15 +145,14 @@ public class EngineTaskScheduler implements ApplicationRunner {
 	 * @param trigger
 	 * @return
 	 */
-	private String getTimingPipelineKey(Integer id) {
+	private String getTimingPipelineKey(Long id) {
 		return id + "";
 	}
 
-
-	private CronTrigger checkCron(String cron){
+	private CronTrigger checkCron(String cron) {
 		try {
 			return new CronTrigger(cron);
-		}catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;

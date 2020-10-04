@@ -39,82 +39,78 @@ import java.util.Date;
  */
 public class CodeExecutor {
 
-    SmartLogger log = SmartLoggerFactory.getLogger(getClass());
+	SmartLogger log = SmartLoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private CustomHistoryDao customHistoryDao;
+	@Autowired
+	private CustomHistoryDao customHistoryDao;
 
-    @Autowired
-    private CustomDatasourceDao customDatasourceDao;
+	@Autowired
+	private CustomDatasourceDao customDatasourceDao;
 
-    @Autowired
-    private CustomAlarmEventDao customAlarmEventDao;
+	@Autowired
+	private CustomAlarmEventDao customAlarmEventDao;
 
-    @Autowired
-    private CustomDataSourceService customDataSourceService;
+	@Autowired
+	private CustomDataSourceService customDataSourceService;
 
-    @Autowired
-    private DemoEngine demoEngine;
+	@Autowired
+	private DemoEngine demoEngine;
 
+	public void executeCode(CustomEngine customEngine) {
+		CustomHistory customHistory = beforeStart(customEngine.getId());
 
-    public void executeCode(CustomEngine customEngine) {
-        CustomHistory customHistory = beforeStart(customEngine.getId());
+		CustomDataSource customDataSource = customDatasourceDao.selectByPrimaryKey(customEngine.getDatasourceId());
+		BaseDataSource baseDataSource = customDataSourceService.properties2Model(customDataSource);
 
-        CustomDataSource customDataSource = customDatasourceDao.selectByPrimaryKey(customEngine.getDatasourceId());
-        BaseDataSource baseDataSource = customDataSourceService.properties2Model(customDataSource);
+		if (baseDataSource instanceof MysqlDataSource) {
+			MysqlDataSource mysqlDataSource = (MysqlDataSource) baseDataSource;
 
-        if (baseDataSource instanceof MysqlDataSource) {
-            MysqlDataSource mysqlDataSource = (MysqlDataSource) baseDataSource;
+			SingleDataSource singleDataSource = new SingleDataSource("com.mysql.jdbc.Driver", mysqlDataSource.getUrl(),
+					mysqlDataSource.getUsername(), mysqlDataSource.getPassword());
 
-            SingleDataSource singleDataSource = new SingleDataSource("com.mysql.jdbc.Driver",mysqlDataSource.getUrl(),
-                    mysqlDataSource.getUsername(), mysqlDataSource.getPassword());
+			JdbcTemplate jdbcTemplate = new JdbcTemplate(singleDataSource);
 
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(singleDataSource);
+			// demoEngine
+			demoEngine.executeCode(jdbcTemplate, customEngine);
 
-            //demoEngine
-            demoEngine.executeCode(jdbcTemplate, customEngine);
+			try {
+				singleDataSource.close();
+			} catch (IOException e) {
+				log.error("singleDataSource close fail", e);
+			}
+		}
 
-            try {
-                singleDataSource.close();
-            } catch (IOException e) {
-                log.error("singleDataSource close fail",e);
-            }
-        }
+		afterEnd(customHistory);
+	}
 
-        afterEnd(customHistory);
-    }
+	private CustomHistory beforeStart(Long customEngineId) {
+		CustomHistory customHistory = new CustomHistory();
+		customHistory.setCustomEngineId(customEngineId);
+		customHistory.setState(1);
+		customHistory.setStartTime(new Date());
+		customHistory.preInsert();
+		customHistoryDao.insertSelective(customHistory);
 
+		return customHistory;
+	}
 
-    private CustomHistory beforeStart(Integer customEngineId) {
-        CustomHistory customHistory = new CustomHistory();
-        customHistory.setCustomEngineId(customEngineId);
-        customHistory.setState(1);
-        customHistory.setStartTime(new Date());
-        customHistory.preInsert();
-        customHistoryDao.insertSelective(customHistory);
+	private void afterEnd(CustomHistory customHistory) {
+		customHistory.setEndTime(new Date());
+		customHistory.setCostTime(customHistory.getEndTime().getTime() - customHistory.getStartTime().getTime());
+		customHistory.preUpdate();
+		customHistory.setState(5);
+		customHistoryDao.updateByPrimaryKeySelective(customHistory);
+	}
 
+	public void saveAlarmEvent(CustomEngine customEngine, String message) {
+		CustomAlarmEvent customAlarmEvent = new CustomAlarmEvent();
+		customAlarmEvent.setCustomEngineId(customEngine.getId());
+		customAlarmEvent.setNotifyGroupIds(customEngine.getNotifyGroupIds());
+		customAlarmEvent.setMessage(message);
+		customAlarmEvent.preInsert();
+		customAlarmEventDao.insertSelective(customAlarmEvent);
 
-        return customHistory;
-    }
-
-    private void afterEnd(CustomHistory customHistory) {
-        customHistory.setEndTime(new Date());
-        customHistory.setCostTime(customHistory.getEndTime().getTime() - customHistory.getStartTime().getTime());
-        customHistory.preUpdate();
-        customHistory.setState(5);
-        customHistoryDao.updateByPrimaryKeySelective(customHistory);
-    }
-
-    public void saveAlarmEvent(CustomEngine customEngine, String message) {
-        CustomAlarmEvent customAlarmEvent = new CustomAlarmEvent();
-        customAlarmEvent.setCustomEngineId(customEngine.getId());
-        customAlarmEvent.setNotifyGroupIds(customEngine.getNotifyGroupIds());
-        customAlarmEvent.setMessage(message);
-        customAlarmEvent.preInsert();
-        customAlarmEventDao.insertSelective(customAlarmEvent);
-
-        //TODO semd message
-    }
-
+		// TODO semd message
+	}
 
 }

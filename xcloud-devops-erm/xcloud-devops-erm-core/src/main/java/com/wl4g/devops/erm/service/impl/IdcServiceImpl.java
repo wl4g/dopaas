@@ -71,12 +71,12 @@ public class IdcServiceImpl implements IdcService {
 		idcDao.updateByPrimaryKeySelective(idc);
 	}
 
-	public Idc detail(Integer id) {
+	public Idc detail(Long id) {
 		Assert.notNull(id, "id is null");
 		return idcDao.selectByPrimaryKey(id);
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		Idc idc = new Idc();
 		idc.setId(id);

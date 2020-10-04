@@ -31,7 +31,7 @@ public interface DockerClusterService {
 
 	void save(DockerCluster dockerCluster);
 
-	DockerCluster detail(Integer id);
+	DockerCluster detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 }
