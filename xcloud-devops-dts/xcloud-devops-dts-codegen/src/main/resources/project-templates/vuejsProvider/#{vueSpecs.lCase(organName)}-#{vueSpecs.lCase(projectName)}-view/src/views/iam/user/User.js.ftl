@@ -164,14 +164,19 @@ export default {
             const that = this;
             const loginAccount = that.saveForm.userName;
             new IAMCore({
-                deploy: {
-                    // e.g. http://127.0.0.1:14040/iam-server
-                    // e.g. http://localhost:14040/iam-server
-                    // e.g. http://iam.wl4g.debug/iam-server
-                    //baseUri: "http://localhost:14040/iam-server",
-                    defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+            	// refer: https://github.com/wl4g/xcloud-iam/blob/master/xcloud-iam-security/src/main/resources/iam-jssdk-webapps/example.html
+<#if vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
+            	deploy: {
+                    defaultTwoDomain: "${entryAppName}",
+                    defaultServerPort: ${entryAppPort},
+                    defaultContextPath: "/${entryAppName}"
+                },
+<#elseif vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
+            	deploy: {
+                    defaultTwoDomain: "iam",
                     defaultContextPath: "/iam-server"
                 },
+</#if>
             }).safeCheck(loginAccount, function (res) {
                 if (res.data && res.data.checkGeneric && res.data.checkGeneric.secretKey) {
                     let secret = res.data.checkGeneric.secretKey;

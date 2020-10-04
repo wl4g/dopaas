@@ -36,14 +36,19 @@ export default {
         initIamJssdk() {
             var that = this;
             new IAMUi().initUI(document.getElementById("iam_container"), {
-                deploy: {
-                    // e.g. http://127.0.0.1:14040/iam-server
-                    // e.g. http://localhost:14040/iam-server
-                    // e.g. http://iam.wl4g.debug/iam-server
-                    //baseUri: "http://localhost:14040/iam-server",
-                    defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+            	// refer: https://github.com/wl4g/xcloud-iam/blob/master/xcloud-iam-security/src/main/resources/iam-jssdk-webapps/example.html
+<#if vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
+            	deploy: {
+                    defaultTwoDomain: "${entryAppName}",
+                    defaultServerPort: ${entryAppPort},
+                    defaultContextPath: "/${entryAppName}"
+                },
+<#elseif vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
+            	deploy: {
+                    defaultTwoDomain: "iam",
                     defaultContextPath: "/iam-server"
                 },
+</#if>
                 account: {
                     onSuccess: function (principal, data) {
                         console.log("Login successful of: " + principal);
