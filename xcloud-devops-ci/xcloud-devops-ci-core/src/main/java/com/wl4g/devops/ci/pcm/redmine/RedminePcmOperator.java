@@ -158,36 +158,36 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		MediaType type = MediaType.parseMediaType("application/json;charset=UTF-8");
 		httpHeaders.setContentType(type);
-		//MultiValueMap<String, Object> map=new LinkedMultiValueMap<>();
+		// MultiValueMap<String, Object> map=new LinkedMultiValueMap<>();
 		HashMap<String, Object> map = new HashMap<>();
 
-		//Necessary parameters
-		map.put("project_id", pipeHistoryPcm.getxProjectId());
-		map.put("subject", pipeHistoryPcm.getxSubject());
-		map.put("assigned_to_id", pipeHistoryPcm.getxAssignTo());
+		// Necessary parameters
+		map.put("project_id", pipeHistoryPcm.getXProjectId());
+		map.put("subject", pipeHistoryPcm.getXSubject());
+		map.put("assigned_to_id", pipeHistoryPcm.getXAssignTo());
 
-		//Not Necessary parameters
-		if(nonNull(pipeHistoryPcm.getxTracker())){
-			map.put("tracker_id", pipeHistoryPcm.getxTracker());
+		// Not Necessary parameters
+		if (nonNull(pipeHistoryPcm.getXTracker())) {
+			map.put("tracker_id", pipeHistoryPcm.getXTracker());
 		}
-		if(nonNull(pipeHistoryPcm.getxStatus())){
-			map.put("status_id", pipeHistoryPcm.getxStatus());
+		if (nonNull(pipeHistoryPcm.getXStatus())) {
+			map.put("status_id", pipeHistoryPcm.getXStatus());
 		}
-		if(nonNull(pipeHistoryPcm.getxPriority())){
-			map.put("priority_id", pipeHistoryPcm.getxPriority());
+		if (nonNull(pipeHistoryPcm.getXPriority())) {
+			map.put("priority_id", pipeHistoryPcm.getXPriority());
 		}
-		if(nonNull(pipeHistoryPcm.getxDescription())){
-			map.put("description", pipeHistoryPcm.getxDescription());
+		if (nonNull(pipeHistoryPcm.getXDescription())) {
+			map.put("description", pipeHistoryPcm.getXDescription());
 		}
-		if(nonNull(pipeHistoryPcm.getxStartDate())){
-			map.put("start_date", pipeHistoryPcm.getxStartDate());
+		if (nonNull(pipeHistoryPcm.getXStartDate())) {
+			map.put("start_date", pipeHistoryPcm.getXStartDate());
 		}
-		if(nonNull(pipeHistoryPcm.getxExpectedTime())){
-			map.put("estimated_hours", pipeHistoryPcm.getxExpectedTime());
+		if (nonNull(pipeHistoryPcm.getXExpectedTime())) {
+			map.put("estimated_hours", pipeHistoryPcm.getXExpectedTime());
 		}
 
 		HashMap<String, Object> map2 = new HashMap<>();
-		map2.put("issue",map);
+		map2.put("issue", map);
 
 		HttpEntity<String> objectHttpEntity = new HttpEntity<>(JacksonUtils.toJSONString(map2), httpHeaders);
 
@@ -195,7 +195,6 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 		String result = responseResultResponseEntity.getBody();
 		log.info(result);
 	}
-
 
 	private void check(Pcm pcm) {
 		Assert.notNull(pcm, "pcm is null");
