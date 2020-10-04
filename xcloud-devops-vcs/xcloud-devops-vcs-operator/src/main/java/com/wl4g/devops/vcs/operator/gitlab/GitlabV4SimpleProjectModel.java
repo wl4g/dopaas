@@ -32,7 +32,7 @@ import java.util.List;
 public class GitlabV4SimpleProjectModel implements VcsProjectModel, Serializable {
 	private static final long serialVersionUID = 3384209918335868080L;
 
-	private int id;
+	private Long id;
 	private String description;
 	private String name;
 	private String name_with_namespace;
@@ -51,11 +51,11 @@ public class GitlabV4SimpleProjectModel implements VcsProjectModel, Serializable
 	private Date last_activity_at;
 	private Namespace namespace;
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 

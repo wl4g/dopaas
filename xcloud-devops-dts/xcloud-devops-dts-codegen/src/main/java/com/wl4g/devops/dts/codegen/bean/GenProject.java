@@ -50,7 +50,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class GenProject extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
-	private Integer datasourceId;
+	private Long datasourceId;
 
 	@RenderProperty(propertyName = GEN_PROJECT_NAME)
 	private String projectName;
@@ -99,7 +99,7 @@ public class GenProject extends BaseBean {
 		return super.getRemark();
 	}
 
-	public GenProject withDatasourceId(Integer datasourceId) {
+	public GenProject withDatasourceId(Long datasourceId) {
 		setDatasourceId(datasourceId);
 		return this;
 	}

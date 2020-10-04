@@ -213,7 +213,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	}
 
 	@Override
-	public ReadResult logfile(Integer taskHisId, Long startPos, Integer size) {
+	public ReadResult logfile(Long taskHisId, Long startPos, Integer size) {
 		if (isNull(startPos)) {
 			startPos = 0l;
 		}
@@ -226,7 +226,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	}
 
 	@Override
-	public ReadResult logDetailFile(Integer taskHisId, Integer instanceId, Long startPos, Integer size) {
+	public ReadResult logDetailFile(Long taskHisId, Long instanceId, Long startPos, Integer size) {
 		if (isNull(startPos)) {
 			startPos = 0l;
 		}
@@ -244,7 +244,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param taskId
 	 * @param provider
 	 */
-	private void doExecutePipeline(Integer taskId, PipelineProvider provider) throws Exception {
+	private void doExecutePipeline(Long taskId, PipelineProvider provider) throws Exception {
 		notNull(taskId, "Pipeline taskId must not be null");
 		notNull(provider, "Pipeline provider must not be null");
 		log.info("Starting pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
@@ -321,7 +321,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param taskId
 	 * @param provider
 	 */
-	protected void prePipelineExecute(Integer taskId) {
+	protected void prePipelineExecute(Long taskId) {
 		// For example, after the test database is imported into the production
 		// database, because the primary key of the ci_task table is growing
 		// automatically, there may be confusion (the current sequence value is
@@ -344,7 +344,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param taskId
 	 * @param provider
 	 */
-	protected void postPipelineRunSuccess(Integer taskId, PipelineProvider provider) {
+	protected void postPipelineRunSuccess(Long taskId, PipelineProvider provider) {
 		List<PipelineHistoryInstance> pipelineHistoryInstances = pipelineHistoryInstanceDao.selectByPipeHistoryId(taskId);
 		boolean allSuccess = true;
 		boolean allFail = true;
@@ -382,7 +382,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param provider
 	 * @param e
 	 */
-	protected void postPipelineRunFailure(Integer taskId, PipelineProvider provider, Throwable e) {
+	protected void postPipelineRunFailure(Long taskId, PipelineProvider provider, Throwable e) {
 		// Failure execute job notification.
 		notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId, "Fail", provider);
 	}
@@ -393,15 +393,15 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param contactGroupId
 	 * @param message
 	 */
-	protected void notificationResult(String contactGroupIds, Integer taskId, String result, PipelineProvider provider) {
+	protected void notificationResult(String contactGroupIds, Long taskId, String result, PipelineProvider provider) {
 		try {
 			String[] split = contactGroupIds.split(",");
-			List<Integer> ints = new ArrayList<>();
+			List<Long> ints = new ArrayList<>();
 			for (int i = 0; i < split.length; i++) {
 				if (StringUtils.isBlank(split[i])) {
 					continue;
 				}
-				ints.add(Integer.parseInt(split[i]));
+				ints.add(Long.parseLong(split[i]));
 			}
 			if (ints.size() <= 0) {
 				return;
@@ -477,7 +477,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		setPipeStepBuildingRef(pipeStepBuilding, project.getId());
 
 		AppEnvironment environment = appEnvironmentDao.selectByClusterIdAndEnv(appCluster.getId(), pipeline.getEnvironment());
-		Integer repositoryId = environment.getRepositoryId();
+		Long repositoryId = environment.getRepositoryId();
 		if (nonNull(repositoryId) && repositoryId != -1) {
 			DockerRepository dockerRepository = dockerRepositoryDao.selectByPrimaryKey(repositoryId);
 			environment.setDockerRepository(dockerRepository);
@@ -504,7 +504,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param taskId
 	 * @param provider
 	 */
-	protected void doRollbackPipeline(Integer taskId, PipelineProvider provider) {
+	protected void doRollbackPipeline(Long taskId, PipelineProvider provider) {
 		notNull(taskId, "TaskId must not be null.");
 		log.info("Starting rollback pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 
@@ -544,7 +544,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		});
 	}
 
-	private void setPipeStepBuildingRef(PipeStepBuilding pipeStepBuilding, Integer projectId) {
+	private void setPipeStepBuildingRef(PipeStepBuilding pipeStepBuilding, Long projectId) {
 		List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuilding.getPipeStepBuildingProjects();
 		for (PipeStepBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
 			if (projectId.equals(pipeStepBuildingProject.getProjectId())) {

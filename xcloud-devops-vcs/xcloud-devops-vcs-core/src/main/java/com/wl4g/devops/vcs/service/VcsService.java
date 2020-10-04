@@ -27,31 +27,31 @@ import java.util.List;
  */
 public interface VcsService {
 
-    PageModel list(PageModel pm, String name, String provider, Integer authType);
+	PageModel list(PageModel pm, String name, String provider, Integer authType);
 
     void save(Vcs vcs);
 
-    void del(Integer id);
+    void del(Long id);
 
-    Vcs detail(Integer id);
+    Vcs detail(Long id);
 
     List<Vcs> all();
 
-    List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Integer vcsId, String projectName);
+    List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Long vcsId, String projectName);
 
-    List<VcsGroupModel> getGroups(Integer id, String groupName);
+    List<VcsGroupModel> getGroups(Long id, String groupName);
 
-    List<VcsProjectModel> getProjects(PageModel pm, Integer vcsId, Integer groupId, String projectName);
+    List<VcsProjectModel> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName);
 
-    VcsProjectModel getProjectById(Integer vcsId, Integer projectId);
+    VcsProjectModel getProjectById(Long vcsId, Long projectId);
 
-    List<VcsBranchModel> getBranchs(Integer vcsId, Integer projectId);
+    List<VcsBranchModel> getBranchs(Long vcsId, Long projectId);
 
-    List<VcsTagModel> getTags(Integer vcsId, Integer projectId);
+    List<VcsTagModel> getTags(Long vcsId, Long projectId);
 
-    VcsBranchModel createBranch(Integer vcsId, Integer projectId, String branch, String ref);
+    VcsBranchModel createBranch(Long vcsId, Long projectId, String branch, String ref);
 
-    VcsTagModel createTag(Integer vcsId, Integer projectId, String tag, String ref, String message, String releaseDescription);
+    VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription);
 
 
 }

@@ -18,7 +18,6 @@ package com.wl4g.devops.ci.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.ci.service.OrchestrationHistoryService;
-import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,13 +35,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrchestrationHistoryController extends BaseController {
 
 	@Autowired
-	private PipelineHistoryService pipelineHistoryService;
-
-	@Autowired
 	private OrchestrationHistoryService orchestrationHistoryService;
 
 	/**
 	 * List
+	 * 
 	 * @param groupName
 	 * @param projectName
 	 * @param branchName
@@ -50,7 +47,7 @@ public class OrchestrationHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm,  String runId) {
+	public RespBase<?> list(PageModel pm, String runId) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = orchestrationHistoryService.list(pm, runId);
 		resp.setData(list);

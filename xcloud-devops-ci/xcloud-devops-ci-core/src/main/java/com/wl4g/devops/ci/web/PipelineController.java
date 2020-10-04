@@ -100,7 +100,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		log.info("into TaskController.detail prarms::" + "id = {} ", id);
 		Assert.notNull(id, "id can not be null");
 		RespBase<Object> resp = RespBase.create();
@@ -115,7 +115,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		Assert.notNull(id, "id can not be null");
 		RespBase<Object> resp = RespBase.create();
 		pipelineService.del(id);
@@ -139,7 +139,7 @@ public class PipelineController extends BaseController {
 	 * @param appClusterId
 	 */
 	@RequestMapping(value = "/getListByAppClusterId")
-	public RespBase<?> getListByAppClusterId(Integer clusterId) {
+	public RespBase<?> getListByAppClusterId(Long clusterId) {
 		notNullOf(clusterId, "clusterId");
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(pipelineService.getByClusterId(clusterId));
@@ -151,31 +151,16 @@ public class PipelineController extends BaseController {
 	 *
 	 * @param taskId
 	 */
-	/*@RequestMapping(value = "/create")
-	public RespBase<?> create(Integer taskId, String trackId, String trackType, String remark, String annex) {
-		RespBase<Object> resp = RespBase.create();
-		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
-		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType, annex),pipelineModel);
-		return resp;
-	}*/
-
-	/**
-	 * create Task History and run Task
-	 *
-	 * @param taskId
-	 */
 	@RequestMapping(value = "/create")
 	public RespBase<?> create(NewParameter newParameter) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		PipelineModel pipelineModel = flowManager.buildPipeline(newParameter.getPipeId());
-		pipeliner.runPipeline(newParameter,pipelineModel);
+		pipeliner.runPipeline(newParameter, pipelineModel);
 		return resp;
 	}
 
-
-
 	@RequestMapping(value = "/getPipeStepBuilding")
-	public RespBase<?> getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType) {
+	public RespBase<?> getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) {
 		Assert2.notNullOf(clusterId, "clusterId");
 		RespBase<Object> resp = RespBase.create();
 		PipeStepBuilding pipeStepBuilding = pipelineService.getPipeStepBuilding(clusterId, pipeId, refType);

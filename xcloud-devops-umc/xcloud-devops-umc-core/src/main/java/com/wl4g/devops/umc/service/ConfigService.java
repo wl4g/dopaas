@@ -24,12 +24,12 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface ConfigService {
 
-	PageModel list(PageModel pm, Integer templateId, Integer contactGroupId);
+	PageModel list(PageModel pm, Long templateId, Long contactGroupId);
 
 	void save(AlarmConfig alarmConfig);
 
-	void del(Integer id);
+	void del(Long id);
 
-	AlarmConfig detail(Integer id);
+	AlarmConfig detail(Long id);
 
 }

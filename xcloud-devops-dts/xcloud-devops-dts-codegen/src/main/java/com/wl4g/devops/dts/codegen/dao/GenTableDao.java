@@ -23,21 +23,21 @@ import java.util.List;
 
 public interface GenTableDao {
 
-	int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Long id);
 
 	int insert(GenTable record);
 
 	int insertSelective(GenTable record);
 
-	GenTable selectByPrimaryKey(Integer id);
+	GenTable selectByPrimaryKey(Long id);
 
-	List<GenTable> selectByProjectId(Integer projectId);
+	List<GenTable> selectByProjectId(Long projectId);
 
-	Integer countByProjectIdAndTableName(@Param("projectId") Integer projectId, @Param("tableName") String tableName);
+	Long countByProjectIdAndTableName(@Param("projectId") Long projectId, @Param("tableName") String tableName);
 
 	int updateByPrimaryKeySelective(GenTable record);
 
 	int updateByPrimaryKey(GenTable record);
 
-	List<GenDataSource> list(@Param("tableName") String tableName, @Param("projectId") Integer projectId);
+	List<GenDataSource> list(@Param("tableName") String tableName, @Param("projectId") Long projectId);
 }

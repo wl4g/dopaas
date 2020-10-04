@@ -46,7 +46,7 @@ public class ConfigServiceImpl implements ConfigService {
 	private AppInstanceDao appInstanceDao;
 
 	@Override
-	public PageModel list(PageModel pm, Integer templateId, Integer contactGroupId) {
+	public PageModel list(PageModel pm, Long templateId, Long contactGroupId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(alarmConfigDao.list(templateId, contactGroupId));
 		return pm;
@@ -64,7 +64,7 @@ public class ConfigServiceImpl implements ConfigService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		AlarmConfig alarmConfig = new AlarmConfig();
 		alarmConfig.setId(id);
 		alarmConfig.setDelFlag(BaseBean.DEL_FLAG_DELETE);
@@ -73,7 +73,7 @@ public class ConfigServiceImpl implements ConfigService {
 	}
 
 	@Override
-	public AlarmConfig detail(Integer id) {
+	public AlarmConfig detail(Long id) {
 		Assert.notNull(id, "id is null");
 		AlarmConfig alarmConfig = alarmConfigDao.selectByPrimaryKey(id);
 		Assert.notNull(alarmConfig, "not found alarmConfig");
@@ -85,4 +85,5 @@ public class ConfigServiceImpl implements ConfigService {
 		alarmConfig.setEnvType(appInstance.getEnvType());
 		return alarmConfig;
 	}
+
 }

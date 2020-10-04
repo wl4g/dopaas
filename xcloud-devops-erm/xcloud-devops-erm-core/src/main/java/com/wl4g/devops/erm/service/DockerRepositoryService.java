@@ -35,9 +35,9 @@ public interface DockerRepositoryService {
 
 	void save(DockerRepository dockerRepository);
 
-	DockerRepository detail(Integer id);
+	DockerRepository detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
-	List<RepositoryProject> getRepositoryProjects(Integer id, String address,String name) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException;
+	List<RepositoryProject> getRepositoryProjects(Long id, String address,String name) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException;
 }

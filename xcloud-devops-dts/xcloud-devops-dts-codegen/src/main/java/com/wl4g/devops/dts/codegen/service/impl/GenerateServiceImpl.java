@@ -92,7 +92,7 @@ public class GenerateServiceImpl implements GenerateService {
 	protected GenTableColumnDao genColumnDao;
 
 	@Override
-	public List<TableMetadata> loadTables(Integer projectId) {
+	public List<TableMetadata> loadTables(Long projectId) {
 		notNullOf(projectId, "projectId");
 		GenProject genProject = genProjectDao.selectByPrimaryKey(projectId);
 		notNullOf(genProject, "genProject");
@@ -117,7 +117,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public RespBase<Object> loadMetadata(Integer projectId, String tableName) {
+	public RespBase<Object> loadMetadata(Long projectId, String tableName) {
 		RespBase<Object> resp = RespBase.create();
 		// Gets gen project
 		notNullOf(projectId, "projectId");
@@ -266,14 +266,14 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public PageModel page(PageModel pm, String tableName, Integer projectId) {
+	public PageModel page(PageModel pm, String tableName, Long projectId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(genTableDao.list(tableName, projectId));
 		return pm;
 	}
 
 	@Override
-	public RespBase<Object> detail(Integer tableId) {
+	public RespBase<Object> detail(Long tableId) {
 		RespBase<Object> resp = RespBase.create();
 		notNullOf(tableId, "tableId");
 
@@ -350,7 +350,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	private void insert(GenTable genTable) {
-		Integer count = genTableDao.countByProjectIdAndTableName(genTable.getProjectId(), genTable.getTableName());
+		Long count = genTableDao.countByProjectIdAndTableName(genTable.getProjectId(), genTable.getTableName());
 		if (nonNull(count)) {
 			Assert2.isTrue(count <= 0, "Cannot add the same table");
 		}
@@ -380,7 +380,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public void delete(Integer id) {
+	public void delete(Long id) {
 		GenTable genTable = new GenTable();
 		genTable.preUpdate();
 		genTable.setId(id);
@@ -389,12 +389,12 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public GeneratedResult generate(Integer tableId) {
+	public GeneratedResult generate(Long tableId) {
 		return engine.execute(new GenericParameter(tableId));
 	}
 
 	@Override
-	public Set<String> getAttrTypes(Integer projectId) {
+	public Set<String> getAttrTypes(Long projectId) {
 		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
 		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
 		if (isNull(providerSet.language())) {
@@ -412,7 +412,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public void setEnable(Integer id, String status) {
+	public void setEnable(Long id, String status) {
 		GenTable genTable = new GenTable();
 		genTable.preUpdate();
 		genTable.setId(id);
@@ -421,7 +421,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public void synchronizeTable(Integer id, boolean focus) {
+	public void synchronizeTable(Long id, boolean focus) {
 		if (focus) {
 			GenTable genTable = genTableDao.selectByPrimaryKey(id);
 			GenTable genTableNew = (GenTable) loadMetadata(genTable.getProjectId(), genTable.getTableName()).getData();

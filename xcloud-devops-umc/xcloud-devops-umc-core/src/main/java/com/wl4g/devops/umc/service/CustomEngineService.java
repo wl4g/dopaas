@@ -26,10 +26,10 @@ public interface CustomEngineService {
 
 	PageModel list(PageModel pm, String name);
 
-	CustomEngine detal(Integer id);
+	CustomEngine detal(Long id);
 
 	void save(CustomEngine customEngine);
 
-	void del(Integer id);
+	void del(Long id);
 
 }

@@ -64,12 +64,12 @@ public class DnsOperationLogServiceImpl implements DnsOperationLogService {
 		dnsOperationLogDao.updateByPrimaryKeySelective(dnsOperationLog);
 	}
 
-	public DnsOperationLog detail(Integer id) {
+	public DnsOperationLog detail(Long id) {
 		Assert.notNull(id, "id is null");
 		return dnsOperationLogDao.selectByPrimaryKey(id);
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		DnsOperationLog dnsOperationLog = new DnsOperationLog();
 		dnsOperationLog.setId(id);

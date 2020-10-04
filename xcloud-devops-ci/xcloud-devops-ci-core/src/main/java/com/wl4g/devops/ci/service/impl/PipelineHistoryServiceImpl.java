@@ -66,7 +66,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Override
 	public PipelineHistory createPipelineHistory(NewParameter newParameter) {
 		Assert2.notNullOf(newParameter, "newParameter");
-		Integer pipeId = newParameter.getPipeId();
+		Long pipeId = newParameter.getPipeId();
 		String traceId = newParameter.getTrackId();
 		String traceType = newParameter.getTrackType();
 		String remark = newParameter.getRemark();
@@ -97,7 +97,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 
 	@Override
 	public PipelineHistory createPipelineHistory(HookParameter hookParameter) {
-		Integer pipeId = hookParameter.getPipeId();
+		Long pipeId = hookParameter.getPipeId();
 		String remark = hookParameter.getRemark();
 		NewParameter newParameter = new NewParameter(pipeId, remark, null, null, null);
 
@@ -124,14 +124,14 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Override
 	public PipelineHistory createPipelineHistory(RollbackParameter rollbackParameter) {
 		Assert2.notNullOf(rollbackParameter, "rollbackParameter");
-		Integer pipeId = rollbackParameter.getPipeId();
+		Long pipeId = rollbackParameter.getPipeId();
 		Assert2.notNullOf(pipeId, "pipeId");
 		String remark = rollbackParameter.getRemark();
 
 		PipelineHistory oldPipelineHistory = pipelineHistoryDao.selectByPrimaryKey(pipeId);
 		Assert2.notNullOf(oldPipelineHistory, "pipelineHistory");
 
-		Integer oldPipeId = oldPipelineHistory.getPipeId();
+		Long oldPipeId = oldPipelineHistory.getPipeId();
 		Pipeline pipeline = pipelineDao.selectByPrimaryKey(oldPipeId);
 		Assert2.notNullOf(pipeline, "pipeline");
 
@@ -150,7 +150,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 
 	}
 
-	private void createPipeHistoryInstance(Integer pipeId, Integer pipeHisId) {
+	private void createPipeHistoryInstance(Long pipeId, Long pipeHisId) {
 		List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(pipeId);
 		if (!CollectionUtils.isEmpty(pipelineInstances)) {
 			for (PipelineInstance pipelineInstance : pipelineInstances) {
@@ -165,7 +165,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	}
 
 	@Override
-	public void updateStatus(int pipeId, int status) {
+	public void updateStatus(Long pipeId, int status) {
 		PipelineHistory pipelineHistory = new PipelineHistory();
 		pipelineHistory.preUpdate();
 		pipelineHistory.setId(pipeId);
@@ -174,7 +174,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	}
 
 	@Override
-	public void updateStatusAndResultAndSha(int pipeId, int status, String sha) {
+	public void updateStatusAndResultAndSha(Long pipeId, int status, String sha) {
 		PipelineHistory pipelineHistory = new PipelineHistory();
 		pipelineHistory.preUpdate();
 		pipelineHistory.setId(pipeId);
@@ -184,7 +184,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	}
 
 	@Override
-	public void stopByPipeHisId(Integer pipeHisId) {
+	public void stopByPipeHisId(Long pipeHisId) {
 		PipelineHistory pipelineHistory = new PipelineHistory();
 		pipelineHistory.preUpdate();
 		pipelineHistory.setId(pipeHisId);
@@ -196,7 +196,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	}
 
 	@Override
-	public void updateCostTime(int taskId, long costTime) {
+	public void updateCostTime(Long taskId, long costTime) {
 		PipelineHistory pipelineHistory = new PipelineHistory();
 		pipelineHistory.preUpdate();
 		pipelineHistory.setId(taskId);
@@ -209,17 +209,17 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 			String providerKind) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterName, environment, startDate,
-				endDate, providerKind,null,null));
+				endDate, providerKind, null, null));
 		return pm;
 	}
 
 	@Override
-	public List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Integer pipeId) {
+	public List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Long pipeId) {
 		return pipelineHistoryInstanceDao.selectByPipeHistoryId(pipeId);
 	}
 
 	@Override
-	public PipelineHistory detail(Integer pipeId) {
+	public PipelineHistory detail(Long pipeId) {
 		PipelineHistory pipelineHistory = pipelineHistoryDao.selectByPrimaryKey(pipeId);
 		List<PipelineHistoryInstance> pipelineHistoryInstances = pipelineHistoryInstanceDao.selectByPipeHistoryId(pipeId);
 		pipelineHistory.setPipelineHistoryInstances(pipelineHistoryInstances);
@@ -227,12 +227,12 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	}
 
 	@Override
-	public PipelineHistory getById(Integer pipeHisId) {
+	public PipelineHistory getById(Long pipeHisId) {
 		return pipelineHistoryDao.selectByPrimaryKey(pipeHisId);
 	}
 
 	@Override
-	public void updatePipeHisInstanceStatus(int pipeInstanceId, int status) {
+	public void updatePipeHisInstanceStatus(Long pipeInstanceId, int status) {
 		PipelineHistoryInstance pipelineHistoryInstance = new PipelineHistoryInstance();
 		pipelineHistoryInstance.preUpdate();
 		pipelineHistoryInstance.setId(pipeInstanceId);

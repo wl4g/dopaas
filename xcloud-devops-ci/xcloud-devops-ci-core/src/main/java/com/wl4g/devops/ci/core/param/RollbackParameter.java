@@ -29,7 +29,7 @@ public class RollbackParameter extends GenericParameter {
 		super();
 	}
 
-	public RollbackParameter(Integer pipeId, String remark) {
+	public RollbackParameter(Long pipeId, String remark) {
 		super(pipeId, remark);
 	}
 

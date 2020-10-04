@@ -48,7 +48,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class GenTable extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
-	private Integer projectId;
+	private Long projectId;
 
 	@RenderProperty(propertyName = GEN_TABLE_NAME)
 	private String tableName;
@@ -93,7 +93,7 @@ public class GenTable extends BaseBean {
 		super();
 	}
 
-	public GenTable withProjectId(Integer projectId) {
+	public GenTable withProjectId(Long projectId) {
 		setProjectId(projectId);
 		return this;
 	}

@@ -23,6 +23,6 @@ import com.wl4g.components.core.bean.ci.PipeHistoryPcm;
  */
 public interface PcmPipelineProvider {
 
-	void createIssues(Integer pcmId, PipeHistoryPcm pipeHistoryPcm);
+	void createIssues(Long pcmId, PipeHistoryPcm pipeHistoryPcm);
 
 }

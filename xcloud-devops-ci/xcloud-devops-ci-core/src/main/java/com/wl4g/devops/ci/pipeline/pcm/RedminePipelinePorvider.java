@@ -30,7 +30,7 @@ public class RedminePipelinePorvider implements PcmPipelineProvider {
 	private PcmService pcmService;
 
 	@Override
-	public void createIssues(Integer pcmId, PipeHistoryPcm pipeHistoryPcm) {
+	public void createIssues(Long pcmId, PipeHistoryPcm pipeHistoryPcm) {
 		pcmService.createIssues(pcmId, pipeHistoryPcm);
 	}
 

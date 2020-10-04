@@ -99,12 +99,12 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 		genDSDao.updateByPrimaryKeySelective(gen);
 	}
 
-	public GenDataSource detail(Integer id) {
+	public GenDataSource detail(Long id) {
 		Assert.notNull(id, "id is null");
 		return genDSDao.selectByPrimaryKey(id);
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		GenDataSource gen = new GenDataSource();
 		gen.setId(id);

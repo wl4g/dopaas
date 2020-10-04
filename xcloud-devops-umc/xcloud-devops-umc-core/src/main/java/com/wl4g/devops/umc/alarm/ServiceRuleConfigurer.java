@@ -66,7 +66,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	}
 
 	@Override
-	public List<AlarmConfig> findAlarmConfig(Integer templateId, String collectAddr) {
+	public List<AlarmConfig> findAlarmConfig(Long templateId, String collectAddr) {
 		return alarmConfigDao.getByCollectAddrAndTemplateId(templateId, collectAddr);
 	}
 
@@ -94,7 +94,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	}
 
 	@Override
-	public List<Contact> getContactByGroupIds(List<Integer> groupIds) {
+	public List<Contact> getContactByGroupIds(List<Long> groupIds) {
 		return contactDao.getContactByGroupIds(groupIds);
 	}
 

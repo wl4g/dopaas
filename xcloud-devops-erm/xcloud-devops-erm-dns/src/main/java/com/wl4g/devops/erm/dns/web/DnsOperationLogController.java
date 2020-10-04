@@ -53,14 +53,14 @@ public class DnsOperationLogController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsOperationLogService.detail(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		dnsOperationLogService.del(id);
 		return resp;

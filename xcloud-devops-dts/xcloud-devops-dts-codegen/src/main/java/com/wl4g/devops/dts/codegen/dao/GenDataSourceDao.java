@@ -22,13 +22,13 @@ import java.util.List;
 
 public interface GenDataSourceDao {
 
-	int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Long id);
 
 	int insert(GenDataSource record);
 
 	int insertSelective(GenDataSource record);
 
-	GenDataSource selectByPrimaryKey(Integer id);
+	GenDataSource selectByPrimaryKey(Long id);
 
 	int updateByPrimaryKeySelective(GenDataSource record);
 

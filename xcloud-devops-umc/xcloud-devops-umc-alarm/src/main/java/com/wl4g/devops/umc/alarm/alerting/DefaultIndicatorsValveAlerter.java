@@ -254,7 +254,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param macthedRules
 	 */
 	protected void postAlarmHandle(List<AlarmMessage> results) {
-		Map<Integer, TemplateContactWrapper> contactMap = new HashMap<>();
+		Map<Long, TemplateContactWrapper> contactMap = new HashMap<>();
 		for (AlarmMessage result : results) {
 			// Check
 			AlarmConfig config = result.getAlarmConfig();

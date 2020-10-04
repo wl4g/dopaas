@@ -45,7 +45,7 @@ import java.util.List;
 @FixMethodOrder(MethodSorters.JVM)
 public class PcmRedmineTests {
 
-	private static final int pcmId = 2;
+	private static final Long pcmId = 2L;
 
 	@Autowired
 	protected PcmDao pcmDao;
@@ -105,7 +105,7 @@ public class PcmRedmineTests {
 
 	}
 
-	private Pcm getPcmKind(Integer PcmId) {
+	private Pcm getPcmKind(Long PcmId) {
 		Pcm pcm = pcmDao.selectByPrimaryKey(PcmId);
 		Assert2.notNullOf(pcm, "pcm");
 		Assert.hasText(pcm.getProviderKind(), "provide kind is null");

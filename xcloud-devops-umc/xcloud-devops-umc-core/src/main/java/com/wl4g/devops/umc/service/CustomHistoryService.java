@@ -26,10 +26,10 @@ public interface CustomHistoryService {
 
 	PageModel list(PageModel pm, String name);
 
-	CustomHistory detal(Integer id);
+	CustomHistory detal(Long id);
 
 	void save(CustomHistory customDatasource);
 
-	void del(Integer id);
+	void del(Long id);
 
 }

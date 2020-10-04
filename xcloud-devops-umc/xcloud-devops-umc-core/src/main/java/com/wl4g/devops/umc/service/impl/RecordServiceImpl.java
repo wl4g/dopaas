@@ -60,7 +60,7 @@ public class RecordServiceImpl implements RecordService {
 	}
 
 	@Override
-	public AlarmRecord detail(Integer id) {
+	public AlarmRecord detail(Long id) {
 		Assert.notNull(id, "id is null");
 		AlarmRecord alarmRecord = alarmRecordDao.selectByPrimaryKey(id);
 		Assert.notNull(alarmRecord, "alarmRecord is null");

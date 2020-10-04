@@ -30,8 +30,8 @@ public interface GenProjectService {
 
 	void save(GenProject project);
 
-	GenProject detail(Integer id);
+	GenProject detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
 }

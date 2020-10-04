@@ -86,7 +86,7 @@ public class PipelineServiceImpl implements PipelineService {
 	@Override
 	public PageModel list(PageModel pm, String pipeName, String providerKind, String environment) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment,null));
+		pm.setRecords(pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null));
 		return pm;
 	}
 
@@ -100,7 +100,7 @@ public class PipelineServiceImpl implements PipelineService {
 	}
 
 	@Override
-	public Pipeline detail(Integer id) {
+	public Pipeline detail(Long id) {
 		Assert2.notNullOf(id, "id");
 		// Pipeline
 		Pipeline pipeline = pipelineDao.selectByPrimaryKey(id);
@@ -109,7 +109,7 @@ public class PipelineServiceImpl implements PipelineService {
 		pipeline.setPipeStepDeploy(pipeStepDeploy);
 		// Pipeline Instance
 		List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(id);
-		Integer[] instanceIds = new Integer[pipelineInstances.size()];
+		Long[] instanceIds = new Long[pipelineInstances.size()];
 		for (int i = 0; i < pipelineInstances.size(); i++) {
 			instanceIds[i] = pipelineInstances.get(i).getInstanceId();
 		}
@@ -140,7 +140,7 @@ public class PipelineServiceImpl implements PipelineService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		Pipeline pipeline = new Pipeline();
 		pipeline.setId(id);
 		pipeline.setDelFlag(BaseBean.DEL_FLAG_DELETE);
@@ -148,7 +148,7 @@ public class PipelineServiceImpl implements PipelineService {
 	}
 
 	@Override
-	public List<Pipeline> getByClusterId(Integer clusterId) {
+	public List<Pipeline> getByClusterId(Long clusterId) {
 		return pipelineDao.selectByClusterId(clusterId);
 	}
 
@@ -158,7 +158,7 @@ public class PipelineServiceImpl implements PipelineService {
 		pipeline.preInsert(getRequestOrganizationCode());
 		pipelineDao.insertSelective(pipeline);
 		// Insert PipeInstance
-		Integer[] instanceIds = pipeline.getInstanceIds();
+		Long[] instanceIds = pipeline.getInstanceIds();
 
 		PipeStepDeploy pipeStepDeploy = pipeline.getPipeStepDeploy();
 		if (isNull(pipeStepDeploy)) {
@@ -170,7 +170,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 		if (nonNull(instanceIds) && instanceIds.length > 0) {
 			List<PipelineInstance> pipelineInstances = new ArrayList<>();
-			for (Integer i : instanceIds) {
+			for (Long i : instanceIds) {
 				PipelineInstance pipelineInstance = new PipelineInstance();
 				pipelineInstance.preInsert();
 				pipelineInstance.setDeployId(pipeStepDeploy.getId());
@@ -246,11 +246,11 @@ public class PipelineServiceImpl implements PipelineService {
 		}
 
 		// Update PipeInstance
-		Integer[] instanceIds = pipeline.getInstanceIds();
+		Long[] instanceIds = pipeline.getInstanceIds();
 		pipelineInstanceDao.deleteByPipeId(pipeline.getId());
 		if (nonNull(instanceIds)) {
 			List<PipelineInstance> pipelineInstances = new ArrayList<>();
-			for (Integer i : instanceIds) {
+			for (Long i : instanceIds) {
 				PipelineInstance pipelineInstance = new PipelineInstance();
 				pipelineInstance.preInsert();
 				pipelineInstance.setDeployId(pipeStepDeploy.getId());
@@ -312,7 +312,7 @@ public class PipelineServiceImpl implements PipelineService {
 	}
 
 	@Override
-	public PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType) {
+	public PipeStepBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) {
 		Project project = projectDao.getByAppClusterId(clusterId);
 		Assert2.notNullOf(project, "project");
 		PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeId);
@@ -361,7 +361,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public List<Pipeline> getForSelect(String environment) {
-		return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment,null);
+		return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment, null);
 	}
 
 	@Override
@@ -373,19 +373,19 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public void saveClusterExtension(ClusterExtension clusterExtension) {
-		Assert2.notNull(clusterExtension,"clusterExtension");
+		Assert2.notNull(clusterExtension, "clusterExtension");
 		ClusterExtension clusterExtensionDb = clusterExtensionDao.selectByClusterId(clusterExtension.getClusterId());
-		if(Objects.nonNull(clusterExtensionDb)){//update
+		if (Objects.nonNull(clusterExtensionDb)) {// update
 			clusterExtensionDb.preUpdate();
 			clusterExtensionDao.updateByPrimaryKeySelective(clusterExtension);
-		}else{//insert
+		} else {// insert
 			clusterExtension.preInsert();
 			clusterExtensionDao.insertSelective(clusterExtension);
 		}
 	}
 
 	private PipeStepBuildingProject getPipeStepBuildingProject(List<PipeStepBuildingProject> pipeStepBuildingProjects,
-															   Integer projectId) {
+			Long projectId) {
 		if (isEmpty(pipeStepBuildingProjects) || isNull(projectId)) {
 			return null;
 		}

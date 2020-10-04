@@ -115,7 +115,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	protected abstract HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials);
 
 	@Override
-	public <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, int projectId) {
+	public <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, Long projectId) {
 		notNull(credentials, "Get remote branchs credentials can't is null.");
 		isTrue(projectId > 0, "Get remote branchs must projectId >= 0");
 		if (log.isInfoEnabled()) {
@@ -125,7 +125,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public <T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, int projectId) {
+	public <T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, Long projectId) {
 		notNull(credentials, "Get remote tags credentials can't is null.");
 		isTrue(projectId >= 0, "Get remote tags must projectId >= 0");
 		if (log.isInfoEnabled()) {
@@ -135,7 +135,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public Integer getRemoteProjectId(Vcs credentials, String projectName) {
+	public Long getRemoteProjectId(Vcs credentials, String projectName) {
 		notNull(credentials, "Get remote projectId credentials can't is null.");
 		hasText(projectName, "Get remote projectId can't is empty");
 		if (log.isInfoEnabled()) {
@@ -145,8 +145,8 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName,
-			int limit, PageModel pm) {
+	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
+			PageModel pm) {
 		notNull(credentials, "Search remote projects credentials can't is null.");
 		/*
 		 * The item name to be searched can be empty. If it is empty, it means
@@ -168,22 +168,22 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, int limit) {
+	public <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, long limit) {
 		return null;
 	}
 
 	@Override
-	public <T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Integer projectId) {
+	public <T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Long projectId) {
 		return null;
 	}
 
 	@Override
-	public <T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, int projectId, String branch, String ref) {
+	public <T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, Long projectId, String branch, String ref) {
 		return null;
 	}
 
 	@Override
-	public <T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref, String message,
+	public <T extends VcsTagModel> T createRemoteTag(Vcs credentials, Long projectId, String tag, String ref, String message,
 			String releaseDescription) {
 		return null;
 	}

@@ -61,8 +61,7 @@ public class TriggerController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci", "ci:trigger" }, logical = AND)
-	public RespBase<?> list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate,
-			String endDate) {
+	public RespBase<?> list(PageModel pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate) {
 		log.info(
 				"into TriggerController.list prarms::"
 						+ "customPage = {} , id = {} , name = {} , taskId = {} , enable = {} , startDate = {} , endDate = {} ",
@@ -96,7 +95,7 @@ public class TriggerController extends BaseController {
 	 */
 	@RequestMapping(value = "/detail")
 	@RequiresPermissions(value = { "ci", "ci:trigger" }, logical = AND)
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		log.info("into TriggerController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		Trigger trigger = triggerService.getById(id);
@@ -113,7 +112,7 @@ public class TriggerController extends BaseController {
 	 */
 	@RequestMapping(value = "/del")
 	@RequiresPermissions(value = { "ci", "ci:trigger" }, logical = AND)
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		log.info("into TriggerController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");

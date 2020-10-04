@@ -26,7 +26,7 @@ public interface ShareService {
 
 	PageModel list(PageModel pm);
 
-	void cancelShare(Integer id);
+	void cancelShare(Long id);
 
 	RespBase<?> rendering(String code, String passwd);
 

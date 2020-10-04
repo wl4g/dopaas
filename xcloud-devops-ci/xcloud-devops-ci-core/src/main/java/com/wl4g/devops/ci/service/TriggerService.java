@@ -24,18 +24,18 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface TriggerService {
 
-	PageModel list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate, String endDate);
+	PageModel list(PageModel pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate);
 
 	void save(Trigger trigger);
 
-	int delete(Integer id);
+	int delete(Long id);
 
-	void enable(Integer id);
+	void enable(Long id);
 
-	void disable(Integer id);
+	void disable(Long id);
 
-	void updateSha(Integer id, String sha);
+	void updateSha(Long id, String sha);
 
-	Trigger getById(Integer id);
+	Trigger getById(Long id);
 
 }

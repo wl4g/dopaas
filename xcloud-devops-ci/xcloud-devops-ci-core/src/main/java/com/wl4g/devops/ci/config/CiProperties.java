@@ -202,7 +202,7 @@ public class CiProperties implements InitializingBean {
 	 * @param taskHisyId
 	 * @return
 	 */
-	public File getJobBaseDir(Integer taskHisyId) {
+	public File getJobBaseDir(Long taskHisyId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		return new File(getWorkspace() + "/" + DEFUALT_JOB_BASEDIR + "/job." + taskHisyId);
 	}
@@ -214,7 +214,7 @@ public class CiProperties implements InitializingBean {
 	 * @param taskHisyId
 	 * @return
 	 */
-	public File getJobLog(Integer taskHisyId) {
+	public File getJobLog(Long taskHisyId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/build.out.log");
 	}
@@ -227,7 +227,7 @@ public class CiProperties implements InitializingBean {
 	 * @param instanceId
 	 * @return
 	 */
-	public File getJobDeployerLog(Integer taskHisyId, Integer instanceId) {
+	public File getJobDeployerLog(Long taskHisyId, Long instanceId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		Assert.notNull(instanceId, "Task history instanceId ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/deploy." + instanceId + ".out.log");
@@ -240,7 +240,7 @@ public class CiProperties implements InitializingBean {
 	 * @param taskHisId
 	 * @return
 	 */
-	public File getJobBackupDir(Integer taskHisId) {
+	public File getJobBackupDir(Long taskHisId) {
 		Assert.notNull(taskHisId, "Rollback task history ref ID must not be null.");
 		return new File(getJobBaseDir(taskHisId).getAbsolutePath());
 	}
@@ -253,7 +253,7 @@ public class CiProperties implements InitializingBean {
 	 * @param projectId
 	 * @return
 	 */
-	public File getJobTmpCommandFile(Integer taskHisyId, Integer projectId) {
+	public File getJobTmpCommandFile(Long taskHisyId, Long projectId) {
 		Assert.notNull(taskHisyId, "Task history ID must not be null.");
 		Assert.notNull(projectId, "Task project ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/" + "tmp.build." + projectId + ".sh");
@@ -292,7 +292,7 @@ public class CiProperties implements InitializingBean {
 	 * @param suffix
 	 * @return
 	 */
-	public File getTransferLocalTmpFile(Integer taskHisId, String projectName, String suffix) {
+	public File getTransferLocalTmpFile(Long taskHisId, String projectName, String suffix) {
 		hasText(projectName, "Transfer project name must not be empty.");
 		hasText(suffix, "Transfer project file suffix must not be empty.");
 		return new File(getJobBackupDir(taskHisId).getAbsolutePath() + "/" + projectName + "." + suffix);

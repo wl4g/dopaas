@@ -88,7 +88,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// If has Action Control, user this first
 		String branchForce = null;
 		ActionControl actionControl = getContext().getActionControl();
-		if(Objects.nonNull(actionControl) && StringUtils.isNotBlank(actionControl.getBranch())){
+		if (Objects.nonNull(actionControl) && StringUtils.isNotBlank(actionControl.getBranch())) {
 			branchForce = actionControl.getBranch();
 		}
 
@@ -97,7 +97,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		for (PipeStepBuildingProject depd : pipeStepBuildingProjects) {
 			ModulesPorject modulesPorject = new ModulesPorject();
 			modulesPorject.setProjectId(depd.getProjectId());
-			modulesPorject.setRef(StringUtils.isNotBlank(branchForce)?branchForce:depd.getRef());
+			modulesPorject.setRef(StringUtils.isNotBlank(branchForce) ? branchForce : depd.getRef());
 			modulesPorjects.add(modulesPorject);
 		}
 		PipelineModel pipelineModel = getContext().getPipelineModel();
@@ -116,7 +116,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			pipelineModel.setCurrent(buildingProject.getProjectId());
 			flowManager.pipelineStateChange(pipelineModel);
 
-			doMutexBuildModuleInDependencies(buildingProject.getProjectId(), StringUtils.isNotBlank(branchForce)?branchForce:buildingProject.getRef(),
+			doMutexBuildModuleInDependencies(buildingProject.getProjectId(),
+					StringUtils.isNotBlank(branchForce) ? branchForce : buildingProject.getRef(),
 					buildingProject.getBuildCommand());
 		}
 
@@ -149,7 +150,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private final void doMutexBuildModuleInDependencies(Integer projectId, String branch, String buildCommand) throws Exception {
+	private final void doMutexBuildModuleInDependencies(Long projectId, String branch, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getBuild().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build wait?
@@ -195,7 +196,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private void pullSourceAndBuild(Integer projectId, String branch, String buildCommand) throws Exception {
+	private void pullSourceAndBuild(Long projectId, String branch, String buildCommand) throws Exception {
 		log.info("Pipeline building for projectId: {}", projectId);
 
 		PipeStepBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
@@ -263,7 +264,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param jobLogFile
 	 * @throws Exception
 	 */
-	protected abstract void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception;
+	protected abstract void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Long taskId) throws Exception;
 
 	/**
 	 * Customized handing after building the module.

@@ -65,7 +65,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 	}
 
 	@Override
-	public BaseDataSource detal(Integer id) {
+	public BaseDataSource detal(Long id) {
 		CustomDataSource customDataSource = customDatasourceDao.selectByPrimaryKey(id);
 		BaseDataSource baseDataSource = properties2Model(customDataSource);
 		if (baseDataSource instanceof MysqlDataSource) {
@@ -104,7 +104,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		CustomDataSource customDatasource = new CustomDataSource();
 		customDatasource.setId(id);
 		customDatasource.setDelFlag(BaseBean.DEL_FLAG_DELETE);
@@ -112,7 +112,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 		customDatasourceDao.updateByPrimaryKeySelective(customDatasource);
 	}
 
-	public void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password, Integer id)
+	public void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password, Long id)
 			throws Exception {
 		String mysqlClassName = "com.mysql.jdbc.Driver";
 		String oracleClassName = "oracle.jdbc.driver.OracleDriver";
@@ -196,7 +196,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 		return customDataSource;
 	}
 
-	public List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Integer dataSourceId)
+	public List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Long dataSourceId)
 			throws IllegalAccessException {
 		String[] ignores = new String[] { "id", "name", "provider", "status", "delFlag", "createBy", "createDate", "updateBy",
 				"updateDate", "remark", };

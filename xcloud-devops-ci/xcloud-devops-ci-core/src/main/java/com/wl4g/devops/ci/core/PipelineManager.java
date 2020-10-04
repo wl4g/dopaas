@@ -59,7 +59,7 @@ public abstract interface PipelineManager {
 	 * @param size
 	 * @return
 	 */
-	ReadResult logfile(Integer taskHisId, Long startPos, Integer size);
+	ReadResult logfile(Long taskHisId, Long startPos, Integer size);
 
 	/**
 	 * Reader pipeline task detail deploying logs.
@@ -70,6 +70,6 @@ public abstract interface PipelineManager {
 	 * @param size
 	 * @return
 	 */
-	ReadResult logDetailFile(Integer taskHisId, Integer instanceId, Long startPos, Integer size);
+	ReadResult logDetailFile(Long taskHisId, Long instanceId, Long startPos, Integer size);
 
 }

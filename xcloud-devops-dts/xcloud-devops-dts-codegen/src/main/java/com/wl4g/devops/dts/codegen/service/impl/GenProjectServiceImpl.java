@@ -80,7 +80,7 @@ public class GenProjectServiceImpl implements GenProjectService {
 		genProjectDao.updateByPrimaryKeySelective(genProject);
 	}
 
-	public GenProject detail(Integer id) {
+	public GenProject detail(Long id) {
 		notNullOf(id, "genProjectId");
 
 		GenProject project = genProjectDao.selectByPrimaryKey(id);
@@ -94,7 +94,7 @@ public class GenProjectServiceImpl implements GenProjectService {
 		return project;
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		GenProject genProject = new GenProject();
 		genProject.setId(id);

@@ -39,7 +39,7 @@ public class HostNetcardController extends BaseController {
 	private HostNetcardService hostNetcardService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, Integer hostId, String name) {
+	public RespBase<?> list(PageModel pm, Long hostId, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostNetcardService.page(pm, hostId, name));
 		return resp;
@@ -53,14 +53,14 @@ public class HostNetcardController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostNetcardService.detail(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		hostNetcardService.del(id);
 		return resp;

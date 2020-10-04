@@ -44,7 +44,7 @@ public class MetricTemplateServiceImpl implements MetricTemplateService {
 	}
 
 	@Override
-	public MetricTemplate detal(Integer id) {
+	public MetricTemplate detal(Long id) {
 		return metricTemplateDao.selectByPrimaryKey(id);
 	}
 
@@ -60,7 +60,7 @@ public class MetricTemplateServiceImpl implements MetricTemplateService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		MetricTemplate metricTemplate = new MetricTemplate();
 		metricTemplate.setId(id);
 		metricTemplate.setDelFlag(BaseBean.DEL_FLAG_DELETE);

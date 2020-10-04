@@ -64,9 +64,9 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 		// Handing Build Image
 		buildImage();
 
-		//skip deploy
+		// skip deploy
 		ActionControl actionControl = getContext().getActionControl();
-		if(Objects.nonNull(actionControl) && !actionControl.isDeploy()){
+		if (Objects.nonNull(actionControl) && !actionControl.isDeploy()) {
 			return;
 		}
 
@@ -111,7 +111,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	 * @throws Exception
 	 */
 	protected void handleDiskBackupAssets() throws Exception {
-		Integer taskHisId = getContext().getPipelineHistory().getId();
+		Long taskHisId = getContext().getPipelineHistory().getId();
 		String assetsFilename = config.getAssetsFullFilename(getContext().getPipeline().getAssetsDir(),
 				getContext().getAppCluster().getName());
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
@@ -138,8 +138,8 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	 * @throws Exception
 	 */
 	protected void rollbackBackupAssets() throws Exception {
-		Integer taskHisRefId = getContext().getPipelineHistory().getRefId();
-		Integer taskHisId = getContext().getPipelineHistory().getId();
+		Long taskHisRefId = getContext().getPipelineHistory().getRefId();
+		Long taskHisId = getContext().getPipelineHistory().getId();
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		String backupPath = config.getJobBackupDir(taskHisRefId).getAbsolutePath() + "/" + tarFileName;
 		String newBackupPath = config.getJobBackupDir(taskHisId).getAbsolutePath() + "/" + tarFileName;

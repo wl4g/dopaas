@@ -18,11 +18,8 @@ package com.wl4g.devops.ci.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.ci.OrchestrationHistory;
 import com.wl4g.components.core.bean.ci.TaskHistory;
-import com.wl4g.components.support.redis.jedis.JedisService;
-import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.OrchestrationHistoryService;
 import com.wl4g.devops.dao.ci.OrchestrationHistoryDao;
-import com.wl4g.devops.dao.ci.OrchestrationPipelineDao;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,29 +42,17 @@ public class OrchestrationHistoryServcieImpl implements OrchestrationHistoryServ
 	@Autowired
 	private PipelineHistoryDao pipelineHistoryDao;
 
-	@Autowired
-	private OrchestrationPipelineDao orchestrationPipelineDao;
-
-	@Autowired
-	private FlowManager flowManager;
-
-	@Autowired
-	private JedisService jedisService;
-
 	@Override
 	public PageModel list(PageModel pm, String runId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<OrchestrationHistory> list = orchestrationHistoryDao.list(getRequestOrganizationCodes(), runId);
-		for(OrchestrationHistory orchestrationHistory : list){
-			List<TaskHistory> taskHistories = pipelineHistoryDao.list(getRequestOrganizationCodes(),
-					null, null, null, null, null, null,
-					2, orchestrationHistory.getId());
+		for (OrchestrationHistory orchestrationHistory : list) {
+			List<TaskHistory> taskHistories = pipelineHistoryDao.list(getRequestOrganizationCodes(), null, null, null, null, null,
+					null, 2, orchestrationHistory.getId());
 			orchestrationHistory.setTaskHistories(taskHistories);
 		}
 		pm.setRecords(list);
 		return pm;
 	}
-
-
 
 }

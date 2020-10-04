@@ -37,7 +37,7 @@ public abstract class GenericParameter implements Serializable {
 	 * Pipeline taskId.
 	 */
 	@NotNull
-	private Integer pipeId;
+	private Long pipeId;
 
 	/**
 	 * Pipeline task remark.
@@ -49,16 +49,16 @@ public abstract class GenericParameter implements Serializable {
 		super();
 	}
 
-	public GenericParameter(Integer pipeId, String remark) {
+	public GenericParameter(Long pipeId, String remark) {
 		setPipeId(pipeId);
 		setRemark(remark);
 	}
 
-	public Integer getPipeId() {
+	public Long getPipeId() {
 		return pipeId;
 	}
 
-	public void setPipeId(Integer pipeId) {
+	public void setPipeId(Long pipeId) {
 		notNull(pipeId, "Pipeline pipeId can't be null.");
 		isTrue(pipeId >= 0, "Pipeline pipeId must be >=0.");
 		this.pipeId = pipeId;

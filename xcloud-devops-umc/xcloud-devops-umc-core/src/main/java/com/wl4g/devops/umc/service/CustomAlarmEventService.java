@@ -26,10 +26,10 @@ public interface CustomAlarmEventService {
 
 	PageModel list(PageModel pm, String name);
 
-	CustomAlarmEvent detal(Integer id);
+	CustomAlarmEvent detal(Long id);
 
 	void save(CustomAlarmEvent customAlarmEvent);
 
-	void del(Integer id);
+	void del(Long id);
 
 }

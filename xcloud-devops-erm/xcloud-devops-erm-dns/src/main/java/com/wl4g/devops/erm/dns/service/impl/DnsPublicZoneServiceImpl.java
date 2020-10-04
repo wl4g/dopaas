@@ -36,12 +36,12 @@ import static java.util.Objects.isNull;
 public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 
 	@Autowired
-	private DnsPublicZoneDao dnsPublicDomainDao;
+	private DnsPublicZoneDao publicZoneDao;
 
 	@Override
 	public PageModel page(PageModel pm, String zone) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(dnsPublicDomainDao.list(getRequestOrganizationCodes(), zone));
+		pm.setRecords(publicZoneDao.list(getRequestOrganizationCodes(), zone));
 		return pm;
 	}
 
@@ -56,19 +56,19 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 	}
 
 	private void insert(DnsPublicZone dnsPublicDomain) {
-		dnsPublicDomainDao.insertSelective(dnsPublicDomain);
+		publicZoneDao.insertSelective(dnsPublicDomain);
 	}
 
 	private void update(DnsPublicZone dnsPublicDomain) {
-		dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
+		publicZoneDao.updateByPrimaryKeySelective(dnsPublicDomain);
 	}
 
-	public DnsPublicZone detail(Integer id) {
+	public DnsPublicZone detail(Long id) {
 		Assert.notNull(id, "id is null");
-		return dnsPublicDomainDao.selectByPrimaryKey(id);
+		return publicZoneDao.selectByPrimaryKey(id);
 	}
 
-	public void del(Integer id) {
+	public void del(Long id) {
 		Assert.notNull(id, "id is null");
 		/*
 		 * DnsPublicZone dnsPublicDomain = new DnsPublicZone();
@@ -76,7 +76,7 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 		 * dnsPublicDomain.setDelFlag(BaseBean.DEL_FLAG_DELETE);
 		 * dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
 		 */
-		dnsPublicDomainDao.deleteByPrimaryKey(id);
+		publicZoneDao.deleteByPrimaryKey(id);
 	}
 
 }

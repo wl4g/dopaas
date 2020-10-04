@@ -30,9 +30,9 @@ public interface LabelService {
 
 	void save(Label label);
 
-	Label detail(Integer id);
+	Label detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
 	List<Label> allLabel();
 

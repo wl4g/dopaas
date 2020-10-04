@@ -38,7 +38,7 @@ import lombok.ToString;
 public class GenTableColumn extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
-	private Integer tableId;
+	private Long tableId;
 
 	@RenderProperty(propertyName = GEN_COLUMN_NAME)
 	private String columnName;

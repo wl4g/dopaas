@@ -31,20 +31,19 @@ public interface CustomDataSourceService {
 
 	PageModel list(PageModel pm, String name);
 
-	BaseDataSource detal(Integer id);
+	BaseDataSource detal(Long id);
 
 	void save(BaseDataSource baseDataSource);
 
-	void del(Integer id);
+	void del(Long id);
 
-	void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password, Integer id)
-			throws Exception;
+	void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password, Long id) throws Exception;
 
 	List<CustomDataSource> dataSources();
 
 	CustomDataSource model2Properties(BaseDataSource baseDataSource);
 
-	List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Integer dataSourceId)
+	List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Long dataSourceId)
 			throws IllegalAccessException;
 
 	<T extends BaseDataSource> T properties2Model(CustomDataSource customDataSource);

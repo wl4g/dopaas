@@ -51,7 +51,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	<T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, int projectId);
+	<T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, Long projectId);
 
 	/**
 	 * Create Branch
@@ -63,7 +63,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param <T>
 	 * @return
 	 */
-	<T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, int projectId, String branch, String ref);
+	<T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, Long projectId, String branch, String ref);
 
 	/**
 	 * Gets VCS remote tag names.
@@ -73,7 +73,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	<T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, int projectId);
+	<T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, Long projectId);
 
 	/**
 	 *
@@ -84,7 +84,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param <T>
 	 * @return
 	 */
-	<T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref, String message,
+	<T extends VcsTagModel> T createRemoteTag(Vcs credentials, Long projectId, String tag, String ref, String message,
 			String releaseDescription);
 
 	/**
@@ -95,7 +95,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	Integer getRemoteProjectId(Vcs credentials, String projectName);
+	Long getRemoteProjectId(Vcs credentials, String projectName);
 
 	/**
 	 * Search find remote projects by name.(unlimited)
@@ -104,9 +104,9 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName,
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
 			PageModel pm) {
-		return searchRemoteProjects(credentials, groupId, projectName, Integer.MAX_VALUE, pm);
+		return searchRemoteProjects(credentials, groupId, projectName, Long.MAX_VALUE, pm);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            Page limit maximum
 	 * @return
 	 */
-	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName, int limit,
+	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
 			PageModel pm);
 
 	/**
@@ -130,7 +130,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	<T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Integer projectId);
+	<T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Long projectId);
 
 	/**
 	 * Search find remote groups by name.(unlimited)
@@ -140,7 +140,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @return
 	 */
 	default <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName) {
-		return searchRemoteGroups(credentials, groupName, Integer.MAX_VALUE);
+		return searchRemoteGroups(credentials, groupName, Long.MAX_VALUE);
 	}
 
 	/**
@@ -154,7 +154,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            Page limit maximum
 	 * @return
 	 */
-	<T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, int limit);
+	<T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, long limit);
 
 	/**
 	 * Clone from remote VCS server.

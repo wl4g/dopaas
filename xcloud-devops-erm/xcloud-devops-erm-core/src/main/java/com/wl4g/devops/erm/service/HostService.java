@@ -31,17 +31,17 @@ import java.util.Map;
  */
 public interface HostService {
 
-	List<Host> list(String name, String hostname, Integer idcId);
+	List<Host> list(String name, String hostname, Long idcId);
 
-	PageModel page(PageModel pm,String name, String hostname, Integer idcId);
+	PageModel page(PageModel pm, String name, String hostname, Long idcId);
 
 	void save(Host host);
 
-	Host detail(Integer id);
+	Host detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
-	ResponseEntity<FileSystemResource> createAndDownloadTemplate(Integer idcId, String organizationCode) throws IOException;
+	ResponseEntity<FileSystemResource> createAndDownloadTemplate(Long idcId, String organizationCode) throws IOException;
 
-	Map<String, Object> importHost(MultipartFile file, Integer force,Integer sshAutoCreate) throws IOException;
+	Map<String, Object> importHost(MultipartFile file, Integer force, Integer sshAutoCreate) throws IOException;
 }

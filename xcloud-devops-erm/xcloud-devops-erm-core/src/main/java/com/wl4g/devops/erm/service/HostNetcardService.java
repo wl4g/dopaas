@@ -26,13 +26,13 @@ import java.util.Map;
  */
 public interface HostNetcardService {
 
-	PageModel page(PageModel pm, Integer hostId, String name);
+	PageModel page(PageModel pm, Long hostId, String name);
 
 	void save(HostNetcard hostNetcard);
 
-	HostNetcard detail(Integer id);
+	HostNetcard detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 
 	Map<String, Object> getHostTunnel();
 }

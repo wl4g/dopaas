@@ -43,7 +43,7 @@ public class DocController extends BaseController {
 	private DocService docService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String name, String lang, Integer labelId) {
+	public RespBase<?> list(PageModel pm, String name, String lang, Long labelId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(docService.list(pm, name, lang, labelId));
 		return resp;
@@ -64,7 +64,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		FileChanges detail = docService.detail(id);
 		resp.setData(detail);
@@ -72,7 +72,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		docService.del(id);
 		return resp;
@@ -87,7 +87,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/compareWith")
-	public RespBase<?> compareWith(Integer oldChangesId, Integer newChangesId) {
+	public RespBase<?> compareWith(Long oldChangesId, Long newChangesId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(docService.compareWith(oldChangesId, newChangesId));
 		return resp;
@@ -101,7 +101,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/shareDoc")
-	public RespBase<?> shareDoc(Integer id, Boolean isEncrypt, Boolean isForever, Integer day, String expireTime) {
+	public RespBase<?> shareDoc(Long id, Boolean isEncrypt, Boolean isForever, Integer day, String expireTime) {
 		RespBase<Object> resp = RespBase.create();
 		Share share = docService.shareDoc(id, isEncrypt, isForever, day, DateUtils2.parseDate(expireTime));
 		resp.setData(share);

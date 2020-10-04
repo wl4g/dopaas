@@ -63,7 +63,7 @@ public class LabelServcieImpl implements LabelService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		Label label = new Label();
 		label.setId(id);
 		label.setDelFlag(BaseBean.DEL_FLAG_DELETE);
@@ -71,7 +71,7 @@ public class LabelServcieImpl implements LabelService {
 	}
 
 	@Override
-	public Label detail(Integer id) {
+	public Label detail(Long id) {
 		return labelDao.selectByPrimaryKey(id);
 	}
 

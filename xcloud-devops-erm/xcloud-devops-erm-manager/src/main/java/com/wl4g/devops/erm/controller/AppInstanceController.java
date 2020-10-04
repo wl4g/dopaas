@@ -44,7 +44,7 @@ public class AppInstanceController extends BaseController {
 	private AppInstanceService appInstanceService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String name, Integer clusterId, String envType, Integer deployType) {
+	public RespBase<?> list(PageModel pm, String name, Long clusterId, String envType, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(appInstanceService.list(pm, name, clusterId, envType, deployType));
 		return resp;
@@ -58,14 +58,14 @@ public class AppInstanceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		appInstanceService.del(id);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		AppInstance detail = appInstanceService.detail(id);
 		resp.setData(detail);
@@ -73,7 +73,7 @@ public class AppInstanceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/connectTest")
-	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException {
+	public RespBase<?> testSSHConnect(Long hostId, String sshUser, String sshKey) throws Exception, InterruptedException {
 		RespBase<Object> resp = RespBase.create();
 		appInstanceService.testSSHConnect(hostId, sshUser, sshKey);
 		return resp;

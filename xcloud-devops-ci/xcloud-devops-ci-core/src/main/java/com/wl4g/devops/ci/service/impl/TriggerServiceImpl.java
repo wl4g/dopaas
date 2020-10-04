@@ -49,8 +49,7 @@ public class TriggerServiceImpl implements TriggerService {
 	private PipelineTaskScheduler timingManager;
 
 	@Override
-	public PageModel list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate,
-			String endDate) {
+	public PageModel list(PageModel pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate) {
 		String endDateStr = null;
 		if (StringUtils.isNotBlank(endDate)) {
 			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
@@ -91,13 +90,13 @@ public class TriggerServiceImpl implements TriggerService {
 
 	@Override
 	@Transactional
-	public int delete(Integer id) {
+	public int delete(Long id) {
 		timingManager.stopTimingPipeline(triggerDao.selectByPrimaryKey(id));
 		return triggerDao.deleteByPrimaryKey(id);
 	}
 
 	@Override
-	public void enable(Integer id) {
+	public void enable(Long id) {
 		Trigger trigger = new Trigger();
 		trigger.setId(id);
 		trigger.preUpdate();
@@ -106,7 +105,7 @@ public class TriggerServiceImpl implements TriggerService {
 	}
 
 	@Override
-	public void disable(Integer id) {
+	public void disable(Long id) {
 		Trigger trigger = new Trigger();
 		trigger.setId(id);
 		trigger.preUpdate();
@@ -115,7 +114,7 @@ public class TriggerServiceImpl implements TriggerService {
 	}
 
 	@Override
-	public void updateSha(Integer id, String sha) {
+	public void updateSha(Long id, String sha) {
 		Trigger trigger = new Trigger();
 		trigger.setId(id);
 		trigger.setSha(sha);
@@ -123,7 +122,7 @@ public class TriggerServiceImpl implements TriggerService {
 	}
 
 	@Override
-	public Trigger getById(Integer id) {
+	public Trigger getById(Long id) {
 		Assert.notNull(id, "id can not be null");
 		return triggerDao.selectByPrimaryKey(id);
 	}
@@ -147,7 +146,7 @@ public class TriggerServiceImpl implements TriggerService {
 	 *
 	 * @param triggerId
 	 */
-	private void restart(Integer triggerId) {
+	private void restart(Long triggerId) {
 		Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
 		timingManager.refreshTimingPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
 	}

@@ -28,16 +28,16 @@ import java.util.List;
  */
 public interface AppInstanceService {
 
-    void save(AppInstance appInstance);
+	void save(AppInstance appInstance);
 
-    PageModel list(PageModel pm, String name, Integer clusterId, String envType, Integer serverType);
+	PageModel list(PageModel pm, String name, Long clusterId, String envType, Integer serverType);
 
-    void del(Integer clusterId);
+	void del(Long clusterId);
 
-    AppInstance detail(Integer clusterId);
+	AppInstance detail(Long clusterId);
 
-    List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
+	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId, String envType);
 
-    void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException;
+	void testSSHConnect(Long hostId, String sshUser, String sshKey) throws Exception, InterruptedException;
 
 }

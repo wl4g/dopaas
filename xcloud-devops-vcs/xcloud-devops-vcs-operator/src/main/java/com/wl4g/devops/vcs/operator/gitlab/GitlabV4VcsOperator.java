@@ -54,7 +54,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4BranchModel> getRemoteBranchs(Vcs credentials, int projectId) {
+	public List<GitlabV4BranchModel> getRemoteBranchs(Vcs credentials, Long projectId) {
 		super.getRemoteBranchs(credentials, projectId);
 
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches";
@@ -71,7 +71,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4TagModel> getRemoteTags(Vcs credentials, int projectId) {
+	public List<GitlabV4TagModel> getRemoteTags(Vcs credentials, Long projectId) {
 		super.getRemoteTags(credentials, projectId);
 
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/tags";
@@ -86,7 +86,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public GitlabV4BranchModel createRemoteBranch(Vcs credentials, int projectId, String branch, String ref) {
+	public GitlabV4BranchModel createRemoteBranch(Vcs credentials, Long projectId, String branch, String ref) {
 		super.createRemoteBranch(credentials, projectId, branch, ref);
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches?branch=%s&ref=%s";
 
@@ -96,7 +96,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public GitlabV4TagModel createRemoteTag(Vcs credentials, int projectId, String tag, String ref, String message,
+	public GitlabV4TagModel createRemoteTag(Vcs credentials, Long projectId, String tag, String ref, String message,
 			String releaseDescription) {
 		super.createRemoteTag(credentials, projectId, tag, ref, message, releaseDescription);
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId
@@ -108,12 +108,12 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public Integer getRemoteProjectId(Vcs credentials, String projectName) {
+	public Long getRemoteProjectId(Vcs credentials, String projectName) {
 		super.getRemoteProjectId(credentials, projectName);
 
 		// Search projects for GITLAB.
 		List<GitlabV4SimpleProjectModel> projects = searchRemoteProjects(credentials, null, projectName, null);
-		Integer id = null;
+		Long id = null;
 		for (GitlabV4SimpleProjectModel p : projects) {
 			if (trimToEmpty(projectName).equals(p.getName())) {
 				id = p.getId();
@@ -129,7 +129,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4SimpleGroupModel> searchRemoteGroups(Vcs credentials, String groupName, int limit) {
+	public List<GitlabV4SimpleGroupModel> searchRemoteGroups(Vcs credentials, String groupName, long limit) {
 		String url = String.format((credentials.getBaseUri() + "/api/v4/groups?search=%s&per_page=%s"), groupName, limit);
 		List<GitlabV4SimpleGroupModel> groups = doRemoteExchange(credentials, url, null,
 				new TypeReference<List<GitlabV4SimpleGroupModel>>() {
@@ -168,7 +168,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName, int limit,
+	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
 			PageModel pm) {
 		super.searchRemoteProjects(credentials, groupId, projectName, limit, pm);
 
@@ -211,7 +211,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public GitlabV4ProjectModel searchRemoteProjectsById(Vcs credentials, Integer projectId) {
+	public GitlabV4ProjectModel searchRemoteProjectsById(Vcs credentials, Long projectId) {
 		Assert2.notNullOf(projectId, "projectId");
 		String url = String.format((credentials.getBaseUri() + "/api/v4/projects/%d"), projectId);
 		GitlabV4ProjectModel project = doRemoteExchange(credentials, url, null, new TypeReference<GitlabV4ProjectModel>() {

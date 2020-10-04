@@ -130,7 +130,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 		saveEnvironments(appCluster);
 	}
 
-	public void del(Integer clusterId) {
+	public void del(Long clusterId) {
 		AppCluster appCluster = new AppCluster();
 		appCluster.setId(clusterId);
 		appCluster.setDelFlag(DEL_FLAG_DELETE);
@@ -138,7 +138,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 	}
 
 	@Override
-	public AppCluster detail(Integer clusterId) {
+	public AppCluster detail(Long clusterId) {
 		Assert.notNull(clusterId, "clusterId is null");
 		AppCluster appCluster = appClusterDao.selectByPrimaryKey(clusterId);
 
@@ -173,7 +173,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 	}
 
 	@Override
-	public List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType) {
+	public List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId, String envType) {
 		Assert.notNull(clusterId, "clusterId is null");
 		Assert.notNull(envType, "envType is null");
 		return appInstanceDao.selectByClusterIdAndEnvType(clusterId, envType);

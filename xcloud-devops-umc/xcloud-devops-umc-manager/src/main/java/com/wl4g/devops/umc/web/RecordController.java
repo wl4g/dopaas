@@ -49,7 +49,7 @@ public class RecordController extends BaseController {
 
 	@RequestMapping(value = "/detail")
 	@RequiresPermissions(value = { "umc:record" })
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		log.info("into CollectorController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		AlarmRecord alarmRecord = recordService.detail(id);

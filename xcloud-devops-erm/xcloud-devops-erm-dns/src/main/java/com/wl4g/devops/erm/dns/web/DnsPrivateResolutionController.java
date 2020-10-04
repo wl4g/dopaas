@@ -39,7 +39,7 @@ public class DnsPrivateResolutionController extends BaseController {
 	private DnsPrivateResolutionService dnsPrivateResolutionService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String host, Integer domainId) {
+	public RespBase<?> list(PageModel pm, String host, Long domainId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPrivateResolutionService.page(pm, host, domainId));
 		return resp;
@@ -53,14 +53,14 @@ public class DnsPrivateResolutionController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPrivateResolutionService.detail(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		dnsPrivateResolutionService.del(id);
 		return resp;

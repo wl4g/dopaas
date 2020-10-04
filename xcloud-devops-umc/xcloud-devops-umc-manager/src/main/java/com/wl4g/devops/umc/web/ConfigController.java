@@ -41,7 +41,7 @@ public class ConfigController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:config" })
-	public RespBase<?> list(Integer templateId, Integer contactGroupId, PageModel pm) {
+	public RespBase<?> list(Long templateId, Long contactGroupId, PageModel pm) {
 		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , pm = {} ", templateId,
 				contactGroupId, pm);
 		RespBase<Object> resp = RespBase.create();
@@ -64,7 +64,7 @@ public class ConfigController extends BaseController {
 
 	@RequestMapping(value = "/detail")
 	@RequiresPermissions(value = { "umc:config" })
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		AlarmConfig alarmConfig = configService.detail(id);
 		resp.forMap().put("alarmConfig", alarmConfig);
@@ -73,7 +73,7 @@ public class ConfigController extends BaseController {
 
 	@RequestMapping(value = "/del")
 	@RequiresPermissions(value = { "umc:config" })
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		configService.del(id);
 		return resp;

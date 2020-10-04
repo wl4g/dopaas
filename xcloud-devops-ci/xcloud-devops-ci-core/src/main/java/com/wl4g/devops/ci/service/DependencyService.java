@@ -25,6 +25,6 @@ import com.wl4g.components.core.bean.ci.Dependency;
  */
 public interface DependencyService {
 
-	LinkedHashSet<Dependency> getHierarchyDependencys(Integer projectId, LinkedHashSet<Dependency> set);
+	LinkedHashSet<Dependency> getHierarchyDependencys(Long projectId, LinkedHashSet<Dependency> set);
 
 }

@@ -89,7 +89,7 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/detail")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		log.info("into ProjectController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
@@ -106,7 +106,7 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/del")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		log.info("into ProjectController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
@@ -129,7 +129,7 @@ public class ProjectController extends BaseController {
 
 	@RequestMapping(value = "/getByAppClusterId")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> getByAppClusterId(Integer clusterId) {
+	public RespBase<?> getByAppClusterId(Long clusterId) {
 		log.info("ProjectController.detail prarms::" + "id = {} ", clusterId);
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(clusterId, "appClusterId can not be null");
@@ -147,7 +147,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/unlock")
-	public RespBase<?> unlock(Integer id) {
+	public RespBase<?> unlock(Long id) {
 		log.info("into ProjectController.unlock prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
@@ -165,7 +165,7 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/getBranchs")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> getBranchs(Integer clusterId, Integer tagOrBranch) {
+	public RespBase<?> getBranchs(Long clusterId, Integer tagOrBranch) {
 		RespBase<Object> resp = RespBase.create();
 		List<String> branchs = projectService.getBranchs(clusterId, tagOrBranch);
 		resp.forMap().put("branchNames", branchs);

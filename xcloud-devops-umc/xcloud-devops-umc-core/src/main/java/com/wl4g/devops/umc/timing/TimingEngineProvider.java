@@ -48,23 +48,22 @@ public class TimingEngineProvider implements Runnable {
 		this.customEngine = customEngine;
 	}
 
-
 	@Override
 	public void run() {
 		log.info("Timing customEngine... customEngineId:{}", customEngine.getId());
 		try {
-			updateStatus(customEngine.getId(),RUNNING);
-			//TODO execute code
+			updateStatus(customEngine.getId(), RUNNING);
+			// TODO execute code
 			codeExecutor.executeCode(customEngine);
 
 		} catch (Exception e) {
 			log.error("", e);
-		}finally {
-			updateStatus(customEngine.getId(),WAIT);
+		} finally {
+			updateStatus(customEngine.getId(), WAIT);
 		}
 	}
 
-	private void updateStatus(Integer id,int status ){
+	private void updateStatus(Long id, int status) {
 		CustomEngine customEngine = new CustomEngine();
 		customEngine.setId(id);
 		customEngine.setStatus(status);

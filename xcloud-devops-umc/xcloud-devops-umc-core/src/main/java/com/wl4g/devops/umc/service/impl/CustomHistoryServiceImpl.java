@@ -52,7 +52,7 @@ public class CustomHistoryServiceImpl implements CustomHistoryService {
 	}
 
 	@Override
-	public CustomHistory detal(Integer id) {
+	public CustomHistory detal(Long id) {
 		CustomHistory customHistory = customHistoryDao.selectByPrimaryKey(id);
 		return customHistory;
 	}
@@ -70,7 +70,7 @@ public class CustomHistoryServiceImpl implements CustomHistoryService {
 	}
 
 	@Override
-	public void del(Integer id) {
+	public void del(Long id) {
 		CustomHistory customHistory = new CustomHistory();
 		customHistory.setId(id);
 		customHistory.setDelFlag(BaseBean.DEL_FLAG_DELETE);

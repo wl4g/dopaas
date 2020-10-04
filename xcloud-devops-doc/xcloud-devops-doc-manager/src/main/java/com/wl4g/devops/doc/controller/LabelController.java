@@ -50,14 +50,14 @@ public class LabelController extends BaseController {
 	}
 
 	@RequestMapping("/del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		labelService.del(id);
 		return resp;
 	}
 
 	@RequestMapping("/detail")
-	public RespBase<?> detail(Integer id) {
+	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Label label = labelService.detail(id);
 		resp.setData(label);

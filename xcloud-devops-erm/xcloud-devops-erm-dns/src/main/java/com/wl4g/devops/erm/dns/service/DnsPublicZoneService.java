@@ -27,7 +27,7 @@ public interface DnsPublicZoneService {
 
 	void save(DnsPublicZone dnsPublicDomain);
 
-	DnsPublicZone detail(Integer id);
+	DnsPublicZone detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 }

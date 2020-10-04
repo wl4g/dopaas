@@ -1,318 +1,319 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dts.codegen.dao.GenTableColumnDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenTableColumn" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="table_id" property="tableId" jdbcType="INTEGER" />
-    <result column="column_name" property="columnName" jdbcType="VARCHAR" />
-    <result column="column_comment" property="columnComment" jdbcType="VARCHAR" />
-    <result column="column_type" property="columnType" jdbcType="VARCHAR" />
-    <result column="simple_column_type" property="simpleColumnType" jdbcType="VARCHAR" />
-    <result column="sql_type" property="sqlType" jdbcType="VARCHAR" />
-    <result column="column_sort" property="columnSort" jdbcType="INTEGER" />
-    <result column="attr_type" property="attrType" jdbcType="VARCHAR" />
-    <result column="attr_name" property="attrName" jdbcType="VARCHAR" />
-    <result column="is_pk" property="isPk" jdbcType="VARCHAR" />
-    <result column="no_null" property="noNull" jdbcType="VARCHAR" />
-    <result column="is_insert" property="isInsert" jdbcType="VARCHAR" />
-    <result column="is_update" property="isUpdate" jdbcType="VARCHAR" />
-    <result column="is_list" property="isList" jdbcType="VARCHAR" />
-    <result column="is_query" property="isQuery" jdbcType="VARCHAR" />
-    <result column="query_type" property="queryType" jdbcType="VARCHAR" />
-    <result column="is_edit" property="isEdit" jdbcType="VARCHAR" />
-    <result column="show_type" property="showType" jdbcType="VARCHAR" />
-    <result column="dict_type" property="dictType" jdbcType="VARCHAR" />
-    <result column="valid_rule" property="validRule" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    id, table_id, column_name, column_comment, column_type, simple_column_type, sql_type, column_sort, attr_type, attr_name,
-    is_pk, no_null, is_insert, is_update, is_list, is_query, query_type, is_edit, show_type, 
-    dict_type, valid_rule
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from dts_gen_table_column
-    where id = #{id,jdbcType=INTEGER}
-  </select>
+<mapper namespace="com.wl4g.devops.dts.codegen.dao.GenTableColumnDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenTableColumn">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="table_id" property="tableId" jdbcType="INTEGER" />
+		<result column="column_name" property="columnName" jdbcType="VARCHAR" />
+		<result column="column_comment" property="columnComment" jdbcType="VARCHAR" />
+		<result column="column_type" property="columnType" jdbcType="VARCHAR" />
+		<result column="simple_column_type" property="simpleColumnType" jdbcType="VARCHAR" />
+		<result column="sql_type" property="sqlType" jdbcType="VARCHAR" />
+		<result column="column_sort" property="columnSort" jdbcType="INTEGER" />
+		<result column="attr_type" property="attrType" jdbcType="VARCHAR" />
+		<result column="attr_name" property="attrName" jdbcType="VARCHAR" />
+		<result column="is_pk" property="isPk" jdbcType="VARCHAR" />
+		<result column="no_null" property="noNull" jdbcType="VARCHAR" />
+		<result column="is_insert" property="isInsert" jdbcType="VARCHAR" />
+		<result column="is_update" property="isUpdate" jdbcType="VARCHAR" />
+		<result column="is_list" property="isList" jdbcType="VARCHAR" />
+		<result column="is_query" property="isQuery" jdbcType="VARCHAR" />
+		<result column="query_type" property="queryType" jdbcType="VARCHAR" />
+		<result column="is_edit" property="isEdit" jdbcType="VARCHAR" />
+		<result column="show_type" property="showType" jdbcType="VARCHAR" />
+		<result column="dict_type" property="dictType" jdbcType="VARCHAR" />
+		<result column="valid_rule" property="validRule" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, table_id, column_name, column_comment, column_type, simple_column_type, sql_type, column_sort, attr_type, attr_name,
+		is_pk, no_null, is_insert, is_update, is_list, is_query, query_type, is_edit, show_type,
+		dict_type, valid_rule
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from dts_gen_table_column
+		where id = #{id,jdbcType=INTEGER}
+	</select>
 
-  <select id="selectByTableId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select
-    <include refid="Base_Column_List" />
-    from dts_gen_table_column
-    where table_id = #{tableId,jdbcType=INTEGER}
-    order by column_sort
-  </select>
+	<select id="selectByTableId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from dts_gen_table_column
+		where table_id = #{tableId,jdbcType=INTEGER}
+		order by column_sort
+	</select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from dts_gen_table_column
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-  <delete id="deleteByTableId" parameterType="java.lang.Integer" >
-    delete from dts_gen_table_column
-    where table_id = #{tableId,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn" >
-    insert into dts_gen_table_column (id, table_id, column_name, 
-      column_comment, column_type, simple_column_type, sql_type, column_sort,
-      attr_type, attr_name, is_pk, 
-      no_null, is_insert, is_update, 
-      is_list, is_query, query_type, 
-      is_edit, show_type, dict_type, valid_rule
-      )
-    values (#{id,jdbcType=INTEGER}, #{tableId,jdbcType=INTEGER}, #{columnName,jdbcType=VARCHAR}, 
-      #{columnComment,jdbcType=VARCHAR}, #{columnType,jdbcType=VARCHAR}, #{simpleColumnType,jdbcType=VARCHAR}, #{sqlType,jdbcType=VARCHAR}, #{columnSort,jdbcType=INTEGER},
-      #{attrType,jdbcType=VARCHAR}, #{attrName,jdbcType=VARCHAR}, #{isPk,jdbcType=VARCHAR}, 
-      #{noNull,jdbcType=VARCHAR}, #{isInsert,jdbcType=VARCHAR}, #{isUpdate,jdbcType=VARCHAR}, 
-      #{isList,jdbcType=VARCHAR}, #{isQuery,jdbcType=VARCHAR}, #{queryType,jdbcType=VARCHAR}, 
-      #{isEdit,jdbcType=VARCHAR}, #{showType,jdbcType=VARCHAR},
-      #{dictType,jdbcType=VARCHAR}, #{validRule,jdbcType=VARCHAR}
-      )
-  </insert>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from dts_gen_table_column
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByTableId" parameterType="java.lang.Long">
+		delete from dts_gen_table_column
+		where table_id = #{tableId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn">
+		insert into dts_gen_table_column (id, table_id, column_name,
+		column_comment, column_type, simple_column_type, sql_type, column_sort,
+		attr_type, attr_name, is_pk,
+		no_null, is_insert, is_update,
+		is_list, is_query, query_type,
+		is_edit, show_type, dict_type, valid_rule
+		)
+		values (#{id,jdbcType=INTEGER}, #{tableId,jdbcType=INTEGER}, #{columnName,jdbcType=VARCHAR},
+		#{columnComment,jdbcType=VARCHAR}, #{columnType,jdbcType=VARCHAR}, #{simpleColumnType,jdbcType=VARCHAR}, #{sqlType,jdbcType=VARCHAR},
+		#{columnSort,jdbcType=INTEGER},
+		#{attrType,jdbcType=VARCHAR}, #{attrName,jdbcType=VARCHAR}, #{isPk,jdbcType=VARCHAR},
+		#{noNull,jdbcType=VARCHAR}, #{isInsert,jdbcType=VARCHAR}, #{isUpdate,jdbcType=VARCHAR},
+		#{isList,jdbcType=VARCHAR}, #{isQuery,jdbcType=VARCHAR}, #{queryType,jdbcType=VARCHAR},
+		#{isEdit,jdbcType=VARCHAR}, #{showType,jdbcType=VARCHAR},
+		#{dictType,jdbcType=VARCHAR}, #{validRule,jdbcType=VARCHAR}
+		)
+	</insert>
 
-  <insert id="insertBatch" parameterType="java.util.Map">
-    insert into dts_gen_table_column (id, table_id, column_name,
-    column_comment, column_type, simple_column_type, sql_type, column_sort,
-    attr_type, attr_name, is_pk,
-    no_null, is_insert, is_update,
-    is_list, is_query, query_type,
-    is_edit, show_type, dict_type, valid_rule
-    )
-    VALUES
-    <foreach collection="columns" item="column" separator=",">
-      (#{column.id,jdbcType=INTEGER}, #{column.tableId,jdbcType=INTEGER}, #{column.columnName,jdbcType=VARCHAR},
-      #{column.columnComment,jdbcType=VARCHAR}, #{column.columnType,jdbcType=VARCHAR}, #{column.simpleColumnType,jdbcType=VARCHAR},
-      #{column.sqlType,jdbcType=VARCHAR}, #{column.columnSort,jdbcType=INTEGER},
-      #{column.attrType,jdbcType=VARCHAR}, #{column.attrName,jdbcType=VARCHAR}, #{column.isPk,jdbcType=VARCHAR},
-      #{column.noNull,jdbcType=VARCHAR}, #{column.isInsert,jdbcType=VARCHAR}, #{column.isUpdate,jdbcType=VARCHAR},
-      #{column.isList,jdbcType=VARCHAR}, #{column.isQuery,jdbcType=VARCHAR}, #{column.queryType,jdbcType=VARCHAR},
-      #{column.isEdit,jdbcType=VARCHAR}, #{column.showType,jdbcType=VARCHAR},
-      #{column.dictType,jdbcType=VARCHAR}, #{column.validRule,jdbcType=VARCHAR}
-      )
-    </foreach>
-  </insert>
+	<insert id="insertBatch" parameterType="java.util.Map">
+		insert into dts_gen_table_column (id, table_id, column_name,
+		column_comment, column_type, simple_column_type, sql_type, column_sort,
+		attr_type, attr_name, is_pk,
+		no_null, is_insert, is_update,
+		is_list, is_query, query_type,
+		is_edit, show_type, dict_type, valid_rule
+		)
+		VALUES
+		<foreach collection="columns" item="column" separator=",">
+			(#{column.id,jdbcType=INTEGER}, #{column.tableId,jdbcType=INTEGER}, #{column.columnName,jdbcType=VARCHAR},
+			#{column.columnComment,jdbcType=VARCHAR}, #{column.columnType,jdbcType=VARCHAR}, #{column.simpleColumnType,jdbcType=VARCHAR},
+			#{column.sqlType,jdbcType=VARCHAR}, #{column.columnSort,jdbcType=INTEGER},
+			#{column.attrType,jdbcType=VARCHAR}, #{column.attrName,jdbcType=VARCHAR}, #{column.isPk,jdbcType=VARCHAR},
+			#{column.noNull,jdbcType=VARCHAR}, #{column.isInsert,jdbcType=VARCHAR}, #{column.isUpdate,jdbcType=VARCHAR},
+			#{column.isList,jdbcType=VARCHAR}, #{column.isQuery,jdbcType=VARCHAR}, #{column.queryType,jdbcType=VARCHAR},
+			#{column.isEdit,jdbcType=VARCHAR}, #{column.showType,jdbcType=VARCHAR},
+			#{column.dictType,jdbcType=VARCHAR}, #{column.validRule,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
 
-  <insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn" >
-    insert into dts_gen_table_column
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="tableId != null" >
-        table_id,
-      </if>
-      <if test="columnName != null" >
-        column_name,
-      </if>
-      <if test="columnComment != null" >
-        column_comment,
-      </if>
-      <if test="columnType != null" >
-        column_type,
-      </if>
-      <if test="simpleColumnType != null" >
-        simple_column_type,
-      </if>
-      <if test="sqlType != null" >
-        sql_type,
-      </if>
-      <if test="columnSort != null" >
-        column_sort,
-      </if>
-      <if test="attrType != null" >
-        attr_type,
-      </if>
-      <if test="attrName != null" >
-        attr_name,
-      </if>
-      <if test="isPk != null" >
-        is_pk,
-      </if>
-      <if test="noNull != null" >
-        no_null,
-      </if>
-      <if test="isInsert != null" >
-        is_insert,
-      </if>
-      <if test="isUpdate != null" >
-        is_update,
-      </if>
-      <if test="isList != null" >
-        is_list,
-      </if>
-      <if test="isQuery != null" >
-        is_query,
-      </if>
-      <if test="queryType != null" >
-        query_type,
-      </if>
-      <if test="isEdit != null" >
-        is_edit,
-      </if>
-      <if test="showType != null" >
-        show_type,
-      </if>
-      <if test="dictType != null" >
-        dict_type,
-      </if>
-      <if test="validRule != null" >
-        valid_rule,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="tableId != null" >
-        #{tableId,jdbcType=INTEGER},
-      </if>
-      <if test="columnName != null" >
-        #{columnName,jdbcType=VARCHAR},
-      </if>
-      <if test="columnComment != null" >
-        #{columnComment,jdbcType=VARCHAR},
-      </if>
-      <if test="columnType != null" >
-        #{columnType,jdbcType=VARCHAR},
-      </if>
-      <if test="simpleColumnType != null" >
-        #{simpleColumnType,jdbcType=VARCHAR},
-      </if>
-      <if test="sqlType != null" >
-        #{sqlType,jdbcType=VARCHAR},
-      </if>
-      <if test="columnSort != null" >
-        #{columnSort,jdbcType=INTEGER},
-      </if>
-      <if test="attrType != null" >
-        #{attrType,jdbcType=VARCHAR},
-      </if>
-      <if test="attrName != null" >
-        #{attrName,jdbcType=VARCHAR},
-      </if>
-      <if test="isPk != null" >
-        #{isPk,jdbcType=VARCHAR},
-      </if>
-      <if test="noNull != null" >
-        #{noNull,jdbcType=VARCHAR},
-      </if>
-      <if test="isInsert != null" >
-        #{isInsert,jdbcType=VARCHAR},
-      </if>
-      <if test="isUpdate != null" >
-        #{isUpdate,jdbcType=VARCHAR},
-      </if>
-      <if test="isList != null" >
-        #{isList,jdbcType=VARCHAR},
-      </if>
-      <if test="isQuery != null" >
-        #{isQuery,jdbcType=VARCHAR},
-      </if>
-      <if test="queryType != null" >
-        #{queryType,jdbcType=VARCHAR},
-      </if>
-      <if test="isEdit != null" >
-        #{isEdit,jdbcType=VARCHAR},
-      </if>
-      <if test="showType != null" >
-        #{showType,jdbcType=VARCHAR},
-      </if>
-      <if test="dictType != null" >
-        #{dictType,jdbcType=VARCHAR},
-      </if>
-      <if test="validRule != null" >
-        #{validRule,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn" >
-    update dts_gen_table_column
-    <set >
-      <if test="tableId != null" >
-        table_id = #{tableId,jdbcType=INTEGER},
-      </if>
-      <if test="columnName != null" >
-        column_name = #{columnName,jdbcType=VARCHAR},
-      </if>
-      <if test="columnComment != null" >
-        column_comment = #{columnComment,jdbcType=VARCHAR},
-      </if>
-      <if test="columnType != null" >
-        column_type = #{columnType,jdbcType=VARCHAR},
-      </if>
-      <if test="simpleColumnType != null" >
-        simple_column_type = #{simpleColumnType,jdbcType=VARCHAR},
-      </if>
-      <if test="sqlType != null" >
-        sql_type = #{sqlType,jdbcType=VARCHAR},
-      </if>
-      <if test="columnSort != null" >
-        column_sort = #{columnSort,jdbcType=INTEGER},
-      </if>
-      <if test="attrType != null" >
-        attr_type = #{attrType,jdbcType=VARCHAR},
-      </if>
-      <if test="attrName != null" >
-        attr_name = #{attrName,jdbcType=VARCHAR},
-      </if>
-      <if test="isPk != null" >
-        is_pk = #{isPk,jdbcType=VARCHAR},
-      </if>
-      <if test="noNull != null" >
-        no_null = #{noNull,jdbcType=VARCHAR},
-      </if>
-      <if test="isInsert != null" >
-        is_insert = #{isInsert,jdbcType=VARCHAR},
-      </if>
-      <if test="isUpdate != null" >
-        is_update = #{isUpdate,jdbcType=VARCHAR},
-      </if>
-      <if test="isList != null" >
-        is_list = #{isList,jdbcType=VARCHAR},
-      </if>
-      <if test="isQuery != null" >
-        is_query = #{isQuery,jdbcType=VARCHAR},
-      </if>
-      <if test="queryType != null" >
-        query_type = #{queryType,jdbcType=VARCHAR},
-      </if>
-      <if test="isEdit != null" >
-        is_edit = #{isEdit,jdbcType=VARCHAR},
-      </if>
-      <if test="showType != null" >
-        show_type = #{showType,jdbcType=VARCHAR},
-      </if>
-      <if test="dictType != null" >
-        dict_type = #{dictType,jdbcType=VARCHAR},
-      </if>
-      <if test="validRule != null" >
-        valid_rule = #{validRule,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn" >
-    update dts_gen_table_column
-    set table_id = #{tableId,jdbcType=INTEGER},
-      column_name = #{columnName,jdbcType=VARCHAR},
-      column_comment = #{columnComment,jdbcType=VARCHAR},
-      column_type = #{columnType,jdbcType=VARCHAR},
-      simple_column_type = #{simpleColumnType,jdbcType=VARCHAR},
-      sql_type = #{sqlType,jdbcType=VARCHAR},
-      column_sort = #{columnSort,jdbcType=INTEGER},
-      attr_type = #{attrType,jdbcType=VARCHAR},
-      attr_name = #{attrName,jdbcType=VARCHAR},
-      is_pk = #{isPk,jdbcType=VARCHAR},
-      no_null = #{noNull,jdbcType=VARCHAR},
-      is_insert = #{isInsert,jdbcType=VARCHAR},
-      is_update = #{isUpdate,jdbcType=VARCHAR},
-      is_list = #{isList,jdbcType=VARCHAR},
-      is_query = #{isQuery,jdbcType=VARCHAR},
-      query_type = #{queryType,jdbcType=VARCHAR},
-      is_edit = #{isEdit,jdbcType=VARCHAR},
-      show_type = #{showType,jdbcType=VARCHAR},
-      dict_type = #{dictType,jdbcType=VARCHAR},
-      valid_rule = #{validRule,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+	<insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn">
+		insert into dts_gen_table_column
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="tableId != null">
+				table_id,
+			</if>
+			<if test="columnName != null">
+				column_name,
+			</if>
+			<if test="columnComment != null">
+				column_comment,
+			</if>
+			<if test="columnType != null">
+				column_type,
+			</if>
+			<if test="simpleColumnType != null">
+				simple_column_type,
+			</if>
+			<if test="sqlType != null">
+				sql_type,
+			</if>
+			<if test="columnSort != null">
+				column_sort,
+			</if>
+			<if test="attrType != null">
+				attr_type,
+			</if>
+			<if test="attrName != null">
+				attr_name,
+			</if>
+			<if test="isPk != null">
+				is_pk,
+			</if>
+			<if test="noNull != null">
+				no_null,
+			</if>
+			<if test="isInsert != null">
+				is_insert,
+			</if>
+			<if test="isUpdate != null">
+				is_update,
+			</if>
+			<if test="isList != null">
+				is_list,
+			</if>
+			<if test="isQuery != null">
+				is_query,
+			</if>
+			<if test="queryType != null">
+				query_type,
+			</if>
+			<if test="isEdit != null">
+				is_edit,
+			</if>
+			<if test="showType != null">
+				show_type,
+			</if>
+			<if test="dictType != null">
+				dict_type,
+			</if>
+			<if test="validRule != null">
+				valid_rule,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="tableId != null">
+				#{tableId,jdbcType=INTEGER},
+			</if>
+			<if test="columnName != null">
+				#{columnName,jdbcType=VARCHAR},
+			</if>
+			<if test="columnComment != null">
+				#{columnComment,jdbcType=VARCHAR},
+			</if>
+			<if test="columnType != null">
+				#{columnType,jdbcType=VARCHAR},
+			</if>
+			<if test="simpleColumnType != null">
+				#{simpleColumnType,jdbcType=VARCHAR},
+			</if>
+			<if test="sqlType != null">
+				#{sqlType,jdbcType=VARCHAR},
+			</if>
+			<if test="columnSort != null">
+				#{columnSort,jdbcType=INTEGER},
+			</if>
+			<if test="attrType != null">
+				#{attrType,jdbcType=VARCHAR},
+			</if>
+			<if test="attrName != null">
+				#{attrName,jdbcType=VARCHAR},
+			</if>
+			<if test="isPk != null">
+				#{isPk,jdbcType=VARCHAR},
+			</if>
+			<if test="noNull != null">
+				#{noNull,jdbcType=VARCHAR},
+			</if>
+			<if test="isInsert != null">
+				#{isInsert,jdbcType=VARCHAR},
+			</if>
+			<if test="isUpdate != null">
+				#{isUpdate,jdbcType=VARCHAR},
+			</if>
+			<if test="isList != null">
+				#{isList,jdbcType=VARCHAR},
+			</if>
+			<if test="isQuery != null">
+				#{isQuery,jdbcType=VARCHAR},
+			</if>
+			<if test="queryType != null">
+				#{queryType,jdbcType=VARCHAR},
+			</if>
+			<if test="isEdit != null">
+				#{isEdit,jdbcType=VARCHAR},
+			</if>
+			<if test="showType != null">
+				#{showType,jdbcType=VARCHAR},
+			</if>
+			<if test="dictType != null">
+				#{dictType,jdbcType=VARCHAR},
+			</if>
+			<if test="validRule != null">
+				#{validRule,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn">
+		update dts_gen_table_column
+		<set>
+			<if test="tableId != null">
+				table_id = #{tableId,jdbcType=INTEGER},
+			</if>
+			<if test="columnName != null">
+				column_name = #{columnName,jdbcType=VARCHAR},
+			</if>
+			<if test="columnComment != null">
+				column_comment = #{columnComment,jdbcType=VARCHAR},
+			</if>
+			<if test="columnType != null">
+				column_type = #{columnType,jdbcType=VARCHAR},
+			</if>
+			<if test="simpleColumnType != null">
+				simple_column_type = #{simpleColumnType,jdbcType=VARCHAR},
+			</if>
+			<if test="sqlType != null">
+				sql_type = #{sqlType,jdbcType=VARCHAR},
+			</if>
+			<if test="columnSort != null">
+				column_sort = #{columnSort,jdbcType=INTEGER},
+			</if>
+			<if test="attrType != null">
+				attr_type = #{attrType,jdbcType=VARCHAR},
+			</if>
+			<if test="attrName != null">
+				attr_name = #{attrName,jdbcType=VARCHAR},
+			</if>
+			<if test="isPk != null">
+				is_pk = #{isPk,jdbcType=VARCHAR},
+			</if>
+			<if test="noNull != null">
+				no_null = #{noNull,jdbcType=VARCHAR},
+			</if>
+			<if test="isInsert != null">
+				is_insert = #{isInsert,jdbcType=VARCHAR},
+			</if>
+			<if test="isUpdate != null">
+				is_update = #{isUpdate,jdbcType=VARCHAR},
+			</if>
+			<if test="isList != null">
+				is_list = #{isList,jdbcType=VARCHAR},
+			</if>
+			<if test="isQuery != null">
+				is_query = #{isQuery,jdbcType=VARCHAR},
+			</if>
+			<if test="queryType != null">
+				query_type = #{queryType,jdbcType=VARCHAR},
+			</if>
+			<if test="isEdit != null">
+				is_edit = #{isEdit,jdbcType=VARCHAR},
+			</if>
+			<if test="showType != null">
+				show_type = #{showType,jdbcType=VARCHAR},
+			</if>
+			<if test="dictType != null">
+				dict_type = #{dictType,jdbcType=VARCHAR},
+			</if>
+			<if test="validRule != null">
+				valid_rule = #{validRule,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn">
+		update dts_gen_table_column
+		set table_id = #{tableId,jdbcType=INTEGER},
+		column_name = #{columnName,jdbcType=VARCHAR},
+		column_comment = #{columnComment,jdbcType=VARCHAR},
+		column_type = #{columnType,jdbcType=VARCHAR},
+		simple_column_type = #{simpleColumnType,jdbcType=VARCHAR},
+		sql_type = #{sqlType,jdbcType=VARCHAR},
+		column_sort = #{columnSort,jdbcType=INTEGER},
+		attr_type = #{attrType,jdbcType=VARCHAR},
+		attr_name = #{attrName,jdbcType=VARCHAR},
+		is_pk = #{isPk,jdbcType=VARCHAR},
+		no_null = #{noNull,jdbcType=VARCHAR},
+		is_insert = #{isInsert,jdbcType=VARCHAR},
+		is_update = #{isUpdate,jdbcType=VARCHAR},
+		is_list = #{isList,jdbcType=VARCHAR},
+		is_query = #{isQuery,jdbcType=VARCHAR},
+		query_type = #{queryType,jdbcType=VARCHAR},
+		is_edit = #{isEdit,jdbcType=VARCHAR},
+		show_type = #{showType,jdbcType=VARCHAR},
+		dict_type = #{dictType,jdbcType=VARCHAR},
+		valid_rule = #{validRule,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
 </mapper>

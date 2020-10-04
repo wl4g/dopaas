@@ -31,7 +31,7 @@ public interface K8sClusterService {
 
 	void save(K8sCluster k8sCluster);
 
-	K8sCluster detail(Integer id);
+	K8sCluster detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 }

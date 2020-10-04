@@ -67,7 +67,7 @@ public class RunModel implements Serializable {
 
 	public static class Pipeline {
 
-		private Integer pipeId;
+		private Long pipeId;
 
 		private String provider;// MvnAssTar
 
@@ -75,7 +75,7 @@ public class RunModel implements Serializable {
 
 		private Long createTime;// timestamp
 
-		private Integer current;// e.g mp
+		private Long current;// e.g mp
 
 		private String status;// WAITING|RUNNING|FAILED|SUCCESS
 
@@ -89,11 +89,11 @@ public class RunModel implements Serializable {
 
 		List<ModulesPorject> modulesPorjects;
 
-		public Integer getPipeId() {
+		public Long getPipeId() {
 			return pipeId;
 		}
 
-		public void setPipeId(Integer pipeId) {
+		public void setPipeId(Long pipeId) {
 			this.pipeId = pipeId;
 		}
 
@@ -121,11 +121,11 @@ public class RunModel implements Serializable {
 			this.createTime = createTime;
 		}
 
-		public Integer getCurrent() {
+		public Long getCurrent() {
 			return current;
 		}
 
-		public void setCurrent(Integer current) {
+		public void setCurrent(Long current) {
 			this.current = current;
 		}
 
@@ -178,17 +178,17 @@ public class RunModel implements Serializable {
 
 		public static class ModulesPorject {
 
-			private Integer projectId;
+			private Long projectId;
 
 			private String ref;// Branch | Tag
 
 			private String status;// WAITING|BUILDING|FAILED|SUCCESS
 
-			public Integer getProjectId() {
+			public Long getProjectId() {
 				return projectId;
 			}
 
-			public void setProjectId(Integer projectId) {
+			public void setProjectId(Long projectId) {
 				this.projectId = projectId;
 			}
 

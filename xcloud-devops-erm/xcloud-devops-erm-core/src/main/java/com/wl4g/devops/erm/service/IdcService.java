@@ -31,7 +31,7 @@ public interface IdcService {
 
 	void save(Idc idc);
 
-	Idc detail(Integer id);
+	Idc detail(Long id);
 
-	void del(Integer id);
+	void del(Long id);
 }

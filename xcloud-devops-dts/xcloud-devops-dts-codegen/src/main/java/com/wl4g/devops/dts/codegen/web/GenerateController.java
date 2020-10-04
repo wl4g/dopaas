@@ -40,7 +40,6 @@ import java.util.List;
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static java.lang.Integer.valueOf;
 
 /**
  * {@link GenerateController}
@@ -63,7 +62,7 @@ public class GenerateController extends BaseController {
 	protected GenerateService generateService;
 
 	@RequestMapping("loadTables")
-	public RespBase<?> loadTables(Integer projectId) {
+	public RespBase<?> loadTables(Long projectId) {
 		RespBase<Object> resp = RespBase.create();
 		List<TableMetadata> tables = generateService.loadTables(projectId);
 		resp.setData(tables);
@@ -71,12 +70,12 @@ public class GenerateController extends BaseController {
 	}
 
 	@RequestMapping("loadMetadata")
-	public RespBase<?> loadMetadata(Integer projectId, String tableName) {
+	public RespBase<?> loadMetadata(Long projectId, String tableName) {
 		return generateService.loadMetadata(projectId, tableName);
 	}
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String tableName, Integer projectId) {
+	public RespBase<?> list(PageModel pm, String tableName, Long projectId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(generateService.page(pm, tableName, projectId));
 		return resp;
@@ -90,24 +89,23 @@ public class GenerateController extends BaseController {
 	}
 
 	@RequestMapping("detail")
-	public RespBase<?> detail(Integer tableId) {
+	public RespBase<?> detail(Long tableId) {
 		return generateService.detail(tableId);
 	}
 
 	@RequestMapping("del")
-	public RespBase<?> del(Integer id) {
+	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		generateService.delete(id);
 		return resp;
 	}
 
 	@RequestMapping("generate")
-	public RespBase<?> generate(String id, HttpServletResponse response) throws IOException {
+	public RespBase<?> generate(Long id, HttpServletResponse response) throws IOException {
 		RespBase<Object> resp = RespBase.create();
-		hasTextOf(id, "id");
 
 		// Execution generate.
-		GeneratedResult result = generateService.generate(valueOf(id));
+		GeneratedResult result = generateService.generate(id);
 		resp.setData(result.getJobId());
 		return resp;
 	}
@@ -128,7 +126,7 @@ public class GenerateController extends BaseController {
 	}
 
 	@RequestMapping("setEnable")
-	public RespBase<?> setEnable(Integer id, String status) {
+	public RespBase<?> setEnable(Long id, String status) {
 		RespBase<Object> resp = RespBase.create();
 		notNullOf(id, "id");
 		generateService.setEnable(id, status);
@@ -136,14 +134,14 @@ public class GenerateController extends BaseController {
 	}
 
 	@RequestMapping("getAttrTypes")
-	public RespBase<?> getAttrTypes(Integer projectId) {
+	public RespBase<?> getAttrTypes(Long projectId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(generateService.getAttrTypes(projectId));
 		return resp;
 	}
 
 	@RequestMapping("synchronizeTable")
-	public RespBase<?> synchronizeTable(Integer id, boolean force) {
+	public RespBase<?> synchronizeTable(Long id, boolean force) {
 		RespBase<Object> resp = RespBase.create();
 		generateService.synchronizeTable(id, force);
 		return resp;
