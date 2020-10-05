@@ -97,9 +97,9 @@ public class PcmRedmineTests {
 		Pcm pcm = getPcmKind(pcmId);
 
 		PipeHistoryPcm pipeHistoryPcm = new PipeHistoryPcm();
-		pipeHistoryPcm.setxProjectId(8);
-		pipeHistoryPcm.setxSubject("test add issues");
-		pipeHistoryPcm.setxAssignTo("27");
+		pipeHistoryPcm.setXProjectId(8L);
+		pipeHistoryPcm.setXSubject("test add issues");
+		pipeHistoryPcm.setXAssignTo("27");
 
 		pcmOperator.forOperator(pcm.getProviderKind()).createIssues(pcm, pipeHistoryPcm);
 
