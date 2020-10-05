@@ -9,13 +9,22 @@ export default {
         defaultContextPath: '/iam-server',
         defaultPort: '14040',
     },
+<#-- 当生成的是IAM本地模式时(即，IAM server与业务应用属于同一工程)，前段IAM模块会硬编码变量如：global.iam，
+但此时配置却是实际的项目配置。 -->
+<#elseif vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
+    iam: {
+        cluster: '${projectName?lower_case}-server',
+        twoDomain: '${projectName?lower_case}',
+        defaultContextPath: '/${projectName?lower_case}-server',
+        defaultPort: '${entryAppPort}',
+    },
 </#if>
 <#list moduleMap?keys as moduleName>
     ${moduleName}: {
         cluster: '${projectName?lower_case}-server',
         twoDomain: '${projectName?lower_case}',
         defaultContextPath: '/${projectName?lower_case}-server',
-        defaultPort: '28080',
+        defaultPort: '${entryAppPort}',
     },
 </#list>
     getBaseUrl: function (app, usedefault) {
