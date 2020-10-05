@@ -44,7 +44,7 @@ public interface ${entityName}Service {
      * @param id
      * @return 
      */
-    ${entityName} detail(Integer id);
+    ${entityName} detail(Long id);
 
     /**
      * ${comments} delete.
@@ -52,7 +52,7 @@ public interface ${entityName}Service {
      * @param id
      * @return 
      */
-    int del(Integer id);
+    int del(Long id);
 
 }
 

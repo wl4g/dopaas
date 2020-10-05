@@ -22,7 +22,7 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_COMMON_VUESPECS;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_COMMON_VUESPECS;
 
 /**
  * {@link VueGeneratorProvider}

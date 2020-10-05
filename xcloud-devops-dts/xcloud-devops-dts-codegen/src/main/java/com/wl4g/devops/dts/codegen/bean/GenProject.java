@@ -35,7 +35,7 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.NGJS;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.VUEJS;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**

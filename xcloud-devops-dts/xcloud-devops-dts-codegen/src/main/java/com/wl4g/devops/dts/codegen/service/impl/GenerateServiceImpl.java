@@ -35,13 +35,15 @@ import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper.MappedMatcher;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
+import com.wl4g.devops.dts.codegen.utils.GenUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,13 +53,10 @@ import java.util.*;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper;
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
 import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -74,7 +73,7 @@ public class GenerateServiceImpl implements GenerateService {
 	protected NamingPrototypeBeanFactory beanFactory;
 
 	@Autowired
-	protected GenericOperatorAdapter<ConverterKind, DbTypeConverter> converter;
+	protected GenericOperatorAdapter<DbType, DbTypeConverter> converter;
 
 	@Autowired
 	protected GenerateEngine engine;
@@ -125,11 +124,11 @@ public class GenerateServiceImpl implements GenerateService {
 		notNullOf(project, "genProject");
 
 		// Gets gen datasource
-		GenDataSource dataSource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
-		notNullOf(dataSource, "genDataSource");
+		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
+		notNullOf(datasource, "genDataSource");
 
 		// Gets gen table
-		MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);
+		MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
 		TableMetadata metadata = resolver.findTableDescribe(tableName);
 		notNullOf(metadata, "tableMetadata");
 
@@ -137,13 +136,13 @@ public class GenerateServiceImpl implements GenerateService {
 		metadata.setColumns(notEmptyOf(resolver.findTableColumns(tableName), "genTableColumns"));
 
 		// To {@link GenTable}
-		GenTable tab = new GenTable();
-		tab.setEntityName(JavaSpecs.tableName2ClassName(metadata.getTableName()));
-		tab.setTableName(metadata.getTableName());
-		tab.setComments(metadata.getComments());
+		GenTable table = new GenTable();
+		table.setEntityName(JavaSpecs.tableName2ClassName(metadata.getTableName()));
+		table.setTableName(metadata.getTableName());
+		table.setComments(metadata.getComments());
 		// Set Table default
-		tab.setFunctionAuthor("unascribed");
-		tab.setRemark(metadata.getComments());
+		table.setFunctionAuthor("unascribed");
+		table.setRemark(metadata.getComments());
 
 		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
 
@@ -161,7 +160,7 @@ public class GenerateServiceImpl implements GenerateService {
 
 			// Converting java type
 			if (nonNull(providerSet.language())) {
-				DbTypeConverter conv = converter.forOperator(dataSource.getType());
+				DbTypeConverter conv = converter.forOperator(datasource.getType());
 				col.setAttrType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Lang, col.getSimpleColumnType()));
 			}
 
@@ -185,66 +184,15 @@ public class GenerateServiceImpl implements GenerateService {
 			setDefaultShowType(colmd, col);
 			cols.add(col);
 		}
-		tab.setGenTableColumns(cols);
+		table.setGenTableColumns(cols);
 		// Check table struct specification.
-		String warningTip = checkTableNormalize(project, tab);
+		String warningTip = GenUtils.checkBuiltinColumns(datasource, project, table);
 		if (isNotBlank(warningTip)) {
 			resp.setStatus("warningTip");
 			resp.setMessage(warningTip);
 		}
-		resp.setData(tab);
+		resp.setData(table);
 		return resp;
-	}
-
-	/**
-	 * Check the normalization of the table structure, otherwise output warning
-	 * prompt.
-	 * 
-	 * @param project
-	 * @param tab
-	 * @return
-	 */
-	private String checkTableNormalize(GenProject project, GenTable tab) {
-		List<String> providers = getProviders(project.getProviderSet());
-		for (String provider : providers) {
-			if (equalsIgnoreCase(provider, IAM_SPINGCLOUD_MVN)) {
-				boolean hasCreateDate = false, hasCreateBy = false, hasUpdateBy = false, hasUpdateDate = false, hasId = false,
-						hasDelflag = false;
-				for (GenTableColumn col : tab.getGenTableColumns()) {
-					if (equalsIgnoreCase(col.getColumnName(), "create_date"))
-						hasCreateDate = true;
-					if (equalsIgnoreCase(col.getColumnName(), "create_by"))
-						hasCreateBy = true;
-					if (equalsIgnoreCase(col.getColumnName(), "update_date"))
-						hasUpdateDate = true;
-					if (equalsIgnoreCase(col.getColumnName(), "update_by"))
-						hasUpdateBy = true;
-					if (equalsIgnoreCase(col.getColumnName(), "id"))
-						hasId = true;
-					if (equalsIgnoreCase(col.getColumnName(), "del_flag"))
-						hasDelflag = true;
-				}
-				if (hasCreateDate && hasCreateBy && hasUpdateDate && hasUpdateBy && hasId && hasDelflag) {
-					return null;
-				}
-				StringBuilder warnTip = new StringBuilder();
-				warnTip.append("检测到当前表无以下通用字段，可能导致部分功能不可用：\n");
-				if (!hasCreateDate)
-					warnTip.append("create_date, ");
-				if (!hasCreateBy)
-					warnTip.append("create_by, ");
-				if (!hasUpdateDate)
-					warnTip.append("update_date, ");
-				if (!hasUpdateBy)
-					warnTip.append("update_by, ");
-				if (!hasId)
-					warnTip.append("id, ");
-				if (!hasDelflag)
-					warnTip.append("del_flag, ");
-				return warnTip.toString();
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -277,13 +225,20 @@ public class GenerateServiceImpl implements GenerateService {
 		RespBase<Object> resp = RespBase.create();
 		notNullOf(tableId, "tableId");
 
+		// Gets gen table
 		GenTable oldGenTab = notNullOf(genTableDao.selectByPrimaryKey(tableId), "genTable");
 
+		// Gets gen table columns
+		List<GenTableColumn> oldGenCols = genColumnDao.selectByTableId(tableId);
+		oldGenTab.setGenTableColumns(oldGenCols);
+
+		// Gets gen project
 		GenProject project = genProjectDao.selectByPrimaryKey(oldGenTab.getProjectId());
 		notNullOf(project, "genProject");
 
-		List<GenTableColumn> oldGenCols = genColumnDao.selectByTableId(tableId);
-		oldGenTab.setGenTableColumns(oldGenCols);
+		// Gets gen datasource
+		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
+		notNullOf(datasource, "genDataSource");
 
 		// Reload the latest table/columns metadata (sure you get the
 		// latest information)
@@ -292,7 +247,6 @@ public class GenerateServiceImpl implements GenerateService {
 
 		List<GenTableColumn> needAdd = new ArrayList<>();
 		List<GenTableColumn> needDel = new ArrayList<>();
-
 		for (GenTableColumn newCol : newGenCols) {
 			GenTableColumn column = genTableColumnByName(oldGenCols, newCol.getColumnName());
 			if (column == null) {
@@ -307,10 +261,9 @@ public class GenerateServiceImpl implements GenerateService {
 		}
 		oldGenCols.removeAll(needDel);
 		oldGenCols.addAll(needAdd);
-
 		oldGenTab.setGenTableColumns(oldGenCols);
 
-		String warningTip = checkTableNormalize(project, oldGenTab);
+		String warningTip = GenUtils.checkBuiltinColumns(datasource, project, oldGenTab);
 		if (isNotBlank(warningTip)) {
 			resp.setStatus("warningTip");
 			resp.setMessage(warningTip);

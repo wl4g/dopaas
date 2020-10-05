@@ -25,8 +25,8 @@ package com.wl4g.devops.dts.codegen.engine.converter;
 public class OracleV11gTypeConverter extends DbTypeConverter {
 
 	@Override
-	public ConverterKind kind() {
-		return ConverterKind.OracleV11g;
+	public DbType kind() {
+		return DbType.OracleV11g;
 	}
 
 }

@@ -54,7 +54,7 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
     }
 
     @Override
-    public ${entityName} detail(Integer id) {
+    public ${entityName} detail(Long id) {
         notNullOf(id, "${entityName?uncap_first}Id");
         return ${entityName?uncap_first}Dao.selectByPrimaryKey(id);
     }
@@ -62,7 +62,7 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
 <#-- Service delete with logical  -->
 <#if optionMap.tableDeleteType == 'deleteWithLogical'>
     @Override
-    public int del(Integer id) {
+    public int del(Long id) {
         notNullOf(id, "${entityName?uncap_first}Id");
         ${entityName} ${entityName?uncap_first} = new ${entityName}();
         ${entityName?uncap_first}.setId(id);
@@ -72,7 +72,7 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
 <#-- Service delete with physical  -->
 <#else>
     @Override
-    public int del(Integer id) {
+    public int del(Long id) {
         notNullOf(id, "${entityName?uncap_first}Id");
         return ${entityName?uncap_first}Dao.deleteByPrimaryKey(id);
     }

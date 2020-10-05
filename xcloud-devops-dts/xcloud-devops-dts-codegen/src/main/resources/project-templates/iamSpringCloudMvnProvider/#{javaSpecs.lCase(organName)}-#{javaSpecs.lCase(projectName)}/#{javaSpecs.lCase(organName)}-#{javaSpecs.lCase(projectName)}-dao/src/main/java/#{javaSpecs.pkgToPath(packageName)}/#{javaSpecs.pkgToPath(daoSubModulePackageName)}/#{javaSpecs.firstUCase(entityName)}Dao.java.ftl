@@ -20,11 +20,11 @@ import ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubMo
  */
 public interface ${entityName?cap_first}Dao {
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     int insertSelective(${entityName?cap_first} ${entityName?uncap_first});
 
-    ${entityName?cap_first} selectByPrimaryKey(Integer id);
+    ${entityName?cap_first} selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(${entityName?cap_first} ${entityName?uncap_first});
 

@@ -25,8 +25,8 @@ package com.wl4g.devops.dts.codegen.engine.converter;
 public class MySQLV5TypeConverter extends DbTypeConverter {
 
 	@Override
-	public ConverterKind kind() {
-		return ConverterKind.MySQLV5;
+	public DbType kind() {
+		return DbType.MySQLV5;
 	}
 
 }

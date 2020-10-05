@@ -15,7 +15,11 @@
  */
 package com.wl4g.devops.dts.codegen.utils;
 
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
 import freemarker.template.Template;
+
+import static java.util.Collections.singletonList;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -25,16 +29,15 @@ import java.util.Map;
 
 import com.wl4g.components.common.view.Freemarkers;
 import com.wl4g.components.core.utils.expression.SpelExpressions;
-import com.wl4g.devops.dts.codegen.utils.FreemarkerUtils;
 
 /**
- * {@link FreemarkerUtilsTests}
+ * {@link RenderingTests}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-11
  * @since
  */
-public class FreemarkerUtilsTests {
+public class RenderingTests {
 
 	static String tplContent = "Freemarker rendering for entityName: ${entityName}, SPEL rendering for entityName: #{entityName}";
 
@@ -51,13 +54,16 @@ public class FreemarkerUtilsTests {
 		System.out.println("----- SPEL rendering result: -----\n" + result);
 
 		// Rendering with freemarker
-		Template template = new Template("tpl1", new StringReader(result), FreemarkerUtils.defaultGenConfigurer);
+		Template template = new Template("tpl1", new StringReader(result), configurer);
 		result = Freemarkers.renderingTemplateToString(template, testModel);
 		System.out.println("-----Freemarker rendering result: -----\n" + result);
 
 	}
 
 	static Map<String, Object> testModel;
+	static Configuration configurer = Freemarkers.createDefault().withVersion(Configuration.VERSION_2_3_27)
+			.withTemplateLoaders(singletonList(new StringTemplateLoader())).build();
+
 	static {
 		testModel = new HashMap<>();
 		testModel.put("entityName", "User");

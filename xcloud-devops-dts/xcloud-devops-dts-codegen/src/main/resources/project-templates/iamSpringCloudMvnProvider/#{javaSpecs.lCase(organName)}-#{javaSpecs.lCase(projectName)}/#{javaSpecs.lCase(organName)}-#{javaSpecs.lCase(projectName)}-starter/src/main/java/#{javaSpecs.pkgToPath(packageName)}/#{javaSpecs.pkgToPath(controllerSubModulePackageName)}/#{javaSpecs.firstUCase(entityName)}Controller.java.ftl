@@ -49,14 +49,14 @@ public class ${entityName}Controller extends BaseController {
     }
 
     @RequestMapping(value = "/detail")
-    public RespBase${r"<"}?> detail(Integer id) {
+    public RespBase${r"<"}?> detail(Long id) {
         RespBase${r"<"}Object> resp = RespBase.create();
         resp.setData(${entityName?uncap_first}Service.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del")
-    public RespBase${r"<"}?> del(Integer id) {
+    public RespBase${r"<"}?> del(Long id) {
         RespBase${r"<"}Object> resp = RespBase.create();
         ${entityName?uncap_first}Service.del(id);
         return resp;
