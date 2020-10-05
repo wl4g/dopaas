@@ -41,8 +41,11 @@ import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
+import com.wl4g.devops.dts.codegen.i18n.CodegenResourceMessageBundler;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
-import com.wl4g.devops.dts.codegen.utils.GenUtils;
+import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
+
+import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +53,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+
+import static com.google.common.collect.Sets.difference;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
 import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -68,6 +83,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  */
 @Service
 public class GenerateServiceImpl implements GenerateService {
+
+	@Resource(name = BEAN_CODEGEN_MSG_SOURCE)
+	protected CodegenResourceMessageBundler bundle;
 
 	@Autowired
 	protected NamingPrototypeBeanFactory beanFactory;
@@ -186,7 +204,7 @@ public class GenerateServiceImpl implements GenerateService {
 		}
 		table.setGenTableColumns(cols);
 		// Check table struct specification.
-		String warningTip = GenUtils.checkBuiltinColumns(datasource, project, table);
+		String warningTip = checkBuiltinColumns(datasource, project, table);
 		if (isNotBlank(warningTip)) {
 			resp.setStatus("warningTip");
 			resp.setMessage(warningTip);
@@ -263,7 +281,7 @@ public class GenerateServiceImpl implements GenerateService {
 		oldGenCols.addAll(needAdd);
 		oldGenTab.setGenTableColumns(oldGenCols);
 
-		String warningTip = GenUtils.checkBuiltinColumns(datasource, project, oldGenTab);
+		String warningTip = checkBuiltinColumns(datasource, project, oldGenTab);
 		if (isNotBlank(warningTip)) {
 			resp.setStatus("warningTip");
 			resp.setMessage(warningTip);
@@ -385,6 +403,53 @@ public class GenerateServiceImpl implements GenerateService {
 			saveGenConfig(genTable);
 		}
 
+	}
+
+	/**
+	 * Check {@link GenTable} columns type with builtin definitions.
+	 * 
+	 * @param datasource
+	 * @param project
+	 * @param table
+	 * @return Warning tip message.
+	 */
+	private String checkBuiltinColumns(@NotNull GenDataSource datasource, @NotNull GenProject project, @NotNull GenTable table) {
+		notNullOf(datasource, "datasource");
+		notNullOf(project, "project");
+		notNullOf(table, "table");
+
+		// Check requires provider.
+		List<String> providers = getProviders(project.getProviderSet());
+		if (!providers.contains(IAM_SPINGCLOUD_MVN)) {
+			return null; // Pass
+		}
+
+		// Check to extract the matched builtin columns.
+		DbType dbType = DbType.of(datasource.getType());
+		Set<BuiltinColumnDefinition> matches = asList(BuiltinColumnDefinition.values()).stream()
+				// Check the specific database column name and type that are
+				// supported?
+				.filter(def -> safeList(table.getGenTableColumns()).stream()
+						.filter(col -> equalsIgnoreCase(col.getColumnName(), def.getColumnName())
+								&& def.getColumnTypes().getOrDefault(dbType, emptyList()).contains(col.getSimpleColumnType()))
+						.findAny().isPresent())
+				.collect(toSet());
+
+		String title = null;
+		StringBuilder warningTip = new StringBuilder();
+		for (BuiltinColumnDefinition missing : difference(newHashSet(BuiltinColumnDefinition.values()), matches)) {
+			if (isNull(title)) {
+				warningTip.append(title = bundle.getMessage("gen.coltypes.missing.title") + "</br>");
+			}
+			List<String> missingColumnTypes = missing.getColumnTypes().entrySet().stream().filter(e -> e.getKey() == dbType)
+					.map(e -> e.getValue()).findFirst().orElse(null);
+			warningTip.append(missing.getColumnName() + " " + missingColumnTypes.toString() + " - "
+					+ (missing.isRequired() ? bundle.getMessage("gen.coltypes.missing.require")
+							: bundle.getMessage("gen.coltypes.missing.suggest")));
+			warningTip.append("</br>");
+		}
+
+		return warningTip.toString();
 	}
 
 }
