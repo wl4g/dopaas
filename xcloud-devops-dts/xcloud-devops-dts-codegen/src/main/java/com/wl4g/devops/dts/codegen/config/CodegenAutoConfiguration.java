@@ -38,7 +38,9 @@ import com.wl4g.devops.dts.codegen.engine.resolver.OracleV11gMetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.PostgreSQLV10MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
+import com.wl4g.devops.dts.codegen.i18n.CodegenResourceMessageBundler;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,6 +59,12 @@ import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.Resol
  */
 @Configuration
 public class CodegenAutoConfiguration {
+
+	@Bean(BEAN_CODEGEN_MSG_SOURCE)
+	@ConditionalOnMissingBean
+	public CodegenResourceMessageBundler codegenResourceMessageBundler() {
+		return new CodegenResourceMessageBundler();
+	}
 
 	@Bean
 	@ConfigurationProperties(prefix = "spring.cloud.xcloud.dts.codegen")
@@ -149,7 +157,7 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@NamingPrototype({IAM_SPINGCLOUD_MVN})
+	@NamingPrototype({ IAM_SPINGCLOUD_MVN })
 	public IamSpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
 		return new IamSpringCloudMvnGeneratorProvider(context);
 	}
@@ -165,5 +173,7 @@ public class CodegenAutoConfiguration {
 	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context) {
 		return new AngularJSGeneratorProvider(context);
 	}
+
+	public static final String BEAN_CODEGEN_MSG_SOURCE = "codegenResourceMessageBundler";
 
 }
