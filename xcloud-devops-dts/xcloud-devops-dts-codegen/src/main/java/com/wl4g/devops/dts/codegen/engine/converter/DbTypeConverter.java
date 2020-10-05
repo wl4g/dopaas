@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.engine.converter;
 
 import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.components.core.framework.operator.Operator;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper.MappedMatcher;
 
 import javax.validation.constraints.NotBlank;
@@ -42,7 +42,7 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
  * @version v1.0 2020-09-10
  * @since
  */
-public abstract class DbTypeConverter implements Operator<ConverterKind> {
+public abstract class DbTypeConverter implements Operator<DbType> {
 
 	/** Sql and code types cache. */
 	private final Map<CodeLanguage, List<TypeMappedWrapper>> typesCache = new ConcurrentHashMap<>(4);
@@ -86,7 +86,7 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 				"No such mapped type of lang: %s, matcher: %s, fromType: %s", lang, matcher, fromType);
 	}
 
-	public List<TypeMappedWrapper> getTypeMappedWrappers(CodeLanguage codeLanguage){
+	public List<TypeMappedWrapper> getTypeMappedWrappers(CodeLanguage codeLanguage) {
 		return typesCache.get(codeLanguage);
 	}
 
@@ -123,11 +123,11 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 			.replace(DbTypeConverter.class.getSimpleName(), "") + "types/";
 
 	/**
-	 * {@link ConverterKind}
+	 * {@link DbType}
 	 * 
 	 * @see
 	 */
-	public static enum ConverterKind {
+	public static enum DbType {
 		MySQLV5("mysqlv5"),
 
 		OracleV11g("oraclev11g"),
@@ -136,12 +136,25 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 
 		private final String dbName;
 
-		private ConverterKind(String alias) {
+		private DbType(String alias) {
 			this.dbName = hasTextOf(alias, "alias");
 		}
 
 		public String getDbName() {
 			return dbName;
+		}
+
+		public static DbType of(String dbType) {
+			return notNull(safeOf(dbType), "No such dbType of %s", dbType);
+		}
+
+		public static DbType safeOf(String dbType) {
+			for (DbType t : values()) {
+				if (t.getDbName().equalsIgnoreCase(dbType) || t.name().equalsIgnoreCase(dbType)) {
+					return t;
+				}
+			}
+			return null;
 		}
 
 	}
@@ -228,23 +241,23 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 		 */
 		public static enum MappedMatcher {
 
-			lang2Sql((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(),fromType)).map(m -> m.getSqlType())
-					.findFirst().orElse(null)),
-
-			Sql2Column((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getSqlType(),fromType))
-					.map(m -> m.getColumnType()).findFirst().orElse(null)),
-
-			Lang2Column((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(),fromType))
-					.map(m -> m.getColumnType()).findFirst().orElse(null)),
-
-			Column2Sql((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getColumnType(),fromType))
+			lang2Sql((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(), fromType))
 					.map(m -> m.getSqlType()).findFirst().orElse(null)),
 
-			Column2Lang((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getColumnType(),fromType))
+			Sql2Column((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getSqlType(), fromType))
+					.map(m -> m.getColumnType()).findFirst().orElse(null)),
+
+			Lang2Column((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(), fromType))
+					.map(m -> m.getColumnType()).findFirst().orElse(null)),
+
+			Column2Sql((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getColumnType(), fromType))
+					.map(m -> m.getSqlType()).findFirst().orElse(null)),
+
+			Column2Lang((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getColumnType(), fromType))
 					.map(m -> m.getAttrType()).findFirst().orElse(null)),
 
-			Sql2Lang((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getSqlType(),fromType)).map(m -> m.getAttrType())
-					.findFirst().orElse(null));
+			Sql2Lang((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getSqlType(), fromType))
+					.map(m -> m.getAttrType()).findFirst().orElse(null));
 
 			/**
 			 * {@link MappedMatcherHandler}

@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.specs.AngularSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;

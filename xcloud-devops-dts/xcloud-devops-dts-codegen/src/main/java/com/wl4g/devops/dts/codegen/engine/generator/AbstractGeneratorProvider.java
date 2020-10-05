@@ -26,6 +26,9 @@ import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.exception.RenderingGenerateException;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
+
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 import javax.validation.constraints.NotBlank;
@@ -43,14 +46,15 @@ import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.common.view.Freemarkers.createDefault;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
 import static com.wl4g.components.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
-import static com.wl4g.devops.dts.codegen.utils.FreemarkerUtils.defaultGenConfigurer;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
 import static java.io.File.separator;
 import static java.lang.String.format;
+import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -375,5 +379,9 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * {@link SpelExpressions}
 	 */
 	private static final SpelExpressions spelExpr = SpelExpressions.create();
+
+	/** Default freemarker {@link Configuration} */
+	private static final Configuration defaultGenConfigurer = createDefault().withVersion(Configuration.VERSION_2_3_27)
+			.withTemplateLoaders(singletonList(new StringTemplateLoader())).build();
 
 }

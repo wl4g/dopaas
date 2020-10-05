@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.GEN_COMMON_GOSPECS;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_COMMON_GOSPECS;
 
 import javax.validation.constraints.NotNull;
 

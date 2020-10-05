@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
 
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**

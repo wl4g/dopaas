@@ -16,13 +16,13 @@
 package com.wl4g.devops.dts.codegen.utils;
 
 /**
- * {@link ModelAttributeDefinitions}
+ * {@link ModelAttributeDefinition}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-25
  * @since
  */
-public abstract class ModelAttributeDefinitions {
+public abstract class ModelAttributeDefinition {
 
 	//
 	// --- Gen Common. ---

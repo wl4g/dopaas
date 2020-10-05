@@ -25,8 +25,8 @@ package com.wl4g.devops.dts.codegen.engine.converter;
 public class PostgreSQLV10TypeConverter extends DbTypeConverter {
 
 	@Override
-	public ConverterKind kind() {
-		return ConverterKind.PostgreSQLV10;
+	public DbType kind() {
+		return DbType.PostgreSQLV10;
 	}
 
 }

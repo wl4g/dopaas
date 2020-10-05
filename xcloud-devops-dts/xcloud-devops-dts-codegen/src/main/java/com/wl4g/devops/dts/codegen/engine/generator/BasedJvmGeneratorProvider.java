@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 import static java.util.Locale.US;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toSet;

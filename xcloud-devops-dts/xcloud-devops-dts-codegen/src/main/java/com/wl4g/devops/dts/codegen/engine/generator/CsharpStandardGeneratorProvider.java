@@ -21,7 +21,7 @@ import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.specs.CSharpSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 
 /**
  * C_sharp standard generator provider.

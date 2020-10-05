@@ -22,7 +22,7 @@ import com.wl4g.devops.dts.codegen.console.CodegenConsole;
 import com.wl4g.devops.dts.codegen.engine.DefaultGenerateEngineImpl;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
 import com.wl4g.devops.dts.codegen.engine.generator.AngularJSGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.CsharpStandardGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.GoStandardGeneratorProvider;
@@ -116,8 +116,8 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	public GenericOperatorAdapter<ConverterKind, DbTypeConverter> dbTypeConverterAdapter(List<DbTypeConverter> dbTypeConverters) {
-		return new GenericOperatorAdapter<ConverterKind, DbTypeConverter>(dbTypeConverters) {
+	public GenericOperatorAdapter<DbType, DbTypeConverter> dbTypeConverterAdapter(List<DbTypeConverter> dbTypeConverters) {
+		return new GenericOperatorAdapter<DbType, DbTypeConverter>(dbTypeConverters) {
 		};
 	}
 

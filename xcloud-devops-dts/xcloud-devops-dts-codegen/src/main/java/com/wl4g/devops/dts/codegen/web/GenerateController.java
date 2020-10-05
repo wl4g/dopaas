@@ -24,7 +24,7 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 public class GenerateController extends BaseController {
 
 	@Autowired
-	protected GenericOperatorAdapter<ConverterKind, DbTypeConverter> converter;
+	protected GenericOperatorAdapter<DbType, DbTypeConverter> converter;
 
 	@Autowired
 	protected CodegenProperties config;

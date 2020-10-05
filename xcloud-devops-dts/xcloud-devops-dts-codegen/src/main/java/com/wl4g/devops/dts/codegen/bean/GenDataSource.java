@@ -20,7 +20,7 @@ import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinitions.*;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 
 /**
  * {@link GenDataSource}
@@ -37,6 +37,9 @@ public class GenDataSource extends BaseBean {
 	@RenderProperty(propertyName = GEN_DB_NAME)
 	private String name;
 
+	/**
+	 * {@link com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType}
+	 */
 	@RenderProperty(propertyName = GEN_DB_TYPE)
 	private String type;
 
