@@ -95,7 +95,7 @@ public class BaseSpecs {
 	 * @return
 	 */
 	public static long genNextId() {
-		return SnowflakeIdGenerator.getDefault().nextId() % 100_000_000_000L;
+		return SnowflakeIdGenerator.getDefault().nextId(true);
 	}
 
 	/**
