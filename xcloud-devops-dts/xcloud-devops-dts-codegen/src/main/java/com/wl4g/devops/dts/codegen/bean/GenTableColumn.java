@@ -114,4 +114,41 @@ public class GenTableColumn extends BaseBean {
 	@RenderProperty(propertyName = GEN_COLUMN_ISEDIT)
 	private String isEdit;
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((columnName == null) ? 0 : columnName.hashCode());
+		result = prime * result + ((columnType == null) ? 0 : columnType.hashCode());
+		result = prime * result + ((simpleColumnType == null) ? 0 : simpleColumnType.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GenTableColumn other = (GenTableColumn) obj;
+		if (columnName == null) {
+			if (other.columnName != null)
+				return false;
+		} else if (!columnName.equals(other.columnName))
+			return false;
+		if (columnType == null) {
+			if (other.columnType != null)
+				return false;
+		} else if (!columnType.equals(other.columnType))
+			return false;
+		if (simpleColumnType == null) {
+			if (other.simpleColumnType != null)
+				return false;
+		} else if (!simpleColumnType.equals(other.simpleColumnType))
+			return false;
+		return true;
+	}
+
 }

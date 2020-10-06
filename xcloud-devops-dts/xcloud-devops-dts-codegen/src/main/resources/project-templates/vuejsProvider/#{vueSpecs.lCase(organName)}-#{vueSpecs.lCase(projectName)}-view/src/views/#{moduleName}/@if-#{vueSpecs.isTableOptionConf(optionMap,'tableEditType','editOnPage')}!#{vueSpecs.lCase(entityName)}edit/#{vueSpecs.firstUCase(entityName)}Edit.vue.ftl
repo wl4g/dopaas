@@ -8,7 +8,7 @@
                 <el-col :span="24">
                     <el-form-item label="${param.attrName}" prop="${param.attrName}">
                         <span slot="label">
-                            <span>${param.attrName}</span>
+                            <span>${param.columnComment}</span>
                         <#if param.columnComment != ''>
                             <el-tooltip class="item" effect="dark" content="${param.columnComment}" placement="right">
                                 <i class="el-icon-question"></i>
