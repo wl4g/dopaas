@@ -36,26 +36,39 @@ public interface GenerateService {
 	List<TableMetadata> loadTables(Long projectId);
 
 	/**
-	 * new gen code
+	 * Load latest generate table metadata info.
 	 * 
 	 * @param databaseId
 	 * @param tableName
 	 */
-	RespBase<Object> loadMetadata(Long projectId, String tableName);
+	RespBase<GenTable> loadMetadata(Long projectId, String tableName);
 
 	PageModel page(PageModel pm, String tableName, Long projectId);
 
-	RespBase<Object> detail(Long tableId);
+	/**
+	 * Find generate talbe metadata info.
+	 * 
+	 * @param tableId
+	 * @return
+	 */
+	RespBase<GenTable> detail(Long tableId);
 
 	void saveGenConfig(GenTable genTable);
 
-	void delete(Long tableId);
+	void deleteGenTable(Long tableId);
 
 	GeneratedResult generate(Long tableId);
 
 	Set<String> getAttrTypes(Long projectId);
 
-	void setEnable(Long id, String status);
+	void setGenTableStatus(Long id, String status);
 
-	void synchronizeTable(Long id, boolean focus);
+	/**
+	 * Synchronizing {@link GenTable} information.
+	 * 
+	 * @param id
+	 * @param force
+	 */
+	void syncGenTable(Long id, boolean force);
+
 }

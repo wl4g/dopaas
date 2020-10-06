@@ -4,7 +4,7 @@
 <mapper namespace="com.wl4g.devops.dts.codegen.dao.GenTableDao">
 	<resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenTable">
 		<id column="id" property="id" jdbcType="BIGINT" />
-		<result column="project_id" property="projectId" jdbcType="INTEGER" />
+		<result column="project_id" property="projectId" jdbcType="BIGINT" />
 		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
 		<result column="entity_name" property="entityName" jdbcType="VARCHAR" />
 		<result column="comments" property="comments" jdbcType="VARCHAR" />
@@ -17,9 +17,9 @@
 		<result column="status" property="status" jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
-		<result column="create_by" property="createBy" jdbcType="VARCHAR" />
+		<result column="create_by" property="createBy" jdbcType="BIGINT" />
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
-		<result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+		<result column="update_by" property="updateBy" jdbcType="BIGINT" />
 		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
 	</resultMap>
 
@@ -34,14 +34,14 @@
 		select
 		<include refid="Base_Column_List" />
 		from dts_gen_table
-		where id = #{id,jdbcType=INTEGER}
+		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByProjectId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
 		from dts_gen_table
-		where project_id = #{id,jdbcType=INTEGER} and del_flag!=1
+		where project_id = #{id,jdbcType=BIGINT} and del_flag!=1
 	</select>
 
 	<select id="countByProjectIdAndTableName" resultType="java.lang.Long" parameterType="java.util.Map">
@@ -49,7 +49,7 @@
 		COUNT(1)
 		FROM dts_gen_table
 		<where>
-			project_id = #{projectId,jdbcType=INTEGER}
+			project_id = #{projectId,jdbcType=BIGINT}
 			AND table_name = #{tableName,jdbcType=VARCHAR}
 			AND del_flag != 1
 		</where>
@@ -58,26 +58,26 @@
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
 		DELETE FROM dts_gen_table
 		<where>
-			id = #{id,jdbcType=INTEGER}
+			id = #{id,jdbcType=BIGINT}
 		</where>
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable">
 		INSERT INTO dts_gen_table (
-		id, project_id, table_name,
-		entity_name, comments,
-		module_name, sub_module_name,
-		function_name, function_name_simple, function_author,
-		gen_base_dir, options, status, remark,
-		del_flag, create_date, create_by,
-		update_date, update_by)
-		values (
-		#{id,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR},
-		#{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR},
-		#{subModuleName,jdbcType=VARCHAR}, #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR},
-		#{functionAuthor,jdbcType=VARCHAR}, #{options,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
-		#{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
-		#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER})
+			id, project_id, table_name,
+			entity_name, comments,
+			module_name, sub_module_name,
+			function_name, function_name_simple, function_author,
+			gen_base_dir, options, status, remark,
+			del_flag, create_date, create_by, update_date, update_by)
+		VALUES (
+			#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{tableName,jdbcType=VARCHAR},
+			#{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR},
+			#{subModuleName,jdbcType=VARCHAR}, #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR},
+			#{functionAuthor,jdbcType=VARCHAR}, #{options,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT},
+			#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{delFlag,jdbcType=INTEGER}
+		)
 	</insert>
 
 	<insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable">
@@ -140,10 +140,10 @@
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
-				#{id,jdbcType=INTEGER},
+				#{id,jdbcType=BIGINT},
 			</if>
 			<if test="projectId != null">
-				#{projectId,jdbcType=INTEGER},
+				#{projectId,jdbcType=BIGINT},
 			</if>
 			<if test="tableName != null">
 				#{tableName,jdbcType=VARCHAR},
@@ -182,13 +182,13 @@
 				#{createDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="createBy != null">
-				#{createBy,jdbcType=VARCHAR},
+				#{createBy,jdbcType=BIGINT},
 			</if>
 			<if test="updateDate != null">
 				#{updateDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="updateBy != null">
-				#{updateBy,jdbcType=VARCHAR},
+				#{updateBy,jdbcType=BIGINT},
 			</if>
 			<if test="delFlag != null">
 				#{delFlag,jdbcType=INTEGER},
@@ -200,7 +200,7 @@
 		UPDATE dts_gen_table
 		<set>
 			<if test="projectId != null">
-				project_id = #{projectId,jdbcType=INTEGER},
+				project_id = #{projectId,jdbcType=BIGINT},
 			</if>
 			<if test="tableName != null">
 				table_name = #{tableName,jdbcType=VARCHAR},
@@ -242,22 +242,22 @@
 				create_date = #{createDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="createBy != null">
-				create_by = #{createBy,jdbcType=VARCHAR},
+				create_by = #{createBy,jdbcType=BIGINT},
 			</if>
 			<if test="updateDate != null">
 				update_date = #{updateDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="updateBy != null">
-				update_by = #{updateBy,jdbcType=VARCHAR},
+				update_by = #{updateBy,jdbcType=BIGINT},
 			</if>
 		</set>
-		where id = #{id,jdbcType=INTEGER}
+		where id = #{id,jdbcType=BIGINT}
 	</update>
 
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable">
 		UPDATE dts_gen_table
 		<set>
-			project_id = #{projectId,jdbcType=INTEGER},
+			project_id = #{projectId,jdbcType=BIGINT},
 			table_name = #{tableName,jdbcType=VARCHAR},
 			entity_name = #{entityName,jdbcType=VARCHAR},
 			comments = #{comments,jdbcType=VARCHAR},
@@ -271,12 +271,12 @@
 			remark = #{remark,jdbcType=VARCHAR},
 			del_flag = #{delFlag,jdbcType=INTEGER},
 			create_date = #{createDate,jdbcType=TIMESTAMP},
-			create_by = #{createBy,jdbcType=VARCHAR},
+			create_by = #{createBy,jdbcType=BIGINT},
 			update_date = #{updateDate,jdbcType=TIMESTAMP},
-			update_by = #{updateBy,jdbcType=VARCHAR}
+			update_by = #{updateBy,jdbcType=BIGINT}
 		</set>
 		<where>
-			id = #{id,jdbcType=INTEGER}
+			id = #{id,jdbcType=BIGINT}
 		</where>
 	</update>
 
@@ -285,12 +285,12 @@
 		<include refid="Base_Column_List" />
 		FROM dts_gen_table
 		<where>
-			del_flag!=1
+			del_flag != 1
 			<if test="tableName != null and tableName != ''">
 				AND `table_name` LIKE CONCAT('%','${tableName}','%')
 			</if>
 			<if test="projectId != null">
-				AND project_id = #{projectId,jdbcType=INTEGER}
+				AND project_id = #{projectId,jdbcType=BIGINT}
 			</if>
 			order by update_date desc
 		</where>

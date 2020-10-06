@@ -13,9 +13,9 @@
 		<result column="db_version" property="dbversion" jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
-		<result column="create_by" property="createBy" jdbcType="VARCHAR" />
+		<result column="create_by" property="createBy" jdbcType="BIGINT" />
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
-		<result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+		<result column="update_by" property="updateBy" jdbcType="BIGINT" />
 		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
 	</resultMap>
 
@@ -28,26 +28,26 @@
 		select
 		<include refid="Base_Column_List" />
 		from dts_gen_datasource
-		where id = #{id,jdbcType=INTEGER}
+		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
 		delete from dts_gen_datasource
-		where id = #{id,jdbcType=INTEGER}
+		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource">
 		INSERT INTO dts_gen_datasource (id, name, `type`,
-		host, port, `database`,
-		username, password, db_version,
-		remark, del_flag, create_date,
-		create_by, update_date, update_by
+			host, port, `database`,
+			username, password, db_version,
+			remark, del_flag, create_date,
+			create_by, update_date, update_by
 		) VALUES (
-		#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
-		#{host,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, #{database,jdbcType=VARCHAR},
-		#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{dbversion,jdbcType=VARCHAR},
-		#{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
-		#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}
+			#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
+			#{host,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, #{database,jdbcType=VARCHAR},
+			#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{dbversion,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT},
+			#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{delFlag,jdbcType=INTEGER}
 		)
 	</insert>
 
@@ -102,7 +102,7 @@
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="id != null">
-				#{id,jdbcType=INTEGER},
+				#{id,jdbcType=BIGINT},
 			</if>
 			<if test="name != null">
 				#{name,jdbcType=VARCHAR},
@@ -135,13 +135,13 @@
 				#{createDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="createBy != null">
-				#{createBy,jdbcType=VARCHAR},
+				#{createBy,jdbcType=BIGINT},
 			</if>
 			<if test="updateDate != null">
 				#{updateDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="updateBy != null">
-				#{updateBy,jdbcType=VARCHAR},
+				#{updateBy,jdbcType=BIGINT},
 			</if>
 			<if test="delFlag != null">
 				#{delFlag,jdbcType=INTEGER},
@@ -183,19 +183,19 @@
 				create_date = #{createDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="createBy != null">
-				create_by = #{createBy,jdbcType=VARCHAR},
+				create_by = #{createBy,jdbcType=BIGINT},
 			</if>
 			<if test="updateDate != null">
 				update_date = #{updateDate,jdbcType=TIMESTAMP},
 			</if>
 			<if test="updateBy != null">
-				update_by = #{updateBy,jdbcType=VARCHAR},
+				update_by = #{updateBy,jdbcType=BIGINT},
 			</if>
 			<if test="delFlag != null">
 				del_flag = #{delFlag,jdbcType=INTEGER},
 			</if>
 		</set>
-		where id = #{id,jdbcType=INTEGER}
+		where id = #{id,jdbcType=BIGINT}
 	</update>
 
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource">
@@ -211,10 +211,10 @@
 		remark = #{remark,jdbcType=VARCHAR},
 		del_flag = #{delFlag,jdbcType=INTEGER},
 		create_date = #{createDate,jdbcType=TIMESTAMP},
-		create_by = #{createBy,jdbcType=VARCHAR},
+		create_by = #{createBy,jdbcType=BIGINT},
 		update_date = #{updateDate,jdbcType=TIMESTAMP},
-		update_by = #{updateBy,jdbcType=VARCHAR}
-		where id = #{id,jdbcType=INTEGER}
+		update_by = #{updateBy,jdbcType=BIGINT}
+		where id = #{id,jdbcType=BIGINT}
 	</update>
 
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">

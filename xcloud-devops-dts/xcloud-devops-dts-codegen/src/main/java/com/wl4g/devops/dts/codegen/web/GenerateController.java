@@ -62,41 +62,40 @@ public class GenerateController extends BaseController {
 	protected GenerateService generateService;
 
 	@RequestMapping("loadTables")
-	public RespBase<?> loadTables(Long projectId) {
-		RespBase<Object> resp = RespBase.create();
-		List<TableMetadata> tables = generateService.loadTables(projectId);
-		resp.setData(tables);
+	public RespBase<List<TableMetadata>> loadTables(Long projectId) {
+		RespBase<List<TableMetadata>> resp = RespBase.create();
+		resp.setData(generateService.loadTables(projectId));
 		return resp;
 	}
 
 	@RequestMapping("loadMetadata")
-	public RespBase<?> loadMetadata(Long projectId, String tableName) {
+	public RespBase<GenTable> loadMetadata(Long projectId, String tableName) {
 		return generateService.loadMetadata(projectId, tableName);
 	}
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String tableName, Long projectId) {
-		RespBase<Object> resp = RespBase.create();
+	public RespBase<PageModel> searchGenTable(PageModel pm, String tableName, Long projectId) {
+		RespBase<PageModel> resp = RespBase.create();
 		resp.setData(generateService.page(pm, tableName, projectId));
 		return resp;
 	}
 
 	@RequestMapping("save")
-	public RespBase<?> save(@RequestBody GenTable genTable) {
+	public RespBase<?> saveGenTable(@RequestBody GenTable genTable) {
 		RespBase<Object> resp = RespBase.create();
 		generateService.saveGenConfig(genTable);
 		return resp;
 	}
 
 	@RequestMapping("detail")
-	public RespBase<?> detail(Long tableId) {
+	public RespBase<?> detailGenTable(Long tableId) {
 		return generateService.detail(tableId);
 	}
 
 	@RequestMapping("del")
-	public RespBase<?> del(Long id) {
+	public RespBase<?> deleteGenTable(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		generateService.delete(id);
+		generateService.deleteGenTable(id);
 		return resp;
 	}
 
@@ -126,10 +125,10 @@ public class GenerateController extends BaseController {
 	}
 
 	@RequestMapping("setEnable")
-	public RespBase<?> setEnable(Long id, String status) {
+	public RespBase<?> setGenTableStatus(Long id, String status) {
 		RespBase<Object> resp = RespBase.create();
 		notNullOf(id, "id");
-		generateService.setEnable(id, status);
+		generateService.setGenTableStatus(id, status);
 		return resp;
 	}
 
@@ -143,7 +142,7 @@ public class GenerateController extends BaseController {
 	@RequestMapping("synchronizeTable")
 	public RespBase<?> synchronizeTable(Long id, boolean force) {
 		RespBase<Object> resp = RespBase.create();
-		generateService.synchronizeTable(id, force);
+		generateService.syncGenTable(id, force);
 		return resp;
 	}
 
