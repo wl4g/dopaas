@@ -5,7 +5,7 @@ export default {
 <#if vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
     iam: {
         cluster: 'iam-server',
-        twoDomain: 'iam',
+        twoDomain: 'iam-services',
         defaultContextPath: '/iam-server',
         defaultPort: '14040',
     },
@@ -14,7 +14,7 @@ export default {
 <#elseif vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
     iam: {
         cluster: '${projectName?lower_case}-server',
-        twoDomain: '${projectName?lower_case}',
+        twoDomain: '${entryAppSubDomain}',
         defaultContextPath: '/${projectName?lower_case}-server',
         defaultPort: '${entryAppPort}',
     },
@@ -22,7 +22,7 @@ export default {
 <#list moduleMap?keys as moduleName>
     ${moduleName}: {
         cluster: '${projectName?lower_case}-server',
-        twoDomain: '${projectName?lower_case}',
+        twoDomain: '${entryAppSubDomain}',
         defaultContextPath: '/${projectName?lower_case}-server',
         defaultPort: '${entryAppPort}',
     },

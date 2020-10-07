@@ -137,6 +137,8 @@ public abstract class ModelAttributeDefinition {
 	 * controller appName or spark program appName)
 	 */
 	public static final String GEN_DEF_ENTRYAPP_NAME = "entryAppName";
+	// e.g: portal-services.mydomain.com => portal-services
+	public static final String GEN_DEF_ENTRYAPP_SUBDOMAIN = "entryAppSubDomain";
 	public static final String GEN_DEF_ENTRYAPP_PORT = "entryAppPort";
 
 	// Default config of deploy topDomain. (dev)

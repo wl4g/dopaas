@@ -39,13 +39,13 @@ export default {
             	// refer: https://github.com/wl4g/xcloud-iam/blob/master/xcloud-iam-security/src/main/resources/iam-jssdk-webapps/example.html
 <#if vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
             	deploy: {
-                    defaultTwoDomain: "${entryAppName}",
+                    defaultTwoDomain: "${entryAppSubDomain}",
                     defaultServerPort: ${entryAppPort},
                     defaultContextPath: "/${entryAppName}"
                 },
 <#elseif vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
             	deploy: {
-                    defaultTwoDomain: "iam",
+                    defaultTwoDomain: "iam-services",
                     defaultContextPath: "/iam-server"
                 },
 </#if>

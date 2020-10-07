@@ -9,7 +9,6 @@ export default {
                 userName: '',
                 displayName: '',
             },
-
             //分页信息
             total: 0,
             pageNum: 1,
@@ -27,9 +26,7 @@ export default {
                 roleIds: [],
                 groupIds: [],
                 groupNameStrs: '',
-
             },
-
             isEdit: false,
 
             dialogVisible: false,
@@ -42,13 +39,11 @@ export default {
             rolesData: [],
             groupsTreeData: [],
 
-
             defaultProps: {
                 children: 'children',
                 label: 'displayName',
             },
             treeShow: false,
-
 
             //验证
             rules: {
@@ -67,7 +62,6 @@ export default {
     },
 
     methods: {
-
         onSubmit() {
             this.getData();
         },
@@ -94,7 +88,6 @@ export default {
                 }
             })
         },
-
 
         addData() {
             this.getRoles();
@@ -142,10 +135,8 @@ export default {
             };
         },
 
-
         save() {
             this.dialogLoading = true;
-
             this.$refs['saveForm'].validate((valid) => {
                 if (valid) {
                     if (this.saveForm.oldPassword != this.saveForm.password || this.saveForm.oldPassword == '') {//need update password
@@ -157,7 +148,6 @@ export default {
                     this.dialogLoading = false;
                 }
             })
-
         },
 
         saveDataWithPassword() {
@@ -167,13 +157,13 @@ export default {
             	// refer: https://github.com/wl4g/xcloud-iam/blob/master/xcloud-iam-security/src/main/resources/iam-jssdk-webapps/example.html
 <#if vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
             	deploy: {
-                    defaultTwoDomain: "${entryAppName}",
+                    defaultTwoDomain: "${entryAppSubDomain}",
                     defaultServerPort: ${entryAppPort},
                     defaultContextPath: "/${entryAppName}"
                 },
 <#elseif vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
             	deploy: {
-                    defaultTwoDomain: "iam",
+                    defaultTwoDomain: "iam-services",
                     defaultContextPath: "/iam-server"
                 },
 </#if>
