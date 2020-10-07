@@ -26,15 +26,11 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 import javax.validation.constraints.NotNull;
 
 import java.util.Map;
-import java.util.Set;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 import static java.util.Locale.US;
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
  * {@link BasedJvmGeneratorProvider}
@@ -89,26 +85,8 @@ public abstract class BasedJvmGeneratorProvider extends DefaultWebConfigurationG
 			model.put(GEN_TABLE_DAO_SUBMODULE_PACKAGENAME, daoSubModulePackageName);
 			model.put(GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME, serviceSubModulePackageName);
 			model.put(GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME, controllerSubModulePackageName);
-
-			// Distinct imports
-			distinctImportAttrTypes(model, table);
 		}
 
-	}
-
-	/**
-	 * Distinct javacodes import types. </br>
-	 * </br>
-	 * 
-	 * @param model
-	 * @param table
-	 */
-	private void distinctImportAttrTypes(MapRenderModel model, GenTable table) {
-		// Note: Java is automatically imported by default java.lang Classes
-		// under packages.
-		Set<String> importTypes = safeList(table.getGenTableColumns()).stream()
-				.filter(col -> !startsWith(col.getAttrType(), "java.lang")).map(col -> col.getAttrType()).collect(toSet());
-		model.put(GEN_TABLE_ATTRTYPES, importTypes);
 	}
 
 }

@@ -1,70 +1,87 @@
+<#-- 全局宏定义 -->
+<#assign currentDate = .now?date>
+<#assign filteredTabColumns = javaSpecs.filterColumns(genTableColumns)><#-- 需过滤掉内置的字段(BaseBean) -->
+<#assign attrTypes = javaSpecs.transformColumns(filteredTabColumns, "attrType")>
+<#-- 是否有Date类型的字段(需@JsonFormat) -->
+<#assign hasAttrNameOfDate = javaSpecs.hasFieldValue(attrTypes, "java.util.Date")>
+<#-- 是否有非空的字段(需@NotNull) -->
+<#assign hasAttrNameOfNotNull = javaSpecs.hasFieldValue(javaSpecs.transformColumns(filteredTabColumns, "noNull"), "1")>
 // ${watermark}
 
 ${javaSpecs.escapeCopyright(copyright)}
 
-<#assign aDateTime = .now>
-<#assign now = aDateTime?date>
 package ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName};
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import com.wl4g.components.core.bean.BaseBean;
-
+<#if hasAttrNameOfDate == true>
+import com.fasterxml.jackson.annotation.JsonFormat;
+</#if>
+<#if hasAttrNameOfNotNull == true>
+import javax.validation.constraints.NotNull;
+</#if>
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-<#-- import lombok.RequiredArgsConstructor; -->
 import lombok.Getter;
 import lombok.Setter;
-
-<#if optionObj.isExportExcel==true>
+<#if optionObj.isExportExcel == true>
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 </#if>
 
-<#list attrTypes as attrType>
+<#list javaSpecs.distinctList(attrTypes) as attrType>
+    <#if !attrType?starts_with("java.lang")>
 import ${attrType};
+    </#if>
 </#list>
-
 /**
  * {@link ${entityName?cap_first}}
  *
  * @author ${author}
  * @version ${version}
- * @Date ${now}
+ * @Date ${currentDate}
  * @since ${since}
  */
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-@ApiModel("${javaSpecs.cleanComment(comments)}") <#-- 转义换行和双引号 -->
+@ApiModel("${javaSpecs.cleanComment(comments)}")<#-- 转义换行和双引号 -->
 <#if optionObj.isExportExcel == true>
 @ColumnWidth(40)
 </#if>
 public class ${entityName?cap_first} extends BaseBean {
     private static final long serialVersionUID = ${javaSpecs.genSerialVersionUID()}L;
-<#list genTableColumns as param>
-	<#if param.attrName != 'id' && param.attrName != 'createBy' && param.attrName != 'updateDate' && param.attrName != 'updateBy' && param.attrName != 'organizationCode'>
+<#list filteredTabColumns as col>
 
     /**
-     * ${param.columnComment}
+     * ${col.columnComment}
      */
-    @ApiModelProperty("${javaSpecs.cleanComment(param.columnComment)}")
-		<#if optionObj.isExportExcel == true>
-    @ExcelProperty(value = { "${javaSpecs.cleanComment(param.columnComment)}" })
-		</#if>
-    private ${javaSpecs.toSimpleJavaType(param.attrType)} ${param.attrName};
-	</#if>
+    @ApiModelProperty("${javaSpecs.cleanComment(col.columnComment)}")
+	<#if optionObj.isExportExcel == true>
+    @ExcelProperty(value = { "${javaSpecs.cleanComment(col.columnComment)}" })
+    </#if>
+    <#if col.attrType == 'java.util.Date'>
+        <#if col.simpleColumnType == 'datetime'>
+            <#assign datePattern = 'yyyy-MM-dd HH:mm:ss'>
+        <#else>
+            <#assign datePattern = 'yyyy-MM-dd'>
+        </#if>
+    @JsonFormat(pattern = "${datePattern}")
+    </#if>
+    <#if col.noNull == '1'>
+    @NotNull
+    </#if>
+    private ${javaSpecs.toSimpleJavaType(col.attrType)} ${col.attrName};
 </#list>
 
-    public ${entityName?cap_first}() {}
-<#list genTableColumns as param>
-	<#-- Ignore super(BaseBean) fields. -->
-	<#if param.attrName != 'id' && param.attrName != 'createBy' && param.attrName != 'updateDate' && param.attrName != 'updateBy' && param.attrName != 'organizationCode'>
+    public ${entityName?cap_first}() {
+    }
+<#list filteredTabColumns as col>
 
-    public ${entityName?cap_first} with${param.attrName?cap_first}(${javaSpecs.toSimpleJavaType(param.attrType)?cap_first} ${param.attrName?uncap_first}) {
-        set${param.attrName?cap_first}(${param.attrName?uncap_first});
+    public ${entityName?cap_first} with${col.attrName?cap_first}(${javaSpecs.toSimpleJavaType(col.attrType)?cap_first} ${col.attrName?uncap_first}) {
+        set${col.attrName?cap_first}(${col.attrName?uncap_first});
         return this;
     }
-	</#if>
 </#list>
 }
