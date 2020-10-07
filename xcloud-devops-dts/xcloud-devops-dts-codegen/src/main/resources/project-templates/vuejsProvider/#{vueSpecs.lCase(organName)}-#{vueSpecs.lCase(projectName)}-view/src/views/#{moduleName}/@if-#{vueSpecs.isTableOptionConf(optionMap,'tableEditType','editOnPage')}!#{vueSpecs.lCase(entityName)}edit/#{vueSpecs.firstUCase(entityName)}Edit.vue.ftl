@@ -1,10 +1,10 @@
 <template>
     <section id="configuration" class="configuration">
-        <el-form label-width="130px" :model="saveForm" ref="saveForm" class="demo-form-inline" :rules="rules">
+        <el-form label-width="180px" :model="saveForm" ref="saveForm" class="demo-form-inline" :rules="rules">
 <#-- 定义要显示的列数 columnCount -->
 <#assign columnCount = 2>
-<#-- 每列宽度，elementui最大值为24 -->
-<#assign showColWidth = 24 / columnCount>
+<#-- 每列宽度，elementui最大值为24（为了美化样式需减去一定宽度，使其尽量居中） -->
+<#assign showColWidth = (24 - 6) / columnCount>
 <#-- 过滤出有效的列(需显示的列) -->
 <#assign availableColumns = vueSpecs.filterColumns(genTableColumns)>
 <#-- 计算显示当前记录集需要的表格行数 rowCount -->
