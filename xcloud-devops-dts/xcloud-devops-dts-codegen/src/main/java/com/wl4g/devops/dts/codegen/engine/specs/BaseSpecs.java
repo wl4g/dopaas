@@ -15,9 +15,11 @@
  */
 package com.wl4g.devops.dts.codegen.engine.specs;
 
+import com.google.common.collect.Lists;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.components.common.id.SnowflakeIdGenerator;
+import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
@@ -27,15 +29,21 @@ import javax.validation.constraints.NotBlank;
 import org.apdplat.word.WordSegmenter;
 import org.apdplat.word.segmentation.Word;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.components.common.collection.Collections2.disDupCollection;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.reflect.ReflectionUtils2.doWithLocalFields;
+import static com.wl4g.components.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.components.common.reflect.ReflectionUtils2.makeAccessible;
 import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.CommentExtractor.ofExtractor;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Locale.US;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -183,6 +191,27 @@ public class BaseSpecs {
 	}
 
 	/**
+	 * Check if the state is true.
+	 * 
+	 * @param assertion
+	 * @return
+	 */
+	public static boolean isTrue(@Nullable String value) {
+		return isTrue(value, false);
+	}
+
+	/**
+	 * Check if the state is true.
+	 * 
+	 * @param assertion
+	 * @param defaultValue
+	 * @return
+	 */
+	public static boolean isTrue(@Nullable String value, boolean defaultValue) {
+		return StringUtils2.isTrue(value, defaultValue);
+	}
+
+	/**
 	 * Check whether the specified extension configuration item exists.
 	 * 
 	 * @param configuredOptions
@@ -229,12 +258,12 @@ public class BaseSpecs {
 	 * {@link GenTableColumn}.
 	 * 
 	 * @param <T>
-	 * @param list
+	 * @param columns
 	 * @param condition
 	 * @return
 	 */
-	public static List<GenTableColumn> filterColumns(@Nullable List<GenTableColumn> list) {
-		return filterColumns(list, BuiltinColumnDefinition.COLUMN_NAME_VALUES);
+	public static List<GenTableColumn> filterColumns(@Nullable List<GenTableColumn> columns) {
+		return filterColumns(columns, BuiltinColumnDefinition.COLUMN_NAME_VALUES);
 	}
 
 	/**
@@ -242,15 +271,59 @@ public class BaseSpecs {
 	 * {@link GenTableColumn}.
 	 * 
 	 * @param <T>
-	 * @param list
+	 * @param columns
 	 * @param condition
 	 * @return
 	 */
-	public static List<GenTableColumn> filterColumns(@Nullable List<GenTableColumn> list,
+	public static List<GenTableColumn> filterColumns(@Nullable List<GenTableColumn> columns,
 			@Nullable List<String> withoutColumnNames) {
 		List<String> conditions = safeList(withoutColumnNames);
-		return safeList(list).stream()
+		return safeList(columns).stream()
 				.filter(e -> !conditions.contains(e.getAttrName()) && !conditions.contains(e.getColumnName())).collect(toList());
+	}
+
+	/**
+	 * Remove duplicate collection elements.
+	 * 
+	 * @param list
+	 * @return
+	 */
+	public static List<Object> distinctList(List<Object> list) {
+		return Lists.newArrayList(disDupCollection(list).toArray(new Object[0]));
+	}
+
+	/**
+	 * Transform {@link GenTableColumn} attributes.
+	 * 
+	 * @param columns
+	 * @param fieldName
+	 * @return
+	 */
+	public static List<Object> transformColumns(@Nullable List<GenTableColumn> columns, @NotBlank String fieldName) {
+		hasTextOf(fieldName, "fieldName");
+
+		List<Object> transformed = new ArrayList<>(isNull(columns) ? 0 : columns.size());
+		safeList(columns).forEach(c -> {
+			doWithLocalFields(GenTableColumn.class, f -> {
+				if (f.getName().equals(fieldName)) {
+					makeAccessible(f);
+					transformed.add(getField(f, c));
+				}
+			});
+		});
+		return transformed;
+	}
+
+	/**
+	 * Check if there is a matches value of the field of {@link List}.
+	 * 
+	 * @param values
+	 * @param matchValue
+	 * @return
+	 */
+	public static boolean hasFieldValue(@Nullable List<Object> values, @NotBlank String matchValue) {
+		hasTextOf(matchValue, "matchValue");
+		return safeList(values).stream().filter(v -> !isNull(v) && v.equals(matchValue)).findFirst().isPresent();
 	}
 
 	/**
