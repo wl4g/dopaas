@@ -601,11 +601,15 @@ INSERT INTO `sys_menu` VALUES (21, 'Notifications', '通知设置', 1, NULL, 2, 
 INSERT INTO `sys_menu` VALUES (33, 'Home', '主页', 1, NULL, 1, 0, 0, NULL, 'home', '', '/home', NULL, 'icon-zhuye', 100, 1, '2019-11-26 10:42:01', 1, '2020-08-26 12:23:21', 0);
 INSERT INTO `sys_menu` VALUES (34, 'Overview', '概览', 1, NULL, 2, 0, 33, NULL, 'home:overview', '/home/overview/Overview', '/home/overview', NULL, 'icon-gailan', 101, 1, '2019-11-26 10:42:33', 1, '2020-08-26 12:24:40', 0);
 <#if moduleMap??>
+    <#assign parentMenuSortSeq = 100>
     <#list moduleMap?keys as moduleName>
         <#assign nextMenuId = javaSpecs.genNextId()>
-INSERT INTO `sys_menu` VALUES (${nextMenuId}, '${moduleName}', '${moduleName}', 1, 'classifyA', 1, 0, 0, NULL, '${moduleName}', '', '/${moduleName}', 'NULL', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+INSERT INTO `sys_menu` VALUES (${nextMenuId}, '${moduleName}', '${moduleName}', 1, 'classifyA', 1, 0, 0, NULL, '${moduleName}', '', '/${moduleName}', 'NULL', 'icon-gongju3', ${parentMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+        <#assign parentMenuSortSeq = parentMenuSortSeq + 100>
+        <#assign subMenuSortSeq = 100>
         <#list moduleMap[moduleName] as table>
-INSERT INTO `sys_menu` VALUES (${javaSpecs.genNextId()}, '${table.entityName}', '${table.functionNameSimple}', 1, 'classifyA', 2, 0, ${nextMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${moduleName}/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', 500, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+INSERT INTO `sys_menu` VALUES (${javaSpecs.genNextId()}, '${table.entityName}', '${table.functionNameSimple}', 1, 'classifyA', 2, 0, ${nextMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${moduleName}/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+            <#assign subMenuSortSeq = subMenuSortSeq + 1>
         </#list>
     </#list>
 </#if>

@@ -23,16 +23,23 @@ import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
 
 import javax.validation.constraints.NotBlank;
+
+import org.apdplat.word.WordSegmenter;
+import org.apdplat.word.segmentation.Word;
+
 import java.util.List;
 import java.util.Map;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.CommentExtractor.ofExtractor;
+import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Locale.US;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.replaceEach;
 import static org.apache.commons.lang3.StringUtils.replacePattern;
 
 /**
@@ -161,6 +168,21 @@ public class BaseSpecs {
 	}
 
 	/**
+	 * It is useful to minimize and optimize the compression of comment strings,
+	 * such as for menu and list header display. </br>
+	 * </br>
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static String extractComment(@Nullable String str, @NotBlank String extractor) {
+		if (isBlank(str)) {
+			return str;
+		}
+		return cleanComment(ofExtractor(hasTextOf(extractor, "extractor")).getHandler().extract(str));
+	}
+
+	/**
 	 * Check whether the specified extension configuration item exists.
 	 * 
 	 * @param configuredOptions
@@ -188,6 +210,9 @@ public class BaseSpecs {
 		return false;
 	}
 
+	/**
+	 * @see {@link #isConf()}
+	 */
 	@Deprecated
 	public static boolean isTableOptionConf(@Nullable Map<String, String> optionMap, @NotBlank String name,
 			@NotBlank String value) {
@@ -226,6 +251,73 @@ public class BaseSpecs {
 		List<String> conditions = safeList(withoutColumnNames);
 		return safeList(list).stream()
 				.filter(e -> !conditions.contains(e.getAttrName()) && !conditions.contains(e.getColumnName())).collect(toList());
+	}
+
+	/**
+	 * Useful comment extractor.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020-10-07
+	 * @sine v1.0.0
+	 * @see
+	 */
+	public static enum CommentExtractor {
+
+		wordSeg(str -> {
+			// Chinese word segmentation keyword extraction.
+			List<Word> words = safeList(WordSegmenter.seg(str));
+			if (words.isEmpty()) {
+				return str;
+			}
+			StringBuffer comment = new StringBuffer();
+			for (int i = 0; i < words.size(); i++) {
+				Word word = words.get(i);
+				if (comment.length() <= 4) {
+					comment.append(word.getText());
+				} else {
+					break;
+				}
+			}
+			return comment.toString();
+		}),
+
+		simple(str -> {
+			String extracted = str.substring(0, Math.min(str.length(), 5));
+			return replaceEach(extracted, new String[] { "，", "。", "（", "）", "(", ")" }, new String[] { "", "", "", "", "", "" });
+		});
+
+		private final ExtractHandler handler;
+
+		private CommentExtractor(ExtractHandler handler) {
+			this.handler = handler;
+		}
+
+		public ExtractHandler getHandler() {
+			return handler;
+		}
+
+		/**
+		 * Parse comment extractor of name
+		 * 
+		 * @param extractorName
+		 * @return
+		 */
+		public static final CommentExtractor ofExtractor(String extractorName) {
+			for (CommentExtractor ext : values()) {
+				if (equalsIgnoreCase(ext.name(), extractorName)) {
+					return ext;
+				}
+			}
+			throw new IllegalArgumentException(format("No such comment extractor of %s", extractorName));
+		}
+
+		/**
+		 * {@link ExtractHandler}
+		 */
+		static interface ExtractHandler {
+			String extract(@Nullable String str);
+		}
+
 	}
 
 }
