@@ -1,17 +1,17 @@
 <template>
     <section id="configuration" class="configuration">
         <el-form :inline="true" :model="searchParams" class="searchbar" @keyup.enter.native="onSubmit()">
+<#assign extractedTabComment = vueSpecs.extractComment(comments, "simple")>
 <#list genTableColumns as param>
+    <#assign extractedColComment = vueSpecs.extractComment(param.columnComment, "simple")>
     <#if param.isQuery == '1'>
-            <el-form-item label="${param.attrName}">
+            <el-form-item label="${extractedColComment}">
         <#if param.showType == '1'>
                 <el-input v-model="searchParams.${param.attrName}" placeholder="${param.columnComment}" style="width:165px"></el-input>
-        </#if>
-        <#if param.showType == '2'>
+        <#elseif param.showType == '2'>
                 <el-input type="textarea" v-model="searchParams.${param.attrName}" placeholder="${param.columnComment}" style="width:165px"></el-input>
-        </#if>
-        <#if param.showType == '3'></#if><#--do nothing-->
-        <#if param.showType == '4'>
+        <#elseif param.showType == '3'><#--do nothing-->
+        <#elseif param.showType == '4'>
                 <el-select filterable clearable v-model="searchParams.${param.attrName}">
                     <el-option
                             v-for="item in dictutil.getDictListByType('${param.dictType}')"
@@ -20,8 +20,7 @@
                             :value="item.value">
                     </el-option>
                 </el-select>
-        </#if>
-        <#if param.showType == '5'>
+        <#elseif param.showType == '5'>
                 <el-select filterable multiple clearable v-model="searchParams.${param.attrName}">
                     <el-option
                             v-for="item in dictutil.getDictListByType('${param.dictType}')"
@@ -30,22 +29,19 @@
                             :value="item.value">
                     </el-option>
                 </el-select>
-        </#if>
-        <#if param.showType == '6'>
+        <#elseif param.showType == '6'>
                 <el-checkbox-group v-model="searchParams.${param.attrName}">
                     <el-checkbox v-for="item in dictutil.getDictListByType('${param.dictType}')" :label="item.value">
                         {{item.label}}
                     </el-checkbox>
                 </el-checkbox-group>
-        </#if>
-        <#if param.showType == '7'>
+        <#elseif param.showType == '7'>
                 <el-date-picker
                         v-model="searchParams.${param.attrName}"
                         type="date"
                         placeholder="选择日期">
                 </el-date-picker>
-        </#if>
-        <#if param.showType == '8'>
+        <#elseif param.showType == '8'>
                 <el-date-picker
                         v-model="searchParams.${param.attrName}"
                         type="datetime"
@@ -59,7 +55,7 @@
             <el-form-item>
                 <el-button @click="onSubmit" type="success" :loading="loading">{{$t('message.common.search')}}</el-button>
             </el-form-item>
-            <el-button type="primary" style='float:right;margin-right:20px' @click="addData()" >+ Add</el-button>
+            <el-button type="primary" style='float:right;margin-right:20px' @click="addData()" >+ ${extractedTabComment}</el-button>
         </el-form>
 
         <!--================================table================================-->
@@ -108,65 +104,76 @@
 
         <!--================================save dialog================================-->
         <el-dialog :close-on-click-modal="false" :title="dialogTitle" :visible.sync="dialogVisible"  v-loading='dialogLoading'>
-            <el-form label-width="130px" :model="saveForm" ref="saveForm" class="demo-form-inline" :rules="rules">
-<#list genTableColumns as param>
-    <#if param.isEdit == '1'>
+            <el-form label-width="150px" :model="saveForm" ref="saveForm" class="demo-form-inline" :rules="rules">
+<#-- 定义要显示的列数 columnCount -->
+<#assign columnCount = 2>
+<#-- 每列宽度，elementui最大值为24（为了美化样式需减去一定宽度，使其尽量居中） -->
+<#assign showColWidth = (24 - 2) / columnCount>
+<#-- 过滤出有效的列(需显示的列) -->
+<#assign availableColumns = vueSpecs.filterColumns(genTableColumns)>
+<#-- 计算显示当前记录集需要的表格行数 rowCount -->
+<#if availableColumns?size % columnCount == 0>
+    <#assign rowCount = (availableColumns?size / columnCount) - 1 >
+<#else>
+    <#assign rowCount = (availableColumns?size / columnCount) >
+</#if>
+<#list 0..rowCount as row> <#-- 外层输出表格的 tr -->
                 <el-row>
-                    <el-col :span="24">
-                        <el-form-item label="${param.attrName}" prop="${param.attrName}">
+    <#-- 内层输出表格的 td -->
+    <#list 0..columnCount - 1 as cell>
+        <#-- 存在当前对象就输出否则输出空格 -->
+        <#if availableColumns[row * columnCount + cell]??>
+            <#assign col = availableColumns[row * columnCount + cell]>
+            <#if col.isEdit == '1'>
+                    <el-col :span="${showColWidth}">
+                        <el-form-item label="${col.attrName}" prop="${col.attrName}">
                             <span slot="label">
-                                <span>${param.columnComment}</span>
-                            <#if param.columnComment != ''>
-                                <el-tooltip class="item" effect="dark" content="${param.columnComment}" placement="right">
+                                <span>${col.columnComment}</span>
+                            <#if col.columnComment != ''>
+                                <el-tooltip class="item" effect="dark" content="${col.columnComment}" placement="right">
                                     <i class="el-icon-question"></i>
                                 </el-tooltip>
                             </#if>
                             </span>
-                        <#if param.showType == '1'>
-                            <el-input v-model="saveForm.${param.attrName}" placeholder="${param.columnComment}" ></el-input>
-                        </#if>
-                        <#if param.showType == '2'>
-                            <el-input type="textarea" v-model="saveForm.${param.attrName}" placeholder="${param.columnComment}" ></el-input>
-                        </#if>
-                        <#if param.showType == '3'></#if><#--do nothing-->
-                        <#if param.showType == '4'>
-                            <el-select filterable clearable v-model="saveForm.${param.attrName}">
+                        <#if col.showType == '1'>
+                            <el-input v-model="saveForm.${col.attrName}" placeholder="${col.columnComment}" ></el-input>
+                        <#elseif col.showType == '2'>
+                            <el-input type="textarea" v-model="saveForm.${col.attrName}" placeholder="${col.columnComment}" ></el-input>
+                        <#elseif col.showType == '3'><#--do nothing-->
+                        <#elseif col.showType == '4'>
+                            <el-select filterable clearable v-model="saveForm.${col.attrName}">
                                 <el-option
-                                        v-for="item in dictutil.getDictListByType('${param.dictType}')"
+                                        v-for="item in dictutil.getDictListByType('${col.dictType}')"
                                         :key="item.value"
                                         :label="item.label"
                                         :value="item.value">
                                 </el-option>
                             </el-select>
-                        </#if>
-                        <#if param.showType == '5'>
-                            <el-select filterable multiple clearable v-model="saveForm.${param.attrName}">
+                        <#elseif col.showType == '5'>
+                            <el-select filterable multiple clearable v-model="saveForm.${col.attrName}">
                                 <el-option
-                                        v-for="item in dictutil.getDictListByType('${param.dictType}')"
+                                        v-for="item in dictutil.getDictListByType('${col.dictType}')"
                                         :key="item.value"
                                         :label="item.label"
                                         :value="item.value">
                                 </el-option>
                             </el-select>
-                        </#if>
-                        <#if param.showType == '6'>
-                            <el-checkbox-group v-model="saveForm.${param.attrName}">
-                                <el-checkbox v-for="item in dictutil.getDictListByType('${param.dictType}')" :label="item.value">
+                        <#elseif col.showType == '6'>
+                            <el-checkbox-group v-model="saveForm.${col.attrName}">
+                                <el-checkbox v-for="item in dictutil.getDictListByType('${col.dictType}')" :label="item.value">
                                     {{item.label}}
                                 </el-checkbox>
                             </el-checkbox-group>
-                        </#if>
-                        <#if param.showType == '7'>
+                        <#elseif col.showType == '7'>
                             <el-date-picker
-                                    v-model="saveForm.${param.attrName}"
+                                    v-model="saveForm.${col.attrName}"
                                     type="date"
                                     format="yyyy-MM-dd"
                                     placeholder="选择日期">
                             </el-date-picker>
-                        </#if>
-                        <#if param.showType == '8'>
+                        <#elseif col.showType == '8'>
                             <el-date-picker
-                                    v-model="saveForm.${param.attrName}"
+                                    v-model="saveForm.${col.attrName}"
                                     type="datetime"
                                     format="yyyy-MM-dd HH:mm:ss"
                                     placeholder="选择日期时间">
@@ -174,9 +181,13 @@
                         </#if>
                         </el-form-item>
                     </el-col>
+                </#if>
+            <#else>
+                &nbsp;
+            </#if>
+        </#list>
                 </el-row>
-    </#if>
-</#list>
+    </#list>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="saveData()" :loading="dialogLoading">{{$t('message.common.save')}}</el-button>
@@ -185,14 +196,11 @@
         </el-dialog>
     </section>
 </template>
-
-
 <script>
     import ${entityName?cap_first} from './${entityName?cap_first}.js'
 
     export default ${entityName?cap_first}
 </script>
-
 <style scoped>
 
 </style>

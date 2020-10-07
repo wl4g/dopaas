@@ -33,6 +33,8 @@ public class BaseSpecsTests {
 		out.println(BaseSpecs.cleanComment("abcd\nefgh123456"));
 		out.println(BaseSpecs.cleanComment("abcd\r\nefgh123456"));
 		out.println(BaseSpecs.cleanComment("abcd\r\nefgh\"jack\"123456"));
+		out.println(BaseSpecs.extractComment("统计类型(1.计划完成 2.实际完成) ", "simple"));
+		out.println(BaseSpecs.extractComment("统计类型(1.计划完成 2.实际完成) ", "wordSeg"));
 	}
 
 }
