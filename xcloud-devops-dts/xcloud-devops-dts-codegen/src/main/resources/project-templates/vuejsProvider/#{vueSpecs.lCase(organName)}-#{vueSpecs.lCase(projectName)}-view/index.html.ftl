@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="./static/css/lanren.css" />
     <script type="text/javascript" src="./static/js/jquery-3.5.1.min.js"></script>
     <script type="text/javascript" src="./static/js/sysloader-2.0.1.min.js" fileUriPort="${entryAppPort}"
-            fileUriDomainSubLevel="${projectName?lower_case}" path="/${entryAppName}/iam-jssdk/assets" cache="false" mode="stable"
+            fileUriDomainSubLevel="${projectName?lower_case}-services" path="/${entryAppName}/iam-jssdk/assets" cache="false" mode="stable"
             refreshLevel="yyMMddhh"></script>
 </head>
 <body>

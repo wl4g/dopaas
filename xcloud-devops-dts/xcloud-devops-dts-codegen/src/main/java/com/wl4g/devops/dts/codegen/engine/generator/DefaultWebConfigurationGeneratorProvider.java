@@ -29,6 +29,7 @@ import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_DEF
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_DEF_DEV_VIEW_SERVICE_HOST;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_DEF_DEV_VIEW_SERVICE_PORT;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_DEF_ENTRYAPP_NAME;
+import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_DEF_ENTRYAPP_SUBDOMAIN;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_DEF_ENTRYAPP_PORT;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_DEF_FAT_MYSQL_HOST;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_DEF_FAT_ORACLE_HOST;
@@ -90,6 +91,7 @@ public abstract class DefaultWebConfigurationGeneratorProvider extends AbstractG
 		String organType = project.getOrganType().toLowerCase(US);
 		String organName = project.getOrganName().toLowerCase(US);
 		model.put(GEN_DEF_ENTRYAPP_NAME, projectName.concat("-server"));
+		model.put(GEN_DEF_ENTRYAPP_SUBDOMAIN, projectName.concat("-services"));
 		model.put(GEN_DEF_ENTRYAPP_PORT, "28080");
 
 		model.put(GEN_DEF_DEV_TOPDOMAIN, organName.concat(".debug"));
