@@ -18,15 +18,19 @@ package com.wl4g.devops.dts.codegen.engine.specs;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.components.common.id.SnowflakeIdGenerator;
+import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
+import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static java.lang.String.valueOf;
 import static java.util.Locale.US;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.replacePattern;
@@ -156,6 +160,14 @@ public class BaseSpecs {
 		return replacePattern(str, "\"", doubleQuotesReplacement);
 	}
 
+	/**
+	 * Check whether the specified extension configuration item exists.
+	 * 
+	 * @param configuredOptions
+	 * @param name
+	 * @param value
+	 * @return
+	 */
 	public static boolean isConf(@Nullable List<GenProjectExtraOption> configuredOptions, @NotBlank String name,
 			@NotBlank String value) {
 		hasTextOf(name, "name");
@@ -176,6 +188,7 @@ public class BaseSpecs {
 		return false;
 	}
 
+	@Deprecated
 	public static boolean isTableOptionConf(@Nullable Map<String, String> optionMap, @NotBlank String name,
 			@NotBlank String value) {
 		for (Map.Entry<String, String> entry : optionMap.entrySet()) {
@@ -184,6 +197,35 @@ public class BaseSpecs {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Filter out the columns displayed on the front page of
+	 * {@link GenTableColumn}.
+	 * 
+	 * @param <T>
+	 * @param list
+	 * @param condition
+	 * @return
+	 */
+	public static List<GenTableColumn> filterColumns(@Nullable List<GenTableColumn> list) {
+		return filterColumns(list, BuiltinColumnDefinition.COLUMN_NAME_VALUES);
+	}
+
+	/**
+	 * Filter out the columns displayed on the front page of
+	 * {@link GenTableColumn}.
+	 * 
+	 * @param <T>
+	 * @param list
+	 * @param condition
+	 * @return
+	 */
+	public static List<GenTableColumn> filterColumns(@Nullable List<GenTableColumn> list,
+			@Nullable List<String> withoutColumnNames) {
+		List<String> conditions = safeList(withoutColumnNames);
+		return safeList(list).stream()
+				.filter(e -> !conditions.contains(e.getAttrName()) && !conditions.contains(e.getColumnName())).collect(toList());
 	}
 
 }
