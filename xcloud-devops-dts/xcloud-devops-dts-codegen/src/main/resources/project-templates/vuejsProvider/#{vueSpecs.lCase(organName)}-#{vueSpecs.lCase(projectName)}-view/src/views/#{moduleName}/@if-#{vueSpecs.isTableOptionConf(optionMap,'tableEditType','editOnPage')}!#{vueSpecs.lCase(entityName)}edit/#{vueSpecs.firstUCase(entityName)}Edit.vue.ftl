@@ -1,3 +1,5 @@
+<!-- ${watermark} -->
+
 <template>
     <section id="configuration" class="configuration">
         <el-form label-width="180px" :model="saveForm" ref="saveForm" class="demo-form-inline" :rules="rules">

@@ -1,3 +1,5 @@
+<!-- ${watermark} -->
+
 <template>
     <section id="configuration" class="configuration">
         <el-form :inline="true" :model="searchParams" class="searchbar" @keyup.enter.native="onSubmit()">

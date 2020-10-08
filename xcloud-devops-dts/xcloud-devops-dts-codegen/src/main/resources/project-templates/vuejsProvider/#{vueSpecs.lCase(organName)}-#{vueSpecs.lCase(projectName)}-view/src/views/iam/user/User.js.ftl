@@ -9,6 +9,7 @@ export default {
                 userName: '',
                 displayName: '',
             },
+
             //分页信息
             total: 0,
             pageNum: 1,
@@ -26,7 +27,9 @@ export default {
                 roleIds: [],
                 groupIds: [],
                 groupNameStrs: '',
+
             },
+
             isEdit: false,
 
             dialogVisible: false,
@@ -39,11 +42,13 @@ export default {
             rolesData: [],
             groupsTreeData: [],
 
+
             defaultProps: {
                 children: 'children',
                 label: 'displayName',
             },
             treeShow: false,
+
 
             //验证
             rules: {
@@ -62,6 +67,7 @@ export default {
     },
 
     methods: {
+
         onSubmit() {
             this.getData();
         },
@@ -88,6 +94,7 @@ export default {
                 }
             })
         },
+
 
         addData() {
             this.getRoles();
@@ -135,8 +142,10 @@ export default {
             };
         },
 
+
         save() {
             this.dialogLoading = true;
+
             this.$refs['saveForm'].validate((valid) => {
                 if (valid) {
                     if (this.saveForm.oldPassword != this.saveForm.password || this.saveForm.oldPassword == '') {//need update password
@@ -148,25 +157,14 @@ export default {
                     this.dialogLoading = false;
                 }
             })
+
         },
 
         saveDataWithPassword() {
             const that = this;
             const loginAccount = that.saveForm.userName;
             new IAMCore({
-            	// refer: https://github.com/wl4g/xcloud-iam/blob/master/xcloud-iam-security/src/main/resources/iam-jssdk-webapps/example.html
-<#if vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
-            	deploy: {
-                    defaultTwoDomain: "${entryAppSubDomain}",
-                    defaultServerPort: ${entryAppPort},
-                    defaultContextPath: "/${entryAppName}"
-                },
-<#elseif vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
-            	deploy: {
-                    defaultTwoDomain: "iam-services",
-                    defaultContextPath: "/iam-server"
-                },
-</#if>
+                deploy: global.iam,
             }).safeCheck(loginAccount, function (res) {
                 if (res.data && res.data.checkGeneric && res.data.checkGeneric.secretKey) {
                     let secret = res.data.checkGeneric.secretKey;

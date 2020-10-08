@@ -1,10 +1,7 @@
 import { store } from "../../utils";
-import promise from "../login/promise";
-import router from '../../router/index.js'
-import webView from '@/views/webview.vue'
-import Layout from 'layout/routeview/Home.vue'
-import Content from 'layout/routeview/Content.vue'
 import iputil from "../../common/iputil";
+import global from "../../common/global_variable";
+import ajax from '@/utils/ajax/ajax'
 
 // 路由懒加载
 const loadView = (view) => {
@@ -18,44 +15,6 @@ const loadView = (view) => {
     }
 };
 
-// 按parentId转换成树结构列表
-function transformTreeData(list) {
-    list.forEach(item => {
-        // 过滤按钮类型
-        if (item.type == '3') {
-            return
-        }
-        if (item.parentId && item.parentId != 0) {
-            let child = item;
-            let parent = list.find(n => {
-                return n.id === child.parentId;
-            });
-            while (parent) {
-                if (!parent.children) {
-                    parent.children = []
-                }
-                if (!parent.children.includes(child)) {
-                    parent.children.push(child);
-                    parent.children.sort(function (a, b) {
-                        return a.sort - b.sort
-                    });
-                }
-                if (parent.parentId != undefined || parent.parentId != null) {
-                    child = parent;
-                    var parentId = parent.parentId;
-                    parent = null;
-                    parent = list.find(n => {
-                        return n.id === parentId;
-                    });
-                } else {
-                    parent = null
-                }
-            }
-        }
-    });
-    return list
-}
-
 export default {
     name: 'Init',
     data() {
@@ -64,7 +23,7 @@ export default {
         }
     },
     mounted() {
-        this.getCache();
+        this.initSystemConfiguration();
 
         if (this.checkHostname()) {
             var routList = this.$store.state.router.routList;
@@ -94,7 +53,7 @@ export default {
             let hostname = location.hostname;
             let isIp = iputil.isIp(hostname);
             if (hostname == 'localhost' || isIp) {
-                this.$alert('请使用域名作为请求地址，禁止使用localhost或ip,详情请看:\nhttps://github.com/wl4g/super-devops/blob/master/README_CN.md\n或者\nhttps://gitee.com/wl4g/super-devops/blob/master/README_CN.md', '错误', {
+                this.$alert('请使用域名作为请求地址，禁止使用localhost或ip,详情请看:\nhttps://github.com/wl4g/xcloud-devops/blob/master/README_CN.md\n或者\nhttps://gitee.com/wl4g/xcloud-devops/blob/master/README_CN.md', '警告', {
                     confirmButtonText: '确定'
                 });
                 return false;
@@ -102,48 +61,34 @@ export default {
                 return true;
             }
         },
-        getCache() {
-            let that = this;
-            // Gets application cluster(modules)
-            that.$$api_iam_clusterConfigInfo({
+        // [顺序优先特殊接口，直接走ajax]登录完成时，需优先加载初始化信息
+        initSystemConfiguration() {
+            // 1. Load syscluster modules.
+            ajax({
+                type: 'get',
+                path: '/clusterConfig/loadInit',
+                sysModule: global.iam,
                 fn: data => {
                     store.set("iam_system_modules", data.data);
-                    console.debug("Sysmodules(cluster) config stored.");
+                    console.debug("Loaded sysmodules config.");
                 },
                 errFn: () => {
-                    // console.debug("Failed to get sysmodules from cache");
-                    // try again
-                    that.$$api_iam_clusterConfigInfo({
-                        fn: data => {
-                            // console.debug("Load sysmodules info: " + JSON.stringify(data.data))
-                            store.set("iam_system_modules", data.data.list);
-                            //console.info(store.get("iam_system_modules"));
-                            console.debug("get cluster config success");
-                        },
-                    });
+                    console.error("Cannot to load sysmodules");
                 },
             });
-            //dict
-            that.$$api_iam_dictCache({
+            // 2. Load sysdict.
+            ajax({
+                type: 'get',
+                path: '/dict/loadInit',
+                sysModule: global.iam,
                 fn: data => {
-                    //console.info(data.data)
                     store.set("dicts_cache", data.data);
-                    //console.info(store.get("dicts_cache"));
-                    console.info("get dict success");
+                    console.debug("Loaded sysmodules config.");
                 },
                 errFn: () => {
-                    //console.info("get dict cache fail");
-                    //try again
-                    that.$$api_iam_dictCache({
-                        fn: data => {
-                            //console.info(data.data)
-                            store.set("dicts_cache", data.data);
-                            //console.info(store.get("dicts_cache"));
-                            console.info("get dict success");
-                        },
-                    });
+                    console.error("Cannot to load sysmodules");
                 },
-            })
+            });
         },
     },
 }
