@@ -16,38 +16,26 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.specs.VueJSSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
-import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_COMMON_VUESPECS;
-
 /**
- * {@link VueGeneratorProvider}
- *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-09-07
- * @since
+ * {@link SpringDubboMvnGeneratorProvider}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020-10-08
+ * @sine v1.0.0
+ * @see
  */
-public class VueGeneratorProvider extends DefaultWebConfigurationGeneratorProvider {
+public class SpringDubboMvnGeneratorProvider extends BasedJvmGeneratorProvider {
 
-	public VueGeneratorProvider(@NotNull GenerateContext context) {
+	public SpringDubboMvnGeneratorProvider(@NotNull GenerateContext context) {
 		super(context, null);
 	}
 
 	@Override
 	public void doGenerate() throws Exception {
-		doGenerateWithTemplates(GenProviderAlias.VUEJS);
-	}
-
-	@Override
-	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
-		super.customizeRenderingModel(resource, model);
-
-		// Add variable of naming utils.
-		model.put(GEN_COMMON_VUESPECS, new VueJSSpecs());
+		doGenerateWithTemplates(GenProviderAlias.SPINGDUBBO_MVN);
 	}
 
 }

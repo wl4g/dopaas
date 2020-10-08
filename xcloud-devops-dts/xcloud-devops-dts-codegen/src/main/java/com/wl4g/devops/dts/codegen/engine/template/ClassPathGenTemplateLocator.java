@@ -73,6 +73,27 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 				add(".map");
 				add(".babelrc");
 				//
+				add(".java");
+				add(".jar");
+				add(".dll");
+				add(".so");
+				add(".dylib");
+				add(".go");
+				add(".lib");
+				add(".sln"); // C#
+				add(".cs");
+				add(".resx");
+				add(".h");
+				add(".c");
+				add(".cc");
+				add(".cpp");
+				add(".exe");
+				add(".csp");
+				add(".asp");
+				add(".aspx");
+				add(".jsp");
+				add(".jsf");
+				//
 				add(".gitignore");
 				add(".gitattributes");
 				//

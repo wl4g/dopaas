@@ -25,8 +25,9 @@ import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
 import com.wl4g.devops.dts.codegen.engine.generator.AngularJSGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.CsharpStandardGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.generator.GoStandardGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.GoGonicWebGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.PythonStandardGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.SpringDubboMvnGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.IamSpringCloudMvnGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5TypeConverter;
@@ -139,9 +140,9 @@ public class CodegenAutoConfiguration {
 	// --- Generator Provider's. ---
 
 	@Bean
-	@NamingPrototype({ GO_STANDARD })
-	public GoStandardGeneratorProvider goStandardGeneratorProvider(GenerateContext context) {
-		return new GoStandardGeneratorProvider(context);
+	@NamingPrototype({ GO_GONICWEB })
+	public GoGonicWebGeneratorProvider goStandardGeneratorProvider(GenerateContext context) {
+		return new GoGonicWebGeneratorProvider(context);
 	}
 
 	@Bean
@@ -160,6 +161,12 @@ public class CodegenAutoConfiguration {
 	@NamingPrototype({ IAM_SPINGCLOUD_MVN })
 	public IamSpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
 		return new IamSpringCloudMvnGeneratorProvider(context);
+	}
+
+	@Bean
+	@NamingPrototype({ SPINGDUBBO_MVN })
+	public SpringDubboMvnGeneratorProvider springDubboMvnGeneratorProvider(GenerateContext context) {
+		return new SpringDubboMvnGeneratorProvider(context);
 	}
 
 	@Bean
