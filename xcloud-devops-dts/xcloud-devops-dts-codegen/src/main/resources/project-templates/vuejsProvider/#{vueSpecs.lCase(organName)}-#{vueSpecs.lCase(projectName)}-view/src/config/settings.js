@@ -1,35 +1,42 @@
-import fa from "element-ui/src/locale/lang/fa";
-import da from "element-ui/src/locale/lang/da";
-import promise from "../views/login/promise";
+import router from '../router'
 
 var gbs = {
-    //  host: '/srm', // 接口根地址。本地代理到slsadmin.api.sls.com,线上使用的是Nginx代理
     db_prefix: 'devops_', // 本地存储的key
-    // 状态码字段
     api_status_key_field: 'code',
-    // 状态码value
     api_status_value_field: 200,
-    // 存放数据的字段
     api_data_field: 'data',
     api_custom: {
         401: function (that, res, method, url, success, error, dataParams) {
-            IAMCore.multiModularMutexAuthenticatingHandler(res, method, url, success, error, dataParams, function(res){
+            IAMCore.multiModularMutexAuthenticatingHandler(res, method, url, success, error, dataParams, function (res) {
                 IAMCore.Console.info("Devops redirection...");
                 // window.location.href = res.data.redirect_url;
-                that.$alert('请登录<br/>RequestId: '+ res.requestId, '提示', {
-                    confirmButtonText: '确定',
-                    dangerouslyUseHTMLString: true,
-                    type: 'warning',
-                    callback: action => {
-                        that.$router.push("/login");
-                        window.location.reload();
-                    }
-                });
+                // TODO that is null??
+                if (that) {
+                    that.$alert('请登录<br/>RequestId: ' + res.requestId, '提示', {
+                        confirmButtonText: '确定',
+                        dangerouslyUseHTMLString: true,
+                        type: 'warning',
+                        callback: action => {
+                            router.push("/login");
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    alert('[提示]请登录\nRequestId: ' + res.requestId)
+                    router.push("/login");
+                    window.location.reload();
+                }
             });
         },
         403: function (that, res, url, success, error, data) {
             if (res && res.message) {
-                that.$message.error(res.message);
+                console.error(res.message);
+                // TODO that is null??
+                if (that) {
+                    alert(res.message);
+                } else {
+                    that.$alert(res.message);
+                }
             }
         },
     }

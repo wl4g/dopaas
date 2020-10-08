@@ -67,12 +67,8 @@ export default function ({
         headers: headers && typeof headers === 'object' ? headers : {},
         withCredentials: true, // 实现cors必须设置
     }
+    options[type === 'get' ? 'params' : 'data'] = (type === 'json' ? data : qs.stringify(data))
 
-    try {
-        options[type === 'get' ? 'params' : 'data'] = (type === 'json' ? data : qs.stringify(data))
-    } catch (error) {
-        console.error(error)
-    }
     // 分发显示加载样式任务
     // this.$store.dispatch('show_loading')
     // Axios内置属性设置
