@@ -73,6 +73,9 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 				add(".map");
 				add(".babelrc");
 				//
+				add(".gitignore");
+				add(".gitattributes");
+				//
 				add(".eot");
 				add(".ttf");
 				add(".woff");
@@ -97,6 +100,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 				add(".flv");
 				add(".hddvd");
 				//
+				add(".properties");
 				add(".json");
 				add(".xml");
 				add(".conf");
