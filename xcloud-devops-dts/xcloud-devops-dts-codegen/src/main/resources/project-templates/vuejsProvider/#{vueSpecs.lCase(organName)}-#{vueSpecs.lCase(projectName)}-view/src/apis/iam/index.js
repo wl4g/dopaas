@@ -1,5 +1,5 @@
 import global from "../../common/global_variable";
-import request from '@/utils/ajax/request'
+import ajax from '@/utils/ajax/ajax'
 
 export default [
     //user
@@ -8,28 +8,28 @@ export default [
         method: 'userList',
         path: '/user/list',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '保存用户',
         method: 'saveUser',
         path: '/user/save',
         type: 'json',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '用户详情',
         method: 'userDetail',
         path: '/user/detail',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '删除用户',
         method: 'delUser',
         path: '/user/del',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     //menu
     {
@@ -37,28 +37,28 @@ export default [
         method: 'getMenuTree',
         path: '/menu/tree',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '保存menu',
         method: 'saveMenu',
         path: '/menu/save',
         type: 'json',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '删除menu',
         method: 'delMenu',
         path: '/menu/del',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '获取用户menu列表',
         method: 'getMenuList',
         path: '/menu/list',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     //role
     {
@@ -66,35 +66,35 @@ export default [
         method: 'getRoles',
         path: '/role/getRolesByUserGroups',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '角色列表',
         method: 'roleList',
         path: '/role/list',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '保存角色',
         method: 'saveRole',
         path: '/role/save',
         type: 'json',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '删除角色',
         method: 'delRole',
         path: '/role/del',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '角色详情',
         method: 'roleDetail',
         path: '/role/detail',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     //group
     {
@@ -102,34 +102,34 @@ export default [
         method: 'getGroupsTree',
         path: '/group/getGroupsTree',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '保存Group',
         method: 'saveGroup',
         path: '/group/save',
         type: 'json',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '删除Group',
         method: 'delGroup',
         path: '/group/del',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: 'Group详情',
         method: 'groupDetail',
         path: '/group/detail',
         type: 'post',
-        sys: global.iam
-    },{
+        sysModule: global.iam
+    }, {
         name: 'getOrganizations',
         method: 'getOrganizations',
         path: '/group/getOrganizations',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     //online
     {
@@ -137,44 +137,43 @@ export default [
         method: 'onlineList',
         path: '/mgr/v1/getSessions',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: 'getIamServer',
         method: 'getIamServer',
         path: '/mgr/v1/findIamServers',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: 'destroySessions',
         method: 'destroySessions',
         path: '/mgr/v1/destroySessions',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     // Cluster Config Informcation
     {
         name: 'appModules',
         method: 'clusterConfigInfo',
-        path: '/clusterConfig/info',
-        type: 'get', // 原因参见：getInit
-        sys: global.iam,
-        usedefault: true,
+        path: '/clusterConfig/loadInit',
+        type: 'get', // 必须使用get，原因同理：dict/loadInit
+        sysModule: global.iam,
     },
     {
         name: 'applylocale',
         method: 'applylocale',
         path: '/login/applylocale',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: 'logout',
         method: 'logout',
         path: '/logout',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     //dict
     {
@@ -182,49 +181,49 @@ export default [
         method: 'dictList',
         path: '/dict/list',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '保存字典',
         method: 'saveDict',
         path: '/dict/save',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '字典详情',
         method: 'dictDetail',
         path: '/dict/detail',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '删除字典',
         method: 'delDict',
         path: '/dict/del',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '所有字典类型',
         method: 'allDictType',
         path: '/dict/allType',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '字典详情',
         method: 'getDictByType',
         path: '/dict/getByType',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '获取字典缓存',
         method: 'dictCache',
-        path: '/dict/getInit',
-        type: 'get', // 由于初始页面时调用，用post会要求调用IAMCore.getXsrfToken等（此时index.html动态加载的IAM sdk还未异步加载完）
-        sys: global.iam
+        path: '/dict/loadInit',
+        type: 'get', // 必须是get，因为在初始期间调用，使用post会调用IAMCore.getXsrfToken等，此时index.html动态加载的IAM sdk还未异步加载完
+        sysModule: global.iam
     },
     //contact
     {
@@ -232,28 +231,28 @@ export default [
         method: 'contactList',
         path: '/contact/list',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '保存',
         method: 'saveContact',
         path: '/contact/save',
         type: 'json',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '联系人详情',
         method: 'contactDetail',
         path: '/contact/detail',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '逻辑删除联系人',
         method: 'delContact',
         path: '/contact/del',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     //group
     {
@@ -261,46 +260,52 @@ export default [
         method: 'contactGroupList',
         path: '/contactGroup/list',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '所有分组列表',
         method: 'groupList',
         path: '/contactGroup/groupList',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '保存联系人分组',
         method: 'saveContactGroup',
         path: '/contactGroup/save',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
     {
         name: '删除联系人分组',
         method: 'delContactGroup',
         path: '/contactGroup/del',
         type: 'post',
-        sys: global.iam
+        sysModule: global.iam
     },
-
     //area
     {
         name: 'getAreaTree',
         method: 'getAreaTree',
         path: '/area/getAreaTree',
         type: 'get',
-        sys: global.iam
+        sysModule: global.iam
     },
-
 ]
 
+// [顺序优先特殊接口，直接走ajax]登录完成时，获取路由动态创建菜单
 export function getRoutes() {
-    return request({
-        url: '/menu/list',
-        method: 'get',
-        sys: global.iam,
-        usedefault: false
-    })
+    return new Promise(function(resolve, reject) {
+        ajax({
+            type: 'get',
+            path: '/menu/list',
+            sysModule: global.iam,
+            fn: data => {
+                resolve(data);
+            },
+            errFn: (obj, error) => {
+                reject(error);
+            }
+        });
+    });
 }
