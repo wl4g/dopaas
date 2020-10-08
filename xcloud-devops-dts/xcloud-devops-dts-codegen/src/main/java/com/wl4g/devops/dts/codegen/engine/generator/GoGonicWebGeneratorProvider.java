@@ -31,15 +31,15 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
  * @version v1.0 2020-09-07
  * @since
  */
-public class GoStandardGeneratorProvider extends AbstractGeneratorProvider {
+public class GoGonicWebGeneratorProvider extends AbstractGeneratorProvider {
 
-	public GoStandardGeneratorProvider(@NotNull GenerateContext context) {
+	public GoGonicWebGeneratorProvider(@NotNull GenerateContext context) {
 		super(context, null);
 	}
 
 	@Override
 	public void doGenerate() throws Exception {
-		doGenerateWithTemplates(GenProviderAlias.GO_STANDARD);
+		doGenerateWithTemplates(GenProviderAlias.GO_GONICWEB);
 	}
 
 	@Override

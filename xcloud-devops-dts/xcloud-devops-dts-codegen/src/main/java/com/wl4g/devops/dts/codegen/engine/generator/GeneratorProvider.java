@@ -64,18 +64,25 @@ public interface GeneratorProvider extends Runnable {
 	public static interface GenProviderAlias {
 
 		/**
-		 * Standard spring cloud + maven projecs gen provider.
+		 * IAM + SpringCloud + Maven projecs gen provider.
 		 */
 		public static final String IAM_SPINGCLOUD_MVN = "iamSpringCloudMvnProvider";
 
 		/**
+		 * Dubbo + SpringCloud + Maven projecs gen provider.
+		 */
+		public static final String SPINGDUBBO_MVN = "springDubboMvnProvider";
+
+		/**
 		 * Standard golang(mod) projecs gen provider.
 		 */
-		public static final String GO_STANDARD = "standardGoProvider";
+		public static final String GO_GONICWEB = "gonicWebProvider";
+
 		/**
 		 * Standard csharp projecs gen provider.
 		 */
 		public static final String CSHARP_STANDARD = "standardCsharpProvider";
+
 		/**
 		 * Standard python projecs gen provider.
 		 */
@@ -108,6 +115,10 @@ public interface GeneratorProvider extends Runnable {
 		DaoServiceController(asList(IAM_SPINGCLOUD_MVN), CodeLanguage.JAVA),
 
 		DaoServiceControllerVueJS(asList(IAM_SPINGCLOUD_MVN, VUEJS), CodeLanguage.JAVA),
+
+		DubboDaoServiceControllerVueJS(asList(SPINGDUBBO_MVN, VUEJS), CodeLanguage.JAVA),
+
+		GonicWebMVC(asList(GO_GONICWEB), CodeLanguage.GO),
 
 		// Nothing to do with DAO layer
 		JustVueJS(asList(VUEJS), null),

@@ -16,13 +16,13 @@
 package com.wl4g.devops.dts.codegen.engine.specs;
 
 /**
- * Vue project naming specification {@link VueSpecs}
+ * Vue project naming specification {@link VueJSSpecs}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
  * @version v1.0 2020-09-23
  * @since
  */
-public class VueSpecs extends BaseSpecs {
+public class VueJSSpecs extends BaseSpecs {
 
 }

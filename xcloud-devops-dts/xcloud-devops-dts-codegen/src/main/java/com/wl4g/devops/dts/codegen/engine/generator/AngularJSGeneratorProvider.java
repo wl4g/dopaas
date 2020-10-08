@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.specs.AngularSpecs;
+import com.wl4g.devops.dts.codegen.engine.specs.AngularJSSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
@@ -46,7 +46,7 @@ public class AngularJSGeneratorProvider extends DefaultWebConfigurationGenerator
 		super.customizeRenderingModel(resource, model);
 
 		// Add variable of naming utils.
-		model.put(GEN_COMMON_NGSPECS, new AngularSpecs());
+		model.put(GEN_COMMON_NGSPECS, new AngularJSSpecs());
 	}
 
 }
