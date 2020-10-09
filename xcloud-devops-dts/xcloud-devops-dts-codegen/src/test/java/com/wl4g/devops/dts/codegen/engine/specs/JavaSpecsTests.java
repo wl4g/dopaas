@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.dts.codegen.engine.specs;
 
-import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+import static java.lang.System.out;
 
-import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
+import org.junit.Test;
 
 /**
  * {@link JavaSpecsTests}
@@ -28,50 +28,13 @@ import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
  */
 public class JavaSpecsTests {
 
-	static String copyright = "";
-
-	static {
-		copyright += "Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>    "
-				+ LINE_SEPARATOR;
-		copyright += "                                                                                                "
-				+ LINE_SEPARATOR;
-		copyright += "Licensed under the Apache License, Version 2.0 (the \"License\");                                 "
-				+ LINE_SEPARATOR;
-		copyright += "you may not use this file except in compliance with the License.                                "
-				+ LINE_SEPARATOR;
-		copyright += "You may obtain a copy of the License at                                                         "
-				+ LINE_SEPARATOR;
-		copyright += "                                                                                                "
-				+ LINE_SEPARATOR;
-		copyright += "     http://www.apache.org/licenses/LICENSE-2.0                                                 "
-				+ LINE_SEPARATOR;
-		copyright += "                                                                                                "
-				+ LINE_SEPARATOR;
-		copyright += "Unless required by applicable law or agreed to in writing, software                             "
-				+ LINE_SEPARATOR;
-		copyright += "distributed under the License is distributed on an \"AS IS\" BASIS,                               "
-				+ LINE_SEPARATOR;
-		copyright += "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.                        "
-				+ LINE_SEPARATOR;
-		copyright += "See the License for the specific language governing permissions and                             "
-				+ LINE_SEPARATOR;
-		copyright += "limitations under the License.  " + LINE_SEPARATOR;
-	}
-
-	public static void main(String[] args) {
-		System.out.println(JavaSpecs.tableName2className("sys_user"));
-		System.out.println(JavaSpecs.tableName2ClassName("sys_user"));
-		System.out.println(JavaSpecs.underlineToHump("sys_user"));
-		System.out.println(JavaSpecs.firstUCase("user"));
-		System.out.println(JavaSpecs.firstLCase("USER"));
-
-		System.out.println("------- Input copyright: --------");
-		System.out.println(copyright);
-
-		System.out.println("\n\n\n\n");
-
-		System.out.println("------- Output copyright: --------");
-		System.out.println(JavaSpecs.escapeCopyright(copyright));
+	@Test
+	public void namingJavaSpecificationCase() {
+		out.println(JavaSpecs.tableName2className("sys_user"));
+		out.println(JavaSpecs.tableName2ClassName("sys_user"));
+		out.println(JavaSpecs.underlineToHump("sys_user"));
+		out.println(JavaSpecs.firstUCase("user"));
+		out.println(JavaSpecs.firstLCase("USER"));
 	}
 
 }

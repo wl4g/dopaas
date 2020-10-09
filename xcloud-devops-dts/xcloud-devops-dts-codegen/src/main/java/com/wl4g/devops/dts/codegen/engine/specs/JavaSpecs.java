@@ -20,22 +20,16 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotBlank;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static java.lang.ThreadLocal.withInitial;
-import static java.util.Objects.isNull;
 import static java.util.regex.Pattern.compile;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.replace;
-import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 
 /**
  * Java naming specification {@link JavaSpecs}
@@ -111,41 +105,6 @@ public class JavaSpecs extends BaseSpecs {
 			return str;
 		}
 		return replace(str, ".", File.separator);
-	}
-
-	/**
-	 * Escape copyright string. If there is no multi line comment in the
-	 * Copyright string, the identifier is inserted, otherwise nothing is done.
-	 * (Multi line annotation conforming to Java specification)
-	 * 
-	 * @param copyright
-	 * @return
-	 */
-	public static String escapeCopyright(@Nullable String copyright) {
-		if (isBlank(copyright)) { // Copyright is optional
-			return EMPTY;
-		}
-
-		// Nothing do
-		if (copyright.contains("/*") && copyright.contains("*/")) {
-			return copyright;
-		}
-
-		StringBuffer newCopyright = new StringBuffer("/*");
-		try (BufferedReader bfr = new BufferedReader(new StringReader(copyright));) {
-			String line = null;
-			while (!isNull(line = bfr.readLine())) {
-				newCopyright.append(LINE_SEPARATOR);
-				newCopyright.append(" * ");
-				newCopyright.append(line);
-			}
-			newCopyright.append(LINE_SEPARATOR);
-			newCopyright.append(" */");
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
-
-		return newCopyright.toString();
 	}
 
 	/**

@@ -315,7 +315,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public void syncGenTable(Long id, boolean force) {
+	public void syncTableColumns(Long id, boolean force) {
 		// Gets older genTable.
 		GenTable oldTable = genTableDao.selectByPrimaryKey(id);
 		if (force) {

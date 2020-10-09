@@ -15,10 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.engine.specs;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-
-import javax.validation.constraints.NotBlank;
-
 /**
  * C# naming specification of {@link CSharpSpecs}
  *
@@ -27,19 +23,5 @@ import javax.validation.constraints.NotBlank;
  * @since
  */
 public class CSharpSpecs extends BaseSpecs {
-
-	/**
-	 * Escape copyright string. If there is no multi line comment in the
-	 * Copyright string, the identifier is inserted, otherwise nothing is done.
-	 * (Multi line annotation conforming to C# specification)
-	 * 
-	 * @param copyright
-	 * @return
-	 */
-	public static String escapeCopyright(@NotBlank String copyright) {
-		hasTextOf(copyright, "copyright");
-		// TODO
-		return copyright;
-	}
 
 }

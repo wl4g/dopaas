@@ -70,8 +70,8 @@ public class GenProjectController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/getConfigOption")
-	public RespBase<?> getConfigOption(String providerSet) {
+	@RequestMapping(value = "/loadExtraOptions")
+	public RespBase<?> loadExtraOptions(String providerSet) {
 		RespBase<Object> resp = RespBase.create();
 		List<String> providers = GenProviderSet.getProviders(providerSet);
 		resp.setData(ExtraOptionDefinition.getOptions(providers.toArray(new String[0])));
