@@ -24,6 +24,7 @@ import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
@@ -41,14 +42,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * {@link DefaultGenerateEngineImpl}
@@ -98,7 +97,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 	public GeneratedResult execute(GenericParameter param) {
 		// Gets gen project.
 		GenProject project = genProjectService.detail(param.getProjectId());
-
+		// Project extra options.
 		project.setExtraOptions(parseJSON(project.getExtraOptionsJson(), new TypeReference<List<GenProjectExtraOption>>() {
 		}));
 
@@ -106,41 +105,30 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
 
 		// Gets gen table.
-		List<GenTable> tabs = genTableDao.selectByProjectId(param.getProjectId());
-		for (GenTable tab : tabs) {
-			// Get Table optionMap
-			Map<String, String> optionMap = parseJSON(tab.getOptions(), new TypeReference<Map<String, String>>() {
-			});
-			tab.setOptionMap(optionMap);
+		List<GenTable> tables = genTableDao.selectByProjectId(param.getProjectId());
+		for (GenTable tab : tables) {
+			tab.setPk(getGenColumnsPrimaryKey(tab.getGenTableColumns()));
+
+			// Table extra options.
+			tab.setExtraOptions(parseJSON(tab.getExtraOptionsJson(), new TypeReference<List<GenTableExtraOption>>() {
+			}));
 
 			// Gets gen table columns.
-			List<GenTableColumn> cols = genColumnDao.selectByTableId(tab.getId());
-			// Deal with saved column coments
-			for (GenTableColumn column : cols) {
-				if (isNotBlank(column.getColumnComment())) {
-					column.setColumnComment(column.getColumnComment().replaceAll("\n", " "));
-				}
-			}
-			tab.setGenTableColumns(cols);
-			BeanUtils.copyProperties(project, tab, "id", "genTables");
-			tab.setPk(getGenColumnsPrimaryKey(cols));
-		}
-		project.setGenTables(tabs);
+			tab.setGenTableColumns(genColumnDao.selectByTableId(tab.getId()));
 
-		// Gen project metadata resolver.
+			BeanUtils.copyProperties(project, tab, "id", "genTables");
+		}
+		project.setGenTables(tables);
+
+		// Gets DB metadata resolver.
 		MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
 
-		// Create context.
+		// Create generate context.
 		GenerateContext context = new DefaultGenerateContext(config, locator, resolver, project, datasource);
 
-		// Gets Generate of providers.
+		// Invoking generate with providers.
 		List<String> providers = getProviders(project.getProviderSet());
-
-		// Invoke generate providers.
-		for (String p : providers) {
-			GeneratorProvider provider = beanFactory.getPrototypeBean(p, context);
-			provider.run();
-		}
+		safeList(providers).forEach(p -> ((GeneratorProvider) beanFactory.getPrototypeBean(p, context)).run());
 
 		log.info("Generated projec codes successfully. project: {}", toJSONString(project));
 		return new GeneratedResult(project, datasource, context.getJobId());

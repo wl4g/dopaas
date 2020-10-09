@@ -27,7 +27,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
@@ -74,10 +73,13 @@ public class GenTable extends BaseBean {
 	@RenderProperty(propertyName = GEN_TABLE_FUNC_AUTHOR)
 	private String functionAuthor;
 
-	private String options;
+	private String extraOptionsJson;
 
-	@RenderProperty(propertyName = GEN_TABLE_OPTION_MAP)
-	private Map<String, String> optionMap;
+	/**
+	 * Configured extra options.
+	 */
+	@RenderProperty(propertyName = GEN_TABLE_EXTRA_OPTIONS, describeForObjField = "No")
+	private List<GenTableExtraOption> extraOptions;
 
 	private String status;
 
@@ -138,13 +140,13 @@ public class GenTable extends BaseBean {
 		return this;
 	}
 
-	public GenTable withOptions(String options) {
-		setOptions(options);
+	public GenTable withExtraOptionsJson(String extraOptionsJson) {
+		setExtraOptionsJson(extraOptionsJson);
 		return this;
 	}
 
-	public GenTable withOptionMap(Map<String, String> optionMap) {
-		setOptionMap(optionMap);
+	public GenTable withExtraOptions(List<GenTableExtraOption> extraOptions) {
+		setExtraOptions(extraOptions);
 		return this;
 	}
 
@@ -170,7 +172,7 @@ public class GenTable extends BaseBean {
 	 * @version v1.0 2020-09-16
 	 * @since
 	 */
-	public static enum ExtraOptionDefinition {
+	public static enum TableExtraOptionDefinition {
 
 		TableDeleteType(new GenTableExtraOption("gen.tab.del-type", "true", "false")),
 
@@ -182,7 +184,7 @@ public class GenTable extends BaseBean {
 		@NotNull
 		private final GenTableExtraOption option;
 
-		private ExtraOptionDefinition(@NotNull GenTableExtraOption option) {
+		private TableExtraOptionDefinition(@NotNull GenTableExtraOption option) {
 			notNullOf(option, "option");
 			this.option = option.validate();
 		}

@@ -27,7 +27,7 @@ public interface GenDataSourceService {
 
 	PageModel page(PageModel pm, String name);
 
-	List<GenDataSource> getForSelect();
+	List<GenDataSource> loadDatasources();
 
 	void save(GenDataSource genDatabase);
 

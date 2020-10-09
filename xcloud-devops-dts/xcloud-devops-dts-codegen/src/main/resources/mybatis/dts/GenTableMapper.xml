@@ -13,7 +13,7 @@
 		<result column="function_name" property="functionName" jdbcType="VARCHAR" />
 		<result column="function_name_simple" property="functionNameSimple" jdbcType="VARCHAR" />
 		<result column="function_author" property="functionAuthor" jdbcType="VARCHAR" />
-		<result column="options" property="options" jdbcType="VARCHAR" />
+		<result column="extra_options_json" property="extraOptionsJson" jdbcType="VARCHAR" />
 		<result column="status" property="status" jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
@@ -26,7 +26,8 @@
 	<sql id="Base_Column_List">
 		id, project_id, table_name, entity_name, comments,
 		module_name, sub_module_name, function_name,
-		function_name_simple, function_author, options, status, remark, create_date,
+		function_name_simple,
+		function_author, extra_options_json, status, remark, create_date,
 		create_by, update_date, update_by, del_flag
 	</sql>
 
@@ -64,19 +65,19 @@
 
 	<insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable">
 		INSERT INTO dts_gen_table (
-			id, project_id, table_name,
-			entity_name, comments,
-			module_name, sub_module_name,
-			function_name, function_name_simple, function_author,
-			gen_base_dir, options, status, remark,
-			del_flag, create_date, create_by, update_date, update_by)
+		id, project_id, table_name,
+		entity_name, comments,
+		module_name, sub_module_name,
+		function_name, function_name_simple, function_author,
+		gen_base_dir, extra_options_json, status, remark,
+		del_flag, create_date, create_by, update_date, update_by)
 		VALUES (
-			#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{tableName,jdbcType=VARCHAR},
-			#{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR},
-			#{subModuleName,jdbcType=VARCHAR}, #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR},
-			#{functionAuthor,jdbcType=VARCHAR}, #{options,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
-			#{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT},
-			#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{delFlag,jdbcType=INTEGER}
+		#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{tableName,jdbcType=VARCHAR},
+		#{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR},
+		#{subModuleName,jdbcType=VARCHAR}, #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR},
+		#{functionAuthor,jdbcType=VARCHAR}, #{extraOptionsJson,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT},
+		#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{delFlag,jdbcType=INTEGER}
 		)
 	</insert>
 
@@ -113,8 +114,8 @@
 			<if test="functionAuthor != null">
 				function_author,
 			</if>
-			<if test="options != null">
-				options,
+			<if test="extraOptionsJson != null">
+				extra_options_json,
 			</if>
 			<if test="status != null">
 				status,
@@ -169,8 +170,8 @@
 			<if test="functionAuthor != null">
 				#{functionAuthor,jdbcType=VARCHAR},
 			</if>
-			<if test="options != null">
-				#{options,jdbcType=VARCHAR},
+			<if test="extraOptionsJson != null">
+				#{extraOptionsJson,jdbcType=VARCHAR},
 			</if>
 			<if test="status != null">
 				#{status,jdbcType=VARCHAR},
@@ -226,8 +227,8 @@
 			<if test="functionAuthor != null">
 				function_author = #{functionAuthor,jdbcType=VARCHAR},
 			</if>
-			<if test="options != null">
-				options = #{options,jdbcType=VARCHAR},
+			<if test="extraOptionsJson != null">
+				extra_options_json = #{extraOptionsJson,jdbcType=VARCHAR},
 			</if>
 			<if test="status != null">
 				status = #{status,jdbcType=VARCHAR},
@@ -251,7 +252,9 @@
 				del_flag = #{delFlag,jdbcType=INTEGER},
 			</if>
 		</set>
-		where id = #{id,jdbcType=BIGINT}
+		<where>
+		  id = #{id,jdbcType=BIGINT}
+		</where>
 	</update>
 
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable">
@@ -259,14 +262,15 @@
 		<set>
 			project_id = #{projectId,jdbcType=BIGINT},
 			table_name = #{tableName,jdbcType=VARCHAR},
-			entity_name = #{entityName,jdbcType=VARCHAR},
+			entity_name =
+			#{entityName,jdbcType=VARCHAR},
 			comments = #{comments,jdbcType=VARCHAR},
 			module_name = #{moduleName,jdbcType=VARCHAR},
 			sub_module_name = #{subModuleName,jdbcType=VARCHAR},
 			function_name = #{functionName,jdbcType=VARCHAR},
 			function_name_simple = #{functionNameSimple,jdbcType=VARCHAR},
 			function_author = #{functionAuthor,jdbcType=VARCHAR},
-			options = #{options,jdbcType=VARCHAR},
+			extra_options_json = #{extraOptionsJson,jdbcType=VARCHAR},
 			status = #{status,jdbcType=VARCHAR},
 			remark = #{remark,jdbcType=VARCHAR},
 			del_flag = #{delFlag,jdbcType=INTEGER},
