@@ -151,7 +151,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 			log.info("[SUCCESS] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
 					TASK_STATUS_SUCCESS, pipeHisInstanceId, instance.getId(), projectId, projectName);
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			log.info("[FAILED] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
 					TASK_STATUS_FAIL, pipeHisInstanceId, instance.getId(), projectId, projectName);
 
