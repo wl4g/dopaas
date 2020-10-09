@@ -62,6 +62,10 @@
 			<groupId>com.github.docker-java</groupId>
 			<artifactId>docker-java</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.hierynomus</groupId>
+			<artifactId>sshj</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
