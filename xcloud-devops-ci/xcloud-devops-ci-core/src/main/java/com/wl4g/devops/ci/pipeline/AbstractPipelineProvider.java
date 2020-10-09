@@ -257,7 +257,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 					// Print successful.
 					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
 							getContext().getAppCluster().getName(), ssh.getUsername(), i.getHostname());
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					String logmsg = writeBuildLog("Failed to deployed to remote! Caused by: \n%s", getStackTraceAsString(e));
 					log.error(logmsg);
 					// TODO
