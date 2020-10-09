@@ -17,11 +17,13 @@ package com.wl4g.devops.dts.codegen.engine.specs;
 
 import com.google.common.collect.Lists;
 import com.wl4g.components.common.annotation.Nullable;
+import com.wl4g.components.common.bean.ConfigOption;
 import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.components.common.id.SnowflakeIdGenerator;
 import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
 
 import javax.validation.constraints.NotBlank;
@@ -34,7 +36,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.wl4g.components.common.collection.Collections2.disDupCollection;
 import static com.wl4g.components.common.collection.Collections2.safeList;
@@ -298,14 +299,15 @@ public class BaseSpecs {
 	}
 
 	/**
-	 * Check whether the specified extension configuration item exists.
+	 * Check whether the specified extension configuration item exists. see:
+	 * {@link GenProjectExtraOption} or {@link GenTableExtraOption}
 	 * 
 	 * @param configuredOptions
 	 * @param name
 	 * @param value
 	 * @return
 	 */
-	public static boolean isConf(@Nullable List<GenProjectExtraOption> configuredOptions, @NotBlank String name,
+	public static boolean isConf(@Nullable List<? extends ConfigOption> configuredOptions, @NotBlank String name,
 			@NotBlank String value) {
 		hasTextOf(name, "name");
 		hasTextOf(value, "value");
@@ -316,26 +318,12 @@ public class BaseSpecs {
 		}
 
 		// Verify name and value contains in options.
-		for (GenProjectExtraOption opt : configuredOptions) {
+		for (ConfigOption opt : configuredOptions) {
 			if (equalsIgnoreCase(opt.getName(), name) && equalsIgnoreCase(opt.getSelectedValue(), value)) {
 				return true;
 			}
 		}
 
-		return false;
-	}
-
-	/**
-	 * @see {@link #isConf()}
-	 */
-	@Deprecated
-	public static boolean isTableOptionConf(@Nullable Map<String, String> optionMap, @NotBlank String name,
-			@NotBlank String value) {
-		for (Map.Entry<String, String> entry : optionMap.entrySet()) {
-			if (equalsIgnoreCase(entry.getKey(), name) && equalsIgnoreCase(entry.getValue(), value)) {
-				return true;
-			}
-		}
 		return false;
 	}
 

@@ -69,10 +69,10 @@ public class GenDataSourceController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/getForSelect")
-	public RespBase<?> getForSelect() {
+	@RequestMapping(value = "/loadDatasources")
+	public RespBase<?> loadDatasources() {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(genDSService.getForSelect());
+		resp.setData(genDSService.loadDatasources());
 		return resp;
 	}
 

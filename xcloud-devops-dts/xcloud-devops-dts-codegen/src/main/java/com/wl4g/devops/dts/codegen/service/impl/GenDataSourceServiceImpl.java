@@ -65,7 +65,7 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 	}
 
 	@Override
-	public List<GenDataSource> getForSelect() {
+	public List<GenDataSource> loadDatasources() {
 		// desensitization
 		return safeList(genDSDao.list(null)).stream().map(ds -> ds.withPassword("******")).collect(toList());
 	}

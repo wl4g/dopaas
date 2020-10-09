@@ -110,6 +110,86 @@ public class GenerateServiceImpl implements GenerateService {
 	@Autowired
 	protected GenTableColumnDao genColumnDao;
 
+	// --- GenTable/GenColumns configuration. ---
+
+	@Override
+	public PageModel page(PageModel pm, String tableName, Long projectId) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(genTableDao.list(tableName, projectId));
+		return pm;
+	}
+
+	@Override
+	public RespBase<GenTable> detail(Long tableId) {
+		RespBase<GenTable> resp = RespBase.create();
+		notNullOf(tableId, "tableId");
+
+		// Gets gen table
+		GenTable oldTable = notNullOf(genTableDao.selectByPrimaryKey(tableId), "genTable");
+
+		// Gets gen table columns.
+		List<GenTableColumn> oldColumns = genColumnDao.selectByTableId(oldTable.getId());
+		oldTable.setGenTableColumns(oldColumns);
+
+		// Gets gen project
+		GenProject project = genProjectDao.selectByPrimaryKey(oldTable.getProjectId());
+		notNullOf(project, "genProject");
+
+		// Gets gen datasource
+		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
+		notNullOf(datasource, "genDataSource");
+
+		// Check builtin gen columns.
+		String warningTip = checkBuiltinColumns(datasource, project, oldTable);
+		if (isNotBlank(warningTip)) {
+			resp.setStatus("warningTip");
+			resp.setMessage(warningTip);
+		}
+
+		resp.setData(oldTable);
+		return resp;
+	}
+
+	@Override
+	public void saveGenConfig(GenTable genTable) {
+		GenProject project = notNullOf(genProjectDao.selectByPrimaryKey(genTable.getProjectId()), "genProject");
+		GenDataSource datasource = notNullOf(genDataSourceDao.selectByPrimaryKey(project.getDatasourceId()), "genDatasource");
+
+		GenProviderSet providerSet = notNullOf(GenProviderSet.of(project.getProviderSet()), "genProviderSet");
+		for (GenTableColumn col : genTable.getGenTableColumns()) {
+			DbTypeConverter conv = converter.forOperator(datasource.getType());
+			col.setSqlType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Sql, col.getSimpleColumnType()));
+		}
+
+		if (nonNull(genTable.getId())) {
+			genTable.preUpdate();
+			doBatchUpdate(genTable);
+		} else {
+			genTable.preInsert();
+			doBatchInsert(genTable);
+		}
+	}
+
+	@Override
+	public void deleteGenTable(Long id) {
+		GenTable genTable = new GenTable();
+		genTable.preUpdate();
+		genTable.setId(id);
+		genTable.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		genTableDao.updateByPrimaryKeySelective(genTable);
+	}
+
+	@Override
+	public void setGenTableStatus(Long id, String status) {
+		GenTable genTable = new GenTable();
+		genTable.preUpdate();
+		genTable.setId(id);
+		genTable.setStatus(status);
+		genTableDao.updateByPrimaryKeySelective(genTable);
+	}
+
+	// --- Generate configuration. ---
+
 	@Override
 	public List<TableMetadata> loadTables(Long projectId) {
 		notNullOf(projectId, "projectId");
@@ -136,7 +216,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public RespBase<GenTable> loadMetadata(Long projectId, String tableName) {
+	public RespBase<GenTable> loadTableColumns(Long projectId, String tableName) {
 		RespBase<GenTable> resp = RespBase.create();
 		// Gets gen project
 		notNullOf(projectId, "projectId");
@@ -218,78 +298,6 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public PageModel page(PageModel pm, String tableName, Long projectId) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(genTableDao.list(tableName, projectId));
-		return pm;
-	}
-
-	@Override
-	public RespBase<GenTable> detail(Long tableId) {
-		RespBase<GenTable> resp = RespBase.create();
-		notNullOf(tableId, "tableId");
-
-		// Gets gen table
-		GenTable oldTable = notNullOf(genTableDao.selectByPrimaryKey(tableId), "genTable");
-
-		// Gets gen table columns.
-		List<GenTableColumn> oldColumns = genColumnDao.selectByTableId(oldTable.getId());
-		oldTable.setGenTableColumns(oldColumns);
-
-		// Gets gen project
-		GenProject project = genProjectDao.selectByPrimaryKey(oldTable.getProjectId());
-		notNullOf(project, "genProject");
-
-		// Gets gen datasource
-		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
-		notNullOf(datasource, "genDataSource");
-
-		// Check builtin gen columns.
-		String warningTip = checkBuiltinColumns(datasource, project, oldTable);
-		if (isNotBlank(warningTip)) {
-			resp.setStatus("warningTip");
-			resp.setMessage(warningTip);
-		}
-
-		resp.setData(oldTable);
-		return resp;
-	}
-
-	@Override
-	public void saveGenConfig(GenTable genTable) {
-		GenProject project = notNullOf(genProjectDao.selectByPrimaryKey(genTable.getProjectId()), "genProject");
-		GenDataSource datasource = notNullOf(genDataSourceDao.selectByPrimaryKey(project.getDatasourceId()), "genDatasource");
-
-		GenProviderSet providerSet = notNullOf(GenProviderSet.of(project.getProviderSet()), "genProviderSet");
-		for (GenTableColumn col : genTable.getGenTableColumns()) {
-			DbTypeConverter conv = converter.forOperator(datasource.getType());
-			col.setSqlType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Sql, col.getSimpleColumnType()));
-		}
-
-		if (nonNull(genTable.getId())) {
-			genTable.preUpdate();
-			doBatchUpdate(genTable);
-		} else {
-			genTable.preInsert();
-			doBatchInsert(genTable);
-		}
-	}
-
-	@Override
-	public void deleteGenTable(Long id) {
-		GenTable genTable = new GenTable();
-		genTable.preUpdate();
-		genTable.setId(id);
-		genTable.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		genTableDao.updateByPrimaryKeySelective(genTable);
-	}
-
-	@Override
-	public GeneratedResult generate(Long tableId) {
-		return engine.execute(new GenericParameter(tableId));
-	}
-
-	@Override
 	public Set<String> getAttrTypes(Long projectId) {
 		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
 		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
@@ -306,21 +314,12 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public void setGenTableStatus(Long id, String status) {
-		GenTable genTable = new GenTable();
-		genTable.preUpdate();
-		genTable.setId(id);
-		genTable.setStatus(status);
-		genTableDao.updateByPrimaryKeySelective(genTable);
-	}
-
-	@Override
 	public void syncTableColumns(Long id, boolean force) {
 		// Gets older genTable.
 		GenTable oldTable = genTableDao.selectByPrimaryKey(id);
 		if (force) {
 			// Gets new genTable.
-			GenTable newTable = loadMetadata(oldTable.getProjectId(), oldTable.getTableName()).getData();
+			GenTable newTable = loadTableColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
 
 			// Overriding columns with force.
 			try {
@@ -340,6 +339,13 @@ public class GenerateServiceImpl implements GenerateService {
 		}
 	}
 
+	// --- Execution generates. ---
+
+	@Override
+	public GeneratedResult generate(Long tableId) {
+		return engine.execute(new GenericParameter(tableId));
+	}
+
 	/**
 	 * Apply sets overriding columns with non force. </br>
 	 * </br>
@@ -354,7 +360,7 @@ public class GenerateServiceImpl implements GenerateService {
 		oldTable.setGenTableColumns(oldColumns);
 
 		// Reload the latest table metadata.
-		GenTable newTable = loadMetadata(oldTable.getProjectId(), oldTable.getTableName()).getData();
+		GenTable newTable = loadTableColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
 		List<GenTableColumn> newColumns = newTable.getGenTableColumns();
 
 		// Calculation table column complement set.

@@ -33,15 +33,7 @@ import java.util.Set;
  */
 public interface GenerateService {
 
-	List<TableMetadata> loadTables(Long projectId);
-
-	/**
-	 * Load latest generate table metadata info.
-	 * 
-	 * @param databaseId
-	 * @param tableName
-	 */
-	RespBase<GenTable> loadMetadata(Long projectId, String tableName);
+	// --- GenTable/GenColumns configuration. ---
 
 	PageModel page(PageModel pm, String tableName, Long projectId);
 
@@ -57,11 +49,21 @@ public interface GenerateService {
 
 	void deleteGenTable(Long tableId);
 
-	GeneratedResult generate(Long tableId);
+	void setGenTableStatus(Long id, String status);
+
+	// --- Generate configuration. ---
+
+	List<TableMetadata> loadTables(Long projectId);
+
+	/**
+	 * Load latest generate table metadata info.
+	 * 
+	 * @param databaseId
+	 * @param tableName
+	 */
+	RespBase<GenTable> loadTableColumns(Long projectId, String tableName);
 
 	Set<String> getAttrTypes(Long projectId);
-
-	void setGenTableStatus(Long id, String status);
 
 	/**
 	 * Synchronizing {@link GenTable} information.
@@ -70,5 +72,9 @@ public interface GenerateService {
 	 * @param force
 	 */
 	void syncTableColumns(Long id, boolean force);
+
+	// --- Execution generates. ---
+
+	GeneratedResult generate(Long tableId);
 
 }

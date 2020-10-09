@@ -61,7 +61,7 @@ public class GenerateController extends BaseController {
 	@Autowired
 	protected GenerateService generateService;
 
-	// --- GenTable configuration. ---
+	// --- GenTable/GenColumns configuration. ---
 
 	@RequestMapping(value = "/list")
 	public RespBase<PageModel> searchGenTable(PageModel pm, String tableName, Long projectId) {
@@ -89,7 +89,7 @@ public class GenerateController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping("setEnable")
+	@RequestMapping("setGenTableStatus")
 	public RespBase<?> setGenTableStatus(Long id, String status) {
 		RespBase<Object> resp = RespBase.create();
 		notNullOf(id, "id");
@@ -97,18 +97,18 @@ public class GenerateController extends BaseController {
 		return resp;
 	}
 
-	// --- GenColumns configuration. ---
+	// --- Generate configuration. ---
 
 	@RequestMapping("loadTables")
-	public RespBase<List<TableMetadata>> loadTables(Long projectId) {
+	public RespBase<?> loadTables(Long projectId) {
 		RespBase<List<TableMetadata>> resp = RespBase.create();
 		resp.setData(generateService.loadTables(projectId));
 		return resp;
 	}
 
-	@RequestMapping("loadMetadata")
-	public RespBase<GenTable> loadMetadata(Long projectId, String tableName) {
-		return generateService.loadMetadata(projectId, tableName);
+	@RequestMapping("loadGenTableColumns")
+	public RespBase<GenTable> loadGenTableColumns(Long projectId, String tableName) {
+		return generateService.loadTableColumns(projectId, tableName);
 	}
 
 	@RequestMapping("getAttrTypes")
@@ -132,7 +132,7 @@ public class GenerateController extends BaseController {
 		return resp;
 	}
 
-	// --- Generates. ---
+	// --- Execution generates. ---
 
 	@RequestMapping("generate")
 	public RespBase<?> generate(Long id, HttpServletResponse response) throws IOException {
