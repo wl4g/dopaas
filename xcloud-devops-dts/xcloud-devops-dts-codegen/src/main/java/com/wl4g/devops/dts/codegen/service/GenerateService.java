@@ -69,6 +69,6 @@ public interface GenerateService {
 	 * @param id
 	 * @param force
 	 */
-	void syncGenTable(Long id, boolean force);
+	void syncTableColumns(Long id, boolean force);
 
 }

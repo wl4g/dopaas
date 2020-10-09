@@ -29,6 +29,9 @@ import javax.validation.constraints.NotBlank;
 import org.apdplat.word.WordSegmenter;
 import org.apdplat.word.segmentation.Word;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,10 +48,13 @@ import static java.lang.String.valueOf;
 import static java.util.Locale.US;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.replaceEach;
 import static org.apache.commons.lang3.StringUtils.replacePattern;
+import static org.apache.commons.lang3.StringUtils.trim;
+import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 
 /**
  * Generic base specification utility.
@@ -58,6 +64,8 @@ import static org.apache.commons.lang3.StringUtils.replacePattern;
  * @since
  */
 public class BaseSpecs {
+
+	// --- Naming. ---
 
 	/**
 	 * Gets the string that converts the first letter to uppercase
@@ -114,8 +122,10 @@ public class BaseSpecs {
 	 * @return
 	 */
 	public static long genNextId() {
-		return SnowflakeIdGenerator.getDefault().nextId(true);
+		return SnowflakeIdGenerator.getDefault().nextId();
 	}
+
+	// --- Comments. ---
 
 	/**
 	 * Clean up and normalize comment strings, such as replacing line breaks,
@@ -189,6 +199,82 @@ public class BaseSpecs {
 		}
 		return cleanComment(ofExtractor(hasTextOf(extractor, "extractor")).getHandler().extract(str));
 	}
+
+	/**
+	 * Convert content to multiline comments format, and return without any
+	 * action if the original content conforms to the format of multiline
+	 * comments.
+	 * 
+	 * @param sourceContent
+	 * @return
+	 * @see {@link com.wl4g.devops.dts.codegen.engine.specs.BaseSpecsTests#wrapCommentCase()}
+	 */
+	public static String wrapMultiComment(@Nullable String sourceContent) {
+		if (isBlank(sourceContent)) { // Optional
+			return EMPTY;
+		}
+
+		// Nothing do
+		if (sourceContent.contains("/*") && sourceContent.contains("*/")) {
+			return sourceContent;
+		}
+
+		StringBuffer newCopyright = new StringBuffer("/*");
+		try (BufferedReader bfr = new BufferedReader(new StringReader(sourceContent));) {
+			String line = null;
+			while (!isNull(line = bfr.readLine())) {
+				newCopyright.append(LINE_SEPARATOR);
+				newCopyright.append(" * ");
+				newCopyright.append(line);
+			}
+			newCopyright.append(LINE_SEPARATOR);
+			newCopyright.append(" */");
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+
+		return newCopyright.toString();
+	}
+
+	/**
+	 * Convert content to single comments format, and return without any action
+	 * if the original content conforms to the format of single comments.
+	 * 
+	 * @param sourceContent
+	 * @param markHead
+	 * @return
+	 * @see {@link com.wl4g.devops.dts.codegen.engine.specs.BaseSpecsTests#wrapCommentCase()}
+	 */
+	public static String wrapSingleComment(@Nullable String sourceContent, @NotBlank String markHead) {
+		hasTextOf(markHead, "markHead");
+		if (isBlank(sourceContent)) { // Optional
+			return EMPTY;
+		}
+
+		// Nothing do
+		if (trim(sourceContent).startsWith(markHead)) {
+			return sourceContent;
+		}
+
+		StringBuffer newCopyright = new StringBuffer(markHead);
+		try (BufferedReader bfr = new BufferedReader(new StringReader(sourceContent));) {
+			String line = null;
+			while (!isNull(line = bfr.readLine())) {
+				newCopyright.append(LINE_SEPARATOR);
+				newCopyright.append(markHead);
+				newCopyright.append(" ");
+				newCopyright.append(line);
+			}
+			newCopyright.append(LINE_SEPARATOR);
+			newCopyright.append(markHead);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+
+		return newCopyright.toString();
+	}
+
+	// --- Functions. ---
 
 	/**
 	 * Check if the state is true.

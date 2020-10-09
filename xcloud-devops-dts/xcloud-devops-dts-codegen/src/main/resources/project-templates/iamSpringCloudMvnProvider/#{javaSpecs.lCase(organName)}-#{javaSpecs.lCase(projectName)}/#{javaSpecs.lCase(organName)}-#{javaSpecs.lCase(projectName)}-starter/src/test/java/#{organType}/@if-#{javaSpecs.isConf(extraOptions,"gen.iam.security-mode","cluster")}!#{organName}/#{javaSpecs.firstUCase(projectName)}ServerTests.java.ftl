@@ -1,6 +1,6 @@
 // ${watermark}
 
-${javaSpecs.escapeCopyright(copyright)}
+${javaSpecs.wrapMultiComment(copyright)}
 
 package ${organType?uncap_first}.${organName?uncap_first};
 

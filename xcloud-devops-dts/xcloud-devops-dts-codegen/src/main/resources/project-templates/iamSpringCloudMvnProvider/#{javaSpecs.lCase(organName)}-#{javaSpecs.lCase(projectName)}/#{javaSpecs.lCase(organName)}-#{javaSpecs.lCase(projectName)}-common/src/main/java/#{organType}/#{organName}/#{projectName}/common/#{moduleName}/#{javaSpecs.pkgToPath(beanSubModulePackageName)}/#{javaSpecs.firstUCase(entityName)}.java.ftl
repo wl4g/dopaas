@@ -8,7 +8,7 @@
 <#assign hasAttrNameOfNotNull = javaSpecs.hasFieldValue(javaSpecs.transformColumns(filteredTabColumns, "noNull"), "1")>
 // ${watermark}
 
-${javaSpecs.escapeCopyright(copyright)}
+${javaSpecs.wrapMultiComment(copyright)}
 
 package ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName};
 

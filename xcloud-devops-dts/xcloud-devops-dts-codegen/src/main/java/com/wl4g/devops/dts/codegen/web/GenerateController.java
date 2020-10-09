@@ -61,17 +61,7 @@ public class GenerateController extends BaseController {
 	@Autowired
 	protected GenerateService generateService;
 
-	@RequestMapping("loadTables")
-	public RespBase<List<TableMetadata>> loadTables(Long projectId) {
-		RespBase<List<TableMetadata>> resp = RespBase.create();
-		resp.setData(generateService.loadTables(projectId));
-		return resp;
-	}
-
-	@RequestMapping("loadMetadata")
-	public RespBase<GenTable> loadMetadata(Long projectId, String tableName) {
-		return generateService.loadMetadata(projectId, tableName);
-	}
+	// --- GenTable configuration. ---
 
 	@RequestMapping(value = "/list")
 	public RespBase<PageModel> searchGenTable(PageModel pm, String tableName, Long projectId) {
@@ -99,6 +89,51 @@ public class GenerateController extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping("setEnable")
+	public RespBase<?> setGenTableStatus(Long id, String status) {
+		RespBase<Object> resp = RespBase.create();
+		notNullOf(id, "id");
+		generateService.setGenTableStatus(id, status);
+		return resp;
+	}
+
+	// --- GenColumns configuration. ---
+
+	@RequestMapping("loadTables")
+	public RespBase<List<TableMetadata>> loadTables(Long projectId) {
+		RespBase<List<TableMetadata>> resp = RespBase.create();
+		resp.setData(generateService.loadTables(projectId));
+		return resp;
+	}
+
+	@RequestMapping("loadMetadata")
+	public RespBase<GenTable> loadMetadata(Long projectId, String tableName) {
+		return generateService.loadMetadata(projectId, tableName);
+	}
+
+	@RequestMapping("getAttrTypes")
+	public RespBase<?> getAttrTypes(Long projectId) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(generateService.getAttrTypes(projectId));
+		return resp;
+	}
+
+	/**
+	 * Sync attributes of {@link GenTable} and {@link GenTableColumn}
+	 * 
+	 * @param id
+	 * @param force
+	 * @return
+	 */
+	@RequestMapping("syncTableColumns")
+	public RespBase<?> syncTableColumns(Long id, boolean force) {
+		RespBase<Object> resp = RespBase.create();
+		generateService.syncTableColumns(id, force);
+		return resp;
+	}
+
+	// --- Generates. ---
+
 	@RequestMapping("generate")
 	public RespBase<?> generate(Long id, HttpServletResponse response) throws IOException {
 		RespBase<Object> resp = RespBase.create();
@@ -122,28 +157,6 @@ public class GenerateController extends BaseController {
 
 		// ZIP download
 		writeZip(response, jobDir.getCanonicalPath(), "codegen-".concat(jobId));
-	}
-
-	@RequestMapping("setEnable")
-	public RespBase<?> setGenTableStatus(Long id, String status) {
-		RespBase<Object> resp = RespBase.create();
-		notNullOf(id, "id");
-		generateService.setGenTableStatus(id, status);
-		return resp;
-	}
-
-	@RequestMapping("getAttrTypes")
-	public RespBase<?> getAttrTypes(Long projectId) {
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(generateService.getAttrTypes(projectId));
-		return resp;
-	}
-
-	@RequestMapping("synchronizeTable")
-	public RespBase<?> synchronizeTable(Long id, boolean force) {
-		RespBase<Object> resp = RespBase.create();
-		generateService.syncGenTable(id, force);
-		return resp;
 	}
 
 	/**

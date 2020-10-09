@@ -1,6 +1,6 @@
 // ${watermark}
 
-${javaSpecs.escapeCopyright(copyright)}
+${javaSpecs.wrapMultiComment(copyright)}
 
 <#assign aDateTime = .now>
 <#assign aDate = aDateTime?date>
