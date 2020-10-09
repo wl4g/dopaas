@@ -64,10 +64,7 @@ export default {
         // [顺序优先特殊接口，直接走ajax]登录完成时，需优先加载初始化信息
         initSystemConfiguration() {
             // 1. Load syscluster modules.
-            ajax({
-                type: 'get',
-                path: '/clusterConfig/loadInit',
-                sysModule: global.iam,
+            this.$$api_iam_clusterConfigLoadInit({
                 fn: data => {
                     store.set("iam_system_modules", data.data);
                     console.debug("Loaded sysmodules config.");
@@ -77,10 +74,7 @@ export default {
                 },
             });
             // 2. Load sysdict.
-            ajax({
-                type: 'get',
-                path: '/dict/loadInit',
-                sysModule: global.iam,
+            this.$$api_iam_dictLoadInit({
                 fn: data => {
                     store.set("dicts_cache", data.data);
                     console.debug("Loaded sysmodules config.");

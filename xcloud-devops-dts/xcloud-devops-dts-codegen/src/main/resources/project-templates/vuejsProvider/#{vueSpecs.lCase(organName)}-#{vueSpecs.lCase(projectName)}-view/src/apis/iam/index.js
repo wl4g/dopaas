@@ -156,7 +156,7 @@ export default [
     // Cluster Config Informcation
     {
         name: 'appModules',
-        method: 'clusterConfigInfo',
+        method: 'clusterConfigLoadInit',
         path: '/clusterConfig/loadInit',
         type: 'get', // 必须使用get，原因同理：dict/loadInit
         sysModule: global.iam,
@@ -220,7 +220,7 @@ export default [
     },
     {
         name: '获取字典缓存',
-        method: 'dictCache',
+        method: 'dictLoadInit',
         path: '/dict/loadInit',
         type: 'get', // 必须是get，因为在初始期间调用，使用post会调用IAMCore.getXsrfToken等，此时index.html动态加载的IAM sdk还未异步加载完
         sysModule: global.iam
