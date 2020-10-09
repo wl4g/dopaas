@@ -25,7 +25,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-<#if optionObj.isExportExcel == true>
+<#assign isExportExcel = javaSpecs.isConf(tableExtraOptions, "gen.tab.export-excel", "true")>
+<#if isExportExcel == true>
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 </#if>
@@ -47,7 +48,7 @@ import ${attrType};
 @Setter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @ApiModel("${javaSpecs.cleanComment(comments)}")<#-- 转义换行和双引号 -->
-<#if optionObj.isExportExcel == true>
+<#if isExportExcel == true>
 @ColumnWidth(40)
 </#if>
 public class ${entityName?cap_first} extends BaseBean {
@@ -58,7 +59,7 @@ public class ${entityName?cap_first} extends BaseBean {
      * ${col.columnComment}
      */
     @ApiModelProperty("${javaSpecs.cleanComment(col.columnComment)}")
-	<#if optionObj.isExportExcel == true>
+	<#if isExportExcel == true>
     @ExcelProperty(value = { "${javaSpecs.cleanComment(col.columnComment)}" })
     </#if>
     <#if col.attrType == 'java.util.Date'>

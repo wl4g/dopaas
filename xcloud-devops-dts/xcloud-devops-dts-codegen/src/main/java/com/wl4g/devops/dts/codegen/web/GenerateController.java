@@ -106,8 +106,8 @@ public class GenerateController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping("loadGenTableColumns")
-	public RespBase<GenTable> loadGenTableColumns(Long projectId, String tableName) {
+	@RequestMapping("loadTableColumns")
+	public RespBase<GenTable> loadTableColumns(Long projectId, String tableName) {
 		return generateService.loadTableColumns(projectId, tableName);
 	}
 
