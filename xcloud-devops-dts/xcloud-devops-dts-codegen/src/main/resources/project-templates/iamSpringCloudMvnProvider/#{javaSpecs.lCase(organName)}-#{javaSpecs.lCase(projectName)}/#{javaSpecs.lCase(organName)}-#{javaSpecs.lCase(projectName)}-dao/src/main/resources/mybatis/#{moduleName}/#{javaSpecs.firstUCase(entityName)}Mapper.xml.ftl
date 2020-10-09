@@ -82,7 +82,7 @@
 			<include refid="Base_Column_List"/>
 		FROM ${tableName}
 		<where>
-			<#if optionMap.tableDeleteType == 'deleteWithLogical'>
+			<#if javaSpecs.isConf(tableExtraOptions, "gen.tab.del-type", "deleteWithLogical")>
 				AND del_flag != 1
 			</#if>
 			<#list genTableColumns as param>

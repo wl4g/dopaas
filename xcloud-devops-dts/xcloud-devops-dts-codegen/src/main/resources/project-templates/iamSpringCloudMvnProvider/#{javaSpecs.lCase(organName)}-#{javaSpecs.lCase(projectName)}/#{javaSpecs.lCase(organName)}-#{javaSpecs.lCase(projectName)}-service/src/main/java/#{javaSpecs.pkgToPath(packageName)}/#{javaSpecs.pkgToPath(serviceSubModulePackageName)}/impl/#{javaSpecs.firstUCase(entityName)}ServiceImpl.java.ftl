@@ -60,7 +60,7 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
     }
 
 <#-- Service delete with logical  -->
-<#if optionMap.tableDeleteType == 'deleteWithLogical'>
+<#if javaSpecs.isConf(tableExtraOptions, "gen.tab.del-type", "deleteWithLogical")>
     @Override
     public int del(Long id) {
         notNullOf(id, "${entityName?uncap_first}Id");

@@ -174,7 +174,7 @@ public class GenTable extends BaseBean {
 	 */
 	public static enum TableExtraOptionDefinition {
 
-		TableDeleteType(new GenTableExtraOption("gen.tab.del-type", "true", "false")),
+		TableDeleteType(new GenTableExtraOption("gen.tab.del-type", "deleteWithLogical", "deleteWithPhysical", "deleteWithNone")),
 
 		TableEditType(new GenTableExtraOption("gen.tab.edit-type", "editOnDialog", "editOnPage")),
 

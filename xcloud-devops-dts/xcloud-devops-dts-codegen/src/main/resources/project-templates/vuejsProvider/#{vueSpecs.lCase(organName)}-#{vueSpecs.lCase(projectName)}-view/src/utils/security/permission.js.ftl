@@ -171,11 +171,12 @@ router.beforeEach(async (to, from, next) => {
 
           // 特殊处理newpipeline页面
           highLevel.forEach(n => {
+<#assign isEditOnPage = vueSpecs.isConf(tableExtraOptions, "gen.tab.edit-type", "editOnPage")>
 <#if moduleMap?exists>
-  <#list moduleMap?keys as moduleName>
+    <#list moduleMap?keys as moduleName>
             if (n.permission === '${moduleName}') {
-    <#list moduleMap[moduleName] as table>
-      <#if table.optionMap.tableEditType == 'editOnPage'>
+        <#list moduleMap[moduleName] as table>
+            <#if isEditOnPage == true>
               n.children.push({
                 path: '/${moduleName}/${table.entityName?lower_case}edit',
                 component: require("@/views/${moduleName}/${table.entityName?lower_case}edit/${table.entityName?cap_first}Edit.vue"),
@@ -183,10 +184,10 @@ router.beforeEach(async (to, from, next) => {
                 icon: '',
                 hidden: true
               })
-      </#if>
-    </#list>
+            </#if>
+        </#list>
             }
-  </#list>
+    </#list>
 </#if>
           });
 

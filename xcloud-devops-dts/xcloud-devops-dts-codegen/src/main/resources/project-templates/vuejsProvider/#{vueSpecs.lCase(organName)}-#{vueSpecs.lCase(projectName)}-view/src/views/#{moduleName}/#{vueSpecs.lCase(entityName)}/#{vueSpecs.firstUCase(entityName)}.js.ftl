@@ -91,7 +91,8 @@ export default {
         }
     },
 
-<#if optionMap.tableEditType == 'editOnPage'>
+<#assign isEditOnPage = vueSpecs.isConf(tableExtraOptions, "gen.tab.edit-type", "editOnPage")>
+<#if isEditOnPage == true>
     activated() {
         this.getData();
     },
@@ -113,7 +114,7 @@ export default {
         },
 
         addData() {
-<#if optionMap.tableEditType == 'editOnPage'>
+<#if isEditOnPage == true>
             this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit'})
 <#else>
             this.cleanSaveForm();
@@ -174,7 +175,7 @@ export default {
         },
 
         editData(row) {
-<#if optionMap.tableEditType == 'editOnPage'>
+<#if isEditOnPage == true>
             this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit', query: {id: row.id}})
 <#else>
             if (!row.id) {
