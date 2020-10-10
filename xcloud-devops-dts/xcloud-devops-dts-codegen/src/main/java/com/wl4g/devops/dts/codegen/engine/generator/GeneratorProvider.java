@@ -123,10 +123,10 @@ public interface GeneratorProvider extends Runnable, Closeable {
 		GonicWebMVC(asList(GO_GONICWEB), CodeLanguage.GO),
 
 		// Nothing to do with DAO layer
-		JustVueJS(asList(VUEJS), null),
+		JustVueJS(asList(VUEJS), CodeLanguage.JAVA),
 
 		// Nothing to do with DAO layer
-		JustNgJS(asList(NGJS), null);
+		JustNgJS(asList(NGJS), CodeLanguage.JAVA);
 
 		/** {@link GenProviderAlias} */
 		@NotEmpty

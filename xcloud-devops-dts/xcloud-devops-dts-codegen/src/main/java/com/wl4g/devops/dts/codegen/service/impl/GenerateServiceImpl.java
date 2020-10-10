@@ -47,17 +47,15 @@ import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
 import com.wl4g.devops.dts.codegen.i18n.CodegenResourceMessageBundler;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
-
-import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
@@ -65,9 +63,11 @@ import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
 import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper;
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
 import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
 import static java.util.Arrays.asList;
@@ -76,9 +76,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
  * {@link GenerateServiceImpl}
@@ -166,6 +164,8 @@ public class GenerateServiceImpl implements GenerateService {
 			DbTypeConverter conv = converter.forOperator(datasource.getType());
 			col.setSqlType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Sql, col.getSimpleColumnType()));
 		}
+
+		genTable.setExtraOptionsJson(toJSONString(genTable.getExtraOptions()));
 
 		if (nonNull(genTable.getId())) {
 			genTable.preUpdate();
