@@ -23,7 +23,6 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
 import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
@@ -38,12 +37,13 @@ import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
@@ -97,9 +97,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 	public GeneratedResult execute(GenericParameter param) {
 		// Gets gen project.
 		GenProject project = genProjectService.detail(param.getProjectId());
-		// Project extra options.
-		project.setExtraOptions(parseJSON(project.getExtraOptionsJson(), new TypeReference<List<GenProjectExtraOption>>() {
-		}));
+		notNullOf(project.getExtraOptions(), "projectExtraOptions");
 
 		// Gets gen datasource.
 		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
@@ -107,7 +105,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		// Gets gen table.
 		List<GenTable> tables = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tables) {
-			tab.setPk(getGenColumnsPrimaryKey(tab.getGenTableColumns()));
+			tab.setPk(notNull(getGenColumnsPrimaryKey(tab.getGenTableColumns()), "'%s' has no primary key?", tab.getTableName()));
 
 			// Table extra options.
 			tab.setExtraOptions(parseJSON(tab.getExtraOptionsJson(), new TypeReference<List<GenTableExtraOption>>() {
@@ -115,8 +113,6 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 
 			// Gets gen table columns.
 			tab.setGenTableColumns(genColumnDao.selectByTableId(tab.getId()));
-
-			BeanUtils.copyProperties(project, tab, "id", "genTables");
 		}
 		project.setGenTables(tables);
 
