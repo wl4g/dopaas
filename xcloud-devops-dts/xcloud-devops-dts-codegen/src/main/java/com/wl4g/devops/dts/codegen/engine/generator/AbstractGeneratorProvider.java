@@ -35,6 +35,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +83,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		this.context = notNullOf(context, "context");
 		// Primary rendering model.
 		this.primaryModel = initPrimaryRenderingModel(context.getConfiguration(), context, defaultFlatModel);
+	}
+
+	@Override
+	public void close() throws IOException {
+		context.getMetadataResolver().close();
 	}
 
 	/**

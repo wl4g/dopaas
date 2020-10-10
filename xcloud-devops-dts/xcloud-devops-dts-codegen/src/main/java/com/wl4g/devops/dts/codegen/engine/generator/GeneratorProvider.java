@@ -23,6 +23,8 @@ import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import java.io.Closeable;
 import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
@@ -40,7 +42,7 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
  * @version v1.0 2020-09-07
  * @since
  */
-public interface GeneratorProvider extends Runnable {
+public interface GeneratorProvider extends Runnable, Closeable {
 
 	@Override
 	default public void run() {
