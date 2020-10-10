@@ -100,20 +100,19 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		GenProject project = genProjectService.detail(param.getProjectId());
 		notNullOf(project.getExtraOptions(), "projectExtraOptions");
 
-		// Gets gen datasource.
+		// Gets genDatasource.
 		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
 
-		// Gets gen table.
+		// Gets genTable.
 		List<GenTable> tables = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tables) {
+			// Gets genTable columns.
+			tab.setGenTableColumns(genColumnDao.selectByTableId(tab.getId()));
+			// Gets primary column.
 			tab.setPk(notNull(getGenColumnsPrimaryKey(tab.getGenTableColumns()), "'%s' has no primary key?", tab.getTableName()));
-
 			// Table extra options.
 			tab.setExtraOptions(parseJSON(tab.getExtraOptionsJson(), new TypeReference<List<GenTableExtraOption>>() {
 			}));
-
-			// Gets gen table columns.
-			tab.setGenTableColumns(genColumnDao.selectByTableId(tab.getId()));
 		}
 		project.setGenTables(tables);
 

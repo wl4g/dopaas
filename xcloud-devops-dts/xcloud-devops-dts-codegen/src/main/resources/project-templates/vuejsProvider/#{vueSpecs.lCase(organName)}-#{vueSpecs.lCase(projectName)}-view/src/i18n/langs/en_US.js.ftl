@@ -56,7 +56,7 @@ const en_US = {
         },
 <#-- Whether Iam is in cluster/local/gateway mode, Vue codes will still hard code 
 these variables, So there is no need to judge. -->
-<#-- <#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")> -->
+<#-- <#if vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")> -->
         iam: {
             'menu': 'Menu',
             'contactPhone': 'Contact Phone',
