@@ -21,6 +21,7 @@ import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
@@ -115,6 +116,14 @@ public class GenerateController extends BaseController {
 	public RespBase<?> getAttrTypes(Long projectId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(generateService.getAttrTypes(projectId));
+		return resp;
+	}
+
+	@RequestMapping(value = "/loadExtraOptions")
+	public RespBase<?> loadExtraOptions(String providerSet) {
+		RespBase<Object> resp = RespBase.create();
+		List<GenTableExtraOption> options = GenTable.TableExtraOptionDefinition.getOptions();
+		resp.setData(options);
 		return resp;
 	}
 
