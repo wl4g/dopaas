@@ -75,7 +75,7 @@ step1: 新建模版工程，[参考(G) iamSpringCloudMvnProvider](src/main/resou
 
 step2: 新建生成处理器，[参考( C) IamSpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/generator/IamSpringCloudMvnGeneratorProvider.java)
 
-step3: 新建源码规范工具类 (可选)，[参考(E) SpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/naming/SpringCloudMvnGeneratorProvider.java)
+step3: 新建模版渲染工具类 (建议)，[参考(E) SpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/naming/SpringCloudMvnGeneratorProvider.java)
 
 step4: 使新建处理器生效，[参考(A) CodegenAutoConfiguration#springMvcGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/config/CodegenAutoConfiguration.java#springMvcGeneratorProvider)
 

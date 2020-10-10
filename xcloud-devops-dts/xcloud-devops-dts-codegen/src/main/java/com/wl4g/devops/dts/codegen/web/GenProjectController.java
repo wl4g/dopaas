@@ -20,6 +20,7 @@ import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenProject.ExtraOptionDefinition;
+import com.wl4g.devops.dts.codegen.bean.extra.GenExtraOption;
 import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +71,14 @@ public class GenProjectController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/loadExtraOptions")
-	public RespBase<?> loadExtraOptions(String providerSet) {
+	/**
+	 * Load project {@link GenExtraOption} of {@link ExtraOptionDefinition}
+	 * 
+	 * @param providerSet
+	 * @return
+	 */
+	@RequestMapping(value = "/extraOptions")
+	public RespBase<?> extraOptions(String providerSet) {
 		RespBase<Object> resp = RespBase.create();
 		List<String> providers = GenProviderSet.getProviders(providerSet);
 		resp.setData(ExtraOptionDefinition.getOptions(providers.toArray(new String[0])));

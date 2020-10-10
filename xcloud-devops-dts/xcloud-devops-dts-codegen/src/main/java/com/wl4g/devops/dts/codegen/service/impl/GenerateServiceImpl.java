@@ -22,15 +22,12 @@ import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
-import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
-import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GenerateEngine;
@@ -38,16 +35,17 @@ import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper.MappedMatcher;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappingWrapper.MappedMatcher;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
 import com.wl4g.devops.dts.codegen.i18n.CodegenResourceMessageBundler;
+import com.wl4g.devops.dts.codegen.service.GenDataSourceService;
+import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +63,7 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
-import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper;
+import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappingWrapper;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
@@ -95,16 +93,13 @@ public class GenerateServiceImpl implements GenerateService {
 	protected NamingPrototypeBeanFactory beanFactory;
 
 	@Autowired
-	protected GenericOperatorAdapter<DbType, DbTypeConverter> converter;
-
-	@Autowired
 	protected GenerateEngine engine;
 
 	@Autowired
-	protected GenDataSourceDao genDataSourceDao;
+	protected GenDataSourceService genDSService;
 
 	@Autowired
-	protected GenProjectDao genProjectDao;
+	protected GenProjectService genProjectService;
 
 	@Autowired
 	protected GenTableDao genTableDao;
@@ -138,10 +133,10 @@ public class GenerateServiceImpl implements GenerateService {
 		table.setGenTableColumns(genColumnDao.selectByTableId(table.getId()));
 
 		// Gets genProject
-		GenProject project = notNullOf(genProjectDao.selectByPrimaryKey(table.getProjectId()), "genProject");
+		GenProject project = notNullOf(genProjectService.detail(table.getProjectId()), "genProject");
 
 		// Gets genDatasource
-		GenDataSource datasource = notNullOf(genDataSourceDao.selectByPrimaryKey(project.getDatasourceId()), "genDataSource");
+		GenDataSource datasource = notNullOf(genDSService.detail(project.getDatasourceId()), "genDataSource");
 
 		// Check builtin genTable columns.
 		String warningTip = checkBuiltinColumns(datasource, project, table);
@@ -156,13 +151,13 @@ public class GenerateServiceImpl implements GenerateService {
 
 	@Override
 	public void saveGenConfig(GenTable genTable) {
-		GenProject project = notNullOf(genProjectDao.selectByPrimaryKey(genTable.getProjectId()), "genProject");
-		GenDataSource datasource = notNullOf(genDataSourceDao.selectByPrimaryKey(project.getDatasourceId()), "genDatasource");
+		GenProject project = notNullOf(genProjectService.detail(genTable.getProjectId()), "genProject");
+		GenDataSource datasource = notNullOf(genDSService.detail(project.getDatasourceId()), "genDatasource");
 
 		GenProviderSet providerSet = notNullOf(GenProviderSet.of(project.getProviderSet()), "genProviderSet");
 		for (GenTableColumn col : genTable.getGenTableColumns()) {
-			DbTypeConverter conv = converter.forOperator(datasource.getType());
-			col.setSqlType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Sql, col.getSimpleColumnType()));
+			DbTypeConverter conv = providerSet.converter();
+			col.setSqlType(conv.convertBy(datasource.getType(), MappedMatcher.Column2Sql, col.getSimpleColumnType()));
 		}
 
 		genTable.setExtraOptionsJson(toJSONString(genTable.getExtraOptions()));
@@ -197,36 +192,35 @@ public class GenerateServiceImpl implements GenerateService {
 	// --- Generate configuration. ---
 
 	@Override
-	public List<TableMetadata> loadTables(Long projectId) throws Exception {
+	public List<TableMetadata> findTables(Long projectId) throws Exception {
 		notNullOf(projectId, "projectId");
-		GenProject genProject = genProjectDao.selectByPrimaryKey(projectId);
-		notNullOf(genProject, "genProject");
+		GenProject genProject = notNullOf(genProjectService.detail(projectId), "genProject");
 
-		GenDataSource dataSource = genDataSourceDao.selectByPrimaryKey(genProject.getDatasourceId());
+		GenDataSource dataSource = genDSService.detail(genProject.getDatasourceId());
 		notNullOf(dataSource, "genDatabase");
 
 		try (MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);) {
 			List<GenTable> genTables = genTableDao.selectByProjectId(projectId);
 			List<TableMetadata> metadatas = resolver.findTablesAll();
+
 			// Filtering configured tables.
 			return safeList(metadatas)
-					.stream().filter(md -> safeList(genTables).stream()
+					.stream().filter(md -> !safeList(genTables).stream()
 							.filter(t -> equalsIgnoreCase(md.getTableName(), t.getTableName())).findAny().isPresent())
 					.collect(toList());
 		}
 	}
 
 	@Override
-	public RespBase<GenTable> loadTableColumns(Long projectId, String tableName) throws Exception {
+	public RespBase<GenTable> loadGenTableConfig(Long projectId, String tableName) throws Exception {
 		RespBase<GenTable> resp = RespBase.create();
-		// Gets gen project
+		// Gets genPoject
 		notNullOf(projectId, "projectId");
-		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
+		GenProject project = genProjectService.detail(projectId);
 		notNullOf(project, "genProject");
 
 		// Gets genDatasource
-		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
-		notNullOf(datasource, "genDataSource");
+		GenDataSource datasource = notNullOf(genDSService.detail(project.getDatasourceId()), "genDataSource");
 
 		try (MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);) {
 			// Gets genTable
@@ -245,7 +239,6 @@ public class GenerateServiceImpl implements GenerateService {
 			table.setRemark(tmetadata.getComments());
 
 			GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
-
 			List<GenTableColumn> cols = new ArrayList<>();
 			for (ColumnMetadata cmetadata : tmetadata.getColumns()) {
 				GenTableColumn col = new GenTableColumn();
@@ -259,10 +252,8 @@ public class GenerateServiceImpl implements GenerateService {
 				col.setAttrName(underlineToHump(cmetadata.getColumnName()));
 
 				// Converting java type
-				if (nonNull(providerSet.language())) {
-					DbTypeConverter conv = converter.forOperator(datasource.getType());
-					col.setAttrType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Lang, col.getSimpleColumnType()));
-				}
+				DbTypeConverter conv = providerSet.converter();
+				col.setAttrType(conv.convertBy(datasource.getType(), MappedMatcher.Column2Attr, col.getSimpleColumnType()));
 
 				// Sets defaults
 				col.setIsInsert("1");
@@ -281,6 +272,8 @@ public class GenerateServiceImpl implements GenerateService {
 				} else {
 					col.setIsPk("0");
 				}
+
+				// Sets default show attrType
 				applyDefaultShowType(cmetadata, col);
 				cols.add(col);
 			}
@@ -299,16 +292,12 @@ public class GenerateServiceImpl implements GenerateService {
 
 	@Override
 	public Set<String> getAttrTypes(Long projectId) {
-		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
+		GenProject project = notNullOf(genProjectService.detail(projectId), "genProject");
+		GenDataSource datasource = genDSService.detail(project.getDatasourceId());
+
 		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
-		if (isNull(providerSet.language())) {
-			return null;
-		}
+		List<TypeMappingWrapper> mapping = providerSet.converter().getTypeMappings(datasource.getType());
 
-		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
-		DbTypeConverter conv = converter.forOperator(datasource.getType());
-
-		List<TypeMappedWrapper> mapping = conv.getTypeMappedWrappers(providerSet.language());
 		// To attrTypes.
 		return mapping.stream().map(m -> m.getAttrType()).collect(toSet());
 	}
@@ -319,7 +308,7 @@ public class GenerateServiceImpl implements GenerateService {
 		GenTable oldTable = genTableDao.selectByPrimaryKey(id);
 		if (force) {
 			// Gets new genTable.
-			GenTable newTable = loadTableColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
+			GenTable newTable = loadGenTableConfig(oldTable.getProjectId(), oldTable.getTableName()).getData();
 
 			// Overriding columns with force.
 			try {
@@ -361,7 +350,7 @@ public class GenerateServiceImpl implements GenerateService {
 		oldTable.setGenTableColumns(oldColumns);
 
 		// Reload the latest table metadata.
-		GenTable newTable = loadTableColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
+		GenTable newTable = loadGenTableConfig(oldTable.getProjectId(), oldTable.getTableName()).getData();
 		List<GenTableColumn> newColumns = newTable.getGenTableColumns();
 
 		// Calculation table column complement set.
@@ -388,12 +377,12 @@ public class GenerateServiceImpl implements GenerateService {
 	private void doBatchInsert(GenTable genTable) {
 		Long count = genTableDao.countByProjectIdAndTableName(genTable.getProjectId(), genTable.getTableName());
 		if (nonNull(count)) {
-			Assert2.isTrue(count <= 0, "Cannot add the same table");
+			Assert2.isTrue(count <= 0, "Cannot save the gen tables");
 		}
 
 		List<GenTableColumn> cols = genTable.getGenTableColumns();
-		int i = 0;
-		for (GenTableColumn col : cols) {
+		for (int i = 0; i < cols.size(); i++) {
+			GenTableColumn col = cols.get(i);
 			col.preInsert();
 			col.setTableId(genTable.getId());
 			col.setColumnSort(i++);
@@ -480,11 +469,11 @@ public class GenerateServiceImpl implements GenerateService {
 	 * @param col
 	 */
 	private void applyDefaultShowType(ColumnMetadata cmetadata, GenTableColumn col) {
-		if (StringUtils.equalsAnyIgnoreCase(cmetadata.getSimpleColumnType(), "DATE")) {
+		if (equalsAnyIgnoreCase(cmetadata.getSimpleColumnType(), "DATE")) {
 			col.setShowType("7");// Date
-		} else if (StringUtils.equalsAnyIgnoreCase(cmetadata.getSimpleColumnType(), "DATETIME", "TIMESTAMP")) {
+		} else if (equalsAnyIgnoreCase(cmetadata.getSimpleColumnType(), "DATETIME", "TIMESTAMP")) {
 			col.setShowType("8");// DateTime
-		} else if (StringUtils.equalsAnyIgnoreCase(cmetadata.getSimpleColumnType(), "TEXT")) {
+		} else if (equalsAnyIgnoreCase(cmetadata.getSimpleColumnType(), "TEXT")) {
 			col.setShowType("2");// textarea
 		} else {
 			col.setShowType("1");// normal input

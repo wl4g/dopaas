@@ -16,6 +16,7 @@
 package com.wl4g.devops.dts.codegen.bean.extra;
 
 import com.wl4g.components.common.bean.ConfigOption;
+import com.wl4g.devops.dts.codegen.bean.GenProject;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -25,27 +26,27 @@ import static com.wl4g.components.common.lang.Assert2.*;
 import static java.util.Arrays.asList;
 
 /**
- * {@link GenProjectExtraOption}
+ * Gen project extra options. see: {@link GenProject}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-16
  * @since
  */
-public class GenProjectExtraOption extends ConfigOption {
+public class GenExtraOption extends ConfigOption {
 
 	/** {@link GeneratorProvider} alias. */
 	@NotBlank
 	private String provider;
 
-	public GenProjectExtraOption() {
+	public GenExtraOption() {
 		super();
 	}
 
-	public GenProjectExtraOption(@NotBlank String provider, @NotBlank String name, @NotEmpty String... values) {
+	public GenExtraOption(@NotBlank String provider, @NotBlank String name, @NotEmpty String... values) {
 		this(provider, name, asList(notEmptyOf(values, "values")));
 	}
 
-	public GenProjectExtraOption(@NotBlank String provider, @NotBlank String name, @NotEmpty List<String> values) {
+	public GenExtraOption(@NotBlank String provider, @NotBlank String name, @NotEmpty List<String> values) {
 		setProvider(provider);
 		setName(name);
 		setValues(values);
@@ -75,7 +76,7 @@ public class GenProjectExtraOption extends ConfigOption {
 	 * 
 	 * @param provider
 	 */
-	public GenProjectExtraOption withProvider(@NotBlank String provider) {
+	public GenExtraOption withProvider(@NotBlank String provider) {
 		setProvider(provider);
 		return this;
 	}
@@ -86,7 +87,7 @@ public class GenProjectExtraOption extends ConfigOption {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public final GenProjectExtraOption validate() {
+	public final GenExtraOption validate() {
 		hasTextOf(getProvider(), "provider");
 		super.validate();
 		return this;

@@ -21,6 +21,8 @@ import com.wl4g.components.common.resource.StreamResource;
 import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.collection.Collections2.safeSet;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 
@@ -44,21 +47,24 @@ public abstract class ResourceBundleUtils {
 	 * Reading config resource file content.
 	 * 
 	 * @param useCache
-	 * @param basePath
+	 * @param withLoadClass
 	 * @param type
 	 * @param filename
 	 * @param args
 	 * @return
 	 * @throws IOException
 	 */
-	public static String readResource(boolean useCache, @NotBlank String basePath, @NotBlank String type,
-			@NotBlank String filename, @Nullable String... args) {
-		hasTextOf(type, "basePath");
+	public static String readResource(@NotNull Class<?> withLoadClass, @NotBlank String subPath, @NotBlank String type,
+			@NotBlank String filename, boolean useCache, @Nullable String... args) {
+		notNullOf(withLoadClass, "withLoadClass");
+		hasTextOf(subPath, "subPath");
 		hasTextOf(type, "type");
 		hasTextOf(filename, "filename");
 
 		try {
 			// First get from cache
+			String basePath = withLoadClass.getName().replace(".", "/").replace(withLoadClass.getSimpleName(), "")
+					.concat(subPath.endsWith("/") ? subPath.substring(0, subPath.length() - 1) : subPath).concat("/");
 			String path = basePath.concat(type).concat("/").concat(filename);
 
 			String sqlStr = null;

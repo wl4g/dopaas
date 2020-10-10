@@ -21,9 +21,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 import com.wl4g.components.common.bean.ConfigOption;
+import com.wl4g.devops.dts.codegen.bean.GenTable;
 
 /**
- * {@link GenTableExtraOption}
+ * Gen project extra options. see: {@link GenTable}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-16

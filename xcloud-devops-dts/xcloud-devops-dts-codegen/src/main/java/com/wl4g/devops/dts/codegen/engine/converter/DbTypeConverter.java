@@ -15,22 +15,18 @@
  */
 package com.wl4g.devops.dts.codegen.engine.converter;
 
-import com.wl4g.components.common.lang.StringUtils2;
-import com.wl4g.components.core.framework.operator.Operator;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper.MappedMatcher;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappingWrapper.MappedMatcher;
 import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.components.common.lang.StringUtils2.tokenizeToStringArray;
 import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils.readResource;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
@@ -42,52 +38,112 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
  * @version v1.0 2020-09-10
  * @since
  */
-public abstract class DbTypeConverter implements Operator<DbType> {
+public enum DbTypeConverter {
 
-	/** Sql and code types cache. */
-	private final Map<CodeLanguage, List<TypeMappedWrapper>> typesCache = new ConcurrentHashMap<>(4);
+	JAVA("java", "java-sql-column.types"),
 
-	protected DbTypeConverter() {
-		for (CodeLanguage mk : CodeLanguage.values()) {
-			this.typesCache.put(mk, loadMappingTypes(kind().getDbName(), mk.getMappingResource()));
+	/**
+	 * e.g: NodeJS, Javascript
+	 */
+	JS("js", "js-sql-column.types"),
+
+	Golang("golang", "golang-sql-column.types"),
+
+	Python("python", "python-sql-column.types"),
+
+	Csharp("csharp", "c_sharp-sql-column.types");
+
+	/**
+	 * Codes language.
+	 */
+	private final String language;
+	private final String mappedResource;
+	/** Attr type and sql type, column type mapping cache. */
+	private final Map<DbType, List<TypeMappingWrapper>> mappingCache = new ConcurrentHashMap<>(4);
+
+	private DbTypeConverter(String language, String mappedResource) {
+		this.language = hasTextOf(language, "language");
+		this.mappedResource = hasTextOf(mappedResource, "mappedResource");
+		// Load converter mapping types.
+		for (DbType dbType : DbType.values()) {
+			this.mappingCache.put(dbType, loadTypeMapping(dbType.getDbName(), mappedResource));
 		}
 	}
 
-	/**
-	 * Type attrType(Java class, C# class, GO struct, Python class, etc)
-	 * conversion with sqlType and database column type
-	 * 
-	 * @param lang
-	 *            {@link CodeLanguage}
-	 * @param fromType
-	 * @return
-	 */
-	public String convertBy(@NotBlank String lang, @NotNull MappedMatcher matcher, @NotBlank String fromType) {
-		return convertBy(CodeLanguage.of(hasTextOf(lang, "lang")), matcher, fromType);
+	public String getLanguage() {
+		return language;
+	}
+
+	public String getMappingResource() {
+		return mappedResource;
+	}
+
+	public static DbTypeConverter of(String language) {
+		return notNull(safeOf(language), "No such DB type converter of %s", language);
+	}
+
+	public static DbTypeConverter safeOf(String language) {
+		for (DbTypeConverter k : values()) {
+			if (k.getLanguage().equalsIgnoreCase(language) || k.name().equalsIgnoreCase(language)) {
+				return k;
+			}
+		}
+		return null;
 	}
 
 	/**
 	 * Type attrType(Java class, C# class, GO struct, Python class, etc)
 	 * conversion with sqlType and database column type
 	 * 
-	 * @param lang
-	 *            {@link CodeLanguage}
+	 * @param converter
+	 *            {@link DbTypeConverter}
 	 * @param fromType
 	 * @return
 	 */
-	public String convertBy(@NotNull CodeLanguage lang, @NotNull MappedMatcher matcher, @NotBlank String fromType) {
-		notNullOf(lang, "lang");
+	public String convertBy(@NotBlank String dbType, @NotNull MappedMatcher matcher, @NotBlank String fromType) {
+		return convertBy(DbType.of(hasTextOf(dbType, "dbType")), matcher, fromType);
+	}
+
+	/**
+	 * Type attrType(Java class, C# class, GO struct, Python class, etc)
+	 * conversion with sqlType and database column type
+	 * 
+	 * @param dbType
+	 *            {@link DbType}
+	 * @param fromType
+	 * @return
+	 */
+	public String convertBy(@NotNull DbType dbType, @NotNull MappedMatcher matcher, @NotBlank String fromType) {
+		notNullOf(dbType, "converter");
 		notNullOf(matcher, "matcher");
 		hasTextOf(fromType, "fromType");
 
 		// Gets type mapped
-		List<TypeMappedWrapper> mapped = notEmpty(typesCache.get(lang), "No such type mapped of %s", lang);
-		return hasText(matcher.getHandler().matchs(mapped, fromType),
-				"No such mapped type of lang: %s, matcher: %s, fromType: %s", lang, matcher, fromType);
+		List<TypeMappingWrapper> mapping = notEmpty(mappingCache.get(dbType), "No such type mapped of %s", dbType);
+		return hasText(matcher.getHandler().matchs(mapping, fromType),
+				"No such mapped type of lang: %s, matcher: %s, fromType: %s", dbType, matcher, fromType);
 	}
 
-	public List<TypeMappedWrapper> getTypeMappedWrappers(CodeLanguage codeLanguage) {
-		return typesCache.get(codeLanguage);
+	/**
+	 * Gets {@link TypeMappingWrapper}
+	 * 
+	 * @param dbType
+	 *            {@link DbType}
+	 * @return
+	 */
+	public List<TypeMappingWrapper> getTypeMappings(String dbType) {
+		return mappingCache.get(DbType.of(dbType));
+	}
+
+	/**
+	 * Gets {@link TypeMappingWrapper}
+	 * 
+	 * @param dbType
+	 *            {@link DbType}
+	 * @return
+	 */
+	public List<TypeMappingWrapper> getTypeMappings(DbType dbType) {
+		return mappingCache.get(dbType);
 	}
 
 	/**
@@ -95,32 +151,26 @@ public abstract class DbTypeConverter implements Operator<DbType> {
 	 * 
 	 * @return a multi-value map, mapping media types to file extensions.
 	 */
-	private static List<TypeMappedWrapper> loadMappingTypes(@NotBlank String dbType, @NotBlank String filename) {
+	private final List<TypeMappingWrapper> loadTypeMapping(@NotBlank String dbType, @NotBlank String filename) {
 		hasTextOf(dbType, "dbType");
 		hasTextOf(filename, "filename");
-		List<TypeMappedWrapper> mappings = new ArrayList<>(16);
+		List<TypeMappingWrapper> mappings = new ArrayList<>(16);
 
 		try (BufferedReader reader = new BufferedReader(
-				new StringReader(readResource(false, TYPES_BASE_PATH, dbType, filename)))) {
+				new StringReader(readResource(DbTypeConverter.class, "types", dbType, filename, false)))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				if (line.isEmpty() || line.charAt(0) == '#') {
 					continue;
 				}
-				String[] tokens = StringUtils2.tokenizeToStringArray(line, " \t\n\r\f");
-				mappings.add(new TypeMappedWrapper(tokens[2], tokens[1], tokens[0]));
+				String[] tokens = tokenizeToStringArray(line, " \t\n\r\f");
+				mappings.add(new TypeMappingWrapper(tokens[2], tokens[1], tokens[0]));
 			}
 			return mappings;
-		} catch (IOException ex) {
+		} catch (Throwable ex) {
 			throw new IllegalStateException("Could not load '" + filename + "'", ex);
 		}
 	}
-
-	/*
-	 * Databsse types definitions base path.
-	 */
-	private final static String TYPES_BASE_PATH = DbTypeConverter.class.getName().replace(".", "/")
-			.replace(DbTypeConverter.class.getSimpleName(), "") + "types/";
 
 	/**
 	 * {@link DbType}
@@ -160,63 +210,17 @@ public abstract class DbTypeConverter implements Operator<DbType> {
 	}
 
 	/**
-	 * Codes of {@link CodeLanguage}
-	 * 
-	 * @see
-	 */
-	public static enum CodeLanguage {
-
-		JAVA("java", "java-sql-column.types"),
-
-		GO("golang", "golang-sql-column.types"),
-
-		PYTHON("python", "python-sql-column.types"),
-
-		C_SHARP("csharp", "c_sharp-sql-column.types");
-
-		private final String lang; // language
-		private final String mappingResource;
-
-		private CodeLanguage(String lang, String mappingResource) {
-			this.lang = hasTextOf(lang, "lang");
-			this.mappingResource = hasTextOf(mappingResource, "mappingResource");
-		}
-
-		public String getAlias() {
-			return lang;
-		}
-
-		public String getMappingResource() {
-			return mappingResource;
-		}
-
-		public static CodeLanguage of(String lang) {
-			return notNull(safeOf(lang), "No such codeKind of %s", lang);
-		}
-
-		public static CodeLanguage safeOf(String lang) {
-			for (CodeLanguage mk : values()) {
-				if (mk.getAlias().equalsIgnoreCase(lang) || mk.name().equalsIgnoreCase(lang)) {
-					return mk;
-				}
-			}
-			return null;
-		}
-
-	}
-
-	/**
-	 * {@link TypeMappedWrapper}
+	 * {@link TypeMappingWrapper}
 	 *
 	 * @since
 	 */
-	public static class TypeMappedWrapper {
+	public static class TypeMappingWrapper {
 
 		private final String columnType; // DB column type
 		private final String sqlType; // e.g: JDBC type
 		private final String attrType; // e.g: JavaBean fieldType
 
-		public TypeMappedWrapper(String columnType, String sqlType, String attrType) {
+		public TypeMappingWrapper(String columnType, String sqlType, String attrType) {
 			this.columnType = notNullOf(columnType, "columnType");
 			this.sqlType = notNullOf(sqlType, "sqlType");
 			this.attrType = notNullOf(attrType, "attrType");
@@ -241,22 +245,22 @@ public abstract class DbTypeConverter implements Operator<DbType> {
 		 */
 		public static enum MappedMatcher {
 
-			lang2Sql((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(), fromType))
+			Attr2Sql((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(), fromType))
 					.map(m -> m.getSqlType()).findFirst().orElse(null)),
 
 			Sql2Column((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getSqlType(), fromType))
 					.map(m -> m.getColumnType()).findFirst().orElse(null)),
 
-			Lang2Column((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(), fromType))
+			Attr2Column((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getAttrType(), fromType))
 					.map(m -> m.getColumnType()).findFirst().orElse(null)),
 
 			Column2Sql((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getColumnType(), fromType))
 					.map(m -> m.getSqlType()).findFirst().orElse(null)),
 
-			Column2Lang((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getColumnType(), fromType))
+			Column2Attr((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getColumnType(), fromType))
 					.map(m -> m.getAttrType()).findFirst().orElse(null)),
 
-			Sql2Lang((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getSqlType(), fromType))
+			Sql2Attr((mapped, fromType) -> mapped.stream().filter(m -> equalsIgnoreCase(m.getSqlType(), fromType))
 					.map(m -> m.getAttrType()).findFirst().orElse(null));
 
 			/**
@@ -279,7 +283,7 @@ public abstract class DbTypeConverter implements Operator<DbType> {
 		 * {@link MappedMatcherHandler}
 		 */
 		public static interface MappedMatcherHandler {
-			String matchs(List<TypeMappedWrapper> mapped, String fromType);
+			String matchs(List<TypeMappingWrapper> mapping, String fromType);
 		}
 
 	}

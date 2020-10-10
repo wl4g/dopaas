@@ -16,9 +16,9 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import com.wl4g.components.common.annotation.Nullable;
-import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenExtraOption;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.bean.GenProject.ExtraOptionDefinition;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeLanguage;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -114,19 +114,17 @@ public interface GeneratorProvider extends Runnable, Closeable {
 	 */
 	public static enum GenProviderSet {
 
-		DaoServiceController(asList(IAM_SPINGCLOUD_MVN), CodeLanguage.JAVA),
+		IamWebMvcVueJS(asList(IAM_SPINGCLOUD_MVN, VUEJS), DbTypeConverter.JAVA),
 
-		DaoServiceControllerVueJS(asList(IAM_SPINGCLOUD_MVN, VUEJS), CodeLanguage.JAVA),
+		IamWebMvc(asList(IAM_SPINGCLOUD_MVN), DbTypeConverter.JAVA),
 
-		DubboDaoServiceControllerVueJS(asList(SPINGDUBBO_MVN, VUEJS), CodeLanguage.JAVA),
+		DubboWebMvcVueJS(asList(SPINGDUBBO_MVN, VUEJS), DbTypeConverter.JAVA),
 
-		GonicWebMVC(asList(GO_GONICWEB), CodeLanguage.GO),
+		GonicWebMVC(asList(GO_GONICWEB), DbTypeConverter.Golang),
 
-		// Nothing to do with DAO layer
-		JustVueJS(asList(VUEJS), CodeLanguage.JAVA),
+		JustVueJS(asList(VUEJS), DbTypeConverter.JS),
 
-		// Nothing to do with DAO layer
-		JustNgJS(asList(NGJS), CodeLanguage.JAVA);
+		JustNgJS(asList(NGJS), DbTypeConverter.JS);
 
 		/** {@link GenProviderAlias} */
 		@NotEmpty
@@ -135,15 +133,15 @@ public interface GeneratorProvider extends Runnable, Closeable {
 		/**
 		 * When the generator provider group contains the DAO layer of the
 		 * generated database, it is necessary to set the source
-		 * {@link CodeLanguage} type to map the relationship between
+		 * {@link DbTypeConverter} type to map the relationship between
 		 * DbColumnType and attrType.
 		 */
 		@Nullable
-		private final CodeLanguage language;
+		private final DbTypeConverter converter;
 
-		private GenProviderSet(@NotEmpty List<String> providers, @Nullable CodeLanguage language) {
-			this.providers = notEmptyOf(providers, "providers");
-			this.language = language;
+		private GenProviderSet(@NotEmpty List<String> providers, @Nullable DbTypeConverter converter) {
+			this.providers = notEmptyOf(providers, "genProviders");
+			this.converter = notNullOf(converter, "typeConverter");
 		}
 
 		/**
@@ -156,12 +154,12 @@ public interface GeneratorProvider extends Runnable, Closeable {
 		}
 
 		/**
-		 * Gets that {@link CodeLanguage}.
+		 * Gets that {@link DbTypeConverter}.
 		 * 
 		 * @return
 		 */
-		public final CodeLanguage language() {
-			return language;
+		public final DbTypeConverter converter() {
+			return converter;
 		}
 
 		/**
@@ -186,9 +184,9 @@ public interface GeneratorProvider extends Runnable, Closeable {
 		 * @return
 		 */
 		public static GenProviderSet safeOf(@NotBlank String providerSet) {
-			for (GenProviderSet gpg : values()) {
-				if (equalsIgnoreCase(gpg.name(), providerSet)) {
-					return gpg;
+			for (GenProviderSet s : values()) {
+				if (equalsIgnoreCase(s.name(), providerSet)) {
+					return s;
 				}
 			}
 			return null;
@@ -201,22 +199,22 @@ public interface GeneratorProvider extends Runnable, Closeable {
 		 * @return
 		 */
 		public static GenProviderSet of(@NotBlank String providerSet) {
-			return notNull(safeOf(providerSet), "Cannot parse gen providerSet of '%s'", providerSet);
+			return notNull(safeOf(providerSet), "No such generator providerSet of '%s'", providerSet);
 		}
 
 		/**
-		 * Validation {@link GenProjectExtraOption} name and values invalid?
+		 * Validation {@link GenExtraOption} name and values invalid?
 		 * 
 		 * @param option
 		 */
-		public static void validateOption(@NotBlank String providerSet, @NotNull List<GenProjectExtraOption> options) {
+		public static void validateOption(@NotBlank String providerSet, @NotNull List<GenExtraOption> options) {
 			hasTextOf(providerSet, "providerSet");
 			notNullOf(options, "options");
 
 			safeList(of(providerSet).providers()).stream().forEach(provider -> {
-				List<GenProjectExtraOption> defineOptions = safeList(ExtraOptionDefinition.getOptions(provider));
+				List<GenExtraOption> defineOptions = safeList(ExtraOptionDefinition.getOptions(provider));
 				// Validate name & value.
-				for (GenProjectExtraOption opt : options) {
+				for (GenExtraOption opt : options) {
 					if (provider.equals(opt.getProvider())) {
 						isTrue(defineOptions.stream().filter(
 								dopt -> dopt.getName().equals(opt.getName()) && dopt.getValues().contains(opt.getSelectedValue()))

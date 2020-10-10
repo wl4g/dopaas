@@ -22,7 +22,7 @@ import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.components.common.id.SnowflakeIdGenerator;
 import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.bean.extra.GenProjectExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.GenExtraOption;
 import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
 
@@ -300,7 +300,7 @@ public class BaseSpecs {
 
 	/**
 	 * Check whether the specified extension configuration item exists. see:
-	 * {@link GenProjectExtraOption} or {@link GenTableExtraOption}
+	 * {@link GenExtraOption} or {@link GenTableExtraOption}
 	 * 
 	 * @param configuredOptions
 	 * @param name
