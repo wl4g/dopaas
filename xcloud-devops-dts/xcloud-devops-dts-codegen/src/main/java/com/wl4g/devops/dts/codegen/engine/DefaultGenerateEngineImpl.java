@@ -118,7 +118,6 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 
 		// Gets DB metadata resolver.
 		MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
-
 		// Create generate context.
 		GenerateContext context = new DefaultGenerateContext(config, locator, resolver, project, datasource);
 

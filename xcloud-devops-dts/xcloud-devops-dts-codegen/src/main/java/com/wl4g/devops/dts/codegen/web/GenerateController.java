@@ -100,14 +100,14 @@ public class GenerateController extends BaseController {
 	// --- Generate configuration. ---
 
 	@RequestMapping("loadTables")
-	public RespBase<?> loadTables(Long projectId) {
+	public RespBase<?> loadTables(Long projectId) throws Exception {
 		RespBase<List<TableMetadata>> resp = RespBase.create();
 		resp.setData(generateService.loadTables(projectId));
 		return resp;
 	}
 
 	@RequestMapping("loadTableColumns")
-	public RespBase<GenTable> loadTableColumns(Long projectId, String tableName) {
+	public RespBase<GenTable> loadTableColumns(Long projectId, String tableName) throws Exception {
 		return generateService.loadTableColumns(projectId, tableName);
 	}
 
@@ -126,7 +126,7 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("syncTableColumns")
-	public RespBase<?> syncTableColumns(Long id, boolean force) {
+	public RespBase<?> syncTableColumns(Long id, boolean force) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		generateService.syncTableColumns(id, force);
 		return resp;

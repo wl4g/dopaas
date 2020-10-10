@@ -31,6 +31,7 @@ import org.junit.Test;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,6 +147,10 @@ public class GeneratorProviderTests {
 		@Override
 		public String findDBVersion() throws Exception {
 			return "test_db_v0.0.0";
+		}
+
+		@Override
+		public void close() throws IOException {
 		}
 	};
 
