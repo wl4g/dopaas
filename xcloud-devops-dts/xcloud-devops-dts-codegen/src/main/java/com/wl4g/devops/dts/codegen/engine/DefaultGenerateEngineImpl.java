@@ -39,6 +39,7 @@ import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
@@ -123,7 +124,13 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 
 		// Invoking generate with providers.
 		List<String> providers = getProviders(project.getProviderSet());
-		safeList(providers).forEach(p -> ((GeneratorProvider) beanFactory.getPrototypeBean(p, context)).run());
+		safeList(providers).forEach(p -> {
+			try (GeneratorProvider generator = beanFactory.getPrototypeBean(p, context);) {
+				generator.run();
+			} catch (IOException e) {
+				log.error("", e);
+			}
+		});
 
 		log.info("Generated projec codes successfully. project: {}", toJSONString(project));
 		return new GeneratedResult(project, datasource, context.getJobId());
