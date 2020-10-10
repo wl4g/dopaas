@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.bean.BeanUtils2;
 import com.wl4g.components.common.lang.Assert2;
@@ -27,6 +28,7 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
+import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
@@ -62,6 +64,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappedWrapper;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
@@ -124,29 +127,31 @@ public class GenerateServiceImpl implements GenerateService {
 		RespBase<GenTable> resp = RespBase.create();
 		notNullOf(tableId, "tableId");
 
-		// Gets gen table
-		GenTable oldTable = notNullOf(genTableDao.selectByPrimaryKey(tableId), "genTable");
+		// Gets genTable
+		GenTable table = notNullOf(genTableDao.selectByPrimaryKey(tableId), "genTable");
+		// Populate extraOptions
+		if (!isBlank(table.getExtraOptionsJson())) {
+			table.setExtraOptions(parseJSON(table.getExtraOptionsJson(), new TypeReference<List<GenTableExtraOption>>() {
+			}));
+		}
 
-		// Gets gen table columns.
-		List<GenTableColumn> oldColumns = genColumnDao.selectByTableId(oldTable.getId());
-		oldTable.setGenTableColumns(oldColumns);
+		// Gets genTable columns.
+		table.setGenTableColumns(genColumnDao.selectByTableId(table.getId()));
 
-		// Gets gen project
-		GenProject project = genProjectDao.selectByPrimaryKey(oldTable.getProjectId());
-		notNullOf(project, "genProject");
+		// Gets genProject
+		GenProject project = notNullOf(genProjectDao.selectByPrimaryKey(table.getProjectId()), "genProject");
 
-		// Gets gen datasource
-		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
-		notNullOf(datasource, "genDataSource");
+		// Gets genDatasource
+		GenDataSource datasource = notNullOf(genDataSourceDao.selectByPrimaryKey(project.getDatasourceId()), "genDataSource");
 
-		// Check builtin gen columns.
-		String warningTip = checkBuiltinColumns(datasource, project, oldTable);
-		if (isNotBlank(warningTip)) {
+		// Check builtin genTable columns.
+		String warningTip = checkBuiltinColumns(datasource, project, table);
+		if (!isBlank(warningTip)) {
 			resp.setStatus("warningTip");
 			resp.setMessage(warningTip);
 		}
 
-		resp.setData(oldTable);
+		resp.setData(table);
 		return resp;
 	}
 

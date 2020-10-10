@@ -34,7 +34,7 @@ import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.List;
 
@@ -84,11 +84,10 @@ public class GenProjectServiceImpl implements GenProjectService {
 		notNullOf(id, "genProjectId");
 
 		GenProject project = genProjectDao.selectByPrimaryKey(id);
-		if (isNotBlank(project.getExtraOptionsJson())) {
-			List<GenProjectExtraOption> extraOptions = parseJSON(project.getExtraOptionsJson(),
-					new TypeReference<List<GenProjectExtraOption>>() {
-					});
-			project.setExtraOptions(extraOptions);
+		// Populate extraOptions
+		if (!isBlank(project.getExtraOptionsJson())) {
+			project.setExtraOptions(parseJSON(project.getExtraOptionsJson(), new TypeReference<List<GenProjectExtraOption>>() {
+			}));
 		}
 
 		return project;
