@@ -98,7 +98,7 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 	}
 
 	public GenDataSource detail(Long id) {
-		Assert.notNull(id, "id is null");
+		notNullOf(id, "id");
 		return genDSDao.selectByPrimaryKey(id);
 	}
 

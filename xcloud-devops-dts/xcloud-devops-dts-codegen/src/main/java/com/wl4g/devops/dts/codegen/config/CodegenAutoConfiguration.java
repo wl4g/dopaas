@@ -16,13 +16,10 @@
 package com.wl4g.devops.dts.codegen.config;
 
 import com.wl4g.components.core.framework.beans.NamingPrototype;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.console.CodegenConsole;
 import com.wl4g.devops.dts.codegen.engine.DefaultGenerateEngineImpl;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
 import com.wl4g.devops.dts.codegen.engine.generator.AngularJSGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.CsharpStandardGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.GoGonicWebGeneratorProvider;
@@ -30,9 +27,6 @@ import com.wl4g.devops.dts.codegen.engine.generator.PythonStandardGeneratorProvi
 import com.wl4g.devops.dts.codegen.engine.generator.SpringDubboMvnGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.IamSpringCloudMvnGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.VueGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5TypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.OracleV11gTypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.PostgreSQLV10TypeConverter;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.OracleV11gMetadataResolver;
@@ -45,8 +39,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.*;
 import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.ResolverAlias.*;
@@ -105,29 +97,6 @@ public class CodegenAutoConfiguration {
 	@NamingPrototype({ POSTGRESQLV10 })
 	public MetadataResolver postgreSQLV10MetadataResolver(GenDataSource genDS) {
 		return new PostgreSQLV10MetadataResolver(genDS);
-	}
-
-	// --- Database Type Converter's. ---
-
-	@Bean
-	public DbTypeConverter mySQLV5xTypeConverter() {
-		return new MySQLV5TypeConverter();
-	}
-
-	@Bean
-	public DbTypeConverter oracleV11gTypeConverter() {
-		return new OracleV11gTypeConverter();
-	}
-
-	@Bean
-	public DbTypeConverter postgreSQLV10TypeConverter() {
-		return new PostgreSQLV10TypeConverter();
-	}
-
-	@Bean
-	public GenericOperatorAdapter<DbType, DbTypeConverter> dbTypeConverterAdapter(List<DbTypeConverter> dbTypeConverters) {
-		return new GenericOperatorAdapter<DbType, DbTypeConverter>(dbTypeConverters) {
-		};
 	}
 
 	// --- Generator Template Locator. ---

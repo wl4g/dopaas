@@ -54,22 +54,22 @@ public interface GenerateService {
 	// --- Generate configuration. ---
 
 	/**
-	 * Query load gen tables.
+	 * Query tables information.
 	 * 
 	 * @param projectId
 	 * @return
 	 * @throws Exception
 	 */
-	List<TableMetadata> loadTables(Long projectId) throws Exception;
+	List<TableMetadata> findTables(Long projectId) throws Exception;
 
 	/**
-	 * Load latest generate table metadata info.
+	 * Load latest generate table describe columns configuration.
 	 * 
 	 * @param databaseId
 	 * @param tableName
 	 * @throws Exception
 	 */
-	RespBase<GenTable> loadTableColumns(Long projectId, String tableName) throws Exception;
+	RespBase<GenTable> loadGenTableConfig(Long projectId, String tableName) throws Exception;
 
 	Set<String> getAttrTypes(Long projectId);
 

@@ -17,15 +17,13 @@ package com.wl4g.devops.dts.codegen.web;
 
 import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.bean.GenTable.TableExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +50,6 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 @RestController
 @RequestMapping("/gen/configure")
 public class GenerateController extends BaseController {
-
-	@Autowired
-	protected GenericOperatorAdapter<DbType, DbTypeConverter> converter;
 
 	@Autowired
 	protected CodegenProperties config;
@@ -100,16 +95,16 @@ public class GenerateController extends BaseController {
 
 	// --- Generate configuration. ---
 
-	@RequestMapping("loadTables")
-	public RespBase<?> loadTables(Long projectId) throws Exception {
+	@RequestMapping("findTables")
+	public RespBase<?> findTables(Long projectId) throws Exception {
 		RespBase<List<TableMetadata>> resp = RespBase.create();
-		resp.setData(generateService.loadTables(projectId));
+		resp.setData(generateService.findTables(projectId));
 		return resp;
 	}
 
-	@RequestMapping("loadTableColumns")
-	public RespBase<GenTable> loadTableColumns(Long projectId, String tableName) throws Exception {
-		return generateService.loadTableColumns(projectId, tableName);
+	@RequestMapping("loadGenTableConfig")
+	public RespBase<GenTable> loadGenTableConfig(Long projectId, String tableName) throws Exception {
+		return generateService.loadGenTableConfig(projectId, tableName);
 	}
 
 	@RequestMapping("getAttrTypes")
@@ -119,23 +114,29 @@ public class GenerateController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/loadExtraOptions")
-	public RespBase<?> loadExtraOptions(String providerSet) {
+	/**
+	 * Load table {@link GenTableExtraOption} of
+	 * {@link TableExtraOptionDefinition}
+	 * 
+	 * @param providerSet
+	 * @return
+	 */
+	@RequestMapping(value = "/tableExtraOptions")
+	public RespBase<?> tableExtraOptions(String providerSet) {
 		RespBase<Object> resp = RespBase.create();
-		List<GenTableExtraOption> options = GenTable.TableExtraOptionDefinition.getOptions();
-		resp.setData(options);
+		resp.setData(TableExtraOptionDefinition.getOptions());
 		return resp;
 	}
 
 	/**
-	 * Sync attributes of {@link GenTable} and {@link GenTableColumn}
+	 * Synchronize attributes of {@link GenTable} and {@link GenTableColumn}
 	 * 
 	 * @param id
 	 * @param force
 	 * @return
 	 */
-	@RequestMapping("syncTableColumns")
-	public RespBase<?> syncTableColumns(Long id, boolean force) throws Exception {
+	@RequestMapping("syncGenTableConfig")
+	public RespBase<?> syncGenTableConfig(Long id, boolean force) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		generateService.syncTableColumns(id, force);
 		return resp;

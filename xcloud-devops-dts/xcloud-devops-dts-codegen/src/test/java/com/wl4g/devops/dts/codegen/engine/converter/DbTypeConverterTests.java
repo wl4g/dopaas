@@ -15,18 +15,26 @@
  */
 package com.wl4g.devops.dts.codegen.engine.converter;
 
-/**
- * {@link PostgreSQLV10TypeConverter}
- *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-09-10
- * @since
- */
-public class PostgreSQLV10TypeConverter extends DbTypeConverter {
+import static java.lang.System.out;
 
-	@Override
-	public DbType kind() {
-		return DbType.PostgreSQLV10;
+import org.junit.Test;
+
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappingWrapper.MappedMatcher;
+
+/**
+ * {@link DbTypeConverterTests}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020-10-10
+ * @sine v1.0.0
+ * @see
+ */
+public class DbTypeConverterTests {
+
+	@Test
+	public void convertCase1() {
+		out.println(DbTypeConverter.JAVA.convertBy(DbType.MySQLV5, MappedMatcher.Column2Attr, "VARCHAR"));
 	}
 
 }

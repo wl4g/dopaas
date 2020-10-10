@@ -17,7 +17,6 @@ package com.wl4g.devops.dts.codegen.engine.resolver;
 
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils;
 
 import static java.lang.String.format;
 
@@ -32,6 +31,7 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils.readResource;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.findMethod;
@@ -93,7 +93,7 @@ public abstract class AbstractMetadataResolver implements MetadataResolver {
 	 * @throws IOException
 	 */
 	protected String loadResolvingSql(String sqlType, String filename, String... args) {
-		return ResourceBundleUtils.readResource(true, SQL_BASE_PATH, sqlType, filename, args);
+		return readResource(AbstractMetadataResolver.class, "sql/", sqlType, filename, true, args);
 	}
 
 	/**
@@ -115,8 +115,6 @@ public abstract class AbstractMetadataResolver implements MetadataResolver {
 	}
 
 	// Database metadata query SQLs.
-	public final static String SQL_BASE_PATH = AbstractMetadataResolver.class.getName().replace(".", "/")
-			.replace(AbstractMetadataResolver.class.getSimpleName(), "") + "sql/";
 	public final static String SQL_TABLES = "find_tables.sql";
 	public final static String SQL_TABLE_DESCRIBE = "find_table_describe.sql";
 	public final static String SQL_COLUMNS = "find_columns.sql";
