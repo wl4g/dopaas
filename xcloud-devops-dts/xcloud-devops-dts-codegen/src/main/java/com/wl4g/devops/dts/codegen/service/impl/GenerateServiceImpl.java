@@ -74,6 +74,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -196,7 +197,7 @@ public class GenerateServiceImpl implements GenerateService {
 	// --- Generate configuration. ---
 
 	@Override
-	public List<TableMetadata> loadTables(Long projectId) {
+	public List<TableMetadata> loadTables(Long projectId) throws Exception {
 		notNullOf(projectId, "projectId");
 		GenProject genProject = genProjectDao.selectByPrimaryKey(projectId);
 		notNullOf(genProject, "genProject");
@@ -204,101 +205,95 @@ public class GenerateServiceImpl implements GenerateService {
 		GenDataSource dataSource = genDataSourceDao.selectByPrimaryKey(genProject.getDatasourceId());
 		notNullOf(dataSource, "genDatabase");
 
-		MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);
-		List<TableMetadata> tmetadatas = resolver.findTablesAll();
-
-		List<GenTable> genTables = genTableDao.selectByProjectId(projectId);
-		List<TableMetadata> needRemove = new ArrayList<>();
-		for (TableMetadata md : tmetadatas) {
-			for (GenTable genTable : genTables) {
-				if (equalsIgnoreCase(md.getTableName(), genTable.getTableName())) {
-					needRemove.add(md);
-				}
-			}
+		try (MetadataResolver resolver = beanFactory.getPrototypeBean(dataSource.getType(), dataSource);) {
+			List<GenTable> genTables = genTableDao.selectByProjectId(projectId);
+			List<TableMetadata> metadatas = resolver.findTablesAll();
+			// Filtering configured tables.
+			return safeList(metadatas)
+					.stream().filter(md -> safeList(genTables).stream()
+							.filter(t -> equalsIgnoreCase(md.getTableName(), t.getTableName())).findAny().isPresent())
+					.collect(toList());
 		}
-		tmetadatas.removeAll(needRemove);
-		return tmetadatas;
 	}
 
 	@Override
-	public RespBase<GenTable> loadTableColumns(Long projectId, String tableName) {
+	public RespBase<GenTable> loadTableColumns(Long projectId, String tableName) throws Exception {
 		RespBase<GenTable> resp = RespBase.create();
 		// Gets gen project
 		notNullOf(projectId, "projectId");
 		GenProject project = genProjectDao.selectByPrimaryKey(projectId);
 		notNullOf(project, "genProject");
 
-		// Gets gen datasource
+		// Gets genDatasource
 		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
 		notNullOf(datasource, "genDataSource");
 
-		// Gets gen table
-		MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
-		TableMetadata tmetadata = resolver.findTableDescribe(tableName);
-		notNullOf(tmetadata, "tableMetadata");
+		try (MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);) {
+			// Gets genTable
+			TableMetadata tmetadata = notNullOf(resolver.findTableDescribe(tableName), "tableMetadata");
+			// Gets genTable columns
+			tmetadata.setColumns(notEmptyOf(resolver.findTableColumns(tableName), "genTableColumns"));
 
-		// Gets gen table columns
-		tmetadata.setColumns(notEmptyOf(resolver.findTableColumns(tableName), "genTableColumns"));
+			// To {@link GenTable}
+			GenTable table = new GenTable();
+			table.setProjectId(project.getId());
+			table.setEntityName(JavaSpecs.tableName2ClassName(tmetadata.getTableName()));
+			table.setTableName(tmetadata.getTableName());
+			table.setComments(tmetadata.getComments());
+			// Sets Table default
+			table.setFunctionAuthor("unascribed");
+			table.setRemark(tmetadata.getComments());
 
-		// To {@link GenTable}
-		GenTable table = new GenTable();
-		table.setProjectId(project.getId());
-		table.setEntityName(JavaSpecs.tableName2ClassName(tmetadata.getTableName()));
-		table.setTableName(tmetadata.getTableName());
-		table.setComments(tmetadata.getComments());
-		// Sets Table default
-		table.setFunctionAuthor("unascribed");
-		table.setRemark(tmetadata.getComments());
+			GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
 
-		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
+			List<GenTableColumn> cols = new ArrayList<>();
+			for (ColumnMetadata cmetadata : tmetadata.getColumns()) {
+				GenTableColumn col = new GenTableColumn();
+				col.setColumnName(cmetadata.getColumnName());
+				// Cleanup comment '\n' or '\r\n'
+				if (!isBlank(cmetadata.getComments())) {
+					col.setColumnComment(BaseSpecs.cleanComment(cmetadata.getComments()));
+				}
+				col.setColumnType(cmetadata.getColumnType());
+				col.setSimpleColumnType(cmetadata.getSimpleColumnType());
+				col.setAttrName(underlineToHump(cmetadata.getColumnName()));
 
-		List<GenTableColumn> cols = new ArrayList<>();
-		for (ColumnMetadata cmetadata : tmetadata.getColumns()) {
-			GenTableColumn col = new GenTableColumn();
-			col.setColumnName(cmetadata.getColumnName());
-			// Cleanup comment '\n' or '\r\n'
-			if (!isBlank(cmetadata.getComments())) {
-				col.setColumnComment(BaseSpecs.cleanComment(cmetadata.getComments()));
+				// Converting java type
+				if (nonNull(providerSet.language())) {
+					DbTypeConverter conv = converter.forOperator(datasource.getType());
+					col.setAttrType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Lang, col.getSimpleColumnType()));
+				}
+
+				// Sets defaults
+				col.setIsInsert("1");
+				col.setIsUpdate("1");
+				col.setIsList("1");
+				col.setIsEdit("1");
+				col.setNoNull(cmetadata.isNullable() ? "0" : "1");
+				col.setQueryType("1");
+				col.setIsQuery("0");
+				col.setShowType("1");
+				if (cmetadata.isPk()) {
+					col.setIsPk("1");
+					col.setIsList("0");
+					col.setIsEdit("0");
+					col.setNoNull("0");
+				} else {
+					col.setIsPk("0");
+				}
+				applyDefaultShowType(cmetadata, col);
+				cols.add(col);
 			}
-			col.setColumnType(cmetadata.getColumnType());
-			col.setSimpleColumnType(cmetadata.getSimpleColumnType());
-			col.setAttrName(underlineToHump(cmetadata.getColumnName()));
-
-			// Converting java type
-			if (nonNull(providerSet.language())) {
-				DbTypeConverter conv = converter.forOperator(datasource.getType());
-				col.setAttrType(conv.convertBy(providerSet.language(), MappedMatcher.Column2Lang, col.getSimpleColumnType()));
+			table.setGenTableColumns(cols);
+			// Check table struct specification.
+			String warningTip = checkBuiltinColumns(datasource, project, table);
+			if (isNotBlank(warningTip)) {
+				resp.setStatus("warningTip");
+				resp.setMessage(warningTip);
 			}
-
-			// Sets defaults
-			col.setIsInsert("1");
-			col.setIsUpdate("1");
-			col.setIsList("1");
-			col.setIsEdit("1");
-			col.setNoNull(cmetadata.isNullable() ? "0" : "1");
-			col.setQueryType("1");
-			col.setIsQuery("0");
-			col.setShowType("1");
-			if (cmetadata.isPk()) {
-				col.setIsPk("1");
-				col.setIsList("0");
-				col.setIsEdit("0");
-				col.setNoNull("0");
-			} else {
-				col.setIsPk("0");
-			}
-			applyDefaultShowType(cmetadata, col);
-			cols.add(col);
+			resp.setData(table);
 		}
-		table.setGenTableColumns(cols);
 
-		// Check table struct specification.
-		String warningTip = checkBuiltinColumns(datasource, project, table);
-		if (isNotBlank(warningTip)) {
-			resp.setStatus("warningTip");
-			resp.setMessage(warningTip);
-		}
-		resp.setData(table);
 		return resp;
 	}
 
@@ -319,7 +314,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public void syncTableColumns(Long id, boolean force) {
+	public void syncTableColumns(Long id, boolean force) throws Exception {
 		// Gets older genTable.
 		GenTable oldTable = genTableDao.selectByPrimaryKey(id);
 		if (force) {
@@ -358,8 +353,9 @@ public class GenerateServiceImpl implements GenerateService {
 	 * columns.
 	 * 
 	 * @param oldTable
+	 * @throws Exception
 	 */
-	private void applyOverridingColumnsWithNonForce(GenTable oldTable) {
+	private void applyOverridingColumnsWithNonForce(GenTable oldTable) throws Exception {
 		// Gets gen table columns.
 		List<GenTableColumn> oldColumns = genColumnDao.selectByTableId(oldTable.getId());
 		oldTable.setGenTableColumns(oldColumns);

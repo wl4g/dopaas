@@ -19,7 +19,8 @@ import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils;
 
-import java.io.Closeable;
+import static java.lang.String.format;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -45,12 +46,15 @@ import static com.wl4g.components.common.reflect.ReflectionUtils2.invokeMethod;
  * @sine v1.0.0
  * @see
  */
-public abstract class AbstractMetadataResolver implements MetadataResolver, Closeable {
+public abstract class AbstractMetadataResolver implements MetadataResolver {
 
 	protected final SmartLogger log = getLogger(getClass());
 
 	/** {@link JdbcTemplate} */
 	protected final JdbcTemplate jdbcTemplate;
+
+	/** Data source configuration. */
+	protected final String dbUrl;
 
 	/**
 	 * New parent of {@link AbstractMetadataResolver}
@@ -63,7 +67,7 @@ public abstract class AbstractMetadataResolver implements MetadataResolver, Clos
 	protected AbstractMetadataResolver(@NotBlank String driverClassName, @NotBlank String url, @NotBlank String username,
 			@Nullable String password) {
 		hasTextOf(driverClassName, "driverClassName");
-		hasTextOf(url, "url");
+		this.dbUrl = hasTextOf(url, "url");
 		DataSource ds = DataSourceBuilder.create(Thread.currentThread().getContextClassLoader()).driverClassName(driverClassName)
 				.url(url).username(username).password(password).build();
 		this.jdbcTemplate = new JdbcTemplate(ds);
@@ -71,8 +75,12 @@ public abstract class AbstractMetadataResolver implements MetadataResolver, Clos
 
 	@Override
 	public void close() throws IOException {
-		DataSource ds = jdbcTemplate.getDataSource();
-		invokeMethod(findMethod(ds.getClass(), "close"), ds);
+		try {
+			DataSource ds = jdbcTemplate.getDataSource();
+			invokeMethod(findMethod(ds.getClass(), "close"), ds);
+		} catch (Throwable e) {
+			log.warn(format("Cannot close medataResolver dataSource. for: %s", dbUrl), e);
+		}
 	}
 
 	/**

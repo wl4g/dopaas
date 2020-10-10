@@ -70,21 +70,19 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 		return safeList(genDSDao.list(null)).stream().map(ds -> ds.withPassword("******")).collect(toList());
 	}
 
-	public void save(GenDataSource gen) {
-
-		try {
-			MetadataResolver resolver = beanFactory.getPrototypeBean(gen.getType(), gen);
-			gen.setDbversion(resolver.findDBVersion());
+	public void save(GenDataSource datasource) {
+		try (MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);) {
+			datasource.setDbversion(resolver.findDBVersion());
 		} catch (Exception e) {
-			log.error("can not get db version", e);
+			log.error("Cannot get db version", e);
 		}
 
-		if (isNull(gen.getId())) {
-			gen.preInsert(getRequestOrganizationCode());
-			insert(gen);
+		if (isNull(datasource.getId())) {
+			datasource.preInsert(getRequestOrganizationCode());
+			insert(datasource);
 		} else {
-			gen.preUpdate();
-			update(gen);
+			datasource.preUpdate();
+			update(datasource);
 		}
 	}
 
@@ -122,10 +120,11 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 			datasource = genDSDao.selectByPrimaryKey(datasource.getId());
 		}
 
-		MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
-		// Only need to check whether it can be queried, and no results are
-		// needed.
-		resolver.findDBVersion();
+		try (MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);) {
+			String dbVersion = resolver.findDBVersion();
+			log.info("Tested gen datasource connection and find that the DB server version is: {}({})", datasource.getType(),
+					dbVersion);
+		}
 
 	}
 

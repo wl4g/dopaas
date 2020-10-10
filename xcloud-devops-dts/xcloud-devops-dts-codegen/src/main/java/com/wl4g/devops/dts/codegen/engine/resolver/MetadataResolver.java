@@ -22,6 +22,7 @@ import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
+import java.io.Closeable;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -34,7 +35,7 @@ import javax.validation.constraints.NotBlank;
  * @version v1.0 2020-09-08
  * @since
  */
-public interface MetadataResolver {
+public interface MetadataResolver extends Closeable {
 
 	/**
 	 * Query tables all info.
