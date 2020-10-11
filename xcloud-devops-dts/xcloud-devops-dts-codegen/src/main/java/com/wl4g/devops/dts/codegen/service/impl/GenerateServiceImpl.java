@@ -39,7 +39,7 @@ import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappingW
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
-import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
+import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.CommentExtractor;
 import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
 import com.wl4g.devops.dts.codegen.i18n.CodegenResourceMessageBundler;
 import com.wl4g.devops.dts.codegen.service.GenDataSourceService;
@@ -57,6 +57,8 @@ import java.util.Set;
 
 import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.extractComment;
+import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.cleanComment;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
@@ -213,12 +215,13 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public RespBase<GenTable> findGenTableColumns(Long projectId, String tableName) throws Exception {
+	public RespBase<GenTable> loadGenColumns(Long projectId, String tableName) throws Exception {
 		RespBase<GenTable> resp = RespBase.create();
-		// Gets genPoject
 		notNullOf(projectId, "projectId");
-		GenProject project = genProjectService.detail(projectId);
-		notNullOf(project, "genProject");
+
+		// Gets genPoject
+		GenProject project = notNullOf(genProjectService.detail(projectId), "genProject");
+		GenProviderSetDefinition providerSet = GenProviderSetDefinition.of(project.getProviderSet());
 
 		// Gets genDatasource
 		GenDataSource datasource = notNullOf(genDSService.detail(project.getDatasourceId()), "genDataSource");
@@ -232,21 +235,24 @@ public class GenerateServiceImpl implements GenerateService {
 			// To {@link GenTable}
 			GenTable table = new GenTable();
 			table.setProjectId(project.getId());
+			// TODO default by java entityName specification.
 			table.setEntityName(JavaSpecs.tableName2ClassName(tmetadata.getTableName()));
 			table.setTableName(tmetadata.getTableName());
 			table.setComments(tmetadata.getComments());
-			// Sets Table default
+			// Sets genTable defaults.
 			table.setFunctionAuthor("unascribed");
+			table.setFunctionName(tmetadata.getComments());
+			table.setFunctionNameSimple(extractComment(tmetadata.getComments(), CommentExtractor.simple));
 			table.setRemark(tmetadata.getComments());
 
-			GenProviderSetDefinition providerSet = GenProviderSetDefinition.of(project.getProviderSet());
+			// Gen table columns
 			List<GenTableColumn> cols = new ArrayList<>();
 			for (ColumnMetadata cmetadata : tmetadata.getColumns()) {
 				GenTableColumn col = new GenTableColumn();
 				col.setColumnName(cmetadata.getColumnName());
 				// Cleanup comment '\n' or '\r\n'
 				if (!isBlank(cmetadata.getComments())) {
-					col.setColumnComment(BaseSpecs.cleanComment(cmetadata.getComments()));
+					col.setColumnComment(cleanComment(cmetadata.getComments()));
 				}
 				col.setColumnType(cmetadata.getColumnType());
 				col.setSimpleColumnType(cmetadata.getSimpleColumnType());
@@ -256,7 +262,7 @@ public class GenerateServiceImpl implements GenerateService {
 				DbTypeConverter conv = providerSet.converter();
 				col.setAttrType(conv.convertBy(datasource.getType(), MappedMatcher.Column2Attr, col.getSimpleColumnType()));
 
-				// Sets defaults
+				// Sets column defaults.
 				col.setIsInsert("1");
 				col.setIsUpdate("1");
 				col.setIsList("1");
@@ -279,6 +285,7 @@ public class GenerateServiceImpl implements GenerateService {
 				cols.add(col);
 			}
 			table.setGenTableColumns(cols);
+
 			// Check table struct specification.
 			String warningTip = checkBuiltinColumns(datasource, project, table);
 			if (isNotBlank(warningTip)) {
@@ -309,7 +316,7 @@ public class GenerateServiceImpl implements GenerateService {
 		GenTable oldTable = genTableDao.selectByPrimaryKey(id);
 		if (force) {
 			// Gets new genTable.
-			GenTable newTable = findGenTableColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
+			GenTable newTable = loadGenColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
 
 			// Overriding columns with force.
 			try {
@@ -351,7 +358,7 @@ public class GenerateServiceImpl implements GenerateService {
 		oldTable.setGenTableColumns(oldColumns);
 
 		// Reload the latest table metadata.
-		GenTable newTable = findGenTableColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
+		GenTable newTable = loadGenColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
 		List<GenTableColumn> newColumns = newTable.getGenTableColumns();
 
 		// Calculation table column complement set.

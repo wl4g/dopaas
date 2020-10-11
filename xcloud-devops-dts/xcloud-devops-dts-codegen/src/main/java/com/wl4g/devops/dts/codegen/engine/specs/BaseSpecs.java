@@ -27,6 +27,7 @@ import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition.GenTabl
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.apdplat.word.WordSegmenter;
 import org.apdplat.word.segmentation.Word;
@@ -192,13 +193,27 @@ public class BaseSpecs {
 	 * </br>
 	 * 
 	 * @param str
+	 * @param extractor
 	 * @return
 	 */
 	public static String extractComment(@Nullable String str, @NotBlank String extractor) {
+		return extractComment(str, ofExtractor(hasTextOf(extractor, "extractor")));
+	}
+
+	/**
+	 * It is useful to minimize and optimize the compression of comment strings,
+	 * such as for menu and list header display. </br>
+	 * </br>
+	 * 
+	 * @param str
+	 * @param extractor
+	 * @return
+	 */
+	public static String extractComment(@Nullable String str, @NotNull CommentExtractor extractor) {
 		if (isBlank(str)) {
 			return str;
 		}
-		return cleanComment(ofExtractor(hasTextOf(extractor, "extractor")).getHandler().extract(str));
+		return cleanComment(extractor.getHandler().extract(str));
 	}
 
 	/**
