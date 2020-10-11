@@ -20,6 +20,7 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
@@ -58,32 +59,65 @@ public class GenerateController extends BaseController {
 
 	// --- GenTable/GenColumns configuration. ---
 
+	/**
+	 * Search page query of {@link GenTable}
+	 * 
+	 * @param pm
+	 * @param tableName
+	 * @param projectId
+	 * @return
+	 */
 	@RequestMapping(value = "/list")
-	public RespBase<PageModel> searchGenTable(PageModel pm, String tableName, Long projectId) {
+	public RespBase<PageModel> page(PageModel pm, String tableName, Long projectId) {
 		RespBase<PageModel> resp = RespBase.create();
 		resp.setData(generateService.page(pm, tableName, projectId));
 		return resp;
 	}
 
+	/**
+	 * Save {@link GenTable} and {@link GenTableColumn} details.
+	 * 
+	 * @param table
+	 * @return
+	 */
 	@RequestMapping("save")
-	public RespBase<?> saveGenTable(@RequestBody GenTable genTable) {
+	public RespBase<?> save(@RequestBody GenTable table) {
 		RespBase<Object> resp = RespBase.create();
-		generateService.saveGenConfig(genTable);
+		generateService.saveGenConfig(table);
 		return resp;
 	}
 
+	/**
+	 * Query the {@link GenTable} and {@link GenTableColumn} details.
+	 * 
+	 * @param tableId
+	 * @return
+	 */
 	@RequestMapping("detail")
-	public RespBase<?> detailGenTable(Long tableId) {
+	public RespBase<?> detail(Long tableId) {
 		return generateService.detail(tableId);
 	}
 
+	/**
+	 * Delete for {@link GenTable} and {@link GenTableColumn}.
+	 * 
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping("del")
-	public RespBase<?> deleteGenTable(Long id) {
+	public RespBase<?> delete(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		generateService.deleteGenTable(id);
 		return resp;
 	}
 
+	/**
+	 * Sets status of {@link GenTable}.
+	 * 
+	 * @param id
+	 * @param status
+	 * @return
+	 */
 	@RequestMapping("setGenTableStatus")
 	public RespBase<?> setGenTableStatus(Long id, String status) {
 		RespBase<Object> resp = RespBase.create();

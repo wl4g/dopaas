@@ -157,12 +157,12 @@ public class GenerateServiceImpl implements GenerateService {
 		GenProject project = notNullOf(genProjectService.detail(genTable.getProjectId()), "genProject");
 		GenDataSource datasource = notNullOf(genDSService.detail(project.getDatasourceId()), "genDatasource");
 
+		// Sets SqlType/attrType
 		GenProviderSetDefinition providerSet = notNullOf(GenProviderSetDefinition.of(project.getProviderSet()), "genProviderSet");
 		for (GenTableColumn col : genTable.getGenTableColumns()) {
 			DbTypeConverter conv = providerSet.converter();
 			col.setSqlType(conv.convertBy(datasource.getType(), MappedMatcher.Column2Sql, col.getSimpleColumnType()));
 		}
-
 		genTable.setExtraOptionsJson(toJSONString(genTable.getExtraOptions()));
 
 		if (nonNull(genTable.getId())) {
@@ -232,7 +232,7 @@ public class GenerateServiceImpl implements GenerateService {
 			// Gets genTable columns
 			tmetadata.setColumns(notEmptyOf(resolver.findTableColumns(tableName), "genTableColumns"));
 
-			// To {@link GenTable}
+			// New genTable
 			GenTable table = new GenTable();
 			table.setProjectId(project.getId());
 			// TODO default by java entityName specification.
@@ -383,6 +383,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	private void doBatchInsert(GenTable genTable) {
+		// Check distinct genTable.
 		Long count = genTableDao.countByProjectIdAndTableName(genTable.getProjectId(), genTable.getTableName());
 		if (nonNull(count)) {
 			Assert2.isTrue(count <= 0, "Cannot save the gen tables");
@@ -402,6 +403,7 @@ public class GenerateServiceImpl implements GenerateService {
 	private void doBatchUpdate(GenTable genTable) {
 		genColumnDao.deleteByTableId(genTable.getId());
 		genTableDao.updateByPrimaryKeySelective(genTable);
+
 		List<GenTableColumn> columns = genTable.getGenTableColumns();
 		int i = 0;
 		for (GenTableColumn col : columns) {
