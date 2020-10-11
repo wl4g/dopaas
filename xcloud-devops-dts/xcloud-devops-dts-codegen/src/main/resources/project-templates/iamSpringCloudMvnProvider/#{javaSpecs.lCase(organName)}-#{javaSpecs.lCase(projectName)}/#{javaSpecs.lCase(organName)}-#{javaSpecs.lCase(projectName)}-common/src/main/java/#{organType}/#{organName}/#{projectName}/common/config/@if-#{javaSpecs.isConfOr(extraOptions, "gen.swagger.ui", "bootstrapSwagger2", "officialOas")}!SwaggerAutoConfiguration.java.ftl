@@ -8,20 +8,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 <#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
-import io.swagger.annotations.Api;
+//import io.swagger.annotations.Api;
 <#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
 import io.swagger.annotations.ApiOperation;
 </#if>
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import static springfox.documentation.builders.RequestHandlerSelectors.withMethodAnnotation;
-
+/**
+ * {@link SwaggerAutoConfiguration}
+ *
+ * @author ${author}
+ * @version ${version}
+ * @Date ${now}
+ * @since ${since}
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerAutoConfiguration {
@@ -29,7 +36,9 @@ public class SwaggerAutoConfiguration {
     @Bean
     public Docket springfoxSwaggerDocket() {
 <#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
-        return new Docket(DocumentationType.SWAGGER_2).apiInfo(createApiInfo()).select().apis(withMethodAnnotation(Api.class))
+        return new Docket(DocumentationType.SWAGGER_2).apiInfo(createApiInfo()).select()
+                .apis(RequestHandlerSelectors.basePackage("${organType?lower_case}.${organName?lower_case}.${projectName?lower_case}"))
+                // .apis(RequestHandlerSelectors.withMethodAnnotation(Api.class))
                 .paths(PathSelectors.any()).build();
 <#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
         return new Docket(DocumentationType.OAS_30).apiInfo(createApiInfo()).select().apis(withMethodAnnotation(ApiOperation.class))

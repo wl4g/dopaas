@@ -45,9 +45,9 @@ import com.wl4g.iam.annotation.EnableIamServer;
 @EnableWebMvc
 </#if>
 <#-- TODO migration com.wl4g.devops.dao => com.wl4g.iam.dao -->
-@MapperScan(basePackages = { "${basePackagePrefix}.*.dao", "${organType?uncap_first}.${basePackagePrefix}.*.dao.*", "com.wl4g.devops.dao" })
+@MapperScan(basePackages = { "${basePackagePrefix}.*.dao", "${organType?lower_case}.${basePackagePrefix}.*.dao.*", "com.wl4g.devops.dao" })
 @AutoConfigureComponentsDataSource
-@SpringBootApplication(scanBasePackages = { "com.wl4g", "${organType?uncap_first}.${organName?uncap_first}" })
+@SpringBootApplication(scanBasePackages = { "com.wl4g", "${organType?lower_case}.${organName?lower_case}" })
 public class ${projectName?cap_first}Server {
 
 	public static void main(String[] args) {

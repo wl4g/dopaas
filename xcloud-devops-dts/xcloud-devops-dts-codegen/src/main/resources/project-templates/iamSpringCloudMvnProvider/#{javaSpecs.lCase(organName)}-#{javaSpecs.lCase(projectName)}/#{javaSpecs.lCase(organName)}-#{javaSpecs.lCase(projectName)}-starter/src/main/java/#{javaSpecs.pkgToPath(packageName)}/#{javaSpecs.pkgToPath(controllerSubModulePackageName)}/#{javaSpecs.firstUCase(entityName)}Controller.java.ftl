@@ -38,7 +38,7 @@ import ${packageName}.${serviceSubModulePackageName}.${entityName?cap_first}Serv
 * @since ${since}
 */
 <#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
-@Api(tags = "${moduleName}", description = "${comments}", value = "${functionName}")
+@Api(tags = { "${moduleName}/${functionSimpleName}" }, description = "${comments}", value = "${functionName}")
 </#if>
 @RestController
 @RequestMapping("/${entityName?lower_case}")
