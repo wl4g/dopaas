@@ -7,6 +7,13 @@ package ${organType?uncap_first}.${organName?uncap_first};
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import com.github.xiaoymin.swaggerbootstrapui.annotations.EnableSwaggerBootstrapUI;
+<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+import springfox.documentation.oas.annotations.EnableOpenApi;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+</#if>
 
 import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
 <#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
@@ -29,6 +36,13 @@ import com.wl4g.iam.annotation.EnableIamServer;
 @EnableIamClient
 <#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
 @EnableIamServer
+</#if>
+<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+@EnableSwagger2
+@EnableSwaggerBootstrapUI
+<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+@EnableOpenApi
+@EnableWebMvc
 </#if>
 <#-- TODO migration com.wl4g.devops.dao => com.wl4g.iam.dao -->
 @MapperScan(basePackages = { "${basePackagePrefix}.*.dao", "${organType?uncap_first}.${basePackagePrefix}.*.dao.*", "com.wl4g.devops.dao" })

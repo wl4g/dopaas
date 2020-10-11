@@ -54,7 +54,7 @@ public class GenTable extends BaseBean {
 	@RenderProperty(propertyName = GEN_MODULE_SUB_NAME)
 	private String subModuleName;
 
-	@RenderProperty(propertyName = GEN_TABLE__FUNC_NAME)
+	@RenderProperty(propertyName = GEN_TABLE_FUNC_NAME)
 	private String functionName;
 
 	@RenderProperty(propertyName = GEN_TABLE_FUNC_SIMPLE_NAME)

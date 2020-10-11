@@ -91,7 +91,7 @@ public abstract class ModelAttributeDefinition {
 	 */
 	public static final String GEN_TABLE_ENTITY_NAME = "entityName";
 	public static final String GEN_TABLE_COMMENT = "comments";
-	public static final String GEN_TABLE__FUNC_NAME = "functionName";
+	public static final String GEN_TABLE_FUNC_NAME = "functionName";
 	public static final String GEN_TABLE_FUNC_SIMPLE_NAME = "functionSimpleName";
 	public static final String GEN_TABLE_FUNC_AUTHOR = "functionAuthor";
 	public static final String GEN_TABLE_COLUMNS = "genTableColumns";

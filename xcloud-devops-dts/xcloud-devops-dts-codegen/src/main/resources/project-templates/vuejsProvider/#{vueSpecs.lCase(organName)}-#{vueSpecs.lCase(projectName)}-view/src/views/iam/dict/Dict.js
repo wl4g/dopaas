@@ -1,6 +1,6 @@
-import {transDate, getDay} from 'utils/'
+import { transDate, getDay } from 'utils/'
 import dictutil from "../../../common/dictutil";
-import {store} from "../../../utils";
+import { store } from "../../../utils";
 
 export default {
     name: 'dict',
@@ -39,7 +39,7 @@ export default {
             //所有的类型，用做下拉框
             allType: [],
 
-            themess: ['default','primary','gray','success','warning','danger'],
+            themess: ['default', 'primary', 'gray', 'success', 'warning', 'danger'],
 
             diseditable: false,
 
@@ -58,24 +58,18 @@ export default {
             loading: false
         }
     },
-
     mounted() {
         this.allDictType();
         this.getData();
-
     },
-
     methods: {
-
         onSubmit() {
             this.getData();
         },
-
         currentChange(i) {
             this.pageNum = i;
             this.getData();
         },
-
         // 获取列表数据
         getData() {
             this.loading = true;
@@ -98,7 +92,6 @@ export default {
                 }
             })
         },
-
         // 获取列表数据
         allDictType() {
             this.$$api_iam_allDictType({
@@ -108,7 +101,6 @@ export default {
                 }
             })
         },
-
         addData() {
             this.cleanSaveForm();
             this.dialogVisible = true;
@@ -118,7 +110,6 @@ export default {
             this.saveForm.themes = 'default';
             this.saveForm.sort = 50;
         },
-
         cleanSaveForm() {
             this.saveForm.key = '';
             this.saveForm.value = '';
@@ -130,10 +121,8 @@ export default {
             this.saveForm.icon = '';
             this.saveForm.sort = '';
         },
-
         saveData() {
             this.dialogLoading = true;
-
             this.$refs['saveForm'].validate((valid) => {
                 if (valid) {
                     this.$$api_iam_saveDict({
@@ -150,12 +139,13 @@ export default {
                             isEdit: this.diseditable,
                         },
                         fn: data => {
+                            // Reload dict list.
+                            this.getData();
                             this.dialogLoading = false;
                             this.dialogVisible = false;
                             this.$$api_iam_dictCache({
                                 fn: data => {
-                                    store.set("dicts_cache",data.data);
-                                    this.getData();
+                                    store.set("dicts_cache", data.data);
                                 },
                             });
                             this.cleanSaveForm();
@@ -173,7 +163,6 @@ export default {
                 }
             });
         },
-
         dataDetail(row) {
             if (!row.key) {
                 return;
@@ -190,8 +179,6 @@ export default {
             this.dialogTitle = '编辑';
             this.diseditable = true;
         },
-
-
         delData(row) {
             if (!row.key) {
                 return;
@@ -219,21 +206,21 @@ export default {
         },
 
         //dict
-        getDictMapByType(type,value) {
-            if (!type||value) {//type can not be null
+        getDictMapByType(type, value) {
+            if (!type || value) {//type can not be null
                 return;
             }
             let dictGroup = this.dictDataMap.get(category);
-            if(!dictGroup){//if not found on catch ,  get from server
+            if (!dictGroup) {//if not found on catch ,  get from server
                 var dicts = this.getDictByTypeFromServer(type);
-                if(!dicts){
+                if (!dicts) {
                     return;
                 }
                 dictGroup = new Map();
-                for(let i=0;i<dicts.length;i++){
-                    dictGroup.set(dicts[i].value,dicts[i]);
+                for (let i = 0; i < dicts.length; i++) {
+                    dictGroup.set(dicts[i].value, dicts[i]);
                 }
-                this.dictDataMap.set(type,dictGroup);
+                this.dictDataMap.set(type, dictGroup);
             }
             return dictGroup.get(value);
         },
@@ -243,17 +230,17 @@ export default {
                 return;
             }
             let dictGroup = this.dictDataList.get(category);
-            if(!dictGroup){//if not found on catch ,  get from server
+            if (!dictGroup) {//if not found on catch ,  get from server
                 var dicts = this.getDictByTypeFromServer(type);
-                if(!dicts){
+                if (!dicts) {
                     return;
                 }
-                this.dictDataList.set(type,dictGroup);
+                this.dictDataList.set(type, dictGroup);
             }
             return dictGroup;
         },
 
-        getDictByTypeFromServer(type){
+        getDictByTypeFromServer(type) {
             if (!type) {
                 return;
             }
@@ -266,10 +253,5 @@ export default {
                 }
             })
         },
-
-
-
-
-
     }
 }

@@ -27,6 +27,7 @@ import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition.GenTabl
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.apdplat.word.WordSegmenter;
@@ -41,6 +42,7 @@ import java.util.List;
 import static com.wl4g.components.common.collection.Collections2.disDupCollection;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.doWithLocalFields;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getField;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.makeAccessible;
@@ -324,8 +326,8 @@ public class BaseSpecs {
 	 */
 	public static boolean isConf(@Nullable List<? extends ConfigOption> configuredOptions, @NotBlank String name,
 			@NotBlank String value) {
-		hasTextOf(name, "name");
-		hasTextOf(value, "value");
+		hasTextOf(name, "configKey");
+		hasTextOf(value, "configValue");
 
 		// Extra config optional
 		if (CollectionUtils2.isEmpty(configuredOptions)) {
@@ -339,6 +341,48 @@ public class BaseSpecs {
 			}
 		}
 
+		return false;
+	}
+
+	/**
+	 * Check whether the specified extension configuration item exists. see:
+	 * {@link GenExtraOption} or {@link GenTableExtraOption}
+	 * 
+	 * @param configuredOptions
+	 * @param name
+	 * @param values
+	 * @return
+	 */
+	public static boolean isConfAnd(@Nullable List<? extends ConfigOption> configuredOptions, @NotBlank String name,
+			@NotEmpty String... values) {
+		notEmptyOf(values, "configValues");
+
+		for (String value : values) {
+			if (!isConf(configuredOptions, name, value)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Check whether the specified extension configuration item exists. see:
+	 * {@link GenExtraOption} or {@link GenTableExtraOption}
+	 * 
+	 * @param configuredOptions
+	 * @param name
+	 * @param values
+	 * @return
+	 */
+	public static boolean isConfOr(@Nullable List<? extends ConfigOption> configuredOptions, @NotBlank String name,
+			@NotEmpty String... values) {
+		notEmptyOf(values, "configValues");
+
+		for (String value : values) {
+			if (isConf(configuredOptions, name, value)) {
+				return true;
+			}
+		}
 		return false;
 	}
 

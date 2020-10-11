@@ -36,6 +36,8 @@ public enum ExtraOptionDefinition {
 
 	SpringCloudMvnIamSecurityMode(new GenExtraOption(IAM_SPINGCLOUD_MVN, "gen.iam.security-mode", "local", "cluster", "gateway")),
 
+	SpringCloudSwagger(new GenExtraOption(IAM_SPINGCLOUD_MVN, "gen.swagger.ui", "none", "officialOas", "bootstrapSwagger2")),
+
 	VueJSCompression(new GenExtraOption(VUEJS, "gen.compression", "true", "false")),
 
 	VueJSBasedOnAdminUi(new GenExtraOption(VUEJS, "gen.basedon.adminui", "true", "false")),
