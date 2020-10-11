@@ -63,13 +63,13 @@ public interface GenerateService {
 	List<TableMetadata> findTables(Long projectId) throws Exception;
 
 	/**
-	 * Load latest generate table describe columns configuration.
+	 * Load latest table metadata and columns information.
 	 * 
 	 * @param databaseId
 	 * @param tableName
 	 * @throws Exception
 	 */
-	RespBase<GenTable> findGenTableColumns(Long projectId, String tableName) throws Exception;
+	RespBase<GenTable> loadGenColumns(Long projectId, String tableName) throws Exception;
 
 	Set<String> getAttrTypes(Long projectId);
 

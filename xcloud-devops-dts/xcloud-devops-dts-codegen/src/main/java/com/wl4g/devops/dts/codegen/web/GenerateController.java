@@ -101,9 +101,17 @@ public class GenerateController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping("findGenTableColumns")
-	public RespBase<GenTable> findGenTableColumns(Long projectId, String tableName) throws Exception {
-		return generateService.findGenTableColumns(projectId, tableName);
+	/**
+	 * Load latest table metadata and columns information.
+	 * 
+	 * @param projectId
+	 * @param tableName
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("loadGenColumns")
+	public RespBase<GenTable> loadGenColumns(Long projectId, String tableName) throws Exception {
+		return generateService.loadGenColumns(projectId, tableName);
 	}
 
 	@RequestMapping("getAttrTypes")
@@ -117,11 +125,10 @@ public class GenerateController extends BaseController {
 	 * Load table {@link GenTableExtraOption} of
 	 * {@link TableExtraOptionDefinition}
 	 * 
-	 * @param providerSet
 	 * @return
 	 */
 	@RequestMapping(value = "/tableExtraOptions")
-	public RespBase<?> tableExtraOptions(String providerSet) {
+	public RespBase<?> tableExtraOptions() {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(TableExtraOptionDefinition.getOptions());
 		return resp;
