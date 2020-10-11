@@ -49,13 +49,16 @@ import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.view.Freemarkers.createDefault;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
+import static com.wl4g.components.core.bean.BaseBean.DISABLED;
 import static com.wl4g.components.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
 import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
 import static java.io.File.separator;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -129,6 +132,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			// Foreach rendering entitys. (Note: included resolve moduleName)
 			if (tplResource.isForeachEntitys()) {
 				for (GenTable tab : project.getGenTables()) {
+					// Skip disable genTable(entity) rendering.
+					if (equalsIgnoreCase(tab.getStatus(), valueOf(DISABLED))) {
+						continue;
+					}
 					context.setGenTable(tab); // Set current genTable
 
 					// When traversing the rendering table (entity), it

@@ -15,25 +15,15 @@
  */
 package com.wl4g.devops.dts.codegen.bean;
 
-import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
-import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * {@link GenTable}
@@ -163,51 +153,6 @@ public class GenTable extends BaseBean {
 	public GenTable withPk(GenTableColumn pk) {
 		setPk(pk);
 		return this;
-	}
-
-	/**
-	 * {@link GenTable} extensible configuration options definitions.
-	 *
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2020-09-16
-	 * @since
-	 */
-	public static enum TableExtraOptionDefinition {
-
-		TableDeleteType(new GenTableExtraOption("gen.tab.del-type", "deleteWithLogical", "deleteWithPhysical", "deleteWithNone")),
-
-		TableEditType(new GenTableExtraOption("gen.tab.edit-type", "editOnDialog", "editOnPage")),
-
-		IsExportExcel(new GenTableExtraOption("gen.tab.export-excel", "true", "false"));
-
-		/** Gen provider extra option of {@link GenTableExtraOption} . */
-		@NotNull
-		private final GenTableExtraOption option;
-
-		private TableExtraOptionDefinition(@NotNull GenTableExtraOption option) {
-			notNullOf(option, "option");
-			this.option = option.validate();
-		}
-
-		public final GenTableExtraOption getOption() {
-			return option;
-		}
-
-		/**
-		 * Gets {@link GenTableExtraOption} by names.
-		 * 
-		 * @param provider
-		 * @return
-		 */
-		public static List<GenTableExtraOption> getOptions(@Nullable String... names) {
-			final List<String> conditions = new ArrayList<>();
-			if (!isEmptyArray(names)) {
-				conditions.addAll(asList(names));
-			}
-			return asList(values()).stream().filter(o -> (isEmpty(conditions) || conditions.contains(o.getOption().getName())))
-					.map(o -> o.getOption()).collect(toList());
-		}
-
 	}
 
 }

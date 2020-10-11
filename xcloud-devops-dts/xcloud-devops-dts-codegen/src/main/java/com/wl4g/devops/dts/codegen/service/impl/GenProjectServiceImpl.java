@@ -20,9 +20,9 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
-import com.wl4g.devops.dts.codegen.bean.extra.GenExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition.GenExtraOption;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
-import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
+import com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ public class GenProjectServiceImpl implements GenProjectService {
 	public void save(GenProject project) {
 		if (nonNull(project.getExtraOptions())) {
 			// Validate
-			GenProviderSet.validateOption(project.getProviderSet(), project.getExtraOptions());
+			GenProviderSetDefinition.validateOption(project.getProviderSet(), project.getExtraOptions());
 			project.setExtraOptionsJson(toJSONString(project.getExtraOptions()));
 		}
 		if (isNull(project.getId())) {

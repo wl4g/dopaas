@@ -69,7 +69,7 @@ public interface GenerateService {
 	 * @param tableName
 	 * @throws Exception
 	 */
-	RespBase<GenTable> loadGenTableConfig(Long projectId, String tableName) throws Exception;
+	RespBase<GenTable> findGenTableColumns(Long projectId, String tableName) throws Exception;
 
 	Set<String> getAttrTypes(Long projectId);
 
