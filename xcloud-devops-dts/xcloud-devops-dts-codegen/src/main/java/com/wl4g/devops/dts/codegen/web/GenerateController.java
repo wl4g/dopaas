@@ -20,8 +20,7 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
-import com.wl4g.devops.dts.codegen.bean.GenTable.TableExtraOptionDefinition;
-import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
@@ -102,9 +101,9 @@ public class GenerateController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping("loadGenTableConfig")
-	public RespBase<GenTable> loadGenTableConfig(Long projectId, String tableName) throws Exception {
-		return generateService.loadGenTableConfig(projectId, tableName);
+	@RequestMapping("findGenTableColumns")
+	public RespBase<GenTable> findGenTableColumns(Long projectId, String tableName) throws Exception {
+		return generateService.findGenTableColumns(projectId, tableName);
 	}
 
 	@RequestMapping("getAttrTypes")

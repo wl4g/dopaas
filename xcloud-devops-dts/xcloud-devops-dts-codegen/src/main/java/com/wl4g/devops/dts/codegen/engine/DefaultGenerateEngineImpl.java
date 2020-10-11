@@ -23,7 +23,7 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
@@ -39,6 +39,8 @@ import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static java.lang.String.valueOf;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -48,7 +50,9 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
+import static com.wl4g.components.core.bean.BaseBean.DISABLED;
+import static com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition.getProviders;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
  * {@link DefaultGenerateEngineImpl}
@@ -106,6 +110,10 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		// Gets genTable.
 		List<GenTable> tables = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable tab : tables) {
+			// Skip disable genTable(entity) rendering.
+			if (equalsIgnoreCase(tab.getStatus(), valueOf(DISABLED))) {
+				continue;
+			}
 			// Gets genTable columns.
 			tab.setGenTableColumns(genColumnDao.selectByTableId(tab.getId()));
 			// Gets primary column.

@@ -27,7 +27,7 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GenerateEngine;
@@ -65,9 +65,10 @@ import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
 import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappingWrapper;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet.getProviders;
+import static com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition.getProviders;
 import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
+import com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
@@ -154,7 +155,7 @@ public class GenerateServiceImpl implements GenerateService {
 		GenProject project = notNullOf(genProjectService.detail(genTable.getProjectId()), "genProject");
 		GenDataSource datasource = notNullOf(genDSService.detail(project.getDatasourceId()), "genDatasource");
 
-		GenProviderSet providerSet = notNullOf(GenProviderSet.of(project.getProviderSet()), "genProviderSet");
+		GenProviderSetDefinition providerSet = notNullOf(GenProviderSetDefinition.of(project.getProviderSet()), "genProviderSet");
 		for (GenTableColumn col : genTable.getGenTableColumns()) {
 			DbTypeConverter conv = providerSet.converter();
 			col.setSqlType(conv.convertBy(datasource.getType(), MappedMatcher.Column2Sql, col.getSimpleColumnType()));
@@ -212,7 +213,7 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public RespBase<GenTable> loadGenTableConfig(Long projectId, String tableName) throws Exception {
+	public RespBase<GenTable> findGenTableColumns(Long projectId, String tableName) throws Exception {
 		RespBase<GenTable> resp = RespBase.create();
 		// Gets genPoject
 		notNullOf(projectId, "projectId");
@@ -238,7 +239,7 @@ public class GenerateServiceImpl implements GenerateService {
 			table.setFunctionAuthor("unascribed");
 			table.setRemark(tmetadata.getComments());
 
-			GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
+			GenProviderSetDefinition providerSet = GenProviderSetDefinition.of(project.getProviderSet());
 			List<GenTableColumn> cols = new ArrayList<>();
 			for (ColumnMetadata cmetadata : tmetadata.getColumns()) {
 				GenTableColumn col = new GenTableColumn();
@@ -295,7 +296,7 @@ public class GenerateServiceImpl implements GenerateService {
 		GenProject project = notNullOf(genProjectService.detail(projectId), "genProject");
 		GenDataSource datasource = genDSService.detail(project.getDatasourceId());
 
-		GenProviderSet providerSet = GenProviderSet.of(project.getProviderSet());
+		GenProviderSetDefinition providerSet = GenProviderSetDefinition.of(project.getProviderSet());
 		List<TypeMappingWrapper> mapping = providerSet.converter().getTypeMappings(datasource.getType());
 
 		// To attrTypes.
@@ -308,7 +309,7 @@ public class GenerateServiceImpl implements GenerateService {
 		GenTable oldTable = genTableDao.selectByPrimaryKey(id);
 		if (force) {
 			// Gets new genTable.
-			GenTable newTable = loadGenTableConfig(oldTable.getProjectId(), oldTable.getTableName()).getData();
+			GenTable newTable = findGenTableColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
 
 			// Overriding columns with force.
 			try {
@@ -350,7 +351,7 @@ public class GenerateServiceImpl implements GenerateService {
 		oldTable.setGenTableColumns(oldColumns);
 
 		// Reload the latest table metadata.
-		GenTable newTable = loadGenTableConfig(oldTable.getProjectId(), oldTable.getTableName()).getData();
+		GenTable newTable = findGenTableColumns(oldTable.getProjectId(), oldTable.getTableName()).getData();
 		List<GenTableColumn> newColumns = newTable.getGenTableColumns();
 
 		// Calculation table column complement set.

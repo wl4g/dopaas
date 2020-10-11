@@ -22,8 +22,8 @@ import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.components.common.id.SnowflakeIdGenerator;
 import com.wl4g.components.common.lang.StringUtils2;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.bean.extra.GenExtraOption;
-import com.wl4g.devops.dts.codegen.bean.extra.GenTableExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition.GenExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
 
 import javax.validation.constraints.NotBlank;

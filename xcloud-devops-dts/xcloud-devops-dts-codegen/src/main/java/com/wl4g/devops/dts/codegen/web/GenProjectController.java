@@ -15,13 +15,12 @@
  */
 package com.wl4g.devops.dts.codegen.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.common.web.rest.RespBase; 
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
-import com.wl4g.devops.dts.codegen.bean.GenProject.ExtraOptionDefinition;
-import com.wl4g.devops.dts.codegen.bean.extra.GenExtraOption;
-import com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderSet;
+import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition;
+import com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,7 +79,7 @@ public class GenProjectController extends BaseController {
 	@RequestMapping(value = "/extraOptions")
 	public RespBase<?> extraOptions(String providerSet) {
 		RespBase<Object> resp = RespBase.create();
-		List<String> providers = GenProviderSet.getProviders(providerSet);
+		List<String> providers = GenProviderSetDefinition.getProviders(providerSet);
 		resp.setData(ExtraOptionDefinition.getOptions(providers.toArray(new String[0])));
 		return resp;
 	}
