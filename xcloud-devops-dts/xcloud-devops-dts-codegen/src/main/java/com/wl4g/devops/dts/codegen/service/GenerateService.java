@@ -18,6 +18,7 @@ package com.wl4g.devops.dts.codegen.service;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 
@@ -45,6 +46,11 @@ public interface GenerateService {
 	 */
 	RespBase<GenTable> detail(Long tableId);
 
+	/**
+	 * Save {@link GenTable} and {@link GenTableColumn} information.
+	 * 
+	 * @param genTable
+	 */
 	void saveGenConfig(GenTable genTable);
 
 	void deleteGenTable(Long tableId);
