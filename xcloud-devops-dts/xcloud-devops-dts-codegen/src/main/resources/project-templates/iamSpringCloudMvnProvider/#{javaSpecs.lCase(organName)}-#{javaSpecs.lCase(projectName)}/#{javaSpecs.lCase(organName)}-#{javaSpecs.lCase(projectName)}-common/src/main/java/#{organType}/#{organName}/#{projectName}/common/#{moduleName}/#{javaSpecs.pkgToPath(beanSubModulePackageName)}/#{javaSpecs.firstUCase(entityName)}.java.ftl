@@ -12,8 +12,10 @@ ${javaSpecs.wrapMultiComment(copyright)}
 
 package ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModulePackageName};
 
+<#if javaSpecs.isConfOr(extraOptions, "gen.swagger.ui", "officialOas", "bootstrapSwagger2")>
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+</#if>
 import com.wl4g.components.core.bean.BaseBean;
 <#if hasAttrNameOfDate == true>
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -47,7 +49,9 @@ import ${attrType};
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
+<#if javaSpecs.isConfOr(extraOptions, "gen.swagger.ui", "officialOas", "bootstrapSwagger2")>
 @ApiModel("${javaSpecs.cleanComment(comments)}")<#-- 转义换行和双引号 -->
+</#if>
 <#if isExportExcel == true>
 @ColumnWidth(40)
 </#if>
@@ -58,7 +62,9 @@ public class ${entityName?cap_first} extends BaseBean {
     /**
      * ${col.columnComment}
      */
+    <#if javaSpecs.isConfOr(extraOptions, "gen.swagger.ui", "officialOas", "bootstrapSwagger2")>
     @ApiModelProperty("${javaSpecs.cleanComment(col.columnComment)}")
+    </#if>
 	<#if isExportExcel == true>
     @ExcelProperty(value = { "${javaSpecs.cleanComment(col.columnComment)}" })
     </#if>

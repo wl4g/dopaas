@@ -16,13 +16,25 @@
 	</properties>
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
+            <dependency>
+                <groupId>com.wl4g</groupId>
+                <artifactId>xcloud-bom</artifactId>
+                <version>master</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>2.9.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>swagger-bootstrap-ui</artifactId>
+                <version>1.9.6</version>
+            </dependency>
+</#if>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -34,14 +46,22 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-common</artifactId>
 		</dependency>
-		<dependency> <!-- https://github.com/springfox/springfox-demos -->
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-		</dependency>
+		<!-- https://github.com/springfox/springfox-demos -->
+<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>swagger-bootstrap-ui</artifactId>
+        </dependency>
+<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+        </dependency>
+</#if>
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>easyexcel</artifactId>
