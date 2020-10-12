@@ -7,7 +7,7 @@ export default [
         name: '${entityName?uncap_first}List',
         method: '${entityName?uncap_first}List',
         path: '/${entityName?lower_case}/list',
-        type: 'post',
+        type: 'get',
         sysModule: global.${moduleName?lower_case}
     },
     {
@@ -21,7 +21,7 @@ export default [
         name: '${entityName?uncap_first}Detail',
         method: '${entityName?uncap_first}Detail',
         path: '/${entityName?lower_case}/detail',
-        type: 'post',
+        type: 'get',
         sysModule: global.${moduleName?lower_case}
     },
     {
