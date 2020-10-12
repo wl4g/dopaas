@@ -24,7 +24,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.*;
@@ -52,7 +54,9 @@ public enum GenProviderSetDefinition {
 
 	JustVueJS(asList(VUEJS), DbTypeConverter.JS),
 
-	JustNgJS(asList(NGJS), DbTypeConverter.JS);
+	JustNgJS(asList(NGJS), DbTypeConverter.JS),
+
+	ABC(asList(GO_GONICWEB), DbTypeConverter.Golang);
 
 	/** {@link GenProviderAlias} */
 	@NotEmpty
@@ -150,6 +154,15 @@ public enum GenProviderSetDefinition {
 			}
 		});
 
+	}
+
+	public static Set<String> getGenProviderSet(){
+		GenProviderSetDefinition[] values = GenProviderSetDefinition.values();
+		Set<String> set = new HashSet();
+		for(GenProviderSetDefinition genProviderSetDefinition: values){
+			set.add(genProviderSetDefinition.name());
+		}
+		return set;
 	}
 
 }
