@@ -3,8 +3,6 @@
 #### Introduction
 ${projectDescription}
 
-
-## Documentation
 - [中文文档](README_CN.md)
 
 
@@ -30,9 +28,23 @@ Ready to access API after startup, the baseURI is: [http://${devServiceHost}:${e
 ```
 
 
+## API Documentation
+<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+[http://${devServiceHost}:${entryAppPort}/${entryAppName}/doc.html](http://${devServiceHost}:${devServicePort}/${entryAppName}/doc.html)
+<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+[http://${devServiceHost}:${entryAppPort}/${entryAppName}/swagger-ui/index.html](http://${devServiceHost}:${devServicePort}/${entryAppName}/swagger-ui/index.html)
+</#if>
+
+
+## Deployment
+- [Configuration based on nginx deployment, please refer to](nginx/)
+
+
 ## Copyright and licensing
 - Copyright (c) 2018-present, ${author}.
-- ${copyright}
+```
+${copyright}
+```
 
 
 <p align="center">
