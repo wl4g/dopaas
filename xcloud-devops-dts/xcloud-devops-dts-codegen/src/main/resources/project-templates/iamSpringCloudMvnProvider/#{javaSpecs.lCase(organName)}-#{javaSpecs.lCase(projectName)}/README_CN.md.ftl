@@ -3,8 +3,6 @@
 ## 简介
 ${projectDescription}
 
-
-## 文档
 - English version goes [here](README.md)
 
 
@@ -32,9 +30,23 @@ mvn clean install -DskipTests -T 2C
 ```
 
 
+## API文档
+<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+[http://${devServiceHost}:${entryAppPort}/${entryAppName}/doc.html](http://${devServiceHost}:${devServicePort}/${entryAppName}/doc.html)
+<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+[http://${devServiceHost}:${entryAppPort}/${entryAppName}/swagger-ui/index.html](http://${devServiceHost}:${devServicePort}/${entryAppName}/swagger-ui/index.html)
+</#if>
+
+
+## 部署
+- [基于nginx架构部署的配置，请参考](nginx/)
+
+
 ## 版权和许可
 - Copyright (c) 2018-present, ${author}.
-- ${copyright}
+```
+${copyright}
+```
 
 
 <p align="center">
