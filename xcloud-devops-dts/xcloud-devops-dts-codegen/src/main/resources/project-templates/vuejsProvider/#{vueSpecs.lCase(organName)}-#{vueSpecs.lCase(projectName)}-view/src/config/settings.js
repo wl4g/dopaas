@@ -22,7 +22,7 @@ var gbs = {
                         }
                     });
                 } else {
-                    alert('[提示]请登录\nRequestId: ' + res.requestId)
+                    //alert('[提示]请登录\nRequestId: ' + res.requestId)
                     router.push("/login");
                     window.location.reload();
                 }
@@ -32,11 +32,11 @@ var gbs = {
             if (res && res.message) {
                 console.error(res.message);
                 // TODO that is null??
-                if (that) {
-                    alert(res.message);
-                } else {
-                    that.$alert(res.message);
-                }
+                // if (that) {
+                //     alert(res.message);
+                // } else {
+                //     that.$alert(res.message);
+                // }
             }
         },
     }
