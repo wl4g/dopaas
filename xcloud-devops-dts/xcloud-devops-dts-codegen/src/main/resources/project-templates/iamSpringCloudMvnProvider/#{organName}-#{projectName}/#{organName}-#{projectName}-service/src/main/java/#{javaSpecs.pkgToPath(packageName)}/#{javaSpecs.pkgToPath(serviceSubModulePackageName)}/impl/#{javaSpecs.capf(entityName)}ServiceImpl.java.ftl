@@ -60,8 +60,8 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
 <#-- Service delete with logical  -->
 <#if javaSpecs.isConf(tableExtraOptions, "gen.tab.del-type", "deleteWithLogical")>
     @Override
-    public int del(Long ${pk.attrName}) {
-        notNullOf(${javaSpecs.toSimpleJavaType(pk.attrType)}, "${pk.attrName}");
+    public int del(${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
+        notNullOf(${pk.attrName}, "${pk.attrName}");
         ${entityName} ${entityName?uncap_first} = new ${entityName}();
         ${entityName?uncap_first}.set${pk.attrName?cap_first}(${pk.attrName});
         ${entityName?uncap_first}.setDelFlag(BaseBean.DEL_FLAG_DELETE);
