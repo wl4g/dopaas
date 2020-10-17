@@ -44,7 +44,7 @@ public interface ${entityName}Service {
      * @param id
      * @return 
      */
-    ${entityName} detail(Long id);
+    ${entityName} detail(${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName});
 
     /**
      * ${comments} delete.
@@ -52,7 +52,7 @@ public interface ${entityName}Service {
      * @param id
      * @return 
      */
-    int del(Long id);
+    int del(${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName});
 
 }
 

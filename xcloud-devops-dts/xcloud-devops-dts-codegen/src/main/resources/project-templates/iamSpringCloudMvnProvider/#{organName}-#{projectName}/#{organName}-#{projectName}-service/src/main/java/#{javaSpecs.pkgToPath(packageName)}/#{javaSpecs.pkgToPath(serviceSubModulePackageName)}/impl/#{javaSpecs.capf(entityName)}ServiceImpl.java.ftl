@@ -42,7 +42,7 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
 
     @Override
     public int save(${entityName} ${entityName?uncap_first}) {
-        if (isNull(${entityName?uncap_first}.getId())) {
+        if (isNull(${entityName?uncap_first}.get${pk.attrName?cap_first}())) {
         	${entityName?uncap_first}.preInsert();
             return ${entityName?uncap_first}Dao.insertSelective(${entityName?uncap_first});
         } else {
@@ -52,27 +52,27 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
     }
 
     @Override
-    public ${entityName} detail(Long id) {
-        notNullOf(id, "${entityName?uncap_first}Id");
-        return ${entityName?uncap_first}Dao.selectByPrimaryKey(id);
+    public ${entityName} detail(${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
+        notNullOf(${pk.attrName}, "${pk.attrName}");
+        return ${entityName?uncap_first}Dao.selectByPrimaryKey(${pk.attrName});
     }
 
 <#-- Service delete with logical  -->
 <#if javaSpecs.isConf(tableExtraOptions, "gen.tab.del-type", "deleteWithLogical")>
     @Override
-    public int del(Long id) {
-        notNullOf(id, "${entityName?uncap_first}Id");
+    public int del(Long ${pk.attrName}) {
+        notNullOf(${javaSpecs.toSimpleJavaType(pk.attrType)}, "${pk.attrName}");
         ${entityName} ${entityName?uncap_first} = new ${entityName}();
-        ${entityName?uncap_first}.setId(id);
+        ${entityName?uncap_first}.set${pk.attrName?cap_first}(${pk.attrName});
         ${entityName?uncap_first}.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         return ${entityName?uncap_first}Dao.updateByPrimaryKeySelective(${entityName?uncap_first});
     }
 <#-- Service delete with physical  -->
 <#else>
     @Override
-    public int del(Long id) {
-        notNullOf(id, "${entityName?uncap_first}Id");
-        return ${entityName?uncap_first}Dao.deleteByPrimaryKey(id);
+    public int del(${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
+        notNullOf(${pk.attrName}, "${pk.attrName}");
+        return ${entityName?uncap_first}Dao.deleteByPrimaryKey(${pk.attrName});
     }
 </#if>
 

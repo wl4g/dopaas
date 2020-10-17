@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 <#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
@@ -72,23 +73,25 @@ public class ${entityName}Controller extends BaseController {
 
     <#if javaSpecs.isConfOr(extraOptions, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
     @ApiOperation(value = "查询${functionSimpleName}详细信息")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "${functionSimpleName}信息ID", dataType="int64", required = true) })
+    <#-- dataType="${pk.attrType}" -->
+    @ApiImplicitParams({ @ApiImplicitParam(name = "${pk.attrName}", value = "${functionSimpleName}信息ID", dataType="int64", required = true) })
     </#if>
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase${r"<"}?> detail(Long id) {
+    public RespBase${r"<"}?> detail(@RequestParam(required = true) ${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
         RespBase${r"<"}Object> resp = RespBase.create();
-        resp.setData(${entityName?uncap_first}Service.detail(id));
+        resp.setData(${entityName?uncap_first}Service.detail(${pk.attrName}));
         return resp;
     }
 
     <#if javaSpecs.isConfOr(extraOptions, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
     @ApiOperation(value = "删除${functionSimpleName}信息")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "id", value = "待删除的${functionSimpleName}信息ID", dataType="int64", required = true) })
+    <#-- dataType="${pk.attrType}" -->
+    @ApiImplicitParams({ @ApiImplicitParam(name = "${pk.attrName}", value = "待删除的${functionSimpleName}信息ID", dataType="int64", required = true) })
     </#if>
     @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase${r"<"}?> del(Long id) {
+    public RespBase${r"<"}?> del(@RequestParam(required = true) ${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
         RespBase${r"<"}Object> resp = RespBase.create();
-        ${entityName?uncap_first}Service.del(id);
+        ${entityName?uncap_first}Service.del(${pk.attrName});
         return resp;
     }
 
