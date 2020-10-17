@@ -72,9 +72,10 @@ public class BaseSpecs {
 	// --- Naming. ---
 
 	/**
-	 * Gets the string that converts the first letter to uppercase
+	 * Gets the string that converts the first letter to uppercase.</br>
+	 * Refer to freeMarker: ""?cap_first
 	 */
-	public static String firstUCase(@Nullable String str) {
+	public static String capf(@Nullable String str) {
 		if (isBlank(str)) {
 			return str;
 		}
@@ -86,9 +87,10 @@ public class BaseSpecs {
 	}
 
 	/**
-	 * Gets the string that converts the first letter to lowercase
+	 * Gets the string that converts the first letter to lowercase.</br>
+	 * Refer to freeMarker: ""?uncap_first
 	 */
-	public static String firstLCase(@Nullable String str) {
+	public static String uncapf(@Nullable String str) {
 		if (isBlank(str)) {
 			return str;
 		}
