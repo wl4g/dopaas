@@ -5,7 +5,7 @@ package service
 
 import (
 	"io"
-	"${organName?lower_case}-${projectName?lower_case}/pkg/logging"
+	"${organName}-${projectName}/pkg/logging"
 
 	"go.uber.org/zap"
 )

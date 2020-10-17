@@ -9,13 +9,13 @@ import (
 	"runtime"
 	"strconv"
 
-	acl "${organName?lower_case}-${projectName?lower_case}/pkg/acl"
-	config "${organName?lower_case}-${projectName?lower_case}/pkg/config"
-	logging "${organName?lower_case}-${projectName?lower_case}/pkg/logging"
+	acl "${organName}-${projectName}/pkg/acl"
+	config "${organName}-${projectName}/pkg/config"
+	logging "${organName}-${projectName}/pkg/logging"
 	<#-- TODO remove -->
-	<#-- ssh2 "${organName?lower_case}-${projectName?lower_case}/pkg/modules/ssh2"
-	store "${organName?lower_case}-${projectName?lower_case}/pkg/modules/ssh2/store" -->
-	utils "${organName?lower_case}-${projectName?lower_case}/pkg/utils"
+	<#-- ssh2 "${organName}-${projectName}/pkg/modules/ssh2"
+	store "${organName}-${projectName}/pkg/modules/ssh2/store" -->
+	utils "${organName}-${projectName}/pkg/utils"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"

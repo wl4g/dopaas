@@ -212,7 +212,7 @@ public class GenerateController extends BaseController {
 	/**
 	 * Generated watermark readme.
 	 */
-	public static final String GENERATED_README = readFullyResourceString("generated/GENERATED.md");
-	public static final String GENERATED_README_CN = readFullyResourceString("generated/GENERATED_CN.md");
+	public static final String GENERATED_README = readFullyResourceString("project-templates/doc/GENERATED.md");
+	public static final String GENERATED_README_CN = readFullyResourceString("project-templates/doc/GENERATED_CN.md");
 
 }

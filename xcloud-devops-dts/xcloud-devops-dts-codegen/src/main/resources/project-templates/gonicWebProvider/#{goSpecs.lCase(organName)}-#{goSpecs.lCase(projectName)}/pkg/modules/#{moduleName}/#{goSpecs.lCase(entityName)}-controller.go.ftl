@@ -6,7 +6,7 @@ package ssh2
 import (
 	"net/http"
 	"strconv"
-	service "${organName?lower_case}-${projectName?lower_case}/pkg/modules/${moduleName}/service"
+	service "${organName}-${projectName}/pkg/modules/${moduleName}/service"
 
 	"github.com/gin-gonic/gin"
 )

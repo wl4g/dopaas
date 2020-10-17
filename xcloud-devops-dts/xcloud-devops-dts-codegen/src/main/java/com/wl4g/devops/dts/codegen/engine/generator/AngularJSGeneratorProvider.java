@@ -30,7 +30,7 @@ import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
  * @version v1.0 2020-09-07
  * @since
  */
-public class AngularJSGeneratorProvider extends DefaultWebConfigurationGeneratorProvider {
+public class AngularJSGeneratorProvider extends BasedWebGeneratorProvider {
 
 	public AngularJSGeneratorProvider(@NotNull GenerateContext context) {
 		super(context, null);
