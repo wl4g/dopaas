@@ -73,7 +73,7 @@
             <template>
                 <el-table :data="tableData" :border="false" style="width:100%">
                     <!--<el-table-column :label="$t('message.common.selectAll')" type="selection"></el-table-column>-->
-                    <!--<el-table-column width="100" prop="id" label="ID"></el-table-column>-->
+                    <!--<el-table-column width="100" prop="${pk.attrName}" label="ID"></el-table-column>-->
 <#list genTableColumns as param>
     <#if param.isList == '1'>
                     <el-table-column prop="${param.attrName}">

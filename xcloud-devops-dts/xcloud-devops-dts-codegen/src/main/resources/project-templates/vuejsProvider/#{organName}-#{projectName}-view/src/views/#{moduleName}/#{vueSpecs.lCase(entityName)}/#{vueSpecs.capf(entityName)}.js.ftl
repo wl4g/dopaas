@@ -101,18 +101,14 @@ export default {
         this.getData();
     },
 </#if>
-
     methods: {
-
         onSubmit() {
             this.getData();
         },
-
         currentChange(i) {
             this.pageNum = i;
             this.getData();
         },
-
         addData() {
 <#if isEditOnPage == true>
             this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit'})
@@ -122,7 +118,6 @@ export default {
             this.dialogTitle = 'Add';
 </#if>
         },
-
         // 获取列表数据
         getData() {
             this.loading = true;
@@ -140,7 +135,6 @@ export default {
                 }
             })
         },
-
         cleanSaveForm() {
             this.saveForm = {
 <#list genTableColumns as param>
@@ -150,7 +144,6 @@ export default {
 </#list>
             };
         },
-
         saveData() {
             this.dialogLoading = true;
             this.saveForm.hostId = this.searchParams.hostId;
@@ -173,10 +166,9 @@ export default {
                 }
             });
         },
-
         editData(row) {
 <#if isEditOnPage == true>
-            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit', query: {id: row.id}})
+            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit', query: {${pk.attrName}: row.id}})
 <#else>
             if (!row.id) {
                 return;
@@ -184,7 +176,7 @@ export default {
             this.cleanSaveForm();
             this.$$api_${moduleName?lower_case}_${entityName?uncap_first}Detail({
                 data: {
-                    id: row.id,
+                    ${pk.attrName}: row.id,
                 },
                 fn: data => {
                     this.saveForm = data.data;
@@ -194,8 +186,6 @@ export default {
             this.dialogTitle = 'Edit';
 </#if>
         },
-
-
         delData(row) {
             if (!row.id) {
                 return;
@@ -207,7 +197,7 @@ export default {
             }).then(() => {
                 this.$$api_${moduleName?lower_case}_del${entityName?cap_first}({
                     data: {
-                        id: row.id,
+                        ${pk.attrName}: row.id,
                     },
                     fn: data => {
                         this.$message({
@@ -221,6 +211,5 @@ export default {
                 //do nothing
             });
         },
-
     }
 }
