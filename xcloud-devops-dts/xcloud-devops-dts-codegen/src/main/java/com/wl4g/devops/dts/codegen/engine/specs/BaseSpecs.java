@@ -469,6 +469,11 @@ public class BaseSpecs {
 	 */
 	public static enum CommentExtractor {
 
+		/**
+		 * <pre>
+		 * case1: 统计类型(1.计划完成 2.实际完成) => words[统计, 类型, 1, 计划, 2]
+		 * </pre>
+		 */
 		wordSeg(str -> {
 			// Chinese word segmentation keyword extraction.
 			List<Word> words = safeList(WordSegmenter.seg(str));
@@ -484,12 +489,19 @@ public class BaseSpecs {
 					break;
 				}
 			}
-			return comment.toString();
+			return comment.toString().replace("表", EMPTY);
 		}),
 
+		/**
+		 * <pre>
+		 * case1: 用户表 => 用户
+		 * case2: 用户类型（1：普通用户，2：vip客户） => 用户
+		 * </pre>
+		 */
 		simple(str -> {
 			String extracted = str.substring(0, Math.min(str.length(), 5));
-			return replaceEach(extracted, new String[] { "，", "。", "（", "）", "(", ")" }, new String[] { "", "", "", "", "", "" });
+			return replaceEach(extracted, new String[] { "，", ",", "。", "（", "）", "(", ")", "表" },
+					new String[] { EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY });
 		});
 
 		private final ExtractHandler handler;

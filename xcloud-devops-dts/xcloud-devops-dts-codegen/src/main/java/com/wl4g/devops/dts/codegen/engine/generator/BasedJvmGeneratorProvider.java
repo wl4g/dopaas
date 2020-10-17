@@ -40,7 +40,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @sine v1.0.0
  * @see
  */
-public abstract class BasedJvmGeneratorProvider extends DefaultWebConfigurationGeneratorProvider {
+public abstract class BasedJvmGeneratorProvider extends BasedWebGeneratorProvider {
 
 	public BasedJvmGeneratorProvider(@NotNull GenerateContext context, @Nullable Map<String, Object> defaultSubModels) {
 		// Add model for naming utils.

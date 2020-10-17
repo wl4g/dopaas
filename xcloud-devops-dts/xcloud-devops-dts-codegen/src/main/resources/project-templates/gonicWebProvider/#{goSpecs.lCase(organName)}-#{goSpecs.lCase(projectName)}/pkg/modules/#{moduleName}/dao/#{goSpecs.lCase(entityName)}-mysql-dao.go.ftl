@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"${organName?lower_case}-${projectName?lower_case}/pkg/config"
-	"${organName?lower_case}-${projectName?lower_case}/pkg/logging"
-	utils "${organName?lower_case}-${projectName?lower_case}/pkg/utils"
+	"${organName}-${projectName}/pkg/config"
+	"${organName}-${projectName}/pkg/logging"
+	utils "${organName}-${projectName}/pkg/utils"
 
 	"go.uber.org/zap"
 

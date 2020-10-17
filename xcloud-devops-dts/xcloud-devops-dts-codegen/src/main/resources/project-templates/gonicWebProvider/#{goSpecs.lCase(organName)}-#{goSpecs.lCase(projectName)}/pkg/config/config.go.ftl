@@ -6,7 +6,7 @@ package config
 import (
 	"fmt"
 
-	utils "${organName?lower_case}-${projectName?lower_case}/pkg/utils"
+	utils "${organName}-${projectName}/pkg/utils"
 )
 
 // GlobalProperties ...

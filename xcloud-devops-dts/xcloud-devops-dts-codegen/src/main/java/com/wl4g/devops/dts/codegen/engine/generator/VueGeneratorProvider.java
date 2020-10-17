@@ -31,7 +31,7 @@ import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_COM
  * @version v1.0 2020-09-07
  * @since
  */
-public class VueGeneratorProvider extends DefaultWebConfigurationGeneratorProvider {
+public class VueGeneratorProvider extends BasedWebGeneratorProvider {
 
 	public VueGeneratorProvider(@NotNull GenerateContext context) {
 		super(context, null);

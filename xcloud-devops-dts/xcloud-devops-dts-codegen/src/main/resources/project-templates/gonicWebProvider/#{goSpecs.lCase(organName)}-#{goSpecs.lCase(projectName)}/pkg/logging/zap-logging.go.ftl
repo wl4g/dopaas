@@ -6,7 +6,7 @@ package logging
 import (
 	"os"
 	"time"
-	"${organName?lower_case}-${projectName?lower_case}/pkg/config"
+	"${organName}-${projectName}/pkg/config"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

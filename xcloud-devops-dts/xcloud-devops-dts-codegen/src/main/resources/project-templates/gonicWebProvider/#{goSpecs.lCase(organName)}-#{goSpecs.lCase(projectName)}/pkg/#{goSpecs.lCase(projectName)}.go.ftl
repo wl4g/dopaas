@@ -7,17 +7,17 @@ import (
 	"context"
 	"strings"
 	"time"
-	admin "${organName?lower_case}-${projectName?lower_case}/pkg/admin"
-	config "${organName?lower_case}-${projectName?lower_case}/pkg/config"
-	logging "${organName?lower_case}-${projectName?lower_case}/pkg/logging"
+	admin "${organName}-${projectName}/pkg/admin"
+	config "${organName}-${projectName}/pkg/config"
+	logging "${organName}-${projectName}/pkg/logging"
 <#if moduleMap?exists>
     <#list moduleMap?keys as moduleName>
         <#list moduleMap[moduleName] as table>
-	${moduleName?lower_case} "${organName?lower_case}-${projectName?lower_case}/pkg/modules/${moduleName?lower_case}"
+	${moduleName?lower_case} "${organName}-${projectName}/pkg/modules/${moduleName}"
         </#list>
     </#list>
 </#if>
-	"${organName?lower_case}-${projectName?lower_case}/pkg/utils"
+	"${organName}-${projectName}/pkg/utils"
 
 	"go.uber.org/zap"
 
