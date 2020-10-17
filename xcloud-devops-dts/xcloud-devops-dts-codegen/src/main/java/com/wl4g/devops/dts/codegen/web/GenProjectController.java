@@ -87,7 +87,7 @@ public class GenProjectController extends BaseController {
 	@RequestMapping(value = "/getGenProviderSet")
 	public RespBase<?> getGenProviderSet(String providerSet) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(GenProviderSetDefinition.getGenProviderSet());
+		resp.setData(GenProviderSetDefinition.values());
 		return resp;
 	}
 
