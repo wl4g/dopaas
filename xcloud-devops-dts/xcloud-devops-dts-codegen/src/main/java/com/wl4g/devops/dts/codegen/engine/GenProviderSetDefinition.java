@@ -24,9 +24,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.*;
@@ -94,15 +92,15 @@ public enum GenProviderSetDefinition {
 	}
 
 	/**
-	 * Gets providers by group name.
+	 * Gets providers by {@link GenProviderSetDefinition}.
 	 * 
 	 * @param providerSet
 	 * @return
 	 */
 	public static List<String> getProviders(@Nullable String providerSet) {
-		for (GenProviderSetDefinition en : values()) {
-			if (equalsIgnoreCase(en.name(), providerSet)) {
-				return en.providers();
+		for (GenProviderSetDefinition def : values()) {
+			if (equalsIgnoreCase(def.name(), providerSet)) {
+				return def.providers();
 			}
 		}
 		return emptyList();
@@ -154,15 +152,6 @@ public enum GenProviderSetDefinition {
 			}
 		});
 
-	}
-
-	public static Set<String> getGenProviderSet(){
-		GenProviderSetDefinition[] values = GenProviderSetDefinition.values();
-		Set<String> set = new HashSet();
-		for(GenProviderSetDefinition genProviderSetDefinition: values){
-			set.add(genProviderSetDefinition.name());
-		}
-		return set;
 	}
 
 }
