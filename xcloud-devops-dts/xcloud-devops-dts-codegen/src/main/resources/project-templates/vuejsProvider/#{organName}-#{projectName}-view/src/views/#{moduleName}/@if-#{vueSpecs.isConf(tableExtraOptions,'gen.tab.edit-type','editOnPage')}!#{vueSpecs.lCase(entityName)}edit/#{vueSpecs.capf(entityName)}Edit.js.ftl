@@ -5,9 +5,8 @@ export default {
     name: '${entityName?uncap_first}Edit',
     data() {
         return {
-            id: '',
+            ${pk.attrName}: '',
             isEdit: false,
-
             //弹窗表单
             saveForm: {
 <#list genTableColumns as param>
@@ -16,9 +15,7 @@ export default {
     </#if>
 </#list>
             },
-
             loading: false,
-
             // 表单规则
             rules: {
 <#list genTableColumns as param>
@@ -72,30 +69,23 @@ export default {
     </#if>
 </#list>
             },
-
         }
     },
-
     activated() {
         this.cleanSaveForm();
-        const id = this.$route.query.id;
-        this.id = id;
-        this.saveForm.id = id;
-        if(id){//edit
+        const ${pk.attrName} = this.$route.query.${pk.attrName};
+        this.${pk.attrName} = ${pk.attrName};
+        this.saveForm.${pk.attrName} = ${pk.attrName};
+        if(${pk.attrName}) { // edit?
             this.isEdit = true;
             this.editData();
-        }else{//add
+        } else { // add
             this.isEdit = false;
         }
-
     },
-
     mounted() {
-
     },
-
     methods: {
-
         cleanSaveForm() {
             this.saveForm = {
 <#list genTableColumns as param>
@@ -105,7 +95,6 @@ export default {
 </#list>
             };
         },
-
         saveData() {
             this.loading = true;
             this.$refs['saveForm'].validate((valid) => {
@@ -125,26 +114,22 @@ export default {
                 }
             });
         },
-
         editData() {
-            if (!this.id) {
+            if (!this.${pk.attrName}) {
                 return;
             }
             this.cleanSaveForm();
             this.$$api_${moduleName?lower_case}_${entityName?uncap_first}Detail({
                 data: {
-                    id: this.id,
+                    ${pk.attrName}: this.${pk.attrName},
                 },
                 fn: data => {
                     this.saveForm = data.data;
                 },
             });
         },
-
         back(){
             this.$router.push({ path: '/${moduleName}/${entityName?lower_case}'})
         }
-
-
     }
 }
