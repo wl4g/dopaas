@@ -33,8 +33,8 @@ public class JavaSpecsTests {
 		out.println(JavaSpecs.tableName2className("sys_user"));
 		out.println(JavaSpecs.tableName2ClassName("sys_user"));
 		out.println(JavaSpecs.underlineToHump("sys_user"));
-		out.println(JavaSpecs.firstUCase("user"));
-		out.println(JavaSpecs.firstLCase("USER"));
+		out.println(JavaSpecs.capf("user"));
+		out.println(JavaSpecs.uncapf("USER"));
 	}
 
 }

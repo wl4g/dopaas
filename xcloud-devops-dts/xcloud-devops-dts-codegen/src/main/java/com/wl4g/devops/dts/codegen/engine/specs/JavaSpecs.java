@@ -72,7 +72,7 @@ public class JavaSpecs extends BaseSpecs {
 		int i = tableName.indexOf("_");
 		if (i >= 0) {
 			String sub = tableName.substring(i + 1, tableName.length());
-			return firstUCase(underlineToHump(sub));
+			return uncapf(underlineToHump(sub));
 		}
 		return tableName;
 	}

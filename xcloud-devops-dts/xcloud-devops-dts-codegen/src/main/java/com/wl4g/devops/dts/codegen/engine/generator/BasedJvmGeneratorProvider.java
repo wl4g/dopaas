@@ -28,7 +28,6 @@ import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
-import static java.util.Locale.US;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -66,7 +65,9 @@ public abstract class BasedJvmGeneratorProvider extends BasedWebGeneratorProvide
 		if (nonNull(table)) { // If there
 			packageName.append(".").append(table.getModuleName());
 		}
-		model.put(GEN_TABLE_PACKAGENAME, packageName.toString().toLowerCase(US));
+		// Capital letters are allowed in special cases.
+		// packageName.toString().toLowerCase(US)
+		model.put(GEN_TABLE_PACKAGENAME, packageName.toString());
 
 		// Add model for sub module packageName.
 		// e.g: bean.order, dao.order, service.order, controller.order
