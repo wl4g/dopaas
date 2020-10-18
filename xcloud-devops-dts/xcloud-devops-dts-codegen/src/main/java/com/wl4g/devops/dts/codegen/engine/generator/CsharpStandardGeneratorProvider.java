@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.specs.CSharpSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateResource;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 
@@ -42,7 +42,7 @@ public class CsharpStandardGeneratorProvider extends AbstractGeneratorProvider {
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper resource, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull GenTemplateResource resource, @NotNull MapRenderModel model) {
 		super.customizeRenderingModel(resource, model);
 
 		// Add variable of naming utils.

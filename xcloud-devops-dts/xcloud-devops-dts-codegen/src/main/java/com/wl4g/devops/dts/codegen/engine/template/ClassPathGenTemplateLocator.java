@@ -49,7 +49,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	/**
 	 * Generate template {@link Template} cache.
 	 */
-	private final Map<String, List<TemplateResourceWrapper>> templatesCache = new HashMap<>();
+	private final Map<String, List<GenTemplateResource>> templatesCache = new HashMap<>();
 
 	/**
 	 * Load generate template suffixs.
@@ -60,7 +60,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	public ClassPathGenTemplateLocator() {
 		this(new ArrayList<String>() {
 			{
-				add(DEFAULT_TPL_SUFFIX);
+				add(GenTemplateResource.DEFAULT_TPL_EXT);
 				add(".shtml");
 				add(".html");
 				add(".htm");
@@ -151,8 +151,8 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	}
 
 	@Override
-	public List<TemplateResourceWrapper> locate(String provider) throws Exception {
-		List<TemplateResourceWrapper> tpls = templatesCache.get(provider);
+	public List<GenTemplateResource> locate(String provider) throws Exception {
+		List<GenTemplateResource> tpls = templatesCache.get(provider);
 		if (isJVMDebugging || isNull(tpls)) {
 			synchronized (this) {
 				tpls = templatesCache.get(provider);
@@ -206,7 +206,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 	 * @return
 	 * @throws Exception
 	 */
-	private static TemplateResourceWrapper wrapTemplate(StreamResource res, String provider) throws Exception {
+	private static GenTemplateResource wrapTemplate(StreamResource res, String provider) throws Exception {
 		/**
 		 * e.g: res.getURI().toString()
 		 * 
@@ -229,7 +229,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 		}
 
 		try {
-			return new TemplateResourceWrapper(pathname, toByteArray(res.getInputStream()));
+			return new GenTemplateResource(pathname, toByteArray(res.getInputStream()));
 		} finally {
 			res.getInputStream().close();
 		}

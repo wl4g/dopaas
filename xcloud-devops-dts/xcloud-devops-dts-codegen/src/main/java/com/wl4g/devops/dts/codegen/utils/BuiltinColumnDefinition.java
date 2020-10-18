@@ -22,7 +22,7 @@ import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbType;
 public enum BuiltinColumnDefinition {
 
 	@SuppressWarnings("serial")
-	ID(true, "id", new HashMap<DbType, List<String>>() {
+	ID(false, "id", new HashMap<DbType, List<String>>() {
 		{
 			put(DbType.MySQLV5, asList("bigint"));
 			put(DbType.OracleV11g, asList("number"));
