@@ -25,7 +25,7 @@ import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateResource;
 import org.junit.Test;
 
 import javax.validation.constraints.NotBlank;
@@ -73,27 +73,27 @@ public class GeneratorProviderTests {
 		// For case1
 		//
 
-		List<TemplateResourceWrapper> tpls1 = Lists.newArrayList();
-		tpls1.add(new TemplateResourceWrapper(
+		List<GenTemplateResource> tpls1 = Lists.newArrayList();
+		tpls1.add(new GenTemplateResource(
 				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-common/src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/#{javaSpecs.firstUCase(entityName)}.java.ftl",
 				TEST_TPL_CONTENT));
-		tpls1.add(new TemplateResourceWrapper(
+		tpls1.add(new GenTemplateResource(
 				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/@if-entityName!#{javaSpecs.firstUCase(entityName)}Service.java.ftl",
 				TEST_TPL_CONTENT));
-		tpls1.add(new TemplateResourceWrapper(
+		tpls1.add(new GenTemplateResource(
 				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@if-aaa!#{javaSpecs.firstUCase(entityName)}ServiceImpl.java.ftl",
 				TEST_TPL_CONTENT));
-		tpls1.add(new TemplateResourceWrapper(
+		tpls1.add(new GenTemplateResource(
 				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(controllerSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.assets-type','MvnAssTar')}!#{javaSpecs.firstUCase(entityName)}Controller.java.ftl",
 				TEST_TPL_CONTENT));
-		tpls1.add(new TemplateResourceWrapper(
+		tpls1.add(new GenTemplateResource(
 				"#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(daoSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.assets-type','SpringExecJar')}!#{javaSpecs.firstUCase(entityName)}Dao.java.ftl",
 				TEST_TPL_CONTENT));
 
 		new IamSpringCloudMvnGeneratorProvider(
 				new DefaultGenerateContext(config, newGenTemplateLocator(tpls1), resolver, project, datasource)) {
 			@Override
-			protected void afterRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
+			protected void afterRenderingComplete(@NotNull GenTemplateResource resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
 				generatedFiles.add(writePath);
 			}
@@ -103,15 +103,15 @@ public class GeneratorProviderTests {
 		// For case2
 		//
 
-		List<TemplateResourceWrapper> tpls2 = Lists.newArrayList();
-		tpls2.add(new TemplateResourceWrapper(
+		List<GenTemplateResource> tpls2 = Lists.newArrayList();
+		tpls2.add(new GenTemplateResource(
 				"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/#{vueSpecs.firstUCase(entityName)}.vue.ftl",
 				TEST_TPL_CONTENT));
 
 		new VueGeneratorProvider(
 				new DefaultGenerateContext(config, newGenTemplateLocator(tpls2), resolver, project, datasource)) {
 			@Override
-			protected void afterRenderingComplete(@NotNull TemplateResourceWrapper resource, @NotNull byte[] renderedBytes,
+			protected void afterRenderingComplete(@NotNull GenTemplateResource resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
 				generatedFiles.add(writePath);
 			}
@@ -122,10 +122,10 @@ public class GeneratorProviderTests {
 
 	}
 
-	static GenTemplateLocator newGenTemplateLocator(List<TemplateResourceWrapper> templates) {
+	static GenTemplateLocator newGenTemplateLocator(List<GenTemplateResource> templates) {
 		return new GenTemplateLocator() {
 			@Override
-			public List<TemplateResourceWrapper> locate(String provider) throws Exception {
+			public List<GenTemplateResource> locate(String provider) throws Exception {
 				return templates;
 			}
 

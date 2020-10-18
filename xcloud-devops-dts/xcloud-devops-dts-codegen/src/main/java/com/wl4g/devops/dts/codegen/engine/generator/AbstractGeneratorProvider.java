@@ -23,7 +23,7 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.TemplateResourceWrapper;
+import com.wl4g.devops.dts.codegen.engine.template.GenTemplateResource;
 import com.wl4g.devops.dts.codegen.exception.RenderingGenerateException;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
@@ -51,7 +51,6 @@ import static com.wl4g.components.common.view.Freemarkers.createDefault;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
 import static com.wl4g.components.core.bean.BaseBean.DISABLED;
 import static com.wl4g.components.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
-import static com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator.DEFAULT_TPL_SUFFIX;
 import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
 import static java.io.File.separator;
@@ -104,10 +103,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		GenProject project = context.getGenProject();
 
 		// Locate load templates.
-		List<TemplateResourceWrapper> tplResources = context.getLocator().locate(provider);
+		List<GenTemplateResource> ress = context.getLocator().locate(provider);
 
 		// Rendering templates
-		for (TemplateResourceWrapper res : tplResources) {
+		for (GenTemplateResource res : ress) {
 			try {
 				// Core generate processing.
 				coreRenderingGenerate(res, project);
@@ -121,16 +120,16 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	/**
 	 * Handling core rendering templates generate and save.
 	 *
-	 * @param tplResource
+	 * @param res
 	 * @param project
 	 * @throws Exception
 	 */
-	protected void coreRenderingGenerate(TemplateResourceWrapper tplResource, GenProject project) throws Exception {
-		log.debug("Rendering generate for - {}", tplResource.getPathname());
+	protected void coreRenderingGenerate(GenTemplateResource res, GenProject project) throws Exception {
+		log.debug("Rendering generate for - {}", res.getRawFilename());
 
-		if (tplResource.isRender()) {
+		if (res.isRender()) {
 			// Foreach rendering entitys. (Note: included resolve moduleName)
-			if (tplResource.isForeachEntitys()) {
+			if (res.isForeachEntitys()) {
 				for (GenTable tab : project.getGenTables()) {
 					// Skip disable genTable(entity) rendering.
 					if (equalsIgnoreCase(tab.getStatus(), valueOf(DISABLED))) {
@@ -147,11 +146,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 					tableModel.putAll(convertToRenderingModel(tab));
 
 					// Rendering.
-					processRenderingTemplateToString(tplResource, tableModel);
+					processRenderingTemplateToString(res, tableModel);
 				}
 			}
 			// Foreach rendering modules. (Note: no-include resolve entityName)
-			else if (tplResource.isForeachModules()) {
+			else if (res.isForeachModules()) {
 				// Rendering of moduleMap.
 				Map<String, List<GenTable>> moduleMap = primaryModel.getElement(GEN_MODULE_MAP);
 
@@ -169,7 +168,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 					moduleModel.put(GEN_MODULE_NAME, moduleName);
 
 					// Rendering.
-					processRenderingTemplateToString(tplResource, moduleModel);
+					processRenderingTemplateToString(res, moduleModel);
 				}
 			}
 			// Simple template rendering.
@@ -178,7 +177,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 				MapRenderModel model = primaryModel.clone();
 
 				// Rendering.
-				processRenderingTemplateToString(tplResource, model);
+				processRenderingTemplateToString(res, model);
 			}
 		}
 		// Static resource no-render content.
@@ -187,16 +186,16 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			MapRenderModel model = primaryModel.clone();
 
 			// Add customize model.
-			customizeRenderingModel(tplResource, model);
+			customizeRenderingModel(res, model);
 
 			// If the 'if' directives is enabled and returns false, the
 			// template is not rendered.
-			if (!processIfDirectives(tplResource, model)) {
+			if (!processIfDirectives(res, model)) {
 				return;
 			}
 
 			// Call post rendered.
-			afterRenderingComplete(tplResource, tplResource.getContent(), resolveTemplatePath(tplResource, model));
+			afterRenderingComplete(res, res.getContent(), resolveTemplatePath(res, model));
 		}
 
 	}
@@ -204,31 +203,31 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	/**
 	 * Preparing rendering processing.
 	 *
-	 * @param tplResource
+	 * @param res
 	 * @param model
 	 * @return
 	 */
-	protected String preRendering(@NotNull TemplateResourceWrapper tplResource, @NotEmpty Map<String, Object> model) {
-		notNullOf(tplResource, "tplResource");
+	protected String preRendering(@NotNull GenTemplateResource res, @NotEmpty Map<String, Object> model) {
+		notNullOf(res, "res");
 		notEmptyOf(model, "model");
 
 		// Customizable pre rendering:
 		// ...
 
 		// Default nothing do
-		return tplResource.getContentAsString();
+		return res.getContentAsString();
 	}
 
 	/**
 	 * Post rendering complete processing.
 	 *
-	 * @param tplResource
+	 * @param res
 	 * @param renderedBytes
 	 * @param writePath
 	 */
-	protected void afterRenderingComplete(@NotNull TemplateResourceWrapper tplResource, @NotNull byte[] renderedBytes,
+	protected void afterRenderingComplete(@NotNull GenTemplateResource res, @NotNull byte[] renderedBytes,
 			@NotBlank String writePath) {
-		notNullOf(tplResource, "tplResource");
+		notNullOf(res, "res");
 		notNullOf(renderedBytes, "renderedBytes");
 		hasTextOf(writePath, "writePath");
 
@@ -239,75 +238,69 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	/**
 	 * Customize rendering model
 	 *
-	 * @param tplResource
+	 * @param res
 	 * @param model
 	 * @return
 	 */
-	protected void customizeRenderingModel(@NotNull TemplateResourceWrapper tplResource, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull GenTemplateResource res, @NotNull MapRenderModel model) {
 	}
 
 	/**
 	 * Processing resolving template path.
 	 *
-	 * @param tplResource
+	 * @param res
 	 * @param model
 	 * @return Return resolved template resource canonical path.
 	 * @throws Exception
 	 */
-	protected final String resolveTemplatePath(TemplateResourceWrapper tplResource, MapRenderModel model) throws Exception {
-		notNullOf(tplResource, "tplResource");
+	protected final String resolveTemplatePath(GenTemplateResource res, MapRenderModel model) throws Exception {
+		notNullOf(res, "res");
 		notEmptyOf(model, "model");
-		tplResource.validate();
+		res.validate();
 
-		String pathname = tplResource.getPathname();
 		String writeBasePath = context.getJobDir().getAbsolutePath();
-		if (pathname.endsWith(DEFAULT_TPL_SUFFIX)) {
-			pathname = pathname.substring(0, pathname.length() - DEFAULT_TPL_SUFFIX.length());
-		}
-
 		// Resolve template path with SPEL expression.
-		log.debug("Resolving template path for pathname: {}, model: {}", pathname, model);
-		return writeBasePath.concat(separator).concat(spelExpr.resolve(pathname, model));
+		log.debug("Resolving template path for pathname: {}, model: {}", res.getPathname(), model);
+		return writeBasePath.concat(separator).concat(spelExpr.resolve(res.getPathname(), model));
 	}
 
 	/**
 	 * Processing template rendering to string.
 	 *
-	 * @param tplResource
+	 * @param res
 	 * @param model
 	 * @return Return rendered source codes file path.
 	 * @throws Exception
 	 */
-	private final String processRenderingTemplateToString(TemplateResourceWrapper tplResource, MapRenderModel model)
-			throws Exception {
-		notNullOf(tplResource, "tplResource");
+	private final String processRenderingTemplateToString(GenTemplateResource res, MapRenderModel model) throws Exception {
+		notNullOf(res, "res");
 		notEmptyOf(model, "model");
-		tplResource.validate();
+		res.validate();
 
 		log.debug("Gen rendering of model: {}", model);
 
 		// Step1: Add customize model.
-		customizeRenderingModel(tplResource, model);
+		customizeRenderingModel(res, model);
 
 		// Step2: If the 'if' directives is enabled and returns false, the
 		// template is not rendered.
-		if (!processIfDirectives(tplResource, model)) {
+		if (!processIfDirectives(res, model)) {
 			return null;
 		}
 
 		// Step3: Resolve template path.
-		String writePath = resolveTemplatePath(tplResource, model);
+		String writePath = resolveTemplatePath(res, model);
 
 		// Step4: Preparing rendering.
-		String renderedString = preRendering(tplResource, model);
-		renderedString = isBlank(renderedString) ? tplResource.getContentAsString() : renderedString; // Fallback
+		String renderedString = preRendering(res, model);
+		renderedString = isBlank(renderedString) ? res.getContentAsString() : renderedString; // Fallback
 
 		// Step5: Core rendering.
-		Template template = new Template(tplResource.getName(), renderedString, defaultGenConfigurer);
+		Template template = new Template(res.getShortFilename(), renderedString, defaultGenConfigurer);
 		renderedString = renderingTemplateToString(template, model);
 
 		// Step6: After rendered processing.
-		afterRenderingComplete(tplResource, renderedString.getBytes(UTF_8), writePath);
+		afterRenderingComplete(res, renderedString.getBytes(UTF_8), writePath);
 
 		return writePath;
 	}
@@ -315,19 +308,19 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	/**
 	 * Process parse the 'if' directives expression and get the result.
 	 * 
-	 * @param tplResource
+	 * @param res
 	 * @param model
 	 * @return
 	 */
-	private final boolean processIfDirectives(TemplateResourceWrapper tplResource, MapRenderModel model) {
-		if (tplResource.isIfDirectives()) {
+	private final boolean processIfDirectives(GenTemplateResource res, MapRenderModel model) {
+		if (res.isIfDirectives()) {
 			// 1. Match checks against the key of the data model.
-			if (model.containsKey(tplResource.getIfDirectivesExpr())) {
+			if (model.containsKey(res.getIfDirectivesExpr())) {
 				return true;
 			}
 			// 2. Match the check according to the spel expression.
-			if (hasSpelTemplateExpr(tplResource.getIfDirectivesExpr())) {
-				return spelExpr.resolve(tplResource.getIfDirectivesExpr(), model);
+			if (hasSpelTemplateExpr(res.getIfDirectivesExpr())) {
+				return spelExpr.resolve(res.getIfDirectivesExpr(), model);
 			}
 			// 3. If there is no match, the result is false
 			return false;
