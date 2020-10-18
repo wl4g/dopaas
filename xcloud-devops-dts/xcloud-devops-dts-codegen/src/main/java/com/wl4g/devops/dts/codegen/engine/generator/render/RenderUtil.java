@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.utils;
+package com.wl4g.devops.dts.codegen.engine.generator.render;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.StringUtils2.isTrue;
@@ -44,14 +44,14 @@ import com.wl4g.components.common.reflect.ReflectionUtils2.FieldFilter;
 import com.wl4g.components.common.reflect.ReflectionUtils2.MethodCallback;
 
 /**
- * {@link RenderPropertyUtils}
+ * {@link RenderUtil}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-09-23
  * @sine v1.0.0
  * @see
  */
-public abstract class RenderPropertyUtils {
+public final class RenderUtil {
 
 	/**
 	 * Converting object to flat map model

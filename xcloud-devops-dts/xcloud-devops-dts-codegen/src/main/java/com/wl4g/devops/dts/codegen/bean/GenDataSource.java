@@ -15,12 +15,13 @@
  */
 package com.wl4g.devops.dts.codegen.bean;
 
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.*;
+
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.RenderProperty;
+import com.wl4g.devops.dts.codegen.engine.generator.render.RenderUtil.RenderProperty;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
 
 /**
  * {@link GenDataSource}

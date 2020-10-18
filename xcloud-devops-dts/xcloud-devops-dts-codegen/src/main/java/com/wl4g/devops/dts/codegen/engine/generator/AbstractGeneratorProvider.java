@@ -22,10 +22,10 @@ import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.generator.render.RenderModel;
 import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
 import com.wl4g.devops.dts.codegen.exception.RenderingGenerateException;
-import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -51,8 +51,8 @@ import static com.wl4g.components.common.view.Freemarkers.createDefault;
 import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
 import static com.wl4g.components.core.bean.BaseBean.DISABLED;
 import static com.wl4g.components.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
-import static com.wl4g.devops.dts.codegen.utils.RenderPropertyUtils.convertToRenderingModel;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.RenderUtil.convertToRenderingModel;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.*;
 import static java.io.File.separator;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -77,9 +77,9 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	protected final GenerateContext context;
 
 	/**
-	 * Generate primary {@link MapRenderModel}.
+	 * Generate primary {@link RenderModel}.
 	 */
-	protected final MapRenderModel primaryModel;
+	protected final RenderModel primaryModel;
 
 	public AbstractGeneratorProvider(@NotNull GenerateContext context, @Nullable Map<String, Object> defaultFlatModel) {
 		this.context = notNullOf(context, "context");
@@ -124,7 +124,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param project
 	 * @throws Exception
 	 */
-	protected void coreRenderingGenerate(TemplateResource res, GenProject project) throws Exception {
+	private void coreRenderingGenerate(TemplateResource res, GenProject project) throws Exception {
 		log.debug("Rendering generate for - {}", res.getRawFilename());
 
 		if (res.isRender()) {
@@ -140,7 +140,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 					// When traversing the rendering table (entity), it
 					// needs to share the item information and must be
 					// cloned to prevent it from being covered.
-					MapRenderModel tableModel = primaryModel.clone();
+					RenderModel tableModel = primaryModel.clone();
 
 					// Add rendering model of GenTable.
 					tableModel.putAll(convertToRenderingModel(tab));
@@ -161,7 +161,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 					// When traversing the rendering module, it
 					// needs to share the item information and must be
 					// cloned to prevent it from being covered.
-					MapRenderModel moduleModel = primaryModel.clone();
+					RenderModel moduleModel = primaryModel.clone();
 
 					// Add rendering model of module tables.
 					moduleModel.putAll(convertToRenderingModel(tablesOfModule));
@@ -174,7 +174,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			// Simple template rendering.
 			else {
 				// Clone the primary model to customize the model.
-				MapRenderModel model = primaryModel.clone();
+				RenderModel model = primaryModel.clone();
 
 				// Rendering.
 				processRenderingTemplateToString(res, model);
@@ -183,7 +183,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// Static resource no-render content.
 		else {
 			// Clone the primary model to customize the model.
-			MapRenderModel model = primaryModel.clone();
+			RenderModel model = primaryModel.clone();
 
 			// Add customize model.
 			customizeRenderingModel(res, model);
@@ -198,6 +198,16 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 			afterRenderingComplete(res, res.getContent(), resolveTemplatePath(res, model));
 		}
 
+	}
+
+	/**
+	 * Customize rendering model
+	 *
+	 * @param res
+	 * @param model
+	 * @return
+	 */
+	protected void customizeRenderingModel(@NotNull TemplateResource res, @NotNull RenderModel model) {
 	}
 
 	/**
@@ -236,16 +246,6 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	}
 
 	/**
-	 * Customize rendering model
-	 *
-	 * @param res
-	 * @param model
-	 * @return
-	 */
-	protected void customizeRenderingModel(@NotNull TemplateResource res, @NotNull MapRenderModel model) {
-	}
-
-	/**
 	 * Processing resolving template path.
 	 *
 	 * @param res
@@ -253,7 +253,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return Return resolved template resource canonical path.
 	 * @throws Exception
 	 */
-	protected final String resolveTemplatePath(TemplateResource res, MapRenderModel model) throws Exception {
+	private final String resolveTemplatePath(TemplateResource res, RenderModel model) throws Exception {
 		notNullOf(res, "res");
 		notEmptyOf(model, "model");
 		res.validate();
@@ -272,7 +272,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return Return rendered source codes file path.
 	 * @throws Exception
 	 */
-	private final String processRenderingTemplateToString(TemplateResource res, MapRenderModel model) throws Exception {
+	private final String processRenderingTemplateToString(TemplateResource res, RenderModel model) throws Exception {
 		notNullOf(res, "res");
 		notEmptyOf(model, "model");
 		res.validate();
@@ -312,7 +312,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param model
 	 * @return
 	 */
-	private final boolean processIfDirectives(TemplateResource res, MapRenderModel model) {
+	private final boolean processIfDirectives(TemplateResource res, RenderModel model) {
 		if (res.isIfDirectives()) {
 			// 1. Match checks against the key of the data model.
 			if (model.containsKey(res.getIfDirectivesExpr())) {
@@ -337,9 +337,9 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param defaultFlatModel
 	 * @return
 	 */
-	private final MapRenderModel initPrimaryRenderingModel(CodegenProperties config, GenerateContext context,
+	private final RenderModel initPrimaryRenderingModel(CodegenProperties config, GenerateContext context,
 			@Nullable Map<String, Object> defaultFlatModel) {
-		MapRenderModel model = new MapRenderModel(config.isAllowRenderingCustomizeModelOverride());
+		RenderModel model = new RenderModel(config.isAllowRenderingCustomizeModelOverride());
 
 		try {
 			// Step1: Add model of GenProject.

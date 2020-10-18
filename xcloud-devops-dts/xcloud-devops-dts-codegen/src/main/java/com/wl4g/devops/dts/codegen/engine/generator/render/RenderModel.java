@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.utils;
+package com.wl4g.devops.dts.codegen.engine.generator.render;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.isNull;
@@ -34,14 +34,14 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.devops.dts.codegen.exception.CannotOverridePropertyException;
 
 /**
- * {@link MapRenderModel}
+ * {@link RenderModel}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-09-20
  * @sine v1.0.0
  * @see
  */
-public class MapRenderModel implements Map<String, Object>, Cloneable {
+public class RenderModel implements Map<String, Object>, Cloneable {
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -65,7 +65,7 @@ public class MapRenderModel implements Map<String, Object>, Cloneable {
 	 * 
 	 * @param overridable
 	 */
-	public MapRenderModel(boolean overridable) {
+	public RenderModel(boolean overridable) {
 		this.overridable = overridable;
 	}
 
@@ -199,8 +199,8 @@ public class MapRenderModel implements Map<String, Object>, Cloneable {
 	 * @return
 	 */
 	@Override
-	public final MapRenderModel clone() {
-		MapRenderModel clone = new MapRenderModel(overridable);
+	public final RenderModel clone() {
+		RenderModel clone = new RenderModel(overridable);
 		clone.orig.putAll(this.orig);
 		clone.readonly.set(false);
 		return clone;
@@ -211,7 +211,7 @@ public class MapRenderModel implements Map<String, Object>, Cloneable {
 	 * 
 	 * @return
 	 */
-	public final MapRenderModel readonly() {
+	public final RenderModel readonly() {
 		this.readonly.set(true);
 		return this;
 	}

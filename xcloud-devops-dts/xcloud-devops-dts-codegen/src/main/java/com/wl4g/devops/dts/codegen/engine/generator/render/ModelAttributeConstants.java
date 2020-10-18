@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.utils;
+package com.wl4g.devops.dts.codegen.engine.generator.render;
 
 /**
- * {@link ModelAttributeDefinition}
+ * {@link ModelAttributeConstants}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-25
  * @since
  */
-public abstract class ModelAttributeDefinition {
+public interface ModelAttributeConstants {
 
-	//
-	// --- Gen Common. ---
-	//
+	// --- Gen Common model attribute keys. ---
 
 	public static final String GEN_COMMON_WATERMARK = "watermark";
 	public static final String GEN_COMMON_BASESPECS = "baseSpecs";
@@ -37,9 +35,7 @@ public abstract class ModelAttributeDefinition {
 	public static final String GEN_COMMON_VUESPECS = "vueSpecs";
 	public static final String GEN_COMMON_NGSPECS = "ngSpecs";
 
-	//
-	// --- Gen DataSource. ---
-	//
+	// --- Gen DataSource model attribute keys. ---
 
 	public static final String GEN_DB = "datasource";
 	public static final String GEN_DB_NAME = "dbname";
@@ -51,9 +47,7 @@ public abstract class ModelAttributeDefinition {
 	public static final String GEN_DB_PASSWORD = "dbpassword";
 	public static final String GEN_DB_VERSION = "dbversion";
 
-	//
-	// --- Gen Project. ---
-	//
+	// --- Gen Project model attribute keys. ---
 
 	public static final String GEN_PROJECT_NAME = "projectName";
 	public static final String GEN_PROJECT_ORGAN_TYPE = "organType";
@@ -67,9 +61,7 @@ public abstract class ModelAttributeDefinition {
 	public static final String GEN_PROJECT_EXTRA_OPTIONS = "extraOptions";
 	public static final String GEN_PROJECT_DESCRIPTION = "projectDescription";
 
-	//
-	// --- Gen Module. ---
-	//
+	// --- Gen Module model attribute keys. ---
 
 	/**
 	 * Command syntax character for traversing entities to generate multiple
@@ -79,9 +71,7 @@ public abstract class ModelAttributeDefinition {
 	public static final String GEN_MODULE_SUB_NAME = "subModuleName";
 	public static final String GEN_MODULE_MAP = "moduleMap";
 
-	//
-	// --- Gen Table. ---
-	//
+	// --- Gen Table model attribute keys. ---
 
 	public static final String GEN_TABLE_NAME = "tableName";
 
@@ -104,9 +94,7 @@ public abstract class ModelAttributeDefinition {
 	public static final String GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME = "serviceSubModulePackageName";
 	public static final String GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME = "controllerSubModulePackageName";
 
-	//
-	// --- Gen Table Columns. ---
-	//
+	// --- Gen Table Columns model attribute keys. ---
 
 	public static final String GEN_COLUMN_NAME = "columnName";
 	public static final String GEN_COLUMN_TYPE = "columnType";
@@ -128,9 +116,7 @@ public abstract class ModelAttributeDefinition {
 	public static final String GEN_COLUMN_ISQUERY = "isQuery";
 	public static final String GEN_COLUMN_ISEDIT = "isEdit";
 
-	//
-	// --- Defaults configuration attributes. ---
-	//
+	// --- Based Web defaults model attribute keys. ---
 
 	/**
 	 * Default entry application name. (e.g: The generated project springboot
@@ -151,60 +137,39 @@ public abstract class ModelAttributeDefinition {
 	public static final String GEN_DEF_DEV_VIEW_SERVICE_PORT = "devViewServicePort";
 	// Default config of redis server host. (dev)
 	public static final String GEN_DEF_DEV_REDIS_HOST = "devRedisHost";
-
-	// Automatically generated according to the data source information
-	// configured by the generator.
-
-	// Default config of mysql server host. (dev)
+	/*
+	 * Automatically generated according to the data source configured by the
+	 * generator.
+	 */
 	// public static final String GEN_DEF_DEV_MYSQL_HOST = "devMysqlHost";
-	// // Default config of oracle server host. (dev)
 	// public static final String GEN_DEF_DEV_ORACLE_HOST = "devOracleHost";
-	// // Default config of postgreSQL server host. (dev)
 	// public static final String GEN_DEF_DEV_POSTGRE_HOST = "devPostgreHost";
 
-	// Default config of deploy topDomain. (fat)
 	public static final String GEN_DEF_FAT_TOPDOMAIN = "fatTopDomain";
-	// Default config of backend service host. (fat)
 	public static final String GEN_DEF_FAT_SERVICE_HOST = "fatServiceHost";
-	// Default config of frontend view service host. (fat)
 	public static final String GEN_DEF_FAT_VIEW_SERVICE_HOST = "fatViewServiceHost";
-	// Default config of redis server host. (fat)
 	public static final String GEN_DEF_FAT_REDIS_HOST = "fatRedisHost";
-	// Default config of mysql server host. (fat)
 	public static final String GEN_DEF_FAT_MYSQL_HOST = "fatMysqlHost";
-	// Default config of oracle server host. (dev)
 	public static final String GEN_DEF_FAT_ORACLE_HOST = "fatOracleHost";
-	// Default config of postgreSQL server host. (dev)
 	public static final String GEN_DEF_FAT_POSTGRE_HOST = "fatPostgreHost";
 
-	// Default config of deploy topDomain. (uat)
 	public static final String GEN_DEF_UAT_TOPDOMAIN = "uatTopDomain";
-	// Default config of backend service host. (uat)
 	public static final String GEN_DEF_UAT_SERVICE_HOST = "uatServiceHost";
-	// Default config of frontend view service host. (uat)
 	public static final String GEN_DEF_UAT_VIEW_SERVICE_HOST = "uatViewServiceHost";
-	// Default config of redis server host. (uat)
 	public static final String GEN_DEF_UAT_REDIS_HOST = "uatRedisHost";
-	// Default config of mysql server host. (uat)
 	public static final String GEN_DEF_UAT_MYSQL_HOST = "uatMysqlHost";
-	// Default config of oracle server host. (uat)
 	public static final String GEN_DEF_UAT_ORACLE_HOST = "uatOracleHost";
-	// Default config of postgreSQL server host. (uat)
 	public static final String GEN_DEF_UAT_POSTGRE_HOST = "uatPostgreHost";
 
-	// Default config of deploy topDomain. (pro)
 	public static final String GEN_DEF_PRO_TOPDOMAIN = "proTopDomain";
-	// Default config of backend service host. (pro)
 	public static final String GEN_DEF_PRO_SERVICE_HOST = "proServiceHost";
-	// Default config of frontend view service host. (pro)
 	public static final String GEN_DEF_PRO_VIEW_SERVICE_HOST = "proViewServiceHost";
-	// Default config of redis server host. (pro)
 	public static final String GEN_DEF_PRO_REDIS_HOST = "proRedisHost";
-	// Default config of mysql server host. (pro)
 	public static final String GEN_DEF_PRO_MYSQL_HOST = "proMysqlHost";
-	// Default config of oracle server host. (pro)
 	public static final String GEN_DEF_PRO_ORACLE_HOST = "proOracleHost";
-	// Default config of postgreSQL server host. (pro)
 	public static final String GEN_DEF_PRO_POSTGRE_HOST = "proPostgreHost";
+
+	// --- Shortcut function variable model attribute keys. ---
+	public static final String GEN_SHORTCUT_CHECK_SWAGGER = "isSwagger";
 
 }
