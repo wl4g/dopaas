@@ -35,13 +35,13 @@ import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 
 /**
- * {@link ResourceBundleUtils}
+ * {@link ResourceBundleUtil}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-10
  * @since
  */
-public abstract class ResourceBundleUtils {
+public abstract class ResourceBundleUtil {
 
 	/**
 	 * Reading config resource file content.

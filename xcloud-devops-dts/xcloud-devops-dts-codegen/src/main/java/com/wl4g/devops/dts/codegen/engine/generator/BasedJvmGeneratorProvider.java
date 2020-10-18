@@ -19,15 +19,20 @@ import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.generator.render.RenderModel;
 import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
-import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
 
 import java.util.Map;
 
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.*;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_COMMON_JAVASPECS;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_PACKAGENAME;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_DAO_SUBMODULE_PACKAGENAME;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -47,7 +52,7 @@ public abstract class BasedJvmGeneratorProvider extends BasedWebGeneratorProvide
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull RenderModel model) {
 		super.customizeRenderingModel(resource, model);
 
 		// Add JavaSpecs

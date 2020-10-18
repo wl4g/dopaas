@@ -31,7 +31,7 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils.readResource;
+import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtil.readResource;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.findMethod;

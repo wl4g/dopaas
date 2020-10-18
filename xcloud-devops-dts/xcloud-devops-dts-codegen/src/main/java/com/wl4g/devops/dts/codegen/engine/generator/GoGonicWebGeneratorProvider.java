@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import static com.wl4g.devops.dts.codegen.utils.ModelAttributeDefinition.GEN_COMMON_GOSPECS;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_COMMON_GOSPECS;
 
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.generator.render.RenderModel;
 import com.wl4g.devops.dts.codegen.engine.specs.GolangSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
-import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 /**
  * Golang standard generator provider.
@@ -43,7 +43,7 @@ public class GoGonicWebGeneratorProvider extends AbstractGeneratorProvider {
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull RenderModel model) {
 		super.customizeRenderingModel(resource, model);
 
 		// Add variable of naming utils.
