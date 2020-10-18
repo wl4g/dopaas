@@ -218,7 +218,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// fullProjectName.toString().toLowerCase(US)
 		model.put(GEN_PROJECT_FULLNAME, fullProjectName);
 
-		String fullProjectPath = project.getOrganName().concat(File.separator).concat(project.getProjectName());
+		String fullProjectPath = project.getOrganType().concat(File.separator).concat(project.getOrganName())
+				.concat(File.separator).concat(project.getProjectName());
 		model.put(GEN_PROJECT_FULLPATH, fullProjectPath);
 	}
 

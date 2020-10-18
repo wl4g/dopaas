@@ -50,7 +50,7 @@ public class IamSpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvide
 
 		GenProject project = context.getGenProject();
 		model.put(GEN_SHORTCUT_CHECK_SWAGGER,
-				JavaSpecs.isConfOr(project.getExtraOptions(), "gen.swagger.ui", "bootstrapSwagger2", "officialOas"));
+				JavaSpecs.isConfOr(project.getExtraOptions(), "swagger.ui", "bootstrapSwagger2", "officialOas"));
 	}
 
 }
