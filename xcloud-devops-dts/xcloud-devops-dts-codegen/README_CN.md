@@ -49,18 +49,20 @@ mvn clean install -DskipTests -T 2C
                     │   ├── CodegenAutoConfiguration.java // (A)入口配置类
                     ├── engine
                     │   ├── converter
-                    │   │   ├── MySQLV5TypeConverter.java // (B)多数据库类型转换器(支持MySQL/Oracle/PostgreSQL)
+                    │   │   ├── DbTypeConverter.java // (B)多数据库类型转换器(支持MySQL/Oracle/PostgreSQL)
                     │   ├── generator
-                    // 省略无关代码...
+                    │   │   ├── render.java
+                    │   │   │   ├── ModelAttributeConstants.java // (G)内置的渲染模型变量名定义
+                    // ...
                     │   │   ├── IamSpringCloudMvnGeneratorProvider.java // (C)多种语言、框架组合生成器
                     │   ├── resolver
-                    │   │   ├── MySQLV5MetadataResolver.java // (D)多种数据库表元数据解析器(支持MySQL/Oracle/PostgreSQL)
-                    // 省略无关代码...
+                    │   │   ├── MySQLV5MetadataResolver.java // (D)多种数据库表元数据解析器(支持MySQL/Oracle/PostgreSQL)         │   │
+                    // ...
                     │   ├── specs
                     │   │   ├── JavaSpecs.java // (E)多种语言项目生成，需要有特定不同的规范处理工具类(支持Java/Golang/Python/Csharp/Vue)
                     │   └── template
                     │       ├── ClassPathGenTemplateLocator.java // (F)多种方式的模版工程加载器
-                    // 省略无关代码...
+                    // ...
     └── resources
         ├── generate-templates
             ├── iamSpringCloudMvnProvider // (G) 多种不同框架组合生成器对应的模版工程
@@ -75,9 +77,9 @@ step1: 新建模版工程，[参考(G) iamSpringCloudMvnProvider](src/main/resou
 
 step2: 新建生成处理器，[参考( C) IamSpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/generator/IamSpringCloudMvnGeneratorProvider.java)
 
-step3: 新建模版渲染工具类 (建议)，[参考(E) SpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/naming/SpringCloudMvnGeneratorProvider.java)
+step3: 新建模版渲染工具类 (建议)，[参考(E) JavaSpecs](src/main/java/com/wl4g/devops/dts/codegen/engine/specs/JavaSpecs.java)
 
-step4: 使新建处理器生效，[参考(A) CodegenAutoConfiguration#springMvcGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/config/CodegenAutoConfiguration.java#springMvcGeneratorProvider)
+step4: 使新建处理器生效，[参考(A) CodegenAutoConfiguration#iamSpringMvcGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/config/CodegenAutoConfiguration.java#iamSpringMvcGeneratorProvider)
 
 step5: 准备在您的IDE上启动服务，入口类：  xcloud-devops-dts-starter/src/main/java/com/wl4g/DtsManager.java
 

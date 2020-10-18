@@ -60,6 +60,8 @@ public interface ModelAttributeConstants {
 	public static final String GEN_PROJECT_GEN_TABLES = "genTables";
 	public static final String GEN_PROJECT_EXTRA_OPTIONS = "extOpts";
 	public static final String GEN_PROJECT_DESCRIPTION = "projectDescription";
+	public static final String GEN_PROJECT_FULLNAME = "fullPrjName";
+	public static final String GEN_PROJECT_FULLPATH = "fullPrjPath";
 
 	// --- Gen Module model attribute keys. ---
 
@@ -89,10 +91,10 @@ public interface ModelAttributeConstants {
 	public static final String GEN_TABLE_EXTRA_OPTIONS = "tExtOpts";
 
 	public static final String GEN_TABLE_PACKAGENAME = "packageName";
-	public static final String GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME = "beanSubModulePackageName";
-	public static final String GEN_TABLE_DAO_SUBMODULE_PACKAGENAME = "daoSubModulePackageName";
-	public static final String GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME = "serviceSubModulePackageName";
-	public static final String GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME = "controllerSubModulePackageName";
+	public static final String GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME = "beanSubModPkgName";
+	public static final String GEN_TABLE_DAO_SUBMODULE_PACKAGENAME = "daoSubModPkgName";
+	public static final String GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME = "serviceSubModPkgName";
+	public static final String GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME = "controllerSubModPkgName";
 
 	// --- Gen Table Columns model attribute keys. ---
 

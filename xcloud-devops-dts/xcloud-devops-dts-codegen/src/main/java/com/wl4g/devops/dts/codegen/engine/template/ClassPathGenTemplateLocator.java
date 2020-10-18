@@ -61,6 +61,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 		this(new ArrayList<String>() {
 			{
 				add(TemplateResource.DEFAULT_TPL_EXT);
+
 				add(".shtml");
 				add(".html");
 				add(".htm");
