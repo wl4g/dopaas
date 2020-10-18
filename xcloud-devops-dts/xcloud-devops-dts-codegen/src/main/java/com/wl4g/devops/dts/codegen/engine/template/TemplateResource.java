@@ -39,7 +39,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0 2020-09-16
  * @since
  */
-public final class GenTemplateResource implements Serializable {
+public final class TemplateResource implements Serializable {
 	private static final long serialVersionUID = 4336198329362479594L;
 
 	/**
@@ -102,7 +102,7 @@ public final class GenTemplateResource implements Serializable {
 	/**
 	 * Constructor
 	 */
-	public GenTemplateResource(@NotBlank String rawFilename, @Nullable byte[] content) {
+	public TemplateResource(@NotBlank String rawFilename, @Nullable byte[] content) {
 		this.rawFilename = hasTextOf(rawFilename, "rawFilename");
 		this.shortFilename = hasTextOf(StringUtils2.getFilename(rawFilename), "filename");
 		this.content = content;

@@ -20,7 +20,7 @@ import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateResource;
+import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
@@ -47,7 +47,7 @@ public abstract class BasedJvmGeneratorProvider extends BasedWebGeneratorProvide
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull GenTemplateResource resource, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull MapRenderModel model) {
 		super.customizeRenderingModel(resource, model);
 
 		// Add JavaSpecs

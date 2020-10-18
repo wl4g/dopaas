@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.specs.GolangSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateResource;
+import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 /**
@@ -43,7 +43,7 @@ public class GoGonicWebGeneratorProvider extends AbstractGeneratorProvider {
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull GenTemplateResource resource, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull MapRenderModel model) {
 		super.customizeRenderingModel(resource, model);
 
 		// Add variable of naming utils.
