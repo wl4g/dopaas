@@ -25,21 +25,21 @@ import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttribute
 import javax.validation.constraints.NotNull;
 
 /**
- * {@link VueGeneratorProvider}
+ * {@link IamVueGeneratorProvider}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public class VueGeneratorProvider extends BasedWebGeneratorProvider {
+public class IamVueGeneratorProvider extends BasedWebGeneratorProvider {
 
-	public VueGeneratorProvider(@NotNull GenerateContext context) {
+	public IamVueGeneratorProvider(@NotNull GenerateContext context) {
 		super(context, null);
 	}
 
 	@Override
 	public void doGenerate() throws Exception {
-		doGenerateWithTemplates(GenProviderAlias.VUEJS);
+		doGenerateWithTemplates(GenProviderAlias.IAM_VUEJS);
 	}
 
 	@Override

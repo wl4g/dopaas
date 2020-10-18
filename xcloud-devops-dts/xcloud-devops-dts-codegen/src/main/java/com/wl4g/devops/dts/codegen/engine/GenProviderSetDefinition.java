@@ -42,19 +42,17 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
  */
 public enum GenProviderSetDefinition {
 
-	IamWebMvcVueJS(asList(IAM_SPINGCLOUD_MVN, VUEJS), DbTypeConverter.JAVA),
+	IamWebMvcVueJS(asList(IAM_SPINGCLOUD_MVN, IAM_VUEJS), DbTypeConverter.JAVA),
 
 	IamWebMvc(asList(IAM_SPINGCLOUD_MVN), DbTypeConverter.JAVA),
 
-	DubboWebMvcVueJS(asList(SPINGDUBBO_MVN, VUEJS), DbTypeConverter.JAVA),
+	DubboWebMvcVueJS(asList(SPINGDUBBO_MVN, IAM_VUEJS), DbTypeConverter.JAVA),
 
 	GonicWebMVC(asList(GO_GONICWEB), DbTypeConverter.Golang),
 
-	JustVueJS(asList(VUEJS), DbTypeConverter.JS),
+	JustVueJS(asList(IAM_VUEJS), DbTypeConverter.JS),
 
-	JustNgJS(asList(NGJS), DbTypeConverter.JS),
-
-	ABC(asList(GO_GONICWEB), DbTypeConverter.Golang);
+	JustNgJS(asList(NGJS), DbTypeConverter.JS);
 
 	/** {@link GenProviderAlias} */
 	@NotEmpty

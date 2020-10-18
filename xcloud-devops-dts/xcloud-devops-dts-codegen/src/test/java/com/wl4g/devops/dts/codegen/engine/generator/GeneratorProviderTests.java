@@ -110,7 +110,7 @@ public class GeneratorProviderTests {
 				"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/#{vueSpecs.capf(entityName)}.vue.ftl",
 				TEST_TPL_CONTENT));
 
-		GeneratorProvider vueProvider = new VueGeneratorProvider(
+		GeneratorProvider vueProvider = new IamVueGeneratorProvider(
 				new DefaultGenerateContext(config, newGenTemplateLocator(tpls2), resolver, project, datasource)) {
 			@Override
 			protected void afterRenderingComplete(@NotNull TemplateResource resource, @NotNull byte[] renderedBytes,
