@@ -26,7 +26,7 @@ import com.wl4g.devops.dts.codegen.engine.generator.GoGonicWebGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.PythonStandardGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.SpringDubboMvnGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.IamSpringCloudMvnGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.generator.VueGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.generator.IamVueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.OracleV11gMetadataResolver;
@@ -139,9 +139,9 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@NamingPrototype({ VUEJS })
-	public VueGeneratorProvider vueGeneratorProvider(GenerateContext context) {
-		return new VueGeneratorProvider(context);
+	@NamingPrototype({ IAM_VUEJS })
+	public IamVueGeneratorProvider iamVueGeneratorProvider(GenerateContext context) {
+		return new IamVueGeneratorProvider(context);
 	}
 
 	@Bean

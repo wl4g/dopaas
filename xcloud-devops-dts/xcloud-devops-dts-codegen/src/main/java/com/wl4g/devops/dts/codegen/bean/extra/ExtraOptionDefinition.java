@@ -17,7 +17,7 @@ import com.wl4g.components.common.bean.ConfigOption;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
-import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.VUEJS;
+import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_VUEJS;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.NGJS;
 import static com.wl4g.components.common.collection.CollectionUtils2.isEmpty;
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
@@ -38,9 +38,9 @@ public enum ExtraOptionDefinition {
 
 	SpringCloudSwagger(new GenExtraOption(IAM_SPINGCLOUD_MVN, "swagger.ui", "none", "officialOas", "bootstrapSwagger2")),
 
-	VueJSCompression(new GenExtraOption(VUEJS, "compression", "true", "false")),
+	VueJSCompression(new GenExtraOption(IAM_VUEJS, "compression", "true", "false")),
 
-	VueJSBasedOnAdminUi(new GenExtraOption(VUEJS, "basedon.adminui", "true", "false")),
+	VueJSBasedOnAdminUi(new GenExtraOption(IAM_VUEJS, "basedon.adminui", "true", "false")),
 
 	NgJSCompression(new GenExtraOption(NGJS, "compression", "true", "false"));
 

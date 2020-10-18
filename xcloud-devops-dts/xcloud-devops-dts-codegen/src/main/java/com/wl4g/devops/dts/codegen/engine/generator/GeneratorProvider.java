@@ -77,7 +77,7 @@ public interface GeneratorProvider extends Runnable, Closeable {
 		/**
 		 * VueJS projecs gen provider.
 		 */
-		public static final String VUEJS = "vuejsProvider";
+		public static final String IAM_VUEJS = "iamVuejsProvider";
 
 		/**
 		 * AngularJS projecs gen provider.
