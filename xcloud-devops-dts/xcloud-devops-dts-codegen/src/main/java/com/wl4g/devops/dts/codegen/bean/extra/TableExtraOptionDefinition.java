@@ -42,11 +42,11 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public enum TableExtraOptionDefinition {
 
-	TableDeleteType(new GenTableExtraOption("gen.tab.del-type", "deleteWithLogical", "deleteWithPhysical", "deleteWithNone")),
+	TableDeleteType(new GenTableExtraOption("tab.del-type", "deleteWithLogical", "deleteWithPhysical", "deleteWithNone")),
 
-	TableEditType(new GenTableExtraOption("gen.tab.edit-type", "editOnDialog", "editOnPage")),
+	TableEditType(new GenTableExtraOption("tab.edit-type", "editOnDialog", "editOnPage")),
 
-	IsExportExcel(new GenTableExtraOption("gen.tab.export-excel", "true", "false"));
+	IsExportExcel(new GenTableExtraOption("tab.export-excel", "true", "false"));
 
 	/** Gen provider extra option of {@link GenTableExtraOption} . */
 	@NotNull

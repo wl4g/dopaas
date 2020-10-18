@@ -43,6 +43,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import static com.google.common.base.Charsets.UTF_8;
+
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_PROJECT_FULLNAME;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_PROJECT_FULLPATH;
 import static com.wl4g.components.common.collection.Collections2.ensureMap;
 import static com.wl4g.components.common.io.FileIOUtils.writeFile;
 import static com.wl4g.components.common.lang.Assert2.*;
@@ -208,6 +211,15 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return
 	 */
 	protected void customizeRenderingModel(@NotNull TemplateResource res, @NotNull RenderModel model) {
+		GenProject project = context.getGenProject();
+
+		String fullProjectName = project.getOrganName().concat("-").concat(project.getProjectName());
+		// Capital letters are allowed in special cases.
+		// fullProjectName.toString().toLowerCase(US)
+		model.put(GEN_PROJECT_FULLNAME, fullProjectName);
+
+		String fullProjectPath = project.getOrganName().concat(File.separator).concat(project.getProjectName());
+		model.put(GEN_PROJECT_FULLPATH, fullProjectPath);
 	}
 
 	/**

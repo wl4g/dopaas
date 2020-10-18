@@ -32,17 +32,17 @@ import static com.wl4g.components.common.lang.Assert2.*;
  */
 public enum ExtraOptionDefinition {
 
-	SpringCloudMvnBuildAssetsType(new GenExtraOption(IAM_SPINGCLOUD_MVN, "gen.build.assets-type", "MvnAssTar", "SpringExecJar")),
+	SpringCloudMvnBuildAssetsType(new GenExtraOption(IAM_SPINGCLOUD_MVN, "build.asset-type", "MvnAssTar", "SpringExecJar")),
 
-	SpringCloudMvnIamSecurityMode(new GenExtraOption(IAM_SPINGCLOUD_MVN, "gen.iam.security-mode", "local", "cluster", "gateway")),
+	SpringCloudMvnIamSecurityMode(new GenExtraOption(IAM_SPINGCLOUD_MVN, "iam.mode", "local", "cluster", "gateway")),
 
-	SpringCloudSwagger(new GenExtraOption(IAM_SPINGCLOUD_MVN, "gen.swagger.ui", "none", "officialOas", "bootstrapSwagger2")),
+	SpringCloudSwagger(new GenExtraOption(IAM_SPINGCLOUD_MVN, "swagger.ui", "none", "officialOas", "bootstrapSwagger2")),
 
-	VueJSCompression(new GenExtraOption(VUEJS, "gen.compression", "true", "false")),
+	VueJSCompression(new GenExtraOption(VUEJS, "compression", "true", "false")),
 
-	VueJSBasedOnAdminUi(new GenExtraOption(VUEJS, "gen.basedon.adminui", "true", "false")),
+	VueJSBasedOnAdminUi(new GenExtraOption(VUEJS, "basedon.adminui", "true", "false")),
 
-	NgJSCompression(new GenExtraOption(NGJS, "gen.compression", "true", "false"));
+	NgJSCompression(new GenExtraOption(NGJS, "compression", "true", "false"));
 
 	/** Gen provider extra option of {@link GenExtraOption} . */
 	@NotNull

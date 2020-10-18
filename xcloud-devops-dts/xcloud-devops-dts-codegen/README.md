@@ -46,21 +46,23 @@ mvn clean install -DskipTests -T 2C
              └── dts
                └── codegen
                     ├── config
-                    │   ├── CodegenAutoConfiguration.java // (A) Entry configuration
+                    │   ├── CodegenAutoConfiguration.java // (A)Entry configuration
                     ├── engine
                     │   ├── converter
-                    │   │   ├── MySQLV5TypeConverter.java // (B)Multi database type converter(support MySQL/Oracle/PostgreSQL/...)
+                    │   │   ├── DbTypeConverter.java // (B)Multi database type converter(support MySQL/Oracle/PostgreSQL/...)
                     │   ├── generator
-                    // Ignore irrelevant code...
-                    │   │   ├── SpringCloudMvnGeneratorProvider.java // (C)Multi language and framework combination generator
+                    │   │   ├── render.java
+                    │   │   │   ├── ModelAttributeConstants.java // (G)Built in rendering model variable name definition
+                    // ...
+                    │   │   ├── IamSpringCloudMvnGeneratorProvider.java // (C)Multi language and framework combination generator
                     │   ├── resolver
                     │   │   ├── MySQLV5MetadataResolver.java // (D)Multiple database table metadata parser(support MySQL/Oracle/PostgreSQL/...)
-                    // Ignore irrelevant code...
+                    // ...
                     │   ├── specs
                     │   │   ├── JavaSpecs.java // (E)Multi language project generation requires specific and different specification processing tools(support Java/Golang/Python/CSharp/Vue)
                     │   └── template
-                    │       ├── ClassPathGenTemplateLocator.java // (F)Multi mode template engineering loader
-                    // Ignore irrelevant code...
+                    │       ├── ClassPathGenTemplateLocator.java // (F)Multi mode template loader
+                    // ...
     └── resources
         ├── generate-templates
             ├── iamSpringCloudMvnProvider // (G) Template project corresponding to different frame combination generators
@@ -75,9 +77,9 @@ step1: New template project, [refer(G) iamSpringCloudMvnProvider](src/main/resou
 
 step2: New generator, [refer( C) IamSpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/generator/IamSpringCloudMvnGeneratorProvider.java)
 
-step3: New rendering template tools (Recommend)，[refer(E) SpringCloudMvnGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/engine/naming/SpringCloudMvnGeneratorProvider.java)
+step3: New rendering template tools (Recommend)，[refer(E) JavaSpecs](src/main/java/com/wl4g/devops/dts/codegen/engine/specs/JavaSpecs.java)
 
-step4: Configure to create a new generator[refer(A) CodegenAutoConfiguration#springMvcGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/config/CodegenAutoConfiguration.java#springMvcGeneratorProvider)
+step4: Configure to create a new generator[refer(A) CodegenAutoConfiguration#iamSpringMvcGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/config/CodegenAutoConfiguration.java#iamSpringMvcGeneratorProvider)
 
 step5: Startup the service on your IDE, the entry class: xcloud-devops-dts-starter/src/main/java/com/wl4g/DtsManager.java
 
