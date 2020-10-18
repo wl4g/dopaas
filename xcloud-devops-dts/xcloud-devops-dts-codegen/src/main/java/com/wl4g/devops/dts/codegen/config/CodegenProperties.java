@@ -26,6 +26,7 @@ import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipal;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+import static org.apache.commons.lang3.SystemUtils.USER_NAME;
 
 /**
  * {@link CodegenProperties}
@@ -105,7 +106,11 @@ public class CodegenProperties implements InitializingBean {
 	 */
 	public String generateJobId(String genProjectId) {
 		hasTextOf(genProjectId, "genProjectId");
-		String principalName = getPrincipal();
+		String principalName = USER_NAME;
+		try {
+			principalName = getPrincipal();
+		} catch (Exception e) {
+		}
 		return "job.".concat(principalName).concat("-").concat(genProjectId).concat("-").concat(valueOf(currentTimeMillis()));
 	}
 

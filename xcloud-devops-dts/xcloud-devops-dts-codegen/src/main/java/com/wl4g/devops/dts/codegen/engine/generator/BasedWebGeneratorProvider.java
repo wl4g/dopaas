@@ -18,7 +18,7 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateResource;
+import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
 import javax.validation.constraints.NotNull;
@@ -66,14 +66,13 @@ import java.util.Map;
  */
 public abstract class BasedWebGeneratorProvider extends AbstractGeneratorProvider {
 
-	public BasedWebGeneratorProvider(@NotNull GenerateContext context,
-			@Nullable Map<String, Object> defaultSubModels) {
+	public BasedWebGeneratorProvider(@NotNull GenerateContext context, @Nullable Map<String, Object> defaultSubModels) {
 		// Add model for naming utils.
 		super(context, defaultSubModels);
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull GenTemplateResource resource, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull MapRenderModel model) {
 		super.customizeRenderingModel(resource, model);
 
 		// Add environment defaults attributes.
@@ -81,7 +80,7 @@ public abstract class BasedWebGeneratorProvider extends AbstractGeneratorProvide
 	}
 
 	/**
-	 * Add environment default configuration model attributes.
+	 * Add environment default model attributes.
 	 * 
 	 * @param project
 	 * @param model

@@ -23,7 +23,7 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.GenTemplateResource;
+import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
 import com.wl4g.devops.dts.codegen.exception.RenderingGenerateException;
 import com.wl4g.devops.dts.codegen.utils.MapRenderModel;
 
@@ -103,10 +103,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		GenProject project = context.getGenProject();
 
 		// Locate load templates.
-		List<GenTemplateResource> ress = context.getLocator().locate(provider);
+		List<TemplateResource> ress = context.getLocator().locate(provider);
 
 		// Rendering templates
-		for (GenTemplateResource res : ress) {
+		for (TemplateResource res : ress) {
 			try {
 				// Core generate processing.
 				coreRenderingGenerate(res, project);
@@ -124,7 +124,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param project
 	 * @throws Exception
 	 */
-	protected void coreRenderingGenerate(GenTemplateResource res, GenProject project) throws Exception {
+	protected void coreRenderingGenerate(TemplateResource res, GenProject project) throws Exception {
 		log.debug("Rendering generate for - {}", res.getRawFilename());
 
 		if (res.isRender()) {
@@ -207,7 +207,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param model
 	 * @return
 	 */
-	protected String preRendering(@NotNull GenTemplateResource res, @NotEmpty Map<String, Object> model) {
+	protected String preRendering(@NotNull TemplateResource res, @NotEmpty Map<String, Object> model) {
 		notNullOf(res, "res");
 		notEmptyOf(model, "model");
 
@@ -225,7 +225,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param renderedBytes
 	 * @param writePath
 	 */
-	protected void afterRenderingComplete(@NotNull GenTemplateResource res, @NotNull byte[] renderedBytes,
+	protected void afterRenderingComplete(@NotNull TemplateResource res, @NotNull byte[] renderedBytes,
 			@NotBlank String writePath) {
 		notNullOf(res, "res");
 		notNullOf(renderedBytes, "renderedBytes");
@@ -242,7 +242,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param model
 	 * @return
 	 */
-	protected void customizeRenderingModel(@NotNull GenTemplateResource res, @NotNull MapRenderModel model) {
+	protected void customizeRenderingModel(@NotNull TemplateResource res, @NotNull MapRenderModel model) {
 	}
 
 	/**
@@ -253,7 +253,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return Return resolved template resource canonical path.
 	 * @throws Exception
 	 */
-	protected final String resolveTemplatePath(GenTemplateResource res, MapRenderModel model) throws Exception {
+	protected final String resolveTemplatePath(TemplateResource res, MapRenderModel model) throws Exception {
 		notNullOf(res, "res");
 		notEmptyOf(model, "model");
 		res.validate();
@@ -272,7 +272,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return Return rendered source codes file path.
 	 * @throws Exception
 	 */
-	private final String processRenderingTemplateToString(GenTemplateResource res, MapRenderModel model) throws Exception {
+	private final String processRenderingTemplateToString(TemplateResource res, MapRenderModel model) throws Exception {
 		notNullOf(res, "res");
 		notEmptyOf(model, "model");
 		res.validate();
@@ -312,7 +312,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param model
 	 * @return
 	 */
-	private final boolean processIfDirectives(GenTemplateResource res, MapRenderModel model) {
+	private final boolean processIfDirectives(TemplateResource res, MapRenderModel model) {
 		if (res.isIfDirectives()) {
 			// 1. Match checks against the key of the data model.
 			if (model.containsKey(res.getIfDirectivesExpr())) {
