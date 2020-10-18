@@ -49,14 +49,14 @@
 			<artifactId>xcloud-components-support</artifactId>
 		</dependency>
 		<#-- refer: Run entry: XxxServer.java -->
-		<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
+		<#if javaSpecs.isConf(extOpts, "gen.iam.security-mode", "cluster")>
 		<#-- Authentication center services and business applications are deployed separately and 
 			run in different JVM processes.(e.g: Microservice cluster architecture) -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-client</artifactId>
 		</dependency>
-		<#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
+		<#elseif javaSpecs.isConf(extOpts, "gen.iam.security-mode", "local")>
 		<#-- Authentication logic and business application depend on deployment and are coupled in 
 			the same JVM process.(e.g: Local monomer application) -->
 		<dependency>

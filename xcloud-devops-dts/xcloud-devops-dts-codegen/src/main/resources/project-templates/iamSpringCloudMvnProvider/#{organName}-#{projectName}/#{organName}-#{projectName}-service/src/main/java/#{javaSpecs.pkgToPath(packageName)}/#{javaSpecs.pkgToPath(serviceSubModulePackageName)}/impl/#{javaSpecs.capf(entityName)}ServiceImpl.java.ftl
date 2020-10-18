@@ -58,7 +58,7 @@ public class ${entityName}ServiceImpl implements ${entityName}Service {
     }
 
 <#-- Service delete with logical  -->
-<#if javaSpecs.isConf(tableExtraOptions, "gen.tab.del-type", "deleteWithLogical")>
+<#if javaSpecs.isConf(tExtOpts, "gen.tab.del-type", "deleteWithLogical")>
     @Override
     public int del(${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
         notNullOf(${pk.attrName}, "${pk.attrName}");

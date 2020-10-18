@@ -31,9 +31,9 @@ mvn clean install -DskipTests -T 2C
 
 
 ## API文档
-<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+<#if javaSpecs.isConf(extOpts, "gen.swagger.ui", "bootstrapSwagger2")>
 [http://${devServiceHost}:${entryAppPort}/${entryAppName}/doc.html](http://${devServiceHost}:${devServicePort}/${entryAppName}/doc.html)
-<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+<#elseif javaSpecs.isConf(extOpts, "gen.swagger.ui", "officialOas")>
 [http://${devServiceHost}:${entryAppPort}/${entryAppName}/swagger-ui/index.html](http://${devServiceHost}:${devServicePort}/${entryAppName}/swagger-ui/index.html)
 </#if>
 
