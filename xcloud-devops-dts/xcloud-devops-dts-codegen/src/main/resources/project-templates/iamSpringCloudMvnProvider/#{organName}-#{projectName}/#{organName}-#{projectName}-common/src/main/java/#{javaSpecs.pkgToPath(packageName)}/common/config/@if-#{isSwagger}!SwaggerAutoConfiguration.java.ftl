@@ -7,9 +7,9 @@ package ${organType}.${organName}.${projectName}.common.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+<#if javaSpecs.isConf(extOpts, "gen.swagger.ui", "bootstrapSwagger2")>
 //import io.swagger.annotations.Api;
-<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+<#elseif javaSpecs.isConf(extOpts, "gen.swagger.ui", "officialOas")>
 import io.swagger.annotations.ApiOperation;
 </#if>
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -35,12 +35,12 @@ public class SwaggerAutoConfiguration {
 
     @Bean
     public Docket springfoxSwaggerDocket() {
-<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+<#if javaSpecs.isConf(extOpts, "gen.swagger.ui", "bootstrapSwagger2")>
         return new Docket(DocumentationType.SWAGGER_2).apiInfo(createApiInfo()).select()
                 .apis(RequestHandlerSelectors.basePackage("${organType}.${organName}.${projectName}"))
                 // .apis(RequestHandlerSelectors.withMethodAnnotation(Api.class))
                 .paths(PathSelectors.any()).build();
-<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+<#elseif javaSpecs.isConf(extOpts, "gen.swagger.ui", "officialOas")>
         return new Docket(DocumentationType.OAS_30).apiInfo(createApiInfo()).select().apis(withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any()).build();
 </#if>

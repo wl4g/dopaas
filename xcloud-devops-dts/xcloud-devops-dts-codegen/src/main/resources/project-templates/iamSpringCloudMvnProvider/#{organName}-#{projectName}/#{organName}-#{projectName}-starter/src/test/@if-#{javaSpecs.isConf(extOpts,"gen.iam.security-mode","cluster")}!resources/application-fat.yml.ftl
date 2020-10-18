@@ -15,7 +15,7 @@
 spring:
   cloud:
     devops:
-<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
+<#if javaSpecs.isConf(extOpts, "gen.iam.security-mode", "cluster")>
       iam:
         cors:
           rules:
@@ -34,7 +34,7 @@ spring:
           server-uri: http://iam.${fatTopDomain}/iam-server
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://${fatViewServiceHost}/#/home
-<#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
+<#elseif javaSpecs.isConf(extOpts, "gen.iam.security-mode", "local")>
       iam: # IAM server configuration.
         cors:
           rules:

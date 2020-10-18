@@ -91,7 +91,7 @@ export default {
         }
     },
 
-<#assign isEditOnPage = vueSpecs.isConf(tableExtraOptions, "gen.tab.edit-type", "editOnPage")>
+<#assign isEditOnPage = vueSpecs.isConf(tExtOpts, "gen.tab.edit-type", "editOnPage")>
 <#if isEditOnPage == true>
     activated() {
         this.getData();

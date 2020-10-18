@@ -19,7 +19,7 @@ spring:
     active: dev
   cloud:
     devops:
-<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
+<#if javaSpecs.isConf(extOpts, "gen.iam.security-mode", "cluster")>
       iam: # IAM client configuration.
         cors:
           enabled: true # Default: true
@@ -43,7 +43,7 @@ spring:
             enable-data-cipher: true # Default by true
           session:
             enable-access-token-validity: true # Default by true
-<#elseif javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "local")>
+<#elseif javaSpecs.isConf(extOpts, "gen.iam.security-mode", "local")>
       iam: # IAM server configuration.
         cors:
           enabled: true # Default: true

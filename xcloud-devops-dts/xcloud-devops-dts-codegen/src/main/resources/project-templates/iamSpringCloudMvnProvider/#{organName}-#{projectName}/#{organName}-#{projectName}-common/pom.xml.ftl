@@ -23,7 +23,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+<#if javaSpecs.isConf(extOpts, "gen.swagger.ui", "bootstrapSwagger2")>
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
@@ -47,7 +47,7 @@
 			<artifactId>xcloud-iam-common</artifactId>
 		</dependency>
 		<!-- https://github.com/springfox/springfox-demos -->
-<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+<#if javaSpecs.isConf(extOpts, "gen.swagger.ui", "bootstrapSwagger2")>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -56,7 +56,7 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>swagger-bootstrap-ui</artifactId>
         </dependency>
-<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+<#elseif javaSpecs.isConf(extOpts, "gen.swagger.ui", "officialOas")>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>

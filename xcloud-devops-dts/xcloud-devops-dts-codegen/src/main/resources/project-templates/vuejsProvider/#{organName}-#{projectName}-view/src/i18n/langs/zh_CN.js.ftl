@@ -56,7 +56,7 @@ const zh_CN = {
         },
 <#-- Whether Iam is in cluster/local/gateway mode, Vue codes will still hard code 
 these variables, So there is no need to judge. -->
-<#-- <#if vueSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")> -->
+<#-- <#if vueSpecs.isConf(extOpts, "gen.iam.security-mode", "cluster")> -->
         iam: {
             'menu': '菜单',
             'contactPhone': '联系手机号',

@@ -870,7 +870,7 @@ CREATE TABLE `sys_cluster_config` (
 -- ----------------------------
 BEGIN;
 <#assign clusterType = 2 />
-<#if javaSpecs.isConf(extraOptions, "gen.iam.security-mode", "cluster")>
+<#if javaSpecs.isConf(extOpts, "gen.iam.security-mode", "cluster")>
 <#assign clusterType = 1 />
 INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://iam.${devTopDomain}:14040', 'http://iam-services.${devTopDomain}:14040/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://iam.${fatTopDomain}', 'http://iam-services.${fatTopDomain}/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);

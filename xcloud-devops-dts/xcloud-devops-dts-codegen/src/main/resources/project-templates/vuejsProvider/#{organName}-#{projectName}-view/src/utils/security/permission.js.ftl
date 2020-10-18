@@ -171,7 +171,7 @@ router.beforeEach(async (to, from, next) => {
 
           // 特殊处理newpipeline页面
           highLevel.forEach(n => {
-<#assign isEditOnPage = vueSpecs.isConf(tableExtraOptions, "gen.tab.edit-type", "editOnPage")>
+<#assign isEditOnPage = vueSpecs.isConf(tExtOpts, "gen.tab.edit-type", "editOnPage")>
 <#if moduleMap?exists>
     <#list moduleMap?keys as moduleName>
             if (n.permission === '${moduleName}') {

@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+<#if javaSpecs.isConf(extOpts, "gen.swagger.ui", "bootstrapSwagger2")>
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
-<#elseif javaSpecs.isConf(extraOptions, "gen.swagger.ui", "officialOas")>
+<#elseif javaSpecs.isConf(extOpts, "gen.swagger.ui", "officialOas")>
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -38,7 +38,7 @@ import ${packageName}.${serviceSubModulePackageName}.${entityName?cap_first}Serv
 * @Date ${now}
 * @since ${since}
 */
-<#if javaSpecs.isConf(extraOptions, "gen.swagger.ui", "bootstrapSwagger2")>
+<#if javaSpecs.isConf(extOpts, "gen.swagger.ui", "bootstrapSwagger2")>
 @Api(tags = { "${moduleName}/${functionSimpleName}" }, description = "${comments}", value = "${functionName}")
 </#if>
 @RestController
@@ -48,7 +48,7 @@ public class ${entityName}Controller extends BaseController {
     @Autowired
     private ${entityName?cap_first}Service ${entityName?uncap_first}Service;
 
-    <#if javaSpecs.isConfOr(extraOptions, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
+    <#if javaSpecs.isConfOr(extOpts, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
     @ApiOperation(value = "查询${functionSimpleName}信息（分页）")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "页码，取值范围：1 <= pageNum", dataType="int32", defaultValue = "1"),
@@ -61,7 +61,7 @@ public class ${entityName}Controller extends BaseController {
         return resp;
     }
 
-    <#if javaSpecs.isConfOr(extraOptions, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
+    <#if javaSpecs.isConfOr(extOpts, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
     @ApiOperation(value = "新增${functionSimpleName}信息")
     </#if>
     @RequestMapping(value = "/save", method = { POST, PUT })
@@ -71,7 +71,7 @@ public class ${entityName}Controller extends BaseController {
         return resp;
     }
 
-    <#if javaSpecs.isConfOr(extraOptions, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
+    <#if javaSpecs.isConfOr(extOpts, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
     @ApiOperation(value = "查询${functionSimpleName}详细信息")
     <#-- dataType="${pk.attrType}" -->
     @ApiImplicitParams({ @ApiImplicitParam(name = "${pk.attrName}", value = "${functionSimpleName}信息ID", dataType="int64", required = true) })
@@ -83,7 +83,7 @@ public class ${entityName}Controller extends BaseController {
         return resp;
     }
 
-    <#if javaSpecs.isConfOr(extraOptions, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
+    <#if javaSpecs.isConfOr(extOpts, "gen.swagger.ui", "bootstrapSwagger2", "officialOas")>
     @ApiOperation(value = "删除${functionSimpleName}信息")
     <#-- dataType="${pk.attrType}" -->
     @ApiImplicitParams({ @ApiImplicitParam(name = "${pk.attrName}", value = "待删除的${functionSimpleName}信息ID", dataType="int64", required = true) })

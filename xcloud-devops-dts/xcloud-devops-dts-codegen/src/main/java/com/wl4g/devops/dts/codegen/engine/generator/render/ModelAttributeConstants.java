@@ -58,7 +58,7 @@ public interface ModelAttributeConstants {
 	public static final String GEN_PROJECT_SINCE = "since"; // of GenTable???
 	public static final String GEN_PROJECT_COPYRIGHT = "copyright";
 	public static final String GEN_PROJECT_GEN_TABLES = "genTables";
-	public static final String GEN_PROJECT_EXTRA_OPTIONS = "extraOptions";
+	public static final String GEN_PROJECT_EXTRA_OPTIONS = "extOpts";
 	public static final String GEN_PROJECT_DESCRIPTION = "projectDescription";
 
 	// --- Gen Module model attribute keys. ---
@@ -86,7 +86,7 @@ public interface ModelAttributeConstants {
 	public static final String GEN_TABLE_FUNC_AUTHOR = "functionAuthor";
 	public static final String GEN_TABLE_COLUMNS = "genTableColumns";
 	public static final String GEN_TABLE_PRIMARY = "pk";
-	public static final String GEN_TABLE_EXTRA_OPTIONS = "tableExtraOptions";
+	public static final String GEN_TABLE_EXTRA_OPTIONS = "tExtOpts";
 
 	public static final String GEN_TABLE_PACKAGENAME = "packageName";
 	public static final String GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME = "beanSubModulePackageName";
