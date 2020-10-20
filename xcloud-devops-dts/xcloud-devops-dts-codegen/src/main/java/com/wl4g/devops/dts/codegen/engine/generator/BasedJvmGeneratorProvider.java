@@ -95,7 +95,7 @@ public abstract class BasedJvmGeneratorProvider extends BasedWebGeneratorProvide
 		}
 
 		// Add MvnAssTar options.
-		model.put(GEN_SHORTCUT_CHECK_MVNASSTAR, JavaSpecs.isConf(project.getExtraOptions(), "build.assets-type", "MvnAssTar"));
+		model.put(GEN_SHORTCUT_CHECK_MVNASSTAR, JavaSpecs.isConf(project.getExtraOptions(), "build.asset-type", "MvnAssTar"));
 	}
 
 }
