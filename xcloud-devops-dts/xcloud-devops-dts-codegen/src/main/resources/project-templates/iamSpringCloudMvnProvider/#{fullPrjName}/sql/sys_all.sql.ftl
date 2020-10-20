@@ -608,8 +608,12 @@ INSERT INTO `sys_menu` VALUES (${nextMenuId}, '${moduleName}', '${moduleName}', 
         <#assign parentMenuSortSeq = parentMenuSortSeq + 100>
         <#assign subMenuSortSeq = 100>
         <#list moduleMap[moduleName] as table>
-INSERT INTO `sys_menu` VALUES (${javaSpecs.genNextId()}, '${table.entityName}', '${table.functionNameSimple}', 1, 'classifyA', 2, 0, ${nextMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${moduleName}/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+          <#assign nextTableMenuId = javaSpecs.genNextId()>
+INSERT INTO `sys_menu` VALUES (${nextTableMenuId}, '${table.entityName}', '${table.functionNameSimple}', 1, 'classifyA', 2, 0, ${nextMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${moduleName}/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
             <#assign subMenuSortSeq = subMenuSortSeq + 1>
+          <#if table.isEditOnPage == true>
+INSERT INTO `sys_menu` VALUES (${javaSpecs.genNextId()}, '${table.entityName} Edit', '${table.functionNameSimple}编辑', 1, 'classifyA', 3, 0, ${nextTableMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}:edit', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}Edit', '/${moduleName}/${table.entityName?lower_case}/edit', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+          </#if>
         </#list>
     </#list>
 </#if>

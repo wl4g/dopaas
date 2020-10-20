@@ -14,7 +14,8 @@ export default [
         name: '保存用户',
         method: 'saveUser',
         path: '/user/save',
-        type: 'json',
+        type: 'post',
+        dataType: 'json',
         sysModule: global.iam
     },
     {
@@ -43,7 +44,8 @@ export default [
         name: '保存menu',
         method: 'saveMenu',
         path: '/menu/save',
-        type: 'json',
+        type: 'post',
+        dataType: 'json',
         sysModule: global.iam
     },
     {
@@ -79,7 +81,8 @@ export default [
         name: '保存角色',
         method: 'saveRole',
         path: '/role/save',
-        type: 'json',
+        type: 'post',
+        dataType: 'json',
         sysModule: global.iam
     },
     {
@@ -108,7 +111,8 @@ export default [
         name: '保存Group',
         method: 'saveGroup',
         path: '/group/save',
-        type: 'json',
+        type: 'post',
+        dataType: 'json',
         sysModule: global.iam
     },
     {
@@ -237,7 +241,8 @@ export default [
         name: '保存',
         method: 'saveContact',
         path: '/contact/save',
-        type: 'json',
+        type: 'post',
+        dataType: 'json',
         sysModule: global.iam
     },
     {
@@ -295,7 +300,7 @@ export default [
 
 // [顺序优先特殊接口，直接走ajax]登录完成时，获取路由动态创建菜单
 export function getRoutes() {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         ajax({
             type: 'get',
             path: '/menu/list',
