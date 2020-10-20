@@ -98,7 +98,7 @@
 				</executions>
 			</plugin>
 		<#-- Build artifact package type.(MvnAssTar/SpringExecJar) -->
-		<#if javaSpecs.isConf(extOpts, "build.assets-type", "MvnAssTar")>
+		<#if javaSpecs.isConf(extOpts, "build.asset-type", "MvnAssTar")>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -120,7 +120,7 @@
 					</execution>
 				</executions>
 			</plugin>
-		<#elseif javaSpecs.isConf(extOpts, "build.assets-type", "SpringExecJar")>
+		<#elseif javaSpecs.isConf(extOpts, "build.asset-type", "SpringExecJar")>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

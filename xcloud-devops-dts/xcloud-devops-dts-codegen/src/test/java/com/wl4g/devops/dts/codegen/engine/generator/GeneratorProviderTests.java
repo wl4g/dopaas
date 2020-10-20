@@ -84,10 +84,10 @@ public class GeneratorProviderTests {
 				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@if-aaa!#{javaSpecs.capf(entityName)}ServiceImpl.java.ftl",
 				TEST_TPL_CONTENT));
 		tpls1.add(new TemplateResource(
-				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(controllerSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.assets-type','MvnAssTar')}!#{javaSpecs.capf(entityName)}Controller.java.ftl",
+				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(controllerSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.asset-type','MvnAssTar')}!#{javaSpecs.capf(entityName)}Controller.java.ftl",
 				TEST_TPL_CONTENT));
 		tpls1.add(new TemplateResource(
-				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(daoSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.assets-type','SpringExecJar')}!#{javaSpecs.capf(entityName)}Dao.java.ftl",
+				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(daoSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.asset-type','SpringExecJar')}!#{javaSpecs.capf(entityName)}Dao.java.ftl",
 				TEST_TPL_CONTENT));
 
 		GeneratorProvider iamProvider = new IamSpringCloudMvnGeneratorProvider(
