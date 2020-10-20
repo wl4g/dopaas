@@ -16,6 +16,9 @@
 package com.wl4g.devops.dts.kit.license;
 
 import java.io.*;
+
+import static org.apache.commons.lang3.StringUtils.endsWithAny;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -44,7 +47,17 @@ public final class LicensePackageGeneratorTool {
 					commentFile(child, comments);
 				}
 			} else {
-				if (file.getName().toLowerCase().endsWith(".java")) {
+				/**
+				 * <pre>
+				 *  ".clj"  Clojure Source Code
+				 *  ".cljs" ClojureScript Source Code
+				 *  ".cljc" Clojure Macros Code
+				 *  ".cljx" Clojure Portable Code
+				 *  ".edn"  Clojure Extensible Data Notation File
+				 * </pre>
+				 */
+				if (endsWithAny(file.getName().toLowerCase(), ".java", ".scala", ".groovy", ".kt", ".clj", ".cljs", ".cljc",
+						".cljx", ".edn")) {
 					System.out.println(file.getName());
 					count++;
 					try {
