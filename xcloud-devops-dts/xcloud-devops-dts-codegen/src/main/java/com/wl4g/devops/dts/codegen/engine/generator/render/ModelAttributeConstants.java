@@ -173,5 +173,7 @@ public interface ModelAttributeConstants {
 
 	// --- Shortcut function variable model attribute keys. ---
 	public static final String GEN_SHORTCUT_CHECK_SWAGGER = "isSwagger";
+	public static final String GEN_SHORTCUT_CHECK_MVNASSTAR = "isMvnAssTar";
+	public static final String GEN_SHORTCUT_CHECK_IAMCLUSTER = "isIamCluster";
 
 }

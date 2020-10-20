@@ -33,6 +33,7 @@ import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttribute
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_DAO_SUBMODULE_PACKAGENAME;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_SHORTCUT_CHECK_MVNASSTAR;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -93,6 +94,8 @@ public abstract class BasedJvmGeneratorProvider extends BasedWebGeneratorProvide
 			model.put(GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME, controllerSubModulePackageName);
 		}
 
+		// Add MvnAssTar options.
+		model.put(GEN_SHORTCUT_CHECK_MVNASSTAR, JavaSpecs.isConf(project.getExtraOptions(), "build.assets-type", "MvnAssTar"));
 	}
 
 }
