@@ -14,7 +14,8 @@ export default [
         name: 'save${entityName?cap_first}',
         method: 'save${entityName?cap_first}',
         path: '/${entityName?lower_case}/save',
-        type: 'json',
+        type: 'post',
+        dataType: 'json',
         sysModule: global.${moduleName?lower_case}
     },
     {

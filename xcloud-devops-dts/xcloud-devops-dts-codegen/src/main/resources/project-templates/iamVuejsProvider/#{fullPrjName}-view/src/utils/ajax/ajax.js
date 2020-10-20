@@ -3,7 +3,8 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import qs from 'qs'
 import global from "@/common/global_variable";
-import { store } from "../index";
+import {store} from "../index";
+
 Vue.use(VueAxios, axios)
 
 // 导入封装的回调函数
@@ -18,38 +19,96 @@ Vue.axios.defaults.timeout = 30000
 Vue.axios.defaults.withCredentials = true
 
 /**
- * 封装axios的通用请求
- * 
- * @param  {string}   type              get或post
- * @param  {string}   pathParams        url参数
- * @param  {string}   url               请求的接口URL
- * @param  {object}   data              传的参数，没有则传空对象
- * @param  {Function} fn                成功函数
- * @param  {Function} fn                失败函数
- * @param  {boolean}  tokenFlag         是否需携带token参数@deprecated
- * @param  {object}   headers
- * @param  {object}   opts
- * @param  {object}   sysModule
+ * Axios的通用请求
+ *
+ * @param  {string}    type           get或post
+ * @param  {string}    dataType       数据类型(json|query或缺省)
+ * @param  {string}    pathParams     URL参数
+ * @param  {string}    path           请求URL的path
+ * @param  {object}    data           body参数(可空)
+ * @param  {Function}  fn             成功函数
+ * @param  {Function}  errFn          失败函数
+ * @param  {object}    headers        请求头
+ * @param  {object}    opts           Axios设置选项
+ * @param  {object}    sysModule      系统模块信息对象
  */
 export default function ({
-    type,
-    pathParams,
-    path,
-    data,
-    fn,
-    errFn,
-    headers,
-    opts,
-    sysModule,
-} = {}) {
-    // 根据sys获取baseUrl
+                             type,
+                             dataType,
+                             pathParams,
+                             path,
+                             data,
+                             fn,
+                             errFn,
+                             headers,
+                             opts,
+                             sysModule,
+                         } = {}) {
+    // step1: 获取具体模块BaseURL
     var baseUrl = global.getBaseUrl(sysModule);
     var p = baseUrl + path;
     if (typeof path === 'function') {
         p = path(pathParams || {})
     }
 
-    //统一添加currentOrganizationCode
+    // step2: 设置axios内置属性
+    var options = {
+        method: type.toUpperCase(),
+        url: p,
+        headers: headers && typeof headers == 'object' ? headers : {},
+        withCredentials: true, // 实现cors必须设置
+    }
+    if (opts && typeof opts == 'object') {
+        for (var f in opts) {
+            options[f] = opts[f]
+        }
+    }
+    // Sets request data.
+    let reqDataKey = 'GET,HEAD,TRACE'.includes(options.method) ? 'params' : 'data';
+    /**
+     * for example(SpringMVC):
+     * Case1:
+     * @RequestMapping("detail") // default by 'application/x-www-form-urlencoded'
+     * public Object detail(Long id) {...}
+     *
+     * Case2:
+     * @RequestMapping("save") // default by 'application/json'
+     * public Object save(@RequestBody MyBean mybean) {...}
+     *
+     * Case3:
+     * @RequestMapping("save") // default by 'application/x-www-form-urlencoded'
+     * public Object save(MyBean mybean, String str) {...}
+     *
+     */
+    if (!dataType || dataType == 'query') {
+        if (typeof data == 'object') {
+            // To flat URL parameters.
+            options[reqDataKey] = qs.stringify(data);
+        } else {
+            options[reqDataKey] = data;
+        }
+        if (!options.headers['Content-Type']) {
+            // Refer:org.springframework.web.HttpMediaTypeNotSupportedException: Content type 'application/x-www-form-urlencoded;charset=UTF-8' not supported
+            options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        }
+    } else {
+        options[reqDataKey] = data;
+        if (!options.headers['Content-Type']) {
+            // options.headers['Content-Type'] = 'application/json;charset=UTF-8'; // Spring4.x-
+            options.headers['Content-Type'] = 'application/json'; // Spring5.x+
+        }
+    }
+
+    // step3: Add build-in security headers(replayToken/xsrfToken).
+    if ('POST,PUT,DELETE'.includes(options.method)) {
+        var iamCore = new IAMCore();
+        var replayToken = iamCore.generateReplayToken();
+        options.headers[replayToken.headerName] = replayToken.value;
+        var xsrfToken = iamCore.getXsrfToken();
+        options.headers[xsrfToken.headerName] = xsrfToken.value;
+    }
+
+    // step4: 统一添加organCode(用于控制数据权限)
     const currentOrganization = store.get("currentOrganization");
     if (currentOrganization) {
         if (p.indexOf('?') > 0) {
@@ -59,42 +118,12 @@ export default function ({
         }
     }
 
-    var options = {
-        method: type === 'json' ? 'post' : type,
-        url: p,
-        headers: headers && typeof headers === 'object' ? headers : {},
-        withCredentials: true, // 实现cors必须设置
-    }
-    options[type === 'get' ? 'params' : 'data'] = (type === 'json' ? data : qs.stringify(data))
-
-    // 分发显示加载样式任务
-    // this.$store.dispatch('show_loading')
-    // Axios内置属性设置
-    if (opts && typeof opts === 'object') {
-        for (var f in opts) {
-            options[f] = opts[f]
-        }
-    }
-
-    // Add build-in security headers(replayToken/xsrfToken).
-    if (options.method.toUpperCase() == 'POST' || options.method.toUpperCase() == 'DELETE') {
-        var iamCore = new IAMCore();
-        var replayToken = iamCore.generateReplayToken();
-        options.headers[replayToken.headerName] = replayToken.value;
-        var xsrfToken = iamCore.getXsrfToken();
-        options.headers[xsrfToken.headerName] = xsrfToken.value;
-    }
-
-    // 发送请求
+    // step5: Send request.
     Vue.axios(options).then((res) => {
         //console.debug("Response data.code: "+ res.data[gbs.api_status_key_field]);
-        // this.$store.dispatch('hide_loading')
-
-        // Backend response code: 200
         if (res.data[gbs.api_status_key_field] == gbs.api_status_value_field) {
-            fn(res.data)
-        } else {
-            //返回code不是200的时候处理
+            fn(res.data);
+        } else { // Failure
             if (gbs.api_custom[res.data[gbs.api_status_key_field]]) {
                 gbs.api_custom[res.data[gbs.api_status_key_field]](this, res.data, options.method, p, fn, errFn, data)
             } else if (errFn) {
@@ -109,7 +138,6 @@ export default function ({
             }
         }
     }).catch((ex) => {
-        // this.$store.dispatch('hide_loading');
         if (errFn) {
             errFn.call(this, ex);
         } else {

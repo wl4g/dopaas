@@ -111,7 +111,7 @@ export default {
         },
         addData() {
 <#if isEditOnPage == true>
-            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit'})
+            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}/edit'})
 <#else>
             this.cleanSaveForm();
             this.dialogVisible = true;
@@ -168,7 +168,7 @@ export default {
         },
         editData(row) {
 <#if isEditOnPage == true>
-            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}edit', query: {${pk.attrName}: row.id}})
+            this.$router.push({ path: '/${moduleName}/${entityName?lower_case}/edit', query: {${pk.attrName}: row.id}})
 <#else>
             if (!row.id) {
                 return;
