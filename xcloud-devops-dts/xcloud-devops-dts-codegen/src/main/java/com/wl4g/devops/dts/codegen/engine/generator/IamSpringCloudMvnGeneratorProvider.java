@@ -15,12 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.generator.render.RenderModel;
-import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
-import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_SHORTCUT_CHECK_SWAGGER;
 
 import javax.validation.constraints.NotNull;
 
@@ -42,15 +37,6 @@ public class IamSpringCloudMvnGeneratorProvider extends BasedJvmGeneratorProvide
 	@Override
 	public void doGenerate() throws Exception {
 		doGenerateWithTemplates(GenProviderAlias.IAM_SPINGCLOUD_MVN);
-	}
-
-	@Override
-	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull RenderModel model) {
-		super.customizeRenderingModel(resource, model);
-
-		GenProject project = context.getGenProject();
-		model.put(GEN_SHORTCUT_CHECK_SWAGGER,
-				JavaSpecs.isConfOr(project.getExtraOptions(), "swagger.ui", "bootstrapSwagger2", "officialOas"));
 	}
 
 }

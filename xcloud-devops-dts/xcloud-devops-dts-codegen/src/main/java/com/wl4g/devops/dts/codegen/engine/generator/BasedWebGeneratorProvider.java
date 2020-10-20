@@ -19,6 +19,7 @@ import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.generator.render.RenderModel;
+import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
 
 import javax.validation.constraints.NotNull;
@@ -52,6 +53,8 @@ import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttribute
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_SERVICE_HOST;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_TOPDOMAIN;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_VIEW_SERVICE_HOST;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_SHORTCUT_CHECK_SWAGGER;
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_SHORTCUT_CHECK_IAMCLUSTER;
 import static java.util.Locale.US;
 
 import java.util.Map;
@@ -77,6 +80,14 @@ public abstract class BasedWebGeneratorProvider extends AbstractGeneratorProvide
 
 		// Add environment defaults attributes.
 		addEnvironmentDefaultAttributes(context.getGenProject(), model);
+
+		// Add swagger options.
+		GenProject project = context.getGenProject();
+		model.put(GEN_SHORTCUT_CHECK_SWAGGER,
+				BaseSpecs.isConfOr(project.getExtraOptions(), "swagger.ui", "bootstrapSwagger2", "officialOas"));
+
+		// Add IAM options.
+		model.put(GEN_SHORTCUT_CHECK_IAMCLUSTER, BaseSpecs.isConf(project.getExtraOptions(), "iam.mode", "cluster"));
 	}
 
 	/**
