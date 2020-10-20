@@ -86,7 +86,12 @@ public class PipelineServiceImpl implements PipelineService {
 	@Override
 	public PageModel list(PageModel pm, String pipeName, String providerKind, String environment) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null));
+		List<Pipeline> list = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
+		for(Pipeline pipeline : list){
+			List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao.selectByPipeId(pipeline.getId());
+			pipeline.setPipeStepBuildingProjects(pipeStepBuildingProjects);
+		}
+		pm.setRecords(list);
 		return pm;
 	}
 
