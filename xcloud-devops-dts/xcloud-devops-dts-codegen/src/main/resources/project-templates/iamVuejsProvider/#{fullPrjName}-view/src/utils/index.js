@@ -1,10 +1,10 @@
-import store from './store/'
+import cache from './cache/'
 import ajax from './ajax/'
 import string from './string/'
 // import security from './security/'
 
 export {
-  store,
+  cache,
   ajax,
   string,
   // security

@@ -1,8 +1,7 @@
 import {
-    store as utilstore
+    cache
 } from '../../utils/'
-
-import store from '../../store'
+import i18nutil from '../../common/i18nutil'
 import ThemePicker from '../../components/theme-picker'
 import OrganizationPanel from '../../components/organization-panel'
 
@@ -16,6 +15,7 @@ export default {
     data() {
         return {
             lang: 'zh_CN',
+            display: '',
             dialog: {
                 show_access: false,
                 show_set: false,
@@ -72,9 +72,8 @@ export default {
         }
     },
     mounted() {
-        // this.setDialogInfo('access');
-        this.routList = utilstore.get('routList');
-        // this.onGetSetting();
+        this.routList = cache.get('rootDeepChildRoutes');
+        this.changeDisplay();
     },
     methods: {
         getMenuName(item) {
@@ -87,6 +86,8 @@ export default {
                 this.$i18n.locale = this.lang;
             }
             sessionStorage.setItem("authzPrincipalLangAttributeName", this.$i18n.locale);
+            let target = this.$route.meta;
+            document.title = i18nutil.getPageTitle(target);
             this.$$api_iam_applylocale({
                 data: {
                     lang: this.$i18n.locale
@@ -95,11 +96,14 @@ export default {
 
                 },
             })
+            this.changeDisplay();
+        },
+        changeDisplay(){
+            let lang = this.$i18n.locale;
+            this.display = i18nutil.getDisplayByLang(lang);
         },
         getUsername() {
-            //TODO bug
-            //return "there has bug";
-            return utilstore.get('userinfo.username')
+            return cache.get('login_username')
         },
         logout() {
             this.$confirm('确认安全退出登录?', '确认', {
@@ -111,14 +115,8 @@ export default {
                     this.$$api_iam_logout({
                         data: {},
                         fn: data => {
-                            utilstore.remove('userinfo.username');
-                            //clean router
-                            //utilstore.remove("routList");
-                            //store.commit('update_routList', { routList: [] })
-
-                            //window.location.href = IAM.Core.getIamBaseUri() + "/logout";
+                            cache.remove('login_username');
                             this.$router.push('/login');
-                            
                             location.reload();
                         },
                     });
@@ -211,10 +209,6 @@ export default {
          * 修改系统设置信息
          */
         onUpdateSetting() {
-            // console.log(this.dialog.set_info.login_style);
-            // console.log(this.dialog.set_info.disabled_update_pass);
-            // console.log(this.dialog.set_info.id);
-
             this.$$api_system_updateSetting({
                 data: {
                     id: this.dialog.set_info.id,
@@ -228,7 +222,7 @@ export default {
         },
 
         // 切换侧边栏菜单汇总页显示状态
-        toggleSidebarLightbox(){
+        toggleSidebarLightbox() {
             this.$root.$emit('lightBoxVisibleChange')
         }
     }

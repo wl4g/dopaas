@@ -1,8 +1,8 @@
 /**
- * Created by sailengsi on 2017/5/10.
+ * Created by <Wanglsir@gmail.com> on 2019/5/10.
  */
 import {
-  store
+  cache
 } from 'utils/'
 
 import * as types from './mutations_types'
@@ -10,11 +10,11 @@ import * as types from './mutations_types'
 export default {
   [types.UPDATE_USERINFO] (state, userDb) {
     state.userinfo = userDb.userinfo || {}
-    store.set('userinfo', state.userinfo)
+    cache.set('userinfo', state.userinfo)
   },
 
   [types.REMOVE_USERINFO] (state) {
-    store.remove('userinfo')
+    cache.remove('userinfo')
     state.userinfo = {}
   },
 
@@ -22,13 +22,13 @@ export default {
     state.remumber.remumber_flag = userDb.remumber_flag
     state.remumber.remumber_login_info = userDb.remumber_login_info
 
-    store.set('remumber_flag', state.remumber.remumber_flag)
-    store.set('remumber_login_info', state.remumber.remumber_login_info)
+    cache.set('remumber_flag', state.remumber.remumber_flag)
+    cache.set('remumber_login_info', state.remumber.remumber_login_info)
   },
 
   [types.REMOVE_REMUMBER] (state) {
-    store.remove('remumber_flag')
-    store.remove('remumber_login_info')
+    cache.remove('remumber_flag')
+    cache.remove('remumber_login_info')
 
     state.remumber.remumber_flag = false
     state.remumber.remumber_login_info = {

@@ -1,3 +1,5 @@
+# ${organName?cap_first} ${projectName?cap_first} View
+
 ## 简介
 ${projectDescription}
 
@@ -43,3 +45,7 @@ npm run dev
 [后端项目](../../../${vueSpecs.lCase(organName)}-${vueSpecs.lCase(projectName)})
 
 
+<p align="center">
+</br>
+${watermark}
+</p>

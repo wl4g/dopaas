@@ -1,4 +1,4 @@
-import { store } from "../../utils";
+import { cache } from "../../utils";
 
 const version = require('element-ui/package.json').version // element-ui version from node_modules
 const ORIGINAL_THEME = '#409EFF' // default color
@@ -31,13 +31,13 @@ export default {
         // refer: https://developer.mozilla.org/zh-CN/docs/Web/API/Window/localStorage
 
         // Get from cache first
-        let themeType = store.get("global_theme");
+        let themeType = cache.get("global_theme");
         if (!themeType) {
             // Sets by default rule
             if (new Date().getHours() >= 19 || new Date().getHours() < 6) {
-                store.set("global_theme", (themeType = 'dark'));
+                cache.set("global_theme", (themeType = 'dark'));
             } else {
-                store.set("global_theme", (themeType = 'light'));
+                cache.set("global_theme", (themeType = 'light'));
             }
         }
         if (themeType == 'dark') {
@@ -58,7 +58,7 @@ export default {
                 this.setTheme(this.theme);
             }
             // Save theme.
-            store.set("global_theme", themeType);
+            cache.set("global_theme", themeType);
         },
         // updateStyle(style, oldCluster, newCluster) {
         //     debugger

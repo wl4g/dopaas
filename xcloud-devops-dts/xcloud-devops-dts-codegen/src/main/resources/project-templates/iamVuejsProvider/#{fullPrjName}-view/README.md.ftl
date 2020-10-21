@@ -1,3 +1,5 @@
+# ${organName?cap_first} ${projectName?cap_first} View
+
 ## Introduction
 ${projectDescription}
 
@@ -41,3 +43,7 @@ Ready to access page after startup：[http://${devViewServiceHost}:${devViewServ
 [Backend project](../../../${vueSpecs.lCase(organName)}-${vueSpecs.lCase(projectName)})
 
 
+<p align="center">
+</br>
+${watermark}
+</p>

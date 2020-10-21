@@ -102,29 +102,29 @@
             </el-row>
             <el-row>
                 <el-col :span="12">
-                    <el-form-item :label="$t('message.iam.routePath')" prop="routePath" ref="routePathRef" :rules="asyncRoutePathRule">
+                    <el-form-item :label="$t('message.iam.routePath')" prop="routeNamespace">
                         <el-col :span="22">
-                            <el-input v-model="formFields.routePath">
-                                <template slot="prepend">/#</template>
+                            <el-input v-model="formFields.routeNamespace">
+                                <!--<template slot="prepend">/#</template>-->
                             </el-input>
                         </el-col>
                         <el-col :span="2" class="text-center">
                             <el-tooltip placement="top">
-                                <div slot="content">点击菜单时请求的路由的地址,如:/#/ci/pipeline<br />如果包含子菜单，可为空</div>
+                                <div slot="content">点击菜单时请求的路由的地址,如:/pipeline<br />最终真实的地址会与所有父级拼接在一齐，得到例如：<br />/ci/pipeline</div>
                                 <i class="el-icon-question"></i>
                             </el-tooltip>
                         </el-col>
                     </el-form-item>
                 </el-col>
 
-                <el-col :span="12" v-if="formFields.type == '2' || formFields.type == '1'">
+                <el-col :span="12" v-if="formFields.type == '2' || formFields.type == '1' || formFields.type == '3'"><!--TODO formFields.type == '3' 待商榷：编辑页面算是按钮类型吗? -->
                     <el-form-item :label="$t('message.iam.pageLocation')" prop="pageLocation">
                         <el-col :span="22">
                             <el-input v-model="formFields.pageLocation"></el-input>
                         </el-col>
                         <el-col :span="2" class="text-center">
                             <el-tooltip placement="top">
-                                <div slot="content">点击菜单时实际打开的页面地址,与路由地址对应,<br />当类型为:静态菜单时,表示vue页面文件路径,如:/ci/pipeline.vue;<br />当类型为:动态菜单时,表示内容页面地址,如:http://google.com;
+                                <div slot="content">点击菜单时实际打开的页面地址,与路由地址对应,<br />当类型为:静态菜单时,表示vue页面文件路径,如:/ci/pipeline;<br />当类型为:动态菜单时,表示内容页面地址,如:http://google.com;
                                 </div>
                                 <i class="el-icon-question"></i>
                             </el-tooltip>

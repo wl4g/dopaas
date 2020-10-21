@@ -1,4 +1,4 @@
-import {store} from "../../utils";
+import {cache} from "../../utils";
 
 export default {
   // 头部当前路由，匹配高亮所用

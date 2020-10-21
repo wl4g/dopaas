@@ -1,7 +1,6 @@
 import it from "element-ui/src/locale/lang/it";
 import {
-  store as utilstore,
-  store
+  cache
 } from '../../utils/'
 import SidebarItem from './SidebarItem'
 
@@ -46,7 +45,7 @@ export default {
           fullPath
         });
 
-        var routes = store.get('routList')
+        var routes = cache.get('rootDeepChildRoutes')
         if (routes) {
           for (var i = 0; i < routes.length; i++) {
             if (routes[i].path === rootPath && !routes[i].hidden) {
@@ -119,7 +118,7 @@ export default {
     setRouterGroup() {
       var self = this;
       var keyWords = this.keyword.trim().toUpperCase();
-      var routerList = utilstore.get('allRouter');
+      var routerList = cache.get('deepChildRoutes');
       var res = {};
 
       routerList.forEach(function (item) {
@@ -158,6 +157,7 @@ export default {
     },
 
     handleKeyWordSearch(e) {
+      debugger
       this.setRouterGroup();
     },
 
@@ -197,7 +197,7 @@ export default {
     })
   },
   mounted() {
-    this.routList = utilstore.get('routList');
+    this.routList = cache.get('rootDeepChildRoutes');
   },
   watch: {
     $route(to, from) {

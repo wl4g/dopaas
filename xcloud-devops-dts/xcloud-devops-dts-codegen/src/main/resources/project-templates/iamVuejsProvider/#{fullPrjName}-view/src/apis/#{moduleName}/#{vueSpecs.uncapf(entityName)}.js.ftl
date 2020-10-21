@@ -32,7 +32,6 @@ export default [
         type: 'post',
         sysModule: global.${moduleName?lower_case}
     },
-
 ]
 
 

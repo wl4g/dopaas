@@ -61,7 +61,7 @@ export default {
                 parentName: '',
                 permission: '',
                 pageLocation: '',
-                routePath: '',
+                routeNamespace: '',
                 icon: '',
                 sort: '',
                 type: '',
@@ -76,6 +76,7 @@ export default {
                 displayName: [{required: true, message: 'Please input displayName', trigger: 'blur'}],
                 permission: [{required: true, message: 'Please input permission', trigger: 'blur'}],
                 type: [{required: true, message: 'Please Select Menu Type', trigger: 'blur'}],
+                routeNamespace: [{required: true, message: 'Please input routePath', trigger: 'blur'}],
                 sort: [
                     {required: true, message: 'Please input sort', trigger: 'blur'},
                     {validator: checkNumber, trigger: 'blur'}
@@ -179,7 +180,7 @@ export default {
                 parentId: opts.data.parentId,
                 permission: opts.data.permission,
                 pageLocation: opts.data.pageLocation,
-                routePath: opts.data.routePath,
+                routeNamespace: opts.data.routeNamespace,
                 icon: opts.data.icon,
                 sort: opts.data.sort,
                 type: opts.data.type ? opts.data.type.toString() : '',
@@ -202,7 +203,7 @@ export default {
                 parentName: '',
                 permission: '',
                 pageLocation: '',
-                routePath: '',
+                routeNamespace: '',
                 icon: '',
                 sort: '',
                 type: '',
@@ -248,14 +249,6 @@ export default {
             });
         },
 
-        /**
-         * 菜单树节点选中事件
-         */
-        /*checkChange(node){
-          this.formFields.parentModuleId = node.moduleId
-          this.formFields.parentModuleName = node.moduleName + ' / ' + node.levelLabel
-        },*/
-
         formatIconJson() {
             if (!iconJson || !iconJson['glyphs']) {
                 return;
@@ -265,8 +258,6 @@ export default {
             for (let i in glyphs) {
                 glyphs[i].font_class = css_prefix_text + glyphs[i].font_class
             }
-
-            console.info(glyphs);
             this.icons = glyphs;
 
         },
@@ -311,7 +302,7 @@ export default {
             if (selfChecked) {
                 this.$refs.modulesTree.setCheckedNodes([node]);
                 this.formFields.parentId = node.id;
-                this.setParentName(node.id)
+                this.setParentName(node.id);
                 this.treeShow = false;
             }
 

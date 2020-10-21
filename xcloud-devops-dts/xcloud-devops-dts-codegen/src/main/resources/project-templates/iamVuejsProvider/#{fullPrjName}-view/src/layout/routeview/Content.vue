@@ -6,21 +6,16 @@
   </div>
 </template>
 <script>
-  export default {
-    name: 'mainBody',
-    data () {
-      return {}
-    },
-    methods: {},
-    created () {
-
-    },
-    mounted () {
-
-    }
-  }
+export default {
+  name: "mainBody",
+  data() {
+    return {};
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+};
 </script>
 
 <style scoped lang='less'>
-
 </style>

@@ -1,4 +1,4 @@
-import { store } from "../../utils";
+import { cache } from "../../utils";
 import iputil from "../../common/iputil";
 
 // 路由懒加载
@@ -27,7 +27,9 @@ export default {
             return;
         }
 
-        var routList = this.$store.state.router.routList;
+        //var routList = this.$store.state.router.routList;
+        var routList = cache.get('flatOneChildRoutes');
+
         if (this.$route.redirectedFrom && this.$route.redirectedFrom != '/') {
             // 跳转刷新前页面
             this.$router.push({ path: this.$route.redirectedFrom });
@@ -70,7 +72,7 @@ For more information, more refer to: \nhttps://github.com/wl4g/xcloud-devops/blo
             // 1. Load syscluster modules.
             this.$$api_iam_clusterConfigLoadInit({
                 fn: data => {
-                    store.set("iam_system_modules", data.data);
+                    cache.set("iamSysModules", data.data);
                     console.debug("Loaded sysmodules config.");
                 },
                 errFn: () => {
@@ -80,7 +82,7 @@ For more information, more refer to: \nhttps://github.com/wl4g/xcloud-devops/blo
             // 2. Load sysdict.
             this.$$api_iam_dictLoadInit({
                 fn: data => {
-                    store.set("dicts_cache", data.data);
+                    cache.set("dicts_cache", data.data);
                     console.debug("Loaded sysmodules config.");
                 },
                 errFn: () => {

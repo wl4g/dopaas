@@ -1,7 +1,5 @@
-import iamutil from './iamutil.js'
-import permission from './permission.js'
+import sysmodules from './sysmodules.js'
 
 export default {
-  iamutil,
-  permission
+    sysmodules
 }

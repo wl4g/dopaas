@@ -1,6 +1,6 @@
 import echarts from "echarts";
 import it from "element-ui/src/locale/lang/it";
-import { store } from "../../utils";
+import { cache } from "../../utils";
 import fa from "element-ui/src/locale/lang/fa";
 import AreaSelector from "../area-selector";
 
@@ -370,14 +370,14 @@ export default {
             this.currentOrganizationCode = item.organizationCode;
             this.currentOrganization = item;
 
-            store.set("currentOrganization", item);
+            cache.set("currentOrganization", item);
 
             location.reload()
             //this.$router.go(0)
         },
 
         getCurrentOrganization() {
-            const currentOrganization = store.get("currentOrganization");
+            const currentOrganization = cache.get("currentOrganization");
             if (currentOrganization) {
                 this.current = currentOrganization.name;
                 this.currentOrganizationCode = currentOrganization.organizationCode;

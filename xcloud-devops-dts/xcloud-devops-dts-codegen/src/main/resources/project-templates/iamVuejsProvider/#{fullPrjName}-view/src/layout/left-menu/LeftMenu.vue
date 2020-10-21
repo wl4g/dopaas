@@ -13,16 +13,14 @@
             <i :class='[{"el-icon-arrow-left":$store.state.leftmenu.menu_flag},{"el-icon-arrow-right":!$store.state.leftmenu.menu_flag}]'></i>
         </div>
     </div>
-
     <transition name="sidebar-fade">
         <div class="sidebar-lightbox" v-show="lightBoxVisible">
             <div class="sidebar-lightbox-list">
                 <div class="sidebar-lightbox-header" @mouseenter="beforeOpenMaskLayer" @mouseleave="resetMaskLayer" @click="toggleMaskLayer">
                     <i class="el-icon-s-grid"></i>
-                    产品与服务
+                    {{$t('message.iam.navEntryName')}}
                     <i class="el-icon-arrow-right"></i>
                 </div>
-
                 <el-menu theme="dark" :default-active="$store.state.router.headerCurRouter" class="el-menu-demo" mode="horizontal" unique-opened router @select="parentLevelMenuClick">
                     <el-menu-item v-for='(item,index) in routList' :index="item.path" :key='item.path' v-if='!item.hidden && (($store.state.user.userinfo.access_status===1 && $store.state.user.userinfo.web_routers[item.path]) || $store.state.user.userinfo.access_status!==1)'>
                         <svg class="top-menu-iconfont" aria-hidden="true" style="cursor:pointer;">
@@ -35,26 +33,22 @@
             </div>
         </div>
     </transition>
-
     <div class="bottom-layer" v-show="lightBoxVisible" @click="parentLevelMenuClick"></div>
-
     <transition name="mask-fade">
-
-      <div class="menu-list-mask" v-show="maskVisible">
-        <div class="list-mask-search-bar" :class="isKeyWordFocus ? 'active': ''">
-          <el-input class="list-mask-search-input" ref="maskSearchInput" v-model="keyword" placeholder="请输入关键字搜索" prefix-icon="el-icon-search" @keydown.native.enter="handleKeyWordSearch" @focus="isKeyWordFocus=true" @blur="isKeyWordFocus=false"></el-input>
-        </div>
-        <div class="mask-list">
-          <div class="mask-list-item" v-for="(item,name) of routerGroupByClassify">
-            <p class="mask-list-item-title">{{name}}</p>
-            <ul class="mask-list-item-ul">
-              <li v-for="n of item">
-                <span class="mask-list-item-link" @click="handleRouteLinkClick(n.routePath)"> {{n.displayName}}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
+        <div class="menu-list-mask" v-show="maskVisible">
+            <div class="list-mask-search-bar" :class="isKeyWordFocus ? 'active': ''">
+                <el-input class="list-mask-search-input" ref="maskSearchInput" v-model="keyword" placeholder="请输入关键字搜索" prefix-icon="el-icon-search" @keyup.native="handleKeyWordSearch" @focus="isKeyWordFocus=true" @blur="isKeyWordFocus=false"></el-input>
+            </div>
+            <div class="mask-list">
+                <div class="mask-list-item" v-for="(item,name) of routerGroupByClassify">
+                    <p class="mask-list-item-title">{{name}}</p>
+                    <ul class="mask-list-item-ul">
+                        <li v-for="n of item">
+                            <span class="mask-list-item-link" @click="handleRouteLinkClick(n.routePath)"> {{n.displayName}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
             <i class="mask-close-btn el-icon-close" @click="parentLevelMenuClick"></i>
         </div>
     </transition>

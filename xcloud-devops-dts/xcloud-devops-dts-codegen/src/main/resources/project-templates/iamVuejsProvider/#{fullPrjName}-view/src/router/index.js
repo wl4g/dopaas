@@ -1,5 +1,5 @@
 /**
- * Created by sailengsi on 2017/5/11.
+ * Created by <Wanglsir@gmail.com> on 2019/5/11.
  */
 import Vue from 'vue'
 import Router from 'vue-router'

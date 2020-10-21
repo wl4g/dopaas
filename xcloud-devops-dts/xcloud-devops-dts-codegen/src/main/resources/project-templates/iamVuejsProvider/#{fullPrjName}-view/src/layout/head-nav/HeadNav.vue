@@ -71,7 +71,7 @@
         </el-select>-->
         <el-dropdown @command="changeLang" style="height:50px;line-height:50px;cursor: pointer">
           <span class="el-dropdown-link" style="height: 50px;display: block;">
-            {{$t('message.common.language')}}<i class="el-icon-caret-bottom el-icon--right"></i>
+            {{display}}<i class="el-icon-caret-bottom el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="zh_CN">中文</el-dropdown-item>

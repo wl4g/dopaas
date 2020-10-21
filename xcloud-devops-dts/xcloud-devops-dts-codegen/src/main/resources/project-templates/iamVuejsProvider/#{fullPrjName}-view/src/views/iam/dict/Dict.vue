@@ -26,9 +26,7 @@
                 <div class="line"></div>
                 Total： <span class="number">{{total}}</span>
             </div>
-
-            <!-- 新增按钮 -->
-            <el-button type="primary" @click="addData()">+</el-button>
+            <el-button type="primary" style="float:right;margin-right:20px" @click="addData()">{{$t('message.common.add')}} Dictionaries</el-button>
         </div>
         <!-- 查询结果表格 -->
         <div>
@@ -127,16 +125,11 @@
                     </span>
         </el-dialog>
     </section>
-
 </template>
-
-
 <script>
     import Dict from './Dict.js'
-
     export default Dict
 </script>
 
 <style scoped>
-
 </style>

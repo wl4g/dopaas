@@ -1,4 +1,4 @@
-import { store } from "../utils";
+import { cache } from "../utils";
 
 export default {
 <#if vueSpecs.isConf(extOpts, "iam.mode", "cluster")>
@@ -24,9 +24,9 @@ export default {
     },
 </#list>
     getBaseUrl: function (sysModule) {
-        // Extract baseUri from store.
+        // Extract baseUri from cache.
         let baseUri = '';
-        let sysModuleCache = store.get("iam_system_modules");
+        let sysModuleCache = cache.get("iam_system_modules");
         if (sysModuleCache && sysModuleCache[sysModule.cluster] && sysModuleCache[sysModule.cluster]['extranetBaseUri']) {
             baseUri = sysModuleCache[sysModule.cluster]['extranetBaseUri'];
         } else {
@@ -34,7 +34,7 @@ export default {
             if (sysModule && sysModule.cluster == this.iam.cluster) {
                 baseUri = new IAMCore(this.iam).getIamBaseUri();
             } else {
-                console.error("Cannot get baseUri from store, No such sysModule: " + sysModule);
+                console.error("Cannot get baseUri from cache, No such sysModule: " + sysModule);
             }
         }
         console.debug("Got sysModule baseUri: ", baseUri);
