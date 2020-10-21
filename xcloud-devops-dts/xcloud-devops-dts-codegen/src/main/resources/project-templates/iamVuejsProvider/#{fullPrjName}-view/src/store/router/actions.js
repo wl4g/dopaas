@@ -1,7 +1,4 @@
 import * as types from './mutations_types'
-import { store } from "../../utils";
-import promise from "../../views/login/promise";
-import router from "../../router";
 import { getRoutes } from '@/apis/iam'
 
 export default {

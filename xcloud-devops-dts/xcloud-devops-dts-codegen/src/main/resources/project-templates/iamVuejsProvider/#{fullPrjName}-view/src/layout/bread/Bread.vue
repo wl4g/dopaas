@@ -19,8 +19,7 @@
 
 <script>
   import {
-    store as utilstore,
-    store
+    cache
   } from '../../utils/'
 
   export default {
@@ -36,19 +35,23 @@
       },
 
       getMenuName(routePath){
-        var routerList = utilstore.get('allRouter');
+        var routerList = cache.get('deepChildRoutes');
         let route = routerList.find(n => {
           return n.routePath === routePath;
         });
         if(route){
-          return route.displayName;
+          let lang = this.$i18n.locale;
+          if(lang == 'en_US'){
+            return route.name;
+          }else{
+            return route.displayName;
+          }
         }else{
           return;
         }
       },
 
       dealPath(route){
-        console.debug('into make bread',route);
         let result = [];
         let routes = route.split("/");
         for(let i = 0; i<routes.length; i++){
@@ -76,7 +79,6 @@
 
     },
     created () {
-      console.info(this.$route);
       if (this.$route.matched.length) {
         var name = this.$route.matched[this.$route.matched.length - 1].name
         this.strong = this.getPageText(name)

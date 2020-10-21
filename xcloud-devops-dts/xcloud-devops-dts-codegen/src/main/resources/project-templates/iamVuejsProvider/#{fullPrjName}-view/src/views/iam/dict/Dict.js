@@ -1,6 +1,6 @@
 import { transDate, getDay } from 'utils/'
 import dictutil from "../../../common/dictutil";
-import { store } from "../../../utils";
+import { cache } from "../../../utils";
 
 export default {
     name: 'dict',
@@ -145,7 +145,7 @@ export default {
                             this.dialogVisible = false;
                             this.$$api_iam_dictCache({
                                 fn: data => {
-                                    store.set("dicts_cache", data.data);
+                                    cache.set("dicts_cache", data.data);
                                 },
                             });
                             this.cleanSaveForm();

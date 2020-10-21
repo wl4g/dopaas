@@ -7,26 +7,22 @@ import 'register/'
 import store from 'store/'
 import dictutil from './common/dictutil'
 import globalVariable from './common/global_variable.js'
-Vue.prototype.dictutil = dictutil;
-Vue.prototype.GLOBAL = globalVariable;
-
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-Vue.use(ElementUI, { size: 'mini' });
-import dictstore from "@/store/global/dictstore";
-import '@/utils/security/permission'
-import promise from "@/views/login/promise";
+import VueClipboard from 'vue-clipboard2'
+import OrganizationSelector from './components/organization-selector';
+import SvgIcon from './layout/left-menu/svgIcon'
 import i18n from '@/i18n/i18n'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import '@/utils/security/sysmodules'
+
+Vue.prototype.dictutil = dictutil;
+Vue.prototype.GLOBAL = globalVariable;
+Vue.use(ElementUI, { size: 'mini' });
 Vue.use(mavonEditor)
-import VueClipboard from 'vue-clipboard2'
 Vue.use(VueClipboard)
-
-import  OrganizationSelector from  './components/organization-selector';
-Vue.component('organization-selector',OrganizationSelector);
-
-import SvgIcon from './layout/left-menu/svgIcon'// svg component
+Vue.component('organization-selector', OrganizationSelector);
 Vue.component('svg-icon', SvgIcon)
 
 Vue.config.productionTip = false;
@@ -58,12 +54,6 @@ new Promise(resolve => {
         },
         mounted() {
             console.debug('根组件：mounted')
-            //promise.buildRoleRoute(this);
         }
     });
 })
-
-
-
-
-

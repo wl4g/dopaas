@@ -3,7 +3,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import qs from 'qs'
 import global from "@/common/global_variable";
-import {store} from "../index";
+import {cache} from "../index";
 
 Vue.use(VueAxios, axios)
 
@@ -64,7 +64,6 @@ export default function ({
         }
     }
     // Sets request data.
-    let reqDataKey = 'GET,HEAD,TRACE'.includes(options.method) ? 'params' : 'data';
     /**
      * for example(SpringMVC):
      * Case1:
@@ -78,23 +77,24 @@ export default function ({
      * Case3:
      * @RequestMapping("save") // default by 'application/x-www-form-urlencoded'
      * public Object save(MyBean mybean, String str) {...}
-     *
      */
-    if (!dataType || dataType == 'query') {
-        if (typeof data == 'object') {
-            // To flat URL parameters.
-            options[reqDataKey] = qs.stringify(data);
+    let dataKey = 'GET,HEAD,TRACE'.includes(options.method) ? 'params' : 'data';
+    let useContentType = 'POST,PUT'.includes(options.method) && !options.headers['Content-Type'];
+    if (!dataType || dataType.toLowerCase() == 'query') { // default by 'query'
+        if (dataKey == 'data' && (typeof data == 'object')) {
+            // To flat URL parameters. (if method is POST,PUT)
+            options[dataKey] = qs.stringify(data);
         } else {
-            options[reqDataKey] = data;
+            options[dataKey] = data;
         }
-        if (!options.headers['Content-Type']) {
+        if (useContentType) {
             // Refer:org.springframework.web.HttpMediaTypeNotSupportedException: Content type 'application/x-www-form-urlencoded;charset=UTF-8' not supported
             options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
-    } else {
-        options[reqDataKey] = data;
-        if (!options.headers['Content-Type']) {
-            // options.headers['Content-Type'] = 'application/json;charset=UTF-8'; // Spring4.x-
+    } else if (dataType.toLowerCase() == 'json') {
+        options[dataKey] = data;
+        if (useContentType) {
+            // 'application/json;charset=UTF-8'; // Spring4.x-
             options.headers['Content-Type'] = 'application/json'; // Spring5.x+
         }
     }
@@ -109,7 +109,7 @@ export default function ({
     }
 
     // step4: 统一添加organCode(用于控制数据权限)
-    const currentOrganization = store.get("currentOrganization");
+    const currentOrganization = cache.get("currentOrganization");
     if (currentOrganization) {
         if (p.indexOf('?') > 0) {
             p = p + '&organization_code=' + Common.Util.Codec.encodeBase58(currentOrganization.organizationCode);

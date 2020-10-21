@@ -24,7 +24,7 @@ export default {
 
     mounted() {
         this.getOrganizations();
-        console.info('into org init'+ this.inputData);
+        console.info('into org init' + this.inputData);
     },
     methods: {
         //get data from server
@@ -59,23 +59,23 @@ export default {
 
         //模块权限树选择
         checkChange(node, selfChecked, childChecked) {
-                if (selfChecked) {
-                    this.$refs.modulesTree.setCheckedNodes([node]);
-                    this.inputData.organizationCode = node.organizationCode;
-                    this.displayName = node.name;
-                    this.treeShow = false;
-                    this.$emit('onChangeOrganization', node.organizationCode);
+            if (selfChecked) {
+                this.$refs.modulesTree.setCheckedNodes([node]);
+                this.inputData.organizationCode = node.organizationCode;
+                this.displayName = node.name;
+                this.treeShow = false;
+                this.$emit('onChangeOrganization', node.organizationCode);
             }
         },
 
-        setKeys(){
+        setKeys() {
             if (this.inputData.organizationCode && this.dataList) {
-                for(let i in this.dataList){
-                    if(this.dataList[i].organizationCode ===this.inputData.organizationCode){
+                for (let i in this.dataList) {
+                    if (this.dataList[i].organizationCode === this.inputData.organizationCode) {
                         this.displayName = this.dataList[i].name;
                     }
                 }
-            }else{
+            } else {
                 this.displayName = '';
             }
         }
@@ -83,8 +83,8 @@ export default {
 
     watch: {
         'inputData.organizationCode': {
-            handler (newName, oldName) {
-                console.info('inputData changed',newName,oldName)
+            handler(newName, oldName) {
+                console.info('inputData changed', newName, oldName)
                 this.setKeys();
             }
         }

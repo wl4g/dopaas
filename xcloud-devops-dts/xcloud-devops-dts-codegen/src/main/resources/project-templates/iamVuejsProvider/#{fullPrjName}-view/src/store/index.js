@@ -4,7 +4,6 @@ import getters from './getters'
 
 Vue.use(Vuex)
 
-import cart from './cart/'
 import user from './user/'
 import global from './global/'
 import leftmenu from './leftmenu/'
@@ -13,7 +12,6 @@ import tabs from './tabs/'
 
 export default new Vuex.Store({
   modules: {
-    cart,
     user,
     global,
     router,
