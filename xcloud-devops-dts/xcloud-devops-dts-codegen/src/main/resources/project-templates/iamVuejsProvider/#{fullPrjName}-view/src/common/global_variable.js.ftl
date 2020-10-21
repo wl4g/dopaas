@@ -32,7 +32,7 @@ export default {
         } else {
             // If it is an IAM app, fallback get.
             if (sysModule && sysModule.cluster == this.iam.cluster) {
-                baseUri = new IAMCore(this.iam).getIamBaseUri();
+                baseUri = new IAMCore({ deploy: this.iam }).getIamBaseUri();
             } else {
                 console.error("Cannot get baseUri from cache, No such sysModule: " + sysModule);
             }
