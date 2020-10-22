@@ -25,6 +25,7 @@ import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import com.wl4g.devops.vcs.service.VcsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,7 +50,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/save")
-	public RespBase<?> save(Vcs vcs) {
+	public RespBase<?> save(@RequestBody Vcs vcs) {
 		RespBase<Object> resp = RespBase.create();
 		vcsService.save(vcs);
 		return resp;
@@ -78,7 +79,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/vcsProjects")
-	public RespBase<?> searchVcsProjects(Long vcsId, String projectName) {
+	public RespBase<?> searchVcsProjects(Long vcsId, String projectName) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		List<CompositeBasicVcsProjectModel> remoteProjects = vcsService.getProjectsToCompositeBasic(vcsId, projectName);
 		resp.setData(remoteProjects);
@@ -93,7 +94,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getProjects")
-	public RespBase<?> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName) {
+	public RespBase<?> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		List<VcsProjectModel> projects = vcsService.getProjects(pm, vcsId, groupId, projectName);
 		pm.setRecords(projects);

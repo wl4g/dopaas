@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.stream.Collectors.toList;
 
@@ -65,7 +66,7 @@ public class VcsServcieImpl implements VcsService {
 	@Override
 	public void save(Vcs vcs) {
 		if (vcs.getId() == null) {
-			vcs.preInsert();
+			vcs.preInsert(getRequestOrganizationCode());
 			insert(vcs);
 		} else {
 			vcs.preUpdate();
@@ -106,7 +107,7 @@ public class VcsServcieImpl implements VcsService {
 		return vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteGroups(vcs, groupName);
 	}
 
-	public List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Long vcsId, String projectName) {
+	public List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Long vcsId, String projectName) throws Exception {
 		notNullOf(vcsId, "vcsId");
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
@@ -117,7 +118,7 @@ public class VcsServcieImpl implements VcsService {
 		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
 	}
 
-	public List<VcsProjectModel> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName) {
+	public List<VcsProjectModel> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName) throws Exception {
 		notNullOf(vcsId, "vcsId");
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);

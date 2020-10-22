@@ -15,19 +15,37 @@
  */
 package com.wl4g.devops.vcs.operator.github;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.annotation.Reserved;
+import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.support.concurrent.locks.JedisLockManager;
+import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.stream.Collectors;
+
+import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static java.lang.String.valueOf;
+import static java.util.Objects.nonNull;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.commons.lang3.StringUtils.contains;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * VCS operator for GITHUB.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月5日
  * @since
@@ -35,35 +53,115 @@ import java.util.List;
 @Reserved
 public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 
-	@Override
-	public VcsProviderKind kind() {
-		return VcsProviderKind.GITHUB;
-	}
+    final static private String REDIS_KEY = "GITHUB_CACHE_";
 
-	@Override
-	protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
-		HttpEntity<String> entity = new HttpEntity<>(null, headers);
-		return entity;
-	}
+    final static private long DEFAULT_EXPIRE_MS = 60 * 1000;
 
-	@Override
-	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, Long projectId) {
-		super.getRemoteBranchs(credentials, projectId);
-		throw new UnsupportedOperationException();
-	}
+    @Autowired
+    private JedisService jedisService;
 
-	@Override
-	public List<VcsTagModel> getRemoteTags(Vcs credentials, Long projectId) {
-		super.getRemoteTags(credentials, projectId);
-		throw new UnsupportedOperationException();
-	}
+    @Autowired
+    private JedisLockManager jedisLockManager;
 
-	@Override
-	public Long getRemoteProjectId(Vcs credentials, String projectName) {
-		super.getRemoteProjectId(credentials, projectName);
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public VcsProviderKind kind() {
+        return VcsProviderKind.GITHUB;
+    }
+
+    @Override
+    protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", "application/vnd.github.v3+json");
+        headers.add("Authorization", "token " + credentials.getAccessToken());
+        HttpEntity<String> entity = new HttpEntity<>(null, headers);
+        return entity;
+    }
+
+    @Override
+    public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, Long projectId) {
+        super.getRemoteBranchs(credentials, projectId);
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<VcsTagModel> getRemoteTags(Vcs credentials, Long projectId) {
+        super.getRemoteTags(credentials, projectId);
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
+        super.getRemoteProjectId(credentials, projectName);
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<GithubV3SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
+                                                                 PageModel pm) throws Exception {
+        super.searchRemoteProjects(credentials, groupId, projectName, limit, pm);
+
+        String redisKey = REDIS_KEY.concat(valueOf(credentials.getId()));
+        List<GithubV3SimpleProjectModel> result = getFromRedis(credentials);
+        if (!isEmpty(result)) {
+            log.debug("Got from cache, size: {}, Repositories: {}", result.size(), result);
+            return safeList(result).stream().filter(project -> nonNull(project) && contains(project.getName(), projectName)).collect(Collectors.toList());
+        } else {
+            Lock lock = jedisLockManager.getLock(redisKey);
+            log.debug("Trying get from Github, key: {}", redisKey);
+            try {
+                if (lock.tryLock(10, SECONDS)) {
+                    result = getFromRedis(credentials);
+                    if (isEmpty(result)) {
+                        result = getFromGithub(credentials);
+                        if (!isEmpty(result)) {
+                            jedisService.set(redisKey, JacksonUtils.toJSONString(result), DEFAULT_EXPIRE_MS);
+                        }
+                    }
+                }
+            } finally {
+                lock.unlock();
+                log.debug("Unlock get from Github, key: {}", redisKey);
+            }
+        }
+        return safeList(result).stream().filter(project -> nonNull(project) && contains(project.getName(), projectName)).collect(Collectors.toList());
+    }
+
+    private List<GithubV3SimpleProjectModel> getFromRedis(Vcs credentials) throws Exception {
+        String redisKey = REDIS_KEY.concat(valueOf(credentials.getId()));
+        String resultJson = jedisService.get(redisKey);
+        if (isNotBlank(resultJson)) {
+            List<GithubV3SimpleProjectModel> result = parseJSON(resultJson,
+                    new TypeReference<List<GithubV3SimpleProjectModel>>() {
+                    });
+            jedisService.expire(redisKey, DEFAULT_EXPIRE_MS);
+            return result;
+        }
+        return null;
+    }
+
+
+    private List<GithubV3SimpleProjectModel> getFromGithub(Vcs credentials) throws Exception {
+        log.info("into getFromGithub");
+        int limit = 100;
+        int pageNum = 1;
+        List<GithubV3SimpleProjectModel> result = new ArrayList<>();
+        boolean cycle = true;
+        while (cycle) {
+            String url = String.format((credentials.getBaseUri() + "/user/repos?per_page=%s&page=%s"), limit, pageNum);
+            HttpHeaders headers = new HttpHeaders();
+            // Search projects.
+            List<GithubV3SimpleProjectModel> projects = doRemoteExchangeSSL(credentials, url, headers,
+                    new TypeReference<List<GithubV3SimpleProjectModel>>() {
+                    });
+            result.addAll(projects);
+            if (projects.size() < limit) {
+                cycle = false;
+            } else {
+                pageNum++;
+            }
+        }
+        return result;
+    }
+
 
 }

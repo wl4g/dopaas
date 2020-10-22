@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.vcs.operator.gitee;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
@@ -24,6 +26,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import java.util.List;
+
+import static com.wl4g.components.common.collection.Collections2.safeList;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * VCS operator for GITEE.
@@ -43,7 +50,8 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	@Override
 	protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
+		//headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
+		headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 		HttpEntity<String> entity = new HttpEntity<>(null, headers);
 		return entity;
 	}
@@ -61,9 +69,41 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public Long getRemoteProjectId(Vcs credentials, String projectName) {
+	public Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
 		super.getRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<GiteeV5SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
+																 PageModel pm) throws Exception {
+		super.searchRemoteProjects(credentials, groupId, projectName, limit, pm);
+
+		// Parameters correcting.
+		if (isBlank(projectName)) {
+			projectName = EMPTY;
+		}
+		if (nonNull(pm) && nonNull(pm.getPageSize())) {
+			limit = pm.getPageSize();
+		} else {
+			limit = 100;
+		}
+		int pageNum = 1;
+		if (nonNull(pm) && nonNull(pm.getPageNum())) {
+			pageNum = pm.getPageNum();
+		}
+		String url = String.format((credentials.getBaseUri() + "/api/v5/user/repos?access_token=%s&q=%s&per_page=%s&page=%s"),
+				credentials.getAccessToken(),projectName, limit, pageNum);
+
+		HttpHeaders headers = new HttpHeaders();
+		List<GiteeV5SimpleProjectModel> projects = doRemoteExchangeSSL(credentials, url, headers,
+				new TypeReference<List<GiteeV5SimpleProjectModel>>() {
+				});
+		/*if (nonNull(pm)) {
+			pm.setTotal(Long.valueOf(headers.getFirst("X-Total")));
+		}*/
+		return safeList(projects);
+
 	}
 
 }

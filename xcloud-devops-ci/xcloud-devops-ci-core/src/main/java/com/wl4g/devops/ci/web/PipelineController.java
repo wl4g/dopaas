@@ -160,7 +160,7 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getPipeStepBuilding")
-	public RespBase<?> getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) {
+	public RespBase<?> getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
 		Assert2.notNullOf(clusterId, "clusterId");
 		RespBase<Object> resp = RespBase.create();
 		PipeStepBuilding pipeStepBuilding = pipelineService.getPipeStepBuilding(clusterId, pipeId, refType);

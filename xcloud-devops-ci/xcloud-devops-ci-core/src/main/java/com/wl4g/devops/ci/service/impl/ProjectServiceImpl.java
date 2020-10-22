@@ -165,7 +165,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<String> getBranchs(Long appClusterId, Integer tagOrBranch) {
+	public List<String> getBranchs(Long appClusterId, Integer tagOrBranch) throws Exception {
 		Assert.notNull(appClusterId, "id can not be null");
 		Project project = projectDao.getByAppClusterId(appClusterId);
 		Assert.notNull(project, "not found project ,please check you project config");
@@ -173,14 +173,14 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<String> getBranchsByProjectId(Long projectId, Integer tagOrBranch) {
+	public List<String> getBranchsByProjectId(Long projectId, Integer tagOrBranch) throws Exception {
 		Assert.notNull(projectId, "id can not be null");
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		Assert.notNull(project, "not found project ,please check you project config");
 		return getBranchByProject(project, tagOrBranch);
 	}
 
-	private List<String> getBranchByProject(Project project, Integer tagOrBranch) {
+	private List<String> getBranchByProject(Project project, Integer tagOrBranch) throws Exception {
 		String url = project.getHttpUrl();
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
