@@ -37,11 +37,11 @@ public interface VcsService {
 
     List<Vcs> all();
 
-    List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Long vcsId, String projectName);
+    List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Long vcsId, String projectName) throws Exception;
 
     List<VcsGroupModel> getGroups(Long id, String groupName);
 
-    List<VcsProjectModel> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName);
+    List<VcsProjectModel> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName) throws Exception;
 
     VcsProjectModel getProjectById(Long vcsId, Long projectId);
 

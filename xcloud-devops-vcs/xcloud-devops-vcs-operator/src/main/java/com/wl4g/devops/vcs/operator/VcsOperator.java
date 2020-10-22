@@ -95,7 +95,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	Long getRemoteProjectId(Vcs credentials, String projectName);
+	Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception;
 
 	/**
 	 * Search find remote projects by name.(unlimited)
@@ -105,7 +105,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @return
 	 */
 	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
-			PageModel pm) {
+			PageModel pm) throws Exception {
 		return searchRemoteProjects(credentials, groupId, projectName, Long.MAX_VALUE, pm);
 	}
 
@@ -121,7 +121,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @return
 	 */
 	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
-			PageModel pm);
+			PageModel pm) throws Exception;
 
 	/**
 	 * Search find remote projects by Id.

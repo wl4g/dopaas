@@ -22,15 +22,27 @@ import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,6 +79,26 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 
 		// Do request.
 		ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		if (null == resp || HttpStatus.OK != resp.getStatusCode()) {
+			throw new IllegalStateException(String.format("Failed to request vcs remote, status: %s, body: %s",
+					resp.getStatusCodeValue(), resp.getBody()));
+		}
+		if (log.isInfoEnabled()) {
+			log.info("Vcs remote response <= {}", resp.getBody());
+		}
+		if (Objects.nonNull(headers)) {
+			headers.putAll(resp.getHeaders());
+		}
+		return parseJSON(resp.getBody(), typeRef);
+	}
+
+	protected <T> T doRemoteExchangeSSL(Vcs credentials, String url, HttpHeaders headers, TypeReference<T> typeRef) throws Exception {
+		// Create httpEntity.
+		HttpEntity<String> entity = createVcsRequestHttpEntity(credentials);
+
+		// Do request.
+		RestTemplate restTemplateSSL = new RestTemplate(generateHttpRequestFactory());
+		ResponseEntity<String> resp = restTemplateSSL.exchange(url, HttpMethod.GET, entity, String.class);
 		if (null == resp || HttpStatus.OK != resp.getStatusCode()) {
 			throw new IllegalStateException(String.format("Failed to request vcs remote, status: %s, body: %s",
 					resp.getStatusCodeValue(), resp.getBody()));
@@ -135,7 +167,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public Long getRemoteProjectId(Vcs credentials, String projectName) {
+	public Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
 		notNull(credentials, "Get remote projectId credentials can't is null.");
 		hasText(projectName, "Get remote projectId can't is empty");
 		if (log.isInfoEnabled()) {
@@ -146,7 +178,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 
 	@Override
 	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
-			PageModel pm) {
+			PageModel pm) throws Exception {
 		notNull(credentials, "Search remote projects credentials can't is null.");
 		/*
 		 * The item name to be searched can be empty. If it is empty, it means
@@ -248,5 +280,20 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 			log.info("Rollback for projecDir: {}, sign: {}", projecDir, sign);
 		}
 		return null;
+	}
+
+	private HttpComponentsClientHttpRequestFactory generateHttpRequestFactory()
+			throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+		TrustStrategy acceptingTrustStrategy = (x509Certificates, authType) -> true;
+		SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+		SSLConnectionSocketFactory connectionSocketFactory = new SSLConnectionSocketFactory(sslContext,
+				new NoopHostnameVerifier());
+
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+		httpClientBuilder.setSSLSocketFactory(connectionSocketFactory);
+		CloseableHttpClient httpClient = httpClientBuilder.build();
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+		factory.setHttpClient(httpClient);
+		return factory;
 	}
 }

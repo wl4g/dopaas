@@ -52,7 +52,7 @@ public class CodingVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public Long getRemoteProjectId(Vcs credentials, String projectName) {
+	public Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
 		super.getRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}

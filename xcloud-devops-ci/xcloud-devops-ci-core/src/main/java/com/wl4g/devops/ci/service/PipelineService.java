@@ -38,7 +38,7 @@ public interface PipelineService {
 
 	List<Pipeline> getByClusterId(Long clusterId);
 
-	PipeStepBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType);
+	PipeStepBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception;
 
 	List<Pipeline> getForSelect(String environment);
 

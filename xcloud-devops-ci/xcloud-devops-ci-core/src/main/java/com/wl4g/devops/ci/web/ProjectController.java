@@ -165,7 +165,7 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/getBranchs")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> getBranchs(Long clusterId, Integer tagOrBranch) {
+	public RespBase<?> getBranchs(Long clusterId, Integer tagOrBranch) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		List<String> branchs = projectService.getBranchs(clusterId, tagOrBranch);
 		resp.forMap().put("branchNames", branchs);

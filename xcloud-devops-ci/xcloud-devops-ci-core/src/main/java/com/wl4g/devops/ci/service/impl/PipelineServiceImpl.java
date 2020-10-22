@@ -317,7 +317,7 @@ public class PipelineServiceImpl implements PipelineService {
 	}
 
 	@Override
-	public PipeStepBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) {
+	public PipeStepBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
 		Project project = projectDao.getByAppClusterId(clusterId);
 		Assert2.notNullOf(project, "project");
 		PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeId);

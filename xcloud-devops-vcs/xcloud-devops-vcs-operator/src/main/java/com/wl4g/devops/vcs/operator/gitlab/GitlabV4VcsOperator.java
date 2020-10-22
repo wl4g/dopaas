@@ -108,7 +108,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public Long getRemoteProjectId(Vcs credentials, String projectName) {
+	public Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
 		super.getRemoteProjectId(credentials, projectName);
 
 		// Search projects for GITLAB.
@@ -169,7 +169,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
-			PageModel pm) {
+			PageModel pm) throws Exception {
 		super.searchRemoteProjects(credentials, groupId, projectName, limit, pm);
 
 		// Parameters correcting.

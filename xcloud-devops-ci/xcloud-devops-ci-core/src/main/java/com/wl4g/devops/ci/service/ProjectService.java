@@ -42,8 +42,8 @@ public interface ProjectService {
 
 	int updateLockStatus(Long id, Integer lockStatus);
 
-	List<String> getBranchs(Long appClusterId, Integer tagOrBranch);
+	List<String> getBranchs(Long appClusterId, Integer tagOrBranch) throws Exception;
 
-	List<String> getBranchsByProjectId(Long projectId, Integer tagOrBranch);
+	List<String> getBranchsByProjectId(Long projectId, Integer tagOrBranch) throws Exception;
 
 }
