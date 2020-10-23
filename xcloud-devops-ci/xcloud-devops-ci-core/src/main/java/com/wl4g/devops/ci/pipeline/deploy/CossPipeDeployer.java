@@ -40,6 +40,7 @@ import java.util.Objects;
  * @version v1.0 2019年5月24日
  * @since
  */
+@SuppressWarnings("deprecation")
 public class CossPipeDeployer extends GenericHostPipeDeployer<ViewNativePipelineProvider> {
 
 	public CossPipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,

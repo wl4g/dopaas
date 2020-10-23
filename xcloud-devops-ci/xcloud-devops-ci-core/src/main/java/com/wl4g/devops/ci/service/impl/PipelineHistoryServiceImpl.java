@@ -24,7 +24,7 @@ import com.wl4g.components.core.bean.ci.PipelineInstance;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.ci.core.param.HookParameter;
-import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.dao.ci.PipelineDao;
@@ -63,14 +63,16 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Autowired
 	private PipelineInstanceDao pipelineInstanceDao;
 
+	// --- Create Pipe Runner. ---
+
 	@Override
-	public PipelineHistory createPipelineHistory(NewParameter newParameter) {
-		Assert2.notNullOf(newParameter, "newParameter");
-		Long pipeId = newParameter.getPipeId();
-		String traceId = newParameter.getTrackId();
-		String traceType = newParameter.getTrackType();
-		String remark = newParameter.getRemark();
-		String annex = newParameter.getAnnex();
+	public PipelineHistory createRunnerPipeline(RunParameter param) {
+		Assert2.notNullOf(param, "newParameter");
+		Long pipeId = param.getPipeId();
+		String traceId = param.getTrackId();
+		String traceType = param.getTrackType();
+		String remark = param.getRemark();
+		String annex = param.getAnnex();
 
 		Assert2.notNullOf(pipeId, "pipeId");
 		Pipeline pipeline = pipelineDao.selectByPrimaryKey(pipeId);
@@ -86,8 +88,8 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		pipelineHistory.setTrackType(traceType);
 		pipelineHistory.setRemark(remark);
 
-		pipelineHistory.setOrchestrationType(newParameter.getOrchestrationType());
-		pipelineHistory.setOrchestrationId(newParameter.getOrchestrationId());
+		pipelineHistory.setOrchestrationType(param.getOrchestrationType());
+		pipelineHistory.setOrchestrationId(param.getOrchestrationId());
 
 		pipelineHistoryDao.insertSelective(pipelineHistory);
 		createPipeHistoryInstance(pipeline.getId(), pipelineHistory.getId());
@@ -96,10 +98,10 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	}
 
 	@Override
-	public PipelineHistory createPipelineHistory(HookParameter hookParameter) {
-		Long pipeId = hookParameter.getPipeId();
-		String remark = hookParameter.getRemark();
-		NewParameter newParameter = new NewParameter(pipeId, remark, null, null, null);
+	public PipelineHistory createHookPipeline(HookParameter param) {
+		Long pipeId = param.getPipeId();
+		String remark = param.getRemark();
+		RunParameter newParameter = new RunParameter(pipeId, remark, null, null, null);
 
 		Assert2.notNullOf(pipeId, "pipeId");
 		Pipeline pipeline = pipelineDao.selectByPrimaryKey(pipeId);
@@ -118,15 +120,15 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		pipelineHistoryDao.insertSelective(pipelineHistory);
 		createPipeHistoryInstance(pipeline.getId(), pipelineHistory.getId());
 
-		return createPipelineHistory(newParameter);
+		return createRunnerPipeline(newParameter);
 	}
 
 	@Override
-	public PipelineHistory createPipelineHistory(RollbackParameter rollbackParameter) {
-		Assert2.notNullOf(rollbackParameter, "rollbackParameter");
-		Long pipeId = rollbackParameter.getPipeId();
+	public PipelineHistory createRollbackPipeline(RollbackParameter param) {
+		Assert2.notNullOf(param, "rollbackParameter");
+		Long pipeId = param.getPipeId();
 		Assert2.notNullOf(pipeId, "pipeId");
-		String remark = rollbackParameter.getRemark();
+		String remark = param.getRemark();
 
 		PipelineHistory oldPipelineHistory = pipelineHistoryDao.selectByPrimaryKey(pipeId);
 		Assert2.notNullOf(oldPipelineHistory, "pipelineHistory");
@@ -149,6 +151,8 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		return pipelineHistory;
 
 	}
+
+	// --- CRUD. ---
 
 	private void createPipeHistoryInstance(Long pipeId, Long pipeHisId) {
 		List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(pipeId);

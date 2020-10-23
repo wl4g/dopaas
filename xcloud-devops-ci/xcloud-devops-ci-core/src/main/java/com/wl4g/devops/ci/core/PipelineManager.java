@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.components.common.io.FileIOUtils.ReadResult;
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.utils.HookCommandHolder;
 
@@ -35,7 +35,7 @@ public abstract interface PipelineManager {
 	 * 
 	 * @param param
 	 */
-	void runPipeline(NewParameter param, PipelineModel pipelineModel) throws Exception;
+	void runPipeline(RunParameter param, PipelineModel pipelineModel) throws Exception;
 
 	/**
 	 * Roll-back pipeline task job.

@@ -16,17 +16,22 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.ci.common.hook.HookInfo;
+import com.wl4g.devops.ci.common.hook.GitlabHookInfo;
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.utils.HookCommandHolder;
+import com.wl4g.devops.ci.utils.HookCommandHolder.DeployCommand;
+import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import java.util.List;
-import java.util.Objects;
 
 /**
  * GIT hook API controller.
@@ -37,13 +42,10 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/hook")
-public class GitHookController extends BaseController {
+public class VcsHookController extends BaseController {
 
 	@Autowired
 	private PipelineManager pipeliner;
-
-	@Autowired
-	private FlowManager flowManager;
 
 	/**
 	 * Receive GITLAB hook.
@@ -52,39 +54,26 @@ public class GitHookController extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping("gitlab")
-	public void gitlabHook(@RequestBody HookInfo hook) throws Exception {
+	public void receiveGitlabHook(@RequestBody GitlabHookInfo hook) throws Exception {
+		log.info("Gitlab hook receive <= {}", toJSONString(hook));
 
-		//HookInfoGitlab a  = JacksonUtils.parseJSON(hook,HookInfoGitlab.class);
-		log.info("Gitlab hook receive <= {}", hook);
-
-		HookCommandHolder.HookCommand hookCommand = null;
-		List<HookInfo.Commits> commits = hook.getCommits();
-		for(HookInfo.Commits commit : commits){
+		HookCommand hookCommand = null;
+		List<GitlabHookInfo.Commits> commits = hook.getCommits();
+		for (GitlabHookInfo.Commits commit : commits) {
 			hookCommand = HookCommandHolder.parse(commit.getMessage());
-			if(Objects.nonNull(hookCommand)){
+			if (nonNull(hookCommand)) {
 				break;
 			}
 		}
-		if(Objects.isNull(hookCommand)){
+		if (isNull(hookCommand)) {
 			return;
 		}
-
-		if(hookCommand instanceof HookCommandHolder.DeployCommand){
-			HookCommandHolder.DeployCommand deployCommand = (HookCommandHolder.DeployCommand)hookCommand;
+		if (hookCommand instanceof DeployCommand) {
+			DeployCommand deployCommand = (DeployCommand) hookCommand;
 			System.out.println(deployCommand.getEnv());
 		}
 
-		//String branchName = hook.getBranchName();
-		//String projectName = hook.getRepository().getName();
 		pipeliner.hookPipeline(hookCommand);
 	}
-
-	/*@RequestMapping(value = "/run")
-	public void create(Integer taskId) {
-		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
-		pipeliner.runPipeline(new NewParameter(taskId, "create by hook", null, null, null),pipelineModel);
-	}*/
-
-
 
 }

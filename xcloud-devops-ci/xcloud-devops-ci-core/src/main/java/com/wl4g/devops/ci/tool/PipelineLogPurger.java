@@ -15,13 +15,17 @@
  */
 package com.wl4g.devops.ci.tool;
 
+import com.wl4g.components.common.task.RunnerProperties;
+import com.wl4g.components.support.task.ApplicationTaskRunner;
+import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.dao.erm.LogPipelineCleanerDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.ScheduledExecutorService;
 
+import static com.wl4g.components.common.lang.TypeConverts.safeLongToInt;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
@@ -31,75 +35,77 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * @version v1.0.0 2019-12-11
  * @since
  */
-public class PipelineLogPurger extends GenericOperatorTool {
-
-	public static final int beforeSec = 30 * 24 * 60 * 60;// 30 day
+public class PipelineLogPurger extends ApplicationTaskRunner<RunnerProperties> {
 
 	@Autowired
-	private LogPipelineCleanerDao logPipelineCleanerDao;
+	protected CiProperties config;
+
+	@Autowired
+	private LogPipelineCleanerDao cleanerDao;
 
 	@Override
-	protected void doStartup(ScheduledExecutorService scheduler) {
-		scheduler.scheduleAtFixedRate(this, config.getLogCleaner().getInitialDelaySec(), config.getLogCleaner().getPeriodSec(),
+	public void run(ApplicationArguments args) throws Exception {
+		super.run(args);
+
+		getWorker().scheduleAtFixedRate(this, config.getLogCleaner().getInitialDelaySec(), config.getLogCleaner().getPeriodSec(),
 				SECONDS);
+
+		Date endTime = getDiscardEndTime(config.getLogCleaner().getPipeHistoryRetainSec());
+		cleanCiBuiltHistoryLog(endTime);
+
+		// cleanJobStatusTraceLog(endTime);
+		// cleanJobExecutionLog(endTime);
+		// cleanUmcAlarmLog(endTime);
 	}
 
-	@Override
-	public void run() {
-		// TODO e.g. Do ci_task_history cleanup...
-		// cleanJobStatusTraceLog();
-		// cleanJobExecutionLog();
-		// cleanUmcAlarmRecord();
-		cleanCiTaskHistory();
-	}
-
-	@SuppressWarnings("unused")
-	private void cleanJobStatusTraceLog() {
-		Date currentTimeBySecound = beforeTimeSec(beforeSec);
+	private void cleanCiBuiltHistoryLog(Date cleanEndTime) {
 		try {
-			logPipelineCleanerDao.cleanJobStatusTraceLog(currentTimeBySecound);
+			cleanerDao.cleanCiTaskHistorySublist(cleanEndTime);
+			cleanerDao.cleanCiTaskHistory(cleanEndTime);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.warn("Failed to cleanup discard ciBuiltHistoryLog. caused by: {}", e.getMessage());
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private void cleanJobExecutionLog() {
-		Date currentTimeBySecound = beforeTimeSec(beforeSec);
-		try {
-			logPipelineCleanerDao.cleanJobExecutionLog(currentTimeBySecound);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	// private void cleanJobStatusTraceLog(Date cleanEndTime) {
+	// Date currentTimeBySecound = getDiscardEndTime(DEFAULT_DISCARD_SECONDS);
+	// try {
+	// cleanerDao.cleanJobStatusTraceLog(currentTimeBySecound);
+	// } catch (Exception e) {
+	// log.warn("Failed to cleanup discard jobStatusTraceLog. caused by: {}",
+	// e.getMessage());
+	// }
+	// }
+	//
+	// private void cleanJobExecutionLog(Date cleanEndTime) {
+	// try {
+	// cleanerDao.cleanJobExecutionLog(cleanEndTime);
+	// } catch (Exception e) {
+	// log.warn("Failed to cleanup discard jobExecutionLog. caused by: {}",
+	// e.getMessage());
+	// }
+	// }
+	//
+	// private void cleanUmcAlarmLog(Date cleanEndTime) {
+	// try {
+	// cleanerDao.cleanUmcAlarmRecordSublist(cleanEndTime);
+	// cleanerDao.cleanUmcAlarmRecord(cleanEndTime);
+	// } catch (Exception e) {
+	// log.warn("Failed to cleanup discard UmcAlarmLog. caused by: {}",
+	// e.getMessage());
+	// }
+	// }
+
+	private static Date getDiscardEndTime(long retainTime) {
+		retainTime = -retainTime;
+		Calendar cale = Calendar.getInstance();
+		cale.add(Calendar.SECOND, safeLongToInt(retainTime));
+		return cale.getTime();
 	}
 
-	@SuppressWarnings("unused")
-	private void cleanUmcAlarmRecord() {
-		Date currentTimeBySecound = beforeTimeSec(beforeSec);
-		try {
-			logPipelineCleanerDao.cleanUmcAlarmRecordSublist(currentTimeBySecound);
-			logPipelineCleanerDao.cleanUmcAlarmRecord(currentTimeBySecound);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	/**
+	 * Default discard history log data time.
+	 */
+	public static final int DEFAULT_DISCARD_SECONDS = 30 * 24 * 60 * 60;
 
-	private void cleanCiTaskHistory() {
-		// TODO
-		Date currentTimeBySecound = beforeTimeSec(beforeSec);
-		try {
-			// logPipelineCleanerDao.cleanCiTaskHistorySublist(currentTimeBySecound);
-			// logPipelineCleanerDao.cleanCiTaskHistory(currentTimeBySecound);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static Date beforeTimeSec(int stuff) {
-		stuff = -stuff;
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.SECOND, stuff);
-		Date beforeDate = calendar.getTime();
-		return beforeDate;
-	}
 }

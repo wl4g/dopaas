@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.ci.config;
 
+import static java.util.concurrent.TimeUnit.DAYS;
+
 import java.io.Serializable;
 
 /**
@@ -39,10 +41,10 @@ public class LogCleanerProperties implements Serializable {
 	private long periodSec = 30 * 60;
 
 	/**
-	 * Pipeline construction history, maximum age hours saved, overdue will be
+	 * Pipeline construction history, maximum age seconds saved, overdue will be
 	 * cleared.
 	 */
-	private long pipeHistoryRetainHour = 30 * 24;
+	private long pipeHistoryRetainSec = DAYS.toSeconds(60);
 
 	public long getInitialDelaySec() {
 		return initialDelaySec;
@@ -60,12 +62,12 @@ public class LogCleanerProperties implements Serializable {
 		this.periodSec = periodSec;
 	}
 
-	public long getPipeHistoryRetainHour() {
-		return pipeHistoryRetainHour;
+	public long getPipeHistoryRetainSec() {
+		return pipeHistoryRetainSec;
 	}
 
-	public void setPipeHistoryRetainHour(long pipeHistoryRetainHour) {
-		this.pipeHistoryRetainHour = pipeHistoryRetainHour;
+	public void setPipeHistoryRetainSec(long pipeHistoryRetainSec) {
+		this.pipeHistoryRetainSec = pipeHistoryRetainSec;
 	}
 
 }

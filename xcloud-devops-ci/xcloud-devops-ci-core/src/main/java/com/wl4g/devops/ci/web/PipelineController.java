@@ -23,7 +23,7 @@ import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.page.PageModel;
@@ -152,7 +152,7 @@ public class PipelineController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
-	public RespBase<?> create(NewParameter newParameter) throws Exception {
+	public RespBase<?> create(RunParameter newParameter) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		PipelineModel pipelineModel = flowManager.buildPipeline(newParameter.getPipeId());
 		pipeliner.runPipeline(newParameter, pipelineModel);

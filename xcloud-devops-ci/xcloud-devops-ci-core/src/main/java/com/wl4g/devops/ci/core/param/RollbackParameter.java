@@ -22,7 +22,7 @@ package com.wl4g.devops.ci.core.param;
  * @version v1.0 2019年11月12日
  * @since
  */
-public class RollbackParameter extends GenericParameter {
+public class RollbackParameter extends BaseParameter {
 	private static final long serialVersionUID = 1489325413465499589L;
 
 	public RollbackParameter() {

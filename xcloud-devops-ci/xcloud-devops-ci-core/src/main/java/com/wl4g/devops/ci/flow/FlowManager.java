@@ -30,7 +30,7 @@ import com.wl4g.devops.ci.bean.RunModel;
 import com.wl4g.devops.ci.bean.RunModel.Pipeline;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
 import com.wl4g.devops.dao.ci.OrchestrationHistoryDao;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
@@ -272,7 +272,7 @@ public class FlowManager {
 				"FlowManager.master2slave prarms::"
 						+ "pipelineModel = {} , remark = {} , taskTraceId = {} , taskTraceType = {} , annex = {} ",
 				pipelineModel, remark, taskTraceId, taskTraceType, annex);
-		pipeliner.runPipeline(new NewParameter(pipelineModel.getPipeId(), remark, taskTraceId, taskTraceType, annex, 2,
+		pipeliner.runPipeline(new RunParameter(pipelineModel.getPipeId(), remark, taskTraceId, taskTraceType, annex, 2,
 				orchestrationHistory.getId()), pipelineModel);
 	}
 
