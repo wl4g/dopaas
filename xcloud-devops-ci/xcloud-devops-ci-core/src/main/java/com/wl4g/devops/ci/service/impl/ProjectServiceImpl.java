@@ -186,7 +186,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private List<String> getBranchByProject(Project project, Integer tagOrBranch) throws Exception {
 
-
 		List<String> result = new ArrayList<>();
 		if (tagOrBranch != null && tagOrBranch == 2) { // tag
 			List<VcsTagModel> remoteTags = vcsOperator.forOperator(project.getVcs().getProviderKind())
@@ -206,26 +205,13 @@ public class ProjectServiceImpl implements ProjectService {
 		return result;
 	}
 
-	private void buildVcsProject(Project project){
+	private void buildVcsProject(Project project) {
 		String gitInfo = project.getGitInfo();
-		if(StringUtils.isNotBlank(gitInfo)){
-			CompositeBasicVcsProjectModel compositeBasicVcsProjectModel = JacksonUtils.parseJSON(gitInfo, CompositeBasicVcsProjectModel.class);
+		if (StringUtils.isNotBlank(gitInfo)) {
+			CompositeBasicVcsProjectModel compositeBasicVcsProjectModel = JacksonUtils.parseJSON(gitInfo,
+					CompositeBasicVcsProjectModel.class);
 			project.setVcsProject(compositeBasicVcsProjectModel);
 		}
-	}
-
-	/**
-	 * Tool for this class : get Git Project Name from Url
-	 *
-	 * @param url
-	 * @return
-	 */
-	private static String extProjectName(String url) {
-		int index = url.lastIndexOf("/");
-		url = url.substring(index + 1);
-		index = url.lastIndexOf(".");
-		url = url.substring(0, index);
-		return url;
 	}
 
 }
