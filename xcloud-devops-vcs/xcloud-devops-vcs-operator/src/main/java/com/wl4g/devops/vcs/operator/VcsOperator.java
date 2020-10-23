@@ -17,6 +17,7 @@ package com.wl4g.devops.vcs.operator;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.core.framework.operator.Operator;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
@@ -51,7 +52,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	<T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, Long projectId);
+	<T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception;
 
 	/**
 	 * Create Branch
@@ -73,7 +74,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	<T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, Long projectId);
+	<T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception;
 
 	/**
 	 *

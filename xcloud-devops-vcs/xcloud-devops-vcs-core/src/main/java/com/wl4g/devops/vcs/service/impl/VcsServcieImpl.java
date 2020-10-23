@@ -19,13 +19,17 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.config.VcsProperties;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
-import com.wl4g.devops.vcs.operator.model.*;
+import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
+import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
+import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import com.wl4g.devops.vcs.service.VcsService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,25 +143,25 @@ public class VcsServcieImpl implements VcsService {
 	}
 
 	@Override
-	public List<VcsBranchModel> getBranchs(Long vcsId, Long projectId) {
+	public List<VcsBranchModel> getBranchs(Long vcsId, Long projectId) throws Exception {
 		notNullOf(vcsId, "vcsId");
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
 		Assert2.notNullOf(vcs, "vcs");
-		return vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs, projectId);
+		return vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs, new CompositeBasicVcsProjectModel(projectId));
 	}
 
 	@Override
-	public List<VcsTagModel> getTags(Long vcsId, Long projectId) {
+	public List<VcsTagModel> getTags(Long vcsId, Long projectId) throws Exception {
 		notNullOf(vcsId, "vcsId");
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
 		Assert2.notNullOf(vcs, "vcs");
-		return vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs, projectId);
+		return vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs, new CompositeBasicVcsProjectModel(projectId));
 	}
 
 	@Override
-	public VcsBranchModel createBranch(Long vcsId, Long projectId, String branch, String ref) {
+	public VcsBranchModel createBranch(Long vcsId, Long projectId, String branch, String ref) throws Exception {
 		notNullOf(vcsId, "vcsId");
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
@@ -173,7 +177,7 @@ public class VcsServcieImpl implements VcsService {
 	}
 
 	@Override
-	public VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription) {
+	public VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription) throws Exception {
 		notNullOf(vcsId, "vcsId");
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
@@ -189,10 +193,10 @@ public class VcsServcieImpl implements VcsService {
 				releaseDescription);
 	}
 
-	private void checkRepeatBranchOrTag(Vcs vcs, Long projectId, String branchOrTag) {
+	private void checkRepeatBranchOrTag(Vcs vcs, Long projectId, String branchOrTag) throws Exception {
 		Assert2.hasTextOf(branchOrTag, "branchOrTag");
-		List<VcsBranchModel> remoteBranchs = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs, projectId);
-		List<VcsTagModel> remoteTags = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs, projectId);
+		List<VcsBranchModel> remoteBranchs = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs, new CompositeBasicVcsProjectModel(projectId));
+		List<VcsTagModel> remoteTags = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs, new CompositeBasicVcsProjectModel(projectId));
 		// check repeart
 		for (VcsBranchModel vcsBranchModel : remoteBranchs) {
 			Assert2.isTrue(!StringUtils.equals(vcsBranchModel.getName(), branchOrTag),
