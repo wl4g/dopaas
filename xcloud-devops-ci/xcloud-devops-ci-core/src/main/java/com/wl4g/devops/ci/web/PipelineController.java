@@ -27,6 +27,7 @@ import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * Task controller
@@ -70,6 +72,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String pipeName, String providerKind, String environment) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = pipelineService.list(pm, pipeName, providerKind, environment);
@@ -85,6 +88,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
 	public RespBase<?> save(@RequestBody Pipeline pipeline) {
 		Assert.notNull(pipeline, "task can not be null");
 		checkPipeline(pipeline);
@@ -100,6 +104,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		log.info("into TaskController.detail prarms::" + "id = {} ", id);
 		Assert.notNull(id, "id can not be null");
@@ -115,6 +120,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		Assert.notNull(id, "id can not be null");
 		RespBase<Object> resp = RespBase.create();
@@ -152,6 +158,7 @@ public class PipelineController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
+	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
 	public RespBase<?> create(RunParameter newParameter) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		PipelineModel pipelineModel = flowManager.buildPipeline(newParameter.getPipeId());
