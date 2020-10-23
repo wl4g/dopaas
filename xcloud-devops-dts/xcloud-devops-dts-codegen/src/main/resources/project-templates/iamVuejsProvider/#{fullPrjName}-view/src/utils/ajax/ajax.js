@@ -111,10 +111,10 @@ export default function ({
     // step4: 统一添加organCode(用于控制数据权限)
     const currentOrganization = cache.get("currentOrganization");
     if (currentOrganization) {
-        if (p.indexOf('?') > 0) {
-            p = p + '&organization_code=' + Common.Util.Codec.encodeBase58(currentOrganization.organizationCode);
+        if (options.url.indexOf('?') > 0) {
+            options.url += '&organization_code=' + Common.Util.Codec.encodeBase58(currentOrganization.organizationCode);
         } else {
-            p = p + '?organization_code=' + Common.Util.Codec.encodeBase58(currentOrganization.organizationCode);
+            options.url += '?organization_code=' + Common.Util.Codec.encodeBase58(currentOrganization.organizationCode);
         }
     }
 
