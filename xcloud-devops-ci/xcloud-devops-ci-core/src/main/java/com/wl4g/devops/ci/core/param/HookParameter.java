@@ -27,7 +27,7 @@ import static org.springframework.util.Assert.hasText;
  * @version v1.0 2019年11月12日
  * @since
  */
-public class HookParameter  extends GenericParameter {
+public class HookParameter  extends BaseParameter {
 	private static final long serialVersionUID = 9219348162378842689L;
 
 	@NotBlank

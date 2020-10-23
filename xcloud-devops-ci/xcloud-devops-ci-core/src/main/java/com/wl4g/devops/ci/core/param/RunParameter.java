@@ -16,13 +16,13 @@
 package com.wl4g.devops.ci.core.param;
 
 /**
- * New create pipeline handle parameter.
+ * Create pipeline handler parameter.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月12日
  * @since
  */
-public class NewParameter extends GenericParameter {
+public class RunParameter extends BaseParameter {
 	private static final long serialVersionUID = -79398460376632146L;
 
 	/**
@@ -45,18 +45,18 @@ public class NewParameter extends GenericParameter {
 
 	private Long orchestrationId;
 
-	public NewParameter() {
+	public RunParameter() {
 		super();
 	}
 
-	public NewParameter(Long pipeId, String remark, String trackId, String trackType, String annex) {
+	public RunParameter(Long pipeId, String remark, String trackId, String trackType, String annex) {
 		super(pipeId, remark);
 		setTrackId(trackId);
 		setTrackType(trackType);
 		setAnnex(annex);
 	}
 
-	public NewParameter(Long pipeId, String remark, String trackId, String trackType, String annex, Integer orchestrationType,
+	public RunParameter(Long pipeId, String remark, String trackId, String trackType, String annex, Integer orchestrationType,
 			Long orchestrationId) {
 		super(pipeId, remark);
 		setTrackId(trackId);

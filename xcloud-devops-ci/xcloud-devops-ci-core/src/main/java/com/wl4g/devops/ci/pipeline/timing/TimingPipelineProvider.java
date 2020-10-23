@@ -24,7 +24,7 @@ import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.service.TriggerService;
@@ -95,7 +95,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 			// Creating pipeline task.
 			// TODO traceId???
 			PipelineModel pipelineModel = flowManager.buildPipeline(task.getId());
-			pipeManager.runPipeline(new NewParameter(task.getId(), "rollback", "1", "1", null), pipelineModel);
+			pipeManager.runPipeline(new RunParameter(task.getId(), "rollback", "1", "1", null), pipelineModel);
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();

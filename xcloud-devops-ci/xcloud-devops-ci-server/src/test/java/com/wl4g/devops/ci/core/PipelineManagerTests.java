@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.CiServer;
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +43,7 @@ public class PipelineManagerTests {
 	public void createTask() throws Exception {
 		Long taskId = 152L;
 		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
-		pipeManager.runPipeline(new NewParameter(taskId, null, null, null, null), pipelineModel);
+		pipeManager.runPipeline(new RunParameter(taskId, null, null, null, null), pipelineModel);
 	}
 
 }

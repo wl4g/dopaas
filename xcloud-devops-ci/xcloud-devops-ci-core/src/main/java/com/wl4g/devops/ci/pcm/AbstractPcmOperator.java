@@ -33,6 +33,7 @@ import com.wl4g.devops.ci.config.CiProperties;
  * @version 2020年1月7日 v1.0.0
  * @see
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractPcmOperator implements PcmOperator, InitializingBean {
 	final protected Logger log = getLogger(getClass());
 

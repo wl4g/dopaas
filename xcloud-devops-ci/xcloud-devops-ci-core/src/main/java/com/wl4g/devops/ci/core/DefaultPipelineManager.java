@@ -37,7 +37,7 @@ import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.HookParameter;
-import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
@@ -129,7 +129,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	private ClusterExtensionDao clusterExtensionDao;
 
 	@Override
-	public void runPipeline(NewParameter param, PipelineModel pipelineModel) throws Exception {
+	public void runPipeline(RunParameter param, PipelineModel pipelineModel) throws Exception {
 		log.info("Running pipeline job for: {}", param);
 
 		Pipeline pipeline = pipelineDao.selectByPrimaryKey(param.getPipeId());
@@ -139,7 +139,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		AppCluster appCluster = appClusterDao.selectByPrimaryKey(pipeline.getClusterId());
 		notNull(appCluster, "not found this app");
 
-		PipelineHistory pipelineHistory = pipelineHistoryService.createPipelineHistory(param);
+		PipelineHistory pipelineHistory = pipelineHistoryService.createRunnerPipeline(param);
 
 		// Execution pipeline job.
 		doExecutePipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel, null));
@@ -149,7 +149,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	public void rollbackPipeline(RollbackParameter param, PipelineModel pipelineModel) {
 		log.info("Rollback pipeline job for: {}", param);
 
-		PipelineHistory pipelineHistory = pipelineHistoryService.createPipelineHistory(param);
+		PipelineHistory pipelineHistory = pipelineHistoryService.createRollbackPipeline(param);
 
 		// Do roll-back pipeline job.
 		doRollbackPipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel, null));
@@ -205,7 +205,7 @@ public class DefaultPipelineManager implements PipelineManager {
 			HookParameter hookParameter = new HookParameter();
 			hookParameter.setPipeId(pipeline.getId());
 			hookParameter.setRemark("hook");
-			PipelineHistory pipelineHistory = pipelineHistoryService.createPipelineHistory(hookParameter);
+			PipelineHistory pipelineHistory = pipelineHistoryService.createHookPipeline(hookParameter);
 
 			// Execution pipeline job.
 			doExecutePipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel, actionControl));

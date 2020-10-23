@@ -29,7 +29,7 @@ import static org.springframework.util.Assert.*;
  * @version v1.0 2019年11月12日
  * @since
  */
-public abstract class GenericParameter implements Serializable {
+public abstract class BaseParameter implements Serializable {
 
 	private static final long serialVersionUID = -5304513598862948298L;
 
@@ -45,11 +45,11 @@ public abstract class GenericParameter implements Serializable {
 	@NotBlank
 	private String remark;
 
-	public GenericParameter() {
+	public BaseParameter() {
 		super();
 	}
 
-	public GenericParameter(Long pipeId, String remark) {
+	public BaseParameter(Long pipeId, String remark) {
 		setPipeId(pipeId);
 		setRemark(remark);
 	}
