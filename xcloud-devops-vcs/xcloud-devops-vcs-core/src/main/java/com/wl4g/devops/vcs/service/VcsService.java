@@ -16,8 +16,12 @@
 package com.wl4g.devops.vcs.service;
 
 import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.vcs.operator.model.*;
+import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
+import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
+import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 
 import java.util.List;
 
@@ -45,13 +49,13 @@ public interface VcsService {
 
     VcsProjectModel getProjectById(Long vcsId, Long projectId);
 
-    List<VcsBranchModel> getBranchs(Long vcsId, Long projectId);
+    List<VcsBranchModel> getBranchs(Long vcsId, Long projectId) throws Exception;
 
-    List<VcsTagModel> getTags(Long vcsId, Long projectId);
+    List<VcsTagModel> getTags(Long vcsId, Long projectId) throws Exception;
 
-    VcsBranchModel createBranch(Long vcsId, Long projectId, String branch, String ref);
+    VcsBranchModel createBranch(Long vcsId, Long projectId, String branch, String ref) throws Exception;
 
-    VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription);
+    VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription) throws Exception;
 
 
 }

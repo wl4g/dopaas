@@ -17,6 +17,7 @@ package com.wl4g.devops.vcs.operator.coding;
 
 import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
@@ -40,14 +41,14 @@ public class CodingVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, Long projectId) {
-		super.getRemoteBranchs(credentials, projectId);
+	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+		super.getRemoteBranchs(credentials, vcsProject);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<VcsTagModel> getRemoteTags(Vcs credentials, Long projectId) {
-		super.getRemoteTags(credentials, projectId);
+	public List<VcsTagModel> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+		super.getRemoteTags(credentials, vcsProject);
 		throw new UnsupportedOperationException();
 	}
 

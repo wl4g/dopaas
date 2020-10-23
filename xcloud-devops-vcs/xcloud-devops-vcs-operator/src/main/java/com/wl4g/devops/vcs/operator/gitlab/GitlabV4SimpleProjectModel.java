@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.vcs.operator.gitlab;
 
-import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 
 import java.io.Serializable;

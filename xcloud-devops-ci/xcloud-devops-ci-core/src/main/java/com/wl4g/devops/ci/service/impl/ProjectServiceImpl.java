@@ -16,9 +16,11 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.ci.Dependency;
 import com.wl4g.components.core.bean.ci.Project;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.dao.ci.DependencyDao;
@@ -27,6 +29,7 @@ import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +40,6 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.components.core.bean.BaseBean.ENABLED;
 import static com.wl4g.components.core.constants.CiDevOpsConstants.TASK_LOCK_STATUS_UNLOCK;
@@ -168,6 +170,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public List<String> getBranchs(Long appClusterId, Integer tagOrBranch) throws Exception {
 		Assert.notNull(appClusterId, "id can not be null");
 		Project project = projectDao.getByAppClusterId(appClusterId);
+		buildVcsProject(project);
 		Assert.notNull(project, "not found project ,please check you project config");
 		return getBranchByProject(project, tagOrBranch);
 	}
@@ -176,23 +179,18 @@ public class ProjectServiceImpl implements ProjectService {
 	public List<String> getBranchsByProjectId(Long projectId, Integer tagOrBranch) throws Exception {
 		Assert.notNull(projectId, "id can not be null");
 		Project project = projectDao.selectByPrimaryKey(projectId);
+		buildVcsProject(project);
 		Assert.notNull(project, "not found project ,please check you project config");
 		return getBranchByProject(project, tagOrBranch);
 	}
 
 	private List<String> getBranchByProject(Project project, Integer tagOrBranch) throws Exception {
-		String url = project.getHttpUrl();
-		// Find remote projectIds.
-		String projectName = extProjectName(url);
-		vcsOperator.forOperator(project.getVcs().getProviderKind());
-		Long vcsProjectId = vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteProjectId(project.getVcs(),
-				projectName);
-		notNullOf(vcsProjectId, "vcsProjectId");
+
 
 		List<String> result = new ArrayList<>();
 		if (tagOrBranch != null && tagOrBranch == 2) { // tag
 			List<VcsTagModel> remoteTags = vcsOperator.forOperator(project.getVcs().getProviderKind())
-					.getRemoteTags(project.getVcs(), vcsProjectId);
+					.getRemoteTags(project.getVcs(), project.getVcsProject());
 			for (VcsTagModel vcsTagModel : remoteTags) {
 				result.add(vcsTagModel.getName());
 			}
@@ -200,12 +198,20 @@ public class ProjectServiceImpl implements ProjectService {
 		// Branch
 		else {
 			List<VcsBranchModel> remoteBranchs = vcsOperator.forOperator(project.getVcs().getProviderKind())
-					.getRemoteBranchs(project.getVcs(), vcsProjectId);
+					.getRemoteBranchs(project.getVcs(), project.getVcsProject());
 			for (VcsBranchModel vcsBranchModel : remoteBranchs) {
 				result.add(vcsBranchModel.getName());
 			}
 		}
 		return result;
+	}
+
+	private void buildVcsProject(Project project){
+		String gitInfo = project.getGitInfo();
+		if(StringUtils.isNotBlank(gitInfo)){
+			CompositeBasicVcsProjectModel compositeBasicVcsProjectModel = JacksonUtils.parseJSON(gitInfo, CompositeBasicVcsProjectModel.class);
+			project.setVcsProject(compositeBasicVcsProjectModel);
+		}
 	}
 
 	/**

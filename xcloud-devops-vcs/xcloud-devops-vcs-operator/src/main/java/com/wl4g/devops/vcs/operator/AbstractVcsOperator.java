@@ -17,6 +17,7 @@ package com.wl4g.devops.vcs.operator;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
@@ -147,22 +148,16 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	protected abstract HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials);
 
 	@Override
-	public <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, Long projectId) {
+	public <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		notNull(credentials, "Get remote branchs credentials can't is null.");
-		isTrue(projectId > 0, "Get remote branchs must projectId >= 0");
-		if (log.isInfoEnabled()) {
-			log.info("Get remote branchs by projectId: {}", projectId);
-		}
+		notNull(vcsProject, "Get remote branchs vcsProject can't is null");
 		return null;
 	}
 
 	@Override
-	public <T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, Long projectId) {
+	public <T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		notNull(credentials, "Get remote tags credentials can't is null.");
-		isTrue(projectId >= 0, "Get remote tags must projectId >= 0");
-		if (log.isInfoEnabled()) {
-			log.info("Get remote tags by projectId: {}", projectId);
-		}
+		notNull(credentials, "Get remote tags vcsProject can't is null.");
 		return null;
 	}
 

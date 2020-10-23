@@ -19,7 +19,7 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
@@ -111,7 +111,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getBranchs")
-	public RespBase<?> getBranchs(Long vcsId, Long projectId) {
+	public RespBase<?> getBranchs(Long vcsId, Long projectId) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		List<VcsBranchModel> branchs = vcsService.getBranchs(vcsId, projectId);
 		resp.setData(branchs);
@@ -119,7 +119,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getTags")
-	public RespBase<?> tags(Long vcsId, Long projectId) {
+	public RespBase<?> tags(Long vcsId, Long projectId) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		List<VcsTagModel> tags = vcsService.getTags(vcsId, projectId);
 		resp.setData(tags);
@@ -127,7 +127,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/createBranch")
-	public RespBase<?> createBranch(Long vcsId, Long projectId, String branch, String ref) {
+	public RespBase<?> createBranch(Long vcsId, Long projectId, String branch, String ref) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		VcsBranchModel vcsBranchModel = vcsService.createBranch(vcsId, projectId, branch, ref);
 		resp.setData(vcsBranchModel);
@@ -135,7 +135,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/createTag")
-	public RespBase<?> createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription) {
+	public RespBase<?> createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		VcsTagModel vcsServiceTag = vcsService.createTag(vcsId, projectId, tag, ref, message, releaseDescription);
 		resp.setData(vcsServiceTag);

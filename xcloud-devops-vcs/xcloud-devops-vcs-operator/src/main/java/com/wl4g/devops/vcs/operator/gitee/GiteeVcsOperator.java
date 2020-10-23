@@ -18,6 +18,7 @@ package com.wl4g.devops.vcs.operator.gitee;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
@@ -57,15 +58,27 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, Long projectId) {
-		super.getRemoteBranchs(credentials, projectId);
-		throw new UnsupportedOperationException();
+	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+		super.getRemoteBranchs(credentials, vcsProject);
+		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/branches?access_token=%s"), vcsProject.getPathWithNamespace(), credentials.getAccessToken());
+		HttpHeaders headers = new HttpHeaders();
+		// Search projects.
+		List<VcsBranchModel> branchs = doRemoteExchangeSSL(credentials, url, headers,
+				new TypeReference<List<VcsBranchModel>>() {
+				});
+		return branchs;
 	}
 
 	@Override
-	public List<VcsTagModel> getRemoteTags(Vcs credentials, Long projectId) {
-		super.getRemoteTags(credentials, projectId);
-		throw new UnsupportedOperationException();
+	public List<VcsTagModel> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+		super.getRemoteTags(credentials, vcsProject);
+		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/tags?access_token=%s"), vcsProject.getPathWithNamespace(), credentials.getAccessToken());
+		HttpHeaders headers = new HttpHeaders();
+		// Search projects.
+		List<VcsTagModel> tags = doRemoteExchangeSSL(credentials, url, headers,
+				new TypeReference<List<VcsTagModel>>() {
+				});
+		return tags;
 	}
 
 	@Override

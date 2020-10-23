@@ -18,6 +18,7 @@ package com.wl4g.devops.vcs.operator.gitlab;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import org.springframework.http.HttpEntity;
@@ -54,10 +55,10 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4BranchModel> getRemoteBranchs(Vcs credentials, Long projectId) {
-		super.getRemoteBranchs(credentials, projectId);
+	public List<GitlabV4BranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+		super.getRemoteBranchs(credentials, vcsProject);
 
-		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches";
+		String url = credentials.getBaseUri() + "/api/v4/projects/" + vcsProject.getId() + "/repository/branches";
 		// Extract branch names.
 		List<GitlabV4BranchModel> branchs = doRemoteExchange(credentials, url, null,
 				new TypeReference<List<GitlabV4BranchModel>>() {
@@ -71,10 +72,10 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4TagModel> getRemoteTags(Vcs credentials, Long projectId) {
-		super.getRemoteTags(credentials, projectId);
+	public List<GitlabV4TagModel> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+		super.getRemoteTags(credentials, vcsProject);
 
-		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/tags";
+		String url = credentials.getBaseUri() + "/api/v4/projects/" + vcsProject.getId() + "/repository/tags";
 		// Extract tag names.
 		List<GitlabV4TagModel> tags = doRemoteExchange(credentials, url, null, new TypeReference<List<GitlabV4TagModel>>() {
 		});
