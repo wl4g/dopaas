@@ -43,13 +43,21 @@ public class PipelineLogPurger extends ApplicationTaskRunner<RunnerProperties> {
 	@Autowired
 	private LogPipelineCleanerDao cleanerDao;
 
+	public PipelineLogPurger() {
+		super(new RunnerProperties(1));
+	}
+
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		super.run(args);
 
+		// Starting schedule runner
 		getWorker().scheduleAtFixedRate(this, config.getLogCleaner().getInitialDelaySec(), config.getLogCleaner().getPeriodSec(),
 				SECONDS);
+	}
 
+	@Override
+	public void run() {
 		Date endTime = getDiscardEndTime(config.getLogCleaner().getPipeHistoryRetainSec());
 		cleanCiBuiltHistoryLog(endTime);
 
