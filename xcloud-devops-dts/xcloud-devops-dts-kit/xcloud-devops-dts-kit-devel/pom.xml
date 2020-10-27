@@ -17,7 +17,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-bom</artifactId>
+				<artifactId>xcloud-devops-bom</artifactId>
 				<version>master</version>
 				<type>pom</type>
 				<scope>import</scope>
@@ -28,10 +28,6 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-components-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mybatis.generator</groupId>
-			<artifactId>mybatis-generator-core</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
