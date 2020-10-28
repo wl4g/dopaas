@@ -69,13 +69,13 @@
 			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-dao</artifactId>				<version>${project.parent.version}</version>
 			</dependency>
 			<!-- XCloud shell dependentcie's -->
-			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-shell-common</artifactId>				<version>2.0.0</version>
+			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-shell-common</artifactId>				<version>2.1.1</version>
 			</dependency>
-			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-shell-core</artifactId>				<version>2.0.0</version>
+			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-shell-core</artifactId>				<version>2.1.1</version>
 			</dependency>
-			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-shell-springboot</artifactId>				<version>2.0.0</version>
+			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-shell-springboot</artifactId>				<version>2.1.1</version>
 			</dependency>
-			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-shell-cli</artifactId>				<version>2.0.0</version>
+			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-shell-cli</artifactId>				<version>2.1.1</version>
 			</dependency>
 			<!-- XCloud IAM dependentcie's -->
 			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-iam-client</artifactId>				<version>master</version>
