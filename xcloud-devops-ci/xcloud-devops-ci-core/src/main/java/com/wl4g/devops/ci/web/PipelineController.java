@@ -88,7 +88,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
+	@RequiresPermissions(value = {"ci","ci:pipeline"}, logical = AND)
 	public RespBase<?> save(@RequestBody Pipeline pipeline) {
 		Assert.notNull(pipeline, "task can not be null");
 		checkPipeline(pipeline);

@@ -15,14 +15,16 @@
  */
 package com.wl4g.devops.doc.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.doc.service.ShareService;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * @author vjay
@@ -36,6 +38,7 @@ public class ShareController extends BaseController {
 	private ShareService shareService;
 
 	@RequestMapping("/list")
+	@RequiresPermissions(value = {"doc:share"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(shareService.list(pm));
@@ -43,6 +46,7 @@ public class ShareController extends BaseController {
 	}
 
 	@RequestMapping("/cancelShare")
+	@RequiresPermissions(value = {"doc:share"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		shareService.cancelShare(id);

@@ -26,6 +26,7 @@ import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,7 @@ import java.util.List;
 import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * {@link GenerateController}
@@ -68,6 +70,7 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
 	public RespBase<PageModel> page(PageModel pm, String tableName, Long projectId) {
 		RespBase<PageModel> resp = RespBase.create();
 		resp.setData(generateService.page(pm, tableName, projectId));
@@ -81,6 +84,7 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("save")
+	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
 	public RespBase<?> save(@RequestBody GenTable table) {
 		RespBase<Object> resp = RespBase.create();
 		generateService.saveGenConfig(table);
@@ -94,6 +98,7 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("detail")
+	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
 	public RespBase<?> detail(Long tableId) {
 		return generateService.detail(tableId);
 	}
@@ -105,6 +110,7 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("del")
+	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
 	public RespBase<?> delete(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		generateService.deleteGenTable(id);
@@ -185,6 +191,7 @@ public class GenerateController extends BaseController {
 	// --- Execution generates. ---
 
 	@RequestMapping("generate")
+	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
 	public RespBase<?> generate(Long id, HttpServletResponse response) throws IOException {
 		RespBase<Object> resp = RespBase.create();
 

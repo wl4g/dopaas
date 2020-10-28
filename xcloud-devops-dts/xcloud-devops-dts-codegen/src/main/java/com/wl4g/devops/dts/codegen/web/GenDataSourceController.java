@@ -20,10 +20,13 @@ import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.service.GenDataSourceService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * {@link GenDataSourceController}
@@ -42,6 +45,7 @@ public class GenDataSourceController extends BaseController {
 	private GenDataSourceService genDSService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"dts:codegen:database"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(genDSService.page(pm, name));
@@ -49,6 +53,7 @@ public class GenDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"dts:codegen:database"}, logical = AND)
 	public RespBase<?> save(@RequestBody GenDataSource gen) {
 		RespBase<Object> resp = RespBase.create();
 		genDSService.save(gen);
@@ -56,6 +61,7 @@ public class GenDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"dts:codegen:database"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(genDSService.detail(id));
@@ -63,6 +69,7 @@ public class GenDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"dts:codegen:database"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		genDSService.del(id);

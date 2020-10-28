@@ -22,12 +22,14 @@ import com.wl4g.components.core.bean.doc.Share;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.doc.service.DocService;
 import com.wl4g.devops.page.PageModel;
-
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * Dictionaries controller
@@ -43,6 +45,7 @@ public class DocController extends BaseController {
 	private DocService docService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"doc"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String name, String lang, Long labelId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(docService.list(pm, name, lang, labelId));
@@ -50,6 +53,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"doc"}, logical = AND)
 	public RespBase<?> save(@RequestBody FileChanges file) {
 		RespBase<Object> resp = RespBase.create();
 		docService.save(file);
@@ -64,6 +68,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"doc"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		FileChanges detail = docService.detail(id);
@@ -72,6 +77,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"doc"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		docService.del(id);
@@ -79,6 +85,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getHistoryByDocCode")
+	@RequiresPermissions(value = {"doc"}, logical = AND)
 	public RespBase<?> getHistoryByDocCode(String docCode) {
 		RespBase<Object> resp = RespBase.create();
 		List<FileChanges> changesByFileId = docService.getHistoryByDocCode(docCode);
@@ -87,6 +94,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/compareWith")
+	@RequiresPermissions(value = {"doc"}, logical = AND)
 	public RespBase<?> compareWith(Long oldChangesId, Long newChangesId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(docService.compareWith(oldChangesId, newChangesId));
@@ -94,6 +102,7 @@ public class DocController extends BaseController {
 	}
 
 	@PostMapping(value = "/upload")
+	@RequiresPermissions(value = {"doc"}, logical = AND)
 	public RespBase<?> upload(@RequestParam(value = "file") MultipartFile file) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(docService.upload(file));
@@ -101,6 +110,7 @@ public class DocController extends BaseController {
 	}
 
 	@RequestMapping(value = "/shareDoc")
+	@RequiresPermissions(value = {"doc"}, logical = AND)
 	public RespBase<?> shareDoc(Long id, Boolean isEncrypt, Boolean isForever, Integer day, String expireTime) {
 		RespBase<Object> resp = RespBase.create();
 		Share share = docService.shareDoc(id, isEncrypt, isForever, day, DateUtils2.parseDate(expireTime));

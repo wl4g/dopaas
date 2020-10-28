@@ -20,6 +20,7 @@ import com.wl4g.components.core.bean.erm.DockerRepository;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.erm.service.DockerRepositoryService;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * 字典
@@ -43,6 +46,7 @@ public class DockerRepositoryController extends BaseController {
 	private DockerRepositoryService dockerRepositoryService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"erm:dockerrepository"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerRepositoryService.page(pm, name));
@@ -50,6 +54,7 @@ public class DockerRepositoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"erm:dockerrepository"}, logical = AND)
 	public RespBase<?> save(@RequestBody DockerRepository dockerRepository) {
 		RespBase<Object> resp = RespBase.create();
 		dockerRepositoryService.save(dockerRepository);
@@ -57,6 +62,7 @@ public class DockerRepositoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"erm:dockerrepository"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerRepositoryService.detail(id));
@@ -64,6 +70,7 @@ public class DockerRepositoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"erm:dockerrepository"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		dockerRepositoryService.del(id);

@@ -15,18 +15,20 @@
  */
 package com.wl4g.devops.ci.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.Orchestration;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.ci.service.OrchestrationService;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * @author vjay
@@ -40,6 +42,7 @@ public class OrchestrationController extends BaseController {
 	private OrchestrationService orchestrationService;
 
 	@RequestMapping("/list")
+	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(orchestrationService.list(pm, name));
@@ -47,6 +50,7 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/save")
+	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
 	public RespBase<?> save(@RequestBody Orchestration orchestration) {
 		RespBase<Object> resp = RespBase.create();
 		orchestrationService.save(orchestration);
@@ -54,6 +58,7 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/del")
+	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		orchestrationService.del(id);
@@ -61,6 +66,7 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/detail")
+	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Orchestration orchestration = orchestrationService.detail(id);
@@ -69,6 +75,7 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/run")
+	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
 	public RespBase<?> run(Long id, String remark, @NotNull String trackId, @NotNull String trackType, String annex) {
 		RespBase<Object> resp = RespBase.create();
 		orchestrationService.run(id, remark, trackId, trackType, annex);

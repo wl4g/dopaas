@@ -20,10 +20,13 @@ import com.wl4g.components.core.bean.erm.K8sCluster;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.erm.service.K8sClusterService;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * 字典
@@ -39,6 +42,7 @@ public class K8sClusterController extends BaseController {
 	private K8sClusterService k8sClusterService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"erm:k8scluster"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(k8sClusterService.page(pm, name));
@@ -46,6 +50,7 @@ public class K8sClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"erm:k8scluster"}, logical = AND)
 	public RespBase<?> save(@RequestBody K8sCluster k8sCluster) {
 		RespBase<Object> resp = RespBase.create();
 		k8sClusterService.save(k8sCluster);
@@ -53,6 +58,7 @@ public class K8sClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"erm:k8scluster"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(k8sClusterService.detail(id));
@@ -60,6 +66,7 @@ public class K8sClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"erm:k8scluster"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		k8sClusterService.del(id);

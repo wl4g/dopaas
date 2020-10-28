@@ -20,9 +20,12 @@ import com.wl4g.components.core.bean.doc.Label;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.doc.service.LabelService;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * @author vjay
@@ -36,6 +39,7 @@ public class LabelController extends BaseController {
 	private LabelService labelService;
 
 	@RequestMapping("/list")
+	@RequiresPermissions(value = {"doc:label"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(labelService.list(pm, name));
@@ -43,6 +47,7 @@ public class LabelController extends BaseController {
 	}
 
 	@RequestMapping("/save")
+	@RequiresPermissions(value = {"doc:label"}, logical = AND)
 	public RespBase<?> save(Label label) {
 		RespBase<Object> resp = RespBase.create();
 		labelService.save(label);
@@ -50,6 +55,7 @@ public class LabelController extends BaseController {
 	}
 
 	@RequestMapping("/del")
+	@RequiresPermissions(value = {"doc:label"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		labelService.del(id);
@@ -57,6 +63,7 @@ public class LabelController extends BaseController {
 	}
 
 	@RequestMapping("/detail")
+	@RequiresPermissions(value = {"doc:label"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Label label = labelService.detail(id);
