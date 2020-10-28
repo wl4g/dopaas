@@ -34,7 +34,7 @@ import com.wl4g.devops.dao.doc.ShareDao;
 import com.wl4g.devops.doc.config.DocProperties;
 import com.wl4g.devops.doc.service.DocService;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +103,7 @@ public class DocServiceImpl implements DocService {
 		Assert2.notNullOf(fileChanges, "fileChanges");
 		Assert2.hasTextOf(fileChanges.getDocCode(), "docCode");
 		Assert2.hasTextOf(fileChanges.getContent(), "content");
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 		fileChanges.preInsert();
 		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
 		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
@@ -137,7 +137,7 @@ public class DocServiceImpl implements DocService {
 	}
 
 	private void insert(FileChanges fileChanges) {
-		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipal info = getPrincipalInfo();
 		fileChanges.preInsert();
 		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
 		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
