@@ -22,12 +22,14 @@ import com.wl4g.components.core.bean.umc.model.DataSourceProvide;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.CustomDataSourceService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.core.bean.umc.model.DataSourceProvide.MYSQL;
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * @author vjay
@@ -41,6 +43,7 @@ public class CustomDataSourceController extends BaseController {
 	private CustomDataSourceService customDataSourceService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"umc:datasource"}, logical = AND)
 	public RespBase<?> list(String name, PageModel pm) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = customDataSourceService.list(pm, name);
@@ -49,6 +52,7 @@ public class CustomDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"umc:datasource"}, logical = AND)
 	public RespBase<?> save(String dataSource, String provider) {
 		log.info("into CustomDatasourceController.save prarms::" + "customDataSource = {} ", dataSource);
 		notNull(dataSource, "customDataSource is null");
@@ -61,6 +65,7 @@ public class CustomDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"umc:datasource"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(customDataSourceService.detal(id));
@@ -68,6 +73,7 @@ public class CustomDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"umc:datasource"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		log.info("into CustomDatasourceController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

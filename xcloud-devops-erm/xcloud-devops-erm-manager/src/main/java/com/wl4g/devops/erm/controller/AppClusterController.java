@@ -47,6 +47,7 @@ public class AppClusterController extends BaseController {
 	private AppClusterService appClusterService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = { "erm:cluster" })
 	public RespBase<?> list(PageModel pm, String clusterName, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = appClusterService.list(pm, clusterName, deployType);

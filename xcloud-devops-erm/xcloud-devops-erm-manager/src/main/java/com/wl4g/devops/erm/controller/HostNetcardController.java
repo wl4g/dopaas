@@ -20,10 +20,13 @@ import com.wl4g.components.core.bean.erm.HostNetcard;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.erm.service.HostNetcardService;
 import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * 字典
@@ -39,6 +42,7 @@ public class HostNetcardController extends BaseController {
 	private HostNetcardService hostNetcardService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"erm:netcard"}, logical = AND)
 	public RespBase<?> list(PageModel pm, Long hostId, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostNetcardService.page(pm, hostId, name));
@@ -46,6 +50,7 @@ public class HostNetcardController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"erm:netcard"}, logical = AND)
 	public RespBase<?> save(@RequestBody HostNetcard hostNetcard) {
 		RespBase<Object> resp = RespBase.create();
 		hostNetcardService.save(hostNetcard);
@@ -53,6 +58,7 @@ public class HostNetcardController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"erm:netcard"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostNetcardService.detail(id));
@@ -60,6 +66,7 @@ public class HostNetcardController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"erm:netcard"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		hostNetcardService.del(id);

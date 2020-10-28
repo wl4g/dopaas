@@ -18,11 +18,13 @@ package com.wl4g.devops.ci.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.ci.service.AnalysisHistoryService;
+import com.wl4g.devops.page.PageModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.devops.page.PageModel;
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * @author vjay
@@ -36,6 +38,7 @@ public class AnalysisHistoryController extends BaseController {
 	private AnalysisHistoryService analysisHistoryService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"ci:analysis"}, logical = AND)
 	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
 		if (log.isInfoEnabled()) {
 			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);

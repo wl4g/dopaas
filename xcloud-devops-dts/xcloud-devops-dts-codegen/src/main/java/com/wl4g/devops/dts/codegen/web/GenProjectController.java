@@ -15,19 +15,22 @@
  */
 package com.wl4g.devops.dts.codegen.web;
 
-import com.wl4g.components.common.web.rest.RespBase; 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * {@link GenProjectController}
@@ -43,6 +46,7 @@ public class GenProjectController extends BaseController {
 	private GenProjectService genProjectService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"dts:codegen:project"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String projectName) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(genProjectService.page(pm, projectName));
@@ -50,6 +54,7 @@ public class GenProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"dts:codegen:project"}, logical = AND)
 	public RespBase<?> save(@RequestBody GenProject project) {
 		RespBase<Object> resp = RespBase.create();
 		genProjectService.save(project);
@@ -57,6 +62,7 @@ public class GenProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"dts:codegen:project"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(genProjectService.detail(id));
@@ -64,6 +70,7 @@ public class GenProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"dts:codegen:project"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		genProjectService.del(id);

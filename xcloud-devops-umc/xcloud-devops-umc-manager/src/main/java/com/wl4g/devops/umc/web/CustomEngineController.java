@@ -23,15 +23,17 @@ import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.CustomEngineService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.wl4g.components.common.lang.Assert2.notNull;
-
 import java.util.List;
+
+import static com.wl4g.components.common.lang.Assert2.notNull;
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * @author vjay
@@ -45,6 +47,7 @@ public class CustomEngineController extends BaseController {
 	private CustomEngineService customEngineService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"umc:custom:engine"}, logical = AND)
 	public RespBase<?> list(String name, PageModel pm) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = customEngineService.list(pm, name);
@@ -53,6 +56,7 @@ public class CustomEngineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"umc:custom:engine"}, logical = AND)
 	public RespBase<?> save(@RequestBody CustomEngineModel customEngineModel) {
 		log.info("into CustomDatasourceController.save prarms::" + "customEngine = {} ", customEngineModel);
 		notNull(customEngineModel, "customEngine is null");
@@ -77,6 +81,7 @@ public class CustomEngineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"umc:custom:engine"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		CustomEngine customEngine = customEngineService.detal(id);
@@ -96,6 +101,7 @@ public class CustomEngineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"umc:custom:engine"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		log.info("into CustomDatasourceController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

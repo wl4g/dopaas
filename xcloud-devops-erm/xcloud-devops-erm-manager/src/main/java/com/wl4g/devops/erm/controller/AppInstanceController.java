@@ -22,11 +22,13 @@ import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.erm.service.AppInstanceService;
 import com.wl4g.devops.page.PageModel;
-
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * 应用组管理
@@ -44,6 +46,7 @@ public class AppInstanceController extends BaseController {
 	private AppInstanceService appInstanceService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"erm:instance"}, logical = AND)
 	public RespBase<?> list(PageModel pm, String name, Long clusterId, String envType, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(appInstanceService.list(pm, name, clusterId, envType, deployType));
@@ -51,6 +54,7 @@ public class AppInstanceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"erm:instance"}, logical = AND)
 	public RespBase<?> save(@RequestBody AppInstance appInstance) {
 		RespBase<Object> resp = RespBase.create();
 		appInstanceService.save(appInstance);
@@ -58,6 +62,7 @@ public class AppInstanceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"erm:instance"}, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		appInstanceService.del(id);
@@ -65,6 +70,7 @@ public class AppInstanceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"erm:instance"}, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		AppInstance detail = appInstanceService.detail(id);

@@ -20,6 +20,7 @@ import com.wl4g.components.core.bean.erm.Log;
 import com.wl4g.components.core.bean.erm.QueryLogModel;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.erm.service.LogConsoleService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 @RestController
 @RequestMapping("/console")
@@ -38,6 +41,7 @@ public class LogConsoleController extends BaseController {
 
 	@RequestMapping("/consoleLog")
 	@ResponseBody
+	@RequiresPermissions(value = {"erm:log"}, logical = AND)
 	public RespBase<?> logfile(@Validated @RequestBody QueryLogModel model) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Reading logfile... {}", model);
