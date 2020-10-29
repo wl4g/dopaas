@@ -14,17 +14,6 @@
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
