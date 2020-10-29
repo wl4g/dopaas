@@ -18,7 +18,6 @@ package com.wl4g.devops.dts.codegen.service.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.bean.BeanUtils2;
-import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
@@ -46,6 +45,8 @@ import com.wl4g.devops.dts.codegen.service.GenDataSourceService;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
+import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.capf;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +61,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.extractComment;
 import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.cleanComment;
 import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
@@ -235,8 +237,15 @@ public class GenerateServiceImpl implements GenerateService {
 			// New genTable
 			GenTable table = new GenTable();
 			table.setProjectId(project.getId());
-			// TODO default by java entityName specification.
-			table.setEntityName(JavaSpecs.tableName2ClassName(tmetadata.getTableName()));
+			// Optimization entityName specification.
+			switch (providerSet.converter()) {
+			case JAVA:
+				table.setEntityName(capf(JavaSpecs.tableName2ClassName(tmetadata.getTableName())));
+				break;
+			default: // TODO
+				table.setEntityName(tmetadata.getTableName());
+				break;
+			}
 			table.setTableName(tmetadata.getTableName());
 			table.setComments(tmetadata.getComments());
 			// Sets genTable defaults.
@@ -386,7 +395,7 @@ public class GenerateServiceImpl implements GenerateService {
 		// Check distinct genTable.
 		Long count = genTableDao.countByProjectIdAndTableName(genTable.getProjectId(), genTable.getTableName());
 		if (nonNull(count)) {
-			Assert2.isTrue(count <= 0, "Cannot save the gen tables");
+			isTrue(count <= 0, "Already saved gen table: '%s'", genTable.getTableName());
 		}
 
 		List<GenTableColumn> cols = genTable.getGenTableColumns();
@@ -394,7 +403,7 @@ public class GenerateServiceImpl implements GenerateService {
 			GenTableColumn col = cols.get(i);
 			col.preInsert();
 			col.setTableId(genTable.getId());
-			col.setColumnSort(i++);
+			col.setColumnSort(i);
 		}
 		genTableDao.insertSelective(genTable);
 		genColumnDao.insertBatch(cols);
