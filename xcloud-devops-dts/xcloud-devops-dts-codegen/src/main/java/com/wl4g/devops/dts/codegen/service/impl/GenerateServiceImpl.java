@@ -29,6 +29,7 @@ import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition.GenTableExtraOption;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
+import com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition;
 import com.wl4g.devops.dts.codegen.engine.GenerateEngine;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
 import com.wl4g.devops.dts.codegen.engine.context.GenericParameter;
@@ -38,41 +39,36 @@ import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappingW
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
-import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.CommentExtractor;
+import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.*;
 import com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs;
 import com.wl4g.devops.dts.codegen.i18n.CodegenResourceMessageBundler;
 import com.wl4g.devops.dts.codegen.service.GenDataSourceService;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
-import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.capf;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.extractComment;
-import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.cleanComment;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
+import static com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition.getProviders;
 import static com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappingWrapper;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
-import static com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition.getProviders;
+import static com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.*;
 import static com.wl4g.devops.dts.codegen.engine.specs.JavaSpecs.underlineToHump;
-import com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
@@ -111,6 +107,9 @@ public class GenerateServiceImpl implements GenerateService {
 
 	@Autowired
 	protected GenTableColumnDao genColumnDao;
+
+	final private static List DEFAULT_NO_EDIT = Arrays.asList("create_by", "create_date", "update_by", "update_date", "del_flag");
+	final private static List DEFAULT_NO_LIST = Arrays.asList("create_by", "create_date", "del_flag");
 
 	// --- GenTable/GenColumns configuration. ---
 
@@ -274,12 +273,22 @@ public class GenerateServiceImpl implements GenerateService {
 				// Sets column defaults.
 				col.setIsInsert("1");
 				col.setIsUpdate("1");
-				col.setIsList("1");
-				col.setIsEdit("1");
 				col.setNoNull(cmetadata.isNullable() ? "0" : "1");
 				col.setQueryType("1");
 				col.setIsQuery("0");
 				col.setShowType("1");
+
+				if(DEFAULT_NO_EDIT.contains(cmetadata.getColumnName())){
+					col.setIsEdit("0");
+				}else{
+					col.setIsEdit("1");
+				}
+				if(DEFAULT_NO_LIST.contains(cmetadata.getColumnName())){
+					col.setIsList("0");
+				}else{
+					col.setIsList("1");
+				}
+
 				if (cmetadata.isPk()) {
 					col.setIsPk("1");
 					col.setIsList("0");
@@ -288,6 +297,7 @@ public class GenerateServiceImpl implements GenerateService {
 				} else {
 					col.setIsPk("0");
 				}
+
 
 				// Sets default show attrType
 				applyDefaultShowType(cmetadata, col);

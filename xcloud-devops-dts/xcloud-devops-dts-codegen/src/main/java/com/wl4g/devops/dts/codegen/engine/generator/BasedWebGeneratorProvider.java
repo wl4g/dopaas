@@ -23,41 +23,10 @@ import com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs;
 import com.wl4g.devops.dts.codegen.engine.template.TemplateResource;
 
 import javax.validation.constraints.NotNull;
-
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_DEV_REDIS_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_DEV_SERVICE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_DEV_TOPDOMAIN;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_DEV_VIEW_SERVICE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_DEV_VIEW_SERVICE_PORT;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_ENTRYAPP_NAME;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_ENTRYAPP_PORT;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_ENTRYAPP_SUBDOMAIN;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_FAT_MYSQL_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_FAT_ORACLE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_FAT_POSTGRE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_FAT_REDIS_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_FAT_SERVICE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_FAT_TOPDOMAIN;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_FAT_VIEW_SERVICE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_PRO_MYSQL_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_PRO_ORACLE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_PRO_POSTGRE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_PRO_REDIS_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_PRO_SERVICE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_PRO_TOPDOMAIN;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_PRO_VIEW_SERVICE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_MYSQL_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_ORACLE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_POSTGRE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_REDIS_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_SERVICE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_TOPDOMAIN;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_DEF_UAT_VIEW_SERVICE_HOST;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_SHORTCUT_CHECK_SWAGGER;
-import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_SHORTCUT_CHECK_IAMCLUSTER;
-import static java.util.Locale.US;
-
 import java.util.Map;
+
+import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.*;
+import static java.util.Locale.US;
 
 /**
  * {@link BasedWebGeneratorProvider}
@@ -88,6 +57,7 @@ public abstract class BasedWebGeneratorProvider extends AbstractGeneratorProvide
 
 		// Add IAM options.
 		model.put(GEN_SHORTCUT_CHECK_IAMCLUSTER, BaseSpecs.isConf(project.getExtraOptions(), "iam.mode", "cluster"));
+		model.put(GEN_SHORTCUT_CHECK_IAMLOCAL, BaseSpecs.isConf(project.getExtraOptions(), "iam.mode", "local"));
 	}
 
 	/**

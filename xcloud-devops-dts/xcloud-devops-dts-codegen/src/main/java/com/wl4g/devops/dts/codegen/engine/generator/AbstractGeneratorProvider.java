@@ -372,11 +372,11 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 			// Step4: Add model of moduleMap. moduleMap{moduleName => tables}
 			//
-			Map<String, List<GenTable>> moduleMap = new HashMap<>();
+			Map<String, List<Map<String, Object>>> moduleMap = new HashMap<>();
 			for (GenTable tab : context.getGenProject().getGenTables()) {
 				String moduleName = tab.getModuleName();
-				List<GenTable> tablesOfModule = moduleMap.getOrDefault(moduleName, new ArrayList<>());
-				tablesOfModule.add(tab);
+				List<Map<String, Object>> tablesOfModule = moduleMap.getOrDefault(moduleName, new ArrayList<>());
+				tablesOfModule.add(convertToRenderingModel(tab));
 				moduleMap.put(moduleName, tablesOfModule);
 			}
 			model.put(GEN_MODULE_MAP, moduleMap);

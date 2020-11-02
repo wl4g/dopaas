@@ -589,29 +589,29 @@ CREATE TABLE `sys_menu` (
 -- Records of sys_menu
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_menu` VALUES (5, 'System Settings', '系统设置', 1, NULL, 1, 0, 0, NULL, 'iam', '/iam', '/iam', NULL, 'icon-xitongshezhi', 900, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:49:57', 0);
-INSERT INTO `sys_menu` VALUES (11, 'Online Users', '在线用户', 1, NULL, 2, 0, 5, NULL, 'iam:online', '/iam/online/Online', '/online', NULL, 'icon-zaixianyonghu', 902, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:55:12', 0);
-INSERT INTO `sys_menu` VALUES (12, 'Users', '用户管理', 1, NULL, 2, 0, 5, NULL, 'iam:user', '/iam/user/User', '/user', NULL, 'icon-yonghuguanli', 903, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:58', 0);
-INSERT INTO `sys_menu` VALUES (13, 'Menus', '菜单配置', 1, NULL, 2, 0, 5, NULL, 'iam:menu', '/iam/menu/Menu', '/menu', NULL, 'icon-caidan', 906, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:13', 0);
-INSERT INTO `sys_menu` VALUES (14, 'Organizations', '组织机构', 1, NULL, 2, 0, 5, NULL, 'iam:group', '/iam/group/Group', '/group', NULL, 'icon-organization', 905, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:07', 0);
-INSERT INTO `sys_menu` VALUES (15, 'Roles', '角色管理', 1, NULL, 2, 0, 5, NULL, 'iam:role', '/iam/role/Role', '/role', NULL, 'icon-jiaoseguanli', 904, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:03', 0);
-INSERT INTO `sys_menu` VALUES (20, 'Dictionaries', '字典配置', 1, NULL, 2, 0, 5, NULL, 'iam:dict', '/iam/dict/Dict', '/dict', NULL, 'icon-zidianguanli', 907, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:18', 0);
-INSERT INTO `sys_menu` VALUES (21, 'Notifications', '通知设置', 1, NULL, 2, 0, 5, NULL, 'iam:contact', '/iam/contact/Contact', '/contact', NULL, 'icon-lianxiren', 901, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:52', 0);
-INSERT INTO `sys_menu` VALUES (33, 'Home', '主页', 1, NULL, 1, 0, 0, NULL, 'home', '', '/home', NULL, 'icon-zhuye', 100, 1, '2019-11-26 10:42:01', 1, '2020-08-26 12:23:21', 0);
-INSERT INTO `sys_menu` VALUES (34, 'Overview', '概览', 1, NULL, 2, 0, 33, NULL, 'home:overview', '/home/overview/Overview', '/overview', NULL, 'icon-gailan', 101, 1, '2019-11-26 10:42:33', 1, '2020-08-26 12:24:40', 0);
+INSERT INTO `sys_menu` VALUES (5, 'System Settings', '系统设置', 1, NULL, 1, 0, 0, 'iam', '/iam', '/iam', NULL, 'icon-xitongshezhi', 900, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:49:57', 0);
+INSERT INTO `sys_menu` VALUES (11, 'Online Users', '在线用户', 1, NULL, 2, 0, 5, 'iam:online', '/iam/online/Online', '/online', NULL, 'icon-zaixianyonghu', 902, 1, '2019-10-31 10:01:57', 1, '2020-08-26 12:55:12', 0);
+INSERT INTO `sys_menu` VALUES (12, 'Users', '用户管理', 1, NULL, 2, 0, 5, 'iam:user', '/iam/user/User', '/user', NULL, 'icon-yonghuguanli', 903, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:58', 0);
+INSERT INTO `sys_menu` VALUES (13, 'Menus', '菜单配置', 1, NULL, 2, 0, 5, 'iam:menu', '/iam/menu/Menu', '/menu', NULL, 'icon-caidan', 906, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:13', 0);
+INSERT INTO `sys_menu` VALUES (14, 'Organizations', '组织机构', 1, NULL, 2, 0, 5, 'iam:group', '/iam/group/Group', '/group', NULL, 'icon-organization', 905, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:07', 0);
+INSERT INTO `sys_menu` VALUES (15, 'Roles', '角色管理', 1, NULL, 2, 0, 5, 'iam:role', '/iam/role/Role', '/role', NULL, 'icon-jiaoseguanli', 904, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:03', 0);
+INSERT INTO `sys_menu` VALUES (20, 'Dictionaries', '字典配置', 1, NULL, 2, 0, 5, 'iam:dict', '/iam/dict/Dict', '/dict', NULL, 'icon-zidianguanli', 907, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:41:18', 0);
+INSERT INTO `sys_menu` VALUES (21, 'Notifications', '通知设置', 1, NULL, 2, 0, 5, 'iam:contact', '/iam/contact/Contact', '/contact', NULL, 'icon-lianxiren', 901, 1, '2019-11-01 15:54:37', 1, '2020-08-26 12:40:52', 0);
+INSERT INTO `sys_menu` VALUES (33, 'Home', '主页', 1, NULL, 1, 0, 0, 'home', '', '/home', NULL, 'icon-zhuye', 100, 1, '2019-11-26 10:42:01', 1, '2020-08-26 12:23:21', 0);
+INSERT INTO `sys_menu` VALUES (34, 'Overview', '概览', 1, NULL, 2, 0, 33, 'home:overview', '/home/overview/Overview', '/overview', NULL, 'icon-gailan', 101, 1, '2019-11-26 10:42:33', 1, '2020-08-26 12:24:40', 0);
 <#if moduleMap??>
     <#assign parentMenuSortSeq = 100>
     <#list moduleMap?keys as moduleName>
         <#assign nextMenuId = javaSpecs.genNextId()>
-INSERT INTO `sys_menu` VALUES (${nextMenuId}, '${moduleName}', '${moduleName}', 1, 'classifyA', 1, 0, 0, NULL, '${moduleName}', '', '/${moduleName}', 'NULL', 'icon-gongju3', ${parentMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+INSERT INTO `sys_menu` VALUES (${nextMenuId}, '${moduleName}', '${moduleName}', 1, 'classifyA', 1, 0, 0, '${moduleName}', '', '/${moduleName}', 'NULL', 'icon-gongju3', ${parentMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
         <#assign parentMenuSortSeq = parentMenuSortSeq + 100>
         <#assign subMenuSortSeq = 100>
         <#list moduleMap[moduleName] as table>
           <#assign nextTableMenuId = javaSpecs.genNextId()>
-INSERT INTO `sys_menu` VALUES (${nextTableMenuId}, '${table.entityName}', '${table.functionNameSimple}', 1, 'classifyA', 2, 0, ${nextMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+INSERT INTO `sys_menu` VALUES (${nextTableMenuId}, '${table.entityName}', '${table.functionSimpleName}', 1, 'classifyA', 2, 0, ${nextMenuId}, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
             <#assign subMenuSortSeq = subMenuSortSeq + 1>
-          <#if table.isEditOnPage == true>
-INSERT INTO `sys_menu` VALUES (${javaSpecs.genNextId()}, '${table.entityName} Edit', '${table.functionNameSimple}编辑', 1, 'classifyA', 3, 0, ${nextTableMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}:edit', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}Edit', '/${table.entityName?lower_case}/edit', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+          <#if javaSpecs.isConf(table.tExtOpts, "tab.edit-type", "editOnPage")>
+INSERT INTO `sys_menu` VALUES (${javaSpecs.genNextId()}, '${table.entityName} Edit', '${table.functionSimpleName}编辑', 1, 'classifyA', 3, 0, ${nextTableMenuId}, '${moduleName}:${table.entityName?lower_case}:edit', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}Edit', '/${table.entityName?lower_case}/edit', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
           </#if>
         </#list>
     </#list>

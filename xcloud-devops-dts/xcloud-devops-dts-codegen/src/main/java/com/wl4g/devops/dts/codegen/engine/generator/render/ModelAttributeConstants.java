@@ -175,5 +175,6 @@ public interface ModelAttributeConstants {
 	public static final String GEN_SHORTCUT_CHECK_SWAGGER = "isSwagger";
 	public static final String GEN_SHORTCUT_CHECK_MVNASSTAR = "isMvnAssTar";
 	public static final String GEN_SHORTCUT_CHECK_IAMCLUSTER = "isIamCluster";
+	public static final String GEN_SHORTCUT_CHECK_IAMLOCAL = "isIamLocal";
 
 }
