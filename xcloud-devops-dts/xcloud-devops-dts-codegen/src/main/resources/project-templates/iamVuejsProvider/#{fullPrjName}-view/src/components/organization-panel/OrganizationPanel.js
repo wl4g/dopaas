@@ -88,7 +88,7 @@ export default {
     },
     mounted() {
         this.getOrganizations();
-        this.getCurrentOrganization();
+        //this.getCurrentOrganization();
         this.getAreaTree();
     },
     methods: {
@@ -103,8 +103,9 @@ export default {
                     this.handleData();
                     this.createEchart();
 
-                    //TODO just for now
                     this.handleShow();
+
+                    this.getCurrentOrganization();
                 },
                 errFn: () => {
                     //do nothing
@@ -113,18 +114,15 @@ export default {
         },
 
         handleData() {
-            if (!this.organizationsTree) {
+            if (!this.organizationsTree || this.organizationsTree.length <= 0) {
                 return;
             }
             for (let i in this.organizationsTree) {
                 this.recursiveTraversalOrganization(this.organizationsTree[i]);
             }
-
             if (this.organizationsTree.length > 1) { // More than one top
                 this.option.series[0].data = [{
-                    name: 'Top', children: [
-                        this.organizationsTree
-                    ]
+                    name: 'Top', children: this.organizationsTree
                 }];
             } else { //  Just one top
                 this.option.series[0].data = this.organizationsTree;
@@ -163,7 +161,7 @@ export default {
         },
 
         clickNode(param) {
-            console.info(param);
+            //console.info(param);
             //this.$message.success(param.value);
             this.currentNodeCode = param.value;
             this.handleShow();
@@ -365,14 +363,17 @@ export default {
             this.search();
         },
 
-        changeOrganization(item) {
+        changeOrganization(item, notReload) {
             this.current = item.name;
             this.currentOrganizationCode = item.organizationCode;
             this.currentOrganization = item;
 
             cache.set("currentOrganization", item);
 
-            location.reload()
+            if(!notReload){
+                location.reload()
+            }
+
             //this.$router.go(0)
         },
 
@@ -383,9 +384,16 @@ export default {
                 this.currentOrganizationCode = currentOrganization.organizationCode;
                 this.currentOrganization = currentOrganization;
             } else {
-                this.current = 'TOP';
+                /*this.current = 'TOP';
                 this.currentOrganizationCode = '';
-                this.currentOrganization = { type: 1 };
+                this.currentOrganization = { type: 1 };*/
+
+                if(this.organizationsTree && this.organizationsTree.length>0){
+                    let firstOrganization = this.organizationsTree[0];
+                    this.changeOrganization(firstOrganization, true);
+                }
+
+
             }
 
         },

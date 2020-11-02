@@ -93,7 +93,7 @@ export default {
       return path.resolve(this.basePath, routePath)
     },
     getMenuName(item){
-      return this.$i18n.locale=='en_US'?item.name:item.displayName;
+      return this.$i18n.locale=='en_US'?item.nameEn:item.nameZh;
     }
   }
 }

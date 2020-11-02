@@ -27,7 +27,11 @@ export default {
                 alarmTemplate: {},
 
             },
-            loading: false
+            loading: false,
+
+            rules: {
+                id: [{ required: true, message: 'Private IAM Service ID is required', trigger: 'blur' }],
+            },
         }
     },
 
@@ -50,19 +54,24 @@ export default {
         // 获取列表数据
         getData() {
             this.loading = true;
-            this.$$api_iam_onlineList({
-                data: {
-                    id: this.searchParams.id,
-                    principal: this.searchParams.principal,
-                },
-                fn: data => {
-                    this.tableData = data.data.sessions;
-                    this.loading = false;
-                },
-                errFn: () => {
-                    this.loading = false;
+            this.$refs['searchForm'].validate((valid) => {
+                if (valid) {
+                    this.$$api_iam_onlineList({
+                        data: {
+                            id: this.searchParams.id,
+                            principal: this.searchParams.principal,
+                        },
+                        fn: data => {
+                            this.tableData = data.data.sessions;
+                            this.loading = false;
+                        },
+                        errFn: () => {
+                            this.loading = false;
+                        }
+                    })
                 }
-            })
+            });
+
         },
 
         getIamServer(){

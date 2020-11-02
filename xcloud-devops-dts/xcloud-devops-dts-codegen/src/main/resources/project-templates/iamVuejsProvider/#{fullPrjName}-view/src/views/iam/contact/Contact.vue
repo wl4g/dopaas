@@ -21,7 +21,7 @@
                         </div>
 
                         <!-- 新增按钮 -->
-                        <el-button type="primary" @click="addContact()"> + </el-button>
+                        <el-button v-if="permitutil.hasPermit('iam:contact:edit')" type="primary" @click="addContact()"> + </el-button>
                     </div>
                     <!-- 查询结果表格 -->
                     <div>
@@ -35,7 +35,7 @@
 
                                 <el-table-column :label="$t('message.common.operation')" min-width="100">
                                     <template slot-scope="scope">
-                                        <el-button type="info" dockerRepository='edit' @click="editContact(scope.row)">{{$t('message.common.edit')}}</el-button>
+                                        <el-button v-if="permitutil.hasPermit('iam:contact:edit')" type="info" dockerRepository='edit' @click="editContact(scope.row)">{{$t('message.common.edit')}}</el-button>
                                         <el-button type="danger" icon='delete' @click="delContact(scope.row)">{{$t('message.common.del')}}</el-button>
                                     </template>
                                 </el-table-column>

@@ -1,8 +1,8 @@
 <template>
     <section id="configuration" class="configuration">
-        <el-form :inline="true" :model="searchParams" class="searchbar" @keyup.enter.native="onSubmit()">
+        <el-form :inline="true" :model="searchParams" class="searchbar" ref="searchForm" @keyup.enter.native="onSubmit()" :rules="rules">
 
-            <el-form-item :label="$t('message.iam.server')">
+            <el-form-item :label="$t('message.iam.server')" prop="id">
                 <el-select v-model="searchParams.id" >
                     <el-option
                             v-for="item in iamServers"

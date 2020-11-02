@@ -13,20 +13,35 @@ export default {
                 callback();
             }
         };
+        const checkRouteNamespace = (rule, value, callback) => {
+            if(!value){
+                callback(new Error('该字段不能为空'));
+            }
+            if(value.indexOf('/')!=0){
+                callback(new Error("必须以'/'开头"));
+            }
+            if(value.length<=1){
+                callback(new Error("不能只为'/'"));
+            }
+            if(value.indexOf('/')!=value.lastIndexOf('/')){
+                callback(new Error("只能存在一个'/'"));
+            }
+            callback();
+        };
 
         return {
             //tree-table 标题列数据
             columns: [
                 {
                     text: i18n.t('message.common.enName'),
-                    value: 'name',
+                    value: 'nameEn',
                     icon: true,
                     width: 240
                 },
                 {
                     text: i18n.t('message.common.name'),
-                    value: 'displayName',
-                    width: 200,
+                    value: 'nameZh',
+                    width: 100,
                 },
                 {
                     text: i18n.t('message.iam.permission'),
@@ -36,6 +51,11 @@ export default {
                 {
                     text: i18n.t('message.common.icon'),
                     value: 'icon',
+                },
+                {
+                    text: '路由地址',
+                    value: 'routePath',
+                    width: 150,
                 },
                 {
                     text: i18n.t('message.common.sort'),
@@ -55,12 +75,13 @@ export default {
             //form 属性
             formFields: {
                 id: '',
-                name: '',
-                displayName: '',
+                nameEn: '',
+                nameZh: '',
                 parentId: '',
                 parentName: '',
                 permission: '',
                 pageLocation: '',
+                parentRoutePath: '',
                 routeNamespace: '',
                 icon: '',
                 sort: '',
@@ -72,14 +93,27 @@ export default {
 
             //验证
             rules: {
-                name: [{required: true, message: 'Please input name', trigger: 'blur'}],
-                displayName: [{required: true, message: 'Please input displayName', trigger: 'blur'}],
-                permission: [{required: true, message: 'Please input permission', trigger: 'blur'}],
-                type: [{required: true, message: 'Please Select Menu Type', trigger: 'blur'}],
-                routeNamespace: [{required: true, message: 'Please input routePath', trigger: 'blur'}],
+                nameEn: [{required: true, message: 'Please input name', trigger: 'change'}],
+                nameZh: [{required: true, message: 'Please input displayName', trigger: 'change'}],
+                permission: [{required: true, message: 'Please input permission', trigger: 'change'}],
+                type: [{required: true, message: 'Please Select Menu Type', trigger: 'change'}],
+                routeNamespace: [
+                    {required: true, message: 'Please input routePath', trigger: 'change'},
+                    {validator: checkRouteNamespace, trigger: 'change'},
+                    {
+                        validator: function (rule, value, callback) {
+                            if (/^\/[a-zA-Z0-9_-]+$/.test(value)) {
+                                callback(); // Pass
+                            } else {
+                                callback(new Error("e.g: /menu"));
+                            }
+                        },
+                        trigger: "change"
+                    }
+                    ],
                 sort: [
-                    {required: true, message: 'Please input sort', trigger: 'blur'},
-                    {validator: checkNumber, trigger: 'blur'}
+                    {required: true, message: 'Please input sort', trigger: 'change'},
+                    {validator: checkNumber, trigger: 'change'}
                 ],
             },
 
@@ -98,7 +132,7 @@ export default {
             menuDataList: [],
             defaultProps: {
                 children: 'children',
-                label: 'displayName',
+                label: 'nameZh',
             },
         }
     },
@@ -155,13 +189,13 @@ export default {
          */
         onClickBtnAdd(opts) {
             // 动态菜单不能添加下级
-            if (opts.data.type == '2') {
-                this.$message.error('动态菜单不能添加下级')
+            if (opts.data.type == '3') {
+                this.$message.error('按钮不能添加下级')
                 return
             }
 
             this.emptyFormFieldsAndEnableDialogSubmitBtn();
-            this.windowTitle = '添加[' + opts.data.displayName + ']的下级菜单';
+            this.windowTitle = '添加[' + opts.data.nameZh + ']的下级菜单';
             this.dialogVisible = true;
             this.formFields.parentId = opts.data.id;
             this.setParentName();
@@ -171,15 +205,16 @@ export default {
          */
         onClickBtnUpdate(opts) {
             this.emptyFormFieldsAndEnableDialogSubmitBtn();
-            this.windowTitle = '修改[' + opts.data.displayName + ']菜单';
+            this.windowTitle = '修改[' + opts.data.nameZh + ']菜单';
             this.dialogVisible = true;
             this.formFields = {
                 id: opts.data.id,
-                name: opts.data.name,
-                displayName: opts.data.displayName,
+                nameEn: opts.data.nameEn,
+                nameZh: opts.data.nameZh,
                 parentId: opts.data.parentId,
                 permission: opts.data.permission,
                 pageLocation: opts.data.pageLocation,
+                parentRoutePath: opts.data.parentRoutePath,
                 routeNamespace: opts.data.routeNamespace,
                 icon: opts.data.icon,
                 sort: opts.data.sort,
@@ -197,12 +232,13 @@ export default {
             }
             this.formFields = {
                 id: '',
-                name: '',
-                displayName: '',
+                nameEn: '',
+                nameZh: '',
                 parentId: '',
                 parentName: '',
                 permission: '',
                 pageLocation: '',
+                parentRoutePath: '',
                 routeNamespace: '',
                 icon: '',
                 sort: '',
@@ -268,7 +304,7 @@ export default {
             } else {
                 let node = this.getNodeById(this.formFields.parentId);
                 //this.$set(this.formFields,'parentName',node.displayName);
-                this.formFields.parentName = node.displayName
+                this.formFields.parentName = node.nameZh
             }
         },
 
