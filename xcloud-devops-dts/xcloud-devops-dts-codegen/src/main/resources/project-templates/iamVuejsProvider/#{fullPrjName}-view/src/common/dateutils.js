@@ -2,8 +2,8 @@ import de from "element-ui/src/locale/lang/de";
 
 export default {
     dateFormat(fmt, date) {
-        if(typeof date == 'string'){
-            date =  new Date(date);
+        if (typeof date == 'string') {
+            date = new Date(date);
         }
         let ret;
         const opt = {

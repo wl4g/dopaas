@@ -14,6 +14,9 @@ export default {
     },
     data() {
         return {
+            searchParams: {
+                keyword: '',
+            },
             lang: 'zh_CN',
             display: '',
             dialog: {
@@ -76,6 +79,9 @@ export default {
         this.changeDisplay();
     },
     methods: {
+        change (e) {  // el-input框有时无法输入的问题
+            this.$forceUpdate()
+        },
         getMenuName(item) {
             return this.$i18n.locale == 'en_US' ? item.name : item.displayName;
         },
@@ -221,9 +227,16 @@ export default {
             })
         },
 
-        // 切换侧边栏菜单汇总页显示状态
+        // 左上角菜单触发切换(@mouseenter)
         toggleSidebarLightbox() {
-            this.$root.$emit('lightBoxVisibleChange')
+            let that = this.$root;
+            setTimeout(function(){
+                that.$emit('lightBoxVisibleChange');
+            }, 300);
+        },
+        // 左上角菜单触发切换(@click)
+        clickToggleSidebarLightbox() {
+            this.$root.$emit('clickLightBoxVisibleChange');
         }
     }
 }

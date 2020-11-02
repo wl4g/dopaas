@@ -1,7 +1,7 @@
 <template>
 <div>
     <el-popover transition="transition:all 0.25s ease-in-out 0s;" ref="centerSwitch" trigger="click" :visible-arrow="true" popper-class="organization-popover centerSwitch">
-        <div style="width:1100px;height:520px;">
+        <div style="width:1150px;height:580px;">
             <div class="title-center">
                 <p>组织架构图 :</p>
                 <p>

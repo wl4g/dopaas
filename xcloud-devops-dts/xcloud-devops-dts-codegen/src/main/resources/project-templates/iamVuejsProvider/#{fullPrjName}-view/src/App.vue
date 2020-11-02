@@ -227,10 +227,6 @@ p {
   margin: 0 2px;
 }
 
-body .el-loading-mask {
-  background: rgba(0, 0, 0, 0.4);
-}
-
 ::-webkit-scrollbar {
   /*滚动条整体样式*/
   width: 10px;
@@ -337,7 +333,7 @@ body .el-loading-mask {
 
 /* Organization style */
 .organization-popover {
-  background-color: #092a47 !important;
+  background-color: #303643 !important;
 
   .title-center {
     position: absolute;

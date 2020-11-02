@@ -89,7 +89,11 @@ function processFirstRedirect(list) {
     list.forEach((item, index) => {
         let firstChild = findFirstChild(list, item.id);
         if (firstChild && firstChild.routePath) {
-            item.redirect = firstChild.routePath;
+            if(firstChild.routeNamespace=='/'){
+                item.redirect = '/' + firstChild.permission.replace(':','_');
+            }else{
+                item.redirect = firstChild.routePath;
+            }
         }
     });
 }
@@ -101,8 +105,8 @@ function transform2OneChildrenRoutes(list) {
     let flatOneChildRoutes = list.filter(item => {
         if (item.parentId == 0) {//顶级
             item.path = item.routePath;
-            if (!item.path) {
-                item.path = '/' + item.permission
+            if (!item.path || item.routeNamespace=='/') {
+                item.path = '/' + item.permission.replace(':','_');
             }
             item.component = Layout;
             return true;
@@ -114,15 +118,15 @@ function transform2OneChildrenRoutes(list) {
             }
             if (item.type == '1') {
                 item.path = item.routePath;
-                if (!item.path) {
-                    item.path = '/' + item.permission
+                if (!item.path || item.routeNamespace=='/') {
+                    item.path = '/' + item.permission.replace(':','_');
                 }
                 if (item.pageLocation) {
                     item.component = loadView(item.pageLocation);
                 }
                 parent.children.push(item);
             } else if (item.type == '2') {
-                item.path = item.routePath ? item.routePath : 'webview' + item.name;
+                item.path = item.routePath ? item.routePath : 'webview' + item.nameEn;
                 item.component = webView;
                 item.meta = {
                     linkhref: item.pageLocation
@@ -133,8 +137,8 @@ function transform2OneChildrenRoutes(list) {
                     let view = loadView(item.pageLocation);
                     if (view) {
                         item.path = item.routePath;
-                        if (!item.path) {
-                            item.path = '/' + item.permission
+                        if (!item.path || item.routeNamespace=='/') {
+                            item.path = '/' + item.permission.replace(':','_');
                         }
                         item.component = view;
                         parent.children.push(item);
@@ -146,8 +150,9 @@ function transform2OneChildrenRoutes(list) {
             if (!item.meta) {
                 item.meta = {}
             }
-            item.meta.displayName = item.displayName;
-            item.meta.name = item.name;
+            item.meta.nameZh = item.nameZh;
+            item.meta.nameEn = item.nameEn;
+            item.name = item.nameEn;
             return false;
         }
     });
@@ -200,8 +205,8 @@ router.beforeEach(async (to, from, next) => {
                             // 头部一级菜单
                             if (item.level == '1') {
                                 item.path = item.routePath;
-                                if (!item.path) {
-                                    item.path = '/' + item.permission
+                                if (!item.path || item.routeNamespace=='/') {
+                                    item.path = '/' + item.permission.replace(':','_');
                                 }
 
                                 // 默认指向第一个子菜单
@@ -213,7 +218,7 @@ router.beforeEach(async (to, from, next) => {
                             } else {
                                 // 二级菜单下有子菜单
                                 if (item.children && item.children.length) {
-                                    item.path = item.permission;
+                                    item.path = item.permission.replace(':','_');
                                     item.component = Content;
                                 } else {
                                     // 二级菜单没有子菜单
@@ -223,7 +228,7 @@ router.beforeEach(async (to, from, next) => {
                                 }
                             }
                         } else if (item.type == '2') {            // 处理动态路由
-                            item.path = item.routePath ? item.routePath : 'webview' + item.name;
+                            item.path = item.routePath ? item.routePath : 'webview' + item.nameEn;
                             item.component = webView;
                             item.meta = {
                                 linkhref: item.pageLocation
@@ -232,6 +237,9 @@ router.beforeEach(async (to, from, next) => {
                             // 页面按钮权限，必须有pageLocation和routePath
                             if (item.pageLocation && item.routePath) {
                                 item.path = item.routePath;
+                                if (!item.path || item.routeNamespace=='/') {
+                                    item.path = '/' + item.permission.replace(':','_');
+                                }
                                 let routePath = loadView(item.pageLocation);
                                 item.component = routePath;
                             }
@@ -244,8 +252,9 @@ router.beforeEach(async (to, from, next) => {
                         if (!item.meta) {
                             item.meta = {}
                         }
-                        item.meta.displayName = item.displayName;
-                        item.meta.name = item.name;
+                        item.meta.nameZh = item.nameZh;
+                        item.meta.nameEn = item.nameEn;
+                        item.name = item.nameEn;
                     })
                 })(deepChildRoutes);
 

@@ -4,7 +4,6 @@
         <el-row class="tac">
             <el-col :span="24">
                 <el-menu :default-active="$route.path" class="el-menu-vertical-demo" active-text-color="#20a1ff">
-
                     <sidebar-item v-for="route in permission_routes" :key="route.path" :item="route" :base-path="route.path" />
                 </el-menu>
             </el-col>
@@ -18,7 +17,7 @@
             <div class="sidebar-lightbox-list">
                 <div class="sidebar-lightbox-header" @mouseenter="beforeOpenMaskLayer" @mouseleave="resetMaskLayer" @click="toggleMaskLayer">
                     <i class="el-icon-s-grid"></i>
-                    {{$t('message.iam.navEntryName')}}
+                    &nbsp;&nbsp;{{$t('message.iam.navEntryName')}}
                     <i class="el-icon-arrow-right"></i>
                 </div>
                 <el-menu theme="dark" :default-active="$store.state.router.headerCurRouter" class="el-menu-demo" mode="horizontal" unique-opened router @select="parentLevelMenuClick">
@@ -26,7 +25,7 @@
                         <svg class="top-menu-iconfont" aria-hidden="true" style="cursor:pointer;">
                             <use :xlink:href="'#'+item.icon"></use>
                         </svg>
-                        {{getMenuName(item)}}
+                        &nbsp;&nbsp;&nbsp;{{getMenuName(item)}}
                         <!--{{item.path}}-->
                     </el-menu-item>
                 </el-menu>
@@ -37,14 +36,17 @@
     <transition name="mask-fade">
         <div class="menu-list-mask" v-show="maskVisible">
             <div class="list-mask-search-bar" :class="isKeyWordFocus ? 'active': ''">
-                <el-input class="list-mask-search-input" ref="maskSearchInput" v-model="keyword" placeholder="请输入关键字搜索" prefix-icon="el-icon-search" @keyup.native="handleKeyWordSearch" @focus="isKeyWordFocus=true" @blur="isKeyWordFocus=false"></el-input>
+                <el-input class="list-mask-search-input" ref="maskSearchInput" v-model="keyword" 
+                    :placeholder="$t('message.common.searchInput')" prefix-icon="el-icon-search" 
+                    @keyup.native="handleKeyWordSearch" @focus="isKeyWordFocus=true" 
+                    @blur="isKeyWordFocus=false"></el-input>
             </div>
             <div class="mask-list">
-                <div class="mask-list-item" v-for="(item,name) of routerGroupByClassify">
-                    <p class="mask-list-item-title">{{name}}</p>
+                <div class="mask-list-item" v-for="(classifyData, classifyKey) of menusOfClassify">
+                    <p class="mask-list-item-title">{{getClassifyName(classifyData)}}</p>
                     <ul class="mask-list-item-ul">
-                        <li v-for="n of item">
-                            <span class="mask-list-item-link" @click="handleRouteLinkClick(n.routePath)"> {{n.displayName}}</span>
+                        <li v-for="item of classifyData.items">
+                            <span class="mask-list-item-link" @click="handleRouteLinkClick(n.routePath)"> {{getMenuName(item)}}</span>
                         </li>
                     </ul>
                 </div>
@@ -105,10 +107,17 @@ export default LeftMenu
     border-bottom: 1px solid rgb(222, 222, 222);
 }
 
+.sidebar-lightbox-header:hover {
+    .el-icon-s-grid {
+        color: #189cfa;
+    }
+}
+
 .sidebar-lightbox-header .el-icon-s-grid {
     margin-right: 4px;
-    color: #909399;
-    font-size: 16px;
+    color: #324a79;
+    font-size: 20px;
+    transition: all 200ms ease 0s;
 }
 
 .sidebar-lightbox-header .el-icon-arrow-right {
@@ -122,7 +131,7 @@ export default LeftMenu
 .menu-list-mask {
     position: fixed;
     top: 50px;
-    left: 190px;
+    left: 220px; /* refer:/store/leftmenu/mutations.js */
     bottom: 0;
     z-index: 1998;
     display: flex;
@@ -191,14 +200,24 @@ export default LeftMenu
 }
 </style><style lang="less">
 .dynamic-menus .el-menu {
-    background-color: #eae8e4;
+    background-color: #f6f2f2ef;
     border-right: 0 none;
 }
 
 .dynamic-menus .el-menu-item,
 .dynamic-menus /deep/ .el-submenu__title {
-    height: 48px;
-    line-height: 48px;
+    height: 45px;
+    line-height: 45px;
+    /*禁止复制*/
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.dynamic-menus .el-submenu .el-menu-item {
+    height: 45px;
+    line-height: 45px;
     /*禁止复制*/
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -209,7 +228,7 @@ export default LeftMenu
 .dynamic-menus .el-menu-item:focus,
 .dynamic-menus .el-menu-item:hover,
 .dynamic-menus .el-menu-item.is-active {
-    color: #20a1ff;
+    color: #23445c;
     background-color: #fff;
 }
 
@@ -232,6 +251,11 @@ export default LeftMenu
     background-color: #DEDEDE;
 }
 
+.dynamic-menus .el-menu-item:focus,
+.dynamic-menus .el-menu-item:hover{
+    background-color: #ebebeb;
+}
+
 .dynamic-menus .el-menu .svg-icon {
     margin-right: 6px;
 }
@@ -246,10 +270,11 @@ export default LeftMenu
     height: 40px;
     line-height: 40px;
     font-size: 12px;
+    color: #724141;
 }
 
 .sidebar-lightbox .el-menu--horizontal>.el-menu-item.is-active {
-    color: #20a1ff;
+    color: #189cfa;
     border-bottom: 2px solid transparent;
     background-color: rgb(222, 222, 222);
 }

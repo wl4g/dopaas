@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="formatData" :row-style="showRow" v-bind="$attrs" row-key="id">
+  <el-table :data="formatData"  v-bind="$attrs" :row-key="rowKey">
     <el-table-column v-if="columns.length===0" width="150">
       <template slot-scope="scope">
         <span v-for="space in scope.row._level" :key="space" class="ms-tree-space"/>
@@ -9,7 +9,7 @@
 
 
     <el-table-column v-for="(column, index) in columns" v-else :key="column.value" :label="column.text"
-    :width="column.width" >
+    :width="column.width" :show-overflow-tooltip="true">
       <template slot-scope="scope">
         <span v-for="space in scope.row._level" v-if="index === 0" :key="space" class="ms-tree-space"/>
 
@@ -19,7 +19,18 @@
               <use :xlink:href="'#'+scope.row['icon']"></use>
             </svg>
         </span>
-        {{ scope.row[column.value] }}
+
+
+        <span v-if="column.dictKey">
+          {{dictutil.getDictLabelByTypeAndValue(column.dictKey, scope.row[column.value])}}
+        </span>
+        <span v-else-if="column.jump">
+          <el-button type="text" @click="$router.push({path: column.jump.path, query: { [column.jump.query] : scope.row[column.jump.query]}})">{{ scope.row[column.value] }}</el-button>
+        </span>
+        <span v-else>
+          {{ scope.row[column.value] }}
+        </span>
+
       </template>
     </el-table-column>
 
@@ -74,6 +85,10 @@ export default {
     }
   },
   props: {
+    rowKey:{
+      type: String,
+      required: true
+    },
     data: {
       type: [Array, Object],
       required: true
@@ -113,8 +128,9 @@ export default {
   },
   methods: {
     showRow: function(row) {
-      const show = (row.parent ? (row.parent._expanded && row.parent._show) : true)
-      row._show = show
+      //const show = (row.parent ? (row.parent._expanded && row.parent._show) : true)
+      const show = true;
+      row._show = show;
       return show ? 'animation:treeTableShow 0.5s;-webkit-animation:treeTableShow 0.5s;' : 'display:none;'
     },
     // 图标显示

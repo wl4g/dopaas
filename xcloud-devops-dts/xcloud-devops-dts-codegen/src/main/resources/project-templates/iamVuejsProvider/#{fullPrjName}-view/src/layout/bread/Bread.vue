@@ -42,9 +42,9 @@
         if(route){
           let lang = this.$i18n.locale;
           if(lang == 'en_US'){
-            return route.name;
+            return route.nameEn;
           }else{
-            return route.displayName;
+            return route.nameZh;
           }
         }else{
           return;
@@ -67,7 +67,7 @@
           let menuName = this.getMenuName(r);
           result.push({
             path: r,
-            name: menuName ? menuName : i,
+            name: menuName ? menuName : routes[i],
           });
         }
         return result;
@@ -79,14 +79,11 @@
 
     },
     created () {
-      if (this.$route.matched.length) {
-        var name = this.$route.matched[this.$route.matched.length - 1].name
-        this.strong = this.getPageText(name)
-      }
+
     },
     watch: {
       $route (to, from) {
-        this.strong = this.getPageText(to.name)
+        //this.strong = this.getPageText(to.name)
       }
     }
   }

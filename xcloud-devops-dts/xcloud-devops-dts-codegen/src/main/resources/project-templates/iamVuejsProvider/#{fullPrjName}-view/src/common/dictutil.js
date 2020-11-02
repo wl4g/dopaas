@@ -1,6 +1,5 @@
-import {
-    cache
-} from 'utils/'
+import { cache } from 'utils/'
+import i18nutil from './i18nutil'
 
 // Default dict theme(if necessary)
 let defaultTheme = "primary";
@@ -34,7 +33,12 @@ export default {
         if (!dict) {
             return defaultLabel;
         }
-        return dict.label;
+
+        switch (i18nutil.getCurrentLang()) {
+            case 'zh_CN': return dict.label; // TODO rename to labelZh
+            case 'en_US': return dict.labelEn;
+            default: return dict.label;
+        }
     },
     getDictThemesByTypeAndValue: function (type, value) {
         //defalut return primary theme , because the default theme is ugly

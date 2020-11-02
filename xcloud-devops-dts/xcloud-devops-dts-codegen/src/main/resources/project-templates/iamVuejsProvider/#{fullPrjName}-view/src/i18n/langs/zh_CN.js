@@ -2,6 +2,9 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 const zh_CN = {
     message: {
         'common': {
+            'profile': '账号信息',
+            'help': '帮助',
+            'logout': '注销登录',
             'home': '主页',
             'language': '语言',
             'createDate': '创建日期',
@@ -56,6 +59,7 @@ const zh_CN = {
             'manager': '管理',
             'startTime': '开始时间',
             'endTime': '结束时间',
+            'searchInput': '请输入关键字',
         },
         'ci': {
             'instances': '实例',

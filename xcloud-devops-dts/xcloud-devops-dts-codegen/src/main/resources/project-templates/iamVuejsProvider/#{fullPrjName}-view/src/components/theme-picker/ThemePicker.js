@@ -60,14 +60,6 @@ export default {
             // Save theme.
             cache.set("global_theme", themeType);
         },
-        // updateStyle(style, oldCluster, newCluster) {
-        //     debugger
-        //     let newStyle = style
-        //     oldCluster.forEach((color, index) => {
-        //         newStyle = newStyle.replace(new RegExp(color, 'ig'), newCluster[index])
-        //     })
-        //     return newStyle
-        // },
         getCSSString(url, variable) {
             return new Promise(resolve => {
                 const xhr = new XMLHttpRequest()

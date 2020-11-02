@@ -38,6 +38,9 @@ var gbs = {
                 //     that.$alert(res.message);
                 // }
             }
+            if(error){
+                error.call(this, data)
+            }
         },
     }
 };
