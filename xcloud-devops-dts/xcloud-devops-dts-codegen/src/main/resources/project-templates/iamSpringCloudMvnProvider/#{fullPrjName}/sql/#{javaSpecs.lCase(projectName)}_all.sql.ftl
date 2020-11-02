@@ -564,14 +564,13 @@ COMMIT;
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu` (
   `id` bigint(25) NOT NULL,
-  `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
-  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
+  `name_en` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
+  `name_zh` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
   `type` int(1) DEFAULT NULL COMMENT '菜单类型, (e.g 1静态菜单,2动态菜单,3按钮...参考字典)',
   `classify` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '分类类型',
   `level` int(1) NOT NULL DEFAULT '1' COMMENT '级别,顶级=1 , 菜单为0级',
   `status` int(1) NOT NULL DEFAULT '0' COMMENT '菜单状态(e.g 启用,禁用)',
   `parent_id` bigint(25) NOT NULL COMMENT '父级菜单ID ,顶级的父级id为0',
-  `parent_ids` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '树形父级菜单ID列表（如：1,11,22）',
   `permission` varchar(500) COLLATE utf8_bin NOT NULL COMMENT '权限标识（如：sys:user:edit,sys:user:view），用于如shiro-aop方法及权限校验',
   `page_location` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '页面地址,(例如静态菜单:/ci/task/xx.vue文件路径(不包含.vue后缀),动态菜单www.baidu.com)',
   `route_namespace` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '路由path(#后面的部分)，类似springmvc的RequestMapping("/list")，注：规定任意层级的菜单的此字段值只有一级，如：/iam或/user或/list',
@@ -609,10 +608,10 @@ INSERT INTO `sys_menu` VALUES (${nextMenuId}, '${moduleName}', '${moduleName}', 
         <#assign subMenuSortSeq = 100>
         <#list moduleMap[moduleName] as table>
           <#assign nextTableMenuId = javaSpecs.genNextId()>
-INSERT INTO `sys_menu` VALUES (${nextTableMenuId}, '${table.entityName}', '${table.functionNameSimple}', 1, 'classifyA', 2, 0, ${nextMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${moduleName}/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+INSERT INTO `sys_menu` VALUES (${nextTableMenuId}, '${table.entityName}', '${table.functionNameSimple}', 1, 'classifyA', 2, 0, ${nextMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}', '/${table.entityName?lower_case}', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
             <#assign subMenuSortSeq = subMenuSortSeq + 1>
           <#if table.isEditOnPage == true>
-INSERT INTO `sys_menu` VALUES (${javaSpecs.genNextId()}, '${table.entityName} Edit', '${table.functionNameSimple}编辑', 1, 'classifyA', 3, 0, ${nextTableMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}:edit', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}Edit', '/${moduleName}/${table.entityName?lower_case}/edit', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
+INSERT INTO `sys_menu` VALUES (${javaSpecs.genNextId()}, '${table.entityName} Edit', '${table.functionNameSimple}编辑', 1, 'classifyA', 3, 0, ${nextTableMenuId}, NULL, '${moduleName}:${table.entityName?lower_case}:edit', '/${moduleName}/${table.entityName?lower_case}/${table.entityName?cap_first}Edit', '/${table.entityName?lower_case}/edit', 'NULL', 'icon-gongju3', ${subMenuSortSeq}, 1, '2020-09-08 14:45:51', 1, '2020-09-21 19:59:37', 0);
           </#if>
         </#list>
     </#list>
@@ -622,12 +621,17 @@ COMMIT;
 -- ----------------------------
 -- Table structure for sys_user
 -- ----------------------------
+-- ----------------------------
+-- Table structure for sys_user
+-- ----------------------------
 DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user` (
   `id` bigint(25) NOT NULL,
   `user_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '登录账号名(唯一）',
-  `display_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '显示名称',
+  `name_en` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `name_zh` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '显示名称',
   `password` varchar(768) COLLATE utf8_bin NOT NULL COMMENT '密文密码',
+  `pub_salt` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '认证加密盐',
   `user_type` int(1) NOT NULL DEFAULT '0' COMMENT '用户类型（保留字段）',
   `enable` int(1) NOT NULL DEFAULT '1' COMMENT '启用状态（0:禁止/1:启用）',
   `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户状态（预留）',
@@ -655,8 +659,13 @@ CREATE TABLE `sys_user` (
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` VALUES (1, 'root', '系统根超级管理员', 'b68bac90602f8800a51282243c7405afff8a9a0dd8e412d238c89970a221669ae13f67e3c997cac35162a88e0234ca1b345384456c3e9ac1358f953a58128f2b', 0, 1, 0, '983708408@qq.com', '18127968606', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '系统根管理员', 1, '2019-11-17 18:11:00', 1, '2019-11-26 14:11:10', 0);
-INSERT INTO `sys_user` VALUES (2, 'administrator', '系统管理员', '6810ae5a577b26dd4916468fe5b21519', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '系统管理员1', 1, '2019-11-17 18:11:00', 1, '2019-11-26 14:11:10', 0);
+INSERT INTO `sys_user` VALUES (1, 'root', NULL, '系统根超级管理员', '05ca1afb242f770c44b98ca144a013a6', 'a3e0b320c73020aa81ebf87bd8611bf1', 0, 1, 0, '983708408@qq.com', '18127968606', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '商物云系统管理员1', NULL, NULL, NULL, '2019-11-17 18:13:34', 0);
+INSERT INTO `sys_user` VALUES (5, 'liuxl', NULL, '刘兴龙', '81d206f6f32bf1d48728fc351cdde734a658b908cac178d3ab3be6bfff9644f169548439c0ab4e5c40b834807ef5dcdbd33476f53466795ce693e61ae548cf9a', 'cb93f6efd291fbc66d59d082e4014c12', 0, 1, 0, 'zhangsan@gmail.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '测试人员-刘兴龙', 1, '2019-10-30 11:16:05', -1, '2020-10-30 08:35:41', 0);
+INSERT INTO `sys_user` VALUES (7, 'hwjie', NULL, '何伟杰', '9bc434a8c2fb6f0ff3d218198bc2eea4ce4376c900b1a7f752098c0aad080e2d6f8c3c3a9f9117f1840fc9584f809718', '36c9ebe0f18dfb0464f80dbc21180803', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 15:01:05', -1, '2020-10-29 11:12:39', 0);
+INSERT INTO `sys_user` VALUES (8, 'wanglsir', NULL, 'wanglsir', '2b64fa319015f13fbec894d6eba5f5a71211a727dbb18a80ab45c3101d98ea85c88879dd81ee215e06b2817a69270ade', 'd553592177c116c3458f02007577fc09', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 18:11:00', -1, '2020-10-29 11:12:59', 0);
+INSERT INTO `sys_user` VALUES (9, 'zhangsan', NULL, '张三', '1dcc3ea0d398e28b176b9d88ddfc5d16cf251badda7717afacebebb017424c9b', '16eee4e2e220622aa8977c8e7c1a0cdc', 0, 1, 0, 'zhangsan@163.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-27 17:53:32', -1, '2020-10-29 11:13:27', 0);
+INSERT INTO `sys_user` VALUES (10, 'lisi', NULL, '李四', '668f12a45c135cffe9b09ceb215850f9cf86f015d1ab1edb26228d46102ed894545968fe9df052678085d8df25bb1fe7', '090a2655e2eb1b5a078117d822eadd18', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-28 14:59:30', -1, '2020-10-29 11:11:44', 0);
+INSERT INTO `sys_user` VALUES (11, 'wangwu', NULL, '王五', '2f4263193a702976b41d80853e08b5d25af77cab02bcaa265c746705dc7f4588a2bd6b09f436e8c90ecb0531545bdcfb5c49b2b298312903807bfb4cf8913ed0', '2babcadf7f5687ae636c737cdf6d4233', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-28 15:21:12', -1, '2020-10-29 11:13:37', 0);
 COMMIT;
 
 -- ----------------------------
@@ -666,7 +675,7 @@ DROP TABLE IF EXISTS `sys_role`;
 CREATE TABLE `sys_role` (
   `id` bigint(25) NOT NULL,
   `role_code` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
-  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
+  `name_zh` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
   `type` int(1) DEFAULT NULL COMMENT '用户角色类型（预留）',
   `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户角色启用状态（0:禁用/1:启用）',
   `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户角色状态（预留）',
@@ -687,18 +696,18 @@ INSERT INTO `sys_role` VALUES (2, 'groupleader', '组长', 1, 1, 0, 1, '2019-10-
 COMMIT;
 
 -- ----------------------------
--- Table structure for sys_group
+-- Table structure for sys_organization
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_group`;
-CREATE TABLE `sys_group` (
+DROP TABLE IF EXISTS `sys_organization`;
+CREATE TABLE `sys_organization` (
   `id` bigint(25) NOT NULL,
-  `name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '用户分租(customer）名，与displayName灵活应用',
-  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '用户分租(customer）展示名',
-  `organization_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '唯一标识',
-  `type` int(1) DEFAULT '0' COMMENT '用户分组类型（预留）1park,2company,3department',
+  `name_en` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '用户分租(customer）名，与displayName灵活应用',
+  `name_zh` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '用户分租(customer）展示名',
+  `organization_code` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '唯一标识',
+  `type` int(1) NOT NULL DEFAULT '0' COMMENT '用户分组类型（预留）1park,2company,3department',
   `parent_id` bigint(25) DEFAULT NULL COMMENT '父级id',
   `parent_ids` varchar(512) COLLATE utf8_bin DEFAULT NULL COMMENT '父级路径id列表, 为减少使用时计算量提高性能(逗号分隔)',
-  `area_id` bigint(25) DEFAULT NULL COMMENT '区域id',
+  `area_id` bigint(25) NOT NULL COMMENT '区域id',
   `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户组启用状态（0:禁用/1:启用）',
   `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户组状态（预留）',
   `create_by` bigint(25) NOT NULL,
@@ -708,92 +717,43 @@ CREATE TABLE `sys_group` (
   `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0:正常/1:删除）',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `parent_id` (`parent_id`) USING BTREE,
-  FULLTEXT KEY `parent_ids` (`parent_ids`)
+  KEY `area_id` (`area_id`),
+  FULLTEXT KEY `parent_ids` (`parent_ids`),
+  CONSTRAINT `sys_organization_ibfk_1` FOREIGN KEY (`area_id`) REFERENCES `sys_area` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统用户组表';
 
 -- ----------------------------
--- Records of sys_group
+-- Records of sys_organization
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_group` VALUES (1, 'PanYuEnergyParkCenter', 'Xxx科技园中心', 'PanYuEnergyParkCenter', 1, NULL, NULL, 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:04:16', 0);
-INSERT INTO `sys_group` VALUES (2, 'Shangmaikeji-GZ', 'Xxx科技有限公司', 'Shangmaikeji-GZ', 2, 1, '1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:05:05', 0);
-INSERT INTO `sys_group` VALUES (3, 'BigdataDepartment', '大数据研发部', 'BigdataDepartment', 3, 2, '2,1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:09:55', 0);
-INSERT INTO `sys_group` VALUES (4, 'BizDepartment', '应用研发部', 'BizDepartment', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:06:18', 0);
-INSERT INTO `sys_group` VALUES (5, 'DevSecOpsFramework', 'DevSecOps+系统架构部', 'DevSecOpsFramework', 3, 2, '2,1', 110100, 1, 0, 1, '2019-10-31 15:46:29', 1, '2019-11-26 14:10:19', 0);
+INSERT INTO `sys_organization` VALUES (1, 'XCompanyOfChina', '中国X集团有限公司', 'XCompanyOfChinaCode', 1, 6, NULL, 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:04:16', 0);
+INSERT INTO `sys_organization` VALUES (2, 'XCompanyOfGz', '广州分公司', 'XCompanyOfGzCode', 1, 1, '1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:05:05', 0);
+INSERT INTO `sys_organization` VALUES (3, 'BigdataResearchDept', '大数据研发部', 'BigdataResearchDeptCode', 2, 2, '2,1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:09:55', 0);
+INSERT INTO `sys_organization` VALUES (4, 'BizDevDept', '应用开发部', 'BizDevDeptCode', 2, 2, '2,1', 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:06:18', 0);
+INSERT INTO `sys_organization` VALUES (5, 'DevSecOpsArch', 'DevSecOps+系统架构部', 'DevSecOpsArchCode', 2, 2, '2,1', 440100, 1, 0, 1, '2019-10-31 15:46:29', 1, '2019-11-26 14:10:19', 0);
+INSERT INTO `sys_organization` VALUES (6, 'XCloud Parent Platform', 'XCloud总台', 'XCP', 0, NULL, NULL, 440100, 1, 0, 1, '2020-10-26 09:48:25', 1, '2020-10-26 09:48:47', 0);
+INSERT INTO `sys_organization` VALUES (7, 'XCloud Parent Platform2', 'XCloud总台2', 'XCP2', 0, NULL, NULL, 440100, 1, 0, 1, '2020-10-26 09:48:25', 1, '2020-10-26 09:48:47', 0);
+INSERT INTO `sys_organization` VALUES (8, 'XCompanyOfChina2', '中国X集团有限公司2', 'XCompanyOfChinaCode2', 1, 7, NULL, 440100, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:04:16', 0);
+INSERT INTO `sys_organization` VALUES (5154539957780480, 'ProductTestDept', '产品测试部', 'ProductTestDeptCode', 3, 2, '2,1', 440100, 1, 0, 1, '2020-10-23 16:52:06', 1, '2020-10-23 16:56:52', 0);
 COMMIT;
 
 -- ----------------------------
--- Table structure for sys_department
+-- Table structure for sys_organization_role
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_department`;
-CREATE TABLE `sys_department` (
-  `id` bigint(25) NOT NULL,
-  `group_id` bigint(25) DEFAULT NULL,
-  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  CONSTRAINT `sys_department_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- ----------------------------
--- Records of sys_department
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_department` VALUES (1, 3, NULL, NULL, '18127968606');
-INSERT INTO `sys_department` VALUES (2, 4, NULL, NULL, NULL);
-COMMIT;
-
--- ----------------------------
--- Table structure for sys_company
--- ----------------------------
-DROP TABLE IF EXISTS `sys_company`;
-CREATE TABLE `sys_company` (
-  `id` bigint(25) NOT NULL,
-  `group_id` bigint(25) DEFAULT NULL,
-  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  CONSTRAINT `sys_company_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- ----------------------------
--- Table structure for sys_group_role
--- ----------------------------
-DROP TABLE IF EXISTS `sys_group_role`;
-CREATE TABLE `sys_group_role` (
-  `id` bigint(25) NOT NULL,
-  `group_id` bigint(25) DEFAULT NULL,
-  `role_id` bigint(25) DEFAULT NULL,
-  `create_by` bigint(25) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  KEY `role_id` (`role_id`) USING BTREE,
-  CONSTRAINT `sys_group_role_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
-  CONSTRAINT `sys_group_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
+DROP TABLE IF EXISTS `sys_organization_role`;
+CREATE TABLE `sys_organization_role` (
+`id` bigint(25) NOT NULL,
+`organization_id` bigint(25) NOT NULL,
+`role_id` bigint(25) NOT NULL,
+`create_by` bigint(25) NOT NULL,
+`create_date` datetime NOT NULL,
+PRIMARY KEY (`id`) USING BTREE,
+KEY `group_id` (`organization_id`) USING BTREE,
+KEY `role_id` (`role_id`) USING BTREE,
+CONSTRAINT `sys_organization_role_ibfk_1` FOREIGN KEY (`organization_id`) REFERENCES `sys_organization` (`id`),
+CONSTRAINT `sys_organization_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-role中间表';
 
--- ----------------------------
--- Table structure for sys_group_user
--- ----------------------------
-DROP TABLE IF EXISTS `sys_group_user`;
-CREATE TABLE `sys_group_user` (
-  `id` bigint(25) NOT NULL,
-  `group_id` bigint(25) DEFAULT NULL,
-  `user_id` bigint(25) DEFAULT NULL,
-  `create_by` bigint(25) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  KEY `user_id` (`user_id`) USING BTREE,
-  CONSTRAINT `sys_group_user_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
-  CONSTRAINT `sys_group_user_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-user中间表';
 
 -- ----------------------------
 -- Table structure for sys_role_user
@@ -987,22 +947,6 @@ INSERT INTO `sys_contact_group_ref` VALUES (1401226240, 8, 7);
 INSERT INTO `sys_contact_group_ref` VALUES (1866160128, 8, 2101651456);
 COMMIT;
 
--- ----------------------------
--- Table structure for sys_group_menu
--- ----------------------------
-DROP TABLE IF EXISTS `sys_group_menu`;
-CREATE TABLE `sys_group_menu` (
-  `id` bigint(25) NOT NULL,
-  `group_id` bigint(25) DEFAULT NULL,
-  `menu_id` bigint(25) DEFAULT NULL,
-  `create_by` bigint(25) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  KEY `menu_id` (`menu_id`) USING BTREE,
-  CONSTRAINT `sys_group_menu_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
-  CONSTRAINT `sys_group_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-menu中间表';
 
 -- ----------------------------
 -- Table structure for sys_notification_contact
@@ -1021,37 +965,22 @@ CREATE TABLE `sys_notification_contact` (
   CONSTRAINT `sys_notification_contact_ibfk_2` FOREIGN KEY (`record_id`) REFERENCES `umc_alarm_record` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
--- ----------------------------
--- Table structure for sys_park
--- ----------------------------
-DROP TABLE IF EXISTS `sys_park`;
-CREATE TABLE `sys_park` (
-  `id` bigint(25) NOT NULL,
-  `group_id` bigint(25) DEFAULT NULL,
-  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `group_id` (`group_id`) USING BTREE,
-  CONSTRAINT `sys_park_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
 -- Table structure for sys_role_menu
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_role_menu`;
 CREATE TABLE `sys_role_menu` (
-  `id` bigint(25) NOT NULL,
-  `role_id` bigint(25) DEFAULT NULL,
-  `menu_id` bigint(25) DEFAULT NULL,
-  `create_by` bigint(25) DEFAULT NULL,
-  `create_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `role_id` (`role_id`) USING BTREE,
-  KEY `menu_id` (`menu_id`) USING BTREE,
-  CONSTRAINT `sys_role_menu_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`),
-  CONSTRAINT `sys_role_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
+`id` bigint(25) NOT NULL,
+`role_id` bigint(25) DEFAULT NULL,
+`menu_id` bigint(25) DEFAULT NULL,
+`create_by` bigint(25) DEFAULT NULL,
+`create_date` datetime DEFAULT NULL,
+PRIMARY KEY (`id`) USING BTREE,
+KEY `role_id` (`role_id`) USING BTREE,
+KEY `menu_id` (`menu_id`) USING BTREE,
+CONSTRAINT `sys_role_menu_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`),
+CONSTRAINT `sys_role_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统role-menu中间表';
 
 SET FOREIGN_KEY_CHECKS = 1;
