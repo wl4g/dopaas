@@ -35,6 +35,7 @@ git clone https://github.com/wl4g/xcloud-devops.git # Upstream repo latest
 cd xcloud-devops
 mvn clean install -DskipTests -T 2C
 ```
+> If the ```error xx/xxx: Filename too long``` error, this is due to the too long template path of the Devops DTS CodeGen sub project. It is recommended to set ```git config --global core.longpaths true``` , Then pull it again.
 
 #### Project structure
 ```
