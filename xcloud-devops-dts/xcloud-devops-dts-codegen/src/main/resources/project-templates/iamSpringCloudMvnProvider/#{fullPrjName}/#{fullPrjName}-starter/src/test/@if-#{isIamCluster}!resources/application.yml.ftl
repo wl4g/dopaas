@@ -14,7 +14,9 @@
 # Mybatis configuration.
 mybatis:
   configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
+  # Note: for example, if depend on 'iam-core', need to use 'classpath*' to scan the DAO mapper configuration of IAM.
+  mapperLocations: classpath*:mybatis/**/*Mapper.xml
+  # TODO: In the future, it will definitely migrate to 'com.wl4g.iam.common.bean'
   typeAliasesPackage: com.wl4g.components.core.bean.*,com.wl4g.components.core.bean.*.*
 
 # Logging configuration.
