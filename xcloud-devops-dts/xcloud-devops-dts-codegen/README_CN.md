@@ -35,6 +35,7 @@ git clone https://github.com/wl4g/xcloud-devops.git # 上游最新
 cd xcloud-devops
 mvn clean install -DskipTests -T 2C
 ```
+> 若出现  ```error xx/xxx: Filename too long```  错误，这是由于devops dts codegen子项目的模板路径过长导致，建议设置 ```git config --global core.longpaths true``` 后重新拉。
 
 #### 项目结构
 ```
@@ -125,5 +126,6 @@ b. 若整体路径过长，可在路径上调用 XxxSpecs 相关的工具方法�
 > <font color=red>在模板路径写代码尽量不要太长，因为操作系统对文件目录和路径有限制，如linux最大目录名长度为 255个字符、文件路径最大长度为 4096个字符通常一个模板路径上只会存在1到2个表达式，一般是够用的。</font>
 
 > <font color=red>万一过长也可使用以下措施优化：</font>
-> - <font color=red>a. 当目录名表达式过长时，建议拆分为多级目录；</font>
-> - <font color=red>b. 当路径整体过长时，建议使用如 javaSpecs 相关工具类处理；</font>
+
+- <font color=red>a. 当目录名表达式过长时，建议拆分为多级目录；</font>
+- <font color=red>b. 当路径整体过长时，建议使用如 javaSpecs 相关工具类处理；</font>
