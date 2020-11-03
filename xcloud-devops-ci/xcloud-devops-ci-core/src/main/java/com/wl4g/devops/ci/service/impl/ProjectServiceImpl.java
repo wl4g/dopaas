@@ -99,7 +99,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public int update(Project project) {
 		Project hasProject = projectDao.getByAppClusterId(project.getAppClusterId());
 		// check repeated
-		Assert.state(hasProject == null || hasProject.getId().intValue() == project.getId().intValue(), "Config Repeated");
+		Assert.state(hasProject == null || hasProject.getId().longValue() == project.getId().longValue(), "Config Repeated");
 		project.preUpdate();
 		int result = projectDao.updateByPrimaryKeySelective(project);
 		dependencyDao.deleteByProjectId(project.getId());

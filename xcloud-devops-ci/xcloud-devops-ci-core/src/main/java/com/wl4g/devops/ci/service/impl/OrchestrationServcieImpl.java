@@ -116,7 +116,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 				if (newOrchestrationPipeline.getId() == null) {
 					continue;
 				}
-				if (oldOrchestrationPipeline.getId().intValue() == newOrchestrationPipeline.getId().intValue()) {
+				if (oldOrchestrationPipeline.getId().longValue() == newOrchestrationPipeline.getId().longValue()) {
 					had = true;
 					break;
 				}
@@ -131,8 +131,8 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 		List<OrchestrationPipeline> needRemove = new ArrayList<>();
 		for (int i = 0; i < orchestrationPipelines.size(); i++) {
 			for (int j = i + 1; j < orchestrationPipelines.size(); j++) {
-				if (orchestrationPipelines.get(i).getPipelineId().intValue() == orchestrationPipelines.get(j).getPipelineId()
-						.intValue()) {
+				if (orchestrationPipelines.get(i).getPipelineId().longValue() == orchestrationPipelines.get(j).getPipelineId()
+						.longValue()) {
 					needRemove.add(orchestrationPipelines.get(i));
 				}
 			}
