@@ -19,7 +19,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node5:3306}/devops?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node5:3306}/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
       username: ${DEVOPS_DB_USER:gzsm}
       password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
