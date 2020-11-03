@@ -38,7 +38,7 @@ spring:
           enabled: true # Default: true
         client: # IAM client configuration.
           filter-chain:
-            /public/**: anon # Public rule release
+            '[/public/**]': anon # Public rule release
     <#if javaSpecs.isConf(extOpts, "swagger.ui", "bootstrapSwagger2")>
             '[/webjars/**]': anon
             '[/swagger-resources/**]': anon
