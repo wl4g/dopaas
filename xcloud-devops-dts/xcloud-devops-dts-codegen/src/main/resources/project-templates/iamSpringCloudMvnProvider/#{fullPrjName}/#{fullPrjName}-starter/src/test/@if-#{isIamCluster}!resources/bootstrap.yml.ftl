@@ -71,6 +71,20 @@ spring:
             #- escapeHtml4
         filter-chain:
           '[/public/**]': anon # Public rule
+<#if javaSpecs.isConf(extOpts, "swagger.ui", "bootstrapSwagger2")>
+          '[/webjars/**]': anon
+          '[/swagger-resources/**]': anon
+          '[/swagger-resources]': anon
+          '[/v2/api-docs]': anon
+          '[/v2/api-docs-ext]': anon
+          '[/doc.html]': anon
+<#elseif javaSpecs.isConf(extOpts, "swagger.ui", "officialOas")>
+          '[/webjars/**]': anon
+          '[/swagger-ui/**]': anon
+          '[/swagger-resources/**]': anon
+          '[/swagger-ui.html]': anon
+          '[/v3/api-docs]': anon
+</#if>
         param: # Must be consistent with the client, otherwise authentication will never succeed
           sid: __sid
         matcher:

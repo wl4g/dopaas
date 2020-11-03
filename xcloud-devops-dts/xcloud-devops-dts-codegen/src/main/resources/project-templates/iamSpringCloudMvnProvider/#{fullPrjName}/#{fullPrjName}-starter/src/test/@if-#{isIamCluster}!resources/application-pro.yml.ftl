@@ -10,7 +10,7 @@
 # limitations under the License.
 #
 
-# #### Environment(FAT) configuration. ####
+# #### Environment(PRO) configuration. ####
 #
 spring:
   cloud:
