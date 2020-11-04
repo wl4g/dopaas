@@ -332,7 +332,9 @@ public class FlowManager {
 	public void pipelineStateChange(PipelineModel pipelineModel) {
 		RunModel runModel = getRunModel(pipelineModel.getRunId());
 		Pipeline pipeline = getPipeline(runModel.getPipelines(), pipelineModel.getPipeId());
-		BeanUtils.copyProperties(pipelineModel, pipeline);
+		if(pipeline != null){
+			BeanUtils.copyProperties(pipelineModel, pipeline);
+		}
 		saveRunModel(runModel);
 	}
 
@@ -412,7 +414,7 @@ public class FlowManager {
 	private Pipeline getPipeline(List<Pipeline> pipelines, Long pipelineId) {
 		if (!CollectionUtils.isEmpty(pipelines)) {
 			for (Pipeline pipeline : pipelines) {
-				if (pipelineId.intValue() == pipeline.getPipeId()) {
+				if (pipelineId.longValue() == pipeline.getPipeId()) {
 					return pipeline;
 				}
 			}

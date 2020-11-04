@@ -106,7 +106,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 		// Task details.
 		Optional<PipelineHistoryInstance> pipelineHistoryInstance = pipelineHistoryInstances.stream()
-				.filter(detail -> detail.getInstanceId().intValue() == instance.getId().intValue()).findFirst();
+				.filter(detail -> detail.getInstanceId().longValue() == instance.getId().longValue()).findFirst();
 		isTrue(pipelineHistoryInstance.isPresent(), "Not found taskDetailId by details.");
 		this.pipeHisInstanceId = pipelineHistoryInstance.get().getId();
 	}
