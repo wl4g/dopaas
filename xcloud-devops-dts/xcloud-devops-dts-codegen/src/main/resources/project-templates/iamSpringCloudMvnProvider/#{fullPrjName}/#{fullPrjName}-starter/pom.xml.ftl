@@ -40,7 +40,7 @@
 		<#if javaSpecs.isConf(extOpts, "iam.mode", "cluster")>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-test</artifactId>
+			<artifactId>xcloud-iam-client-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		</#if>
