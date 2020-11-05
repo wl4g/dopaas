@@ -38,7 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-test</artifactId>
+			<artifactId>xcloud-iam-client-test</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
