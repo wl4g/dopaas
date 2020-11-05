@@ -97,7 +97,7 @@ public class HistoryServiceImpl implements HistoryService {
 		return historyDao.list(agl);
 	}
 
-	public PageModel versionList(PageModel pm,Map<String, Object> param) {
+	public PageModel<?> versionList(PageModel<?> pm,Map<String, Object> param) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(historyDao.versionList(param));
 		return pm;

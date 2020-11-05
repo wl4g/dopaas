@@ -19,7 +19,7 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
@@ -47,7 +47,7 @@ public class VcsController extends BaseController {
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = {"vcs"}, logical = AND)
-	public RespBase<?> list(PageModel pm, String name, String providerKind, Integer authType) {
+	public RespBase<?> list(PageModel<?> pm, String name, String providerKind, Integer authType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(vcsService.list(pm, name, providerKind, authType));
 		return resp;
@@ -101,7 +101,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getProjects")
-	public RespBase<?> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName) throws Exception {
+	public RespBase<?> getProjects(PageModel<?> pm, Long vcsId, Long groupId, String projectName) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		List<VcsProjectModel> projects = vcsService.getProjects(pm, vcsId, groupId, projectName);
 		pm.setRecords(projects);

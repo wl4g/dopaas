@@ -114,7 +114,7 @@ public class GenerateServiceImpl implements GenerateService {
 	// --- GenTable/GenColumns configuration. ---
 
 	@Override
-	public PageModel page(PageModel pm, String tableName, Long projectId) {
+	public PageModel<?> page(PageModel<?> pm, String tableName, Long projectId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(genTableDao.list(tableName, projectId));
 		return pm;

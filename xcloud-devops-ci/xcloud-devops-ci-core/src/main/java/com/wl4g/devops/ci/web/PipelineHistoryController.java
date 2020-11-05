@@ -19,12 +19,13 @@ import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.PipelineHistory;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,10 +64,10 @@ public class PipelineHistoryController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"ci:pipehis"}, logical = AND)
-	public RespBase<?> list(PageModel pm, String pipeName, String clusterName, String environment, String startDate,
+	public RespBase<?> list(PageModel<?> pm, String pipeName, String clusterName, String environment, String startDate,
 			String endDate, String providerKind) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = pipelineHistoryService.list(pm, pipeName, clusterName, environment, startDate, endDate, providerKind);
+		PageModel<?> list = pipelineHistoryService.list(pm, pipeName, clusterName, environment, startDate, endDate, providerKind);
 		resp.setData(list);
 		return resp;
 	}

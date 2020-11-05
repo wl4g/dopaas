@@ -15,7 +15,8 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.core.bean.ci.AnalysisHistory;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
@@ -23,6 +24,6 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface AnalysisHistoryService {
 
-	PageModel list(PageModel pm);
+	PageModel<AnalysisHistory> list(PageModel<AnalysisHistory> pm);
 
 }

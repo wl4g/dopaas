@@ -19,10 +19,11 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.K8sCluster;
 import com.wl4g.components.core.bean.erm.K8sInstance;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.K8sClusterDao;
 import com.wl4g.devops.dao.erm.K8sInstanceDao;
 import com.wl4g.devops.erm.service.K8sClusterService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -49,7 +50,7 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 	private K8sInstanceDao k8sInstanceDao;
 
 	@Override
-	public PageModel page(PageModel pm, String name) {
+	public PageModel<?> page(PageModel<?> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(k8sClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;

@@ -21,6 +21,7 @@ import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.core.bean.ci.PipelineHistory;
 import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.ci.PipelineInstance;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.ci.core.param.HookParameter;
@@ -31,7 +32,6 @@ import com.wl4g.devops.dao.ci.PipelineDao;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import com.wl4g.devops.dao.ci.PipelineHistoryInstanceDao;
 import com.wl4g.devops.dao.ci.PipelineInstanceDao;
-import com.wl4g.devops.page.PageModel;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -209,7 +209,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	}
 
 	@Override
-	public PageModel list(PageModel pm, String pipeName, String clusterName, String environment, String startDate, String endDate,
+	public PageModel<?> list(PageModel<?> pm, String pipeName, String clusterName, String environment, String startDate, String endDate,
 			String providerKind) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterName, environment, startDate,

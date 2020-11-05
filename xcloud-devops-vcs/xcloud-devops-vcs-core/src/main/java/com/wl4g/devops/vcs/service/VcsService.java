@@ -17,7 +17,7 @@ package com.wl4g.devops.vcs.service;
 
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 public interface VcsService {
 
-	PageModel list(PageModel pm, String name, String provider, Integer authType);
+	PageModel<?> list(PageModel<?> pm, String name, String provider, Integer authType);
 
     void save(Vcs vcs);
 
@@ -45,7 +45,7 @@ public interface VcsService {
 
     List<VcsGroupModel> getGroups(Long id, String groupName);
 
-    List<VcsProjectModel> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName) throws Exception;
+    List<VcsProjectModel> getProjects(PageModel<?> pm, Long vcsId, Long groupId, String projectName) throws Exception;
 
     VcsProjectModel getProjectById(Long vcsId, Long projectId);
 

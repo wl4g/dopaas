@@ -21,12 +21,12 @@ import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.umc.AlarmConfig;
 import com.wl4g.components.core.bean.umc.AlarmRule;
 import com.wl4g.components.core.bean.umc.AlarmTemplate;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmRuleDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.TemplateService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +69,7 @@ public class TemplateServiceImpl implements TemplateService {
 	private AppInstanceDao appInstanceDao;
 
 	@Override
-	public PageModel list(PageModel pm, String name, Long metricId, String classify) {
+	public PageModel<?> list(PageModel<?> pm, String name, Long metricId, String classify) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
 		for (AlarmTemplate alarmTpl : list) {

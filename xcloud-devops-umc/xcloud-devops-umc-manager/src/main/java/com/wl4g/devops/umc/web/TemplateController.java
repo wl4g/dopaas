@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.umc.AlarmTemplate;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.umc.service.TemplateService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +42,11 @@ public class TemplateController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:templat" })
-	public RespBase<?> list(String name, Long metricId, String classify, PageModel pm) {
+	public RespBase<?> list(String name, Long metricId, String classify, PageModel<?> pm) {
 		log.info("into TemplateController.list prarms::" + "name = {} , metric = {} , classify = {} , pm = {} ", name, metricId,
 				classify, pm);
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = templateService.list(pm, name, metricId, classify);
+		PageModel<?> list = templateService.list(pm, name, metricId, classify);
 		resp.setData(list);
 		return resp;
 	}

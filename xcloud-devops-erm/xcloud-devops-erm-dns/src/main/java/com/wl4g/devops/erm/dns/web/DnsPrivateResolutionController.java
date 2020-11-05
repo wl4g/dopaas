@@ -18,8 +18,9 @@ package com.wl4g.devops.erm.dns.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.DnsPrivateResolution;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.erm.dns.service.DnsPrivateResolutionService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +40,7 @@ public class DnsPrivateResolutionController extends BaseController {
 	private DnsPrivateResolutionService dnsPrivateResolutionService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String host, Long domainId) {
+	public RespBase<?> list(PageModel<?> pm, String host, Long domainId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPrivateResolutionService.page(pm, host, domainId));
 		return resp;

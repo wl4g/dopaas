@@ -16,14 +16,14 @@
 package com.wl4g.devops.erm.dns.service;
 
 import com.wl4g.components.core.bean.erm.DnsOperationLog;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
  */
 public interface DnsOperationLogService {
 
-	PageModel page(PageModel pm, String domain);
+	PageModel<?> page(PageModel<?> pm, String domain);
 
 	void save(DnsOperationLog dnsOperationLog);
 

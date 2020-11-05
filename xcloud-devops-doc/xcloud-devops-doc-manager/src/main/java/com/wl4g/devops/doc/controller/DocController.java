@@ -20,8 +20,9 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.doc.FileChanges;
 import com.wl4g.components.core.bean.doc.Share;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.doc.service.DocService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class DocController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"doc"}, logical = AND)
-	public RespBase<?> list(PageModel pm, String name, String lang, Long labelId) {
+	public RespBase<?> list(PageModel<?> pm, String name, String lang, Long labelId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(docService.list(pm, name, lang, labelId));
 		return resp;

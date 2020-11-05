@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.components.core.bean.ci.Trigger;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
@@ -24,7 +24,7 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface TriggerService {
 
-	PageModel list(PageModel pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate);
+	PageModel<?> list(PageModel<?> pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate);
 
 	void save(Trigger trigger);
 

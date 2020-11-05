@@ -18,9 +18,10 @@ package com.wl4g.devops.doc.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.doc.Label;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.doc.LabelDao;
 import com.wl4g.devops.doc.service.LabelService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class LabelServcieImpl implements LabelService {
 	private LabelDao labelDao;
 
 	@Override
-	public PageModel list(PageModel pm, String name) {
+	public PageModel<?> list(PageModel<?> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(labelDao.list(name));
 		return pm;

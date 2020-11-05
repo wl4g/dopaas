@@ -22,10 +22,10 @@ import com.wl4g.components.core.bean.ci.Dependency;
 import com.wl4g.components.core.bean.ci.Project;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
@@ -130,7 +130,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public PageModel list(PageModel pm, String groupName, String projectName) {
+	public PageModel<?> list(PageModel<?> pm, String groupName, String projectName) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<Project> list = projectDao.list(getRequestOrganizationCodes(), groupName, projectName, null);
 		for (Project project : list) {

@@ -19,11 +19,12 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.ci.*;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.dao.ci.*;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,7 +85,7 @@ public class PipelineServiceImpl implements PipelineService {
 	private ClusterExtensionDao clusterExtensionDao;
 
 	@Override
-	public PageModel list(PageModel pm, String pipeName, String providerKind, String environment) {
+	public PageModel<?> list(PageModel<?> pm, String pipeName, String providerKind, String environment) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<Pipeline> list = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
 		for(Pipeline pipeline : list){
@@ -370,7 +371,7 @@ public class PipelineServiceImpl implements PipelineService {
 	}
 
 	@Override
-	public PageModel clusterExtensionList(PageModel pm, String clusterName) {
+	public PageModel<?> clusterExtensionList(PageModel<?> pm, String clusterName) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(clusterExtensionDao.list(clusterName));
 		return pm;

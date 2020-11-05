@@ -19,10 +19,11 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.DockerCluster;
 import com.wl4g.components.core.bean.erm.DockerInstance;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.DockerClusterDao;
 import com.wl4g.devops.dao.erm.DockerInstanceDao;
 import com.wl4g.devops.erm.service.DockerClusterService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -49,7 +50,7 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 	private DockerInstanceDao dockerInstanceDao;
 
 	@Override
-	public PageModel page(PageModel pm, String name) {
+	public PageModel<?> page(PageModel<?> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(dockerClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;

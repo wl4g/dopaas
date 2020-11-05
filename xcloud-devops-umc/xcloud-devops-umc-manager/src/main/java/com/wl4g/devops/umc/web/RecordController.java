@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.umc.AlarmRecord;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.umc.service.RecordService;
 
 /**
@@ -39,7 +39,7 @@ public class RecordController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:record" })
-	public RespBase<?> list(String name, PageModel pm, String startDate, String endDate) {
+	public RespBase<?> list(String name, PageModel<?> pm, String startDate, String endDate) {
 		log.info("into RecordController.list prarms::" + "name = {} , pm = {} , startDate = {} , endDate = {} ", name, pm,
 				startDate, endDate);
 		RespBase<Object> resp = RespBase.create();

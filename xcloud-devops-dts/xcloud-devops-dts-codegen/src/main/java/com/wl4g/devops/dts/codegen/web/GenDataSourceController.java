@@ -46,7 +46,7 @@ public class GenDataSourceController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"dts:codegen:database"}, logical = AND)
-	public RespBase<?> list(PageModel pm, String name) {
+	public RespBase<?> list(PageModel<?> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(genDSService.page(pm, name));
 		return resp;

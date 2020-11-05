@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.service;
 
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ public interface AppClusterService {
 
 	void save(AppCluster appCluster);
 
-	Map<String, Object> list(PageModel pm, String clusterName, Integer deployType);
+	Map<String, Object> list(PageModel<?> pm, String clusterName, Integer deployType);
 
 	List<AppCluster> clusters();
 

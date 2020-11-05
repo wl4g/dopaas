@@ -18,8 +18,9 @@ package com.wl4g.devops.ci.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.Project;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.service.ProjectService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -56,7 +57,7 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
+	public RespBase<?> list(String groupName, String projectName, PageModel<?> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
 		}

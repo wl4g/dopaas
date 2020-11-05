@@ -16,7 +16,7 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.components.core.bean.erm.Ssh;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface SshService {
 
-	PageModel page(PageModel pm, String name);
+	PageModel<?> page(PageModel<?> pm, String name);
 
 	List<Ssh> getForSelect();
 

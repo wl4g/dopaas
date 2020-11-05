@@ -18,8 +18,9 @@ package com.wl4g.devops.erm.controller;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.Host;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.erm.service.HostService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -54,7 +55,7 @@ public class AppHostController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:host" })
-	public RespBase<?> list(PageModel pm, String name, String hostname) {
+	public RespBase<?> list(PageModel<?> pm, String name, String hostname) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostService.page(pm, name, hostname, null));
 		return resp;

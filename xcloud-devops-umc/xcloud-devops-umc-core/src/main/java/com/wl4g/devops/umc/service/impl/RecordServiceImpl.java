@@ -19,10 +19,10 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.umc.AlarmRecord;
 import com.wl4g.components.core.bean.umc.AlarmRule;
 import com.wl4g.components.core.bean.umc.AlarmTemplate;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.umc.AlarmRecordDao;
 import com.wl4g.devops.dao.umc.AlarmRuleDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.RecordService;
 import com.wl4g.components.core.bean.iam.NotificationContact;
 import com.wl4g.devops.dao.iam.NotificationContactDao;
@@ -53,7 +53,7 @@ public class RecordServiceImpl implements RecordService {
 	private NotificationContactDao notificationContactDao;
 
 	@Override
-	public PageModel list(PageModel pm, String name, String startDate, String endDate) {
+	public PageModel<?> list(PageModel<?> pm, String name, String startDate, String endDate) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(alarmRecordDao.list(name, startDate, endDate));
 		return pm;

@@ -19,8 +19,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
@@ -55,7 +56,8 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4BranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<GitlabV4BranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
 
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + vcsProject.getId() + "/repository/branches";
@@ -167,7 +169,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
 			PageModel pm) throws Exception {
@@ -207,7 +209,6 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 			pm.setTotal(Long.valueOf(headers.getFirst("X-Total")));
 		}
 		return safeList(projects);
-
 	}
 
 	@SuppressWarnings("unchecked")

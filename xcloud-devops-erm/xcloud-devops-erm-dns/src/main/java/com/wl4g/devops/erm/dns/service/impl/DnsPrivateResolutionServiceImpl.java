@@ -20,11 +20,12 @@ import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.DnsPrivateResolution;
 import com.wl4g.components.core.bean.erm.DnsPrivateZone;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.DnsPrivateZoneDao;
 import com.wl4g.devops.dao.erm.DnsPrivateResolutionDao;
 import com.wl4g.devops.erm.dns.handler.DnsZoneHandler;
 import com.wl4g.devops.erm.dns.service.DnsPrivateResolutionService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -52,7 +53,7 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
 	private DnsPrivateZoneDao dnsPrivateDomainDao;
 
 	@Override
-	public PageModel page(PageModel pm, String host, Long domainId) {
+	public PageModel<?> page(PageModel<?> pm, String host, Long domainId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(privateResolutionDao.list(getRequestOrganizationCodes(), host, domainId));
 		return pm;

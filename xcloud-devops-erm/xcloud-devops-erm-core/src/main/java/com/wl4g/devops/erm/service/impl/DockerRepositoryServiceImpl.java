@@ -21,9 +21,10 @@ import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.DockerRepository;
 import com.wl4g.components.core.bean.erm.model.RepositoryProject;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.DockerRepositoryDao;
 import com.wl4g.devops.erm.service.DockerRepositoryService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -65,7 +66,7 @@ public class DockerRepositoryServiceImpl implements DockerRepositoryService {
 	private DockerRepositoryDao dockerRepositoryDao;
 
 	@Override
-	public PageModel page(PageModel pm, String name) {
+	public PageModel<?> page(PageModel<?> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(dockerRepositoryDao.list(getRequestOrganizationCodes(), name));
 		return pm;

@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.umc.CustomHistory;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.umc.service.CustomHistoryService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +42,9 @@ public class CustomHistoryController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"umc:custom:history"}, logical = AND)
-	public RespBase<?> list(String name, PageModel pm) {
+	public RespBase<?> list(String name, PageModel<?> pm) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = customHistoryService.list(pm, name);
+		PageModel<?> list = customHistoryService.list(pm, name);
 		resp.setData(list);
 		return resp;
 	}

@@ -20,11 +20,12 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.HostNetcard;
 import com.wl4g.components.core.bean.erm.HostTunnelOpenvpn;
 import com.wl4g.components.core.bean.erm.HostTunnelPptp;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.HostNetcardDao;
 import com.wl4g.devops.dao.erm.HostTunnelOpenvpnDao;
 import com.wl4g.devops.dao.erm.HostTunnelPptpDao;
 import com.wl4g.devops.erm.service.HostNetcardService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -54,7 +55,7 @@ public class HostNetcardServiceImpl implements HostNetcardService {
 	private HostTunnelPptpDao hostTunnelPptpDao;
 
 	@Override
-	public PageModel page(PageModel pm, Long hostId, String name) {
+	public PageModel<?> page(PageModel<?> pm, Long hostId, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(appHostNetCardDao.list(getRequestOrganizationCodes(), hostId, name));
 		return pm;

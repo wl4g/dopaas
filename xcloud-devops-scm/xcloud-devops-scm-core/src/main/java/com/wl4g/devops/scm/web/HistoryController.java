@@ -53,7 +53,7 @@ public class HistoryController extends BaseController {
 	 */
 	@RequestMapping(value = "version-list.json", method = { RequestMethod.POST, RequestMethod.GET })
 	@RequiresPermissions(value = {"scm"})
-	public RespBase<?> versionlist(String startDate, String endDate, PageModel pm) {
+	public RespBase<?> versionlist(String startDate, String endDate, PageModel<?> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("VersionList request ... {}, {}, {}", startDate, endDate, pm);
 		}
@@ -240,7 +240,7 @@ public class HistoryController extends BaseController {
 	 */
 	@RequestMapping(value = "release-list.json", method = { RequestMethod.POST, RequestMethod.GET })
 	@RequiresPermissions(value = {"scm"})
-	public RespBase<?> list(ConfigVersionList agl, PageModel pm) {
+	public RespBase<?> list(ConfigVersionList agl, PageModel<?> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("ReleaseList request... {}, {}", agl, pm);
 		}
@@ -286,7 +286,7 @@ public class HistoryController extends BaseController {
 	 */
 	@RequestMapping(value = "history_list", method = { RequestMethod.POST, RequestMethod.GET })
 	@RequiresPermissions(value = {"scm"})
-	public RespBase<?> historylist(ReleaseHistoryList agl, PageModel pm) {
+	public RespBase<?> historylist(ReleaseHistoryList agl, PageModel<?> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("HistoryVersionList request ... {}, {}", agl, pm);
 		}

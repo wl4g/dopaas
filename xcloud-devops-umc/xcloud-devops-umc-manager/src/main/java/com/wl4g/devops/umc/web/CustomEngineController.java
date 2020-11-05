@@ -20,7 +20,7 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.umc.CustomEngine;
 import com.wl4g.components.core.bean.umc.CustomEngineModel;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.umc.service.CustomEngineService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -48,9 +48,9 @@ public class CustomEngineController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"umc:custom:engine"}, logical = AND)
-	public RespBase<?> list(String name, PageModel pm) {
+	public RespBase<?> list(String name, PageModel<?> pm) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = customEngineService.list(pm, name);
+		PageModel<?> list = customEngineService.list(pm, name);
 		resp.setData(list);
 		return resp;
 	}

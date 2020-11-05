@@ -16,7 +16,8 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.components.core.bean.erm.Host;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
+
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +34,7 @@ public interface HostService {
 
 	List<Host> list(String name, String hostname, Long idcId);
 
-	PageModel page(PageModel pm, String name, String hostname, Long idcId);
+	PageModel<?> page(PageModel<?> pm, String name, String hostname, Long idcId);
 
 	void save(Host host);
 

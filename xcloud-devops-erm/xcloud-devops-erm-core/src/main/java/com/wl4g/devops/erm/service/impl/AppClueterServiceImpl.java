@@ -23,12 +23,12 @@ import com.wl4g.components.core.bean.erm.AppEnvironment;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.erm.DockerRepository;
 import com.wl4g.components.core.bean.iam.Dict;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppEnvironmentDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.iam.DictDao;
 import com.wl4g.devops.erm.service.AppClusterService;
-import com.wl4g.devops.page.PageModel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 	private DictDao dictDao;
 
 	@Override
-	public Map<String, Object> list(PageModel pm, String clusterName, Integer deployType) {
+	public Map<String, Object> list(PageModel<?> pm, String clusterName, Integer deployType) {
 		Map<String, Object> data = new HashMap<>();
 		Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
 		List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(), clusterName, deployType);

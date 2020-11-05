@@ -19,8 +19,8 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.erm.service.AppClusterService;
-import com.wl4g.devops.page.PageModel;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class AppClusterController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:cluster" })
-	public RespBase<?> list(PageModel pm, String clusterName, Integer deployType) {
+	public RespBase<?> list(PageModel<?> pm, String clusterName, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = appClusterService.list(pm, clusterName, deployType);
 		resp.setData(result);

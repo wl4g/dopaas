@@ -17,9 +17,10 @@ package com.wl4g.devops.erm.dns.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.erm.DnsPublicZone;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.DnsPublicZoneDao;
 import com.wl4g.devops.erm.dns.service.DnsPublicZoneService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -39,7 +40,7 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 	private DnsPublicZoneDao publicZoneDao;
 
 	@Override
-	public PageModel page(PageModel pm, String zone) {
+	public PageModel<?> page(PageModel<?> pm, String zone) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(publicZoneDao.list(getRequestOrganizationCodes(), zone));
 		return pm;

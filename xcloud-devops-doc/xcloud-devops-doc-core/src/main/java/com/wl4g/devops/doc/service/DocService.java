@@ -17,7 +17,8 @@ package com.wl4g.devops.doc.service;
 
 import com.wl4g.components.core.bean.doc.FileChanges;
 import com.wl4g.components.core.bean.doc.Share;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 public interface DocService {
 
-	PageModel list(PageModel pm, String name, String lang, Long labelId);
+	PageModel<?> list(PageModel<?> pm, String name, String lang, Long labelId);
 
 	void save(FileChanges fileChanges);
 

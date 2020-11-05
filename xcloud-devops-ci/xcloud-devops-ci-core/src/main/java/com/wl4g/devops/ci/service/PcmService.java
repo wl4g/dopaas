@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.service;
 import com.wl4g.components.core.bean.ci.Pcm;
 import com.wl4g.components.core.bean.ci.PipeHistoryPcm;
 import com.wl4g.components.core.web.model.SelectionModel;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface PcmService {
 
-	PageModel list(PageModel pm, String name, String providerKind, Integer authType);
+	PageModel<?> list(PageModel<?> pm, String name, String providerKind, Integer authType);
 
 	void save(Pcm pcm);
 
