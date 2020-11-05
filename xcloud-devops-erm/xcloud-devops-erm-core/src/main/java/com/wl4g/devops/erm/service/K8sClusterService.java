@@ -16,7 +16,7 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.components.core.bean.erm.K8sCluster;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface K8sClusterService {
 
-	PageModel page(PageModel pm, String name);
+	PageModel<?> page(PageModel<?> pm, String name);
 
 	List<K8sCluster> getForSelect();
 

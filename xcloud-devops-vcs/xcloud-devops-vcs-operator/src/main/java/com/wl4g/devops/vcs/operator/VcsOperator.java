@@ -19,7 +19,7 @@ import com.google.common.annotations.Beta;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.core.framework.operator.Operator;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
@@ -52,7 +52,8 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	<T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception;
+	<T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception;
 
 	/**
 	 * Create Branch
@@ -105,6 +106,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes" })
 	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
 			PageModel pm) throws Exception {
 		return searchRemoteProjects(credentials, groupId, projectName, Long.MAX_VALUE, pm);
@@ -121,6 +123,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            Page limit maximum
 	 * @return
 	 */
+	@SuppressWarnings({ "rawtypes" })
 	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
 			PageModel pm) throws Exception;
 

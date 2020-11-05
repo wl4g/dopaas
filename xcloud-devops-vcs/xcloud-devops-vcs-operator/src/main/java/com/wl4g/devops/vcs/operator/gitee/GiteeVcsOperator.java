@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
@@ -51,8 +51,9 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	@Override
 	protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
 		HttpHeaders headers = new HttpHeaders();
-		//headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
-		headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+		// headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
+		headers.add("user-agent",
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 		HttpEntity<String> entity = new HttpEntity<>(null, headers);
 		return entity;
 	}
@@ -60,24 +61,24 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	@Override
 	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
-		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/branches?access_token=%s"), vcsProject.getPathWithNamespace(), credentials.getAccessToken());
+		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/branches?access_token=%s"),
+				vcsProject.getPathWithNamespace(), credentials.getAccessToken());
 		HttpHeaders headers = new HttpHeaders();
 		// Search projects.
-		List<VcsBranchModel> branchs = doRemoteExchangeSSL(credentials, url, headers,
-				new TypeReference<List<VcsBranchModel>>() {
-				});
+		List<VcsBranchModel> branchs = doRemoteExchangeSSL(credentials, url, headers, new TypeReference<List<VcsBranchModel>>() {
+		});
 		return branchs;
 	}
 
 	@Override
 	public List<VcsTagModel> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteTags(credentials, vcsProject);
-		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/tags?access_token=%s"), vcsProject.getPathWithNamespace(), credentials.getAccessToken());
+		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/tags?access_token=%s"),
+				vcsProject.getPathWithNamespace(), credentials.getAccessToken());
 		HttpHeaders headers = new HttpHeaders();
 		// Search projects.
-		List<VcsTagModel> tags = doRemoteExchangeSSL(credentials, url, headers,
-				new TypeReference<List<VcsTagModel>>() {
-				});
+		List<VcsTagModel> tags = doRemoteExchangeSSL(credentials, url, headers, new TypeReference<List<VcsTagModel>>() {
+		});
 		return tags;
 	}
 
@@ -87,9 +88,10 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<GiteeV5SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
-																 PageModel pm) throws Exception {
+			PageModel pm) throws Exception {
 		super.searchRemoteProjects(credentials, groupId, projectName, limit, pm);
 
 		// Parameters correcting.
@@ -106,15 +108,16 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 			pageNum = pm.getPageNum();
 		}
 		String url = String.format((credentials.getBaseUri() + "/api/v5/user/repos?access_token=%s&q=%s&per_page=%s&page=%s"),
-				credentials.getAccessToken(),projectName, limit, pageNum);
+				credentials.getAccessToken(), projectName, limit, pageNum);
 
 		HttpHeaders headers = new HttpHeaders();
 		List<GiteeV5SimpleProjectModel> projects = doRemoteExchangeSSL(credentials, url, headers,
 				new TypeReference<List<GiteeV5SimpleProjectModel>>() {
 				});
-		/*if (nonNull(pm)) {
-			pm.setTotal(Long.valueOf(headers.getFirst("X-Total")));
-		}*/
+		/*
+		 * if (nonNull(pm)) {
+		 * pm.setTotal(Long.valueOf(headers.getFirst("X-Total"))); }
+		 */
 		return safeList(projects);
 
 	}

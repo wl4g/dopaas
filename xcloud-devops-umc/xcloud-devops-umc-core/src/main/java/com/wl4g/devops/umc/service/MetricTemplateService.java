@@ -16,7 +16,7 @@
 package com.wl4g.devops.umc.service;
 
 import com.wl4g.components.core.bean.umc.MetricTemplate;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface MetricTemplateService {
 
-	PageModel list(PageModel pm, String metric, String classify);
+	PageModel<?> list(PageModel<?> pm, String metric, String classify);
 
 	MetricTemplate detal(Long id);
 

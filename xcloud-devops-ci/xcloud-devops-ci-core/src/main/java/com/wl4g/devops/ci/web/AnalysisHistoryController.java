@@ -16,9 +16,11 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.bean.ci.AnalysisHistory;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.service.AnalysisHistoryService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,14 +40,11 @@ public class AnalysisHistoryController extends BaseController {
 	private AnalysisHistoryService analysisHistoryService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"ci:analysis"}, logical = AND)
-	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
-		if (log.isInfoEnabled()) {
-			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
-		}
+	@RequiresPermissions(value = { "ci:analysis" }, logical = AND)
+	public RespBase<?> list(String groupName, String projectName, PageModel<AnalysisHistory> pm) {
+		log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
 		RespBase<Object> resp = RespBase.create();
-		analysisHistoryService.list(pm);
-		resp.setData(pm);
+		resp.setData(analysisHistoryService.list(pm));
 		return resp;
 	}
 

@@ -18,8 +18,9 @@ package com.wl4g.devops.doc.controller;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.doc.Label;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.doc.service.LabelService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +41,7 @@ public class LabelController extends BaseController {
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = {"doc:label"}, logical = AND)
-	public RespBase<?> list(PageModel pm, String name) {
+	public RespBase<?> list(PageModel<?> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(labelService.list(pm, name));
 		return resp;

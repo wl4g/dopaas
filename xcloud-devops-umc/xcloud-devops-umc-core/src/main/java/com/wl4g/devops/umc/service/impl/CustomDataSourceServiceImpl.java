@@ -23,9 +23,9 @@ import com.wl4g.components.core.bean.umc.CustomDataSourceProperties;
 import com.wl4g.components.core.bean.umc.datasouces.BaseDataSource;
 import com.wl4g.components.core.bean.umc.datasouces.MysqlDataSource;
 import com.wl4g.components.core.bean.umc.model.DataSourceProvide;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.umc.CustomDataSourcePropertiesDao;
 import com.wl4g.devops.dao.umc.CustomDatasourceDao;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.CustomDataSourceService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -58,7 +58,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 	private CustomDataSourcePropertiesDao customDataSourcePropertiesDao;
 
 	@Override
-	public PageModel list(PageModel pm, String name) {
+	public PageModel<?> list(PageModel<?> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(customDatasourceDao.list(name));
 		return pm;

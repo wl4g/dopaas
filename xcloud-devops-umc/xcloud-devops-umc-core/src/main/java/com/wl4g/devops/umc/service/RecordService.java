@@ -16,7 +16,7 @@
 package com.wl4g.devops.umc.service;
 
 import com.wl4g.components.core.bean.umc.AlarmRecord;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
@@ -24,7 +24,7 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface RecordService {
 
-	PageModel list(PageModel pm, String name, String startDate, String endDate);
+	PageModel<?> list(PageModel<?> pm, String name, String startDate, String endDate);
 
 	AlarmRecord detail(Long id);
 

@@ -23,11 +23,11 @@ import com.wl4g.components.core.bean.ci.Pcm;
 import com.wl4g.components.core.bean.ci.PipeHistoryPcm;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.web.model.SelectionModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.dao.ci.PcmDao;
-import com.wl4g.devops.page.PageModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +53,7 @@ public class PcmServcieImpl implements PcmService {
 	private GenericOperatorAdapter<PcmKind, PcmOperator> pcmOperator;
 
 	@Override
-	public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
+	public PageModel<?> list(PageModel<?> pm, String name, String providerKind, Integer authType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(pcmDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;

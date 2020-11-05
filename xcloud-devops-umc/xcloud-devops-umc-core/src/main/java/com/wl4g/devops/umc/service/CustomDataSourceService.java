@@ -19,7 +19,7 @@ import com.wl4g.components.core.bean.umc.CustomDataSource;
 import com.wl4g.components.core.bean.umc.CustomDataSourceProperties;
 import com.wl4g.components.core.bean.umc.datasouces.BaseDataSource;
 import com.wl4g.components.core.bean.umc.model.DataSourceProvide;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import java.util.List;
  */
 public interface CustomDataSourceService {
 
-	PageModel list(PageModel pm, String name);
+	PageModel<?> list(PageModel<?> pm, String name);
 
 	BaseDataSource detal(Long id);
 

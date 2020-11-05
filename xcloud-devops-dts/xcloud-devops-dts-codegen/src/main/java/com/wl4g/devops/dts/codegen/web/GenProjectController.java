@@ -47,7 +47,7 @@ public class GenProjectController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"dts:codegen:project"}, logical = AND)
-	public RespBase<?> list(PageModel pm, String projectName) {
+	public RespBase<?> list(PageModel<?> pm, String projectName) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(genProjectService.page(pm, projectName));
 		return resp;

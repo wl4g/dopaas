@@ -16,14 +16,14 @@
 package com.wl4g.devops.erm.dns.service;
 
 import com.wl4g.components.core.bean.erm.DnsPublicZone;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
  */
 public interface DnsPublicZoneService {
 
-	PageModel page(PageModel pm, String name);
+	PageModel<?> page(PageModel<?> pm, String name);
 
 	void save(DnsPublicZone dnsPublicDomain);
 

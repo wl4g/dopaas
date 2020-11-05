@@ -19,12 +19,13 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.lang.DateUtils2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.ci.Trigger;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.dao.ci.TriggerDao;
-import com.wl4g.devops.page.PageModel;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,9 +50,10 @@ public class TriggerServiceImpl implements TriggerService {
 	private PipelineTaskScheduler timingManager;
 
 	@Override
-	public PageModel list(PageModel pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate) {
+	public PageModel<?> list(PageModel<?> pm, Long id, String name, Long taskId, Integer enable, String startDate,
+			String endDate) {
 		String endDateStr = null;
-		if (StringUtils.isNotBlank(endDate)) {
+		if (isNotBlank(endDate)) {
 			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
 		}
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));

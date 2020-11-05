@@ -19,10 +19,11 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.DnsPrivateBlacklist;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.DnsPrivateBlacklistDao;
 import com.wl4g.devops.erm.dns.handler.DnsZoneHandler;
 import com.wl4g.devops.erm.dns.service.DnsPrivateBlacklistService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class DnsPrivateBlacklistServiceImpl implements DnsPrivateBlacklistServic
 	private DnsZoneHandler dnsServerInterface;
 
 	@Override
-	public PageModel page(PageModel pm, String expression) {
+	public PageModel<?> page(PageModel<?> pm, String expression) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(dnsPrivateBlacklistDao.list(expression));
 		return pm;

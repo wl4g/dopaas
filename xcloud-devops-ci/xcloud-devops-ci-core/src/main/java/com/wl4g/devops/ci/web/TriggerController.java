@@ -19,8 +19,8 @@ import com.wl4g.components.common.task.QuartzCronUtils;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.Trigger;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.service.TriggerService;
-import com.wl4g.devops.page.PageModel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -61,13 +61,13 @@ public class TriggerController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci", "ci:trigger" }, logical = AND)
-	public RespBase<?> list(PageModel pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate) {
+	public RespBase<?> list(PageModel<?> pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate) {
 		log.info(
 				"into TriggerController.list prarms::"
 						+ "customPage = {} , id = {} , name = {} , taskId = {} , enable = {} , startDate = {} , endDate = {} ",
 				pm, id, name, taskId, enable, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = triggerService.list(pm, id, name, taskId, enable, startDate, endDate);
+		PageModel<?> list = triggerService.list(pm, id, name, taskId, enable, startDate, endDate);
 		resp.setData(list);
 		return resp;
 	}

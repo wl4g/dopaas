@@ -16,14 +16,14 @@
 package com.wl4g.devops.erm.dns.service;
 
 import com.wl4g.components.core.bean.erm.DnsPrivateBlacklist;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
  */
 public interface DnsPrivateBlacklistService {
 
-	PageModel page(PageModel pm, String expression);
+	PageModel<?> page(PageModel<?> pm, String expression);
 
 	void save(DnsPrivateBlacklist dnsPrivateBlacklist);
 

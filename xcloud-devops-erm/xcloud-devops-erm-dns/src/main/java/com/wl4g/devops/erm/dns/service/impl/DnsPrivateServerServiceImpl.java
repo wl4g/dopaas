@@ -18,9 +18,10 @@ package com.wl4g.devops.erm.dns.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.DnsPrivateServer;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.DnsPrivateServerDao;
 import com.wl4g.devops.erm.dns.service.DnsPrivateServerService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -40,7 +41,7 @@ public class DnsPrivateServerServiceImpl implements DnsPrivateServerService {
 	private DnsPrivateServerDao dnsPrivateServerDao;
 
 	@Override
-	public PageModel page(PageModel pm, String name) {
+	public PageModel<?> page(PageModel<?> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(dnsPrivateServerDao.list(getRequestOrganizationCodes(), name));
 		return pm;

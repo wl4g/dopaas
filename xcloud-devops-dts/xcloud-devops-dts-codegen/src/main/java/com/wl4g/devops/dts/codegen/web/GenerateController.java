@@ -71,8 +71,8 @@ public class GenerateController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
-	public RespBase<PageModel> page(PageModel pm, String tableName, Long projectId) {
-		RespBase<PageModel> resp = RespBase.create();
+	public RespBase<PageModel<?>> page(PageModel<?> pm, String tableName, Long projectId) {
+		RespBase<PageModel<?>> resp = RespBase.create();
 		resp.setData(generateService.page(pm, tableName, projectId));
 		return resp;
 	}

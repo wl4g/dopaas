@@ -20,8 +20,9 @@ import com.wl4g.components.common.cli.ssh2.SSH2Holders;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.erm.service.AppInstanceService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,7 +48,7 @@ public class AppInstanceController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"erm:instance"}, logical = AND)
-	public RespBase<?> list(PageModel pm, String name, Long clusterId, String envType, Integer deployType) {
+	public RespBase<?> list(PageModel<?> pm, String name, Long clusterId, String envType, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(appInstanceService.list(pm, name, clusterId, envType, deployType));
 		return resp;

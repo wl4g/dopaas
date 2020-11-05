@@ -20,6 +20,7 @@ import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.ci.Orchestration;
 import com.wl4g.components.core.bean.ci.OrchestrationPipeline;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.devops.ci.bean.RunModel;
@@ -27,7 +28,6 @@ import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.OrchestrationService;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
 import com.wl4g.devops.dao.ci.OrchestrationPipelineDao;
-import com.wl4g.devops.page.PageModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,7 +61,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 	private JedisService jedisService;
 
 	@Override
-	public PageModel list(PageModel pm, String name) {
+	public PageModel<?> list(PageModel<?> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
 		return pm;

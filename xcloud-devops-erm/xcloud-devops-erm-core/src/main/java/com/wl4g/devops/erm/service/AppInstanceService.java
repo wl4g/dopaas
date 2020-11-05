@@ -16,7 +16,7 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public interface AppInstanceService {
 
 	void save(AppInstance appInstance);
 
-	PageModel list(PageModel pm, String name, Long clusterId, String envType, Integer serverType);
+	PageModel<?> list(PageModel<?> pm, String name, Long clusterId, String envType, Integer serverType);
 
 	void del(Long clusterId);
 

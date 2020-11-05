@@ -24,6 +24,7 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.doc.FileChanges;
 import com.wl4g.components.core.bean.doc.FileLabel;
 import com.wl4g.components.core.bean.doc.Share;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.DestroableCommand;
 import com.wl4g.components.support.cli.command.LocalDestroableCommand;
@@ -33,7 +34,6 @@ import com.wl4g.devops.dao.doc.LabelDao;
 import com.wl4g.devops.dao.doc.ShareDao;
 import com.wl4g.devops.doc.config.DocProperties;
 import com.wl4g.devops.doc.service.DocService;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.iam.common.subject.IamPrincipal;
 
 import org.slf4j.Logger;
@@ -79,7 +79,7 @@ public class DocServiceImpl implements DocService {
 	protected DestroableProcessManager pm;
 
 	@Override
-	public PageModel list(PageModel pm, String name, String lang, Long labelId) {
+	public PageModel<?> list(PageModel<?> pm, String name, String lang, Long labelId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<FileChanges> list = fileChangesDao.list(name, lang, labelId);
 		pm.setRecords(list);

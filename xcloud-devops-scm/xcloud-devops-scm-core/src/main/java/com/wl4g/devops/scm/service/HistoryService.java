@@ -45,7 +45,7 @@ public interface HistoryService {
 
 	public List<ConfigVersionList> list(ConfigVersionList agl);
 
-	PageModel versionList(PageModel pm, Map<String, Object> param);
+	PageModel<?> versionList(PageModel<?> pm, Map<String, Object> param);
 
 	public List<ReleaseHistoryList> historylist(ReleaseHistoryList agl);
 

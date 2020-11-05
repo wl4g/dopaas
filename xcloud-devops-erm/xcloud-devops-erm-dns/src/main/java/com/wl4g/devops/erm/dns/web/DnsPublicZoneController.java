@@ -18,8 +18,9 @@ package com.wl4g.devops.erm.dns.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.DnsPublicZone;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.erm.dns.service.DnsPublicZoneService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +38,7 @@ public class DnsPublicZoneController extends BaseController {
 	private DnsPublicZoneService dnsPublicDomainService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String zone) {
+	public RespBase<?> list(PageModel<?> pm, String zone) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPublicDomainService.page(pm, zone));
 		return resp;

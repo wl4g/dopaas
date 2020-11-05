@@ -18,9 +18,10 @@ package com.wl4g.devops.erm.dns.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.DnsOperationLog;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.DnsOperationLogDao;
 import com.wl4g.devops.erm.dns.service.DnsOperationLogService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -40,7 +41,7 @@ public class DnsOperationLogServiceImpl implements DnsOperationLogService {
 	private DnsOperationLogDao dnsOperationLogDao;
 
 	@Override
-	public PageModel page(PageModel pm, String domain) {
+	public PageModel<?> page(PageModel<?> pm, String domain) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(dnsOperationLogDao.list(getRequestOrganizationCodes(), domain));
 		return pm;

@@ -18,8 +18,8 @@ package com.wl4g.devops.umc.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.umc.CustomHistory;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.umc.CustomHistoryDao;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.CustomHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class CustomHistoryServiceImpl implements CustomHistoryService {
 	private CustomHistoryDao customHistoryDao;
 
 	@Override
-	public PageModel list(PageModel pm, String name) {
+	public PageModel<?> list(PageModel<?> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<CustomHistory> list = customHistoryDao.list(name);
 		/*

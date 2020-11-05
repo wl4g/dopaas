@@ -78,7 +78,7 @@ public class ConfigurationController extends BaseController {
 	 */
 	@RequestMapping(value = "config-list.json", method = RequestMethod.POST)
 	@RequiresPermissions(value = {"scm:configuration"})
-	public RespBase<?> list(ConfigVersionList agl, PageModel pm) {
+	public RespBase<?> list(ConfigVersionList agl, PageModel<?> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("ConfigList request ... {}, {}", agl, pm);
 		}

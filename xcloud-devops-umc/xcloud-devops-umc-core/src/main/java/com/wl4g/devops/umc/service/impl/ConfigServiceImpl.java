@@ -20,10 +20,10 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.umc.AlarmConfig;
 import com.wl4g.components.core.bean.umc.AlarmTemplate;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,7 +46,7 @@ public class ConfigServiceImpl implements ConfigService {
 	private AppInstanceDao appInstanceDao;
 
 	@Override
-	public PageModel list(PageModel pm, Long templateId, Long contactGroupId) {
+	public PageModel<?> list(PageModel<?> pm, Long templateId, Long contactGroupId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(alarmConfigDao.list(templateId, contactGroupId));
 		return pm;

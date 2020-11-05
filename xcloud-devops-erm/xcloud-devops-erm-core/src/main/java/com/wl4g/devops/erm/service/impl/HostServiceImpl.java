@@ -26,6 +26,7 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.Host;
 import com.wl4g.components.core.bean.erm.HostSsh;
 import com.wl4g.components.core.bean.erm.Ssh;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.dao.erm.HostDao;
@@ -33,7 +34,6 @@ import com.wl4g.devops.dao.erm.HostSshDao;
 import com.wl4g.devops.dao.erm.SshDao;
 import com.wl4g.devops.erm.config.FsProperties;
 import com.wl4g.devops.erm.service.HostService;
-import com.wl4g.devops.page.PageModel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +94,7 @@ public class HostServiceImpl implements HostService {
 	}
 
 	@Override
-	public PageModel page(PageModel pm, String name, String hostname, Long idcId) {
+	public PageModel<?> page(PageModel<?> pm, String name, String hostname, Long idcId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(appHostDao.list(getRequestOrganizationCodes(), name, hostname, idcId));
 		return pm;

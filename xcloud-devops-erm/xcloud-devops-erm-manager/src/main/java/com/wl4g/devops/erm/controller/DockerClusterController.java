@@ -18,8 +18,9 @@ package com.wl4g.devops.erm.controller;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.DockerCluster;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.erm.service.DockerClusterService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +44,7 @@ public class DockerClusterController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"erm:dockercluster"}, logical = AND)
-	public RespBase<?> list(PageModel pm, String name) {
+	public RespBase<?> list(PageModel<?> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerClusterService.page(pm, name));
 		return resp;

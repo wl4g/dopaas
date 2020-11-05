@@ -16,7 +16,7 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
@@ -24,7 +24,7 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface ShareService {
 
-	PageModel list(PageModel pm);
+	PageModel<?> list(PageModel<?> pm);
 
 	void cancelShare(Long id);
 

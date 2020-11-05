@@ -20,11 +20,12 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.doc.FileChanges;
 import com.wl4g.components.core.bean.doc.Share;
 import com.wl4g.components.core.constants.DocDevOpsConstants;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.doc.ShareDao;
 import com.wl4g.devops.doc.config.DocProperties;
 import com.wl4g.devops.doc.service.DocService;
 import com.wl4g.devops.doc.service.ShareService;
-import com.wl4g.devops.page.PageModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,7 @@ public class ShareServiceImpl implements ShareService {
 	private DocProperties docProperties;
 
 	@Override
-	public PageModel list(PageModel pm) {
+	public PageModel<?> list(PageModel<?> pm) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<Share> list = shareDao.list();
 		for (Share share : list) {

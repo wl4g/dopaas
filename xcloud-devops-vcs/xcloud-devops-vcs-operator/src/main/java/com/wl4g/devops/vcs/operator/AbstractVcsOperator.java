@@ -18,7 +18,7 @@ package com.wl4g.devops.vcs.operator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
@@ -58,6 +58,7 @@ import static org.springframework.util.Assert.*;
  * @version v1.0 2019年8月2日
  * @since
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractVcsOperator implements VcsOperator, InitializingBean {
 	final protected Logger log = getLogger(getClass());
 
@@ -93,7 +94,8 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		return parseJSON(resp.getBody(), typeRef);
 	}
 
-	protected <T> T doRemoteExchangeSSL(Vcs credentials, String url, HttpHeaders headers, TypeReference<T> typeRef) throws Exception {
+	protected <T> T doRemoteExchangeSSL(Vcs credentials, String url, HttpHeaders headers, TypeReference<T> typeRef)
+			throws Exception {
 		// Create httpEntity.
 		HttpEntity<String> entity = createVcsRequestHttpEntity(credentials);
 
@@ -148,14 +150,16 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	protected abstract HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials);
 
 	@Override
-	public <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception {
 		notNull(credentials, "Get remote branchs credentials can't is null.");
 		notNull(vcsProject, "Get remote branchs vcsProject can't is null");
 		return null;
 	}
 
 	@Override
-	public <T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public <T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception {
 		notNull(credentials, "Get remote tags credentials can't is null.");
 		notNull(credentials, "Get remote tags vcsProject can't is null.");
 		return null;
@@ -171,6 +175,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		return null;
 	}
 
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
 			PageModel pm) throws Exception {
@@ -214,6 +219,8 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 			String releaseDescription) {
 		return null;
 	}
+
+	// --- GIT operations. ---
 
 	@Override
 	public <T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException {

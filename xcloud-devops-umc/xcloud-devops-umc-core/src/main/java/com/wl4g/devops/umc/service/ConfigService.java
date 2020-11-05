@@ -16,7 +16,7 @@
 package com.wl4g.devops.umc.service;
 
 import com.wl4g.components.core.bean.umc.AlarmConfig;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.components.data.page.PageModel;
 
 /**
  * @author vjay
@@ -24,7 +24,7 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface ConfigService {
 
-	PageModel list(PageModel pm, Long templateId, Long contactGroupId);
+	PageModel<?> list(PageModel<?> pm, Long templateId, Long contactGroupId);
 
 	void save(AlarmConfig alarmConfig);
 

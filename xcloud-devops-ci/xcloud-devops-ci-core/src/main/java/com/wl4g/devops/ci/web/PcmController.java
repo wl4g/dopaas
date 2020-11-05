@@ -18,8 +18,9 @@ package com.wl4g.devops.ci.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.Pcm;
 import com.wl4g.components.core.web.model.SelectionModel;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.service.PcmService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,7 +101,7 @@ public class PcmController {
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
-	public RespBase<?> list(PageModel pm, String name, String providerKind, Integer authType) {
+	public RespBase<?> list(PageModel<?> pm, String name, String providerKind, Integer authType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(pcmService.list(pm, name, providerKind, authType));
 		return resp;

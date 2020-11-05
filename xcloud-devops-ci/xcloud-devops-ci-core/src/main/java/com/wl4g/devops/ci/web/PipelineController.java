@@ -21,12 +21,13 @@ import com.wl4g.components.core.bean.ci.ClusterExtension;
 import com.wl4g.components.core.bean.ci.PipeStepBuilding;
 import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.PipelineService;
-import com.wl4g.devops.page.PageModel;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -73,9 +74,9 @@ public class PipelineController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
-	public RespBase<?> list(PageModel pm, String pipeName, String providerKind, String environment) {
+	public RespBase<?> list(PageModel<?> pm, String pipeName, String providerKind, String environment) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = pipelineService.list(pm, pipeName, providerKind, environment);
+		PageModel<?> list = pipelineService.list(pm, pipeName, providerKind, environment);
 		resp.setData(list);
 		return resp;
 	}
@@ -183,7 +184,7 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/clusterExtensionList")
-	public RespBase<?> clusterExtensionList(PageModel pm, String clusterName) {
+	public RespBase<?> clusterExtensionList(PageModel<?> pm, String clusterName) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(pipelineService.clusterExtensionList(pm, clusterName));
 		return resp;

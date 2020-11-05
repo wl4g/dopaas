@@ -21,8 +21,8 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.ci.VcsDao;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.config.VcsProperties;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
@@ -61,7 +61,7 @@ public class VcsServcieImpl implements VcsService {
 	private VcsProperties vcsProperties;
 
 	@Override
-	public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
+	public PageModel<?> list(PageModel<?> pm, String name, String providerKind, Integer authType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(vcsDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;
@@ -122,7 +122,7 @@ public class VcsServcieImpl implements VcsService {
 		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
 	}
 
-	public List<VcsProjectModel> getProjects(PageModel pm, Long vcsId, Long groupId, String projectName) throws Exception {
+	public List<VcsProjectModel> getProjects(PageModel<?> pm, Long vcsId, Long groupId, String projectName) throws Exception {
 		notNullOf(vcsId, "vcsId");
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
