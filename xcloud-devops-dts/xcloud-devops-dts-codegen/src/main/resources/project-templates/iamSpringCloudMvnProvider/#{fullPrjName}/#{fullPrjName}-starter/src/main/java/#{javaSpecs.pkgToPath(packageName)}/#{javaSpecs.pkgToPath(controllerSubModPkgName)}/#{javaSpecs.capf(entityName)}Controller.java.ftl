@@ -55,8 +55,8 @@ public class ${entityName}Controller extends BaseController {
             @ApiImplicitParam(name = "pageSize", value = "单页数据记录，当pageSize=0时返回所有记录", dataType="int32", defaultValue = "10"), })
     </#if>
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase${r"<"}${entityName}> list(PageModel pm, ${entityName?cap_first} ${entityName?uncap_first}) {
-        RespBase${r"<"}${entityName}> resp = RespBase.create();
+    public RespBase${r"<"}PageModel> list(PageModel pm, ${entityName?cap_first} ${entityName?uncap_first}) {
+        RespBase${r"<"}PageModel> resp = RespBase.create();
         resp.setData(${entityName?uncap_first}Service.page(pm, ${entityName?uncap_first}));
         return resp;
     }
@@ -65,8 +65,8 @@ public class ${entityName}Controller extends BaseController {
     @ApiOperation(value = "新增${functionSimpleName}信息")
     </#if>
     @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase${r"<"}${entityName}> save(@RequestBody ${entityName?cap_first} ${entityName?uncap_first}) {
-        RespBase${r"<"}${entityName}> resp = RespBase.create();
+    public RespBase${r"<"}?> save(@RequestBody ${entityName?cap_first} ${entityName?uncap_first}) {
+        RespBase${r"<"}Object> resp = RespBase.create();
         ${entityName?uncap_first}Service.save(${entityName?uncap_first});
         return resp;
     }
@@ -77,8 +77,8 @@ public class ${entityName}Controller extends BaseController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "${pk.attrName}", value = "${functionSimpleName}信息ID", dataType="int64", required = true) })
     </#if>
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase${r"<"}${entityName}> detail(@RequestParam(required = true) ${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
-        RespBase${r"<"}${entityName}> resp = RespBase.create();
+    public RespBase${r"<"}?> detail(@RequestParam(required = true) ${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
+        RespBase${r"<"}Object> resp = RespBase.create();
         resp.setData(${entityName?uncap_first}Service.detail(${pk.attrName}));
         return resp;
     }
@@ -89,8 +89,8 @@ public class ${entityName}Controller extends BaseController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "${pk.attrName}", value = "待删除的${functionSimpleName}信息ID", dataType="int64", required = true) })
     </#if>
     @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase${r"<"}${entityName}> del(@RequestParam(required = true) ${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
-        RespBase${r"<"}${entityName}> resp = RespBase.create();
+    public RespBase${r"<"}?> del(@RequestParam(required = true) ${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
+        RespBase${r"<"}Object> resp = RespBase.create();
         ${entityName?uncap_first}Service.del(${pk.attrName});
         return resp;
     }
