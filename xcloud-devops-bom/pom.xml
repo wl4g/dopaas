@@ -80,7 +80,7 @@
 			<!-- XCloud IAM dependentcie's -->
 			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-iam-client</artifactId>				<version>master</version>
 			</dependency>
-			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-iam-test</artifactId>				<version>master</version>				<scope>test</scope>
+			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-iam-client-test</artifactId>				<version>master</version>				<scope>test</scope>
 			</dependency>
 			<!-- XCloud RCM dependentcie's -->
 			<dependency>				<groupId>com.wl4g</groupId>				<artifactId>xcloud-rcm-common</artifactId>				<version>${project.parent.version}</version>
