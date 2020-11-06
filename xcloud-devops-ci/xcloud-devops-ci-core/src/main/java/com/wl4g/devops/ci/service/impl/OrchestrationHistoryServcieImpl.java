@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.ci.OrchestrationHistory;
-import com.wl4g.components.core.bean.ci.TaskHistory;
+import com.wl4g.components.core.bean.ci.PipelineHistory;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.service.OrchestrationHistoryService;
 import com.wl4g.devops.dao.ci.OrchestrationHistoryDao;
@@ -47,10 +47,10 @@ public class OrchestrationHistoryServcieImpl implements OrchestrationHistoryServ
 	public PageModel<OrchestrationHistory> list(PageModel<OrchestrationHistory> pm, String runId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<OrchestrationHistory> list = orchestrationHistoryDao.list(getRequestOrganizationCodes(), runId);
-		for (OrchestrationHistory orchestrationHistory : list) {
-			List<TaskHistory> taskHistories = pipelineHistoryDao.list(getRequestOrganizationCodes(), null, null, null, null, null,
-					null, 2, orchestrationHistory.getId());
-			orchestrationHistory.setTaskHistories(taskHistories);
+		for (OrchestrationHistory orch : list) {
+			List<PipelineHistory> pipeHis = pipelineHistoryDao.list(getRequestOrganizationCodes(), null, null, null, null, null,
+					null, 2, orch.getId());
+			orch.setPipeHistories(pipeHis);
 		}
 		pm.setRecords(list);
 		return pm;

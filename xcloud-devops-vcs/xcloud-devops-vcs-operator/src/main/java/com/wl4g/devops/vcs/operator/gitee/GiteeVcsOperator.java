@@ -16,7 +16,6 @@
 package com.wl4g.devops.vcs.operator.gitee;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.data.page.PageModel;
@@ -32,6 +31,7 @@ import static com.wl4g.components.common.collection.Collections2.safeList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.http.HttpMethod.*;
 
 /**
  * VCS operator for GITEE.
@@ -40,7 +40,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0 2019年11月5日
  * @since
  */
-@Reserved
 public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
@@ -49,7 +48,7 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
+	protected HttpEntity<String> createRequestEntity(Vcs credentials) {
 		HttpHeaders headers = new HttpHeaders();
 		// headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
 		headers.add("user-agent",
@@ -65,7 +64,7 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 				vcsProject.getPathWithNamespace(), credentials.getAccessToken());
 		HttpHeaders headers = new HttpHeaders();
 		// Search projects.
-		List<VcsBranchModel> branchs = doRemoteExchangeSSL(credentials, url, headers, new TypeReference<List<VcsBranchModel>>() {
+		List<VcsBranchModel> branchs = doRemoteRequest(GET, credentials, url, headers, new TypeReference<List<VcsBranchModel>>() {
 		});
 		return branchs;
 	}
@@ -73,13 +72,12 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	@Override
 	public List<VcsTagModel> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteTags(credentials, vcsProject);
+
 		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/tags?access_token=%s"),
 				vcsProject.getPathWithNamespace(), credentials.getAccessToken());
-		HttpHeaders headers = new HttpHeaders();
 		// Search projects.
-		List<VcsTagModel> tags = doRemoteExchangeSSL(credentials, url, headers, new TypeReference<List<VcsTagModel>>() {
+		return doRemoteRequest(GET, credentials, url, new HttpHeaders(), new TypeReference<List<VcsTagModel>>() {
 		});
-		return tags;
 	}
 
 	@Override
@@ -88,7 +86,7 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public List<GiteeV5SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
 			PageModel pm) throws Exception {
@@ -110,8 +108,7 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 		String url = String.format((credentials.getBaseUri() + "/api/v5/user/repos?access_token=%s&q=%s&per_page=%s&page=%s"),
 				credentials.getAccessToken(), projectName, limit, pageNum);
 
-		HttpHeaders headers = new HttpHeaders();
-		List<GiteeV5SimpleProjectModel> projects = doRemoteExchangeSSL(credentials, url, headers,
+		List<GiteeV5SimpleProjectModel> projects = doRemoteRequest(GET, credentials, url, null,
 				new TypeReference<List<GiteeV5SimpleProjectModel>>() {
 				});
 		/*

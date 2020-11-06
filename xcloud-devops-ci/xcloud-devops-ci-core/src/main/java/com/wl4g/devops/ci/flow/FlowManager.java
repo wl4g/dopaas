@@ -21,7 +21,7 @@ import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.core.bean.ci.Orchestration;
 import com.wl4g.components.core.bean.ci.OrchestrationHistory;
 import com.wl4g.components.core.bean.ci.OrchestrationPipeline;
-import com.wl4g.components.core.bean.ci.TaskHistory;
+import com.wl4g.components.core.bean.ci.PipelineHistory;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
@@ -73,17 +73,6 @@ public class FlowManager {
 
 	@Autowired
 	private PipelineHistoryDao pipelineHistoryDao;
-
-	public static final String REDIS_CI_RUN_PRE = "CI_RUN_";// redis key
-
-	public static final int REDIS_CI_RUN_SCAN_BATCH = 100;// redis scan batch
-
-	// TODO config
-	private static String node = "master-1";
-	private static int REDIS_SAVE_TIME_S = 30 * 60;// redis ttl(defautl 30 min)
-	private static long FLOW_TIME_OUT_MS = 30 * 60 * 1000;// flow time
-	// out(defautl
-	// 30min)
 
 	/**
 	 * Start to run orchestration
@@ -235,11 +224,11 @@ public class FlowManager {
 			pipelineCompleteFocus(runModel.getRunId());
 			throw e;
 		} finally {
-			List<TaskHistory> list = pipelineHistoryDao.list(null, null, null, null, null, null, null, 2,
+			List<PipelineHistory> list = pipelineHistoryDao.list(null, null, null, null, null, null, null, 2,
 					orchestrationHistory.getId());
 
 			boolean isAllSuccess = true;
-			for (TaskHistory p : list) {
+			for (PipelineHistory p : list) {
 				if (p.getStatus() != 2) {
 					isAllSuccess = false;
 				}
@@ -332,7 +321,7 @@ public class FlowManager {
 	public void pipelineStateChange(PipelineModel pipelineModel) {
 		RunModel runModel = getRunModel(pipelineModel.getRunId());
 		Pipeline pipeline = getPipeline(runModel.getPipelines(), pipelineModel.getPipeId());
-		if(pipeline != null){
+		if (pipeline != null) {
 			BeanUtils.copyProperties(pipelineModel, pipeline);
 		}
 		saveRunModel(runModel);
@@ -549,5 +538,13 @@ public class FlowManager {
 		}
 
 	}
+
+	public static final String REDIS_CI_RUN_PRE = "CI_RUN_";// redis key
+	public static final int REDIS_CI_RUN_SCAN_BATCH = 100;// redis scan batch
+	// TODO config
+	private static String node = "master-1";
+	private static int REDIS_SAVE_TIME_S = 30 * 60;// cache ttl(defautl 30 min)
+	// flow time out(default 30min)
+	private static long FLOW_TIME_OUT_MS = 30 * 60 * 1000;
 
 }

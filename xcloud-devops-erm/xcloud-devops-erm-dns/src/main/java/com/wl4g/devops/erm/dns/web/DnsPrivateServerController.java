@@ -40,7 +40,7 @@ public class DnsPrivateServerController extends BaseController {
 	private DnsPrivateServerService dnsPrivateServerService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel<?> pm, String name) {
+	public RespBase<?> list(PageModel<DnsPrivateServer> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPrivateServerService.page(pm, name));
 		return resp;

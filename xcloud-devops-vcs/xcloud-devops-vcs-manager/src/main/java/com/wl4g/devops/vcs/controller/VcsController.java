@@ -46,15 +46,15 @@ public class VcsController extends BaseController {
 	private VcsService vcsService;
 
 	@RequestMapping("/list")
-	@RequiresPermissions(value = {"vcs"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String name, String providerKind, Integer authType) {
-		RespBase<Object> resp = RespBase.create();
+	@RequiresPermissions(value = { "vcs" }, logical = AND)
+	public RespBase<PageModel<Vcs>> list(PageModel<Vcs> pm, String name, String providerKind, Integer authType) {
+		RespBase<PageModel<Vcs>> resp = RespBase.create();
 		resp.setData(vcsService.list(pm, name, providerKind, authType));
 		return resp;
 	}
 
 	@RequestMapping("/save")
-	@RequiresPermissions(value = {"vcs"}, logical = AND)
+	@RequiresPermissions(value = { "vcs" }, logical = AND)
 	public RespBase<?> save(@RequestBody Vcs vcs) {
 		RespBase<Object> resp = RespBase.create();
 		vcsService.save(vcs);
@@ -62,7 +62,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/del")
-	@RequiresPermissions(value = {"vcs"}, logical = AND)
+	@RequiresPermissions(value = { "vcs" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		vcsService.del(id);
@@ -70,7 +70,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/detail")
-	@RequiresPermissions(value = {"vcs"}, logical = AND)
+	@RequiresPermissions(value = { "vcs" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Vcs vcs = vcsService.detail(id);
@@ -101,8 +101,9 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getProjects")
-	public RespBase<?> getProjects(PageModel<?> pm, Long vcsId, Long groupId, String projectName) throws Exception {
-		RespBase<Object> resp = RespBase.create();
+	public RespBase<PageModel<VcsProjectModel>> getProjects(PageModel<VcsProjectModel> pm, Long vcsId, Long groupId,
+			String projectName) throws Exception {
+		RespBase<PageModel<VcsProjectModel>> resp = RespBase.create();
 		List<VcsProjectModel> projects = vcsService.getProjects(pm, vcsId, groupId, projectName);
 		pm.setRecords(projects);
 		resp.setData(pm);
@@ -134,7 +135,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/createBranch")
-	@RequiresPermissions(value = {"vcs"}, logical = AND)
+	@RequiresPermissions(value = { "vcs" }, logical = AND)
 	public RespBase<?> createBranch(Long vcsId, Long projectId, String branch, String ref) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		VcsBranchModel vcsBranchModel = vcsService.createBranch(vcsId, projectId, branch, ref);
@@ -143,8 +144,9 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/createTag")
-	@RequiresPermissions(value = {"vcs"}, logical = AND)
-	public RespBase<?> createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription) throws Exception {
+	@RequiresPermissions(value = { "vcs" }, logical = AND)
+	public RespBase<?> createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription)
+			throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		VcsTagModel vcsServiceTag = vcsService.createTag(vcsId, projectId, tag, ref, message, releaseDescription);
 		resp.setData(vcsServiceTag);

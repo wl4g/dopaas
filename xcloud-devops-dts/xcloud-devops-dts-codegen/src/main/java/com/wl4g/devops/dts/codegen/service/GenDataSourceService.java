@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface GenDataSourceService {
 
-	PageModel<?> page(PageModel<?> pm, String name);
+	PageModel<GenDataSource> page(PageModel<GenDataSource> pm, String name);
 
 	List<GenDataSource> loadDatasources();
 

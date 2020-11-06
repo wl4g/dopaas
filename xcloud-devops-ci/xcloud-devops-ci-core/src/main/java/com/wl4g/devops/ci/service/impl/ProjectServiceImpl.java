@@ -27,6 +27,7 @@ import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.vcs.operator.VcsOperator;
+import com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import org.apache.commons.lang3.StringUtils;
@@ -52,16 +53,17 @@ import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganiza
  */
 @Service
 public class ProjectServiceImpl implements ProjectService {
+
 	final protected Logger log = LoggerFactory.getLogger(getClass());
+
+	@Autowired
+	private GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsOperator;
 
 	@Autowired
 	private ProjectDao projectDao;
 
 	@Autowired
 	private DependencyDao dependencyDao;
-
-	@Autowired
-	private GenericOperatorAdapter<VcsOperator.VcsProviderKind, VcsOperator> vcsOperator;
 
 	@Override
 	public void save(Project project) {
@@ -130,7 +132,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String groupName, String projectName) {
+	public PageModel<Project> list(PageModel<Project> pm, String groupName, String projectName) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<Project> list = projectDao.list(getRequestOrganizationCodes(), groupName, projectName, null);
 		for (Project project : list) {

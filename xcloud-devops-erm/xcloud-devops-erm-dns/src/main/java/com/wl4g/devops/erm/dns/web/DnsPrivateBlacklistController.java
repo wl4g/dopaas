@@ -40,7 +40,7 @@ public class DnsPrivateBlacklistController extends BaseController {
 	private DnsPrivateBlacklistService dnsPrivateBlacklistService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel<?> pm, String name) {
+	public RespBase<?> list(PageModel<DnsPrivateBlacklist> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPrivateBlacklistService.page(pm, name));
 		return resp;

@@ -26,7 +26,7 @@ import com.wl4g.devops.dts.codegen.bean.GenProject;
  */
 public interface GenProjectService {
 
-	PageModel<?> page(PageModel<?> pm, String name);
+	PageModel<GenProject> page(PageModel<GenProject> pm, String name);
 
 	void save(GenProject project);
 

@@ -28,7 +28,6 @@ import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmRuleDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.umc.service.TemplateService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,12 +68,12 @@ public class TemplateServiceImpl implements TemplateService {
 	private AppInstanceDao appInstanceDao;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name, Long metricId, String classify) {
+	public PageModel<AlarmTemplate> list(PageModel<AlarmTemplate> pm, String name, Long metricId, String classify) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
 		for (AlarmTemplate alarmTpl : list) {
 			String tags = alarmTpl.getTags();
-			if (StringUtils.isNotBlank(tags)) {
+			if (isNotBlank(tags)) {
 				alarmTpl.setTagMap(parseJSON(tags, new TypeReference<List<Map<String, String>>>() {
 				}));
 			}

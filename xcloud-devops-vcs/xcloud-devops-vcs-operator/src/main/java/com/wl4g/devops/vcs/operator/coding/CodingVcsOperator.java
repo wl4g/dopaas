@@ -59,7 +59,7 @@ public class CodingVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
+	protected HttpEntity<String> createRequestEntity(Vcs credentials) {
 		throw new UnsupportedOperationException();
 	}
 

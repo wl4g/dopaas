@@ -18,7 +18,7 @@ package com.wl4g.devops.erm.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.Host;
-import com.wl4g.components.core.bean.erm.Ssh;
+import com.wl4g.components.core.bean.erm.SshBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
@@ -64,18 +64,18 @@ public class SshServiceImpl implements SshService {
 	private DestroableProcessManager pm;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String name) {
+	public PageModel<SshBean> page(PageModel<SshBean> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(sshDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}
 
 	@Override
-	public List<Ssh> getForSelect() {
+	public List<SshBean> getForSelect() {
 		return sshDao.list(getRequestOrganizationCodes(), null);
 	}
 
-	public void save(Ssh ssh) {
+	public void save(SshBean ssh) {
 		if (isNull(ssh.getId())) {
 			ssh.preInsert(getRequestOrganizationCode());
 			insert(ssh);
@@ -85,30 +85,30 @@ public class SshServiceImpl implements SshService {
 		}
 	}
 
-	private void insert(Ssh ssh) {
+	private void insert(SshBean ssh) {
 		if (StringUtils.isNotBlank(ssh.getSshKey())) {
 			ssh.setSshKey(encryptSshkeyToHex(cipherKey, ssh.getSshKey()));
 		}
 		sshDao.insertSelective(ssh);
 	}
 
-	private void update(Ssh ssh) {
+	private void update(SshBean ssh) {
 		if (StringUtils.isNotBlank(ssh.getSshKey())) {
 			ssh.setSshKey(encryptSshkeyToHex(cipherKey, ssh.getSshKey()));
 		}
 		sshDao.updateByPrimaryKeySelective(ssh);
 	}
 
-	public Ssh detail(Long id) {
+	public SshBean detail(Long id) {
 		Assert.notNull(id, "id is null");
-		Ssh ssh = sshDao.selectByPrimaryKey(id);
+		SshBean ssh = sshDao.selectByPrimaryKey(id);
 		ssh.setSshKey(decryptSshkeyFromHex(cipherKey, ssh.getSshKey()));
 		return ssh;
 	}
 
 	public void del(Long id) {
 		Assert.notNull(id, "id is null");
-		Ssh ssh = new Ssh();
+		SshBean ssh = new SshBean();
 		ssh.setId(id);
 		ssh.setDelFlag(BaseBean.DEL_FLAG_DELETE);
 		sshDao.updateByPrimaryKeySelective(ssh);
@@ -118,7 +118,7 @@ public class SshServiceImpl implements SshService {
 	public void testSSHConnect(Long hostId, String sshUser, String sshKey, Long sshId) throws Exception {
 		Host appHost = appHostDao.selectByPrimaryKey(hostId);
 		if (Objects.nonNull(sshId)) {
-			Ssh ssh = sshDao.selectByPrimaryKey(sshId);
+			SshBean ssh = sshDao.selectByPrimaryKey(sshId);
 			sshUser = ssh.getUsername();
 			sshKey = ssh.getSshKey();
 		}

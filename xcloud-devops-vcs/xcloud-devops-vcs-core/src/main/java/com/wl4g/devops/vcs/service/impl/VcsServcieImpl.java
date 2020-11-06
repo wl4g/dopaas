@@ -61,7 +61,7 @@ public class VcsServcieImpl implements VcsService {
 	private VcsProperties vcsProperties;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name, String providerKind, Integer authType) {
+	public PageModel<Vcs> list(PageModel<Vcs> pm, String name, String providerKind, Integer authType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(vcsDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;
@@ -177,7 +177,8 @@ public class VcsServcieImpl implements VcsService {
 	}
 
 	@Override
-	public VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription) throws Exception {
+	public VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription)
+			throws Exception {
 		notNullOf(vcsId, "vcsId");
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
@@ -195,8 +196,10 @@ public class VcsServcieImpl implements VcsService {
 
 	private void checkRepeatBranchOrTag(Vcs vcs, Long projectId, String branchOrTag) throws Exception {
 		Assert2.hasTextOf(branchOrTag, "branchOrTag");
-		List<VcsBranchModel> remoteBranchs = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs, new CompositeBasicVcsProjectModel(projectId));
-		List<VcsTagModel> remoteTags = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs, new CompositeBasicVcsProjectModel(projectId));
+		List<VcsBranchModel> remoteBranchs = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs,
+				new CompositeBasicVcsProjectModel(projectId));
+		List<VcsTagModel> remoteTags = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs,
+				new CompositeBasicVcsProjectModel(projectId));
 		// check repeart
 		for (VcsBranchModel vcsBranchModel : remoteBranchs) {
 			Assert2.isTrue(!StringUtils.equals(vcsBranchModel.getName(), branchOrTag),

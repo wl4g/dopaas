@@ -53,7 +53,7 @@ public class DnsPrivateBlacklistServiceImpl implements DnsPrivateBlacklistServic
 	private DnsZoneHandler dnsServerInterface;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String expression) {
+	public PageModel<DnsPrivateBlacklist> page(PageModel<DnsPrivateBlacklist> pm, String expression) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(dnsPrivateBlacklistDao.list(expression));
 		return pm;

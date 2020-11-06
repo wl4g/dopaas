@@ -29,7 +29,7 @@ import java.util.List;
  */
 public interface DockerRepositoryService {
 
-	PageModel<?> page(PageModel<?> pm, String name);
+	PageModel<DockerRepository> page(PageModel<DockerRepository> pm, String name);
 
 	List<DockerRepository> getForSelect();
 
@@ -39,5 +39,6 @@ public interface DockerRepositoryService {
 
 	void del(Long id);
 
-	List<RepositoryProject> getRepositoryProjects(Long id, String address,String name) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException;
+	List<RepositoryProject> getRepositoryProjects(Long id, String address, String name)
+			throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException;
 }

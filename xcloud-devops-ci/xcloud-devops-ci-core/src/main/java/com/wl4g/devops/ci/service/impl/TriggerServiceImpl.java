@@ -50,7 +50,7 @@ public class TriggerServiceImpl implements TriggerService {
 	private PipelineTaskScheduler timingManager;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, Long id, String name, Long taskId, Integer enable, String startDate,
+	public PageModel<Trigger> list(PageModel<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,
 			String endDate) {
 		String endDateStr = null;
 		if (isNotBlank(endDate)) {

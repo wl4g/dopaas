@@ -36,7 +36,7 @@ public interface GenerateService {
 
 	// --- GenTable/GenColumns configuration. ---
 
-	PageModel<?> page(PageModel<?> pm, String tableName, Long projectId);
+	PageModel<GenTable> page(PageModel<GenTable> pm, String tableName, Long projectId);
 
 	/**
 	 * Find generate talbe metadata info.

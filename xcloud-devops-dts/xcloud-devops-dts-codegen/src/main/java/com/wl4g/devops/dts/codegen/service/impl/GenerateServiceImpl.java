@@ -108,13 +108,10 @@ public class GenerateServiceImpl implements GenerateService {
 	@Autowired
 	protected GenTableColumnDao genColumnDao;
 
-	final private static List DEFAULT_NO_EDIT = Arrays.asList("create_by", "create_date", "update_by", "update_date", "del_flag");
-	final private static List DEFAULT_NO_LIST = Arrays.asList("create_by", "create_date", "del_flag");
-
 	// --- GenTable/GenColumns configuration. ---
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String tableName, Long projectId) {
+	public PageModel<GenTable> page(PageModel<GenTable> pm, String tableName, Long projectId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(genTableDao.list(tableName, projectId));
 		return pm;
@@ -278,14 +275,14 @@ public class GenerateServiceImpl implements GenerateService {
 				col.setIsQuery("0");
 				col.setShowType("1");
 
-				if(DEFAULT_NO_EDIT.contains(cmetadata.getColumnName())){
+				if (DEFAULT_NO_EDIT.contains(cmetadata.getColumnName())) {
 					col.setIsEdit("0");
-				}else{
+				} else {
 					col.setIsEdit("1");
 				}
-				if(DEFAULT_NO_LIST.contains(cmetadata.getColumnName())){
+				if (DEFAULT_NO_LIST.contains(cmetadata.getColumnName())) {
 					col.setIsList("0");
-				}else{
+				} else {
 					col.setIsList("1");
 				}
 
@@ -297,7 +294,6 @@ public class GenerateServiceImpl implements GenerateService {
 				} else {
 					col.setIsPk("0");
 				}
-
 
 				// Sets default show attrType
 				applyDefaultShowType(cmetadata, col);
@@ -508,5 +504,9 @@ public class GenerateServiceImpl implements GenerateService {
 			col.setShowType("1");// normal input
 		}
 	}
+
+	// TODO 后续增加专门自动分析设置默认值
+	final private static List DEFAULT_NO_EDIT = Arrays.asList("create_by", "create_date", "update_by", "update_date", "del_flag");
+	final private static List DEFAULT_NO_LIST = Arrays.asList("create_by", "create_date", "del_flag");
 
 }

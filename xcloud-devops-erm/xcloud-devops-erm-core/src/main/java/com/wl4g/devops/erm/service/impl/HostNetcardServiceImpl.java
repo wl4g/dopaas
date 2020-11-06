@@ -55,7 +55,7 @@ public class HostNetcardServiceImpl implements HostNetcardService {
 	private HostTunnelPptpDao hostTunnelPptpDao;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, Long hostId, String name) {
+	public PageModel<HostNetcard> page(PageModel<HostNetcard> pm, Long hostId, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(appHostNetCardDao.list(getRequestOrganizationCodes(), hostId, name));
 		return pm;

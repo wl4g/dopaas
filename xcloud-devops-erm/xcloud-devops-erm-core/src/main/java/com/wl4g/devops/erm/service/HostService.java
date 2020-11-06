@@ -34,7 +34,7 @@ public interface HostService {
 
 	List<Host> list(String name, String hostname, Long idcId);
 
-	PageModel<?> page(PageModel<?> pm, String name, String hostname, Long idcId);
+	PageModel<Host> page(PageModel<Host> pm, String name, String hostname, Long idcId);
 
 	void save(Host host);
 

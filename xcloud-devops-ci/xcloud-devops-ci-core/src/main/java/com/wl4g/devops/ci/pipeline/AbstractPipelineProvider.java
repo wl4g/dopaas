@@ -19,7 +19,7 @@ import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.core.bean.ci.Project;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.components.core.bean.erm.Ssh;
+import com.wl4g.components.core.bean.erm.SshBean;
 import com.wl4g.components.core.exception.ci.BadCommandScriptException;
 import com.wl4g.components.core.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
@@ -244,7 +244,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected final void startupExecuteRemoteDeploying() {
 		// Creating transfer instances jobs.
-		Ssh ssh = getContext().getAppCluster().getSsh();
+		SshBean ssh = getContext().getAppCluster().getSsh();
 		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
 			return (Runnable) () -> {
 				File jobDeployerLog = config.getJobDeployerLog(context.getPipelineHistory().getId(), i.getId());

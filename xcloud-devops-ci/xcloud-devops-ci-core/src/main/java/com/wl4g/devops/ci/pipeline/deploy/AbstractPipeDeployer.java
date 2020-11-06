@@ -23,7 +23,7 @@ import com.wl4g.components.core.bean.ci.PipeStepInstanceCommand;
 import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.components.core.bean.erm.Ssh;
+import com.wl4g.components.core.bean.erm.SshBean;
 import com.wl4g.components.core.exception.ci.PipelineDeployingException;
 import com.wl4g.components.core.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.components.support.cli.DestroableProcessManager;
@@ -117,7 +117,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		Long projectId = getContext().getProject().getId();
 		String projectName = getContext().getProject().getProjectName();
 		AppCluster appCluster = getContext().getAppCluster();
-		Ssh ssh = appCluster.getSsh();
+		SshBean ssh = appCluster.getSsh();
 		PipeStepInstanceCommand pipeStepInstanceCommand = provider.getContext().getPipeStepInstanceCommand();
 		log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), projectId,
 				projectName);

@@ -24,7 +24,7 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface ConfigService {
 
-	PageModel<?> list(PageModel<?> pm, Long templateId, Long contactGroupId);
+	PageModel<AlarmConfig> list(PageModel<AlarmConfig> pm, Long templateId, Long contactGroupId);
 
 	void save(AlarmConfig alarmConfig);
 

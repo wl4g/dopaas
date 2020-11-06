@@ -55,7 +55,8 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 	private DestroableProcessManager pm;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name, Long instanceId, String envType, Integer deployType) {
+	public PageModel<AppInstance> list(PageModel<AppInstance> pm, String name, Long instanceId, String envType,
+			Integer deployType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(appInstanceDao.list(getRequestOrganizationCodes(), name, instanceId, envType, deployType));
 		return pm;

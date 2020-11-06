@@ -46,15 +46,15 @@ public class GenProjectController extends BaseController {
 	private GenProjectService genProjectService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"dts:codegen:project"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String projectName) {
-		RespBase<Object> resp = RespBase.create();
+	@RequiresPermissions(value = { "dts:codegen:project" }, logical = AND)
+	public RespBase<PageModel<GenProject>> list(PageModel<GenProject> pm, String projectName) {
+		RespBase<PageModel<GenProject>> resp = RespBase.create();
 		resp.setData(genProjectService.page(pm, projectName));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"dts:codegen:project"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen:project" }, logical = AND)
 	public RespBase<?> save(@RequestBody GenProject project) {
 		RespBase<Object> resp = RespBase.create();
 		genProjectService.save(project);
@@ -62,7 +62,7 @@ public class GenProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"dts:codegen:project"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen:project" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(genProjectService.detail(id));
@@ -70,7 +70,7 @@ public class GenProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"dts:codegen:project"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen:project" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		genProjectService.del(id);

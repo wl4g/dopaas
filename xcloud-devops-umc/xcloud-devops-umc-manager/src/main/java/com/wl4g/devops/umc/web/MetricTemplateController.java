@@ -42,11 +42,9 @@ public class MetricTemplateController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:metrictemplate" })
-	public RespBase<?> list(String metric, String classify, PageModel<?> pm) {
+	public RespBase<?> list(String metric, String classify, PageModel<MetricTemplate> pm) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel<?> list = metricTemplateService.list(pm, metric, classify);
-		resp.setData(list);
-		return resp;
+		return resp.withData(metricTemplateService.list(pm, metric, classify));
 	}
 
 	@RequestMapping(value = "/save")

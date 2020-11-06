@@ -38,7 +38,7 @@ public class DnsPublicZoneController extends BaseController {
 	private DnsPublicZoneService dnsPublicDomainService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel<?> pm, String zone) {
+	public RespBase<?> list(PageModel<DnsPublicZone> pm, String zone) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPublicDomainService.page(pm, zone));
 		return resp;

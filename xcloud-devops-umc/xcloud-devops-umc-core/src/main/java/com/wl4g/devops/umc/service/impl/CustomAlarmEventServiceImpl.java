@@ -35,7 +35,7 @@ public class CustomAlarmEventServiceImpl implements CustomAlarmEventService {
 	private CustomAlarmEventDao customAlarmEventDao;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name) {
+	public PageModel<CustomAlarmEvent> list(PageModel<CustomAlarmEvent> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(customAlarmEventDao.list(name));
 		return pm;

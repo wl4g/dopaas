@@ -57,7 +57,7 @@ public class GenerateController extends BaseController {
 	protected CodegenProperties config;
 
 	@Autowired
-	protected GenerateService generateService;
+	protected GenerateService genService;
 
 	// --- GenTable/GenColumns configuration. ---
 
@@ -70,10 +70,10 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
-	public RespBase<PageModel<?>> page(PageModel<?> pm, String tableName, Long projectId) {
-		RespBase<PageModel<?>> resp = RespBase.create();
-		resp.setData(generateService.page(pm, tableName, projectId));
+	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
+	public RespBase<PageModel<GenTable>> page(PageModel<GenTable> pm, String tableName, Long projectId) {
+		RespBase<PageModel<GenTable>> resp = RespBase.create();
+		resp.setData(genService.page(pm, tableName, projectId));
 		return resp;
 	}
 
@@ -84,10 +84,10 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("save")
-	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
 	public RespBase<?> save(@RequestBody GenTable table) {
 		RespBase<Object> resp = RespBase.create();
-		generateService.saveGenConfig(table);
+		genService.saveGenConfig(table);
 		return resp;
 	}
 
@@ -98,9 +98,9 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("detail")
-	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
 	public RespBase<?> detail(Long tableId) {
-		return generateService.detail(tableId);
+		return genService.detail(tableId);
 	}
 
 	/**
@@ -110,10 +110,10 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("del")
-	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
 	public RespBase<?> delete(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		generateService.deleteGenTable(id);
+		genService.deleteGenTable(id);
 		return resp;
 	}
 
@@ -128,7 +128,7 @@ public class GenerateController extends BaseController {
 	public RespBase<?> setGenTableStatus(Long id, String status) {
 		RespBase<Object> resp = RespBase.create();
 		notNullOf(id, "id");
-		generateService.setGenTableStatus(id, status);
+		genService.setGenTableStatus(id, status);
 		return resp;
 	}
 
@@ -137,7 +137,7 @@ public class GenerateController extends BaseController {
 	@RequestMapping("findTables")
 	public RespBase<?> findTables(Long projectId) throws Exception {
 		RespBase<List<TableMetadata>> resp = RespBase.create();
-		resp.setData(generateService.findTables(projectId));
+		resp.setData(genService.findTables(projectId));
 		return resp;
 	}
 
@@ -151,13 +151,13 @@ public class GenerateController extends BaseController {
 	 */
 	@RequestMapping("loadGenColumns")
 	public RespBase<GenTable> loadGenColumns(Long projectId, String tableName) throws Exception {
-		return generateService.loadGenColumns(projectId, tableName);
+		return genService.loadGenColumns(projectId, tableName);
 	}
 
 	@RequestMapping("getAttrTypes")
 	public RespBase<?> getAttrTypes(Long projectId) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(generateService.getAttrTypes(projectId));
+		resp.setData(genService.getAttrTypes(projectId));
 		return resp;
 	}
 
@@ -184,19 +184,19 @@ public class GenerateController extends BaseController {
 	@RequestMapping("syncGenTableConfig")
 	public RespBase<?> syncGenTableConfig(Long id, boolean force) throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		generateService.syncTableColumns(id, force);
+		genService.syncTableColumns(id, force);
 		return resp;
 	}
 
 	// --- Execution generates. ---
 
 	@RequestMapping("generate")
-	@RequiresPermissions(value = {"dts:codegen"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
 	public RespBase<?> generate(Long id, HttpServletResponse response) throws IOException {
 		RespBase<Object> resp = RespBase.create();
 
 		// Execution generate.
-		GeneratedResult result = generateService.generate(id);
+		GeneratedResult result = genService.generate(id);
 		resp.setData(result.getJobId());
 		return resp;
 	}

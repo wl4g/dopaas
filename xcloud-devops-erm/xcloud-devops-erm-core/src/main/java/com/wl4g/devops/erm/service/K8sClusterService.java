@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface K8sClusterService {
 
-	PageModel<?> page(PageModel<?> pm, String name);
+	PageModel<K8sCluster> page(PageModel<K8sCluster> pm, String name);
 
 	List<K8sCluster> getForSelect();
 

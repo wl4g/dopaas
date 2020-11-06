@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public interface HostNetcardService {
 
-	PageModel<?> page(PageModel<?> pm, Long hostId, String name);
+	PageModel<HostNetcard> page(PageModel<HostNetcard> pm, Long hostId, String name);
 
 	void save(HostNetcard hostNetcard);
 

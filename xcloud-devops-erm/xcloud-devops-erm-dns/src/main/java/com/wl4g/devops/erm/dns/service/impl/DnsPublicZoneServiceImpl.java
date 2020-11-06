@@ -40,7 +40,7 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 	private DnsPublicZoneDao publicZoneDao;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String zone) {
+	public PageModel<DnsPublicZone> page(PageModel<DnsPublicZone> pm, String zone) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(publicZoneDao.list(getRequestOrganizationCodes(), zone));
 		return pm;

@@ -61,7 +61,8 @@ public class TriggerController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci", "ci:trigger" }, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate) {
+	public RespBase<?> list(PageModel<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,
+			String endDate) {
 		log.info(
 				"into TriggerController.list prarms::"
 						+ "customPage = {} , id = {} , name = {} , taskId = {} , enable = {} , startDate = {} , endDate = {} ",

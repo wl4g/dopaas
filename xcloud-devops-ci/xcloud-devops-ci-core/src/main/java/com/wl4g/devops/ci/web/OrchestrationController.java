@@ -43,15 +43,15 @@ public class OrchestrationController extends BaseController {
 	private OrchestrationService orchestrationService;
 
 	@RequestMapping("/list")
-	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String name) {
+	@RequiresPermissions(value = { "ci:orchestration" }, logical = AND)
+	public RespBase<?> list(PageModel<Orchestration> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(orchestrationService.list(pm, name));
 		return resp;
 	}
 
 	@RequestMapping("/save")
-	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
+	@RequiresPermissions(value = { "ci:orchestration" }, logical = AND)
 	public RespBase<?> save(@RequestBody Orchestration orchestration) {
 		RespBase<Object> resp = RespBase.create();
 		orchestrationService.save(orchestration);
@@ -59,7 +59,7 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/del")
-	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
+	@RequiresPermissions(value = { "ci:orchestration" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		orchestrationService.del(id);
@@ -67,7 +67,7 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/detail")
-	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
+	@RequiresPermissions(value = { "ci:orchestration" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Orchestration orchestration = orchestrationService.detail(id);
@@ -76,7 +76,7 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/run")
-	@RequiresPermissions(value = {"ci:orchestration"}, logical = AND)
+	@RequiresPermissions(value = { "ci:orchestration" }, logical = AND)
 	public RespBase<?> run(Long id, String remark, @NotNull String trackId, @NotNull String trackType, String annex) {
 		RespBase<Object> resp = RespBase.create();
 		orchestrationService.run(id, remark, trackId, trackType, annex);

@@ -39,12 +39,11 @@ public class RecordController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:record" })
-	public RespBase<?> list(String name, PageModel<?> pm, String startDate, String endDate) {
+	public RespBase<?> list(String name, PageModel<AlarmRecord> pm, String startDate, String endDate) {
 		log.info("into RecordController.list prarms::" + "name = {} , pm = {} , startDate = {} , endDate = {} ", name, pm,
 				startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(recordService.list(pm, name, startDate, endDate));
-		return resp;
+		return resp.withData(recordService.list(pm, name, startDate, endDate));
 	}
 
 	@RequestMapping(value = "/detail")

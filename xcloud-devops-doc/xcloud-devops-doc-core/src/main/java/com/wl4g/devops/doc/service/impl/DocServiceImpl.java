@@ -79,7 +79,7 @@ public class DocServiceImpl implements DocService {
 	protected DestroableProcessManager pm;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name, String lang, Long labelId) {
+	public PageModel<FileChanges> list(PageModel<FileChanges> pm, String name, String lang, Long labelId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<FileChanges> list = fileChangesDao.list(name, lang, labelId);
 		pm.setRecords(list);

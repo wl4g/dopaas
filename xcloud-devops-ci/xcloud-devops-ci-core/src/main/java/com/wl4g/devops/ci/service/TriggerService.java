@@ -24,7 +24,8 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface TriggerService {
 
-	PageModel<?> list(PageModel<?> pm, Long id, String name, Long taskId, Integer enable, String startDate, String endDate);
+	PageModel<Trigger> list(PageModel<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,
+			String endDate);
 
 	void save(Trigger trigger);
 

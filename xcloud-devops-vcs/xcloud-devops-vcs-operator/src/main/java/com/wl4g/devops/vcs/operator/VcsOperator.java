@@ -16,6 +16,7 @@
 package com.wl4g.devops.vcs.operator;
 
 import com.google.common.annotations.Beta;
+import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.core.framework.operator.Operator;
@@ -24,12 +25,18 @@ import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
+
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 
 /**
@@ -40,9 +47,18 @@ import static org.springframework.util.Assert.notNull;
  * @since
  */
 @Beta
-public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
+public interface VcsOperator extends Operator<VcsProviderKind> {
 
-	// --- APIs operator. ---
+	/**
+	 * Gets this {@link SmartLogger} instance.
+	 * 
+	 * @return
+	 */
+	SmartLogger getLog();
+
+	//
+	// --- APIs operators. ---
+	//
 
 	/**
 	 * Gets VCS remote branch names.
@@ -52,8 +68,12 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	<T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
-			throws Exception;
+	default <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception {
+		notNull(credentials, "Get remote branchs credentials can't is null.");
+		notNull(vcsProject, "Get remote branchs vcsProject can't is null");
+		return null;
+	}
 
 	/**
 	 * Create Branch
@@ -65,7 +85,9 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param <T>
 	 * @return
 	 */
-	<T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, Long projectId, String branch, String ref);
+	default <T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, Long projectId, String branch, String ref) {
+		return null;
+	}
 
 	/**
 	 * Gets VCS remote tag names.
@@ -75,7 +97,12 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	<T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception;
+	default <T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception {
+		notNull(credentials, "Get remote tags credentials can't is null.");
+		notNull(credentials, "Get remote tags vcsProject can't is null.");
+		return null;
+	}
 
 	/**
 	 *
@@ -86,8 +113,10 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param <T>
 	 * @return
 	 */
-	<T extends VcsTagModel> T createRemoteTag(Vcs credentials, Long projectId, String tag, String ref, String message,
-			String releaseDescription);
+	default <T extends VcsTagModel> T createRemoteTag(Vcs credentials, Long projectId, String tag, String ref, String message,
+			String releaseDescription) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Gets remote project ID by project name.
@@ -97,7 +126,12 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception;
+	default Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
+		notNull(credentials, "Get remote projectId credentials can't is null.");
+		hasText(projectName, "Get remote projectId can't is empty");
+		getLog().info("Search remote projectIds by projectName: {}", projectName);
+		return null;
+	}
 
 	/**
 	 * Search find remote projects by name.(unlimited)
@@ -106,7 +140,6 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes" })
 	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
 			PageModel pm) throws Exception {
 		return searchRemoteProjects(credentials, groupId, projectName, Long.MAX_VALUE, pm);
@@ -123,18 +156,29 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            Page limit maximum
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes" })
-	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
-			PageModel pm) throws Exception;
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
+			long limit, PageModel pm) throws Exception {
+		notNull(credentials, "Search remote projects credentials can't is null.");
+		/*
+		 * The item name to be searched can be empty. If it is empty, it means
+		 * unconditional.
+		 */
+		// hasText(projectName, "Search remote projects name can't is empty");
+		isTrue(limit > 0, "Search remote projects must limit > 0");
+		return null;
+	}
 
 	/**
 	 * Search find remote projects by Id.
 	 *
 	 * @param credentials
-	 * @param projectId
+	 * @param vcsProjectId
 	 * @return
 	 */
-	<T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Long projectId);
+	default <T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Long vcsProjectId) {
+		notNullOf(vcsProjectId, "vcsProjectId");
+		return null;
+	}
 
 	/**
 	 * Search find remote groups by name.(unlimited)
@@ -148,7 +192,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	}
 
 	/**
-	 * Search find remote groups by name.
+	 * Search find remote teams(groups) by name.
 	 *
 	 * @param credentials
 	 * @param projectName
@@ -158,7 +202,13 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            Page limit maximum
 	 * @return
 	 */
-	<T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, long limit);
+	default <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, long limit) {
+		return null;
+	}
+
+	//
+	// --- GIT operators. ---
+	//
 
 	/**
 	 * Clone from remote VCS server.
@@ -191,7 +241,14 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @return
 	 * @throws IOException
 	 */
-	<T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException;
+	default <T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+		notNull(credentials, "Clone credentials is requires.");
+		hasText(remoteUrl, "Clone remoteUrl is requires");
+		hasText(projecDir, "Clone projecDir is requires");
+		hasText(branchName, "Clone branchName is requires");
+		getLog().info("Cloning VCS repository for remoteUrl: {}, projecDir: {}, branchName:{}", remoteUrl, projecDir, branchName);
+		return null;
+	}
 
 	/**
 	 * Checkout and pull of VCS repository.
@@ -202,7 +259,13 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            project local VCS repository directory absolute path.
 	 * @param branchName
 	 */
-	<T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName, VcsAction action);
+	default <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName, VcsAction action) {
+		notNull(credentials, "Checkout & pull credentials is requires.");
+		hasText(projecDir, "Checkout & pull projecDir is requires.");
+		hasText(branchName, "Checkout & pull branchName is requires.");
+		getLog().info("Checkout & pull for projecDir: {}, branchName: {}", projecDir, branchName);
+		return null;
+	}
 
 	/**
 	 * Delete (local) branch.
@@ -213,7 +276,12 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param force
 	 * @return
 	 */
-	List<String> delLocalBranch(String projecDir, String branchName, boolean force);
+	default List<String> delLocalBranch(String projecDir, String branchName, boolean force) {
+		hasText(projecDir, "Deletion local branch projecDir is requires.");
+		hasText(branchName, "Deletion local branch  branchName is requires.");
+		getLog().info("Deletion local branch for projecDir: {}, branchName: {}, force: {}", projecDir, branchName, force);
+		return null;
+	}
 
 	/**
 	 * Check VCS project have local repository exist.
@@ -222,7 +290,11 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            project local VCS repository directory absolute path.
 	 * @return
 	 */
-	boolean hasLocalRepository(String projecDir);
+	default boolean hasLocalRepository(String projecDir) {
+		hasText(projecDir, "Check VCS repository projecDir can't is empty");
+		getLog().info("Check VCS repository for projecDir: {}", projecDir);
+		return false;
+	}
 
 	/**
 	 * Gets (local) latest committed ID.
@@ -232,7 +304,11 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @return
 	 * @throws Exception
 	 */
-	String getLatestCommitted(String projecDir) throws Exception;
+	default String getLatestCommitted(String projecDir) throws Exception {
+		hasText(projecDir, "Get committed projecDir can't is empty");
+		getLog().info("Get latest committed for projecDir: {}", projecDir);
+		return null;
+	}
 
 	/**
 	 * Roll-back VCS project local repository(fetch and checkout).
@@ -246,7 +322,13 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            committed ID.
 	 * @return
 	 */
-	<T> T rollback(Vcs credentials, String projecDir, String sign);
+	default <T> T rollback(Vcs credentials, String projecDir, String sign) {
+		notNull(credentials, "Rollback credentials is requires.");
+		hasText(projecDir, "Rollback projecDir can't is empty");
+		hasText(sign, "Rollback sign can't is empty");
+		getLog().info("Rollback for projecDir: {}, sign: {}", projecDir, sign);
+		return null;
+	}
 
 	/**
 	 * VCS type definitions.

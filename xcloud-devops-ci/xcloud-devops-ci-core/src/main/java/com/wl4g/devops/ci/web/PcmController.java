@@ -43,6 +43,10 @@ public class PcmController {
 	@Autowired
 	private PcmService pcmService;
 
+	//
+	// PCM provider operation.
+	//
+
 	@RequestMapping(value = "/getUsers")
 	public RespBase<?> getUsers(Long pcmId) {
 		RespBase<Object> resp = RespBase.create();
@@ -99,9 +103,13 @@ public class PcmController {
 		return resp;
 	}
 
+	//
+	// PCM information.
+	//
+
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String name, String providerKind, Integer authType) {
+	public RespBase<?> list(PageModel<Pcm> pm, String name, String providerKind, Integer authType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(pcmService.list(pm, name, providerKind, authType));
 		return resp;
@@ -138,4 +146,5 @@ public class PcmController {
 		resp.setData(pcmService.all());
 		return resp;
 	}
+
 }

@@ -61,7 +61,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 	private JedisService jedisService;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name) {
+	public PageModel<Orchestration> list(PageModel<Orchestration> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
 		return pm;

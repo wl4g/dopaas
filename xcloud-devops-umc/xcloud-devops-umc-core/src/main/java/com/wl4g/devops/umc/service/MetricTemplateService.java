@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface MetricTemplateService {
 
-	PageModel<?> list(PageModel<?> pm, String metric, String classify);
+	PageModel<MetricTemplate> list(PageModel<MetricTemplate> pm, String metric, String classify);
 
 	MetricTemplate detal(Long id);
 

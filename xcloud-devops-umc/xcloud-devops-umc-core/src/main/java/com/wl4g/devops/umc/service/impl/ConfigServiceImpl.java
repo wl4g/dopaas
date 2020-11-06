@@ -46,7 +46,7 @@ public class ConfigServiceImpl implements ConfigService {
 	private AppInstanceDao appInstanceDao;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, Long templateId, Long contactGroupId) {
+	public PageModel<AlarmConfig> list(PageModel<AlarmConfig> pm, Long templateId, Long contactGroupId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(alarmConfigDao.list(templateId, contactGroupId));
 		return pm;

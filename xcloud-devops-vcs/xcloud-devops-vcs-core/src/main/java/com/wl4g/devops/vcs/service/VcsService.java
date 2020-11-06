@@ -31,31 +31,31 @@ import java.util.List;
  */
 public interface VcsService {
 
-	PageModel<?> list(PageModel<?> pm, String name, String provider, Integer authType);
+	PageModel<Vcs> list(PageModel<Vcs> pm, String name, String provider, Integer authType);
 
-    void save(Vcs vcs);
+	void save(Vcs vcs);
 
-    void del(Long id);
+	void del(Long id);
 
-    Vcs detail(Long id);
+	Vcs detail(Long id);
 
-    List<Vcs> all();
+	List<Vcs> all();
 
-    List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Long vcsId, String projectName) throws Exception;
+	List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Long vcsId, String projectName) throws Exception;
 
-    List<VcsGroupModel> getGroups(Long id, String groupName);
+	List<VcsGroupModel> getGroups(Long id, String groupName);
 
-    List<VcsProjectModel> getProjects(PageModel<?> pm, Long vcsId, Long groupId, String projectName) throws Exception;
+	List<VcsProjectModel> getProjects(PageModel<?> pm, Long vcsId, Long groupId, String projectName) throws Exception;
 
-    VcsProjectModel getProjectById(Long vcsId, Long projectId);
+	VcsProjectModel getProjectById(Long vcsId, Long projectId);
 
-    List<VcsBranchModel> getBranchs(Long vcsId, Long projectId) throws Exception;
+	List<VcsBranchModel> getBranchs(Long vcsId, Long projectId) throws Exception;
 
-    List<VcsTagModel> getTags(Long vcsId, Long projectId) throws Exception;
+	List<VcsTagModel> getTags(Long vcsId, Long projectId) throws Exception;
 
-    VcsBranchModel createBranch(Long vcsId, Long projectId, String branch, String ref) throws Exception;
+	VcsBranchModel createBranch(Long vcsId, Long projectId, String branch, String ref) throws Exception;
 
-    VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription) throws Exception;
-
+	VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription)
+			throws Exception;
 
 }

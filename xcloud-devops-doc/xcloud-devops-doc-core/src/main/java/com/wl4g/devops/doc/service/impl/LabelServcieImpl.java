@@ -38,7 +38,7 @@ public class LabelServcieImpl implements LabelService {
 	private LabelDao labelDao;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name) {
+	public PageModel<Label> list(PageModel<Label> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(labelDao.list(name));
 		return pm;

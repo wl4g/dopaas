@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface PipelineService {
 
-	PageModel<?> list(PageModel<?> pm, String pipeName, String providerKind, String environment);
+	PageModel<Pipeline> list(PageModel<Pipeline> pm, String pipeName, String providerKind, String environment);
 
 	void save(Pipeline pipeline);
 
@@ -42,7 +42,7 @@ public interface PipelineService {
 
 	List<Pipeline> getForSelect(String environment);
 
-	PageModel<?> clusterExtensionList(PageModel<?> pm, String clusterName);
+	PageModel<ClusterExtension> clusterExtensionList(PageModel<ClusterExtension> pm, String clusterName);
 
 	void saveClusterExtension(ClusterExtension clusterExtension);
 

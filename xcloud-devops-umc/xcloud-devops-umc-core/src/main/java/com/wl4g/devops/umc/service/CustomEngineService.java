@@ -24,7 +24,7 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface CustomEngineService {
 
-	PageModel<?> list(PageModel<?> pm, String name);
+	PageModel<CustomEngine> list(PageModel<CustomEngine> pm, String name);
 
 	CustomEngine detal(Long id);
 
