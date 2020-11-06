@@ -33,6 +33,8 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 </#if>
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 <#list javaSpecs.distinctList(attrTypes) as attrType>
     <#if !attrType?starts_with("java.lang")>
 import ${attrType};
@@ -75,6 +77,7 @@ public class ${entityName?cap_first} extends BaseBean {
             <#assign datePattern = 'yyyy-MM-dd'>
         </#if>
     @JsonFormat(pattern = "${datePattern}")
+    @DateTimeFormat(pattern = "${datePattern}")
     </#if>
     <#if col.noNull == '1'>
     @NotNull
