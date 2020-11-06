@@ -41,7 +41,7 @@ public class DnsPrivateServerServiceImpl implements DnsPrivateServerService {
 	private DnsPrivateServerDao dnsPrivateServerDao;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String name) {
+	public PageModel<DnsPrivateServer> page(PageModel<DnsPrivateServer> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(dnsPrivateServerDao.list(getRequestOrganizationCodes(), name));
 		return pm;

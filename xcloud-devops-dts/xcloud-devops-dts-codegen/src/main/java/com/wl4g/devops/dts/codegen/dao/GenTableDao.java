@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.dao;
 
-import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import org.apache.ibatis.annotations.Param;
 
@@ -39,5 +38,6 @@ public interface GenTableDao {
 
 	int updateByPrimaryKey(GenTable record);
 
-	List<GenDataSource> list(@Param("tableName") String tableName, @Param("projectId") Long projectId);
+	List<GenTable> list(@Param("tableName") String tableName, @Param("projectId") Long projectId);
+
 }

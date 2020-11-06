@@ -41,16 +41,14 @@ public class CustomAlarmEventController extends BaseController {
 	private CustomAlarmEventService customAlarmEventService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"umc:alarm:event"}, logical = AND)
-	public RespBase<?> list(String name, PageModel<?> pm) {
+	@RequiresPermissions(value = { "umc:alarm:event" }, logical = AND)
+	public RespBase<?> list(String name, PageModel<CustomAlarmEvent> pm) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel<?> list = customAlarmEventService.list(pm, name);
-		resp.setData(list);
-		return resp;
+		return resp.withData(customAlarmEventService.list(pm, name));
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"umc:alarm:event"}, logical = AND)
+	@RequiresPermissions(value = { "umc:alarm:event" }, logical = AND)
 	public RespBase<?> save(@RequestBody CustomAlarmEvent customAlarmEvent) {
 		log.info("into CustomDatasourceController.save prarms::" + "customAlarmEvent = {} ", customAlarmEvent);
 		notNull(customAlarmEvent, "customAlarmEvent is null");
@@ -60,7 +58,7 @@ public class CustomAlarmEventController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"umc:alarm:event"}, logical = AND)
+	@RequiresPermissions(value = { "umc:alarm:event" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		CustomAlarmEvent customAlarmEvent = customAlarmEventService.detal(id);
@@ -69,7 +67,7 @@ public class CustomAlarmEventController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"umc:alarm:event"}, logical = AND)
+	@RequiresPermissions(value = { "umc:alarm:event" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		log.info("into CustomDatasourceController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

@@ -57,7 +57,7 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> list(String groupName, String projectName, PageModel<?> pm) {
+	public RespBase<?> list(String groupName, String projectName, PageModel<Project> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
 		}

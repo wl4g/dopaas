@@ -26,7 +26,7 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface TemplateService {
 
-	PageModel<?> list(PageModel<?> pm, String name, Long metricId, String classify);
+	PageModel<AlarmTemplate> list(PageModel<AlarmTemplate> pm, String name, Long metricId, String classify);
 
 	List<AlarmTemplate> getByClassify(String classify);
 

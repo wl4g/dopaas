@@ -41,7 +41,7 @@ public class DnsOperationLogServiceImpl implements DnsOperationLogService {
 	private DnsOperationLogDao dnsOperationLogDao;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String domain) {
+	public PageModel<DnsOperationLog> page(PageModel<DnsOperationLog> pm, String domain) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(dnsOperationLogDao.list(getRequestOrganizationCodes(), domain));
 		return pm;

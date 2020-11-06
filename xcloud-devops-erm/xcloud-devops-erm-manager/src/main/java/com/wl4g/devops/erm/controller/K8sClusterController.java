@@ -43,15 +43,15 @@ public class K8sClusterController extends BaseController {
 	private K8sClusterService k8sClusterService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"erm:k8scluster"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String name) {
+	@RequiresPermissions(value = { "erm:k8scluster" }, logical = AND)
+	public RespBase<?> list(PageModel<K8sCluster> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(k8sClusterService.page(pm, name));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"erm:k8scluster"}, logical = AND)
+	@RequiresPermissions(value = { "erm:k8scluster" }, logical = AND)
 	public RespBase<?> save(@RequestBody K8sCluster k8sCluster) {
 		RespBase<Object> resp = RespBase.create();
 		k8sClusterService.save(k8sCluster);
@@ -59,7 +59,7 @@ public class K8sClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"erm:k8scluster"}, logical = AND)
+	@RequiresPermissions(value = { "erm:k8scluster" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(k8sClusterService.detail(id));
@@ -67,7 +67,7 @@ public class K8sClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"erm:k8scluster"}, logical = AND)
+	@RequiresPermissions(value = { "erm:k8scluster" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		k8sClusterService.del(id);

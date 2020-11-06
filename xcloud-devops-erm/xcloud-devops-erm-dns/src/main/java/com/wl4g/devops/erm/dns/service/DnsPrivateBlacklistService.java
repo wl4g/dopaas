@@ -23,7 +23,7 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface DnsPrivateBlacklistService {
 
-	PageModel<?> page(PageModel<?> pm, String expression);
+	PageModel<DnsPrivateBlacklist> page(PageModel<DnsPrivateBlacklist> pm, String expression);
 
 	void save(DnsPrivateBlacklist dnsPrivateBlacklist);
 

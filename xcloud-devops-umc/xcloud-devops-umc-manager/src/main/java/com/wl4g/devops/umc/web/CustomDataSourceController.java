@@ -17,6 +17,7 @@ package com.wl4g.devops.umc.web;
 
 import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.bean.umc.CustomDataSource;
 import com.wl4g.components.core.bean.umc.datasouces.MysqlDataSource;
 import com.wl4g.components.core.bean.umc.model.DataSourceProvide;
 import com.wl4g.components.core.web.BaseController;
@@ -43,16 +44,14 @@ public class CustomDataSourceController extends BaseController {
 	private CustomDataSourceService customDataSourceService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"umc:datasource"}, logical = AND)
-	public RespBase<?> list(String name, PageModel<?> pm) {
+	@RequiresPermissions(value = { "umc:datasource" }, logical = AND)
+	public RespBase<?> list(String name, PageModel<CustomDataSource> pm) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel<?> list = customDataSourceService.list(pm, name);
-		resp.setData(list);
-		return resp;
+		return resp.withData(customDataSourceService.list(pm, name));
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"umc:datasource"}, logical = AND)
+	@RequiresPermissions(value = { "umc:datasource" }, logical = AND)
 	public RespBase<?> save(String dataSource, String provider) {
 		log.info("into CustomDatasourceController.save prarms::" + "customDataSource = {} ", dataSource);
 		notNull(dataSource, "customDataSource is null");
@@ -65,7 +64,7 @@ public class CustomDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"umc:datasource"}, logical = AND)
+	@RequiresPermissions(value = { "umc:datasource" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(customDataSourceService.detal(id));
@@ -73,7 +72,7 @@ public class CustomDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"umc:datasource"}, logical = AND)
+	@RequiresPermissions(value = { "umc:datasource" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		log.info("into CustomDatasourceController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

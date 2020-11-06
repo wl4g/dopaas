@@ -73,8 +73,8 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String pipeName, String providerKind, String environment) {
+	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
+	public RespBase<?> list(PageModel<Pipeline> pm, String pipeName, String providerKind, String environment) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel<?> list = pipelineService.list(pm, pipeName, providerKind, environment);
 		resp.setData(list);
@@ -89,7 +89,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"ci","ci:pipeline"}, logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:pipeline" }, logical = AND)
 	public RespBase<?> save(@RequestBody Pipeline pipeline) {
 		Assert.notNull(pipeline, "task can not be null");
 		checkPipeline(pipeline);
@@ -105,7 +105,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
+	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		log.info("into TaskController.detail prarms::" + "id = {} ", id);
 		Assert.notNull(id, "id can not be null");
@@ -121,7 +121,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
+	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		Assert.notNull(id, "id can not be null");
 		RespBase<Object> resp = RespBase.create();
@@ -159,7 +159,7 @@ public class PipelineController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
-	@RequiresPermissions(value = {"ci:pipeline"}, logical = AND)
+	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
 	public RespBase<?> create(RunParameter newParameter) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		PipelineModel pipelineModel = flowManager.buildPipeline(newParameter.getPipeId());
@@ -184,7 +184,7 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/clusterExtensionList")
-	public RespBase<?> clusterExtensionList(PageModel<?> pm, String clusterName) {
+	public RespBase<?> clusterExtensionList(PageModel<ClusterExtension> pm, String clusterName) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(pipelineService.clusterExtensionList(pm, clusterName));
 		return resp;

@@ -55,7 +55,7 @@ public class AppHostController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:host" })
-	public RespBase<?> list(PageModel<?> pm, String name, String hostname) {
+	public RespBase<?> list(PageModel<Host> pm, String name, String hostname) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostService.page(pm, name, hostname, null));
 		return resp;
@@ -86,8 +86,7 @@ public class AppHostController extends BaseController {
 	}
 
 	@RequestMapping(value = "/createAndDownloadTemplate")
-	public ResponseEntity<FileSystemResource> createAndDownloadTemplate(Long idcId, String organizationCode)
-			throws IOException {
+	public ResponseEntity<FileSystemResource> createAndDownloadTemplate(Long idcId, String organizationCode) throws IOException {
 		return hostService.createAndDownloadTemplate(idcId, organizationCode);
 	}
 

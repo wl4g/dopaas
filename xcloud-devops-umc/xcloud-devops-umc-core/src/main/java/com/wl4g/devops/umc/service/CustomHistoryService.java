@@ -24,7 +24,7 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface CustomHistoryService {
 
-	PageModel<?> list(PageModel<?> pm, String name);
+	PageModel<CustomHistory> list(PageModel<CustomHistory> pm, String name);
 
 	CustomHistory detal(Long id);
 

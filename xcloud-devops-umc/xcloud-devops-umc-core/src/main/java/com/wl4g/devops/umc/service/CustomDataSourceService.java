@@ -29,7 +29,7 @@ import java.util.List;
  */
 public interface CustomDataSourceService {
 
-	PageModel<?> list(PageModel<?> pm, String name);
+	PageModel<CustomDataSource> list(PageModel<CustomDataSource> pm, String name);
 
 	BaseDataSource detal(Long id);
 

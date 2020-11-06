@@ -50,7 +50,7 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 	private DockerInstanceDao dockerInstanceDao;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String name) {
+	public PageModel<DockerCluster> page(PageModel<DockerCluster> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(dockerClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;

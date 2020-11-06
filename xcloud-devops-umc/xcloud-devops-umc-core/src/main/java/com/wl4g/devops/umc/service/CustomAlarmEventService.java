@@ -24,7 +24,7 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface CustomAlarmEventService {
 
-	PageModel<?> list(PageModel<?> pm, String name);
+	PageModel<CustomAlarmEvent> list(PageModel<CustomAlarmEvent> pm, String name);
 
 	CustomAlarmEvent detal(Long id);
 

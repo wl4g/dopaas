@@ -47,15 +47,15 @@ public class AppInstanceController extends BaseController {
 	private AppInstanceService appInstanceService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"erm:instance"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String name, Long clusterId, String envType, Integer deployType) {
+	@RequiresPermissions(value = { "erm:instance" }, logical = AND)
+	public RespBase<?> list(PageModel<AppInstance> pm, String name, Long clusterId, String envType, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(appInstanceService.list(pm, name, clusterId, envType, deployType));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"erm:instance"}, logical = AND)
+	@RequiresPermissions(value = { "erm:instance" }, logical = AND)
 	public RespBase<?> save(@RequestBody AppInstance appInstance) {
 		RespBase<Object> resp = RespBase.create();
 		appInstanceService.save(appInstance);
@@ -63,7 +63,7 @@ public class AppInstanceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"erm:instance"}, logical = AND)
+	@RequiresPermissions(value = { "erm:instance" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		appInstanceService.del(id);
@@ -71,7 +71,7 @@ public class AppInstanceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"erm:instance"}, logical = AND)
+	@RequiresPermissions(value = { "erm:instance" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		AppInstance detail = appInstanceService.detail(id);

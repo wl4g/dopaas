@@ -42,13 +42,12 @@ public class TemplateController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:templat" })
-	public RespBase<?> list(String name, Long metricId, String classify, PageModel<?> pm) {
+	public RespBase<?> list(String name, Long metricId, String classify, PageModel<AlarmTemplate> pm) {
 		log.info("into TemplateController.list prarms::" + "name = {} , metric = {} , classify = {} , pm = {} ", name, metricId,
 				classify, pm);
+
 		RespBase<Object> resp = RespBase.create();
-		PageModel<?> list = templateService.list(pm, name, metricId, classify);
-		resp.setData(list);
-		return resp;
+		return resp.withData(templateService.list(pm, name, metricId, classify));
 	}
 
 	@RequestMapping(value = "/save")

@@ -47,15 +47,15 @@ public class DockerRepositoryController extends BaseController {
 	private DockerRepositoryService dockerRepositoryService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"erm:dockerrepository"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String name) {
+	@RequiresPermissions(value = { "erm:dockerrepository" }, logical = AND)
+	public RespBase<?> list(PageModel<DockerRepository> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerRepositoryService.page(pm, name));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"erm:dockerrepository"}, logical = AND)
+	@RequiresPermissions(value = { "erm:dockerrepository" }, logical = AND)
 	public RespBase<?> save(@RequestBody DockerRepository dockerRepository) {
 		RespBase<Object> resp = RespBase.create();
 		dockerRepositoryService.save(dockerRepository);
@@ -63,7 +63,7 @@ public class DockerRepositoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"erm:dockerrepository"}, logical = AND)
+	@RequiresPermissions(value = { "erm:dockerrepository" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerRepositoryService.detail(id));
@@ -71,7 +71,7 @@ public class DockerRepositoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"erm:dockerrepository"}, logical = AND)
+	@RequiresPermissions(value = { "erm:dockerrepository" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		dockerRepositoryService.del(id);

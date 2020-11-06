@@ -53,7 +53,7 @@ public class ShareServiceImpl implements ShareService {
 	private DocProperties docProperties;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm) {
+	public PageModel<Share> list(PageModel<Share> pm) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<Share> list = shareDao.list();
 		for (Share share : list) {

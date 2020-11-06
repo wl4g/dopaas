@@ -39,7 +39,7 @@ public class CustomEngineServiceImpl implements CustomEngineService {
 	private EngineTaskScheduler engineTaskScheduler;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name) {
+	public PageModel<CustomEngine> list(PageModel<CustomEngine> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(customEngineDao.list(name));
 		return pm;

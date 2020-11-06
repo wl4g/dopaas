@@ -85,10 +85,10 @@ public class PipelineServiceImpl implements PipelineService {
 	private ClusterExtensionDao clusterExtensionDao;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String pipeName, String providerKind, String environment) {
+	public PageModel<Pipeline> list(PageModel<Pipeline> pm, String pipeName, String providerKind, String environment) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<Pipeline> list = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
-		for(Pipeline pipeline : list){
+		for (Pipeline pipeline : list) {
 			List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao.selectByPipeId(pipeline.getId());
 			pipeline.setPipeStepBuildingProjects(pipeStepBuildingProjects);
 		}
@@ -371,7 +371,7 @@ public class PipelineServiceImpl implements PipelineService {
 	}
 
 	@Override
-	public PageModel<?> clusterExtensionList(PageModel<?> pm, String clusterName) {
+	public PageModel<ClusterExtension> clusterExtensionList(PageModel<ClusterExtension> pm, String clusterName) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(clusterExtensionDao.list(clusterName));
 		return pm;

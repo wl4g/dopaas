@@ -24,7 +24,7 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface OrchestrationService {
 
-	PageModel<?> list(PageModel<?> pm, String name);
+	PageModel<Orchestration> list(PageModel<Orchestration> pm, String name);
 
 	void save(Orchestration orchestration);
 

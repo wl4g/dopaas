@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface LabelService {
 
-	PageModel<?> list(PageModel<?> pm, String name);
+	PageModel<Label> list(PageModel<Label> pm, String name);
 
 	void save(Label label);
 

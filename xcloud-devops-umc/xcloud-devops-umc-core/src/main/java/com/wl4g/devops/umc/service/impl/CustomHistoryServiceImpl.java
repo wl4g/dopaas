@@ -37,7 +37,7 @@ public class CustomHistoryServiceImpl implements CustomHistoryService {
 	private CustomHistoryDao customHistoryDao;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name) {
+	public PageModel<CustomHistory> list(PageModel<CustomHistory> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<CustomHistory> list = customHistoryDao.list(name);
 		/*

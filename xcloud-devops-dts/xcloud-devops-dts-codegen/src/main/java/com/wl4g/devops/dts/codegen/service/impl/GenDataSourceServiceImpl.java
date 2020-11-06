@@ -55,12 +55,10 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 	private GenDataSourceDao genDSDao;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String name) {
+	public PageModel<GenDataSource> page(PageModel<GenDataSource> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		// desensitization
-		List<GenDataSource> records = safeList(genDSDao.list(name)).stream().map(ds -> ds.withPassword("******"))
-				.collect(toList());
-		pm.setRecords(records);
+		pm.setRecords(safeList(genDSDao.list(name)).stream().map(ds -> ds.withPassword("******")).collect(toList()));
 		return pm;
 	}
 

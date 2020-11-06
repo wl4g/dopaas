@@ -47,16 +47,14 @@ public class CustomEngineController extends BaseController {
 	private CustomEngineService customEngineService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"umc:custom:engine"}, logical = AND)
-	public RespBase<?> list(String name, PageModel<?> pm) {
+	@RequiresPermissions(value = { "umc:custom:engine" }, logical = AND)
+	public RespBase<?> list(String name, PageModel<CustomEngine> pm) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel<?> list = customEngineService.list(pm, name);
-		resp.setData(list);
-		return resp;
+		return resp.withData(customEngineService.list(pm, name));
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"umc:custom:engine"}, logical = AND)
+	@RequiresPermissions(value = { "umc:custom:engine" }, logical = AND)
 	public RespBase<?> save(@RequestBody CustomEngineModel customEngineModel) {
 		log.info("into CustomDatasourceController.save prarms::" + "customEngine = {} ", customEngineModel);
 		notNull(customEngineModel, "customEngine is null");
@@ -81,7 +79,7 @@ public class CustomEngineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"umc:custom:engine"}, logical = AND)
+	@RequiresPermissions(value = { "umc:custom:engine" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		CustomEngine customEngine = customEngineService.detal(id);
@@ -101,7 +99,7 @@ public class CustomEngineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"umc:custom:engine"}, logical = AND)
+	@RequiresPermissions(value = { "umc:custom:engine" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		log.info("into CustomDatasourceController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

@@ -25,7 +25,7 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.erm.Host;
 import com.wl4g.components.core.bean.erm.HostSsh;
-import com.wl4g.components.core.bean.erm.Ssh;
+import com.wl4g.components.core.bean.erm.SshBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
@@ -94,7 +94,7 @@ public class HostServiceImpl implements HostService {
 	}
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String name, String hostname, Long idcId) {
+	public PageModel<Host> page(PageModel<Host> pm, String name, String hostname, Long idcId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(appHostDao.list(getRequestOrganizationCodes(), name, hostname, idcId));
 		return pm;
@@ -281,13 +281,13 @@ public class HostServiceImpl implements HostService {
 		List<Long> sshIds = new ArrayList<>();
 		String[] split = sshCell.split("\\|");
 		for (String sshname : split) {
-			Ssh ssh = sshDao.selectByName(sshname);
+			SshBean ssh = sshDao.selectByName(sshname);
 			if (Objects.nonNull(ssh)) {
 				sshIds.add(ssh.getId());
 			} else {
 				if (StringUtils.isNoneBlank(hostname, password)) {
 					// TODO create ssh
-					ssh = new Ssh();
+					ssh = new SshBean();
 					ssh.preInsert();
 					ssh.setName(sshname);
 					ssh.setUsername(sshname);

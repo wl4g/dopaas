@@ -37,7 +37,7 @@ public class MetricTemplateServiceImpl implements MetricTemplateService {
 	private MetricTemplateDao metricTemplateDao;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String metric, String classify) {
+	public PageModel<MetricTemplate> list(PageModel<MetricTemplate> pm, String metric, String classify) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(metricTemplateDao.list(metric, classify));
 		return pm;

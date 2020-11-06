@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.erm.Idc;
+import com.wl4g.components.core.bean.erm.IdcBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.erm.IdcDao;
 import com.wl4g.devops.erm.service.IdcService;
@@ -43,18 +43,18 @@ public class IdcServiceImpl implements IdcService {
 	private IdcDao idcDao;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String name) {
+	public PageModel<IdcBean> page(PageModel<IdcBean> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(idcDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}
 
 	@Override
-	public List<Idc> getForSelect() {
+	public List<IdcBean> getForSelect() {
 		return idcDao.list(getRequestOrganizationCodes(), null);
 	}
 
-	public void save(Idc idc) {
+	public void save(IdcBean idc) {
 		if (isNull(idc.getId())) {
 			idc.preInsert(getRequestOrganizationCode());
 			insert(idc);
@@ -64,22 +64,22 @@ public class IdcServiceImpl implements IdcService {
 		}
 	}
 
-	private void insert(Idc idc) {
+	private void insert(IdcBean idc) {
 		idcDao.insertSelective(idc);
 	}
 
-	private void update(Idc idc) {
+	private void update(IdcBean idc) {
 		idcDao.updateByPrimaryKeySelective(idc);
 	}
 
-	public Idc detail(Long id) {
+	public IdcBean detail(Long id) {
 		Assert.notNull(id, "id is null");
 		return idcDao.selectByPrimaryKey(id);
 	}
 
 	public void del(Long id) {
 		Assert.notNull(id, "id is null");
-		Idc idc = new Idc();
+		IdcBean idc = new IdcBean();
 		idc.setId(id);
 		idc.setDelFlag(BaseBean.DEL_FLAG_DELETE);
 		idcDao.updateByPrimaryKeySelective(idc);

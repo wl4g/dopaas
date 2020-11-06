@@ -45,15 +45,15 @@ public class GenDataSourceController extends BaseController {
 	private GenDataSourceService genDSService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"dts:codegen:database"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String name) {
-		RespBase<Object> resp = RespBase.create();
+	@RequiresPermissions(value = { "dts:codegen:database" }, logical = AND)
+	public RespBase<PageModel<GenDataSource>> list(PageModel<GenDataSource> pm, String name) {
+		RespBase<PageModel<GenDataSource>> resp = RespBase.create();
 		resp.setData(genDSService.page(pm, name));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"dts:codegen:database"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen:database" }, logical = AND)
 	public RespBase<?> save(@RequestBody GenDataSource gen) {
 		RespBase<Object> resp = RespBase.create();
 		genDSService.save(gen);
@@ -61,7 +61,7 @@ public class GenDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"dts:codegen:database"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen:database" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(genDSService.detail(id));
@@ -69,7 +69,7 @@ public class GenDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"dts:codegen:database"}, logical = AND)
+	@RequiresPermissions(value = { "dts:codegen:database" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		genDSService.del(id);

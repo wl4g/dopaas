@@ -41,13 +41,11 @@ public class ConfigController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:config" })
-	public RespBase<?> list(Long templateId, Long contactGroupId, PageModel<?> pm) {
+	public RespBase<PageModel<AlarmConfig>> list(PageModel<AlarmConfig> pm, Long templateId, Long contactGroupId) {
 		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , pm = {} ", templateId,
 				contactGroupId, pm);
-		RespBase<Object> resp = RespBase.create();
-		PageModel<?> list = configService.list(pm, templateId, contactGroupId);
-		resp.setData(list);
-		return resp;
+		RespBase<PageModel<AlarmConfig>> resp = RespBase.create();
+		return resp.withData(configService.list(pm, templateId, contactGroupId));
 	}
 
 	@RequestMapping(value = "/save")

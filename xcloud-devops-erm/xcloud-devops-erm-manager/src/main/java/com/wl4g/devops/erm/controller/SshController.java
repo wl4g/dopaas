@@ -18,7 +18,7 @@ package com.wl4g.devops.erm.controller;
 import com.wl4g.components.common.cli.ssh2.JschHolder;
 import com.wl4g.components.common.cli.ssh2.SSH2Holders;
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.erm.Ssh;
+import com.wl4g.components.core.bean.erm.SshBean;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.erm.service.SshService;
@@ -45,23 +45,23 @@ public class SshController extends BaseController {
 	private SshService sshService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"erm:ssh"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String name) {
+	@RequiresPermissions(value = { "erm:ssh" }, logical = AND)
+	public RespBase<?> list(PageModel<SshBean> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(sshService.page(pm, name));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"erm:ssh"}, logical = AND)
-	public RespBase<?> save(@RequestBody Ssh ssh) {
+	@RequiresPermissions(value = { "erm:ssh" }, logical = AND)
+	public RespBase<?> save(@RequestBody SshBean ssh) {
 		RespBase<Object> resp = RespBase.create();
 		sshService.save(ssh);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"erm:ssh"}, logical = AND)
+	@RequiresPermissions(value = { "erm:ssh" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(sshService.detail(id));
@@ -69,7 +69,7 @@ public class SshController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"erm:ssh"}, logical = AND)
+	@RequiresPermissions(value = { "erm:ssh" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		sshService.del(id);

@@ -32,7 +32,7 @@ public interface ProjectService {
 
 	int removeById(Long id);
 
-	PageModel<?> list(PageModel<?> pm, String groupName, String projectName);
+	PageModel<Project> list(PageModel<Project> pm, String groupName, String projectName);
 
 	List<Project> getBySelect(Integer isBoot);
 

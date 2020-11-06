@@ -58,7 +58,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 	private CustomDataSourcePropertiesDao customDataSourcePropertiesDao;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name) {
+	public PageModel<CustomDataSource> list(PageModel<CustomDataSource> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(customDatasourceDao.list(name));
 		return pm;

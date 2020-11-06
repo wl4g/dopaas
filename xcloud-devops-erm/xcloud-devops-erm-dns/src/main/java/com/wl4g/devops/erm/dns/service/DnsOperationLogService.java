@@ -23,7 +23,7 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface DnsOperationLogService {
 
-	PageModel<?> page(PageModel<?> pm, String domain);
+	PageModel<DnsOperationLog> page(PageModel<DnsOperationLog> pm, String domain);
 
 	void save(DnsOperationLog dnsOperationLog);
 

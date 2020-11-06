@@ -46,8 +46,8 @@ public interface PipelineHistoryService {
 
 	void updateCostTime(Long taskId, long costTime);
 
-	PageModel<?> list(PageModel<?> pm, String pipeName, String clusterName, String environment, String startDate, String endDate,
-			String providerKind);
+	PageModel<PipelineHistory> list(PageModel<PipelineHistory> pm, String pipeName, String clusterName, String environment,
+			String startDate, String endDate, String providerKind);
 
 	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Long pipeHisId);
 

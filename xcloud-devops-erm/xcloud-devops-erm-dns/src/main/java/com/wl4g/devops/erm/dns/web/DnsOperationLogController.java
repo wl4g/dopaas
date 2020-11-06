@@ -40,7 +40,7 @@ public class DnsOperationLogController extends BaseController {
 	private DnsOperationLogService dnsOperationLogService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel<?> pm, String name) {
+	public RespBase<?> list(PageModel<DnsOperationLog> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsOperationLogService.page(pm, name));
 		return resp;

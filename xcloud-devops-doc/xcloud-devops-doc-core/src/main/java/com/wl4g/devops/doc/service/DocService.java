@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public interface DocService {
 
-	PageModel<?> list(PageModel<?> pm, String name, String lang, Long labelId);
+	PageModel<FileChanges> list(PageModel<FileChanges> pm, String name, String lang, Long labelId);
 
 	void save(FileChanges fileChanges);
 

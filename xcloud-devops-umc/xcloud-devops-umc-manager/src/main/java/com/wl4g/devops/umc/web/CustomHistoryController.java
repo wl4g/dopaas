@@ -41,16 +41,14 @@ public class CustomHistoryController extends BaseController {
 	private CustomHistoryService customHistoryService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"umc:custom:history"}, logical = AND)
-	public RespBase<?> list(String name, PageModel<?> pm) {
+	@RequiresPermissions(value = { "umc:custom:history" }, logical = AND)
+	public RespBase<?> list(String name, PageModel<CustomHistory> pm) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel<?> list = customHistoryService.list(pm, name);
-		resp.setData(list);
-		return resp;
+		return resp.withData(customHistoryService.list(pm, name));
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"umc:custom:history"}, logical = AND)
+	@RequiresPermissions(value = { "umc:custom:history" }, logical = AND)
 	public RespBase<?> save(@RequestBody CustomHistory customHistory) {
 		log.info("into CustomDatasourceController.save prarms::" + "customHistory = {} ", customHistory);
 		notNull(customHistory, "customHistory is null");
@@ -60,7 +58,7 @@ public class CustomHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"umc:custom:history"}, logical = AND)
+	@RequiresPermissions(value = { "umc:custom:history" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		CustomHistory customHistory = customHistoryService.detal(id);
@@ -69,7 +67,7 @@ public class CustomHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"umc:custom:history"}, logical = AND)
+	@RequiresPermissions(value = { "umc:custom:history" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		log.info("into CustomDatasourceController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

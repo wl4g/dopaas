@@ -23,7 +23,7 @@ import com.wl4g.components.data.page.PageModel;
  */
 public interface DnsPrivateZoneService {
 
-	PageModel<?> page(PageModel<?> pm, String zone);
+	PageModel<DnsPrivateZone> page(PageModel<DnsPrivateZone> pm, String zone);
 
 	void save(DnsPrivateZone dnsPrivateDomain);
 

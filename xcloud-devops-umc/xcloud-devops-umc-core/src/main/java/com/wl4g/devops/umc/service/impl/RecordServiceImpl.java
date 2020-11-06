@@ -53,7 +53,7 @@ public class RecordServiceImpl implements RecordService {
 	private NotificationContactDao notificationContactDao;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name, String startDate, String endDate) {
+	public PageModel<AlarmRecord> list(PageModel<AlarmRecord> pm, String name, String startDate, String endDate) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(alarmRecordDao.list(name, startDate, endDate));
 		return pm;

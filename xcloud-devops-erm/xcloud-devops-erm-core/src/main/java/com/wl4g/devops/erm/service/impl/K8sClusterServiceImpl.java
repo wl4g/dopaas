@@ -50,7 +50,7 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 	private K8sInstanceDao k8sInstanceDao;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String name) {
+	public PageModel<K8sCluster> page(PageModel<K8sCluster> pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(k8sClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;

@@ -53,7 +53,7 @@ public class PcmServcieImpl implements PcmService {
 	private GenericOperatorAdapter<PcmKind, PcmOperator> pcmOperator;
 
 	@Override
-	public PageModel<?> list(PageModel<?> pm, String name, String providerKind, Integer authType) {
+	public PageModel<Pcm> list(PageModel<Pcm> pm, String name, String providerKind, Integer authType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(pcmDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;

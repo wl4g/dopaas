@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface PcmService {
 
-	PageModel<?> list(PageModel<?> pm, String name, String providerKind, Integer authType);
+	PageModel<Pcm> list(PageModel<Pcm> pm, String name, String providerKind, Integer authType);
 
 	void save(Pcm pcm);
 

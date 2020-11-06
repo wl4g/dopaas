@@ -16,7 +16,7 @@
 package com.wl4g.devops.erm.controller;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.erm.Idc;
+import com.wl4g.components.core.bean.erm.IdcBean;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.erm.service.IdcService;
@@ -43,23 +43,23 @@ public class IdcController extends BaseController {
 	private IdcService idcService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"erm:idc"}, logical = AND)
-	public RespBase<?> list(PageModel<?> pm, String name) {
+	@RequiresPermissions(value = { "erm:idc" }, logical = AND)
+	public RespBase<?> list(PageModel<IdcBean> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(idcService.page(pm, name));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"erm:idc"}, logical = AND)
-	public RespBase<?> save(@RequestBody Idc idc) {
+	@RequiresPermissions(value = { "erm:idc" }, logical = AND)
+	public RespBase<?> save(@RequestBody IdcBean idc) {
 		RespBase<Object> resp = RespBase.create();
 		idcService.save(idc);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"erm:idc"}, logical = AND)
+	@RequiresPermissions(value = { "erm:idc" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(idcService.detail(id));
@@ -67,7 +67,7 @@ public class IdcController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"erm:idc"}, logical = AND)
+	@RequiresPermissions(value = { "erm:idc" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		idcService.del(id);

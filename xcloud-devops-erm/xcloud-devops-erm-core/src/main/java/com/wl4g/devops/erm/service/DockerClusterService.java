@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface DockerClusterService {
 
-	PageModel<?> page(PageModel<?> pm, String name);
+	PageModel<DockerCluster> page(PageModel<DockerCluster> pm, String name);
 
 	List<DockerCluster> getForSelect();
 

@@ -53,7 +53,7 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
 	private DnsPrivateZoneDao dnsPrivateDomainDao;
 
 	@Override
-	public PageModel<?> page(PageModel<?> pm, String host, Long domainId) {
+	public PageModel<DnsPrivateResolution> page(PageModel<DnsPrivateResolution> pm, String host, Long domainId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(privateResolutionDao.list(getRequestOrganizationCodes(), host, domainId));
 		return pm;

@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.dao;
 
-import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import org.apache.ibatis.annotations.Param;
 
@@ -24,15 +23,16 @@ import java.util.List;
 public interface GenProjectDao {
 	int deleteByPrimaryKey(Long id);
 
-    int insert(GenProject record);
+	int insert(GenProject record);
 
-    int insertSelective(GenProject record);
+	int insertSelective(GenProject record);
 
-    GenProject selectByPrimaryKey(Long id);
+	GenProject selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKeySelective(GenProject record);
+	int updateByPrimaryKeySelective(GenProject record);
 
-    int updateByPrimaryKey(GenProject record);
+	int updateByPrimaryKey(GenProject record);
 
-    List<GenDataSource> list(@Param("projectName") String projectName);
+	List<GenProject> list(@Param("projectName") String projectName);
+
 }
