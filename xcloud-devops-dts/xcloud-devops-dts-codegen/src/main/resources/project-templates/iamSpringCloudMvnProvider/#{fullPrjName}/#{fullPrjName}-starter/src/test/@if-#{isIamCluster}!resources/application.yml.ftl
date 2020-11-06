@@ -33,6 +33,7 @@ logging:
     maxIndex: 10
   level:
     de.codecentric.boot.admin: INFO
+    io.swagger: ERROR
     org:
       springframework: INFO
       apache: INFO

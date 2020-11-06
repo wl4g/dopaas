@@ -21,10 +21,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import springfox.documentation.annotations.ApiIgnore;
 <#elseif javaSpecs.isConf(extOpts, "swagger.ui", "officialOas")>
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import springfox.documentation.annotations.ApiIgnore;
 </#if>
 
 import ${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModPkgName}.${entityName?cap_first};
@@ -51,12 +53,12 @@ public class ${entityName}Controller extends BaseController {
     <#if javaSpecs.isConfOr(extOpts, "swagger.ui", "bootstrapSwagger2", "officialOas")>
     @ApiOperation(value = "查询${functionSimpleName}信息（分页）")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNum", value = "页码，取值范围：1 <= pageNum", dataType="int32", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "单页数据记录，当pageSize=0时返回所有记录", dataType="int32", defaultValue = "10"), })
+            @ApiImplicitParam(name = "pageNum", value = "Page index.(minimum is 1)", dataType="int32", defaultValue = "1"),
+            @ApiImplicitParam(name = "pageSize", value = "Page records size.(Respond to all data when it is 0)", dataType="int32", defaultValue = "10")})
     </#if>
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase${r"<"}PageModel<${entityName}>> list(PageModel<${entityName}> pm, ${entityName?cap_first} ${entityName?uncap_first}) {
-        RespBase${r"<"}PageModel<${entityName}>> resp = RespBase.create();
+    public RespBase${r"<"}PageModel${r"<"}${entityName}>> list(@ApiIgnore PageModel${r"<"}${entityName}> pm, ${entityName?cap_first} ${entityName?uncap_first}) {
+        RespBase${r"<"}PageModel${r"<"}${entityName}>> resp = RespBase.create();
         resp.setData(${entityName?uncap_first}Service.page(pm, ${entityName?uncap_first}));
         return resp;
     }
@@ -78,7 +80,7 @@ public class ${entityName}Controller extends BaseController {
     </#if>
     @RequestMapping(value = "/detail", method = { GET })
     public RespBase${r"<"}${entityName}> detail(@RequestParam(required = true) ${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
-        RespBase${r"<"}Object> resp = RespBase.create();
+        RespBase${r"<"}${entityName}> resp = RespBase.create();
         resp.setData(${entityName?uncap_first}Service.detail(${pk.attrName}));
         return resp;
     }

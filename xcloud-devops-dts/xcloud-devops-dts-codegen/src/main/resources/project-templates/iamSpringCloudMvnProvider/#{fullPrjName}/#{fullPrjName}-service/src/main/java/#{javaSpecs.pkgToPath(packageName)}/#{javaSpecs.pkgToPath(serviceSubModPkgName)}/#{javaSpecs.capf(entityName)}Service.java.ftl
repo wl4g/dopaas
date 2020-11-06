@@ -28,7 +28,7 @@ public interface ${entityName}Service {
      * @param ${entityName?uncap_first}
      * @return 
      */
-    PageModel page(PageModel pm, ${entityName} ${entityName?uncap_first});
+    PageModel${r"<"}${entityName}> page(PageModel${r"<"}${entityName}> pm, ${entityName} ${entityName?uncap_first});
 
     /**
      * ${comments} save.
