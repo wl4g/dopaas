@@ -55,8 +55,8 @@ public class ${entityName}Controller extends BaseController {
             @ApiImplicitParam(name = "pageSize", value = "单页数据记录，当pageSize=0时返回所有记录", dataType="int32", defaultValue = "10"), })
     </#if>
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase${r"<"}PageModel> list(PageModel pm, ${entityName?cap_first} ${entityName?uncap_first}) {
-        RespBase${r"<"}PageModel> resp = RespBase.create();
+    public RespBase${r"<"}PageModel<${entityName}>> list(PageModel<${entityName}> pm, ${entityName?cap_first} ${entityName?uncap_first}) {
+        RespBase${r"<"}PageModel<${entityName}>> resp = RespBase.create();
         resp.setData(${entityName?uncap_first}Service.page(pm, ${entityName?uncap_first}));
         return resp;
     }
@@ -77,7 +77,7 @@ public class ${entityName}Controller extends BaseController {
     @ApiImplicitParams({ @ApiImplicitParam(name = "${pk.attrName}", value = "${functionSimpleName}信息ID", dataType="int64", required = true) })
     </#if>
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase${r"<"}?> detail(@RequestParam(required = true) ${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
+    public RespBase${r"<"}${entityName}> detail(@RequestParam(required = true) ${javaSpecs.toSimpleJavaType(pk.attrType)} ${pk.attrName}) {
         RespBase${r"<"}Object> resp = RespBase.create();
         resp.setData(${entityName?uncap_first}Service.detail(${pk.attrName}));
         return resp;
