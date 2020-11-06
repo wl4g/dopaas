@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiModelProperty;
 import com.wl4g.components.core.bean.BaseBean;
 <#if hasAttrNameOfDate == true>
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 </#if>
 <#if hasAttrNameOfNotNull == true>
 import javax.validation.constraints.NotNull;
@@ -32,14 +33,12 @@ import lombok.Setter;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 </#if>
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 <#list javaSpecs.distinctList(attrTypes) as attrType>
     <#if !attrType?starts_with("java.lang")>
 import ${attrType};
     </#if>
 </#list>
+
 /**
  * {@link ${entityName?cap_first}}
  *
