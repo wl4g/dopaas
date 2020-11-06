@@ -3,7 +3,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import qs from 'qs'
 import global from "@/common/global_variable";
-import {cache} from "../index";
+import { cache } from "../index";
 
 Vue.use(VueAxios, axios)
 
@@ -33,17 +33,17 @@ Vue.axios.defaults.withCredentials = true
  * @param  {object}    sysModule      系统模块信息对象
  */
 export default function ({
-                             type,
-                             dataType,
-                             pathParams,
-                             path,
-                             data,
-                             fn,
-                             errFn,
-                             headers,
-                             opts,
-                             sysModule,
-                         } = {}) {
+    type,
+    dataType,
+    pathParams,
+    path,
+    data,
+    fn,
+    errFn,
+    headers,
+    opts,
+    sysModule,
+} = {}) {
     // step1: 获取具体模块BaseURL
     var baseUrl = global.getBaseUrl(sysModule);
     var p = baseUrl + path;
@@ -81,11 +81,17 @@ export default function ({
      *
      */
     if (!dataType || dataType == 'query') {
-        if (typeof data == 'object') {
+        if (reqDataKey == 'params') {
+            if (typeof data == 'object') {
+                options[reqDataKey] = data;
+            } else {
+                options.url = options.url.indexOf('?') > 0 ? (options.url + data) : (options.url + "?" + data);
+            }
+        } else if (typeof data == 'object') {
             // To flat URL parameters.
-            options[reqDataKey] = qs.stringify(data);
+            options[reqDataKey] = qs.stringify(data);//from
         } else {
-            options[reqDataKey] = data;
+            options[reqDataKey] = data;//form
         }
         if (!options.headers['Content-Type']) {
             // Refer:org.springframework.web.HttpMediaTypeNotSupportedException: Content type 'application/x-www-form-urlencoded;charset=UTF-8' not supported
