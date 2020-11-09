@@ -15,16 +15,13 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.components.core.bean.ci.Project;
-import com.wl4g.components.core.bean.ci.Task;
-import com.wl4g.components.core.bean.ci.TaskInstance;
+import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.core.bean.ci.Trigger;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.pipeline.provider.TimingPipelineProvider;
+import com.wl4g.devops.dao.ci.PipelineDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TaskDao;
-import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +38,6 @@ import java.util.concurrent.ScheduledFuture;
 
 import static com.wl4g.components.core.constants.CiDevOpsConstants.TASK_TYPE_TIMMING;
 import static java.util.Objects.nonNull;
-import static org.springframework.util.Assert.notEmpty;
-import static org.springframework.util.Assert.notNull;
 
 /**
  * Pipeline timing scheduler manager
@@ -70,9 +65,7 @@ public class TimingPipelineManager implements ApplicationRunner {
 	@Autowired
 	protected ProjectDao projectDao;
 	@Autowired
-	protected TaskDao taskDao;
-	@Autowired
-	protected TaskDetailDao taskDetailDao;
+	protected PipelineDao pipelineDao;
 
 	@Override
 	public void run(ApplicationArguments args) {
@@ -102,15 +95,10 @@ public class TimingPipelineManager implements ApplicationRunner {
 		// Check stopped?
 		stopTimingPipeline(trigger);
 
-		Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
-		notNull(task, String.format("Timing pipeline not found for taskId:{}", trigger.getTaskId()));
-		List<TaskInstance> instances = taskDetailDao.selectByTaskId(trigger.getTaskId());
-		notEmpty(instances, String.format("Timing pipeline instances is empty for taskId:{}", trigger.getTaskId()));
-		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
-		notNull(project, String.format("Timing pipeline project:(%s) not found", task.getProjectId()));
+		Pipeline pipeline = pipelineDao.selectByPrimaryKey(trigger.getTaskId());
 
 		// Startup to pipeline.
-		startTimingPipeline(trigger, project, task, instances);
+		startTimingPipeline(trigger,  pipeline);
 	}
 
 	/**
@@ -121,9 +109,7 @@ public class TimingPipelineManager implements ApplicationRunner {
 	 * @param task
 	 * @param taskInstances
 	 */
-	private void startTimingPipeline(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
-		log.info("Startup timing pipeline for triggerId: {}, expression: '{}', instances: {} ", trigger.getId(),
-				trigger.getCron(), taskInstances);
+	private void startTimingPipeline(Trigger trigger,  Pipeline pipeline) {
 
 		stopTimingPipeline(trigger);
 
@@ -132,7 +118,7 @@ public class TimingPipelineManager implements ApplicationRunner {
 		}
 
 		TimingPipelineProvider provider = beanFactory.getBean(TimingPipelineProvider.class,
-				new Object[] { trigger, project, task, taskInstances });
+				new Object[] { trigger, pipeline });
 
 		ScheduledFuture<?> future = scheduler.schedule(provider, new CronTrigger(trigger.getCron()));
 

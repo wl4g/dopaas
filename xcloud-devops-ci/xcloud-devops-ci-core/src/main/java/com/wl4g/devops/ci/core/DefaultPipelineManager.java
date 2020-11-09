@@ -102,11 +102,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected ProjectDao projectDao;
 	@Autowired
-	protected TaskDetailDao taskDetailDao;
-	@Autowired
 	protected ContactDao contactDao;
-	@Autowired
-	protected TaskBuildCommandDao taskBuildCmdDao;
 	@Autowired
 	protected FlowManager flowManager;
 	@Autowired
