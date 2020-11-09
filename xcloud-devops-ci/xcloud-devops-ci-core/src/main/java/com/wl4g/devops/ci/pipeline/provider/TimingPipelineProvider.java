@@ -15,26 +15,21 @@
  */
 package com.wl4g.devops.ci.pipeline.provider;
 
+import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.core.bean.ci.Project;
-import com.wl4g.components.core.bean.ci.Task;
-import com.wl4g.components.core.bean.ci.TaskInstance;
 import com.wl4g.components.core.bean.ci.Trigger;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.RunParameter;
+import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.vcs.operator.VcsOperator;
-import com.wl4g.devops.vcs.operator.VcsOperator.VcsAction;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 import static com.wl4g.components.common.lang.Assert2.hasText;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
  * Timing pipeline jobs provider.
@@ -50,38 +45,37 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	protected PipelineManager pipeManager;
 	@Autowired
 	protected TriggerService triggerService;
+	@Autowired
+	protected ProjectService projectService;
 
-	protected final Task task;
-	protected final Project project;
-	protected final List<TaskInstance> taskInstances;
+	protected final Pipeline pipeline;
+
 	protected Trigger trigger;
 
-	public TimingPipelineProvider(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
+	public TimingPipelineProvider(Trigger trigger, Pipeline pipeline) {
 		super(PipelineContext.EMPTY);
 		this.trigger = trigger;
-		this.project = project;
-		this.task = task;
-		this.taskInstances = taskInstances;
+		this.pipeline = pipeline;
 	}
 
 	@Override
 	public void run() {
-		log.info("Timing pipeline... project:{}, task:{}, trigger:{}", project, task, trigger);
+
 		trigger = triggerService.getById(trigger.getId());
+		Project project = projectService.getByAppClusterId(pipeline.getClusterId());
 
 		// Gets VCS operator.
 		VcsOperator operator = vcsManager.forOperator(project.getVcs().getProviderKind());
 		try {
-			if (!checkCommittedChanged(operator)) { // Changed?
-				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, task:{}, trigger:{}", project,
-						task, trigger);
+			/*if (!checkCommittedChanged(operator)) { // Changed?
+				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, trigger:{}", project, trigger);
 				return;
-			}
+			}*/
 
 			// Creating pipeline task.
 			// TODO traceId???
-			PipelineModel pipeModel = flowManager.buildPipeline(task.getId());
-			pipeManager.runPipeline(new RunParameter(task.getId(), "rollback", "1", "1", null), pipeModel);
+			PipelineModel pipeModel = flowManager.buildPipeline(pipeline.getId());
+			pipeManager.runPipeline(new RunParameter(pipeline.getId(), "rollback", "1", "1", null), pipeModel);
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
@@ -109,7 +103,8 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean checkCommittedChanged(VcsOperator operator) throws Exception {
+	//TODO check is need update
+	/*private boolean checkCommittedChanged(VcsOperator operator,Project project) throws Exception {
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		if (operator.hasLocalRepository(projectDir)) {
 			operator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName(), VcsAction.safeOf(task.getBranchType()));
@@ -118,6 +113,6 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 		}
 		String newSign = operator.getLatestCommitted(projectDir);
 		return !equalsIgnoreCase(trigger.getSha(), newSign);
-	}
+	}*/
 
 }

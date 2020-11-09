@@ -37,11 +37,9 @@ import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.dao.ci.PipeStageBuildingProjectDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -97,8 +95,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	@Autowired
 	protected DependencyService dependencyService;
-	@Autowired
-	protected TaskHistoryBuildCommandDao taskHistoryBuildCommandDao;
+
 	@Autowired
 	protected ProjectDao projectDao;
 	@Autowired

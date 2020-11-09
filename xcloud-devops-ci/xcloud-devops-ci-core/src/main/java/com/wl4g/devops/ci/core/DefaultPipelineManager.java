@@ -110,6 +110,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected PipelineDao pipelineDao;
 	@Autowired
 	protected PipelineHistoryService pipelineHistoryService;
+
 	@Autowired
 	protected PipelineHistoryInstanceDao pipelineHistoryInstanceDao;
 	@Autowired
