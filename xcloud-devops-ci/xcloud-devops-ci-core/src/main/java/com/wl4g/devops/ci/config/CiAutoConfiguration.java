@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.ci.config;
 
-import com.wl4g.components.core.bean.ci.*;
+import com.wl4g.components.core.bean.ci.Pipeline;
+import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
+import com.wl4g.components.core.bean.ci.Trigger;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.framework.beans.NamingPrototype;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
@@ -27,18 +29,12 @@ import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
 import com.wl4g.devops.ci.pcm.redmine.RedminePcmOperator;
-import com.wl4g.devops.ci.pipeline.*;
+import com.wl4g.devops.ci.pipeline.TimeoutJobsEvictor;
+import com.wl4g.devops.ci.pipeline.TimingPipelineManager;
 import com.wl4g.devops.ci.pipeline.deploy.*;
 import com.wl4g.devops.ci.pipeline.flow.FlowManager;
-import com.wl4g.devops.ci.pipeline.provider.GolangModPipelineProvider;
-import com.wl4g.devops.ci.pipeline.provider.MvnAssembleTarPipelineProvider;
-import com.wl4g.devops.ci.pipeline.provider.NpmViewPipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.*;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider.PipelineKind;
-import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
-import com.wl4g.devops.ci.pipeline.provider.Python3PipelineProvider;
-import com.wl4g.devops.ci.pipeline.provider.SpringExecutableJarPipelineProvider;
-import com.wl4g.devops.ci.pipeline.provider.TimingPipelineProvider;
-import com.wl4g.devops.ci.pipeline.provider.ViewNativePipelineProvider;
 import com.wl4g.devops.ci.pipeline.provider.container.DockerNativePipelineProvider;
 import com.wl4g.devops.ci.pipeline.provider.container.RktNativePipelineProvider;
 import com.wl4g.devops.ci.tool.PipelineLogPurger;
@@ -46,6 +42,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.List;
 
@@ -67,6 +64,11 @@ public class CiAutoConfiguration {
 	@ConfigurationProperties(prefix = "spring.cloud.devops.ci.pipeline")
 	public CiProperties ciCdProperties() {
 		return new CiProperties();
+	}
+
+	@Bean
+	public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+		return new ThreadPoolTaskScheduler();
 	}
 
 	@Bean
