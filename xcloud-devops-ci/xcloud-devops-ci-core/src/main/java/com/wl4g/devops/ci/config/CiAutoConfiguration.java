@@ -216,9 +216,8 @@ public class CiAutoConfiguration {
 
 	@Bean
 	@Scope(SCOPE_PROTOTYPE)
-	public TimingPipelineProvider timingPipelineProvider(Trigger trigger, Project project, Task task,
-			List<TaskInstance> taskInstances) {
-		return new TimingPipelineProvider(trigger, project, task, taskInstances);
+	public TimingPipelineProvider timingPipelineProvider(Trigger trigger, Pipeline pipeline) {
+		return new TimingPipelineProvider(trigger, pipeline);
 	}
 
 	@Bean
