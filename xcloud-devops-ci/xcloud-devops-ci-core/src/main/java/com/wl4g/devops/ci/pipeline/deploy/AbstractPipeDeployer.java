@@ -19,7 +19,7 @@ import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.log.SmartLoggerFactory;
-import com.wl4g.components.core.bean.ci.PipeStepInstanceCommand;
+import com.wl4g.components.core.bean.ci.PipeStageInstanceCommand;
 import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
@@ -30,7 +30,7 @@ import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.pipeline.PipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.dao.iam.ClusterConfigDao;
 
@@ -118,7 +118,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		String projectName = getContext().getProject().getProjectName();
 		AppCluster appCluster = getContext().getAppCluster();
 		SshBean ssh = appCluster.getSsh();
-		PipeStepInstanceCommand pipeStepInstanceCommand = provider.getContext().getPipeStepInstanceCommand();
+		PipeStageInstanceCommand pipeStepInstanceCommand = provider.getContext().getPipeStepInstanceCommand();
 		log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), projectId,
 				projectName);
 

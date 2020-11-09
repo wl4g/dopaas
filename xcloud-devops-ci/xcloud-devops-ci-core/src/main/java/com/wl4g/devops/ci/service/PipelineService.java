@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.components.core.bean.ci.ClusterExtension;
-import com.wl4g.components.core.bean.ci.PipeStepBuilding;
+import com.wl4g.components.core.bean.ci.PipeStageBuilding;
 import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.data.page.PageModel;
 
@@ -38,7 +38,7 @@ public interface PipelineService {
 
 	List<Pipeline> getByClusterId(Long clusterId);
 
-	PipeStepBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception;
+	PipeStageBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception;
 
 	List<Pipeline> getForSelect(String environment);
 

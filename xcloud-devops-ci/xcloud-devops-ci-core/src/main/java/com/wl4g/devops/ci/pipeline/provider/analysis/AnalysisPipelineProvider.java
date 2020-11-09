@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.analysis;
+package com.wl4g.devops.ci.pipeline.provider.analysis;
 
 /**
  * @author vjay
  * @date 2020-04-27 15:05:00
  */
-public class SpotBugsPipelineProvider implements AnalysisPipelineProvider {
-
+public interface AnalysisPipelineProvider {
 }

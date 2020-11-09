@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline;
+package com.wl4g.devops.ci.pipeline.provider;
 
 import com.wl4g.components.core.bean.ci.*;
 import com.wl4g.components.core.exception.ci.DependencyCurrentlyInBuildingException;
@@ -78,7 +78,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 				getContext().getAppCluster().getName(), jobLog.getAbsolutePath()));
 
 		// Resolve project dependencies.
-		List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao
+		List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao
 				.selectByPipeId(getContext().getPipeline().getId());
 		// LinkedHashSet<Dependency> dependencies =
 		// dependencyService.getHierarchyDependencys(project.getId(), null);
@@ -94,7 +94,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 
 		// Pipeline State Change
 		List<ModulesPorject> modulesPorjects = new ArrayList<>();
-		for (PipeStepBuildingProject depd : pipeStepBuildingProjects) {
+		for (PipeStageBuildingProject depd : pipeStepBuildingProjects) {
 			ModulesPorject modulesPorject = new ModulesPorject();
 			modulesPorject.setProjectId(depd.getProjectId());
 			modulesPorject.setRef(StringUtils.isNotBlank(branchForce) ? branchForce : depd.getRef());
@@ -108,7 +108,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		log.info(writeBuildLog("Analyzed pipelineModel=%s", toJSONString(pipelineModel)));
 
 		// Build of dependencies sub-modules.
-		for (PipeStepBuildingProject buildingProject : pipeStepBuildingProjects) {
+		for (PipeStageBuildingProject buildingProject : pipeStepBuildingProjects) {
 			// Is dependency Already build
 			if (flowManager.isDependencyBuilded(buildingProject.getProjectId())) {
 				continue;
@@ -199,7 +199,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	private void pullSourceAndBuild(Long projectId, String branch, String buildCommand) throws Exception {
 		log.info("Pipeline building for projectId: {}", projectId);
 
-		PipeStepBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
+		PipeStageBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
 
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		notNull(project, format("Not found project by %s", projectId));

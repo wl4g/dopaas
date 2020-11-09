@@ -13,25 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.pcm;
-
-import com.wl4g.components.core.bean.ci.PipeHistoryPcm;
-import com.wl4g.devops.ci.service.PcmService;
-
-import org.springframework.beans.factory.annotation.Autowired;
+package com.wl4g.devops.ci.pipeline.provider.analysis;
 
 /**
  * @author vjay
- * @date 2020-04-27 09:29:00
+ * @date 2020-04-27 15:05:00
  */
-public class RedminePipelinePorvider implements PcmPipelineProvider {
-
-	@Autowired
-	private PcmService pcmService;
-
-	@Override
-	public void createIssues(Long pcmId, PipeHistoryPcm pipeHistoryPcm) {
-		pcmService.createIssues(pcmId, pipeHistoryPcm);
-	}
+public class SpotBugsPipelineProvider implements AnalysisPipelineProvider {
 
 }

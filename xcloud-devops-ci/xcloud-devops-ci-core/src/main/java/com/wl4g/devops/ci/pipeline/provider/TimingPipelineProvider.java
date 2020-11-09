@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.timing;
+package com.wl4g.devops.ci.pipeline.provider;
 
 import com.wl4g.components.core.bean.ci.Project;
 import com.wl4g.components.core.bean.ci.Task;
 import com.wl4g.components.core.bean.ci.TaskInstance;
 import com.wl4g.components.core.bean.ci.Trigger;
-import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.RunParameter;
-import com.wl4g.devops.ci.flow.FlowManager;
-import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.service.TriggerService;
-import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.vcs.operator.VcsOperator;
+import com.wl4g.devops.vcs.operator.VcsOperator.VcsAction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +37,7 @@ import static com.wl4g.components.common.lang.Assert2.hasText;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
- * Timing scheduling composite pipeline provider.
+ * Timing pipeline jobs provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
@@ -50,19 +47,13 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	protected CiProperties config;
-	@Autowired
 	protected PipelineManager pipeManager;
 	@Autowired
 	protected TriggerService triggerService;
-	@Autowired
-	protected TriggerDao triggerDao;
-	@Autowired
-	private FlowManager flowManager;
 
-	final protected Task task;
-	final protected Project project;
-	final protected List<TaskInstance> taskInstances;
+	protected final Task task;
+	protected final Project project;
+	protected final List<TaskInstance> taskInstances;
 	protected Trigger trigger;
 
 	public TimingPipelineProvider(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
@@ -74,19 +65,14 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	}
 
 	@Override
-	protected Runnable newPipeDeployer(AppInstance instance) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public void run() {
 		log.info("Timing pipeline... project:{}, task:{}, trigger:{}", project, task, trigger);
-		trigger = triggerDao.selectByPrimaryKey(trigger.getId());
+		trigger = triggerService.getById(trigger.getId());
 
 		// Gets VCS operator.
-		VcsOperator vcsOperator = vcsAdapter.forOperator(project.getVcs().getProviderKind());
+		VcsOperator operator = vcsManager.forOperator(project.getVcs().getProviderKind());
 		try {
-			if (!checkCommittedChanged(vcsOperator)) { // Changed?
+			if (!checkCommittedChanged(operator)) { // Changed?
 				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, task:{}, trigger:{}", project,
 						task, trigger);
 				return;
@@ -94,19 +80,19 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 
 			// Creating pipeline task.
 			// TODO traceId???
-			PipelineModel pipelineModel = flowManager.buildPipeline(task.getId());
-			pipeManager.runPipeline(new RunParameter(task.getId(), "rollback", "1", "1", null), pipelineModel);
+			PipelineModel pipeModel = flowManager.buildPipeline(task.getId());
+			pipeManager.runPipeline(new RunParameter(task.getId(), "rollback", "1", "1", null), pipeModel);
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-			String latestSha = vcsOperator.getLatestCommitted(projectDir);
+			String latestSha = operator.getLatestCommitted(projectDir);
 			hasText(latestSha, "Trigger latest sha can't be empty for %s", projectDir);
 
 			// Update latest sign.
 			triggerService.updateSha(trigger.getId(), latestSha);
 			trigger.setSha(latestSha);
 
-			log.info("Timing pipeline tasks executed successful, with triggerId: {}, projectId:{}, projectName:{} ",
+			log.info("Timing pipeline tasks executed successful, with triggerId: {}, projectId: {}, projectName: {} ",
 					trigger.getId(), project.getId(), project.getProjectName());
 		} catch (Exception e) {
 			log.error("", e);
@@ -119,19 +105,18 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	 * When the Sha of the VCS local warehouse is different from the latest Sha
 	 * on the server, it indicates that there is code update
 	 * 
-	 * @param vcsOperator
+	 * @param operator
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean checkCommittedChanged(VcsOperator vcsOperator) throws Exception {
+	private boolean checkCommittedChanged(VcsOperator operator) throws Exception {
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		if (vcsOperator.hasLocalRepository(projectDir)) {
-			vcsOperator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName(),
-					VcsOperator.VcsAction.safeOf(task.getBranchType()));
+		if (operator.hasLocalRepository(projectDir)) {
+			operator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName(), VcsAction.safeOf(task.getBranchType()));
 		} else {
-			vcsOperator.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
+			operator.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
 		}
-		String newSign = vcsOperator.getLatestCommitted(projectDir);
+		String newSign = operator.getLatestCommitted(projectDir);
 		return !equalsIgnoreCase(trigger.getSha(), newSign);
 	}
 

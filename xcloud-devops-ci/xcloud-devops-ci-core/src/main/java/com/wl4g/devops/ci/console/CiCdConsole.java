@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.console;
 
 import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalArgument;
-import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
+import com.wl4g.devops.ci.pipeline.TimeoutJobsEvictor;
 import com.wl4g.shell.common.annotation.ShellMethod;
 import com.wl4g.shell.core.handler.SimpleShellContext;
 import com.wl4g.shell.springboot.annotation.ShellComponent;
@@ -38,9 +38,9 @@ import static java.lang.String.format;
 public class CiCdConsole {
 	final public static String GROUP = "Devops CI/CD console commands";
 
-	/** {@link GlobalTimeoutJobCleanupCoordinator}. */
+	/** {@link TimeoutJobsEvictor}. */
 	@Autowired
-	private GlobalTimeoutJobCleanupCoordinator coordinator;
+	private TimeoutJobsEvictor coordinator;
 
 	/**
 	 * Reset timeout cleanup expression.

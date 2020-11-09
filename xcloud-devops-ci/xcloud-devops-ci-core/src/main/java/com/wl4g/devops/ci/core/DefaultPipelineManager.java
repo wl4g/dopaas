@@ -40,7 +40,7 @@ import com.wl4g.devops.ci.core.param.HookParameter;
 import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
-import com.wl4g.devops.ci.pipeline.PipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.ci.utils.HookCommandHolder;
 import com.wl4g.devops.dao.ci.*;
@@ -116,11 +116,11 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	private PipelineHistoryInstanceDao pipelineHistoryInstanceDao;
 	@Autowired
-	private PipeStepInstanceCommandDao pipeStepInstanceCommandDao;
+	private PipeStageInstanceCommandDao pipeStepInstanceCommandDao;
 	@Autowired
-	private PipeStepNotificationDao pipeStepNotificationDao;
+	private PipeStageNotificationDao pipeStepNotificationDao;
 	@Autowired
-	private PipeStepBuildingDao pipeStepBuildingDao;
+	private PipeStageBuildingDao pipeStepBuildingDao;
 	@Autowired
 	private AppEnvironmentDao appEnvironmentDao;
 	@Autowired
@@ -469,11 +469,11 @@ public class DefaultPipelineManager implements PipelineManager {
 		// New pipeline context.
 		String projectSourceDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 
-		PipeStepInstanceCommand pipeStepInstanceCommand = pipeStepInstanceCommandDao.selectByPipeId(pipeline.getId());
+		PipeStageInstanceCommand pipeStepInstanceCommand = pipeStepInstanceCommandDao.selectByPipeId(pipeline.getId());
 
-		PipeStepNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(pipeline.getId());
+		PipeStageNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(pipeline.getId());
 
-		PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeline.getId());
+		PipeStageBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeline.getId());
 		setPipeStepBuildingRef(pipeStepBuilding, project.getId());
 
 		AppEnvironment environment = appEnvironmentDao.selectByClusterIdAndEnv(appCluster.getId(), pipeline.getEnvironment());
@@ -544,9 +544,9 @@ public class DefaultPipelineManager implements PipelineManager {
 		});
 	}
 
-	private void setPipeStepBuildingRef(PipeStepBuilding pipeStepBuilding, Long projectId) {
-		List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuilding.getPipeStepBuildingProjects();
-		for (PipeStepBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
+	private void setPipeStepBuildingRef(PipeStageBuilding pipeStepBuilding, Long projectId) {
+		List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeStepBuilding.getPipeStepBuildingProjects();
+		for (PipeStageBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
 			if (projectId.equals(pipeStepBuildingProject.getProjectId())) {
 				pipeStepBuilding.setRef(pipeStepBuildingProject.getRef());
 				return;

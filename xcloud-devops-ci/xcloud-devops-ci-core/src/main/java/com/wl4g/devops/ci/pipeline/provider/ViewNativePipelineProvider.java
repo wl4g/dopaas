@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline;
+package com.wl4g.devops.ci.pipeline.provider;
 
 import com.wl4g.components.core.bean.ci.PipelineHistory;
 import com.wl4g.components.core.bean.ci.Project;
@@ -21,37 +21,31 @@ import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.support.cli.command.DestroableCommand;
 import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.ViewNativePipeDeployer;
 
 import java.io.File;
 
 import static java.lang.String.format;
 
 /**
- * Pipeline provider for deployment NPM/(VUE/AngularJS/ReactJS...) standard
- * project.
+ * Pipeline provider for deployment native view standard project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
  * @since
  */
-public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
+public class ViewNativePipelineProvider extends RestorableDeployPipelineProvider {
 
-	/**
-	 * NPM default building command.
-	 */
-	final public static String DEFAULT_NPM_CMD = "cd %s\nrm -Rf dist\nnpm install\nnpm run build\n";
+	final public static String DEFAULT_CMD = "cd %s\nrm -Rf dist\nmkdir dist\ncp -R `ls -A|grep -v dist` dist/\n";
 
-	public NpmViewPipelineProvider(PipelineContext context) {
+	public ViewNativePipelineProvider(PipelineContext context) {
 		super(context);
 	}
-
-	// --- NPM building. ---
 
 	@Override
 	protected Runnable newPipeDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
-		return beanFactory.getBean(NpmViewPipeDeployer.class, args);
+		return beanFactory.getBean(ViewNativePipeDeployer.class, args);
 	}
 
 	@Override
@@ -61,17 +55,17 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 		File tmpCmdFile = config.getJobTmpCommandFile(pipelineHistory.getId(), project.getId());
 
 		// Execution command.
-		String defaultNpmBuildCmd = format(DEFAULT_NPM_CMD, projectDir);
-		log.info(writeBuildLog("Building with npm default command: %s", defaultNpmBuildCmd));
+		String defaultViewNativeBuildCmd = format(DEFAULT_CMD, projectDir);
+		log.info(writeBuildLog("Building with native default command: %s", defaultViewNativeBuildCmd));
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), defaultNpmBuildCmd,
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), defaultViewNativeBuildCmd,
 				tmpCmdFile, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 
 	/**
-	 * Handling the NPM built installation package asset file, and convert the
-	 * dist directory to a formal tar compressed package.
+	 * Handling the view native built installation package asset file, and
+	 * convert the dist directory to a formal tar compressed package.
 	 * 
 	 * </br>
 	 * For example:
@@ -94,7 +88,7 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 
 		String tarCommand = format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/dist/%s.tar *", projectDir,
 				prgramInstallFileName, prgramInstallFileName, prgramInstallFileName, projectDir, prgramInstallFileName);
-		log.info(writeBuildLog("Npm built, packing the assets file command: %s", tarCommand));
+		log.info(writeBuildLog("view native built, packing the assets file command: %s", tarCommand));
 
 		// Execution command.
 		// TODO timeoutMs?

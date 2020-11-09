@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.devops.ci.pipeline.Python3PipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.Python3PipelineProvider;
 
 import java.util.List;
 

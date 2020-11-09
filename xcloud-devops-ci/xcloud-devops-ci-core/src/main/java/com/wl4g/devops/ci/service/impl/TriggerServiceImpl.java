@@ -20,7 +20,7 @@ import com.wl4g.components.common.lang.DateUtils2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.ci.Trigger;
 import com.wl4g.components.data.page.PageModel;
-import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
+import com.wl4g.devops.ci.pipeline.TimingPipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.dao.ci.TriggerDao;
 
@@ -47,7 +47,7 @@ public class TriggerServiceImpl implements TriggerService {
 	private TriggerDao triggerDao;
 
 	@Autowired
-	private PipelineTaskScheduler timingManager;
+	private TimingPipelineManager timingManager;
 
 	@Override
 	public PageModel<Trigger> list(PageModel<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,

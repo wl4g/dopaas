@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline;
+package com.wl4g.devops.ci.pipeline.provider;
 
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.bean.ci.Project;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.erm.SshBean;
@@ -34,12 +35,13 @@ import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.deploy.CossPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.dao.ci.PipeStepBuildingProjectDao;
+import com.wl4g.devops.dao.ci.PipeStageBuildingProjectDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.vcs.operator.VcsOperator;
-import org.slf4j.Logger;
+import com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
+
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -69,25 +71,30 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2019-08-05 17:17:00
  */
 public abstract class AbstractPipelineProvider implements PipelineProvider {
-	final protected Logger log = getLogger(getClass());
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/** Pipeline context. */
 	final protected PipelineContext context;
 
 	@Autowired
-	protected CiProperties config;
-	@Autowired
-	protected PipelineJobExecutor jobExecutor;
-	@Autowired
 	protected BeanFactory beanFactory;
 	@Autowired
-	protected NamingPrototypeBeanFactory aliasPrototypeBeanFactory;
+	protected NamingPrototypeBeanFactory namingBeanFactory;
+
+	@Autowired
+	protected CiProperties config;
+	@Autowired
+	protected GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsManager;
 	@Autowired
 	protected JedisLockManager lockManager;
 	@Autowired
 	protected DestroableProcessManager pm;
 	@Autowired
-	protected GenericOperatorAdapter<VcsOperator.VcsProviderKind, VcsOperator> vcsAdapter;
+	protected PipelineJobExecutor jobExecutor;
+	@Autowired
+	protected FlowManager flowManager;
+
 	@Autowired
 	protected DependencyService dependencyService;
 	@Autowired
@@ -97,9 +104,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected TaskSignDao taskSignDao;
 	@Autowired
-	protected FlowManager flowManager;
-	@Autowired
-	protected PipeStepBuildingProjectDao pipeStepBuildingProjectDao;
+	protected PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
 
 	/**
 	 * Pull project source from VCS files fingerprint.
@@ -142,7 +147,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @return
 	 */
 	protected VcsOperator getVcsOperator(String vcsKind) {
-		return vcsAdapter.forOperator(vcsKind);
+		return vcsManager.forOperator(vcsKind);
 	}
 
 	// --- Fingerprint's. ---
@@ -312,7 +317,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @param instance
 	 * @return
 	 */
-	protected abstract Runnable newPipeDeployer(AppInstance instance);
+	protected Runnable newPipeDeployer(AppInstance instance) {
+		throw new UnsupportedOperationException();
+	}
 
 	// TODO
 	protected Runnable newPipeDeployerByType(AppInstance instance) {
