@@ -23,13 +23,13 @@ import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
 import com.wl4g.devops.ci.pcm.redmine.RedminePcmOperator;
 import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.deploy.*;
+import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.provider.GolangModPipelineProvider;
 import com.wl4g.devops.ci.pipeline.provider.MvnAssembleTarPipelineProvider;
 import com.wl4g.devops.ci.pipeline.provider.NpmViewPipelineProvider;
@@ -46,7 +46,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.List;
 
@@ -71,11 +70,6 @@ public class CiAutoConfiguration {
 	}
 
 	@Bean
-	public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
-		return new ThreadPoolTaskScheduler();
-	}
-
-	@Bean
 	public PipelineJobExecutor pipelineJobExecutor(CiProperties config) {
 		return new PipelineJobExecutor(config);
 	}
@@ -86,7 +80,7 @@ public class CiAutoConfiguration {
 	}
 
 	@Bean
-	public TimeoutJobsEvictor globalTimeoutJobCleanCoordinator() {
+	public TimeoutJobsEvictor timeoutJobsEvictor() {
 		return new TimeoutJobsEvictor();
 	}
 

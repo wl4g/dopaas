@@ -23,7 +23,7 @@ import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
-import com.wl4g.devops.ci.flow.FlowManager;
+import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;

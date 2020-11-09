@@ -76,7 +76,7 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
 	public void run() {
 		this.future = getWorker().scheduleWithRandomDelay(() -> {
 			try {
-				doInspectForTimeoutStopAndCleanup(getCleanupFinalizerLockName());
+				watchForTimeoutJobsDestroy(getCleanupFinalizerLockName());
 			} catch (Exception e) {
 				throw new IllegalStateException(
 						"Critical error!!! Global timeout cleanup watcher interrupted, timeout jobs will not be cleanup.", e);
@@ -85,12 +85,12 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
 	}
 
 	/**
-	 * Inspecting timeout jobs, updating their status to failure.
+	 * Watching timeout jobs, updating their status to failure.
 	 * 
 	 * @param cleanupFinalizerLockName
 	 * @throws InterruptedException
 	 */
-	private void doInspectForTimeoutStopAndCleanup(String cleanupFinalizerLockName) throws InterruptedException {
+	private final void watchForTimeoutJobsDestroy(String cleanupFinalizerLockName) throws InterruptedException {
 		Lock lock = lockManager.getLock(keyFormat(cleanupFinalizerLockName));
 		try {
 			// Cleanup timeout jobs on this node, nodes that do not

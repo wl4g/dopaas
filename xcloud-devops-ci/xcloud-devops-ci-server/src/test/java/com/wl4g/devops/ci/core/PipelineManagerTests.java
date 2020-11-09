@@ -18,7 +18,8 @@ package com.wl4g.devops.ci.core;
 import com.wl4g.CiServer;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.param.RunParameter;
-import com.wl4g.devops.ci.flow.FlowManager;
+import com.wl4g.devops.ci.pipeline.flow.FlowManager;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

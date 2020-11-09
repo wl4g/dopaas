@@ -25,7 +25,7 @@ import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.RunParameter;
-import com.wl4g.devops.ci.flow.FlowManager;
+import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.service.PipelineService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;

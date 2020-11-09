@@ -24,7 +24,7 @@ import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.devops.ci.bean.RunModel;
-import com.wl4g.devops.ci.flow.FlowManager;
+import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.service.OrchestrationService;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
 import com.wl4g.devops.dao.ci.OrchestrationPipelineDao;
@@ -36,8 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_PRE;
-import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_SCAN_BATCH;
+import static com.wl4g.devops.ci.pipeline.flow.FlowManager.REDIS_CI_RUN_PRE;
+import static com.wl4g.devops.ci.pipeline.flow.FlowManager.REDIS_CI_RUN_SCAN_BATCH;
 import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 

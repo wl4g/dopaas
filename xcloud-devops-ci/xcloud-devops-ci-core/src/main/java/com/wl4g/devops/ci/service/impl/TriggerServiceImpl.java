@@ -93,7 +93,7 @@ public class TriggerServiceImpl implements TriggerService {
 	@Override
 	@Transactional
 	public int delete(Long id) {
-		timingManager.stopTimingPipeline(triggerDao.selectByPrimaryKey(id));
+		timingManager.stopPipeline(triggerDao.selectByPrimaryKey(id));
 		return triggerDao.deleteByPrimaryKey(id);
 	}
 
@@ -150,7 +150,7 @@ public class TriggerServiceImpl implements TriggerService {
 	 */
 	private void restart(Long triggerId) {
 		Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
-		timingManager.refreshTimingPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
+		timingManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
 	}
 
 }
