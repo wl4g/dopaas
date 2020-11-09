@@ -21,7 +21,7 @@ import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.iam.ClusterConfig;
-import com.wl4g.devops.ci.pipeline.ViewNativePipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.ViewNativePipelineProvider;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;

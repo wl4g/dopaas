@@ -46,16 +46,16 @@ public class DefaultPipelineContext implements PipelineContext {
 	final private PipelineHistory pipelineHistory;
 	final private List<PipelineHistoryInstance> pipelineHistoryInstances;
 	final private PipelineModel pipelineModel;
-	final private PipeStepInstanceCommand pipeStepInstanceCommand;
-	final private PipeStepNotification pipeStepNotification;
-	final private PipeStepBuilding pipeStepBuilding;
+	final private PipeStageInstanceCommand pipeStepInstanceCommand;
+	final private PipeStageNotification pipeStepNotification;
+	final private PipeStageBuilding pipeStepBuilding;
 	final private AppEnvironment environment;
 	final private ActionControl actionControl;
 
 	public DefaultPipelineContext(Project project, String projectSourceDir, AppCluster appCluster, List<AppInstance> instances,
 								  PipelineHistory pipelineHistory, List<PipelineHistoryInstance> pipelineHistoryInstances, PipelineModel pipelineModel,
-								  PipeStepInstanceCommand pipeStepInstanceCommand, Pipeline pipeline, PipeStepNotification pipeStepNotification,
-								  PipeStepBuilding pipeStepBuilding, AppEnvironment environment, ActionControl actionControl) {
+								  PipeStageInstanceCommand pipeStepInstanceCommand, Pipeline pipeline, PipeStageNotification pipeStepNotification,
+								  PipeStageBuilding pipeStepBuilding, AppEnvironment environment, ActionControl actionControl) {
 		notNull(project, "project must not be null");
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
@@ -110,7 +110,7 @@ public class DefaultPipelineContext implements PipelineContext {
 	}
 
 	@Override
-	public PipeStepInstanceCommand getPipeStepInstanceCommand() {
+	public PipeStageInstanceCommand getPipeStepInstanceCommand() {
 		return pipeStepInstanceCommand;
 	}
 
@@ -120,12 +120,12 @@ public class DefaultPipelineContext implements PipelineContext {
 	}
 
 	@Override
-	public PipeStepNotification getPipeStepNotification() {
+	public PipeStageNotification getPipeStepNotification() {
 		return pipeStepNotification;
 	}
 
 	@Override
-	public PipeStepBuilding getPipeStepBuilding() {
+	public PipeStageBuilding getPipeStepBuilding() {
 		return pipeStepBuilding;
 	}
 

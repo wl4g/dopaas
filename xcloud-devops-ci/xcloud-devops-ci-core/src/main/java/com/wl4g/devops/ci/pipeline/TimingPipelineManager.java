@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.timing;
+package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.components.core.bean.ci.Project;
 import com.wl4g.components.core.bean.ci.Task;
@@ -21,6 +21,7 @@ import com.wl4g.components.core.bean.ci.TaskInstance;
 import com.wl4g.components.core.bean.ci.Trigger;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
+import com.wl4g.devops.ci.pipeline.provider.TimingPipelineProvider;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
@@ -49,7 +50,7 @@ import static org.springframework.util.Assert.notNull;
  * @author vjay
  * @date 2019-07-19 09:50:00
  */
-public class PipelineTaskScheduler implements ApplicationRunner {
+public class TimingPipelineManager implements ApplicationRunner {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	private static ConcurrentHashMap<String, ScheduledFuture<?>> map = new ConcurrentHashMap<String, ScheduledFuture<?>>();
@@ -136,7 +137,7 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 		ScheduledFuture<?> future = scheduler.schedule(provider, new CronTrigger(trigger.getCron()));
 
 		// TODO distributed cluster??
-		PipelineTaskScheduler.map.put(getTimingPipelineKey(trigger), future);
+		TimingPipelineManager.map.put(getTimingPipelineKey(trigger), future);
 	}
 
 	/**
@@ -151,7 +152,7 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 		}
 
 		String key = getTimingPipelineKey(trigger);
-		ScheduledFuture<?> future = PipelineTaskScheduler.map.get(key);
+		ScheduledFuture<?> future = TimingPipelineManager.map.get(key);
 
 		if (nonNull(future)) {
 			boolean cancel = future.cancel(true);

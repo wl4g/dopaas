@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.container;
+package com.wl4g.devops.ci.pipeline.provider.container;
 
 import com.github.dockerjava.api.DockerClient;
-import com.wl4g.components.core.bean.ci.PipeStepBuilding;
+import com.wl4g.components.core.bean.ci.PipeStageBuilding;
 import com.wl4g.components.core.bean.ci.PipelineHistory;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppEnvironment;
@@ -25,8 +25,8 @@ import com.wl4g.components.core.bean.erm.DockerRepository;
 import com.wl4g.components.support.cli.command.DestroableCommand;
 import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
+import com.wl4g.devops.ci.pipeline.provider.AbstractPipelineProvider;
 import com.wl4g.devops.ci.utils.DockerJavaUtil;
 
 import org.apache.commons.lang3.StringUtils;
@@ -65,7 +65,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
 		DockerClient dockerClient = DockerJavaUtil.sampleConnect(config.getDocker().getMakeImageAddr());// "tcp://10.0.0.161:2375"
 		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
 		AppCluster appCluster = getContext().getAppCluster();
-		PipeStepBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
+		PipeStageBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
 		AppEnvironment environment = getContext().getEnvironment();
 		DockerRepository dockerRepository = environment.getDockerRepository();
 		DockerRepository.AuthConfigModel authConfigModel = dockerRepository.getAuthConfigModel();

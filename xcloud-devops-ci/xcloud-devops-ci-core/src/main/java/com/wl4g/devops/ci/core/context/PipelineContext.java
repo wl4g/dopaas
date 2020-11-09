@@ -36,7 +36,7 @@ public abstract interface PipelineContext {
 	/**
 	 * The is empty for {@link PipelineContext} instance.
 	 */
-	final public static PipelineContext EMPTY = new PipelineContext() {
+	public static final PipelineContext EMPTY = new PipelineContext() {
 
 		@Override
 		public List<PipelineHistoryInstance> getPipelineHistoryInstances() {
@@ -49,7 +49,7 @@ public abstract interface PipelineContext {
 		}
 
 		@Override
-		public PipeStepInstanceCommand getPipeStepInstanceCommand() {
+		public PipeStageInstanceCommand getPipeStepInstanceCommand() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -59,12 +59,12 @@ public abstract interface PipelineContext {
 		}
 
 		@Override
-		public PipeStepNotification getPipeStepNotification() {
+		public PipeStageNotification getPipeStepNotification() {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public PipeStepBuilding getPipeStepBuilding() {
+		public PipeStageBuilding getPipeStepBuilding() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -102,7 +102,6 @@ public abstract interface PipelineContext {
 		public AppCluster getAppCluster() {
 			throw new UnsupportedOperationException();
 		}
-
 
 	};
 
@@ -150,13 +149,13 @@ public abstract interface PipelineContext {
 
 	PipelineModel getPipelineModel();
 
-	PipeStepInstanceCommand getPipeStepInstanceCommand();
+	PipeStageInstanceCommand getPipeStepInstanceCommand();
 
 	Pipeline getPipeline();
 
-	PipeStepNotification getPipeStepNotification();
+	PipeStageNotification getPipeStepNotification();
 
-	PipeStepBuilding getPipeStepBuilding();
+	PipeStageBuilding getPipeStepBuilding();
 
 	AppEnvironment getEnvironment();
 

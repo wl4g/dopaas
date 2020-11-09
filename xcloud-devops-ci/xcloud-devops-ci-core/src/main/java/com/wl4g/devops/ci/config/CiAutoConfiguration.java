@@ -29,12 +29,18 @@ import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
 import com.wl4g.devops.ci.pcm.redmine.RedminePcmOperator;
 import com.wl4g.devops.ci.pipeline.*;
-import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
-import com.wl4g.devops.ci.pipeline.container.RktNativePipelineProvider;
-import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
 import com.wl4g.devops.ci.pipeline.deploy.*;
-import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.GolangModPipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.MvnAssembleTarPipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.NpmViewPipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.PipelineProvider.PipelineKind;
+import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.Python3PipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.SpringExecutableJarPipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.TimingPipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.ViewNativePipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.container.DockerNativePipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.container.RktNativePipelineProvider;
 import com.wl4g.devops.ci.tool.PipelineLogPurger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -80,8 +86,8 @@ public class CiAutoConfiguration {
 	}
 
 	@Bean
-	public GlobalTimeoutJobCleanupCoordinator globalTimeoutJobCleanCoordinator() {
-		return new GlobalTimeoutJobCleanupCoordinator();
+	public TimeoutJobsEvictor globalTimeoutJobCleanCoordinator() {
+		return new TimeoutJobsEvictor();
 	}
 
 	// --- Console's. ---
@@ -222,8 +228,8 @@ public class CiAutoConfiguration {
 	}
 
 	@Bean
-	public PipelineTaskScheduler pipelineTaskScheduler() {
-		return new PipelineTaskScheduler();
+	public TimingPipelineManager pipelineTaskScheduler() {
+		return new TimingPipelineManager();
 	}
 
 	// --- Tools. ---

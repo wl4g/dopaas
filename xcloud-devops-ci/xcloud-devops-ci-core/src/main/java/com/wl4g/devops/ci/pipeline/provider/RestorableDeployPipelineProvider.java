@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline;
+package com.wl4g.devops.ci.pipeline.provider;
 
 import com.wl4g.components.core.exception.ci.NotFoundBackupAssetsFileException;
 import com.wl4g.components.support.cli.command.DestroableCommand;
 import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.container.DockerNativePipelineProvider;
 
 import java.io.File;
 import java.util.Objects;
 
 import static com.wl4g.components.common.codec.FingerprintUtils.getMd5Fingerprint;
-import static com.wl4g.devops.ci.pipeline.PipelineKind.DOCKER_NATIVE;
+import static com.wl4g.devops.ci.pipeline.provider.PipelineProvider.PipelineKind.DOCKER_NATIVE;
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static java.lang.String.format;
 
@@ -76,7 +76,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 
 	private void buildImage() throws Exception {
 		if (getContext().getAppCluster().getDeployType() == 2) {
-			DockerNativePipelineProvider p = aliasPrototypeBeanFactory.getPrototypeBean(DOCKER_NATIVE, getContext());
+			DockerNativePipelineProvider p = namingBeanFactory.getPrototypeBean(DOCKER_NATIVE, getContext());
 			p.buildImage();
 		}
 	}

@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.analysis;
+package com.wl4g.devops.ci.pipeline.provider.pcm;
+
+import com.wl4g.components.core.bean.ci.PipeHistoryPcm;
 
 /**
  * @author vjay
- * @date 2020-04-27 15:05:00
+ * @date 2020-04-27 09:29:00
  */
-public interface AnalysisPipelineProvider {
+public interface PcmPipelineProvider {
+
+	void createIssues(Long pcmId, PipeHistoryPcm pipeHistoryPcm);
+
 }

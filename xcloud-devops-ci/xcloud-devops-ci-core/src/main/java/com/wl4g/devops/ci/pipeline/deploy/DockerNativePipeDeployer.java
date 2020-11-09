@@ -23,7 +23,7 @@ import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppEnvironment;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.devops.ci.pipeline.PipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.ci.utils.DockerJavaUtil;
 
 import org.apache.commons.lang3.StringUtils;

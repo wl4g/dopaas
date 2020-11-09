@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.web;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.ClusterExtension;
-import com.wl4g.components.core.bean.ci.PipeStepBuilding;
+import com.wl4g.components.core.bean.ci.PipeStageBuilding;
 import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
@@ -171,7 +171,7 @@ public class PipelineController extends BaseController {
 	public RespBase<?> getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
 		Assert2.notNullOf(clusterId, "clusterId");
 		RespBase<Object> resp = RespBase.create();
-		PipeStepBuilding pipeStepBuilding = pipelineService.getPipeStepBuilding(clusterId, pipeId, refType);
+		PipeStageBuilding pipeStepBuilding = pipelineService.getPipeStepBuilding(clusterId, pipeId, refType);
 		resp.setData(pipeStepBuilding);
 		return resp;
 	}

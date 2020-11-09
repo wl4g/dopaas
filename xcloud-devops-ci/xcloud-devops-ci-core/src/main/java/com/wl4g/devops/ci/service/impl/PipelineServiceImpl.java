@@ -55,16 +55,16 @@ public class PipelineServiceImpl implements PipelineService {
 	private PipelineInstanceDao pipelineInstanceDao;
 
 	@Autowired
-	private PipeStepBuildingDao pipeStepBuildingDao;
+	private PipeStageBuildingDao pipeStepBuildingDao;
 
 	@Autowired
-	private PipeStepBuildingProjectDao pipeStepBuildingProjectDao;
+	private PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
 
 	@Autowired
-	private PipeStepPcmDao pipeStepPcmDao;
+	private PipeStagePcmDao pipeStepPcmDao;
 
 	@Autowired
-	private PipeStepNotificationDao pipeStepNotificationDao;
+	private PipeStageNotificationDao pipeStepNotificationDao;
 
 	@Autowired
 	private ProjectDao projectDao;
@@ -76,10 +76,10 @@ public class PipelineServiceImpl implements PipelineService {
 	private ProjectService projectService;
 
 	@Autowired
-	private PipeStepInstanceCommandDao pipeStepInstanceCommandDao;
+	private PipeStageInstanceCommandDao pipeStepInstanceCommandDao;
 
 	@Autowired
-	private PipeStepDeployDao pipeStepDeployDao;
+	private PipeStageDeployDao pipeStepDeployDao;
 
 	@Autowired
 	private ClusterExtensionDao clusterExtensionDao;
@@ -89,7 +89,7 @@ public class PipelineServiceImpl implements PipelineService {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		List<Pipeline> list = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
 		for (Pipeline pipeline : list) {
-			List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao.selectByPipeId(pipeline.getId());
+			List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao.selectByPipeId(pipeline.getId());
 			pipeline.setPipeStepBuildingProjects(pipeStepBuildingProjects);
 		}
 		pm.setRecords(list);
@@ -111,7 +111,7 @@ public class PipelineServiceImpl implements PipelineService {
 		// Pipeline
 		Pipeline pipeline = pipelineDao.selectByPrimaryKey(id);
 		// Pipeline Deploy
-		PipeStepDeploy pipeStepDeploy = pipeStepDeployDao.selectByPipeId(id);
+		PipeStageDeploy pipeStepDeploy = pipeStepDeployDao.selectByPipeId(id);
 		pipeline.setPipeStepDeploy(pipeStepDeploy);
 		// Pipeline Instance
 		List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(id);
@@ -122,22 +122,22 @@ public class PipelineServiceImpl implements PipelineService {
 		pipeline.setInstanceIds(instanceIds);
 
 		// Pipeline Building
-		PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(id);
+		PipeStageBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(id);
 		pipeline.setPipeStepBuilding(pipeStepBuilding);
 
 		// Pipeline Pcm
-		PipeStepPcm pipeStepPcm = pipeStepPcmDao.selectByPipeId(id);
+		PipeStagePcm pipeStepPcm = pipeStepPcmDao.selectByPipeId(id);
 		pipeline.setPipeStepPcm(pipeStepPcm);
 
 		// Pipeline Notification
-		PipeStepNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(id);
+		PipeStageNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(id);
 		if (Objects.nonNull(pipeStepNotification)) {
 			pipeStepNotification.setContactGroupId2(pipeStepNotification.getContactGroupIds().split(","));
 			pipeline.setPipeStepNotification(pipeStepNotification);
 		}
 
 		// Pipeline Instance Command
-		PipeStepInstanceCommand pipeStepInstanceCommand = pipeStepInstanceCommandDao.selectByPipeId(id);
+		PipeStageInstanceCommand pipeStepInstanceCommand = pipeStepInstanceCommandDao.selectByPipeId(id);
 		pipeline.setPipeStepInstanceCommand(pipeStepInstanceCommand);
 
 		// TODO ...... testing,analysis,docker,k8s
@@ -166,9 +166,9 @@ public class PipelineServiceImpl implements PipelineService {
 		// Insert PipeInstance
 		Long[] instanceIds = pipeline.getInstanceIds();
 
-		PipeStepDeploy pipeStepDeploy = pipeline.getPipeStepDeploy();
+		PipeStageDeploy pipeStepDeploy = pipeline.getPipeStepDeploy();
 		if (isNull(pipeStepDeploy)) {
-			pipeStepDeploy = new PipeStepDeploy();
+			pipeStepDeploy = new PipeStageDeploy();
 		}
 		pipeStepDeploy.preInsert();
 		pipeStepDeploy.setPipeId(pipeline.getId());
@@ -189,13 +189,13 @@ public class PipelineServiceImpl implements PipelineService {
 
 		}
 		// Insert PipeStepBuilding
-		PipeStepBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
+		PipeStageBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
 		if (nonNull(pipeStepBuilding)) {
 			pipeStepBuilding.preInsert();
 			pipeStepBuilding.setPipeId(pipeline.getId());
 			pipeStepBuildingDao.insertSelective(pipeStepBuilding);
 			// Insert PipeStepBuildingProject
-			List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding().getPipeStepBuildingProjects();
+			List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding().getPipeStepBuildingProjects();
 			if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
 				for (int i = 0; i < pipeStepBuildingProjects.size(); i++) {
 					pipeStepBuildingProjects.get(i).preInsert();
@@ -207,7 +207,7 @@ public class PipelineServiceImpl implements PipelineService {
 		}
 
 		// Insert Pipeline Instance Command
-		PipeStepInstanceCommand pipeStepInstanceCommand = pipeline.getPipeStepInstanceCommand();
+		PipeStageInstanceCommand pipeStepInstanceCommand = pipeline.getPipeStepInstanceCommand();
 		if (nonNull(pipeStepInstanceCommand)) {
 			pipeStepInstanceCommand.preInsert();
 			pipeStepInstanceCommand.setPipeId(pipeline.getId());
@@ -217,14 +217,14 @@ public class PipelineServiceImpl implements PipelineService {
 		// TODO ...... testing,analysis,docker,k8s
 
 		// Insert Pcm
-		PipeStepPcm pipeStepPcm = pipeline.getPipeStepPcm();
+		PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
 		if (nonNull(pipeStepPcm)) {
 			pipeStepPcm.preInsert();
 			pipeStepPcm.setPipeId(pipeline.getId());
 			pipeStepPcmDao.insertSelective(pipeStepPcm);
 		}
 		// Insert Notification
-		PipeStepNotification pipeStepNotification = pipeline.getPipeStepNotification();
+		PipeStageNotification pipeStepNotification = pipeline.getPipeStepNotification();
 		if (nonNull(pipeStepNotification)) {
 			pipeStepNotification.preInsert();
 			pipeStepNotification.setPipeId(pipeline.getId());
@@ -241,11 +241,11 @@ public class PipelineServiceImpl implements PipelineService {
 		pipeline.preUpdate();
 		pipelineDao.updateByPrimaryKeySelective(pipeline);
 
-		PipeStepDeploy pipeStepDeploy = pipeline.getPipeStepDeploy();
+		PipeStageDeploy pipeStepDeploy = pipeline.getPipeStepDeploy();
 		if (nonNull(pipeStepDeploy)) {
 			pipeStepDeployDao.updateByPrimaryKeySelective(pipeStepDeploy);
 		} else {
-			pipeStepDeploy = new PipeStepDeploy();
+			pipeStepDeploy = new PipeStageDeploy();
 			pipeStepDeploy.preInsert();
 			pipeStepDeploy.setPipeId(pipeline.getId());
 			pipeStepDeployDao.insertSelective(pipeStepDeploy);
@@ -270,13 +270,13 @@ public class PipelineServiceImpl implements PipelineService {
 		// Update PipeStepBuilding
 		pipeStepBuildingProjectDao.deleteByPipeId(pipeline.getId());
 		pipeStepBuildingDao.deleteByPipeId(pipeline.getId());
-		PipeStepBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
+		PipeStageBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
 		if (nonNull(pipeStepBuilding)) {
 			pipeStepBuilding.preInsert();
 			pipeStepBuilding.setPipeId(pipeline.getId());
 			pipeStepBuildingDao.insertSelective(pipeStepBuilding);
 			// Update PipeStepBuildingProject
-			List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding().getPipeStepBuildingProjects();
+			List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding().getPipeStepBuildingProjects();
 			if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
 				for (int i = 0; i < pipeStepBuildingProjects.size(); i++) {
 					pipeStepBuildingProjects.get(i).preInsert();
@@ -289,7 +289,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 		// Update Pipeline Instance Command
 		pipeStepInstanceCommandDao.deleteByPipeId(pipeline.getId());
-		PipeStepInstanceCommand pipeStepInstanceCommand = pipeline.getPipeStepInstanceCommand();
+		PipeStageInstanceCommand pipeStepInstanceCommand = pipeline.getPipeStepInstanceCommand();
 		if (nonNull(pipeStepInstanceCommand)) {
 			pipeStepInstanceCommand.preInsert();
 			pipeStepInstanceCommand.setPipeId(pipeline.getId());
@@ -300,7 +300,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 		// Update Pcm
 		pipeStepPcmDao.deleteByPipeId(pipeline.getId());
-		PipeStepPcm pipeStepPcm = pipeline.getPipeStepPcm();
+		PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
 		if (nonNull(pipeStepPcm)) {
 			pipeStepPcm.preInsert();
 			pipeStepPcm.setPipeId(pipeline.getId());
@@ -308,7 +308,7 @@ public class PipelineServiceImpl implements PipelineService {
 		}
 		// Update Notification
 		pipeStepNotificationDao.deleteByPipeId(pipeline.getId());
-		PipeStepNotification pipeStepNotification = pipeline.getPipeStepNotification();
+		PipeStageNotification pipeStepNotification = pipeline.getPipeStepNotification();
 		if (nonNull(pipeStepNotification)) {
 			pipeStepNotification.preInsert();
 			pipeStepNotification.setPipeId(pipeline.getId());
@@ -318,25 +318,25 @@ public class PipelineServiceImpl implements PipelineService {
 	}
 
 	@Override
-	public PipeStepBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
+	public PipeStageBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
 		Project project = projectDao.getByAppClusterId(clusterId);
 		Assert2.notNullOf(project, "project");
-		PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeId);
+		PipeStageBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeId);
 		if (Objects.isNull(pipeStepBuilding)) {
-			pipeStepBuilding = new PipeStepBuilding();
+			pipeStepBuilding = new PipeStageBuilding();
 			pipeStepBuilding.setPipeId(pipeId);
 		}
 		if (nonNull(refType)) {
 			pipeStepBuilding.setRefType(refType);
 		}
-		List<PipeStepBuildingProject> pipeStepBuildingProjectsFromdb = pipeStepBuildingProjectDao.selectByPipeId(pipeId);
+		List<PipeStageBuildingProject> pipeStepBuildingProjectsFromdb = pipeStepBuildingProjectDao.selectByPipeId(pipeId);
 		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);
-		List<PipeStepBuildingProject> pipeStepBuildingProjects = new ArrayList<>();
+		List<PipeStageBuildingProject> pipeStepBuildingProjects = new ArrayList<>();
 		for (Dependency dependency : dependencys) {
-			PipeStepBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStepBuildingProjectsFromdb,
+			PipeStageBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStepBuildingProjectsFromdb,
 					dependency.getDependentId());
 			if (isNull(pipeStepBuildingProject)) {
-				pipeStepBuildingProject = new PipeStepBuildingProject();
+				pipeStepBuildingProject = new PipeStageBuildingProject();
 			}
 			Project project1 = projectDao.selectByPrimaryKey(dependency.getDependentId());
 			if (project1 == null) {
@@ -350,10 +350,10 @@ public class PipelineServiceImpl implements PipelineService {
 		}
 
 		// self
-		PipeStepBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStepBuildingProjectsFromdb,
+		PipeStageBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStepBuildingProjectsFromdb,
 				project.getId());
 		if (isNull(pipeStepBuildingProject)) {
-			pipeStepBuildingProject = new PipeStepBuildingProject();
+			pipeStepBuildingProject = new PipeStageBuildingProject();
 		}
 		pipeStepBuildingProject.setProjectId(project.getId());
 		pipeStepBuildingProject.setProjectName(project.getProjectName());
@@ -390,12 +390,12 @@ public class PipelineServiceImpl implements PipelineService {
 		}
 	}
 
-	private PipeStepBuildingProject getPipeStepBuildingProject(List<PipeStepBuildingProject> pipeStepBuildingProjects,
+	private PipeStageBuildingProject getPipeStepBuildingProject(List<PipeStageBuildingProject> pipeStepBuildingProjects,
 			Long projectId) {
 		if (isEmpty(pipeStepBuildingProjects) || isNull(projectId)) {
 			return null;
 		}
-		for (PipeStepBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
+		for (PipeStageBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
 			if (pipeStepBuildingProject.getProjectId().equals(projectId)) {
 				return pipeStepBuildingProject;
 			}

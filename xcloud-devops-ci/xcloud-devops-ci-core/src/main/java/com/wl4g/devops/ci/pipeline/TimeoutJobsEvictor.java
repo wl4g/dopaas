@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.coordinate;
+package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.components.support.redis.jedis.JedisService;
@@ -23,10 +24,8 @@ import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -41,41 +40,41 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
- * Global timeout job handler finalizer.
+ * Global timeout jobs eviction finalizer.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-10-15
  * @since
  */
-public class GlobalTimeoutJobCleanupCoordinator extends ApplicationTaskRunner<RunnerProperties> {
-	final public static long DEFAULT_MIN_WATCH_MS = 2_000L;
+public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> {
 
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
-	@Autowired
-	protected ThreadPoolTaskScheduler scheduler;
 	@Autowired
 	protected ConfigurableEnvironment environment;
+
 	@Autowired
 	protected CiProperties config;
 	@Autowired
 	protected JedisLockManager lockManager;
 	@Autowired
 	protected JedisService jedisService;
+
 	@Autowired
 	protected TaskHistoryDao taskHistoryDao;
 	@Autowired
 	protected PipelineHistoryDao pipelineHistoryDao;
 
+	/** Timing jobs future {@link ScheduledFuture} */
 	protected ScheduledFuture<?> future;
 
-	public GlobalTimeoutJobCleanupCoordinator() {
+	public TimeoutJobsEvictor() {
 		super(new RunnerProperties(false, 1));
 	}
 
 	@Override
 	public void run() {
-		future = getWorker().scheduleWithRandomDelay(() -> {
+		this.future = getWorker().scheduleWithRandomDelay(() -> {
 			try {
 				doInspectForTimeoutStopAndCleanup(getCleanupFinalizerLockName());
 			} catch (Exception e) {
@@ -117,8 +116,8 @@ public class GlobalTimeoutJobCleanupCoordinator extends ApplicationTaskRunner<Ru
 	}
 
 	/**
-	 * Refresh global distributed {@link GlobalTimeoutJobCleanupCoordinator}
-	 * watching intervalMs.
+	 * Refresh global distributed {@link TimeoutJobsEvictor} watching
+	 * intervalMs.
 	 * 
 	 * @param globalJobCleanMaxIntervalMs
 	 * @return
@@ -140,18 +139,16 @@ public class GlobalTimeoutJobCleanupCoordinator extends ApplicationTaskRunner<Ru
 	}
 
 	/**
-	 * Get {@link GlobalTimeoutJobCleanupCoordinator} watcher locker name.
+	 * Get {@link TimeoutJobsEvictor} watcher locker name.
 	 * 
 	 * @return
 	 */
 	private String getCleanupFinalizerLockName() {
-		return environment.getRequiredProperty("spring.application.name") + "."
-				+ GlobalTimeoutJobCleanupCoordinator.class.getSimpleName();
+		return environment.getRequiredProperty("spring.application.name") + "." + TimeoutJobsEvictor.class.getSimpleName();
 	}
 
 	/**
-	 * Get global distributed {@link GlobalTimeoutJobCleanupCoordinator}
-	 * watching intervalMs.
+	 * Get global distributed {@link TimeoutJobsEvictor} watching intervalMs.
 	 * 
 	 * @return
 	 */
@@ -159,5 +156,7 @@ public class GlobalTimeoutJobCleanupCoordinator extends ApplicationTaskRunner<Ru
 		Long maxInternalMs = jedisService.getObjectT(KEY_FINALIZER_INTERVALMS, Long.class);
 		return nonNull(maxInternalMs) ? maxInternalMs : config.getBuild().getJobCleanMaxIntervalMs();
 	}
+
+	final public static long DEFAULT_MIN_WATCH_MS = 2_000L;
 
 }
