@@ -20,6 +20,9 @@ import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.devops.ci.bean.RunModel;
 
+import static com.wl4g.devops.ci.pipeline.flow.FlowManager.REDIS_CI_RUN_PRE;
+import static com.wl4g.devops.ci.pipeline.flow.FlowManager.REDIS_CI_RUN_SCAN_BATCH;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,9 +30,6 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_PRE;
-import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_SCAN_BATCH;
 
 /**
  * @author vjay

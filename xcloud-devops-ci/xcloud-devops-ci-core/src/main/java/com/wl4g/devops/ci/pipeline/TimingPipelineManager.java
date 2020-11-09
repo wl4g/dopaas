@@ -85,7 +85,7 @@ public class TimingPipelineManager implements ApplicationRunner {
 	private void refreshAll() {
 		List<Trigger> triggers = triggerDao.selectByType(TASK_TYPE_TIMMING);
 		for (Trigger trigger : triggers) {
-			refreshTimingPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
+			refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
 		}
 	}
 
@@ -96,11 +96,11 @@ public class TimingPipelineManager implements ApplicationRunner {
 	 * @param expression
 	 * @param trigger
 	 */
-	public void refreshTimingPipeline(String key, String expression, Trigger trigger) {
+	public void refreshPipeline(String key, String expression, Trigger trigger) {
 		log.info("Refresh timing pipeline for key:'{}', expression: '{}', triggerId: {}", key, expression, trigger.getId());
 
 		// Check stopped?
-		stopTimingPipeline(trigger);
+		stopPipeline(trigger);
 
 		Task task = taskDao.selectByPrimaryKey(trigger.getTaskId());
 		notNull(task, String.format("Timing pipeline not found for taskId:{}", trigger.getTaskId()));
@@ -110,7 +110,7 @@ public class TimingPipelineManager implements ApplicationRunner {
 		notNull(project, String.format("Timing pipeline project:(%s) not found", task.getProjectId()));
 
 		// Startup to pipeline.
-		startTimingPipeline(trigger, project, task, instances);
+		startPipeline(trigger, project, task, instances);
 	}
 
 	/**
@@ -121,11 +121,11 @@ public class TimingPipelineManager implements ApplicationRunner {
 	 * @param task
 	 * @param taskInstances
 	 */
-	private void startTimingPipeline(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
+	private void startPipeline(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
 		log.info("Startup timing pipeline for triggerId: {}, expression: '{}', instances: {} ", trigger.getId(),
 				trigger.getCron(), taskInstances);
 
-		stopTimingPipeline(trigger);
+		stopPipeline(trigger);
 
 		if (trigger.getEnable() != 1) {
 			return;
@@ -145,7 +145,7 @@ public class TimingPipelineManager implements ApplicationRunner {
 	 * 
 	 * @param trigger
 	 */
-	public void stopTimingPipeline(Trigger trigger) {
+	public void stopPipeline(Trigger trigger) {
 		if (log.isInfoEnabled()) {
 			log.info("Stopping timing pipeline for triggerId: {}, taskId: {}, expression: '{}'", trigger.getId(),
 					trigger.getTaskId(), trigger.getCron());

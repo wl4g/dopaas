@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.components.common.io.FileIOUtils.*;
+import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.ci.*;
@@ -39,7 +40,7 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.HookParameter;
 import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
-import com.wl4g.devops.ci.flow.FlowManager;
+import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.ci.utils.HookCommandHolder;
@@ -51,7 +52,6 @@ import com.wl4g.devops.dao.erm.DockerRepositoryDao;
 import com.wl4g.devops.dao.iam.ContactDao;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -65,7 +65,7 @@ import static com.wl4g.components.common.io.FileIOUtils.*;
 import static com.wl4g.components.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.core.constants.CiDevOpsConstants.*;
-import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.*;
+import static com.wl4g.devops.ci.pipeline.flow.FlowManager.FlowStatus.*;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
@@ -83,7 +83,8 @@ import static org.springframework.util.Assert.notNull;
  * @since
  */
 public class DefaultPipelineManager implements PipelineManager {
-	final protected Logger log = getLogger(getClass());
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	@Autowired
 	protected CiProperties config;
@@ -92,41 +93,37 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
-	protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
+	protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifier;
+	@Autowired
+	protected FlowManager flowManager;
+
 	@Autowired
 	protected AppInstanceDao appInstanceDao;
 	@Autowired
 	protected AppClusterDao appClusterDao;
 	@Autowired
-	protected TriggerDao triggerDao;
-	@Autowired
 	protected ProjectDao projectDao;
 	@Autowired
-	protected TaskDetailDao taskDetailDao;
-	@Autowired
 	protected ContactDao contactDao;
+
 	@Autowired
-	protected TaskBuildCommandDao taskBuildCmdDao;
+	protected PipelineDao pipelineDao;
 	@Autowired
-	protected FlowManager flowManager;
+	protected PipelineHistoryService pipelineHistoryService;
 	@Autowired
-	private PipelineDao pipelineDao;
+	protected PipelineHistoryInstanceDao pipelineHistoryInstanceDao;
 	@Autowired
-	private PipelineHistoryService pipelineHistoryService;
+	protected PipeStageInstanceCommandDao pipeStepInstanceCommandDao;
 	@Autowired
-	private PipelineHistoryInstanceDao pipelineHistoryInstanceDao;
+	protected PipeStageNotificationDao pipeStepNotificationDao;
 	@Autowired
-	private PipeStageInstanceCommandDao pipeStepInstanceCommandDao;
+	protected PipeStageBuildingDao pipeStepBuildingDao;
 	@Autowired
-	private PipeStageNotificationDao pipeStepNotificationDao;
+	protected AppEnvironmentDao appEnvironmentDao;
 	@Autowired
-	private PipeStageBuildingDao pipeStepBuildingDao;
+	protected DockerRepositoryDao dockerRepositoryDao;
 	@Autowired
-	private AppEnvironmentDao appEnvironmentDao;
-	@Autowired
-	private DockerRepositoryDao dockerRepositoryDao;
-	@Autowired
-	private ClusterExtensionDao clusterExtensionDao;
+	protected ClusterExtensionDao clusterExtensionDao;
 
 	@Override
 	public void runPipeline(RunParameter param, PipelineModel pipelineModel) throws Exception {
@@ -142,7 +139,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		PipelineHistory pipelineHistory = pipelineHistoryService.createRunnerPipeline(param);
 
 		// Execution pipeline job.
-		doExecutePipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel, null));
+		executePipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel, null));
 	}
 
 	@Override
@@ -183,7 +180,6 @@ public class DefaultPipelineManager implements PipelineManager {
 		}
 
 		for (String project : projects) {
-
 			// User default
 			ClusterExtension clusterExtension = clusterExtensionDao.selectByClusterName(project);
 			if (Objects.nonNull(clusterExtension)) {
@@ -208,7 +204,7 @@ public class DefaultPipelineManager implements PipelineManager {
 			PipelineHistory pipelineHistory = pipelineHistoryService.createHookPipeline(hookParameter);
 
 			// Execution pipeline job.
-			doExecutePipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel, actionControl));
+			executePipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel, actionControl));
 		}
 	}
 
@@ -244,7 +240,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param taskId
 	 * @param provider
 	 */
-	private void doExecutePipeline(Long taskId, PipelineProvider provider) throws Exception {
+	private void executePipeline(Long taskId, PipelineProvider provider) throws Exception {
 		notNull(taskId, "Pipeline taskId must not be null");
 		notNull(provider, "Pipeline provider must not be null");
 		log.info("Starting pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
@@ -429,7 +425,7 @@ public class DefaultPipelineManager implements PipelineManager {
 					msg.addParameter("costTime",
 							currentTimeMillis() - provider.getContext().getPipelineHistory().getCreateDate().getTime());
 
-					notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
+					notifier.forOperator(contactChannel.getKind()).send(msg);
 				}
 
 			}
