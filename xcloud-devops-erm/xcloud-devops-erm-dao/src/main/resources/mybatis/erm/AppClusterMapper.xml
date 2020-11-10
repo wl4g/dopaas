@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.erm.AppClusterDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.AppCluster">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
+		<result column="endpoint" property="endpoint" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="enable" property="enable" jdbcType="INTEGER" />
+		<result column="ssh_id" property="sshId" jdbcType="INTEGER" />
+		<result column="deploy_type" property="deployType" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_by" property="createBy" jdbcType="INTEGER" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="update_by" property="updateBy" jdbcType="INTEGER" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+
+		<association property="ssh" javaType="com.wl4g.components.core.bean.erm.SshBean">
+			<id column="s.id" jdbcType="INTEGER" property="id" />
+			<result column="s.name" jdbcType="VARCHAR" property="name" />
+			<result column="s.username" jdbcType="VARCHAR" property="username" />
+			<result column="s.password" jdbcType="VARCHAR" property="password" />
+			<result column="s.ssh_key" jdbcType="VARCHAR" property="sshKey" />
+			<result column="s.ssh_key_pub" jdbcType="VARCHAR" property="sshKeyPub" />
+			<result column="s.auth_type" jdbcType="VARCHAR" property="authType" />
+			<result column="s.create_by" jdbcType="INTEGER" property="createBy" />
+			<result column="s.create_date" jdbcType="TIMESTAMP" property="createDate" />
+			<result column="s.update_by" jdbcType="INTEGER" property="updateBy" />
+			<result column="s.update_date" jdbcType="TIMESTAMP" property="updateDate" />
+			<result column="s.del_flag" jdbcType="INTEGER" property="delFlag" />
+		</association>
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name, organization_code, endpoint, type, enable, ssh_id, deploy_type, remark, create_by, create_date, update_by,
+		update_date,
+		del_flag
+	</sql>
+	<sql id="Base_Column_List_c">
+		c.id, c.name, c.organization_code, c.endpoint, c.type, c.enable, c.ssh_id, c.deploy_type, c.remark, c.create_by,
+		c.create_date,
+		c.update_by, c.update_date,
+		c.del_flag
+	</sql>
+	<sql id="Ssh_Column_List">
+		s.id as 's.id', s.name as 's.name', s.username as 's.username', s.password as 's.password', s.ssh_key as 's.ssh_key',
+		s.ssh_key_pub as 's.ssh_key_pub', s.auth_type as 's.auth_type', s.create_by as 's.create_by', s.create_date as 's.create_date',
+		s.update_by as 's.update_by', s.update_date as 's.update_date', s.del_flag as 's.del_flag'
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List_c" />
+		,
+		<include refid="Ssh_Column_List" />
+		from erm_app_cluster c
+		left join erm_ssh s on s.id = c.ssh_id
+		where c.id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from erm_app_cluster
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+
+	<insert id="insert" parameterType="com.wl4g.components.core.bean.erm.AppCluster">
+		insert into erm_app_cluster (id, name, organization_code, endpoint,
+		type, enable, ssh_id,
+		deploy_type, remark,
+		create_by, create_date, update_by,
+		update_date, del_flag)
+		values (#{id,jdbcType=BIGINT},
+		#{name,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR},#{endpoint,jdbcType=VARCHAR},
+		#{type,jdbcType=INTEGER},
+		#{enable,jdbcType=INTEGER}, #{sshId,jdbcType=BIGINT}, #{deployType,jdbcType=INTEGER},
+		#{remark,jdbcType=VARCHAR},
+		#{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT},
+		#{updateDate,jdbcType=TIMESTAMP},
+		#{delFlag,jdbcType=INTEGER})
+	</insert>
+
+	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.AppCluster" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into erm_app_cluster
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="organizationCode != null">
+				organization_code,
+			</if>
+			<if test="endpoint != null">
+				endpoint,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="enable != null">
+				enable,
+			</if>
+			<if test="sshId != null">
+				ssh_id,
+			</if>
+			<if test="deployType != null">
+				deploy_type,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="updateBy != null">
+				update_by,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				#{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="endpoint != null">
+				#{endpoint,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="enable != null">
+				#{enable,jdbcType=INTEGER},
+			</if>
+			<if test="sshId != null">
+				#{sshId,jdbcType=BIGINT},
+			</if>
+			<if test="deployType != null">
+				#{deployType,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.AppCluster">
+		update erm_app_cluster
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				organization_code = #{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="endpoint != null">
+				endpoint = #{endpoint,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="enable != null">
+				enable = #{enable,jdbcType=INTEGER},
+			</if>
+			<if test="sshId != null">
+				ssh_id = #{sshId,jdbcType=BIGINT},
+			</if>
+			<if test="deployType != null">
+				deploy_type = #{deployType,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delFlag != null">
+				del_flag = #{delFlag,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.AppCluster">
+		update erm_app_cluster
+		set name = #{name,jdbcType=VARCHAR},
+		organization_code
+		= #{organizationCode,jdbcType=VARCHAR},
+		endpoint = #{endpoint,jdbcType=VARCHAR},
+		type = #{type,jdbcType=INTEGER},
+		enable =
+		#{enable,jdbcType=INTEGER},
+		ssh_id = #{sshId,jdbcType=BIGINT},
+		deploy_type = #{deployType,jdbcType=INTEGER},
+		remark =
+		#{remark,jdbcType=VARCHAR},
+		create_by = #{createBy,jdbcType=BIGINT},
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		update_by =
+		#{updateBy,jdbcType=BIGINT},
+		update_date = #{updateDate,jdbcType=TIMESTAMP},
+		del_flag = #{delFlag,jdbcType=INTEGER}
+		where id =
+		#{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from erm_app_cluster
+		where del_flag!=1
+		<if test="clusterName != null and clusterName != ''">
+			AND name LIKE CONCAT('%','${clusterName}','%')
+		</if>
+		<if test="deployType != null">
+			AND deploy_type = #{deployType,jdbcType=INTEGER}
+		</if>
+		<if test="organizationCodes != null and organizationCodes.size() > 0">
+			and organization_code in
+			<foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+				#{organizationCode}
+			</foreach>
+		</if>
+	</select>
+
+</mapper>

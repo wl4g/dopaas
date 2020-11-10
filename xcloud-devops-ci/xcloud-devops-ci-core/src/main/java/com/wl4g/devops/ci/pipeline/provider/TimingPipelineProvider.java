@@ -15,16 +15,16 @@
  */
 package com.wl4g.devops.ci.pipeline.provider;
 
-import com.wl4g.components.core.bean.ci.Pipeline;
-import com.wl4g.components.core.bean.ci.Project;
-import com.wl4g.components.core.bean.ci.Trigger;
-import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.service.TriggerService;
+import com.wl4g.devops.common.bean.ci.Pipeline;
+import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.Trigger;
+import com.wl4g.devops.common.bean.ci.parameter.RunParameter;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.VcsOperator.RefType;
 

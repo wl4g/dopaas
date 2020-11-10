@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-erm</artifactId>
@@ -11,10 +10,11 @@
 		<version>master</version>
 	</parent>
 	<modules>
+		<module>xcloud-devops-erm-dao</module>
+		<module>xcloud-devops-erm-service-api</module>
+		<module>xcloud-devops-erm-service-impl</module>
 		<module>xcloud-devops-erm-manager</module>
-		<module>xcloud-devops-erm-core</module>
-		<module>xcloud-devops-erm-dns</module>
-<!-- 		<module>xcloud-devops-erm-initializer</module> -->
+		<!-- <module>xcloud-devops-erm-initializer</module> -->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,17 +35,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>

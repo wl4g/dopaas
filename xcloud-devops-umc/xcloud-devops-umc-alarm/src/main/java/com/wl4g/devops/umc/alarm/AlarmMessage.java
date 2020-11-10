@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.components.core.bean.umc.AlarmConfig;
-import com.wl4g.components.core.bean.umc.AlarmRule;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
 
 import java.util.List;

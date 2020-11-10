@@ -17,13 +17,13 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.CiServer;
 import com.wl4g.components.common.lang.Assert2;
-import com.wl4g.components.core.bean.ci.Pcm;
-import com.wl4g.components.core.bean.ci.PipeHistoryPcm;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.web.model.SelectionModel;
+import com.wl4g.devops.ci.dao.PcmDao;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.service.PcmService;
-import com.wl4g.devops.dao.ci.PcmDao;
+import com.wl4g.devops.common.bean.ci.Pcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

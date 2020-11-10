@@ -22,6 +22,10 @@ import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.common.bean.ci.PipeStageBuilding;
+import com.wl4g.devops.common.bean.ci.PipeStageBuildingProject;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.vcs.operator.VcsOperator.RefType;
 
 import org.apache.commons.lang3.StringUtils;

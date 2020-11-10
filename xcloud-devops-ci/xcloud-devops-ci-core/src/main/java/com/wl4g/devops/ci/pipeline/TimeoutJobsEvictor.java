@@ -21,7 +21,7 @@ import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.ci.config.CiProperties;
-import com.wl4g.devops.dao.ci.PipelineHistoryDao;
+import com.wl4g.devops.ci.dao.PipelineHistoryDao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;

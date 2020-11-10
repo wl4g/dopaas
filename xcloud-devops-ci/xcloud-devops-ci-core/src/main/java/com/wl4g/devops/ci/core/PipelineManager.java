@@ -17,9 +17,9 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.components.common.io.FileIOUtils.ReadResult;
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.core.param.RunParameter;
-import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.utils.HookCommandHolder;
+import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
+import com.wl4g.devops.common.bean.ci.param.RunParameter;
 
 /**
  * CICD pipeline entry management.

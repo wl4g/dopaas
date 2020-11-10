@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.umc.rule.handler;
 
-import com.wl4g.components.core.bean.erm.AppCluster;
-import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.components.core.bean.umc.AlarmConfig;
-import com.wl4g.components.core.bean.umc.AlarmRule;
-import com.wl4g.components.core.bean.umc.AlarmTemplate;
+import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.common.bean.umc.AlarmRule;
+import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 
 import java.util.Date;
 import java.util.List;

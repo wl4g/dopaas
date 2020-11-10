@@ -13,8 +13,10 @@
 	</parent>
 	<modules>
 		<module>xcloud-devops-ci-analyzer</module>
-		<module>xcloud-devops-ci-common</module>
 		<module>xcloud-devops-ci-core</module>
+		<module>xcloud-devops-ci-dao</module>
+		<module>xcloud-devops-ci-service-api</module>
+		<module>xcloud-devops-ci-service-impl</module>
 		<module>xcloud-devops-ci-server</module>
 		<module>xcloud-devops-ci-example</module>
 	</modules>
@@ -37,17 +39,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+
 	<build>
 		<plugins>
 			<plugin>

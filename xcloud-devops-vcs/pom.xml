@@ -11,8 +11,10 @@
 		<version>master</version>
 	</parent>
 	<modules>
+		<module>xcloud-devops-vcs-dao</module>
 		<module>xcloud-devops-vcs-operator</module>
-		<module>xcloud-devops-vcs-core</module>
+		<module>xcloud-devops-vcs-service-api</module>
+		<module>xcloud-devops-vcs-service-impl</module>
 		<module>xcloud-devops-vcs-manager</module>
 	</modules>
 	<properties>
@@ -34,17 +36,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+
 	<build>
 		<plugins>
 			<plugin>

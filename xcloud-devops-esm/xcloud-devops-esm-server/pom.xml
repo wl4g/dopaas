@@ -16,17 +16,7 @@
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<final.name>esm-server</final.name>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>

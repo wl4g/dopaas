@@ -15,10 +15,6 @@
  */
 package com.wl4g.devops.ci.config;
 
-import com.wl4g.components.core.bean.ci.Pipeline;
-import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
-import com.wl4g.components.core.bean.ci.Trigger;
-import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.framework.beans.NamingPrototype;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.ci.console.CiCdConsole;
@@ -38,6 +34,11 @@ import com.wl4g.devops.ci.pipeline.provider.PipelineProvider.PipelineKind;
 import com.wl4g.devops.ci.pipeline.provider.container.DockerNativePipelineProvider;
 import com.wl4g.devops.ci.pipeline.provider.container.RktNativePipelineProvider;
 import com.wl4g.devops.ci.tool.PipelineLogPurger;
+import com.wl4g.devops.common.bean.ci.Pipeline;
+import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
+import com.wl4g.devops.common.bean.ci.Trigger;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

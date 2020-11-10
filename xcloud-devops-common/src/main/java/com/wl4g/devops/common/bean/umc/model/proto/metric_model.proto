@@ -1,0 +1,55 @@
+/**
+ * Copyright 2017 ~ 2025 the original author or authors[983708408@qq.com].
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";  // Must(proto2,proto3)
+
+//package indicators;
+package com.wl4g.devops.common.bean.umc.model.proto;
+
+message MetricAggregate {
+    string classify = 1;
+    string host = 2;
+    string endpoint = 3;
+    string namespace = 4;
+    int64 timestamp = 5;
+    repeated Metric metrics = 6; // Array<Metric>
+}
+
+message Metric {
+    string Metric = 1;
+    map<string, string> tags = 2;
+    double Value = 3;
+}
+
+// ------------------- Using description -------------------
+// [Step1]
+
+// go get github.com/gogo/protobuf/protoc-gen-gogo // Required
+// //go get github.com/gogo/protobuf/protoc-gen-gofast // Optional
+// go get github.com/gogo/protobuf/proto // Required
+// //go get github.com/gogo/protobuf/gogoproto // Optional
+
+// [Step2]
+//
+// --------- Golang ---------
+//
+// cd $PROJECT_HOME/pkg
+// protoc --gogo_out=. indicators/metric_model.proto
+
+// ---------- Java ----------
+//
+// cd $PROJECT_HOME/src/main/java
+// protoc --java_out=. com/wl4g/devops/common/bean/umc/model/proto/metric_model.proto
+// @SuppressWarnings({ "unused", "unchecked", "deprecation" })
