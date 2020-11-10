@@ -23,13 +23,15 @@ package com.wl4g.devops.vcs.operator.model;
  * @since
  */
 public class VcsTagModel {
-    private String name;
 
-    public String getName() {
-        return name;
-    }
+	private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

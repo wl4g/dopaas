@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.pipeline.provider.container.RktNativePipelineProvider;
 import java.util.List;
 
 /**
- * CoreOS(Red hat) RKT native deployments deployer.
+ * CoreOS(Red hat) RKT native pipeline deployer.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-11-16

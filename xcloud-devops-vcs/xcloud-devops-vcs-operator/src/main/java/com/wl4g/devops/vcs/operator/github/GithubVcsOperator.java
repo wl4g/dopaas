@@ -18,15 +18,16 @@ package com.wl4g.devops.vcs.operator.github;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
-import com.wl4g.components.data.page.PageModel;
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
+import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 
 import static org.springframework.http.HttpMethod.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
@@ -42,6 +43,7 @@ import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -69,10 +71,11 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 	@Override
 	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
+
 		// Search projects.
 		String url = format((credentials.getBaseUri() + "/repos/%s/branches"), vcsProject.getPathWithNamespace());
-		return doRemoteRequest(GET, credentials, url, null, new TypeReference<List<VcsBranchModel>>() {
-		});
+		return doRemoteRequest(GET, credentials, url, null, new ParameterizedTypeReference<List<VcsBranchModel>>() {
+		}).getBody();
 	}
 
 	@Override
@@ -81,8 +84,8 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 
 		// Search projects.
 		String url = format((credentials.getBaseUri() + "/repos/%s/tags"), vcsProject.getPathWithNamespace());
-		return doRemoteRequest(GET, credentials, url, null, new TypeReference<List<VcsTagModel>>() {
-		});
+		return doRemoteRequest(GET, credentials, url, null, new ParameterizedTypeReference<List<VcsTagModel>>() {
+		}).getBody();
 	}
 
 	@Override
@@ -91,11 +94,10 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public List<GithubV3SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
-			PageModel pm) throws Exception {
-		super.searchRemoteProjects(credentials, groupId, projectName, limit, pm);
+	public List<VcsProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, SearchMeta meta)
+			throws Exception {
+		super.searchRemoteProjects(credentials, groupId, projectName, meta);
 
 		String redisKey = DEFAULT_CACHE_KEY.concat(valueOf(credentials.getId()));
 
@@ -103,7 +105,7 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 		if (!isEmpty(projects)) {
 			log.debug("Got from cache, size: {}, Repositories: {}", projects.size(), projects);
 			return safeList(projects).stream().filter(project -> nonNull(project) && contains(project.getName(), projectName))
-					.collect(Collectors.toList());
+					.collect(toList());
 		} else {
 			// Due to the slow response of requests, it is necessary to increase
 			// the request lock in order to solve the problem that the cache
@@ -176,8 +178,8 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 			String url = format((credentials.getBaseUri() + "/user/repos?per_page=%s&page=%s"), limit, pageNum);
 			// Search projects.
 			List<GithubV3SimpleProjectModel> projects = doRemoteRequest(GET, credentials, url, null,
-					new TypeReference<List<GithubV3SimpleProjectModel>>() {
-					});
+					new ParameterizedTypeReference<List<GithubV3SimpleProjectModel>>() {
+					}).getBody();
 			log.debug("Receiving search GITHUB projects: {}", () -> toJSONString(projects));
 
 			result.addAll(projects);

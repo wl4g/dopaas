@@ -20,11 +20,15 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.components.core.framework.operator.Operator;
-import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
@@ -105,6 +109,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	}
 
 	/**
+	 * Create tag to remote VCS server.
 	 *
 	 * @param credentials
 	 * @param projectId
@@ -140,9 +145,9 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
-			PageModel pm) throws Exception {
-		return searchRemoteProjects(credentials, groupId, projectName, Long.MAX_VALUE, pm);
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName)
+			throws Exception {
+		return searchRemoteProjects(credentials, groupId, projectName, SearchMeta.MAX_LIMIT);
 	}
 
 	/**
@@ -152,19 +157,19 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectName
 	 *            The item name to be searched can be empty. If it is empty, it
 	 *            means unconditional.
-	 * @param limit
-	 *            Page limit maximum
+	 * @param meta
 	 * @return
 	 */
 	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
-			long limit, PageModel pm) throws Exception {
+			SearchMeta meta) throws Exception {
 		notNull(credentials, "Search remote projects credentials can't is null.");
 		/*
 		 * The item name to be searched can be empty. If it is empty, it means
 		 * unconditional.
 		 */
 		// hasText(projectName, "Search remote projects name can't is empty");
-		isTrue(limit > 0, "Search remote projects must limit > 0");
+		isTrue(meta.getPageNo() > 0, "Search remote pageNo > 0");
+		isTrue(meta.getLimit() > 0, "Search remote limit > 0");
 		return null;
 	}
 
@@ -188,7 +193,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @return
 	 */
 	default <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName) {
-		return searchRemoteGroups(credentials, groupName, Long.MAX_VALUE);
+		return searchRemoteGroups(credentials, groupName, SearchMeta.MAX_LIMIT);
 	}
 
 	/**
@@ -198,11 +203,10 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectName
 	 *            The item name to be searched can be empty. If it is empty, it
 	 *            means unconditional.
-	 * @param limit
-	 *            Page limit maximum
+	 * @param meta
 	 * @return
 	 */
-	default <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, long limit) {
+	default <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, SearchMeta meta) {
 		return null;
 	}
 
@@ -257,13 +261,14 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 *            VCS authentication credentials
 	 * @param projecDir
 	 *            project local VCS repository directory absolute path.
-	 * @param branchName
+	 * @param refName
+	 *            VCS source name (branch/tag)
 	 */
-	default <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName, VcsAction action) {
+	default <T> T checkoutAndPull(Vcs credentials, String projecDir, String refName, RefType action) {
 		notNull(credentials, "Checkout & pull credentials is requires.");
 		hasText(projecDir, "Checkout & pull projecDir is requires.");
-		hasText(branchName, "Checkout & pull branchName is requires.");
-		getLog().info("Checkout & pull for projecDir: {}, branchName: {}", projecDir, branchName);
+		hasText(refName, "Checkout & pull branchName is requires.");
+		getLog().info("Checkout & pull for projecDir: {}, branchName: {}", projecDir, refName);
 		return null;
 	}
 
@@ -331,7 +336,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	}
 
 	/**
-	 * VCS type definitions.
+	 * VCS provider definitions.
 	 * 
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2019年11月5日
@@ -399,7 +404,15 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 
 	}
 
-	public static enum VcsAction {
+	/**
+	 * VCS resource ref definitions.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020-11-09
+	 * @sine v1.0.0
+	 * @see
+	 */
+	public static enum RefType {
 
 		/** Branch . */
 		BRANCH("1"),
@@ -409,7 +422,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 
 		final private String value;
 
-		private VcsAction(String value) {
+		private RefType(String value) {
 			this.value = value;
 		}
 
@@ -418,16 +431,16 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 		}
 
 		/**
-		 * Safe converter string to {@link VcsAction}
+		 * Safe converter string to {@link RefType}
 		 *
 		 * @param action
 		 * @return
 		 */
-		final public static VcsAction safeOf(String action) {
+		final public static RefType safeOf(String action) {
 			if (isNull(action)) {
 				return null;
 			}
-			for (VcsAction t : values()) {
+			for (RefType t : values()) {
 				if (StringUtils.equals(action, t.getValue())) {
 					return t;
 				}
@@ -436,16 +449,42 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 		}
 
 		/**
-		 * Converter string to {@link VcsAction}
+		 * Converter string to {@link RefType}
 		 *
 		 * @param action
 		 * @return
 		 */
-		final public static VcsAction of(String action) {
-			VcsAction type = safeOf(action);
+		final public static RefType of(String action) {
+			RefType type = safeOf(action);
 			notNull(type, String.format("Unsupported VCS provider for %s", action));
 			return type;
 		}
+
+	}
+
+	/**
+	 * Search page result metadata wrapper.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020-11-09
+	 * @sine v1.0.0
+	 * @see
+	 */
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static final class SearchMeta {
+		private Integer pageNo = 1;
+		private Integer limit = 20;
+		private Integer total;
+
+		public SearchMeta(Integer pageNo, Integer limit) {
+			this.pageNo = pageNo;
+			this.limit = limit;
+		}
+
+		public static final SearchMeta MAX_LIMIT = new SearchMeta(1, Integer.MAX_VALUE, 0);
 
 	}
 

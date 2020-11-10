@@ -19,8 +19,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 
 /**
+ * {@link GitlabV4BranchModel}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
  * @date 2020-04-20 14:40:00
+ * @sine v1.0.0
+ * @see
  */
 public class GitlabV4BranchModel extends VcsBranchModel {
 

@@ -25,6 +25,7 @@ import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.vcs.config.VcsProperties;
 import com.wl4g.devops.vcs.operator.VcsOperator;
+import com.wl4g.devops.vcs.operator.VcsOperator.SearchMeta;
 import com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
@@ -55,7 +56,7 @@ public class VcsServcieImpl implements VcsService {
 	private VcsDao vcsDao;
 
 	@Autowired
-	private GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsOperator;
+	private GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsManager;
 
 	@Autowired
 	private VcsProperties vcsProperties;
@@ -108,7 +109,7 @@ public class VcsServcieImpl implements VcsService {
 	public List<VcsGroupModel> getGroups(Long id, String groupName) {
 		Vcs vcs = vcsDao.selectByPrimaryKey(id);
 		Assert2.notNullOf(vcs, "vcs");
-		return vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteGroups(vcs, groupName);
+		return vcsManager.forOperator(vcs.getProviderKind()).searchRemoteGroups(vcs, groupName);
 	}
 
 	public List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Long vcsId, String projectName) throws Exception {
@@ -117,7 +118,7 @@ public class VcsServcieImpl implements VcsService {
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
 
 		// Search remote projects.
-		List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, null,
+		List<VcsProjectModel> projects = vcsManager.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, null,
 				projectName, null);
 		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
 	}
@@ -129,7 +130,8 @@ public class VcsServcieImpl implements VcsService {
 		Assert2.notNullOf(vcs, "vcs");
 
 		// Search remote projects.
-		return vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, groupId, projectName, pm);
+		return vcsManager.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, groupId, projectName,
+				new SearchMeta(pm.getPageNum(), pm.getPageSize()));
 	}
 
 	public VcsProjectModel getProjectById(Long vcsId, Long projectId) {
@@ -139,7 +141,7 @@ public class VcsServcieImpl implements VcsService {
 		Assert2.notNullOf(vcs, "vcs");
 
 		// Search remote projects.
-		return vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjectsById(vcs, projectId);
+		return vcsManager.forOperator(vcs.getProviderKind()).searchRemoteProjectsById(vcs, projectId);
 	}
 
 	@Override
@@ -148,7 +150,7 @@ public class VcsServcieImpl implements VcsService {
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
 		Assert2.notNullOf(vcs, "vcs");
-		return vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs, new CompositeBasicVcsProjectModel(projectId));
+		return vcsManager.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs, new CompositeBasicVcsProjectModel(projectId));
 	}
 
 	@Override
@@ -157,7 +159,7 @@ public class VcsServcieImpl implements VcsService {
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
 		Assert2.notNullOf(vcs, "vcs");
-		return vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs, new CompositeBasicVcsProjectModel(projectId));
+		return vcsManager.forOperator(vcs.getProviderKind()).getRemoteTags(vcs, new CompositeBasicVcsProjectModel(projectId));
 	}
 
 	@Override
@@ -173,7 +175,7 @@ public class VcsServcieImpl implements VcsService {
 		String pattern = vcsProperties.getBranchFormat();
 		Assert2.isTrue(Pattern.matches(pattern, branch), "not match format,format=" + pattern);
 
-		return vcsOperator.forOperator(vcs.getProviderKind()).createRemoteBranch(vcs, projectId, branch, ref);
+		return vcsManager.forOperator(vcs.getProviderKind()).createRemoteBranch(vcs, projectId, branch, ref);
 	}
 
 	@Override
@@ -190,15 +192,15 @@ public class VcsServcieImpl implements VcsService {
 		String pattern = vcsProperties.getTagFormat();
 		Assert2.isTrue(Pattern.matches(pattern, tag), "not match format,format=" + pattern);
 
-		return vcsOperator.forOperator(vcs.getProviderKind()).createRemoteTag(vcs, projectId, tag, ref, message,
+		return vcsManager.forOperator(vcs.getProviderKind()).createRemoteTag(vcs, projectId, tag, ref, message,
 				releaseDescription);
 	}
 
 	private void checkRepeatBranchOrTag(Vcs vcs, Long projectId, String branchOrTag) throws Exception {
 		Assert2.hasTextOf(branchOrTag, "branchOrTag");
-		List<VcsBranchModel> remoteBranchs = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs,
+		List<VcsBranchModel> remoteBranchs = vcsManager.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs,
 				new CompositeBasicVcsProjectModel(projectId));
-		List<VcsTagModel> remoteTags = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs,
+		List<VcsTagModel> remoteTags = vcsManager.forOperator(vcs.getProviderKind()).getRemoteTags(vcs,
 				new CompositeBasicVcsProjectModel(projectId));
 		// check repeart
 		for (VcsBranchModel vcsBranchModel : remoteBranchs) {

@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.pipeline.provider.MvnAssembleTarPipelineProvider;
 import java.util.List;
 
 /**
- * MAVEN assemble tar deployments task.
+ * MAVEN assemble tar pipeline deployer.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日

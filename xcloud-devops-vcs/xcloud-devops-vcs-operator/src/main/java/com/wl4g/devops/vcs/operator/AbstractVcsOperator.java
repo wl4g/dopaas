@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.vcs.operator;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.bean.ci.Vcs;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -25,6 +24,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -44,7 +44,6 @@ import java.security.NoSuchAlgorithmException;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 
 /**
  * Abstract VCS API operator.
@@ -90,15 +89,15 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	/**
 	 * Do request to remote VCS provider servers.
 	 *
-	 * @param emthod
+	 * @param mthod
 	 * @param credentials
 	 * @param url
 	 * @param headers
 	 * @param ref
 	 * @return
 	 */
-	protected final <T> T doRemoteRequest(HttpMethod method, Vcs credentials, String url, HttpHeaders headers,
-			TypeReference<T> ref) {
+	protected final <T> ResponseEntity<T> doRemoteRequest(HttpMethod method, Vcs credentials, String url, HttpHeaders headers,
+			ParameterizedTypeReference<T> ref) {
 		notNullOf(method, "method");
 		notNullOf(credentials, "credentials");
 		notNullOf(ref, "typeReference");
@@ -110,14 +109,14 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		}
 
 		// Do request.
-		ResponseEntity<String> resp = http.exchange(url, method, entity, String.class);
+		ResponseEntity<T> resp = http.exchange(url, method, entity, ref);
 		if (null == resp || HttpStatus.OK != resp.getStatusCode()) {
 			throw new IllegalStateException(
 					format("Failed to request vcs remote, status: %s, body: %s", resp.getStatusCodeValue(), resp.getBody()));
 		}
 		log.info("Receiving VCS server response <= {}", resp.getBody());
 
-		return parseJSON(resp.getBody(), ref);
+		return resp;
 	}
 
 	/**

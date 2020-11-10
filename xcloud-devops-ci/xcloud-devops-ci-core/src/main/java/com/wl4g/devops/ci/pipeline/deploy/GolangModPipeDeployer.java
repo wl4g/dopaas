@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.pipeline.provider.Python3PipelineProvider;
 import java.util.List;
 
 /**
- * Golang stdandard transfer job.
+ * Golang stdandard pipeline deployer.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月25日

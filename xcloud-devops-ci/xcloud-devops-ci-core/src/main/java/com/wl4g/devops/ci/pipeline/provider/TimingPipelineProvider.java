@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.pipeline.provider;
 import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.core.bean.ci.Project;
 import com.wl4g.components.core.bean.ci.Trigger;
+import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
@@ -25,11 +26,14 @@ import com.wl4g.devops.ci.core.param.RunParameter;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.vcs.operator.VcsOperator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.wl4g.devops.vcs.operator.VcsOperator.RefType;
+
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.components.common.lang.Assert2.hasText;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
 /**
  * Timing pipeline jobs provider.
@@ -39,7 +43,6 @@ import static com.wl4g.components.common.lang.Assert2.hasText;
  * @date 2019-08-19 10:41:00
  */
 public class TimingPipelineProvider extends AbstractPipelineProvider implements Runnable {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	protected PipelineManager pipeManager;
@@ -49,28 +52,30 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	protected ProjectService projectService;
 
 	protected final Pipeline pipeline;
-
 	protected Trigger trigger;
 
 	public TimingPipelineProvider(Trigger trigger, Pipeline pipeline) {
 		super(PipelineContext.EMPTY);
-		this.trigger = trigger;
-		this.pipeline = pipeline;
+		this.trigger = notNullOf(trigger, "trigger");
+		this.pipeline = notNullOf(pipeline, "pipeline");
+	}
+
+	@Override
+	protected Runnable newPipeDeployer(AppInstance instance) {
+		return null;
 	}
 
 	@Override
 	public void run() {
-
-		trigger = triggerService.getById(trigger.getId());
 		Project project = projectService.getByAppClusterId(pipeline.getClusterId());
 
 		// Gets VCS operator.
 		VcsOperator operator = vcsManager.forOperator(project.getVcs().getProviderKind());
 		try {
-			/*if (!checkCommittedChanged(operator)) { // Changed?
-				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, trigger:{}", project, trigger);
+			if (!checkCommittedChanged(operator, project)) { // Changed?
+				log.info("Skip timing tasks pipeline, because commit unchanged, of project: {}, trigger: {}", project, trigger);
 				return;
-			}*/
+			}
 
 			// Creating pipeline task.
 			// TODO traceId???
@@ -103,16 +108,17 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	 * @return
 	 * @throws Exception
 	 */
-	//TODO check is need update
-	/*private boolean checkCommittedChanged(VcsOperator operator,Project project) throws Exception {
-		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		if (operator.hasLocalRepository(projectDir)) {
-			operator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName(), VcsAction.safeOf(task.getBranchType()));
-		} else {
-			operator.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
-		}
-		String newSign = operator.getLatestCommitted(projectDir);
-		return !equalsIgnoreCase(trigger.getSha(), newSign);
-	}*/
+	private boolean checkCommittedChanged(VcsOperator operator, Project project) throws Exception {
+		return true;
+		// TODO
+//		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+//		if (operator.hasLocalRepository(projectDir)) {
+//			operator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName(), RefType.safeOf(task.getBranchType()));
+//		} else {
+//			operator.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
+//		}
+//		String newSign = operator.getLatestCommitted(projectDir);
+//		return !equalsIgnoreCase(trigger.getSha(), newSign);
+	}
 
 }

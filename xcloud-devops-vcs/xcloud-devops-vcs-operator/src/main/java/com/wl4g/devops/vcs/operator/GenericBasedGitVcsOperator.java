@@ -79,18 +79,18 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public PullResult checkoutAndPull(Vcs credentials, String projecDir, String branchName, VcsAction action) {
-		super.checkoutAndPull(credentials, projecDir, branchName, action);
+	public PullResult checkoutAndPull(Vcs credentials, String projecDir, String refName, RefType action) {
+		super.checkoutAndPull(credentials, projecDir, refName, action);
 		String projectURL = projecDir + "/.git";
 		try (Git git = Git.open(new File(projectURL))) {
 			// fetch
 			setupCredentials(credentials, git.fetch().setTagOpt(TagOpt.FETCH_TAGS)).setForceUpdate(true).call();
 			// tag list
 			boolean hasTag = false;
-			if (VcsAction.TAG.equals(action)) {
+			if (RefType.TAG.equals(action)) {
 				List<Ref> tags = git.tagList().call();
 				for (Ref ref : tags) {
-					if (StringUtils.equals(branchName, getBranchName(ref))) {
+					if (StringUtils.equals(refName, getBranchName(ref))) {
 						hasTag = true;
 						break;
 					}
@@ -101,7 +101,7 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 			boolean hasBranch = false;// is branch exist
 			for (Ref ref : refs) {
 				String branchNameHad = getBranchName(ref);
-				if (StringUtils.equals(branchName, branchNameHad)) {
+				if (StringUtils.equals(refName, branchNameHad)) {
 					hasBranch = true;
 					break;
 				}
@@ -109,23 +109,22 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 			if (hasTag && hasBranch) {
 				throw new RuntimeException("has same name with tag and branch");
 			} else if (hasTag) {
-				git.checkout().setName(branchName).setForced(true).call();
+				git.checkout().setName(refName).setForced(true).call();
 				return null; // needn't pull
 			} else if (hasBranch) {
-				git.checkout().setName(branchName).setForceRefUpdate(true).setForced(true).call();
+				git.checkout().setName(refName).setForceRefUpdate(true).setForced(true).call();
 			} else { // Not exist to checkout & create local branch
-				git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName)
-						.setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM)
-						.setForced(true).call();
+				git.checkout().setCreateBranch(true).setName(refName).setStartPoint("origin/" + refName).setForceRefUpdate(true)
+						.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).setForced(true).call();
 			}
 			// Pull latest source.
 			PullResult pullRes = setupCredentials(credentials, git.pull()).call();
 			if (log.isInfoEnabled()) {
-				log.info("Checkout & pull successful for branchName:{}, projecDir:{}", branchName, projecDir);
+				log.info("Checkout & pull successful for branchName:{}, projecDir:{}", refName, projecDir);
 			}
 			return pullRes;
 		} catch (Exception e) {
-			String errmsg = String.format("Failed to checkout & pull for branchName: %s, projecDir: %s", branchName, projecDir);
+			String errmsg = String.format("Failed to checkout & pull for branchName: %s, projecDir: %s", refName, projecDir);
 			log.error(errmsg, e);
 			throw new IllegalStateException(errmsg, e);
 		}

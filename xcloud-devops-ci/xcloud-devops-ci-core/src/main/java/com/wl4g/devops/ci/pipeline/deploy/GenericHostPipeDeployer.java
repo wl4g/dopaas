@@ -16,21 +16,18 @@
 package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.components.common.cli.ssh2.SSH2Holders;
-import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.List;
 
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static org.springframework.util.Assert.hasText;
 
 /**
- * Generic based host deploying transfer job.
+ * Generic based host deployer.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年05月23日
@@ -38,10 +35,6 @@ import static org.springframework.util.Assert.hasText;
  * @param <P>
  */
 public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extends AbstractPipeDeployer<P> {
-	/** Default executable file suffix. */
-	final public static String DEFAULT_FILE_SUFFIX = "tar";
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	public GenericHostPipeDeployer(P provider, AppInstance instance, List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		super(provider, instance, pipelineHistoryInstances);
@@ -49,10 +42,9 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 
 	@Override
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-
-		Assert2.hasText(remoteHost,"RemoteHost is empty, Please check your config in page(Instance)");
-		Assert2.hasText(user,"user is empty, Please check your config in page(Cluster)");
-		Assert2.hasText(sshkey,"sshkey is empty, Please check your config in page(Cluster)");
+		hasTextOf(remoteHost, "remoteHost");
+		hasTextOf(user, "remoteUser");
+		hasTextOf(sshkey, "sshPubkey");
 
 		// Ensure remote home temporary dir.
 		createReplaceRemoteDirectory(remoteHost, user, sshkey, config.getDeploy().getRemoteHomeTmpDir());
@@ -105,7 +97,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 */
 	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey) throws Exception {
 		String localFile = config.getJobBackupDir(getContext().getPipelineHistory().getId()) + "/" + getPrgramInstallFileName()
-				+ "." + DEFAULT_FILE_SUFFIX;
+				+ "." + DEFAULT_ASSETS_SUFFIX;
 
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, localFile));
@@ -199,8 +191,11 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @returns
 	 */
 	protected String getRemoteTmpFilePath() {
-		String result = config.getDeploy().getRemoteHomeTmpDir() + "/" + getPrgramInstallFileName() + "." + DEFAULT_FILE_SUFFIX;
+		String result = config.getDeploy().getRemoteHomeTmpDir() + "/" + getPrgramInstallFileName() + "." + DEFAULT_ASSETS_SUFFIX;
 		return result;
 	}
+
+	/** Default executable file suffix. */
+	public static final String DEFAULT_ASSETS_SUFFIX = "tar";
 
 }
