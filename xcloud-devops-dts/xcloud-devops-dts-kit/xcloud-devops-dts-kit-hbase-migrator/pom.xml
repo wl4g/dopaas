@@ -19,13 +19,6 @@
 	</properties>
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
 			<!-- For conflict dependency -->
 			<dependency>
 				<groupId>com.google.protobuf</groupId>

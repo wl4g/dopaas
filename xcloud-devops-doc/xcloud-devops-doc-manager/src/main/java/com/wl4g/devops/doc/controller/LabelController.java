@@ -16,9 +16,9 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.doc.Label;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
+import com.wl4g.devops.common.bean.doc.Label;
 import com.wl4g.devops.doc.service.LabelService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;

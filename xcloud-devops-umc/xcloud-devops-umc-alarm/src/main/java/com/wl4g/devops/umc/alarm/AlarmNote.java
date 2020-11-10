@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.alarm;
 import java.util.List;
 import java.util.Map;
 
-import com.wl4g.components.core.bean.umc.AlarmRule;
+import com.wl4g.devops.common.bean.umc.AlarmRule;
 
 /**
  * @author vjay

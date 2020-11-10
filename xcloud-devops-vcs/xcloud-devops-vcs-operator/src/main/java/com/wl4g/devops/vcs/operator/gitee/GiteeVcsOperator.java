@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.vcs.operator.gitee;
 
-import com.wl4g.components.core.bean.ci.Vcs;
-import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
+import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.common.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;

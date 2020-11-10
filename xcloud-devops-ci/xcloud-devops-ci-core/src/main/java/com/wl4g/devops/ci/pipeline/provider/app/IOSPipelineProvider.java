@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.pipeline.provider.app;
 
-import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.provider.RestorableDeployPipelineProvider;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.io.File;
 

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.ci.AnalysisHistoryDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.AnalysisHistory">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="project_id" property="projectId" jdbcType="INTEGER" />
+		<result column="analyzer_kind" property="analyzerKind" jdbcType="VARCHAR" />
+		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
+		<result column="language" property="language" jdbcType="VARCHAR" />
+		<result column="asset_version" property="assetVersion" jdbcType="VARCHAR" />
+		<result column="asset_bytes" property="assetBytes" jdbcType="INTEGER" />
+		<result column="asset_analysis_size" property="assetAnalysisSize" jdbcType="INTEGER" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="bug_collection_file" property="bugCollectionFile" jdbcType="VARCHAR" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, project_id, analyzer_kind, organization_code, language, asset_version, asset_bytes, asset_analysis_size,
+		state, bug_collection_file, create_date, update_date
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from ci_analysis_history
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from ci_analysis_history
+		where 1=1
+		<if test="organizationCodes != null and organizationCodes.size() > 0">
+			and organization_code in
+			<foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+				#{organizationCode}
+			</foreach>
+		</if>
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from ci_analysis_history
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.AnalysisHistory">
+		insert into ci_analysis_history (id, project_id, analyzer_kind, organization_code,
+		language, asset_version, asset_bytes,
+		asset_analysis_size, state, bug_collection_file,
+		create_date, update_date)
+		values (#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{analyzerKind,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR},
+		#{language,jdbcType=VARCHAR}, #{assetVersion,jdbcType=VARCHAR}, #{assetBytes,jdbcType=INTEGER},
+		#{assetAnalysisSize,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, #{bugCollectionFile,jdbcType=VARCHAR},
+		#{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.AnalysisHistory">
+		insert into ci_analysis_history
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="projectId != null">
+				project_id,
+			</if>
+			<if test="analyzerKind != null">
+				analyzer_kind,
+			</if>
+			<if test="organizationCode != null">
+				organization_code,
+			</if>
+			<if test="language != null">
+				language,
+			</if>
+			<if test="assetVersion != null">
+				asset_version,
+			</if>
+			<if test="assetBytes != null">
+				asset_bytes,
+			</if>
+			<if test="assetAnalysisSize != null">
+				asset_analysis_size,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="bugCollectionFile != null">
+				bug_collection_file,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="projectId != null">
+				#{projectId,jdbcType=BIGINT},
+			</if>
+			<if test="analyzerKind != null">
+				#{analyzerKind,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				#{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="language != null">
+				#{language,jdbcType=VARCHAR},
+			</if>
+			<if test="assetVersion != null">
+				#{assetVersion,jdbcType=VARCHAR},
+			</if>
+			<if test="assetBytes != null">
+				#{assetBytes,jdbcType=INTEGER},
+			</if>
+			<if test="assetAnalysisSize != null">
+				#{assetAnalysisSize,jdbcType=INTEGER},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=INTEGER},
+			</if>
+			<if test="bugCollectionFile != null">
+				#{bugCollectionFile,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.AnalysisHistory">
+		update ci_analysis_history
+		<set>
+			<if test="projectId != null">
+				project_id = #{projectId,jdbcType=BIGINT},
+			</if>
+			<if test="analyzerKind != null">
+				analyzer_kind = #{analyzerKind,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				organization_code = #{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="language != null">
+				language = #{language,jdbcType=VARCHAR},
+			</if>
+			<if test="assetVersion != null">
+				asset_version = #{assetVersion,jdbcType=VARCHAR},
+			</if>
+			<if test="assetBytes != null">
+				asset_bytes = #{assetBytes,jdbcType=INTEGER},
+			</if>
+			<if test="assetAnalysisSize != null">
+				asset_analysis_size = #{assetAnalysisSize,jdbcType=INTEGER},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=INTEGER},
+			</if>
+			<if test="bugCollectionFile != null">
+				bug_collection_file = #{bugCollectionFile,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.AnalysisHistory">
+		update ci_analysis_history
+		set project_id = #{projectId,jdbcType=BIGINT},
+		analyzer_kind = #{analyzerKind,jdbcType=VARCHAR},
+		organization_code = #{organizationCode,jdbcType=VARCHAR},
+		language = #{language,jdbcType=VARCHAR},
+		asset_version = #{assetVersion,jdbcType=VARCHAR},
+		asset_bytes = #{assetBytes,jdbcType=INTEGER},
+		asset_analysis_size = #{assetAnalysisSize,jdbcType=INTEGER},
+		state = #{state,jdbcType=INTEGER},
+		bug_collection_file = #{bugCollectionFile,jdbcType=VARCHAR},
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		update_date = #{updateDate,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+</mapper>

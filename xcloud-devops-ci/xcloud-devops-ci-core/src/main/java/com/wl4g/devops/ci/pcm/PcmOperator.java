@@ -16,10 +16,10 @@
 package com.wl4g.devops.ci.pcm;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.components.core.bean.ci.Pcm;
-import com.wl4g.components.core.bean.ci.PipeHistoryPcm;
 import com.wl4g.components.core.framework.operator.Operator;
 import com.wl4g.components.core.web.model.SelectionModel;
+import com.wl4g.devops.common.bean.ci.Pcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 
 import java.util.List;
 

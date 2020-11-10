@@ -12,15 +12,16 @@
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-umc-manager</module>
-		<module>xcloud-devops-umc-client-springboot</module>
-        <!-- <module>xcloud-devops-umc-client-java</module> -->
-		<module>xcloud-devops-umc-example</module>
-		<module>xcloud-devops-umc-receiver</module>
-		<module>xcloud-devops-umc-core</module>
+		<module>xcloud-devops-umc-dao</module>
+		<module>xcloud-devops-umc-service-api</module>
+		<module>xcloud-devops-umc-service-impl</module>
 		<module>xcloud-devops-umc-alarm</module>
 		<module>xcloud-devops-umc-store</module>
 		<module>xcloud-devops-umc-watch</module>
+		<module>xcloud-devops-umc-receiver</module>
+		<module>xcloud-devops-umc-client-springboot</module>
+		<module>xcloud-devops-umc-manager</module>
+		<module>xcloud-devops-umc-example</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,17 +42,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+
 	<build>
 		<plugins>
 			<plugin>

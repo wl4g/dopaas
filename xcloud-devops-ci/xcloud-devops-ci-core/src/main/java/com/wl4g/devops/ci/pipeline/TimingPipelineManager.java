@@ -15,14 +15,15 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.components.core.bean.ci.Pipeline;
-import com.wl4g.components.core.bean.ci.Trigger;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
+import com.wl4g.devops.ci.dao.PipelineDao;
+import com.wl4g.devops.ci.dao.ProjectDao;
+import com.wl4g.devops.ci.dao.TriggerDao;
 import com.wl4g.devops.ci.pipeline.provider.TimingPipelineProvider;
-import com.wl4g.devops.dao.ci.PipelineDao;
-import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TriggerDao;
+import com.wl4g.devops.common.bean.ci.Pipeline;
+import com.wl4g.devops.common.bean.ci.Trigger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;

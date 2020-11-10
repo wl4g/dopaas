@@ -15,10 +15,6 @@
  */
 package com.wl4g.devops.umc.alarm.alerting;
 
-import com.wl4g.components.core.bean.umc.AlarmConfig;
-import com.wl4g.components.core.bean.umc.AlarmRecord;
-import com.wl4g.components.core.bean.umc.AlarmRule;
-import com.wl4g.components.core.bean.umc.AlarmTemplate;
 import com.wl4g.components.core.bean.umc.model.MetricValue;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
@@ -28,6 +24,10 @@ import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.components.support.notification.mail.MailMessageNotifier;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.alarm.AlarmNote;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.common.bean.umc.AlarmRecord;
+import com.wl4g.devops.common.bean.umc.AlarmRule;
+import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.umc.alarm.AlarmMessage;
 import com.wl4g.devops.umc.alarm.TemplateContactWrapper;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
@@ -37,9 +37,9 @@ import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
-import com.wl4g.components.core.bean.iam.Contact;
-import com.wl4g.components.core.bean.iam.ContactChannel;
-import com.wl4g.components.core.bean.iam.NotificationContact;
+import com.wl4g.iam.bean.Contact;
+import com.wl4g.iam.bean.ContactChannel;
+import com.wl4g.iam.bean.NotificationContact;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;

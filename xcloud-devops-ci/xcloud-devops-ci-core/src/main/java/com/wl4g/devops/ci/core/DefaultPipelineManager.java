@@ -20,13 +20,6 @@ import com.wl4g.components.common.io.FileIOUtils.*;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.ci.*;
-import com.wl4g.components.core.bean.erm.AppCluster;
-import com.wl4g.components.core.bean.erm.AppEnvironment;
-import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.components.core.bean.erm.DockerRepository;
-import com.wl4g.components.core.bean.iam.Contact;
-import com.wl4g.components.core.bean.iam.ContactChannel;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.support.notification.GenericNotifyMessage;
@@ -37,19 +30,39 @@ import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.core.param.HookParameter;
-import com.wl4g.devops.ci.core.param.RunParameter;
-import com.wl4g.devops.ci.core.param.RollbackParameter;
+import com.wl4g.devops.ci.dao.ClusterExtensionDao;
+import com.wl4g.devops.ci.dao.PipeStageBuildingDao;
+import com.wl4g.devops.ci.dao.PipeStageInstanceCommandDao;
+import com.wl4g.devops.ci.dao.PipeStageNotificationDao;
+import com.wl4g.devops.ci.dao.PipelineDao;
+import com.wl4g.devops.ci.dao.PipelineHistoryInstanceDao;
+import com.wl4g.devops.ci.dao.ProjectDao;
 import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.ci.utils.HookCommandHolder;
-import com.wl4g.devops.dao.ci.*;
+import com.wl4g.devops.common.bean.ci.ClusterExtension;
+import com.wl4g.devops.common.bean.ci.PipeStageBuilding;
+import com.wl4g.devops.common.bean.ci.PipeStageBuildingProject;
+import com.wl4g.devops.common.bean.ci.PipeStageInstanceCommand;
+import com.wl4g.devops.common.bean.ci.PipeStageNotification;
+import com.wl4g.devops.common.bean.ci.Pipeline;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
+import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
+import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.param.HookParameter;
+import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
+import com.wl4g.devops.common.bean.ci.param.RunParameter;
+import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppEnvironment;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.erm.DockerRepository;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppEnvironmentDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.erm.DockerRepositoryDao;
-import com.wl4g.devops.dao.iam.ContactDao;
+import com.wl4g.iam.common.bean.Contact;
+import com.wl4g.iam.common.bean.ContactChannel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +97,7 @@ import static org.springframework.util.Assert.notNull;
  */
 public class DefaultPipelineManager implements PipelineManager {
 
-	final protected SmartLogger log = getLogger(getClass());
+	protected final SmartLogger log = getLogger(getClass());
 
 	@Autowired
 	protected CiProperties config;
@@ -406,7 +419,6 @@ public class DefaultPipelineManager implements PipelineManager {
 
 			List<Contact> contacts = contactDao.getContactByGroupIds(ints);
 			for (Contact contact : contacts) {
-
 				// new
 				List<ContactChannel> contactChannels = contact.getContactChannels();
 				if (CollectionUtils.isEmpty(contactChannels)) {

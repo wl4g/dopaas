@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.umc.rule;
 
-import com.wl4g.components.core.bean.umc.AlarmConfig;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

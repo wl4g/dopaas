@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.ci.pipeline.provider;
 
-import com.wl4g.components.core.bean.ci.PipelineHistory;
-import com.wl4g.components.core.bean.ci.Project;
-import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.support.cli.command.DestroableCommand;
 import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
+import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.io.File;
 

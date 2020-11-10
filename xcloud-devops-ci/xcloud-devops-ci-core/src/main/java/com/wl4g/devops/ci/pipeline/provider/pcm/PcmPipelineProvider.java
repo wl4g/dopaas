@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline.provider.pcm;
 
-import com.wl4g.components.core.bean.ci.PipeHistoryPcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 
 /**
  * @author vjay

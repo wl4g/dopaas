@@ -16,7 +16,8 @@
 package com.wl4g.devops.vcs.operator;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.devops.common.bean.ci.Vcs;
+
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
