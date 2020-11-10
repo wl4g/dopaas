@@ -71,7 +71,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 		}
 
 		// Deploying to remote instances.
-		startupExecuteRemoteDeploying();
+		startExecutionDeploying();
 	}
 
 	private void buildImage() throws Exception {
@@ -99,7 +99,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 		rollbackBackupAssets();
 
 		// Deploying to remote instances.
-		startupExecuteRemoteDeploying();
+		startExecutionDeploying();
 	}
 
 	/**

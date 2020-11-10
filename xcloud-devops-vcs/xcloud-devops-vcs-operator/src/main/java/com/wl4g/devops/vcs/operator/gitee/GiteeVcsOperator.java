@@ -15,20 +15,19 @@
  */
 package com.wl4g.devops.vcs.operator.gitee;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
-import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
+
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
-import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.http.HttpMethod.*;
@@ -60,12 +59,15 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	@Override
 	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
+
 		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/branches?access_token=%s"),
 				vcsProject.getPathWithNamespace(), credentials.getAccessToken());
+
 		HttpHeaders headers = new HttpHeaders();
 		// Search projects.
-		List<VcsBranchModel> branchs = doRemoteRequest(GET, credentials, url, headers, new TypeReference<List<VcsBranchModel>>() {
-		});
+		List<VcsBranchModel> branchs = doRemoteRequest(GET, credentials, url, headers,
+				new ParameterizedTypeReference<List<VcsBranchModel>>() {
+				}).getBody();
 		return branchs;
 	}
 
@@ -76,8 +78,8 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/tags?access_token=%s"),
 				vcsProject.getPathWithNamespace(), credentials.getAccessToken());
 		// Search projects.
-		return doRemoteRequest(GET, credentials, url, new HttpHeaders(), new TypeReference<List<VcsTagModel>>() {
-		});
+		return doRemoteRequest(GET, credentials, url, new HttpHeaders(), new ParameterizedTypeReference<List<VcsTagModel>>() {
+		}).getBody();
 	}
 
 	@Override
@@ -88,29 +90,19 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public List<GiteeV5SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
-			PageModel pm) throws Exception {
-		super.searchRemoteProjects(credentials, groupId, projectName, limit, pm);
+	public List<GiteeV5SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
+			SearchMeta meta) throws Exception {
+		super.searchRemoteProjects(credentials, groupId, projectName, meta);
 
 		// Parameters correcting.
-		if (isBlank(projectName)) {
-			projectName = EMPTY;
-		}
-		if (nonNull(pm) && nonNull(pm.getPageSize())) {
-			limit = pm.getPageSize();
-		} else {
-			limit = 100;
-		}
-		int pageNum = 1;
-		if (nonNull(pm) && nonNull(pm.getPageNum())) {
-			pageNum = pm.getPageNum();
-		}
+		projectName = isBlank(projectName) ? EMPTY : projectName;
+
 		String url = String.format((credentials.getBaseUri() + "/api/v5/user/repos?access_token=%s&q=%s&per_page=%s&page=%s"),
-				credentials.getAccessToken(), projectName, limit, pageNum);
+				credentials.getAccessToken(), projectName, meta.getLimit(), meta.getPageNo());
 
 		List<GiteeV5SimpleProjectModel> projects = doRemoteRequest(GET, credentials, url, null,
-				new TypeReference<List<GiteeV5SimpleProjectModel>>() {
-				});
+				new ParameterizedTypeReference<List<GiteeV5SimpleProjectModel>>() {
+				}).getBody();
 		/*
 		 * if (nonNull(pm)) {
 		 * pm.setTotal(Long.valueOf(headers.getFirst("X-Total"))); }

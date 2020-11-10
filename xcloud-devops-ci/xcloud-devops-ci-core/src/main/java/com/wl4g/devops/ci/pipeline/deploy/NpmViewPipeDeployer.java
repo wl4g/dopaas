@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.pipeline.provider.NpmViewPipelineProvider;
 import java.util.List;
 
 /**
- * NPM view deployments pipeline handler tasks.
+ * NPM view pipeline deployer.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日

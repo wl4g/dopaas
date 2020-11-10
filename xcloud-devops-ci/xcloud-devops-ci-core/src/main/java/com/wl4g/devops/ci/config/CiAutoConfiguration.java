@@ -114,6 +114,12 @@ public class CiAutoConfiguration {
 	}
 
 	@Bean
+	@NamingPrototype({ PipelineKind.WAR_TOMCAT })
+	public WarTomcatPipelineProvider warTomcatPipelineProvider(PipelineContext context) {
+		return new WarTomcatPipelineProvider(context);
+	}
+
+	@Bean
 	@NamingPrototype({ PipelineKind.NPM_VIEW })
 	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineContext context) {
 		return new NpmViewPipelineProvider(context);
@@ -160,6 +166,20 @@ public class CiAutoConfiguration {
 
 	@Bean
 	@Scope(SCOPE_PROTOTYPE)
+	public SpringExecutableJarPipeDeployer springExecutableJarPipeDeployer(SpringExecutableJarPipelineProvider provider,
+			AppInstance instance, List<PipelineHistoryInstance> pipelineHistoryInstances) {
+		return new SpringExecutableJarPipeDeployer(provider, instance, pipelineHistoryInstances);
+	}
+
+	@Bean
+	@Scope(SCOPE_PROTOTYPE)
+	public WarTomcatPipeDeployer warTomcatPipeDeployer(WarTomcatPipelineProvider provider, AppInstance instance,
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
+		return new WarTomcatPipeDeployer(provider, instance, pipelineHistoryInstances);
+	}
+
+	@Bean
+	@Scope(SCOPE_PROTOTYPE)
 	public NpmViewPipeDeployer npmViewPipeDeployer(NpmViewPipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new NpmViewPipeDeployer(provider, instance, pipelineHistoryInstances);
@@ -170,13 +190,6 @@ public class CiAutoConfiguration {
 	public ViewNativePipeDeployer viewNativePipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new ViewNativePipeDeployer(provider, instance, pipelineHistoryInstances);
-	}
-
-	@Bean
-	@Scope(SCOPE_PROTOTYPE)
-	public SpringExecutableJarPipeDeployer springExecutableJarPipeDeployer(SpringExecutableJarPipelineProvider provider,
-			AppInstance instance, List<PipelineHistoryInstance> pipelineHistoryInstances) {
-		return new SpringExecutableJarPipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
@@ -223,11 +236,11 @@ public class CiAutoConfiguration {
 	}
 
 	@Bean
-	public TimingPipelineManager pipelineTaskScheduler() {
+	public TimingPipelineManager timingPipelineManager() {
 		return new TimingPipelineManager();
 	}
 
-	// --- Tools. ---
+	// --- Tool's. ---
 
 	@Bean
 	public PipelineLogPurger logPipelineCleaner() {

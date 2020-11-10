@@ -17,20 +17,20 @@ package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.devops.ci.pipeline.provider.SpringExecutableJarPipelineProvider;
+import com.wl4g.devops.ci.pipeline.provider.WarTomcatPipelineProvider;
 
 import java.util.List;
 
 /**
- * Spring executable JAR pipeline deployer.
+ * War tomcat pipeline deployer.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月25日
  * @since
  */
-public class SpringExecutableJarPipeDeployer extends GenericHostPipeDeployer<SpringExecutableJarPipelineProvider> {
+public class WarTomcatPipeDeployer extends GenericHostPipeDeployer<WarTomcatPipelineProvider> {
 
-	public SpringExecutableJarPipeDeployer(SpringExecutableJarPipelineProvider provider, AppInstance instance,
+	public WarTomcatPipeDeployer(WarTomcatPipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		super(provider, instance, pipelineHistoryInstances);
 	}

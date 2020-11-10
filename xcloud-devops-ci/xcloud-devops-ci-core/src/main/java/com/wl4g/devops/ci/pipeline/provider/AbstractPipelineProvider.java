@@ -49,6 +49,7 @@ import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.components.common.io.FileIOUtils.writeBLineFile;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.DateUtils2.getDate;
 import static com.wl4g.components.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
@@ -94,7 +95,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	@Autowired
 	protected DependencyService dependencyService;
-
 	@Autowired
 	protected ProjectDao projectDao;
 	@Autowired
@@ -111,8 +111,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	private String assetsFingerprint;
 
 	public AbstractPipelineProvider(PipelineContext context) {
-		notNull(context, "Pipeline context must not be null.");
-		this.context = context;
+		this.context = notNullOf(context, "pipelineContext");
 	}
 
 	/**
@@ -182,7 +181,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		this.assetsFingerprint = assetsFingerprint;
 	}
 
-	// --- Function's. ---
+	// --- Remote deployment's. ---
 
 	/**
 	 * Execution remote commands
@@ -241,7 +240,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Execution distribution transfer to remote instances for deployments.
 	 */
-	protected final void startupExecuteRemoteDeploying() {
+	protected final void startExecutionDeploying() {
 		// Creating transfer instances jobs.
 		SshBean ssh = getContext().getAppCluster().getSsh();
 		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
@@ -251,7 +250,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 					writeBLineFile(jobDeployerLog, LOG_FILE_START);
 
 					// Do deploying.
-					newPipeDeployerByType(i).run();
+					createPipeDeployer(i).run();
 
 					// Print successful.
 					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
@@ -311,13 +310,15 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @param instance
 	 * @return
 	 */
-	protected Runnable newPipeDeployer(AppInstance instance) {
-		throw new UnsupportedOperationException();
-	}
+	protected abstract Runnable newPipeDeployer(AppInstance instance);
 
-	// TODO
-	protected Runnable newPipeDeployerByType(AppInstance instance) {
-
+	/**
+	 * Create distrbuted pipeline deployer.
+	 * 
+	 * @param instance
+	 * @return
+	 */
+	private Runnable createPipeDeployer(AppInstance instance) {
 		switch (getContext().getAppCluster().getDeployType()) {
 		case 2:// docker
 			Object[] args2 = { this, instance, getContext().getPipelineHistoryInstances() };
@@ -341,22 +342,22 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	class PlaceholderVariableResolver {
 
 		/** Placeholder for projectDir. */
-		final public static String PH_PROJECT_DIR = "{pipe.projectDir}";
+		public static final String PH_PROJECT_DIR = "{pipe.projectDir}";
 
 		/** Placeholder for workspaceDir. */
-		final public static String PH_WORKSPACE_DIR = "{pipe.workspaceDir}";
+		public static final String PH_WORKSPACE_DIR = "{pipe.workspaceDir}";
 
 		/** Placeholder for temporary scripts file. */
-		final public static String PH_TMP_SCRIPT_FILE = "{pipe.tmpScriptFile}";
+		public static final String PH_TMP_SCRIPT_FILE = "{pipe.tmpScriptFile}";
 
 		/** Placeholder for backupDir. */
-		final public static String PH_BACKUP_DIR = "{pipe.backupDir}";
+		public static final String PH_BACKUP_DIR = "{pipe.backupDir}";
 
 		/** Placeholder for logPath. */
-		final public static String PH_LOG_FILE = "{pipe.logFile}";
+		public static final String PH_LOG_FILE = "{pipe.logFile}";
 
 		/** Placeholder for remoteTmpDir. */
-		final public static String PH_REMOTE_TMP_DIR = "{pipe.remoteTmpDir}";
+		public static final String PH_REMOTE_TMP_DIR = "{pipe.remoteTmpDir}";
 
 		/** Resolving commands. */
 		private String commands;

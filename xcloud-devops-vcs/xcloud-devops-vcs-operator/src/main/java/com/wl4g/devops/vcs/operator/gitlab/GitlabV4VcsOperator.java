@@ -15,20 +15,22 @@
  */
 package com.wl4g.devops.vcs.operator.gitlab;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.components.core.bean.vcs.CompositeBasicVcsProjectModel;
-import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+
 import static org.springframework.http.HttpMethod.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wl4g.components.common.lang.TypeConverts.parseIntOrDefault;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
@@ -63,12 +65,12 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + vcsProject.getId() + "/repository/branches";
 		// Extract branch names.
-		List<GitlabV4BranchModel> branchs = doRemoteRequest(GET, credentials, url, null,
-				new TypeReference<List<GitlabV4BranchModel>>() {
+		ResponseEntity<List<GitlabV4BranchModel>> branchs = doRemoteRequest(GET, credentials, url, null,
+				new ParameterizedTypeReference<List<GitlabV4BranchModel>>() {
 				});
 
 		log.info("Extract remote branch names: {}", branchs);
-		return branchs;
+		return branchs.getBody();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -78,12 +80,12 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + vcsProject.getId() + "/repository/tags";
 		// Extract tag names.
-		List<GitlabV4TagModel> tags = doRemoteRequest(GET, credentials, url, null, new TypeReference<List<GitlabV4TagModel>>() {
-		});
-		if (log.isInfoEnabled()) {
-			log.info("Extract remote tag names: {}", tags);
-		}
-		return tags;
+		ResponseEntity<List<GitlabV4TagModel>> tags = doRemoteRequest(GET, credentials, url, null,
+				new ParameterizedTypeReference<List<GitlabV4TagModel>>() {
+				});
+
+		log.info("Extract remote tag names: {}", tags.getBody());
+		return tags.getBody();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,8 +94,9 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 		super.createRemoteBranch(credentials, projectId, branch, ref);
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches?branch=%s&ref=%s";
 
-		return doRemoteRequest(POST, credentials, format(url, branch, ref), null, new TypeReference<GitlabV4BranchModel>() {
-		});
+		return doRemoteRequest(POST, credentials, format(url, branch, ref), null,
+				new ParameterizedTypeReference<GitlabV4BranchModel>() {
+				}).getBody();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -106,8 +109,8 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 				+ "/repository/tags?tag_name=%s&ref=%s&message=%s&release_description=%s";
 
 		return doRemoteRequest(POST, credentials, format(url, tag, ref, message, releaseDescription), null,
-				new TypeReference<GitlabV4TagModel>() {
-				});
+				new ParameterizedTypeReference<GitlabV4TagModel>() {
+				}).getBody();
 	}
 
 	@Override
@@ -132,14 +135,51 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4SimpleTeamModel> searchRemoteGroups(Vcs credentials, String groupName, long limit) {
-		String url = format((credentials.getBaseUri() + "/api/v4/groups?search=%s&per_page=%s"), groupName, limit);
+	public List<GitlabV4SimpleTeamModel> searchRemoteGroups(Vcs credentials, String groupName) {
+		String url = format((credentials.getBaseUri() + "/api/v4/groups?search=%s&per_page=%s"), groupName);
 
-		List<GitlabV4SimpleTeamModel> gitTeams = doRemoteRequest(GET, credentials, url, null,
-				new TypeReference<List<GitlabV4SimpleTeamModel>>() {
+		ResponseEntity<List<GitlabV4SimpleTeamModel>> gitTeams = doRemoteRequest(GET, credentials, url, null,
+				new ParameterizedTypeReference<List<GitlabV4SimpleTeamModel>>() {
 				});
 
-		return transformGitTeamTree(safeList(gitTeams));
+		return transformGitTeamTree(safeList(gitTeams.getBody()));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
+			SearchMeta meta) throws Exception {
+		super.searchRemoteProjects(credentials, groupId, projectName, meta);
+
+		// Parameters correcting.
+		projectName = isBlank(projectName) ? EMPTY : projectName;
+
+		// Build search URL.
+		String url;
+		if (nonNull(groupId)) {
+			url = format((credentials.getBaseUri() + "/api/v4/groups/%d/projects?simple=true&search=%s&per_page=%s&page=%s"),
+					groupId, projectName, meta.getLimit(), meta.getPageNo());
+		} else {
+			url = format((credentials.getBaseUri() + "/api/v4/projects?simple=true&search=%s&per_page=%s&page=%s"), projectName,
+					meta.getLimit(), meta.getPageNo());
+		}
+
+		// Search projects.
+		ResponseEntity<List<GitlabV4SimpleProjectModel>> projects = doRemoteRequest(GET, credentials, url, null,
+				new ParameterizedTypeReference<List<GitlabV4SimpleProjectModel>>() {
+				});
+
+		meta.setTotal(parseIntOrDefault(projects.getHeaders().getFirst("X-Total")));
+
+		return safeList(projects.getBody());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public GitlabV4ProjectModel searchRemoteProjectsById(Vcs credentials, Long vcsProjectId) {
+		String url = format((credentials.getBaseUri() + "/api/v4/projects/%d"), vcsProjectId);
+		return doRemoteRequest(GET, credentials, url, null, new ParameterizedTypeReference<GitlabV4ProjectModel>() {
+		}).getBody();
 	}
 
 	private List<GitlabV4SimpleTeamModel> transformGitTeamTree(List<GitlabV4SimpleTeamModel> teams) {
@@ -167,58 +207,6 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 				addChild(groups, group);
 			}
 		}
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, long limit,
-			PageModel pm) throws Exception {
-		super.searchRemoteProjects(credentials, groupId, projectName, limit, pm);
-
-		// Parameters correcting.
-		if (isBlank(projectName)) {
-			projectName = EMPTY;
-		}
-		if (nonNull(pm) && nonNull(pm.getPageSize())) {
-			limit = pm.getPageSize();
-		} else {
-			limit = 10;
-		}
-		int pageNum = 1;
-		if (nonNull(pm) && nonNull(pm.getPageNum())) {
-			pageNum = pm.getPageNum();
-		}
-
-		// Build search URL.
-		String url;
-		if (nonNull(groupId)) {
-			url = format((credentials.getBaseUri() + "/api/v4/groups/%d/projects?simple=true&search=%s&per_page=%s&page=%s"),
-					groupId, projectName, limit, pm.getPageNum());
-		} else {
-			url = format((credentials.getBaseUri() + "/api/v4/projects?simple=true&search=%s&per_page=%s&page=%s"), projectName,
-					limit, pageNum);
-		}
-
-		// Build search headers.
-		HttpHeaders headers = new HttpHeaders();
-		if (nonNull(pm)) {
-			pm.setTotal(Long.valueOf(headers.getFirst("X-Total")));
-		}
-
-		// Search projects.
-		List<GitlabV4SimpleProjectModel> projects = doRemoteRequest(GET, credentials, url, headers,
-				new TypeReference<List<GitlabV4SimpleProjectModel>>() {
-				});
-
-		return safeList(projects);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public GitlabV4ProjectModel searchRemoteProjectsById(Vcs credentials, Long vcsProjectId) {
-		String url = format((credentials.getBaseUri() + "/api/v4/projects/%d"), vcsProjectId);
-		return doRemoteRequest(GET, credentials, url, null, new TypeReference<GitlabV4ProjectModel>() {
-		});
 	}
 
 }

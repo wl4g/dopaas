@@ -22,7 +22,8 @@ import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.vcs.operator.VcsOperator;
+import com.wl4g.devops.vcs.operator.VcsOperator.RefType;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -211,7 +212,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		if (getVcsOperator(project).hasLocalRepository(projectDir)) {
 			log.info(writeBuildLog("Pulling project source to '%s:%s' ...", branch, projectDir));
 			getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch,
-					VcsOperator.VcsAction.of(pipeStepBuilding.getRefType().toString()));
+					RefType.of(pipeStepBuilding.getRefType().toString()));
 		} else { // Unchecked out? new clone & checkout.
 			log.info(writeBuildLog("New checkout project source to '%s:%s' ...", branch, projectDir));
 			getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);

@@ -29,12 +29,15 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import static com.wl4g.components.common.lang.Assert2.isTrue;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * NPM view deployments pipeline handler tasks.
+ * NPM view pipeline deployer.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日
@@ -55,7 +58,7 @@ public class CossPipeDeployer extends GenericHostPipeDeployer<ViewNativePipeline
 		// String url = "http://localhost:8080/Lock/nbdc/remoteUpdate";
 		// String filePath = "/Users/vjay/Downloads/logo.png";
 		String localFile = config.getJobBackupDir(getContext().getPipelineHistory().getId()) + "/" + getPrgramInstallFileName()
-				+ "." + DEFAULT_FILE_SUFFIX;
+				+ "." + DEFAULT_ASSETS_SUFFIX;
 		// CossCluster cossCluster =
 		// cossClusterDao.selectByPrimaryKey(instance.getCossId());
 
@@ -85,9 +88,8 @@ public class CossPipeDeployer extends GenericHostPipeDeployer<ViewNativePipeline
 		param.add("cossProvider", cossProvider);
 		param.add("bucketName", bucketName);
 		param.add("acl", "default");
-		RespBase respBase = restTemplate.postForObject(uploadUrl, param, RespBase.class);
-		Assert2.isTrue(Objects.nonNull(respBase) && respBase.getCode() == 200, "TransFile Fail, cause: %s",
-				JacksonUtils.toJSONString(respBase));
+		RespBase<Object> resp = restTemplate.postForObject(uploadUrl, param, RespBase.class);
+		isTrue(Objects.nonNull(resp) && resp.getCode() == 200, "TransFile Fail, cause: %s", toJSONString(resp));
 	}
 
 }

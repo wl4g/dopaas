@@ -90,9 +90,19 @@ public interface PipelineProvider {
 		final public static String SPRING_EXECUTABLE_JAR = "SpringExecJar";
 
 		/**
+		 * War tomcat pipeline provider alias.
+		 */
+		final public static String WAR_TOMCAT = "warTomcat";
+
+		/**
 		 * NPM provider alias.
 		 */
 		final public static String NPM_VIEW = "NpmTar";
+
+		/**
+		 * view native ,needn't build
+		 */
+		final public static String VIEW_NATIVE = "ViewNative";
 
 		/**
 		 * Python3 standard provider alias.
@@ -113,11 +123,6 @@ public interface PipelineProvider {
 		 * CoreOS(Red hat) RKT native provider alias.
 		 */
 		final public static String RKT_NATIVE = "RktNative";
-
-		/**
-		 * view native ,needn't build
-		 */
-		final public static String VIEW_NATIVE = "ViewNative";
 
 	}
 

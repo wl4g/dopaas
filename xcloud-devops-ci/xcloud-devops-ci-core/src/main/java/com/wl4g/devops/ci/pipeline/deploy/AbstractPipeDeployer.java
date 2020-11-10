@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.pipeline.deploy;
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.io.FileIOUtils;
-import com.wl4g.components.common.log.SmartLoggerFactory;
+import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.bean.ci.PipeStageInstanceCommand;
 import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppCluster;
@@ -34,7 +34,6 @@ import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.dao.iam.ClusterConfigDao;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -46,12 +45,13 @@ import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.components.common.lang.DateUtils2.getDate;
 import static com.wl4g.components.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.core.constants.CiDevOpsConstants.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;
 
 /**
- * Abstract deploying transfer job.
+ * Abstract pipeline deployer.
  *
  * @param <P>
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
@@ -59,7 +59,8 @@ import static org.springframework.util.Assert.*;
  * @since
  */
 public abstract class AbstractPipeDeployer<P extends PipelineProvider> implements Runnable {
-	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
+
+	protected final SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Pipeline CICD properties configuration.
@@ -85,17 +86,17 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	/**
 	 * Pipeline provider.
 	 */
-	final protected P provider;
+	protected final P provider;
 
 	/**
 	 * Pipeline deploy instance.
 	 */
-	final protected AppInstance instance;
+	protected final AppInstance instance;
 
 	/**
 	 * Pipeline taskDetailId.
 	 */
-	final protected Long pipeHisInstanceId;
+	protected final Long pipeHisInstanceId;
 
 	public AbstractPipeDeployer(P provider, AppInstance instance, List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		notNull(provider, "Pipeline provider must not be null.");

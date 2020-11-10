@@ -13,26 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.deploy;
+package com.wl4g.devops.ci.pipeline.provider;
 
-import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.devops.ci.pipeline.provider.ViewNativePipelineProvider;
-
-import java.util.List;
+import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.pipeline.deploy.WarTomcatPipeDeployer;
 
 /**
- * NPM view pipeline deployer.
+ * Pipeline provider for deployment war to tomcat.
  *
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月24日
+ * @version v1.0 2019年5月25日
  * @since
  */
-public class ViewNativePipeDeployer extends GenericHostPipeDeployer<ViewNativePipelineProvider> {
+public class WarTomcatPipelineProvider extends BasedMavenPipelineProvider {
 
-	public ViewNativePipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
-			List<PipelineHistoryInstance> pipelineHistoryInstances) {
-		super(provider, instance, pipelineHistoryInstances);
+	public WarTomcatPipelineProvider(PipelineContext context) {
+		super(context);
+	}
+
+	@Override
+	protected void postBuiltModulesDependencies() throws Exception {
+		// TODO
+	}
+
+	@Override
+	protected Runnable newPipeDeployer(AppInstance instance) {
+		Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
+		return beanFactory.getBean(WarTomcatPipeDeployer.class, args);
 	}
 
 }

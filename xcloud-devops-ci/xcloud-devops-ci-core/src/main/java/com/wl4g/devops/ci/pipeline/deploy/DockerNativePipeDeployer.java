@@ -32,7 +32,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Docker native deployments task.
+ * Docker native deployer.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日
