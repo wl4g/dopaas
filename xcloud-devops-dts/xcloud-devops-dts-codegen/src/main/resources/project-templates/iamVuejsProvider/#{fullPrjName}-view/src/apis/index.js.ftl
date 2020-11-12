@@ -15,7 +15,7 @@ import ${table.entityName?uncap_first} from './${moduleName?lower_case}/${table.
 export default [
     {
         module: 'iam',
-        name: '权限管理',
+        name: 'IAM System Management',
         list: iam
     },
 
@@ -23,7 +23,7 @@ export default [
     <#list moduleMap?keys as moduleName>
      {
         module: '${moduleName?lower_case}',
-        name: '权限管理',
+        name: '${moduleName}',
         list: []<#list moduleMap[moduleName] as table>.concat(${table.entityName?uncap_first})</#list>
      },
     </#list>
