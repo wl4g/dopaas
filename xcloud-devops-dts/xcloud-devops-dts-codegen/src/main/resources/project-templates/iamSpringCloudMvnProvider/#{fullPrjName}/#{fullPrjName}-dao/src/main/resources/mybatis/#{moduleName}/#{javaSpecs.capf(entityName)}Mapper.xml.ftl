@@ -17,7 +17,7 @@
         <#list genTableColumns as param>${param.columnName}<#if param_has_next>, </#if></#list>
     </sql>
 
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByPrimaryKey" parameterType="${pk.attrType}" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
         FROM ${tableName}
@@ -26,7 +26,7 @@
         </where>
     </select>
 
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <delete id="deleteByPrimaryKey" parameterType="${pk.attrType}">
         DELETE FROM ${tableName}
         <where>
             ${pk.columnName} = ${r'#{'}${pk.attrName}, jdbcType=${pk.sqlType}}
@@ -77,7 +77,7 @@
         </where>
     </update>
 
-    <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    <select id="list" resultMap="BaseResultMap" parameterType="${organType}.${organName}.${projectName}.common.${moduleName}.${beanSubModPkgName}.${entityName?cap_first}" >
         SELECT
             <include refid="Base_Column_List"/>
         FROM ${tableName}
