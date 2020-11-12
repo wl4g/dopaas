@@ -14,14 +14,6 @@ import ${table.entityName?uncap_first} from './${moduleName?lower_case}/${table.
 
 export default [
     {
-        module: 'user',
-        name: '用户管理',
-        list: user
-    }, {
-        module: 'system',
-        name: '系统设置',
-        list: system
-    }, {
         module: 'iam',
         name: '权限管理',
         list: iam
