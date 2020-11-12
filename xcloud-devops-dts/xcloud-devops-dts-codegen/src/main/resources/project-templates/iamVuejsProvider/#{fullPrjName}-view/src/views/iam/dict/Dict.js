@@ -82,10 +82,10 @@ export default {
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
                 },
-                fn: data => {
+                fn: json => {
                     this.loading = false;
-                    this.total = data.data.total;
-                    this.tableData = data.data.records;
+                    this.total = json.data.total;
+                    this.tableData = json.data.records;
                 },
                 errFn: () => {
                     this.loading = false;
@@ -96,8 +96,8 @@ export default {
         allDictType() {
             this.$$api_iam_allDictType({
                 data: {},
-                fn: data => {
-                    this.allType = data.data.list;
+                fn: json => {
+                    this.allType = json.data.list;
                 }
             })
         },
@@ -138,14 +138,14 @@ export default {
                             sort: this.saveForm.sort,
                             isEdit: this.diseditable,
                         },
-                        fn: data => {
+                        fn: json => {
                             // Reload dict list.
                             this.getData();
                             this.dialogLoading = false;
                             this.dialogVisible = false;
                             this.$$api_iam_dictCache({
-                                fn: data => {
-                                    cache.set("dicts_cache", data.data);
+                                fn: json => {
+                                    cache.set("dicts_cache", json.data);
                                 },
                             });
                             this.cleanSaveForm();
@@ -171,8 +171,8 @@ export default {
                 data: {
                     key: row.key,
                 },
-                fn: data => {
-                    this.saveForm = data.data;
+                fn: json => {
+                    this.saveForm = json.data;
                 }
             });
             this.dialogVisible = true;
@@ -192,7 +192,7 @@ export default {
                     data: {
                         key: row.key,
                     },
-                    fn: data => {
+                    fn: json => {
                         this.$message({
                             message: '删除成功',
                             type: 'success'
@@ -248,8 +248,8 @@ export default {
                 data: {
                     type: type,
                 },
-                fn: data => {
-                    return data.data.dict;
+                fn: json => {
+                    return json.data.dict;
                 }
             })
         },

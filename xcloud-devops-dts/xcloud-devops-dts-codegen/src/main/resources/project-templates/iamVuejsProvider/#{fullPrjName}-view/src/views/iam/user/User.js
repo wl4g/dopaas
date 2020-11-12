@@ -91,8 +91,8 @@ export default {
         getRoles() {
             this.$$api_iam_getRoles({
                 data: {},
-                fn: data => {
-                    this.rolesData = data.data.data;
+                fn: json => {
+                    this.rolesData = json.data.data;
                 }
             })
         },
@@ -119,9 +119,9 @@ export default {
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
                 },
-                fn: data => {
-                    this.total = data.data.total;
-                    this.tableData = data.data.records;
+                fn: json => {
+                    this.total = json.data.total;
+                    this.tableData = json.data.records;
                     this.loading = false;
                 },
                 errFn: () => {
@@ -181,7 +181,7 @@ export default {
             this.saveForm.password = password;
             this.$$api_iam_saveUser({
                 data: this.saveForm,
-                fn: data => {
+                fn: json => {
                     this.dialogVisible = false;
                     this.dialogLoading = false;
                     this.getData();
@@ -206,8 +206,8 @@ export default {
                 data: {
                     userId: row.id,
                 },
-                fn: data => {
-                    this.saveForm = data.data.data;
+                fn: json => {
+                    this.saveForm = json.data.data;
                     this.saveForm.oldPassword = this.saveForm.password;
                 }
             });
@@ -229,7 +229,7 @@ export default {
                     data: {
                         userId: row.id,
                     },
-                    fn: data => {
+                    fn: json => {
                         this.$message({
                             message: 'del success',
                             type: 'success'

@@ -101,7 +101,7 @@ export default {
                 if (valid) {
                     this.$$api_${moduleName?lower_case}_save${entityName?cap_first}({
                         data: this.saveForm,
-                        fn: data => {
+                        fn: json => {
                             this.back();
                             this.cleanSaveForm();
                         },
@@ -123,8 +123,8 @@ export default {
                 data: {
                     ${pk.attrName}: this.${pk.attrName},
                 },
-                fn: data => {
-                    this.saveForm = data.data;
+                fn: json => {
+                    this.saveForm = json.data;
                 },
             });
         },

@@ -85,10 +85,10 @@ export default {
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
                 },
-                fn: data => {
+                fn: json => {
                     this.submitLoading = false;
-                    this.total = data.data.total;
-                    this.contactData = data.data.records;
+                    this.total = json.data.total;
+                    this.contactData = json.data.records;
                 },
                 errFn: () => {
                     this.submitLoading = false;
@@ -115,8 +115,8 @@ export default {
         groupList() {
             this.$$api_iam_groupList({
                 data: {},
-                fn: data => {
-                    this.contactGroupData = data.data;
+                fn: json => {
+                    this.contactGroupData = json.data;
                 }
             })
         },
@@ -127,7 +127,7 @@ export default {
                 if (valid) {
                     this.$$api_iam_saveContact({
                         data: this.saveForm,
-                        fn: data => {
+                        fn: json => {
                             this.dialogLoading = false;
                             if (data.code == 200) {
                                 this.dialogVisible = false;
@@ -161,8 +161,8 @@ export default {
                 data: {
                     id: row.id,
                 },
-                fn: data => {
-                    this.saveForm = data.data.contact;
+                fn: json => {
+                    this.saveForm = json.data.contact;
                 }
             })
 
@@ -184,7 +184,7 @@ export default {
                     data: {
                         id: row.id,
                     },
-                    fn: data => {
+                    fn: json => {
                         this.$message({
                             message: '删除成功',
                             type: 'success'
@@ -208,10 +208,10 @@ export default {
                     pageNum: this.groupPageNum,
                     pageSize: this.groupPageSize,
                 },
-                fn: data => {
+                fn: json => {
                     this.groupLoading = false;
-                    this.groupTotal = data.data.total;
-                    this.contactGroupData = data.data.records;
+                    this.groupTotal = json.data.total;
+                    this.contactGroupData = json.data.records;
                 },
                 errFn: () => {
                     this.groupLoading = false;
@@ -228,7 +228,7 @@ export default {
                     id: row.id,
                     name: row.name,
                 },
-                fn: data => {
+                fn: json => {
                     this.$message({
                         message: 'Success',
                         type: 'success'
@@ -253,7 +253,7 @@ export default {
                 data: {
                     id: row.id,
                 },
-                fn: data => {
+                fn: json => {
                     this.$message({
                         message: '删除成功',
                         type: 'success'

@@ -158,10 +158,10 @@ export default {
         onGetList() {
             this.loading = true;
             this.$$api_iam_getMenuTree({
-                fn: data => {
+                fn: json => {
                     this.loading = false;
-                    this.data = data.data.data;
-                    this.menuDataList = data.data.data2;
+                    this.data = json.data.data;
+                    this.menuDataList = json.data.data2;
                 },
                 errFn: () => {
                     this.loading = false;
@@ -176,7 +176,7 @@ export default {
             this.$confirm('请小心！！！子菜单会连同一起删除，是否继续？', '确认删除？').then(() => {
                 this.$$api_iam_delMenu({
                     data: {id: opts.data.id},
-                    fn: data => {
+                    fn: json => {
                         this.onGetList();
                     }
                 })
@@ -266,7 +266,7 @@ export default {
                 if (valid) {
                     this.$$api_iam_saveMenu({
                         data: this.formFields,
-                        fn: data => {
+                        fn: json => {
                             this.$message({
                                 message: 'save success',
                                 type: 'success'

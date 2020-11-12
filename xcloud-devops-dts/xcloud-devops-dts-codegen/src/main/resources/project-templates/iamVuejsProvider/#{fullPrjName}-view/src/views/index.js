@@ -1,7 +1,3 @@
-/**
- * Created by Administrator on 2017/5/10.
- */
-
 import Init from './init/'
 import Login from './login/'
 import Home from './home/'
@@ -18,12 +14,5 @@ export {
     Init,
     Login,
     Home,
-    Scm,
-    Ci,
-    Umc,
     Iam,
-    Erm,
-    Doc,
-    Coss,
-    Vcs
 }

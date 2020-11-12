@@ -61,8 +61,8 @@ export default {
                             id: this.searchParams.id,
                             principal: this.searchParams.principal,
                         },
-                        fn: data => {
-                            this.tableData = data.data.sessions;
+                        fn: json => {
+                            this.tableData = json.data.sessions;
                             this.loading = false;
                         },
                         errFn: () => {
@@ -77,8 +77,8 @@ export default {
         getIamServer(){
             this.$$api_iam_getIamServer({
                 data: {},
-                fn: data => {
-                    this.iamServers = data.data;
+                fn: json => {
+                    this.iamServers = json.data;
                 }
             })
         },
@@ -91,7 +91,7 @@ export default {
                     sessionId: row.id,
                     //principal: row.principal,
                 },
-                fn: data => {
+                fn: json => {
                     this.$message({
                         message: 'destroy seccess',
                         type: 'success'

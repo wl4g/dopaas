@@ -6,8 +6,6 @@ import Role from './role/'
 import Dict from '../iam/dict/'
 import Contact from '../iam/contact/'
 
-
-
 export default {
     Online,
     User,
@@ -16,5 +14,4 @@ export default {
     Role,
     Dict,
     Contact,
-
 }

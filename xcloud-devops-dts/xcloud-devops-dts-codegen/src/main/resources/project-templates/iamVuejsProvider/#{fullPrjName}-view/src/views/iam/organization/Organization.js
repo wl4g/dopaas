@@ -105,9 +105,9 @@ export default {
     onGetList() {
       this.loading = true;
       this.$$api_iam_getGroupsTree({
-        fn: data => {
+        fn: json => {
           this.loading = false;
-          this.data = data.data.data;
+          this.data = json.data.data;
         },
         errFn: () => {
           this.loading = false;
@@ -124,7 +124,7 @@ export default {
       }).then(() => {
         this.$$api_iam_delGroup({
           data: {id : opts.data.id},
-          fn: data => {
+          fn: json => {
             this.onGetList();
           }
         })
@@ -180,8 +180,8 @@ export default {
         data: {
           id: opts.data.id,
         },
-        fn: data => {
-          this.saveForm = data.data.data;
+        fn: json => {
+          this.saveForm = json.data.data;
           if(this.$refs.modulesTree && this.saveForm.menuIds instanceof Array){
             this.$refs.modulesTree.setCheckedKeys(this.saveForm.menuIds);
             this.checkChange();
@@ -231,7 +231,7 @@ export default {
         if (valid) {
           this.$$api_iam_saveGroup({
             data: this.saveForm,
-            fn: data => {
+            fn: json => {
               this.$message({
                 message: 'save success',
                 type: 'success'
@@ -255,8 +255,8 @@ export default {
         data: {
 
         },
-        fn: data => {
-            this.rolesData = data.data.data;
+        fn: json => {
+            this.rolesData = json.data.data;
         },
       })
     },
@@ -265,9 +265,9 @@ export default {
       this.$$api_iam_getMenuTree({
         data: {
         },
-        fn: data => {
-            this.menuData = data.data.data;
-            this.menuDataList = data.data.data2;
+        fn: json => {
+            this.menuData = json.data.data;
+            this.menuDataList = json.data.data2;
         }
       })
     },

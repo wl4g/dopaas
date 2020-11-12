@@ -118,9 +118,9 @@ export default {
         getMenus() {
             this.$$api_iam_getMenuTree({
                 data: {},
-                fn: data => {
-                    this.menuData = data.data.data;
-                    this.menuDataList = data.data.data2;
+                fn: json => {
+                    this.menuData = json.data.data;
+                    this.menuDataList = json.data.data2;
                 }
             })
         },
@@ -128,8 +128,8 @@ export default {
         getGroupsTree() {
             this.$$api_iam_getGroupsTree({
                 data: {},
-                fn: data => {
-                    this.groupsTreeData = data.data.data;
+                fn: json => {
+                    this.groupsTreeData = json.data.data;
                 }
             })
         },
@@ -163,10 +163,10 @@ export default {
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
                 },
-                fn: data => {
+                fn: json => {
                     this.loading = false;
-                    this.total = data.data.total;
-                    this.tableData = data.data.records;
+                    this.total = json.data.total;
+                    this.tableData = json.data.records;
                 },
                 errFn: () => {
                     this.loading = false;
@@ -193,7 +193,7 @@ export default {
                 if (valid) {
                     this.$$api_iam_saveRole({
                         data: this.saveForm,
-                        fn: data => {
+                        fn: json => {
                             this.dialogLoading = false;
                             this.dialogVisible = false;
                             this.getData();
@@ -221,8 +221,8 @@ export default {
                 data: {
                     id: row.id,
                 },
-                fn: data => {
-                    this.saveForm = data.data.data;
+                fn: json => {
+                    this.saveForm = json.data.data;
                     if (this.$refs.modulesTree && this.saveForm.menuIds instanceof Array) {
                         this.$refs.modulesTree.setCheckedKeys(this.saveForm.menuIds);
                         this.checkChange();
@@ -246,7 +246,7 @@ export default {
                     data: {
                         id: row.id,
                     },
-                    fn: data => {
+                    fn: json => {
                         this.$message({
                             message: 'del success',
                             type: 'success'
@@ -339,9 +339,11 @@ export default {
                 // remove childs
                 for (let i = 0; i < childList2.length; i++) {
                     let id = childList2[i];
+                    debugger
                     let index = checkedKeys2.findIndex(e => e == id);
                     checkedKeys2.splice(index, 1);
                 }
+                debugger
                 // remove self
                 let index2 = checkedKeys2.findIndex(e => e == data.id);
                 checkedKeys2.splice(index2, 1);

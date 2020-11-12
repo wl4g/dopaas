@@ -71,8 +71,8 @@ For more information, more refer to: \nhttps://github.com/wl4g/xcloud-devops/blo
         initSystemConfiguration() {
             // 1. Load syscluster modules.
             this.$$api_iam_clusterConfigLoadInit({
-                fn: data => {
-                    cache.set("iamSysModules", data.data);
+                fn: json => {
+                    cache.set("iamSysModules", json.data);
                     console.debug("Loaded sysmodules config.");
                 },
                 errFn: () => {
@@ -81,8 +81,8 @@ For more information, more refer to: \nhttps://github.com/wl4g/xcloud-devops/blo
             });
             // 2. Load sysdict.
             this.$$api_iam_dictLoadInit({
-                fn: data => {
-                    cache.set("dicts_cache", data.data);
+                fn: json => {
+                    cache.set("dicts_cache", json.data);
                     console.debug("Loaded sysmodules config.");
                 },
                 errFn: () => {

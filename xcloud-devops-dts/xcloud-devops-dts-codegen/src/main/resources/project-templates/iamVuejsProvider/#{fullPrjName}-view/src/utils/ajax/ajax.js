@@ -44,17 +44,13 @@ export default function ({
     opts,
     sysModule,
 } = {}) {
-    // step1: 获取具体模块BaseURL
-    var baseUrl = global.getBaseUrl(sysModule);
-    var p = baseUrl + path;
-    if (typeof path === 'function') {
-        p = path(pathParams || {})
-    }
+    // step1: 获取具体模块URL
+    var bizUrl = global.getBaseUrl(sysModule) + path;
 
     // step2: 设置axios内置属性
     var options = {
         method: type.toUpperCase(),
-        url: p,
+        url: bizUrl,
         headers: headers && typeof headers == 'object' ? headers : {},
         withCredentials: true, // 实现cors必须设置
     }
@@ -131,7 +127,7 @@ export default function ({
             fn(res.data);
         } else { // Failure
             if (gbs.api_custom[res.data[gbs.api_status_key_field]]) {
-                gbs.api_custom[res.data[gbs.api_status_key_field]](this, res.data, options.method, p, fn, errFn, data)
+                gbs.api_custom[res.data[gbs.api_status_key_field]](this, res.data, options.method, bizUrl, fn, errFn, data)
             } else if (errFn) {
                 errFn.call(this, res.data);
                 if (res.data && res.data.message) {
