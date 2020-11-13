@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.erm.HostTunnelPptpDao">
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.HostTunnelPptp">
+<mapper namespace="com.wl4g.devops.erm.dao.HostTunnelPptpDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.HostTunnelPptp">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
@@ -39,7 +39,7 @@
     delete from erm_host_tunnel_pptp
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.HostTunnelPptp">
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.HostTunnelPptp">
     insert into erm_host_tunnel_pptp (id, name, organization_code, addr,
       username, password, create_date, 
       create_by, update_date, update_by, 
@@ -49,7 +49,7 @@
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.HostTunnelPptp">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.HostTunnelPptp">
     insert into erm_host_tunnel_pptp
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -122,7 +122,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.HostTunnelPptp">
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.HostTunnelPptp">
     update erm_host_tunnel_pptp
     <set>
       <if test="name != null">
@@ -158,7 +158,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.HostTunnelPptp">
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.HostTunnelPptp">
     update erm_host_tunnel_pptp
     set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},

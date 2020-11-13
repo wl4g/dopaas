@@ -26,9 +26,9 @@ import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import java.util.List;
 
 /**
  * @author vjay

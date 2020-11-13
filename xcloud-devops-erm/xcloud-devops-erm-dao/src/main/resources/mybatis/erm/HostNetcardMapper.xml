@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.erm.HostNetcardDao">
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.HostNetcard">
+<mapper namespace="com.wl4g.devops.erm.dao.HostNetcardDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.HostNetcard">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="host_id" jdbcType="INTEGER" property="hostId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -37,7 +37,7 @@
     delete from erm_host_netcard
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.HostNetcard">
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.HostNetcard">
     insert into erm_host_netcard (id, host_id, name, organization_code,
       status, vpn_tunnel_type, openvpn_tunnel_id, 
       pptp_tunnel_id, ipv4, ipv6, 
@@ -53,7 +53,7 @@
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{delFlag,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.HostNetcard">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.HostNetcard">
     insert into erm_host_netcard
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -174,7 +174,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.HostNetcard">
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.HostNetcard">
     update erm_host_netcard
     <set>
       <if test="hostId != null">
@@ -234,7 +234,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.HostNetcard">
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.HostNetcard">
     update erm_host_netcard
     set host_id = #{hostId,jdbcType=BIGINT},
       name = #{name,jdbcType=VARCHAR},

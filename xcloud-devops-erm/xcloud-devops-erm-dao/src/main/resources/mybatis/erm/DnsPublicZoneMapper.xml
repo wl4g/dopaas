@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.DnsPublicZoneDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.DnsPublicZone" >
+<mapper namespace="com.wl4g.devops.erm.dao.DnsPublicZoneDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="zone" property="zone" jdbcType="VARCHAR" />
     <result column="dns_kind" property="dnsKind" jdbcType="VARCHAR" />
@@ -19,13 +19,13 @@
     delete from erm_dns_public_zone
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.DnsPublicZone" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
     insert into erm_dns_public_zone (id, `zone`, dns_kind
       )
     values (#{id,jdbcType=BIGINT}, #{zone,jdbcType=VARCHAR}, #{dnsKind,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.DnsPublicZone" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
     insert into erm_dns_public_zone
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -50,7 +50,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.DnsPublicZone" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
     update erm_dns_public_zone
     <set >
       <if test="zone != null" >
@@ -62,7 +62,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.DnsPublicZone" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
     update erm_dns_public_zone
     set `zone` = #{zone,jdbcType=VARCHAR},
       dns_kind = #{dnsKind,jdbcType=VARCHAR}

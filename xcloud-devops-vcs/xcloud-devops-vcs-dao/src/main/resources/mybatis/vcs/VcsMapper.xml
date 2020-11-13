@@ -21,6 +21,7 @@
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
 		<result column="update_by" property="updateBy" jdbcType="VARCHAR" />
 	</resultMap>
+
 	<sql id="Base_Column_List">
 		id, name, organization_code, provider_kind, auth_type, base_uri, ssh_key_pub, ssh_key, access_token, username, password,
 		remark, enable, del_flag, create_date, create_by, update_date, update_by

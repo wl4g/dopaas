@@ -34,7 +34,7 @@ import com.wl4g.devops.doc.dao.FileLabelDao;
 import com.wl4g.devops.doc.dao.LabelDao;
 import com.wl4g.devops.doc.dao.ShareDao;
 import com.wl4g.devops.doc.service.DocService;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.core.subject.IamPrincipal;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ import java.security.InvalidParameterException;
 import java.util.*;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 
 /**
  * @author vjay

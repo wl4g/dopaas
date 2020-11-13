@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.DnsPrivateServerDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.DnsPrivateServer" >
+<mapper namespace="com.wl4g.devops.erm.dao.DnsPrivateServerDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DnsPrivateServer" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="kind" property="kind" jdbcType="VARCHAR" />
@@ -21,13 +21,13 @@
     delete from erm_dns_private_server
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateServer" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateServer" >
     insert into erm_dns_private_server (id, name, kind, 
       dns_server1, dns_server2)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{kind,jdbcType=VARCHAR}, 
       #{dnsServer1,jdbcType=VARCHAR}, #{dnsServer2,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateServer" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateServer" >
     insert into erm_dns_private_server
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -64,7 +64,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateServer" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateServer" >
     update erm_dns_private_server
     <set >
       <if test="name != null" >
@@ -82,7 +82,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateServer" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateServer" >
     update erm_dns_private_server
     set name = #{name,jdbcType=VARCHAR},
       kind = #{kind,jdbcType=VARCHAR},

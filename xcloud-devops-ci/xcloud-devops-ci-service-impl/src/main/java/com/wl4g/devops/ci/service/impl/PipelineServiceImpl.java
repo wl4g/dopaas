@@ -54,8 +54,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;

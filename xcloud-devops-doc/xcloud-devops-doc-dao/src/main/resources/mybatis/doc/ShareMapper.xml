@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.doc.ShareDao">
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.doc.Share">
+<mapper namespace="com.wl4g.devops.doc.dao.ShareDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.doc.Share">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="share_code" jdbcType="VARCHAR" property="shareCode" />
     <result column="doc_code" jdbcType="VARCHAR" property="docCode" />
@@ -45,7 +45,7 @@
     delete from doc_share
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.doc.Share">
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.doc.Share">
     insert into doc_share (id, share_code, doc_code, 
       share_type, passwd, expire_time, 
       expire_type, create_date, create_by, 
@@ -57,7 +57,7 @@
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.doc.Share" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.doc.Share" useGeneratedKeys="true" keyProperty="id">
     insert into doc_share
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -136,7 +136,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.doc.Share">
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.doc.Share">
     update doc_share
     <set>
       <if test="shareCode != null">
@@ -175,7 +175,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.doc.Share">
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.doc.Share">
     update doc_share
     set share_code = #{shareCode,jdbcType=VARCHAR},
       doc_code = #{docCode,jdbcType=VARCHAR},

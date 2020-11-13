@@ -42,8 +42,8 @@ import java.util.List;
 
 import static com.wl4g.components.core.constants.CiDevOpsConstants.TASK_STATUS_CREATE;
 import static com.wl4g.components.core.constants.CiDevOpsConstants.TASK_STATUS_STOPING;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay

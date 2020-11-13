@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.AppEnvironmentDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.AppEnvironment" >
+<mapper namespace="com.wl4g.devops.erm.dao.AppEnvironmentDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
     <result column="repository_id" property="repositoryId" jdbcType="INTEGER" />
@@ -57,7 +57,7 @@
     delete from erm_app_cluster_env
     where cluster_id = #{clusterId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.AppEnvironment" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     insert into erm_app_cluster_env (id, cluster_id, repository_id, env_type,
       remark, repository_namespace, custom_repository_config, create_by, create_date,
       update_by, update_date, del_flag, enable,
@@ -80,7 +80,7 @@
       #{environment.organizationCode,jdbcType=VARCHAR}, #{environment.runCommand,jdbcType=LONGVARCHAR}, #{environment.configContent,jdbcType=LONGVARCHAR})
     </foreach>
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.AppEnvironment" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     insert into erm_app_cluster_env
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -183,7 +183,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.AppEnvironment" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     update erm_app_cluster_env
     <set >
       <if test="clusterId != null" >
@@ -234,7 +234,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.components.core.bean.erm.AppEnvironment" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     update erm_app_cluster_env
     set cluster_id = #{clusterId,jdbcType=BIGINT},
       repository_id = #{repositoryId,jdbcType=BIGINT},
@@ -253,7 +253,7 @@
       config_content = #{configContent,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.AppEnvironment" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     update erm_app_cluster_env
     set cluster_id = #{clusterId,jdbcType=BIGINT},
       repository_id = #{repositoryId,jdbcType=BIGINT},
