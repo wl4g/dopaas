@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.ci.PipeStageDeployDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.PipeStageDeploy">
+<mapper namespace="com.wl4g.devops.ci.dao.PipeStageDeployDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.PipeStageDeploy">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="pipe_id" property="pipeId" jdbcType="INTEGER" />
 		<result column="deploy_type" property="deployType" jdbcType="INTEGER" />
@@ -28,7 +28,7 @@
 		delete from ci_pipe_step_deploy
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.PipeStageDeploy">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStageDeploy">
 		insert into ci_pipe_step_deploy (id, pipe_id, deploy_type,
 		deploy_dockerfile_content, deploy_config_type,
 		deploy_config_content)
@@ -36,7 +36,7 @@
 		#{deployDockerfileContent,jdbcType=VARCHAR}, #{deployConfigType,jdbcType=INTEGER},
 		#{deployConfigContent,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.PipeStageDeploy">
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStageDeploy">
 		insert into ci_pipe_step_deploy
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -79,7 +79,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.PipeStageDeploy">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStageDeploy">
 		update ci_pipe_step_deploy
 		<set>
 			<if test="pipeId != null">
@@ -100,7 +100,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.PipeStageDeploy">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipeStageDeploy">
 		update ci_pipe_step_deploy
 		set pipe_id = #{pipeId,jdbcType=BIGINT},
 		deploy_type = #{deployType,jdbcType=INTEGER},

@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.config;
 
 import com.wl4g.components.core.framework.beans.NamingPrototype;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.ci.console.CiCdConsole;
+import com.wl4g.devops.ci.console.CiConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
@@ -33,7 +33,7 @@ import com.wl4g.devops.ci.pipeline.provider.*;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider.PipelineKind;
 import com.wl4g.devops.ci.pipeline.provider.container.DockerNativePipelineProvider;
 import com.wl4g.devops.ci.pipeline.provider.container.RktNativePipelineProvider;
-import com.wl4g.devops.ci.tool.PipelineLogPurger;
+import com.wl4g.devops.ci.tool.LogPurger;
 import com.wl4g.devops.common.bean.ci.Pipeline;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.ci.Trigger;
@@ -90,8 +90,8 @@ public class CiAutoConfiguration {
 	// --- Console's. ---
 
 	@Bean
-	public CiCdConsole cicdConsole() {
-		return new CiCdConsole();
+	public CiConsole ciConsole() {
+		return new CiConsole();
 	}
 
 	// --- Flow Manager ---
@@ -244,8 +244,8 @@ public class CiAutoConfiguration {
 	// --- Tool's. ---
 
 	@Bean
-	public PipelineLogPurger logPipelineCleaner() {
-		return new PipelineLogPurger();
+	public LogPurger logPurger() {
+		return new LogPurger();
 	}
 
 	// --- PCM's (Project collaboration management). ---

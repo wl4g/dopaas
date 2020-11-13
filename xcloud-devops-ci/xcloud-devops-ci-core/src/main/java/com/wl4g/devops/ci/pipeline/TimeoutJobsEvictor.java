@@ -71,36 +71,34 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
 	public void run() {
 		this.future = getWorker().scheduleWithRandomDelay(() -> {
 			try {
-				watchForTimeoutJobsDestroy(getCleanupFinalizerLockName());
+				watchTimeoutJobsDestroy(getDistributedLockName());
 			} catch (Exception e) {
 				throw new IllegalStateException(
 						"Critical error!!! Global timeout cleanup watcher interrupted, timeout jobs will not be cleanup.", e);
 			}
-		}, 5000, DEFAULT_MIN_WATCH_MS, getGlobalJobCleanMaxIntervalMs(), TimeUnit.MILLISECONDS);
+		}, 5000, DEFAULT_MIN_WATCH_MS, getJobEvictionInternal(), TimeUnit.MILLISECONDS);
 	}
 
 	/**
 	 * Watching timeout jobs, updating their status to failure.
 	 * 
-	 * @param cleanupFinalizerLockName
+	 * @param cleanerLockName
 	 * @throws InterruptedException
 	 */
-	private final void watchForTimeoutJobsDestroy(String cleanupFinalizerLockName) throws InterruptedException {
-		Lock lock = lockManager.getLock(keyFormat(cleanupFinalizerLockName));
+	private final void watchTimeoutJobsDestroy(String cleanerLockName) throws InterruptedException {
+		Lock lock = lockManager.getLock(keyFormat(cleanerLockName));
 		try {
 			// Cleanup timeout jobs on this node, nodes that do not
 			// acquire lock are on ready in place.
 			if (lock.tryLock()) {
 				long begin = System.currentTimeMillis();
-				// int count =
-				// taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
 				int count = pipelineHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
 				if (count > 0) {
 					log.info("Updated pipeline timeout jobs, with jobTimeoutSec:{}, count:{}, cost: {}ms",
 							config.getBuild().getJobTimeoutSec(), count, (currentTimeMillis() - begin));
 				}
 			} else {
-				log.debug("Skip cleanup jobs ... jobTimeoutSec:{}", config.getBuild().getJobTimeoutSec());
+				log.debug("Skip cleanup jobs of jobTimeoutSec:{}", config.getBuild().getJobTimeoutSec());
 			}
 		} catch (Throwable ex) {
 			log.error("Failed to timeout jobs cleanup", ex);
@@ -117,7 +115,7 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
 	 * @param globalJobCleanMaxIntervalMs
 	 * @return
 	 */
-	public Long refreshGlobalJobCleanMaxIntervalMs(Long globalJobCleanMaxIntervalMs) {
+	public Long refreshEvictionIntervalMs(Long globalJobCleanMaxIntervalMs) {
 		// Distributed global intervalMs.
 		jedisService.setObjectT(KEY_FINALIZER_INTERVALMS, globalJobCleanMaxIntervalMs, -1);
 		log.info("Refreshed global timeoutCleanupFinalizer of intervalMs:<%s>", globalJobCleanMaxIntervalMs);
@@ -130,7 +128,7 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
 		run(); // Restart
 
 		// Get available global intervalMs.
-		return getGlobalJobCleanMaxIntervalMs();
+		return getJobEvictionInternal();
 	}
 
 	/**
@@ -138,7 +136,7 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
 	 * 
 	 * @return
 	 */
-	private String getCleanupFinalizerLockName() {
+	private String getDistributedLockName() {
 		return environment.getRequiredProperty("spring.application.name") + "." + TimeoutJobsEvictor.class.getSimpleName();
 	}
 
@@ -147,11 +145,11 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
 	 * 
 	 * @return
 	 */
-	private Long getGlobalJobCleanMaxIntervalMs() {
+	private Long getJobEvictionInternal() {
 		Long maxInternalMs = jedisService.getObjectT(KEY_FINALIZER_INTERVALMS, Long.class);
 		return nonNull(maxInternalMs) ? maxInternalMs : config.getBuild().getJobCleanMaxIntervalMs();
 	}
 
-	final public static long DEFAULT_MIN_WATCH_MS = 2_000L;
+	public static final long DEFAULT_MIN_WATCH_MS = 2_000L;
 
 }

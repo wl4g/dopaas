@@ -57,10 +57,6 @@ import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.erm.DockerRepository;
-import com.wl4g.devops.dao.erm.AppClusterDao;
-import com.wl4g.devops.dao.erm.AppEnvironmentDao;
-import com.wl4g.devops.dao.erm.AppInstanceDao;
-import com.wl4g.devops.dao.erm.DockerRepositoryDao;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.common.bean.ContactChannel;
 
@@ -104,9 +100,10 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected NamingPrototypeBeanFactory beanFactory;
 	@Autowired
-	protected PipelineJobExecutor jobExecutor;
-	@Autowired
 	protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifier;
+
+	@Autowired
+	protected PipelineJobExecutor jobExecutor;
 	@Autowired
 	protected FlowManager flowManager;
 
@@ -115,15 +112,20 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected AppClusterDao appClusterDao;
 	@Autowired
-	protected ProjectDao projectDao;
+	protected AppEnvironmentDao appEnvironmentDao;
+	@Autowired
+	protected DockerRepositoryDao dockerRepositoryDao;
 	@Autowired
 	protected ContactDao contactDao;
 
 	@Autowired
+	protected ClusterExtensionDao clusterExtensionDao;
+	@Autowired
+	protected ProjectDao projectDao;
+	@Autowired
 	protected PipelineDao pipelineDao;
 	@Autowired
 	protected PipelineHistoryService pipelineHistoryService;
-
 	@Autowired
 	protected PipelineHistoryInstanceDao pipelineHistoryInstanceDao;
 	@Autowired
@@ -132,12 +134,6 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected PipeStageNotificationDao pipeStepNotificationDao;
 	@Autowired
 	protected PipeStageBuildingDao pipeStepBuildingDao;
-	@Autowired
-	protected AppEnvironmentDao appEnvironmentDao;
-	@Autowired
-	protected DockerRepositoryDao dockerRepositoryDao;
-	@Autowired
-	protected ClusterExtensionDao clusterExtensionDao;
 
 	@Override
 	public void runPipeline(RunParameter param, PipelineModel pipelineModel) throws Exception {

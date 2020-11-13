@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.ci.OrchestrationHistoryDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.OrchestrationHistory">
+<mapper namespace="com.wl4g.devops.ci.dao.OrchestrationHistoryDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.OrchestrationHistory">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="run_id" property="runId" jdbcType="VARCHAR" />
 		<result column="status" property="status" jdbcType="INTEGER" />
@@ -32,7 +32,7 @@
 		delete from ci_orchestration_history
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.OrchestrationHistory">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.OrchestrationHistory">
 		insert into ci_orchestration_history (id, run_id, status,
 		info, create_date, create_by,
 		update_date, update_by, organization_code, cost_time
@@ -42,7 +42,7 @@
 		#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR}, #{costTime,jdbcType=TIMESTAMP}
 		)
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.OrchestrationHistory">
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.OrchestrationHistory">
 		insert into ci_orchestration_history
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -109,7 +109,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.OrchestrationHistory">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.OrchestrationHistory">
 		update ci_orchestration_history
 		<set>
 			<if test="runId != null">
@@ -142,7 +142,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.OrchestrationHistory">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.OrchestrationHistory">
 		update ci_orchestration_history
 		set run_id = #{runId,jdbcType=VARCHAR},
 		status = #{status,jdbcType=INTEGER},

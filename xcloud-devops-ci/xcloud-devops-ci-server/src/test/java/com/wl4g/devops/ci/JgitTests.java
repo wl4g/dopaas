@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.core;
+package com.wl4g.devops.ci;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.*;

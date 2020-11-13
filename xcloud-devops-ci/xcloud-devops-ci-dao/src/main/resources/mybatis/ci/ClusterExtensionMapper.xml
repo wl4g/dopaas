@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.ci.ClusterExtensionDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.ClusterExtension">
+<mapper namespace="com.wl4g.devops.ci.dao.ClusterExtensionDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.ClusterExtension">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
 		<result column="default_env" property="defaultEnv" jdbcType="VARCHAR" />
@@ -17,7 +17,6 @@
 	<sql id="Base_Column_List_e">
 		e.id, e.default_env, e.default_branch
 	</sql>
-
 
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
@@ -47,13 +46,13 @@
 		delete from ci_cluster_extension
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.ClusterExtension">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.ClusterExtension">
 		insert into ci_cluster_extension (id, cluster_id, default_env,
 		default_branch)
 		values (#{id,jdbcType=BIGINT}, #{clusterId,jdbcType=BIGINT}, #{defaultEnv,jdbcType=VARCHAR},
 		#{defaultBranch,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.ClusterExtension">
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.ClusterExtension">
 		insert into ci_cluster_extension
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -84,7 +83,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.ClusterExtension">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.ClusterExtension">
 		update ci_cluster_extension
 		<set>
 			<if test="clusterId != null">
@@ -99,7 +98,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.ClusterExtension">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.ClusterExtension">
 		update ci_cluster_extension
 		set cluster_id = #{clusterId,jdbcType=BIGINT},
 		default_env = #{defaultEnv,jdbcType=VARCHAR},

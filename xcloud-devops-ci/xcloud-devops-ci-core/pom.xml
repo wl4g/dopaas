@@ -25,6 +25,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-vcs-operator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-client</artifactId>
 		</dependency>
 		<dependency>
@@ -38,10 +42,6 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-shell-springboot</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-vcs-operator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>

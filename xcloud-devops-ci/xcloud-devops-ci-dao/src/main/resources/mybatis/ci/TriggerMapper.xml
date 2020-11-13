@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.ci.TriggerDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.Trigger">
+<mapper namespace="com.wl4g.devops.ci.dao.TriggerDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Trigger">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
@@ -32,7 +32,7 @@
 		delete from ci_trigger
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.Trigger">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Trigger">
 		insert into ci_trigger (id, name, organization_code, cluster_id,
 		task_id, type, cron,
 		sha, remark, enable,
@@ -44,7 +44,7 @@
 		#{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
 		#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.Trigger" useGeneratedKeys="true"
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Trigger" useGeneratedKeys="true"
 		keyProperty="id">
 		insert into ci_trigger
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -142,7 +142,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.Trigger">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Trigger">
 		update ci_trigger
 		<set>
 			<if test="name != null">
@@ -190,7 +190,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.Trigger">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Trigger">
 		update ci_trigger
 		set name = #{name,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},

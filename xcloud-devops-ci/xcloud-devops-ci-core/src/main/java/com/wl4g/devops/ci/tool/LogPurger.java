@@ -15,17 +15,19 @@
  */
 package com.wl4g.devops.ci.tool;
 
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.ci.config.CiProperties;
-import com.wl4g.devops.dao.erm.LogPipelineCleanerDao;
+import com.wl4g.devops.ci.service.LogCleanService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import static com.wl4g.components.common.lang.TypeConverts.safeLongToInt;
+import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
@@ -35,15 +37,15 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * @version v1.0.0 2019-12-11
  * @since
  */
-public class PipelineLogPurger extends ApplicationTaskRunner<RunnerProperties> {
+public class LogPurger extends ApplicationTaskRunner<RunnerProperties> {
 
 	@Autowired
-	protected CiProperties config;
+	private CiProperties config;
 
 	@Autowired
-	private LogPipelineCleanerDao cleanerDao;
+	private LogCleanService cleanService;
 
-	public PipelineLogPurger() {
+	public LogPurger() {
 		super(new RunnerProperties(1));
 	}
 
@@ -58,57 +60,39 @@ public class PipelineLogPurger extends ApplicationTaskRunner<RunnerProperties> {
 
 	@Override
 	public void run() {
-		Date endTime = getDiscardEndTime(config.getLogCleaner().getPipeHistoryRetainSec());
-		cleanCiBuiltHistoryLog(endTime);
-
-		// cleanJobStatusTraceLog(endTime);
-		// cleanJobExecutionLog(endTime);
-		// cleanUmcAlarmLog(endTime);
+		cleanupBuiltHistoryLogs(null);
 	}
 
-	private void cleanCiBuiltHistoryLog(Date cleanEndTime) {
-		try {
-			cleanerDao.cleanCiTaskHistorySublist(cleanEndTime);
-			cleanerDao.cleanCiTaskHistory(cleanEndTime);
-		} catch (Exception e) {
-			log.warn("Failed to cleanup discard ciBuiltHistoryLog. caused by: {}", e.getMessage());
+	/**
+	 * Cleanup CI/CD built history logs.
+	 * 
+	 * @param cleanStopTime
+	 */
+	public void cleanupBuiltHistoryLogs(@Nullable Long cleanStopTime) {
+		if (isNull(cleanStopTime)) { // External priority
+			cleanStopTime = getDiscardStopTime(config.getLogCleaner().getPipeHistoryRetainSec());
 		}
+		log.info("Cleanup built history logs of stopTime: {}", cleanStopTime);
+
+		try {
+			cleanService.cleanOrchestrationHistory(cleanStopTime);
+			cleanService.cleanPipelineHistory(cleanStopTime);
+		} catch (Exception e) {
+			log.warn("Failed to cleanup discard CI built history logs. caused by: {}", e.getMessage());
+		}
+
 	}
 
-	// private void cleanJobStatusTraceLog(Date cleanEndTime) {
-	// Date currentTimeBySecound = getDiscardEndTime(DEFAULT_DISCARD_SECONDS);
-	// try {
-	// cleanerDao.cleanJobStatusTraceLog(currentTimeBySecound);
-	// } catch (Exception e) {
-	// log.warn("Failed to cleanup discard jobStatusTraceLog. caused by: {}",
-	// e.getMessage());
-	// }
-	// }
-	//
-	// private void cleanJobExecutionLog(Date cleanEndTime) {
-	// try {
-	// cleanerDao.cleanJobExecutionLog(cleanEndTime);
-	// } catch (Exception e) {
-	// log.warn("Failed to cleanup discard jobExecutionLog. caused by: {}",
-	// e.getMessage());
-	// }
-	// }
-	//
-	// private void cleanUmcAlarmLog(Date cleanEndTime) {
-	// try {
-	// cleanerDao.cleanUmcAlarmRecordSublist(cleanEndTime);
-	// cleanerDao.cleanUmcAlarmRecord(cleanEndTime);
-	// } catch (Exception e) {
-	// log.warn("Failed to cleanup discard UmcAlarmLog. caused by: {}",
-	// e.getMessage());
-	// }
-	// }
-
-	private static Date getDiscardEndTime(long retainTime) {
-		retainTime = -retainTime;
+	/**
+	 * Gets discard history logs end time.
+	 * 
+	 * @param retainTime
+	 * @return
+	 */
+	private static final long getDiscardStopTime(long retainTime) {
 		Calendar cale = Calendar.getInstance();
-		cale.add(Calendar.SECOND, safeLongToInt(retainTime));
-		return cale.getTime();
+		cale.add(Calendar.SECOND, safeLongToInt(-retainTime));
+		return cale.getTimeInMillis();
 	}
 
 	/**
