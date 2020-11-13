@@ -18,17 +18,28 @@ package com.wl4g.devops.ci.service;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.common.bean.ci.ClusterExtension;
 import com.wl4g.devops.common.bean.ci.PipeStageBuilding;
+import com.wl4g.devops.common.bean.ci.PipeStageInstanceCommand;
 import com.wl4g.devops.common.bean.ci.Pipeline;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 /**
+ * {@link PipelineService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2020-04-27 15:06:00
+ * @version v1.0 2020-04-27
+ * @sine v1.0
+ * @see
  */
 public interface PipelineService {
 
 	PageModel<Pipeline> list(PageModel<Pipeline> pm, String pipeName, String providerKind, String environment);
+
+	List<Pipeline> findList(List<String> organizationCodes, Long id, String pipeName, @Param("providerKind") String providerKind,
+			String environment, String clusterName);
 
 	void save(Pipeline pipeline);
 
@@ -38,12 +49,18 @@ public interface PipelineService {
 
 	List<Pipeline> getByClusterId(Long clusterId);
 
-	PipeStageBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception;
+	PipeStageBuilding getSimplePipeStageBuilding(Long pipeId);
+
+	PipeStageBuilding getPipeStageBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception;
 
 	List<Pipeline> getForSelect(String environment);
 
 	PageModel<ClusterExtension> clusterExtensionList(PageModel<ClusterExtension> pm, String clusterName);
 
 	void saveClusterExtension(ClusterExtension clusterExtension);
+
+	ClusterExtension getClusterExtensionByName(String clusterName);
+
+	PipeStageInstanceCommand getPipeInstanceById(Long pipeId);
 
 }

@@ -17,16 +17,19 @@ package com.wl4g.devops.erm.service;
 
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * 应用组管理Service接口
+ * Application cluster information service of {@link AppClusterService}
  * 
- * @author sut
- * @date 2018年9月20日
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-11-13
+ * @sine v1.0
+ * @see
  */
 public interface AppClusterService {
 
@@ -41,5 +44,7 @@ public interface AppClusterService {
 	AppCluster detail(Long clusterId);
 
 	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId, String envType);
+
+	AppEnvironment getAppClusterEnvironment(Long clusterId, String envType);
 
 }

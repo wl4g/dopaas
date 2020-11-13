@@ -34,7 +34,7 @@ public interface AppInstanceService {
 
 	void del(Long clusterId);
 
-	AppInstance detail(Long clusterId);
+	AppInstance detail(Long instanceId);
 
 	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId, String envType);
 

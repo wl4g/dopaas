@@ -54,6 +54,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
@@ -61,8 +63,12 @@ import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * @author vjay
- * @date 2020-04-27 15:08:00
+ * {@link PipelineServiceImpl}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-04-27
+ * @sine v1.0
+ * @see
  */
 @Service
 public class PipelineServiceImpl implements PipelineService {
@@ -74,7 +80,7 @@ public class PipelineServiceImpl implements PipelineService {
 	private PipelineInstanceDao pipelineInstanceDao;
 
 	@Autowired
-	private PipeStageBuildingDao pipeStepBuildingDao;
+	private PipeStageBuildingDao pipeStageBuildingDao;
 
 	@Autowired
 	private PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
@@ -106,13 +112,18 @@ public class PipelineServiceImpl implements PipelineService {
 	@Override
 	public PageModel<Pipeline> list(PageModel<Pipeline> pm, String pipeName, String providerKind, String environment) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		List<Pipeline> list = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
-		for (Pipeline pipeline : list) {
-			List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao.selectByPipeId(pipeline.getId());
-			pipeline.setPipeStepBuildingProjects(pipeStepBuildingProjects);
+		List<Pipeline> pipes = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
+		for (Pipeline p : safeList(pipes)) {
+			p.setPipeStepBuildingProjects(pipeStepBuildingProjectDao.selectByPipeId(p.getId()));
 		}
-		pm.setRecords(list);
+		pm.setRecords(pipes);
 		return pm;
+	}
+
+	@Override
+	public List<Pipeline> findList(List<String> organizationCodes, Long id, String pipeName, String providerKind,
+			String environment, String clusterName) {
+		return pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
 	}
 
 	@Override
@@ -141,7 +152,7 @@ public class PipelineServiceImpl implements PipelineService {
 		pipeline.setInstanceIds(instanceIds);
 
 		// Pipeline Building
-		PipeStageBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(id);
+		PipeStageBuilding pipeStepBuilding = pipeStageBuildingDao.selectByPipeId(id);
 		pipeline.setPipeStepBuilding(pipeStepBuilding);
 
 		// Pipeline Pcm
@@ -212,7 +223,7 @@ public class PipelineServiceImpl implements PipelineService {
 		if (nonNull(pipeStepBuilding)) {
 			pipeStepBuilding.preInsert();
 			pipeStepBuilding.setPipeId(pipeline.getId());
-			pipeStepBuildingDao.insertSelective(pipeStepBuilding);
+			pipeStageBuildingDao.insertSelective(pipeStepBuilding);
 			// Insert PipeStepBuildingProject
 			List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding()
 					.getPipeStepBuildingProjects();
@@ -289,12 +300,12 @@ public class PipelineServiceImpl implements PipelineService {
 		}
 		// Update PipeStepBuilding
 		pipeStepBuildingProjectDao.deleteByPipeId(pipeline.getId());
-		pipeStepBuildingDao.deleteByPipeId(pipeline.getId());
+		pipeStageBuildingDao.deleteByPipeId(pipeline.getId());
 		PipeStageBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
 		if (nonNull(pipeStepBuilding)) {
 			pipeStepBuilding.preInsert();
 			pipeStepBuilding.setPipeId(pipeline.getId());
-			pipeStepBuildingDao.insertSelective(pipeStepBuilding);
+			pipeStageBuildingDao.insertSelective(pipeStepBuilding);
 			// Update PipeStepBuildingProject
 			List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding()
 					.getPipeStepBuildingProjects();
@@ -339,10 +350,15 @@ public class PipelineServiceImpl implements PipelineService {
 	}
 
 	@Override
-	public PipeStageBuilding getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
-		Project project = projectDao.getByAppClusterId(clusterId);
-		Assert2.notNullOf(project, "project");
-		PipeStageBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeId);
+	public PipeStageBuilding getSimplePipeStageBuilding(Long pipeId) {
+		return pipeStageBuildingDao.selectByPipeId(pipeId);
+	}
+
+	@Override
+	public PipeStageBuilding getPipeStageBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
+		Project project = notNullOf(projectDao.getByAppClusterId(clusterId), "project");
+
+		PipeStageBuilding pipeStepBuilding = pipeStageBuildingDao.selectByPipeId(pipeId);
 		if (Objects.isNull(pipeStepBuilding)) {
 			pipeStepBuilding = new PipeStageBuilding();
 			pipeStepBuilding.setPipeId(pipeId);
@@ -350,11 +366,13 @@ public class PipelineServiceImpl implements PipelineService {
 		if (nonNull(refType)) {
 			pipeStepBuilding.setRefType(refType);
 		}
-		List<PipeStageBuildingProject> pipeStepBuildingProjectsFromdb = pipeStepBuildingProjectDao.selectByPipeId(pipeId);
+
+		List<PipeStageBuildingProject> pipeStageBuildingProjects1 = pipeStepBuildingProjectDao.selectByPipeId(pipeId);
 		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);
-		List<PipeStageBuildingProject> pipeStepBuildingProjects = new ArrayList<>();
+
+		List<PipeStageBuildingProject> pipeStageBuildingProjects2 = new ArrayList<>();
 		for (Dependency dependency : dependencys) {
-			PipeStageBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStepBuildingProjectsFromdb,
+			PipeStageBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStageBuildingProjects1,
 					dependency.getDependentId());
 			if (isNull(pipeStepBuildingProject)) {
 				pipeStepBuildingProject = new PipeStageBuildingProject();
@@ -367,22 +385,22 @@ public class PipelineServiceImpl implements PipelineService {
 			pipeStepBuildingProject.setProjectName(project1.getProjectName());
 			List<String> branchs = projectService.getBranchsByProjectId(pipeStepBuildingProject.getProjectId(), refType);
 			pipeStepBuildingProject.setBranchs(branchs);
-			pipeStepBuildingProjects.add(pipeStepBuildingProject);
+			pipeStageBuildingProjects2.add(pipeStepBuildingProject);
 		}
 
 		// self
-		PipeStageBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStepBuildingProjectsFromdb,
+		PipeStageBuildingProject pipeStageBuildingProject = getPipeStepBuildingProject(pipeStageBuildingProjects1,
 				project.getId());
-		if (isNull(pipeStepBuildingProject)) {
-			pipeStepBuildingProject = new PipeStageBuildingProject();
+		if (isNull(pipeStageBuildingProject)) {
+			pipeStageBuildingProject = new PipeStageBuildingProject();
 		}
-		pipeStepBuildingProject.setProjectId(project.getId());
-		pipeStepBuildingProject.setProjectName(project.getProjectName());
-		List<String> branchs = projectService.getBranchsByProjectId(pipeStepBuildingProject.getProjectId(), refType);
-		pipeStepBuildingProject.setBranchs(branchs);
-		pipeStepBuildingProjects.add(pipeStepBuildingProject);
+		pipeStageBuildingProject.setProjectId(project.getId());
+		pipeStageBuildingProject.setProjectName(project.getProjectName());
+		List<String> branchs = projectService.getBranchsByProjectId(pipeStageBuildingProject.getProjectId(), refType);
+		pipeStageBuildingProject.setBranchs(branchs);
+		pipeStageBuildingProjects2.add(pipeStageBuildingProject);
 
-		pipeStepBuilding.setPipeStepBuildingProjects(pipeStepBuildingProjects);
+		pipeStepBuilding.setPipeStepBuildingProjects(pipeStageBuildingProjects2);
 		return pipeStepBuilding;
 	}
 
@@ -423,4 +441,15 @@ public class PipelineServiceImpl implements PipelineService {
 		}
 		return null;
 	}
+
+	@Override
+	public ClusterExtension getClusterExtensionByName(String clusterName) {
+		return clusterExtensionDao.selectByClusterName(clusterName);
+	}
+
+	@Override
+	public PipeStageInstanceCommand getPipeInstanceById(Long pipeId) {
+		return pipeStepInstanceCommandDao.selectByPipeId(pipeId);
+	}
+
 }

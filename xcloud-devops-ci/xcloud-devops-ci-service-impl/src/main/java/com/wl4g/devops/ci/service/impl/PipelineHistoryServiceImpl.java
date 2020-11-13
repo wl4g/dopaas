@@ -57,7 +57,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Autowired
 	private PipelineHistoryDao pipelineHistoryDao;
 	@Autowired
-	private PipelineHistoryInstanceDao pipelineHistoryInstanceDao;
+	private PipelineHistoryInstanceDao pipeHistoryInstanceDao;
 	@Autowired
 	protected DestroableProcessManager pm;
 	@Autowired
@@ -163,7 +163,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 				pipelineHistoryInstance.setStatus(TASK_STATUS_CREATE);
 				pipelineHistoryInstance.setInstanceId(pipelineInstance.getInstanceId());
 				pipelineHistoryInstance.setPipeHistoryId(pipeHisId);
-				pipelineHistoryInstanceDao.insertSelective(pipelineHistoryInstance);
+				pipeHistoryInstanceDao.insertSelective(pipelineHistoryInstance);
 			}
 		}
 	}
@@ -219,15 +219,14 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 
 	@Override
 	public List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Long pipeId) {
-		return pipelineHistoryInstanceDao.selectByPipeHistoryId(pipeId);
+		return pipeHistoryInstanceDao.selectByPipeHistoryId(pipeId);
 	}
 
 	@Override
 	public PipelineHistory detail(Long pipeId) {
-		PipelineHistory pipelineHistory = pipelineHistoryDao.selectByPrimaryKey(pipeId);
-		List<PipelineHistoryInstance> pipelineHistoryInstances = pipelineHistoryInstanceDao.selectByPipeHistoryId(pipeId);
-		pipelineHistory.setPipelineHistoryInstances(pipelineHistoryInstances);
-		return pipelineHistory;
+		PipelineHistory pipeHistory = pipelineHistoryDao.selectByPrimaryKey(pipeId);
+		pipeHistory.setPipelineHistoryInstances(pipeHistoryInstanceDao.selectByPipeHistoryId(pipeId));
+		return pipeHistory;
 	}
 
 	@Override
@@ -241,7 +240,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		pipelineHistoryInstance.preUpdate();
 		pipelineHistoryInstance.setId(pipeInstanceId);
 		pipelineHistoryInstance.setStatus(status);
-		pipelineHistoryInstanceDao.updateByPrimaryKeySelective(pipelineHistoryInstance);
+		pipeHistoryInstanceDao.updateByPrimaryKeySelective(pipelineHistoryInstance);
 	}
 
 }

@@ -22,6 +22,7 @@ import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import java.util.List;
 
 public interface AppEnvironmentDao {
+
 	int deleteByPrimaryKey(Long id);
 
 	int deleteByClusterId(Long cluster);

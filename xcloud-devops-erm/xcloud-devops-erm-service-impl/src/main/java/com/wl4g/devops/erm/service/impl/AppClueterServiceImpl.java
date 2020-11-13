@@ -179,4 +179,9 @@ public class AppClueterServiceImpl implements AppClusterService {
 		return appInstanceDao.selectByClusterIdAndEnvType(clusterId, envType);
 	}
 
+	@Override
+	public AppEnvironment getAppClusterEnvironment(Long clusterId, String envType) {
+		return appEnvironmentDao.selectByClusterIdAndEnv(clusterId, envType);
+	}
+
 }
