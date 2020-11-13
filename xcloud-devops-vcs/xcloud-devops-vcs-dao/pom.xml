@@ -9,7 +9,6 @@
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-devops-vcs</artifactId>
 		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
