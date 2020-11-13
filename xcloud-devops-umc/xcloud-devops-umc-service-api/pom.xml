@@ -17,10 +17,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-umc-service-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-umc-alarm</artifactId>
 		</dependency>
 		<!-- Spring Boot -->

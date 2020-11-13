@@ -18,11 +18,6 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-ci-service-api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-ci-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
