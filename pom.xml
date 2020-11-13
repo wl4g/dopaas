@@ -61,6 +61,7 @@
 		<!-- <module>xcloud-devops-doc</module> -->
 		<module>xcloud-devops-vcs</module>
 		<module>xcloud-devops-dts</module>
+		<module>xcloud-devops-all-starter</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

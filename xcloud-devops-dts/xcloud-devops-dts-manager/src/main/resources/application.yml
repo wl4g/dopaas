@@ -33,4 +33,6 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.devops.dts.codegen.dao: DEBUG
+      wl4g.devops.dts:
+        dao: DEBUG
+        codegen.dao: DEBUG
