@@ -22,7 +22,7 @@ import java.io.File;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipal;
+import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipal;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;

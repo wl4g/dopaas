@@ -54,8 +54,8 @@ import java.util.*;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.erm.util.SshkeyUtils.encryptSshkeyToHex;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**

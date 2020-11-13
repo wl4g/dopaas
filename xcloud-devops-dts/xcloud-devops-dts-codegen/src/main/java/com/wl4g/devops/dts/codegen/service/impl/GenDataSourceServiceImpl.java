@@ -35,7 +35,7 @@ import java.util.List;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 

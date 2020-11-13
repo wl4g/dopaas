@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.DnsPrivateZoneDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.DnsPrivateZone" >
+<mapper namespace="com.wl4g.devops.erm.dao.DnsPrivateZoneDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="zone" property="zone" jdbcType="VARCHAR" />
     <result column="dns_server_id" property="dnsServerId" jdbcType="INTEGER" />
@@ -35,7 +35,7 @@
     delete from erm_dns_private_zone
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateZone" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
     insert into erm_dns_private_zone (id, zone, dns_server_id, 
       status, register_date, due_date, 
       remark, create_by, create_date, 
@@ -47,7 +47,7 @@
       #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateZone" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
     insert into erm_dns_private_zone
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -126,7 +126,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateZone" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
     update erm_dns_private_zone
     <set >
       <if test="zone != null" >
@@ -165,7 +165,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateZone" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
     update erm_dns_private_zone
     set zone = #{zone,jdbcType=VARCHAR},
       dns_server_id = #{dnsServerId,jdbcType=BIGINT},

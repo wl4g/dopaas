@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.erm.DockerClusterDao">
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.DockerCluster">
+<mapper namespace="com.wl4g.devops.erm.dao.DockerClusterDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DockerCluster">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
@@ -25,7 +25,7 @@
     delete from erm_docker_cluster
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.DockerCluster">
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DockerCluster">
     insert into erm_docker_cluster (id, name, organization_code, master_addr,
       create_date, create_by, update_date, 
       update_by, del_flag)
@@ -33,7 +33,7 @@
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.DockerCluster">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DockerCluster">
     insert into erm_docker_cluster
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -94,7 +94,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.DockerCluster">
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DockerCluster">
     update erm_docker_cluster
     <set>
       <if test="name != null">
@@ -124,7 +124,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.DockerCluster">
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DockerCluster">
     update erm_docker_cluster
     set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},

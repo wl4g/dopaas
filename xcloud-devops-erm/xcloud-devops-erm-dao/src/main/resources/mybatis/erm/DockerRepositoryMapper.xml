@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.DockerRepositoryDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.DockerRepository" >
+<mapper namespace="com.wl4g.devops.erm.dao.DockerRepositoryDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DockerRepository" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="registry_address" property="registryAddress" jdbcType="VARCHAR" />
@@ -28,7 +28,7 @@
     delete from erm_docker_repository
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.DockerRepository" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DockerRepository" >
     insert into erm_docker_repository (id, name, registry_address, organization_code,
       auth_config, remark, create_date, 
       create_by, update_date, update_by, 
@@ -38,7 +38,7 @@
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.DockerRepository" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DockerRepository" >
     insert into erm_docker_repository
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -111,7 +111,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.DockerRepository" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DockerRepository" >
     update erm_docker_repository
     <set >
       <if test="name != null" >
@@ -147,7 +147,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.DockerRepository" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DockerRepository" >
     update erm_docker_repository
     set name = #{name,jdbcType=VARCHAR},
       registry_address = #{registryAddress,jdbcType=VARCHAR},

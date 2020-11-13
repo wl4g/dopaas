@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.DnsPrivateBlacklistDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.DnsPrivateBlacklist" >
+<mapper namespace="com.wl4g.devops.erm.dao.DnsPrivateBlacklistDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="expression" property="expression" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="VARCHAR" />
@@ -30,7 +30,7 @@
     delete from erm_dns_private_blacklist
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateBlacklist" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist" >
     insert into erm_dns_private_blacklist (id, expression, type, 
       enable, remark, create_date, 
       create_by, del_flag)
@@ -38,7 +38,7 @@
       #{enable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateBlacklist" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist" >
     insert into erm_dns_private_blacklist
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -93,7 +93,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateBlacklist" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist" >
     update erm_dns_private_blacklist
     <set >
       <if test="expression != null" >
@@ -120,7 +120,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateBlacklist" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist" >
     update erm_dns_private_blacklist
     set expression = #{expression,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},

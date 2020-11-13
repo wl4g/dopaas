@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.doc.FileLabelDao">
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.doc.FileLabel">
+<mapper namespace="com.wl4g.devops.doc.dao.FileLabelDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.doc.FileLabel">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="label_id" jdbcType="INTEGER" property="labelId" />
     <result column="file_id" jdbcType="INTEGER" property="fileId" />
@@ -26,7 +26,7 @@
     where file_id = #{fileId,jdbcType=BIGINT}
   </delete>
 
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.doc.FileLabel">
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.doc.FileLabel">
     insert into doc_file_label (id, label_id, file_id
       )
     values (#{id,jdbcType=BIGINT}, #{labelId,jdbcType=BIGINT}, #{fileId,jdbcType=BIGINT}
@@ -41,7 +41,7 @@
     </foreach>
   </insert>
 
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.doc.FileLabel" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.doc.FileLabel" useGeneratedKeys="true" keyProperty="id">
     insert into doc_file_label
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -66,7 +66,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.doc.FileLabel">
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.doc.FileLabel">
     update doc_file_label
     <set>
       <if test="labelId != null">
@@ -78,7 +78,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.doc.FileLabel">
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.doc.FileLabel">
     update doc_file_label
     set label_id = #{labelId,jdbcType=BIGINT},
       file_id = #{fileId,jdbcType=BIGINT}

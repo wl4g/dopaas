@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.AppInstanceDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.AppInstance" >
+<mapper namespace="com.wl4g.devops.erm.dao.AppInstanceDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppInstance" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
@@ -25,7 +25,7 @@
     <result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
     <result column="deploy_type" property="deployType" jdbcType="INTEGER" />
 
-    <association property="dockerCluster" javaType="com.wl4g.components.core.bean.erm.DockerCluster">
+    <association property="dockerCluster" javaType="com.wl4g.devops.common.bean.erm.DockerCluster">
       <id column="d.id" jdbcType="INTEGER" property="id" />
       <result column="d.name" jdbcType="VARCHAR" property="name" />
       <result column="d.organization_code" jdbcType="VARCHAR" property="organizationCode" />
@@ -36,9 +36,7 @@
       <result column="d.update_by" jdbcType="VARCHAR" property="updateBy" />
       <result column="d.del_flag" jdbcType="INTEGER" property="delFlag" />
     </association>
-
   </resultMap>
-
 
   <sql id="Base_Column_List" >
     id, name, organization_code, cluster_id, version_id, host_id, k8s_id, docker_id, coss_ref_bucket, env_type, enable, remark,
@@ -116,7 +114,7 @@
     delete from erm_app_instance
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.AppInstance" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
     insert into erm_app_instance (id, name,organization_code, cluster_id, version_id,
       host_id, k8s_id, docker_id, coss_ref_bucket, env_type, enable,
       remark,
@@ -128,7 +126,7 @@
       #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT},
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.AppInstance" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
     insert into erm_app_instance
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -237,7 +235,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.AppInstance" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
     update erm_app_instance
     <set >
       <if test="name != null" >
@@ -291,7 +289,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.AppInstance" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
     update erm_app_instance
     set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},

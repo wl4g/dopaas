@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.wl4g.devops.ci.pipeline.flow.FlowManager.*;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay

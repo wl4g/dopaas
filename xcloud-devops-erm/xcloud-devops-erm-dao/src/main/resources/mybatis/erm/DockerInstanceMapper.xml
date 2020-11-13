@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.erm.DockerInstanceDao">
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.DockerInstance">
+<mapper namespace="com.wl4g.devops.erm.dao.DockerInstanceDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DockerInstance">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="docker_id" jdbcType="INTEGER" property="dockerId" />
     <result column="host_id" jdbcType="INTEGER" property="hostId" />
@@ -33,7 +33,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.DockerInstance">
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DockerInstance">
     insert into erm_docker_instance (id, docker_id, host_id
       )
     values (#{id,jdbcType=BIGINT}, #{dockerId,jdbcType=BIGINT}, #{hostId,jdbcType=BIGINT}
@@ -48,7 +48,7 @@
     </foreach>
   </insert>
 
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.DockerInstance">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DockerInstance">
     insert into erm_docker_instance
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -73,7 +73,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.DockerInstance">
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DockerInstance">
     update erm_docker_instance
     <set>
       <if test="dockerId != null">
@@ -85,7 +85,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.DockerInstance">
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DockerInstance">
     update erm_docker_instance
     set docker_id = #{dockerId,jdbcType=BIGINT},
       host_id = #{hostId,jdbcType=BIGINT}

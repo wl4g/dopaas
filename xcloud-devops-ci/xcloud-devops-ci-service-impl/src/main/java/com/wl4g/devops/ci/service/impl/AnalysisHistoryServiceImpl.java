@@ -20,7 +20,7 @@ import com.wl4g.devops.ci.dao.AnalysisHistoryDao;
 import com.wl4g.devops.ci.service.AnalysisHistoryService;
 import com.wl4g.devops.common.bean.ci.AnalysisHistory;
 
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

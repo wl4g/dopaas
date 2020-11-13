@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.doc.FileChangesDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.doc.FileChanges">
+<mapper namespace="com.wl4g.devops.doc.dao.FileChangesDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.doc.FileChanges">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
 		<result column="doc_code" jdbcType="VARCHAR" property="docCode" />
@@ -76,7 +76,7 @@
 		delete from doc_file_changes
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.doc.FileChanges">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.doc.FileChanges">
 		insert into doc_file_changes (id, name, doc_code,
 		type, action, lang,
 		content, sha,
@@ -94,7 +94,7 @@
 		#{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}
 		)
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.doc.FileChanges" useGeneratedKeys="true"
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.doc.FileChanges" useGeneratedKeys="true"
 		keyProperty="id">
 		insert into doc_file_changes
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -192,7 +192,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.doc.FileChanges">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.doc.FileChanges">
 		update doc_file_changes
 		<set>
 			<if test="name != null">
@@ -240,7 +240,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.doc.FileChanges">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.doc.FileChanges">
 		update doc_file_changes
 		set name = #{name,jdbcType=VARCHAR},
 		doc_code =

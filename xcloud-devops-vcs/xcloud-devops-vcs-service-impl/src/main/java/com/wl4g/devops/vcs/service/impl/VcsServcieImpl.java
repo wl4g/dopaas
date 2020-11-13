@@ -41,8 +41,8 @@ import java.util.regex.Pattern;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.stream.Collectors.toList;
 
 /**

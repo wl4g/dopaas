@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.AppClusterDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.AppCluster">
+<mapper namespace="com.wl4g.devops.erm.dao.AppClusterDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppCluster">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
@@ -16,8 +16,7 @@
 		<result column="update_by" property="updateBy" jdbcType="INTEGER" />
 		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
 		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
-
-		<association property="ssh" javaType="com.wl4g.components.core.bean.erm.SshBean">
+		<association property="ssh" javaType="com.wl4g.devops.common.bean.erm.SshBean">
 			<id column="s.id" jdbcType="INTEGER" property="id" />
 			<result column="s.name" jdbcType="VARCHAR" property="name" />
 			<result column="s.username" jdbcType="VARCHAR" property="username" />
@@ -63,7 +62,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.erm.AppCluster">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppCluster">
 		insert into erm_app_cluster (id, name, organization_code, endpoint,
 		type, enable, ssh_id,
 		deploy_type, remark,
@@ -79,7 +78,7 @@
 		#{delFlag,jdbcType=INTEGER})
 	</insert>
 
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.AppCluster" useGeneratedKeys="true"
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" useGeneratedKeys="true"
 		keyProperty="id">
 		insert into erm_app_cluster
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -171,7 +170,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.AppCluster">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppCluster">
 		update erm_app_cluster
 		<set>
 			<if test="name != null">
@@ -216,7 +215,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.AppCluster">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppCluster">
 		update erm_app_cluster
 		set name = #{name,jdbcType=VARCHAR},
 		organization_code

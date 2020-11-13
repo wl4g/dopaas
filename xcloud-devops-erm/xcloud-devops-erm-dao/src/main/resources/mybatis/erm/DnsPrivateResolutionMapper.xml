@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.DnsPrivateResolutionDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.erm.DnsPrivateResolution" >
+<mapper namespace="com.wl4g.devops.erm.dao.DnsPrivateResolutionDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DnsPrivateResolution" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="host" property="host" jdbcType="VARCHAR" />
     <result column="resolve_type" property="resolveType" jdbcType="VARCHAR" />
@@ -44,7 +44,7 @@
     delete from erm_dns_private_resolution
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateResolution" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateResolution" >
     insert into erm_dns_private_resolution (id, host, resolve_type, 
       line_isp, value, ttl, domain_id,
       priority, status, remark, 
@@ -56,7 +56,7 @@
       #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateResolution" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateResolution" >
     insert into erm_dns_private_resolution
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -153,7 +153,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateResolution" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateResolution" >
     update erm_dns_private_resolution
     <set >
       <if test="host != null" >
@@ -201,7 +201,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.erm.DnsPrivateResolution" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateResolution" >
     update erm_dns_private_resolution
     set host = #{host,jdbcType=VARCHAR},
       resolve_type = #{resolveType,jdbcType=VARCHAR},
