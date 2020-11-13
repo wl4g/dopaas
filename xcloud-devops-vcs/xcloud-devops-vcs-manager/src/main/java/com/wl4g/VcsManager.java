@@ -23,7 +23,7 @@ import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient
-@MapperScan("com.wl4g.devops.dao.*")
+@MapperScan("com.wl4g.devops.vcs.dao")
 @AutoConfigureComponentsDataSource
 @SpringBootApplication
 public class VcsManager {

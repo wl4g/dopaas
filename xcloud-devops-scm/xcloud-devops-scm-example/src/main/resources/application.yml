@@ -17,7 +17,7 @@ spring:
 mybatis:
   configLocation: mybatis/mybatis-config.xml
   mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.components.core.bean.*,com.wl4g.components.core.bean.*.*
+  typeAliasesPackage: com.wl4g.devops.common.bean.*.*
 
 # Logging configuration.
 logging:

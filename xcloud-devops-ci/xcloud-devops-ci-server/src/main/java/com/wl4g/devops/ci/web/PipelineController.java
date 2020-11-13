@@ -24,7 +24,6 @@ import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.common.bean.ci.ClusterExtension;
-import com.wl4g.devops.common.bean.ci.PipeStageBuilding;
 import com.wl4g.devops.common.bean.ci.Pipeline;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
 
@@ -171,9 +170,7 @@ public class PipelineController extends BaseController {
 	public RespBase<?> getPipeStepBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
 		Assert2.notNullOf(clusterId, "clusterId");
 		RespBase<Object> resp = RespBase.create();
-		PipeStageBuilding pipeStepBuilding = pipelineService.getPipeStepBuilding(clusterId, pipeId, refType);
-		resp.setData(pipeStepBuilding);
-		return resp;
+		return resp.withData(pipelineService.getPipeStageBuilding(clusterId, pipeId, refType));
 	}
 
 	@RequestMapping(value = "/getForSelect")
