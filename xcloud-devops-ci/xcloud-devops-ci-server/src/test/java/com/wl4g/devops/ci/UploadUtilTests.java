@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.core;
+package com.wl4g.devops.ci;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;

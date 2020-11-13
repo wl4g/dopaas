@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.core;
+package com.wl4g.devops.ci;
 
 import com.wl4g.CiServer;
 import com.wl4g.devops.ci.bean.PipelineModel;
+import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
 

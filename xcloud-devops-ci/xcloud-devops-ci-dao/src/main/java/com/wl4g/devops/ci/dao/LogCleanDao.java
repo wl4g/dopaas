@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.dao;
+package com.wl4g.devops.ci.dao;
 
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 
 /**
- * {@link LogPipelineCleanerDao}
+ * {@link LogCleanDao}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
@@ -28,18 +28,10 @@ import java.util.Date;
  * @sine v1.0.0
  * @see
  */
-public interface LogPipelineCleanerDao {
+public interface LogCleanDao {
 
-	int cleanJobStatusTraceLog(@Param("creationTime") Date creationTime);
+	int cleanOrchestrationHistory(@Param("createDate") Date createDate);
 
-	int cleanJobExecutionLog(@Param("startTime") Date startTime);
-
-	int cleanUmcAlarmRecordSublist(@Param("createTime") Date createTime);
-
-	int cleanUmcAlarmRecord(@Param("createTime") Date createTime);
-
-	int cleanCiTaskHistorySublist(@Param("createDate") Date createDate);
-
-	int cleanCiTaskHistory(@Param("createDate") Date createDate);
+	int cleanPipelineHistory(@Param("createDate") Date createDate);
 
 }

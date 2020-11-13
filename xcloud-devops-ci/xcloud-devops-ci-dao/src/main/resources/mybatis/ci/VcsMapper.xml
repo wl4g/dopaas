@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.ci.VcsDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.Vcs">
+<mapper namespace="com.wl4g.devops.ci.dao.VcsDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Vcs">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
@@ -58,7 +58,7 @@
 		delete from ci_vcs
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.Vcs">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Vcs">
 		insert into ci_vcs (id,name,organization_code, provider_kind, auth_type,
 		base_uri, ssh_key_pub, ssh_key,
 		access_token, username, password,
@@ -73,7 +73,7 @@
 		#{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
 		#{updateBy,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.Vcs" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Vcs" useGeneratedKeys="true" keyProperty="id">
 		insert into ci_vcs
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -188,7 +188,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.Vcs">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Vcs">
 		update ci_vcs
 		<set>
 			<if test="name != null">
@@ -245,7 +245,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.Vcs">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Vcs">
 		update ci_vcs
 		set name = #{name,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},

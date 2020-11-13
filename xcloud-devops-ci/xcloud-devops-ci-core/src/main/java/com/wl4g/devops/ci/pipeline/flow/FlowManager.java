@@ -33,7 +33,7 @@ import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.common.bean.ci.OrchestrationHistory;
 import com.wl4g.devops.common.bean.ci.OrchestrationPipeline;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
-import com.wl4g.devops.common.bean.ci.parameter.RunParameter;
+import com.wl4g.devops.common.bean.ci.param.RunParameter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.pipeline.provider;
 
-import com.wl4g.components.core.bean.ci.*;
 import com.wl4g.components.core.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.components.support.cli.command.DestroableCommand;
 import com.wl4g.components.support.cli.command.LocalDestroableCommand;

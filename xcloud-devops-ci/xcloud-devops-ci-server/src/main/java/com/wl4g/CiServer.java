@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableIamClient
 @EnableShellServer
-@MapperScan("com.wl4g.devops.dao.*")
+@MapperScan("com.wl4g.devops.ci.dao")
 @AutoConfigureComponentsDataSource
 @EnableTransactionManagement
 @SpringBootApplication

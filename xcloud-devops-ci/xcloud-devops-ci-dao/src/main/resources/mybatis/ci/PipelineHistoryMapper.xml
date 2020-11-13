@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.ci.PipelineHistoryDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.PipelineHistory">
+<mapper namespace="com.wl4g.devops.ci.dao.PipelineHistoryDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.PipelineHistory">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="pipe_id" jdbcType="INTEGER" property="pipeId" />
 		<result column="provider_kind" jdbcType="VARCHAR" property="providerKind" />
@@ -49,7 +49,7 @@
 		delete from ci_pipe_history
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.PipelineHistory">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistory">
 		insert into ci_pipe_history (id, pipe_id, provider_kind, organization_code,
 		status, sha_local, ref_id,
 		cost_time, track_type, track_id,
@@ -63,7 +63,7 @@
 		#{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR},
 		#{delFlag,jdbcType=INTEGER}, #{orchestrationType,jdbcType=INTEGER}, #{orchestrationId,jdbcType=BIGINT})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.PipelineHistory">
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistory">
 		insert into ci_pipe_history
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -184,7 +184,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.PipelineHistory">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistory">
 		update ci_pipe_history
 		<set>
 			<if test="pipeId != null">
@@ -244,7 +244,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.PipelineHistory">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistory">
 		update ci_pipe_history
 		set pipe_id = #{pipeId,jdbcType=BIGINT},
 		provider_kind = #{providerKind,jdbcType=VARCHAR},

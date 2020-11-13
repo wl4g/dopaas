@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.ci.PipelineDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.Pipeline">
+<mapper namespace="com.wl4g.devops.ci.dao.PipelineDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Pipeline">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="pipe_name" jdbcType="VARCHAR" property="pipeName" />
 		<result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
@@ -21,21 +21,13 @@
 		<result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
 		<result column="pcm_enable" jdbcType="INTEGER" property="pcmEnable" />
 		<result column="pcm_id" jdbcType="INTEGER" property="pcmId" />
-
-
-
-		<!--<collection property="instances" javaType="list" ofType="com.wl4g.components.core.bean.erm.AppInstance"> <id column="i.id" property="id" 
-			jdbcType="INTEGER" /> <result column="i.hostname" property="hostname" jdbcType="VARCHAR" /> <result column="i.endpoint" property="endpoint" 
-			jdbcType="INTEGER" /> <result column="i.remark" property="remark" jdbcType="VARCHAR" /> </collection> -->
-
 	</resultMap>
 
-	<resultMap id="ListResultMap" type="com.wl4g.components.core.bean.ci.Pipeline" extends="BaseResultMap">
+	<resultMap id="ListResultMap" type="com.wl4g.devops.common.bean.ci.Pipeline" extends="BaseResultMap">
 		<collection property="instances" select="selectInstancesByDeployId" column="{deployId = deploy_id}"
-			ofType="com.wl4g.components.core.bean.erm.AppInstance" javaType="java.util.List">
+			ofType="com.wl4g.devops.common.bean.erm.AppInstance" javaType="java.util.List">
 		</collection>
 	</resultMap>
-
 
 	<sql id="Base_Column_List">
 		id, pipe_name, organization_code, cluster_id, provider_kind, environment, parent_app_home, assets_dir,
@@ -46,7 +38,6 @@
 		p.id, p.pipe_name,p.organization_code, p.cluster_id, p.provider_kind, p.environment, p.parent_app_home, p.assets_dir,
 		p.remark, p.create_date, p.create_by, p.update_date, p.update_by, p.del_flag
 	</sql>
-
 
 	<select id="selectInstancesByDeployId" resultMap="com.wl4g.devops.dao.erm.AppInstanceDao.BaseResultMap"
 		parameterType="java.util.Map">
@@ -77,7 +68,7 @@
 		delete from ci_pipeline
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.Pipeline">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
 		insert into ci_pipeline (id, pipe_name, organization_code, cluster_id,
 		provider_kind, environment, parent_app_home,
 		assets_dir, remark, create_date,
@@ -89,7 +80,7 @@
 		#{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR},
 		#{delFlag,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.Pipeline">
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
 		insert into ci_pipeline
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -180,7 +171,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.Pipeline">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
 		update ci_pipeline
 		<set>
 			<if test="pipeName != null">
@@ -225,7 +216,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.Pipeline">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
 		update ci_pipeline
 		set pipe_name = #{pipeName,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},

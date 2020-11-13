@@ -23,12 +23,9 @@ import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Pipeline;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.ci.parameter.RunParameter;
+import com.wl4g.devops.common.bean.ci.param.RunParameter;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.vcs.operator.VcsOperator;
-import com.wl4g.devops.vcs.operator.VcsOperator.RefType;
-
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -100,7 +97,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	}
 
 	/**
-	 * Check for updates. </br>
+	 * Check changed of dependency submodules. </br>
 	 * When the Sha of the VCS local warehouse is different from the latest Sha
 	 * on the server, it indicates that there is code update
 	 * 
@@ -111,14 +108,17 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	private boolean checkCommittedChanged(VcsOperator operator, Project project) throws Exception {
 		return true;
 		// TODO
-//		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-//		if (operator.hasLocalRepository(projectDir)) {
-//			operator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName(), RefType.safeOf(task.getBranchType()));
-//		} else {
-//			operator.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
-//		}
-//		String newSign = operator.getLatestCommitted(projectDir);
-//		return !equalsIgnoreCase(trigger.getSha(), newSign);
+		// String projectDir =
+		// config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+		// if (operator.hasLocalRepository(projectDir)) {
+		// operator.checkoutAndPull(project.getVcs(), projectDir,
+		// task.getBranchName(), RefType.safeOf(task.getBranchType()));
+		// } else {
+		// operator.clone(project.getVcs(), project.getHttpUrl(), projectDir,
+		// task.getBranchName());
+		// }
+		// String newSign = operator.getLatestCommitted(projectDir);
+		// return !equalsIgnoreCase(trigger.getSha(), newSign);
 	}
 
 }

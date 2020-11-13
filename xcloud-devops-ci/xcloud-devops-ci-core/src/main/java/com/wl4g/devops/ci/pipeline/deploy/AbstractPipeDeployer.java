@@ -32,7 +32,6 @@ import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.erm.SshBean;
-import com.wl4g.iam.dao.ClusterConfigDao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,9 +75,6 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 	@Autowired
 	protected PipelineHistoryService pipelineHistoryService;
-
-	@Autowired
-	protected ClusterConfigDao clusterConfigDao;
 
 	@Value("${spring.profiles.active}")
 	protected String profile;

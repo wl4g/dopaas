@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.ci.PipeStageBuildingDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.PipeStageBuilding">
+<mapper namespace="com.wl4g.devops.ci.dao.PipeStageBuildingDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.PipeStageBuilding">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="pipe_id" jdbcType="INTEGER" property="pipeId" />
 		<result column="pre_command" jdbcType="VARCHAR" property="preCommand" />
 		<result column="post_command" jdbcType="VARCHAR" property="postCommand" />
 		<result column="ref_type" jdbcType="INTEGER" property="refType" />
 		<collection property="pipeStepBuildingProjects" javaType="list"
-			ofType="com.wl4g.components.core.bean.ci.PipeStageBuildingProject">
+			ofType="com.wl4g.devops.common.bean.ci.PipeStageBuildingProject">
 			<id column="p.id" jdbcType="INTEGER" property="id" />
 			<result column="p.building_id" jdbcType="INTEGER" property="buildingId" />
 			<result column="p.project_id" jdbcType="INTEGER" property="projectId" />
@@ -62,13 +62,13 @@
 		where pipe_id = #{pipeId,jdbcType=BIGINT}
 	</delete>
 
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.PipeStageBuilding">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStageBuilding">
 		insert into ci_pipe_step_building (id, pipe_id, pre_command,
 		post_command, ref_type)
 		values (#{id,jdbcType=BIGINT}, #{pipeId,jdbcType=BIGINT}, #{preCommand,jdbcType=VARCHAR},
 		#{postCommand,jdbcType=VARCHAR}, #{refType,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.PipeStageBuilding">
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStageBuilding">
 		insert into ci_pipe_step_building
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -105,7 +105,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.PipeStageBuilding">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStageBuilding">
 		update ci_pipe_step_building
 		<set>
 			<if test="pipeId != null">
@@ -123,7 +123,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.PipeStageBuilding">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipeStageBuilding">
 		update ci_pipe_step_building
 		set pipe_id = #{pipeId,jdbcType=BIGINT},
 		pre_command = #{preCommand,jdbcType=VARCHAR},

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wl4g.devops.dao.ci.OrchestrationPipelineDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.ci.OrchestrationPipeline">
+<mapper namespace="com.wl4g.devops.ci.dao.OrchestrationPipelineDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.OrchestrationPipeline">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="orchestration_id" jdbcType="INTEGER" property="orchestrationId" />
 		<result column="pipeline_id" jdbcType="INTEGER" property="pipelineId" />
@@ -28,13 +28,13 @@
 		delete from ci_orchestration_pipeline
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.components.core.bean.ci.OrchestrationPipeline">
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.OrchestrationPipeline">
 		insert into ci_orchestration_pipeline (id, orchestration_id, pipeline_id,
 		priority)
 		values (#{id,jdbcType=BIGINT}, #{orchestrationId,jdbcType=BIGINT}, #{pipelineId,jdbcType=BIGINT},
 		#{priority,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.components.core.bean.ci.OrchestrationPipeline">
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.OrchestrationPipeline">
 		insert into ci_orchestration_pipeline
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -65,7 +65,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.ci.OrchestrationPipeline">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.OrchestrationPipeline">
 		update ci_orchestration_pipeline
 		<set>
 			<if test="orchestrationId != null">
@@ -80,7 +80,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.ci.OrchestrationPipeline">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.OrchestrationPipeline">
 		update ci_orchestration_pipeline
 		set orchestration_id = #{orchestrationId,jdbcType=BIGINT},
 		pipeline_id = #{pipelineId,jdbcType=BIGINT},
