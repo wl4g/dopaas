@@ -18,6 +18,7 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-ci-service-interface</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
@@ -27,7 +28,6 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-core</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

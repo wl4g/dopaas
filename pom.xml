@@ -54,11 +54,11 @@
 	</developers>
 	<modules>
 		<module>xcloud-devops-common</module>
+		<module>xcloud-devops-ci</module>
+		<module>xcloud-devops-doc</module>
 		<module>xcloud-devops-erm</module>
 		<!-- <module>xcloud-devops-scm</module> -->
-		<!-- <module>xcloud-devops-ci</module> -->
 		<!-- <module>xcloud-devops-umc</module> -->
-		<!-- <module>xcloud-devops-doc</module> -->
 		<module>xcloud-devops-vcs</module>
 		<module>xcloud-devops-dts</module>
 		<module>xcloud-devops-all-starter</module>
@@ -157,12 +157,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- TODO: for temporary use -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-dao</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
 			<!-- XCloud shell dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
@@ -192,221 +186,20 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-core</artifactId>
+				<version>master</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>xcloud-iam-service-interface</artifactId>
+				<version>master</version>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-iam-client-test</artifactId>
 				<version>master</version>
 				<scope>test</scope>
 			</dependency>
-			<!-- XCloud RCM dependentcie's -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-rcm-common</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-rcm-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-rcm-aliyunsaf</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-rcm-client</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- XCloud DevOps dependency's -->
-			<!-- DevOps Commons -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-common</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- DevOps CI -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-ci</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-ci-service-interface</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-ci-service-impl</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-ci-analyzer</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- DevOps SCM -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-scm</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-scm-common</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-scm-config</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-scm-client-springboot</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-scm-client-java</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-scm-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- DevOps ERM -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-erm</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-erm-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-erm-dns</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-erm-initializer</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- DevOps UMC -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-umc</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-umc-alarm</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-umc-client-springboot</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-umc-watch</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-umc-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-umc-store</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-umc-receiver</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-umc-manager</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- DevOps Docs(markdown) -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-doc</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-doc-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-doc-manager</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- DevOps VCS -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-vcs</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-vcs-manager</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-vcs-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-vcs-operator</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- DevOps DTS -->
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-dts</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-dts-codegen</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-dts-core</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-dts-kit</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-dts-kit-devel</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-dts-kit-hbase-migrator</artifactId>
-				<version>${project.parent.version}</version>
-			</dependency>
-			<!-- [END DevOps] -->
 			<!-- Spring Boot. -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
