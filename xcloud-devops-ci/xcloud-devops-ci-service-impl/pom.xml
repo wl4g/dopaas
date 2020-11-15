@@ -25,10 +25,6 @@
 			<artifactId>xcloud-devops-ci-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-core</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
