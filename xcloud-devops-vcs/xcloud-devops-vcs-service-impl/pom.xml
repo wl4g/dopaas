@@ -27,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-vcs-dao</artifactId>
+			<artifactId>xcloud-devops-vcs-service-dao</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

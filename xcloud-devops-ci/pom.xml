@@ -14,7 +14,7 @@
 	<modules>
 		<module>xcloud-devops-ci-analyzer</module>
 		<module>xcloud-devops-ci-core</module>
-		<module>xcloud-devops-ci-dao</module>
+		<module>xcloud-devops-ci-service-dao</module>
 		<module>xcloud-devops-ci-service-interface</module>
 		<module>xcloud-devops-ci-service-impl</module>
 		<module>xcloud-devops-ci-server</module>
