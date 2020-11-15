@@ -32,13 +32,14 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
+//TODO using by coss-sdk
 /**
  * @author vjay
  * @date 2020-01-06 17:16:00
  */
 @RestController
 @RequestMapping("/fs")
-public class FsController {
+public class TmpTestedReportFSController {
 
 	@Autowired
 	protected CiProperties config;

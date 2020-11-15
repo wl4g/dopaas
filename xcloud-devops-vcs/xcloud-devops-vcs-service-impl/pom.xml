@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-vcs-service-api</artifactId>
+			<artifactId>xcloud-devops-vcs-service-interface</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

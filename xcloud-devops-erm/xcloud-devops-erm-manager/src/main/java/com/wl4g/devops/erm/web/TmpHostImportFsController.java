@@ -25,9 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+// TODO using by coss-sdk
 @RestController
 @RequestMapping("/fs")
-public class FsController {
+public class TmpHostImportFsController {
 
 	@Autowired
 	private FsService fsService;

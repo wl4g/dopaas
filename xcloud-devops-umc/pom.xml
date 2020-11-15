@@ -13,7 +13,7 @@
 	</parent>
 	<modules>
 		<module>xcloud-devops-umc-dao</module>
-		<module>xcloud-devops-umc-service-api</module>
+		<module>xcloud-devops-umc-service-interface</module>
 		<module>xcloud-devops-umc-service-impl</module>
 		<module>xcloud-devops-umc-alarm</module>
 		<module>xcloud-devops-umc-store</module>

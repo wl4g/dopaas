@@ -232,7 +232,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-ci-service-api</artifactId>
+				<artifactId>xcloud-devops-ci-service-interface</artifactId>
 				<version>${project.parent.version}</version>
 			</dependency>
 			<dependency>
