@@ -19,6 +19,7 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-dts-core</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

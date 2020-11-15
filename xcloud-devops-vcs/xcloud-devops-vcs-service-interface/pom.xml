@@ -18,10 +18,12 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-vcs-operator</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-common</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

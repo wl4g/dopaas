@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-vcs-operator</artifactId>
-			<version>${project.parent.version}</version> <!--$NO-MVN-MAN-VER$ -->
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
@@ -32,11 +32,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
+			<artifactId>xcloud-iam-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client</artifactId>
+			<artifactId>xcloud-components-support</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
