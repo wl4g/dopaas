@@ -17,7 +17,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-umc-service-api</artifactId>
+			<artifactId>xcloud-devops-umc-service-interface</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

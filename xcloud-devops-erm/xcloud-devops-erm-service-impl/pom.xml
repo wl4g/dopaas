@@ -27,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-erm-service-api</artifactId>
+			<artifactId>xcloud-devops-erm-service-interface</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

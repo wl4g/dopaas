@@ -13,7 +13,7 @@
 	<modules>
 		<module>xcloud-devops-vcs-dao</module>
 		<module>xcloud-devops-vcs-operator</module>
-		<module>xcloud-devops-vcs-service-api</module>
+		<module>xcloud-devops-vcs-service-interface</module>
 		<module>xcloud-devops-vcs-service-impl</module>
 		<module>xcloud-devops-vcs-manager</module>
 	</modules>

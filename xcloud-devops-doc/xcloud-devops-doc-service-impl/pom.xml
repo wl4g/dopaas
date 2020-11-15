@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-doc-service-api</artifactId>
+			<artifactId>xcloud-devops-doc-service-interface</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

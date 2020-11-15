@@ -103,4 +103,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node5:7379,owner-node5:7380,owner-node5:7381}
+  nodes: ${DEVOPS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node5:7379,owner-node5:7380,owner-node5:7381}

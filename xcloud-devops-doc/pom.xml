@@ -12,7 +12,7 @@
 	</parent>
 	<modules>
 		<module>xcloud-devops-doc-dao</module>
-		<module>xcloud-devops-doc-service-api</module>
+		<module>xcloud-devops-doc-service-interface</module>
 		<module>xcloud-devops-doc-service-impl</module>
 		<module>xcloud-devops-doc-manager</module>
 	</modules>

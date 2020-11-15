@@ -17,7 +17,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-ci-service-api</artifactId>
+			<artifactId>xcloud-devops-ci-service-interface</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
