@@ -17,11 +17,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-dao</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-erm-dao</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -29,6 +24,10 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-erm-service-interface</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-service-interface</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

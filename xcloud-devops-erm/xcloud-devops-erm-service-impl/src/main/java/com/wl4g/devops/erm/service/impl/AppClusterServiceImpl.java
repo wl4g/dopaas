@@ -28,7 +28,7 @@ import com.wl4g.devops.erm.dao.AppEnvironmentDao;
 import com.wl4g.devops.erm.dao.AppInstanceDao;
 import com.wl4g.devops.erm.service.AppClusterService;
 import com.wl4g.iam.common.bean.Dict;
-import com.wl4g.iam.dao.DictDao;
+import com.wl4g.iam.service.DictService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizati
 
 @Service
 @Transactional
-public class AppClueterServiceImpl implements AppClusterService {
+public class AppClusterServiceImpl implements AppClusterService {
 
 	@Autowired
 	private AppClusterDao appClusterDao;
@@ -57,7 +57,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 	private AppEnvironmentDao appEnvironmentDao;
 
 	@Autowired
-	private DictDao dictDao;
+	private DictService dictService;
 
 	@Override
 	public Map<String, Object> list(PageModel<?> pm, String clusterName, Integer deployType) {
@@ -109,13 +109,13 @@ public class AppClueterServiceImpl implements AppClusterService {
 			appEnvironmentDao.insertBatch(environments);
 		} else {
 			environments = new ArrayList<>();
-			List<Dict> appNsTypes = dictDao.selectByType("app_ns_type");
-			for (Dict appNsType : appNsTypes) {
+			List<Dict> appEnvTypes = dictService.getByType(DICT_APP_ENV_TYPE);
+			for (Dict envType : appEnvTypes) {
 				AppEnvironment environment = new AppEnvironment();
 				environment.preInsert();
 				environment.setOrganizationCode(appCluster.getOrganizationCode());
 				environment.setClusterId(appCluster.getId());
-				environment.setEnvType(appNsType.getValue());
+				environment.setEnvType(envType.getValue());
 				environments.add(environment);
 			}
 			appEnvironmentDao.insertBatch(environments);
@@ -145,13 +145,13 @@ public class AppClueterServiceImpl implements AppClusterService {
 		List<AppEnvironment> environments = appEnvironmentDao.selectByClusterId(clusterId);
 		if (CollectionUtils.isEmpty(environments)) {
 			environments = new ArrayList<>();
-			List<Dict> appNsTypes = dictDao.selectByType("app_ns_type");
-			for (Dict appNsType : appNsTypes) {
+			List<Dict> appEnvTypes = dictService.getByType(DICT_APP_ENV_TYPE);
+			for (Dict envType : appEnvTypes) {
 				AppEnvironment environment = new AppEnvironment();
 				environment.preInsert();
 				environment.setOrganizationCode(appCluster.getOrganizationCode());
 				environment.setClusterId(appCluster.getId());
-				environment.setEnvType(appNsType.getValue());
+				environment.setEnvType(envType.getValue());
 				environments.add(environment);
 			}
 		}
@@ -163,12 +163,6 @@ public class AppClueterServiceImpl implements AppClusterService {
 			}
 		}
 		appCluster.setEnvironments(environments);
-		// List<AppInstance> appInstances =
-		// appInstanceDao.selectByClusterId(clusterId);
-		// List<InstanceDtoModel> instanceDtoModels =
-		// InstanceDtoModel.instanesToDtoModels(appInstances);
-		// appCluster.setInstances(appInstances);
-		// appCluster.setInstanceDtoModels(instanceDtoModels);
 		return appCluster;
 	}
 
@@ -183,5 +177,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 	public AppEnvironment getAppClusterEnvironment(Long clusterId, String envType) {
 		return appEnvironmentDao.selectByClusterIdAndEnv(clusterId, envType);
 	}
+
+	public static final String DICT_APP_ENV_TYPE = "app_ns_type";
 
 }
