@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2050 the original author or authors <Wanglsir@gmail.com, 983708408@qq.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
+import static org.springframework.context.annotation.AdviceMode.ASPECTJ;
+
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,7 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableShellServer
 @MapperScan("com.wl4g.devops.ci.dao")
 @AutoConfigureComponentsDataSource
-@EnableTransactionManagement
+@EnableTransactionManagement(mode = ASPECTJ)
 @SpringBootApplication
 public class CiServer {
 

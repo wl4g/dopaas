@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: devops-all
+  application.name: devops-server
   profiles:
     include: common,support,util
     active: dev
