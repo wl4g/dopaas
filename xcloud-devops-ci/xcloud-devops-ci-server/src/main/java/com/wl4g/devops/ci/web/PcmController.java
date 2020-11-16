@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.components.core.web.model.SelectionModel;
-import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.ci.Pcm;
 

@@ -20,7 +20,7 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.log.SmartLoggerFactory;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;

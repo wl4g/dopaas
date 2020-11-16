@@ -19,7 +19,7 @@ import com.wl4g.components.common.cli.ssh2.JschHolder;
 import com.wl4g.components.common.cli.ssh2.SSH2Holders;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.erm.service.AppInstanceService;
 
