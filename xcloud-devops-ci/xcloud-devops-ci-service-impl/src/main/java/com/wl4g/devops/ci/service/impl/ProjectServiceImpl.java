@@ -19,7 +19,7 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.ci.dao.DependencyDao;
 import com.wl4g.devops.ci.dao.ProjectDao;
 import com.wl4g.devops.ci.service.ProjectService;

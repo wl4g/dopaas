@@ -19,7 +19,7 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.erm.DockerRepository;
 import com.wl4g.devops.common.bean.erm.model.RepositoryProject;
 import com.wl4g.devops.erm.dao.DockerRepositoryDao;
