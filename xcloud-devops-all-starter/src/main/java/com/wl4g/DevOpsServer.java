@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2050 the original author or authors <Wanglsir@gmail.com, 983708408@qq.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,13 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import static org.springframework.context.annotation.AdviceMode.ASPECTJ;
 
 @EnableIamClient
 @EnableShellServer
 @MapperScan("com.wl4g.devops.*.dao")
 @AutoConfigureComponentsDataSource
-@EnableTransactionManagement
+@EnableTransactionManagement(mode = ASPECTJ)
 @SpringBootApplication
 public class DevOpsServer {
 
