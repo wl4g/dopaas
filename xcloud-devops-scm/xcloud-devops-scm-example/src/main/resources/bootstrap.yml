@@ -19,7 +19,7 @@ spring: # Base configuration.
     active: dev
   cloud: # Spring cloud configuration.
     # Devops configuration.
-    devops: 
+    xcloud: 
       scm.client: # SCM client configuration.
         base-uri: http://127.0.0.1:14043/scm-server
         #connect-timeout: 5000
