@@ -17,7 +17,7 @@ spring:
     active: dev
   cloud: # Spring cloud configuration.
     # Devops configuration.
-    devops:
+    xcloud:
       iam: # IAM client configuration.
         cors:
           enabled: true # Default: true

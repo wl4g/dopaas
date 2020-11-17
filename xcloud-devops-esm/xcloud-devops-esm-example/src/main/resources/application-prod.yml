@@ -18,7 +18,7 @@ example:
 
 spring:
   cloud:
-    devops:
+    xcloud:
       iam:
         client:
           base-uri: http://localhost:14043/scm

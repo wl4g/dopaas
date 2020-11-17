@@ -16,7 +16,7 @@ spring:
     include: common,support,util
     active: dev
   cloud:
-    devops:
+    xcloud:
       embedded-webapps:
         enabled: true # Default false
         base-uri: /view

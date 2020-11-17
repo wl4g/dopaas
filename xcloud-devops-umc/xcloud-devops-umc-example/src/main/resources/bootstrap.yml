@@ -18,7 +18,7 @@ spring: # Base configuration.
     active: dev
   cloud: # Spring cloud configuration.
     # Devops monitor(metrics) configuration.
-    devops:
+    xcloud:
       metrics: # Metrics configuration.
         counter:
           enable: true

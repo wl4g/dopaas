@@ -21,7 +21,6 @@ spring:
         enable: true # Default false
         base-uri: /view
         webapp-location: classpath*:/default-webapps
-    devops:
       support:
         cli:
           enable: true

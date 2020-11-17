@@ -37,7 +37,7 @@ spring:
       filters: stat,wall
       log-slow-sql: true
   cloud:
-    devops:
+    xcloud:
       umc:
         store:
           derby:

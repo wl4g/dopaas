@@ -16,7 +16,7 @@ spring:
     include: common,support,util
     active: dev
   cloud:
-    devops:
+    xcloud:
       iam: # IAM client configuration.
         cors:
           enabled: true # Default: true
