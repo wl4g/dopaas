@@ -10,7 +10,7 @@
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-erm-service-dao</module>
+		<module>xcloud-devops-erm-service-data</module>
 		<module>xcloud-devops-erm-service-interface</module>
 		<module>xcloud-devops-erm-service-impl</module>
 		<module>xcloud-devops-erm-manager</module>

@@ -28,7 +28,7 @@ import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.dao.PipeStageNotificationDao;
+import com.wl4g.devops.ci.data.PipeStageNotificationDao;
 import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;

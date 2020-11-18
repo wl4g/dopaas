@@ -20,8 +20,8 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.erm.DockerCluster;
 import com.wl4g.devops.common.bean.erm.DockerInstance;
-import com.wl4g.devops.erm.dao.DockerClusterDao;
-import com.wl4g.devops.erm.dao.DockerInstanceDao;
+import com.wl4g.devops.erm.data.DockerClusterDao;
+import com.wl4g.devops.erm.data.DockerInstanceDao;
 import com.wl4g.devops.erm.service.DockerClusterService;
 
 import org.springframework.beans.factory.annotation.Autowired;

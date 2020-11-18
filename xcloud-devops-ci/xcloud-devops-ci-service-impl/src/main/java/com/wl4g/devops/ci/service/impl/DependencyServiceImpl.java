@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.devops.ci.dao.DependencyDao;
+import com.wl4g.devops.ci.data.DependencyDao;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.common.bean.ci.Dependency;
 

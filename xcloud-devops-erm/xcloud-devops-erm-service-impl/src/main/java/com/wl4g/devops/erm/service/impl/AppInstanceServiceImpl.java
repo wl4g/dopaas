@@ -21,8 +21,8 @@ import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.erm.Host;
-import com.wl4g.devops.erm.dao.AppInstanceDao;
-import com.wl4g.devops.erm.dao.HostDao;
+import com.wl4g.devops.erm.data.AppInstanceDao;
+import com.wl4g.devops.erm.data.HostDao;
 import com.wl4g.devops.erm.service.AppInstanceService;
 
 import org.springframework.beans.factory.annotation.Autowired;

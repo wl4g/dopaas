@@ -19,7 +19,7 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.doc.Label;
-import com.wl4g.devops.doc.dao.LabelDao;
+import com.wl4g.devops.doc.data.LabelDao;
 import com.wl4g.devops.doc.service.LabelService;
 
 import org.springframework.beans.factory.annotation.Autowired;

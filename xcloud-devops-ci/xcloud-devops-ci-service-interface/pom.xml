@@ -18,7 +18,7 @@
 		<!-- TODO remove dao -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-ci-service-dao</artifactId>
+			<artifactId>xcloud-devops-ci-service-data</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

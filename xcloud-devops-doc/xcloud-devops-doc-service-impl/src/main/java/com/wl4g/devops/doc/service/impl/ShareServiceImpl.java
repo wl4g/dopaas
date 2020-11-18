@@ -22,7 +22,7 @@ import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.doc.FileChanges;
 import com.wl4g.devops.common.bean.doc.Share;
 import com.wl4g.devops.doc.config.DocProperties;
-import com.wl4g.devops.doc.dao.ShareDao;
+import com.wl4g.devops.doc.data.ShareDao;
 import com.wl4g.devops.doc.service.DocService;
 import com.wl4g.devops.doc.service.ShareService;
 
