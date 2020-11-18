@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.wl4g.components.core.constants.CiDevOpsConstants.TASK_LOCK_STATUS_UNLOCK;
+import static com.wl4g.devops.common.constant.CiConstants.TASK_LOCK_STATUS_UNLOCK;
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**

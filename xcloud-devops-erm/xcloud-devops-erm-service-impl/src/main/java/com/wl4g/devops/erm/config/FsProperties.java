@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.config;
 
-import com.wl4g.components.core.constants.DocDevOpsConstants;
+import com.wl4g.devops.common.constant.DocConstants;
 
 public class FsProperties {
 
@@ -37,7 +37,7 @@ public class FsProperties {
 
     public String getBaseImgUrl(){
         //return getBaseUrl()+"/fs/downloadImg";
-        return DocDevOpsConstants.SHARE_LINK_BASEURI +"/fs/downloadImg";
+        return DocConstants.SHARE_LINK_BASEURI +"/fs/downloadImg";
     }
 
     public String getBasePath() {

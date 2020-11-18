@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.analyses.config;
 
-import static com.wl4g.components.core.constants.CiDevOpsConstants.URL_ANALYZER_BASE_PATH;
+import static com.wl4g.devops.common.constant.CiConstants.URL_ANALYZER_BASE_PATH;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

@@ -40,8 +40,8 @@ import java.util.Objects;
 
 import static com.wl4g.components.common.lang.Assert2.hasText;
 import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.core.constants.ERMDevOpsConstants.KEY_DEFAULT_MSG;
-import static com.wl4g.components.core.constants.ERMDevOpsConstants.LOG_LEVEL;
+import static com.wl4g.devops.common.constant.ERMConstants.KEY_DEFAULT_MSG;
+import static com.wl4g.devops.common.constant.ERMConstants.LOG_LEVEL;
 import static java.util.Objects.isNull;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 

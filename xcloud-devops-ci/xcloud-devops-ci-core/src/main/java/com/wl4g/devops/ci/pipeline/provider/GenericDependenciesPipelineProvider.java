@@ -37,10 +37,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.components.core.constants.CiDevOpsConstants.LOCK_DEPENDENCY_BUILD;
 import static com.wl4g.devops.ci.bean.RunModel.Pipeline.ModulesPorject;
 import static com.wl4g.devops.ci.pipeline.flow.FlowManager.FlowStatus.RUNNING_BUILD;
 import static com.wl4g.devops.ci.pipeline.flow.FlowManager.FlowStatus.RUNNING_DEPLOY;
+import static com.wl4g.devops.common.constant.CiConstants.LOCK_DEPENDENCY_BUILD;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.lang3.StringUtils.isBlank;
