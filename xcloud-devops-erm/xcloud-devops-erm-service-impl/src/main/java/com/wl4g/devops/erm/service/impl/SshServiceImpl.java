@@ -22,8 +22,8 @@ import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.common.bean.erm.SshBean;
-import com.wl4g.devops.erm.dao.HostDao;
-import com.wl4g.devops.erm.dao.SshDao;
+import com.wl4g.devops.erm.data.HostDao;
+import com.wl4g.devops.erm.data.SshDao;
 import com.wl4g.devops.erm.service.SshService;
 
 import org.apache.commons.lang3.StringUtils;

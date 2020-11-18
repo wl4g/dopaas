@@ -20,8 +20,8 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.erm.K8sCluster;
 import com.wl4g.devops.common.bean.erm.K8sInstance;
-import com.wl4g.devops.erm.dao.K8sClusterDao;
-import com.wl4g.devops.erm.dao.K8sInstanceDao;
+import com.wl4g.devops.erm.data.K8sClusterDao;
+import com.wl4g.devops.erm.data.K8sInstanceDao;
 import com.wl4g.devops.erm.service.K8sClusterService;
 
 import org.springframework.beans.factory.annotation.Autowired;

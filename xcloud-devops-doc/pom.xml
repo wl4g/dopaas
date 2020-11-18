@@ -11,7 +11,7 @@
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-doc-service-dao</module>
+		<module>xcloud-devops-doc-service-data</module>
 		<module>xcloud-devops-doc-service-interface</module>
 		<module>xcloud-devops-doc-service-impl</module>
 		<module>xcloud-devops-doc-manager</module>

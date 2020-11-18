@@ -22,7 +22,7 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.components.core.web.model.SelectionModel;
-import com.wl4g.devops.ci.dao.PcmDao;
+import com.wl4g.devops.ci.data.PcmDao;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.service.PcmService;

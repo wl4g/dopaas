@@ -19,7 +19,7 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.erm.DnsPrivateServer;
-import com.wl4g.devops.erm.dao.DnsPrivateServerDao;
+import com.wl4g.devops.erm.data.DnsPrivateServerDao;
 import com.wl4g.devops.erm.service.DnsPrivateServerService;
 
 import org.springframework.beans.factory.annotation.Autowired;

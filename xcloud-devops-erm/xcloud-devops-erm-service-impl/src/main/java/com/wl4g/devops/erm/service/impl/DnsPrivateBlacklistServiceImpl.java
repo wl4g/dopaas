@@ -20,7 +20,7 @@ import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist;
-import com.wl4g.devops.erm.dao.DnsPrivateBlacklistDao;
+import com.wl4g.devops.erm.data.DnsPrivateBlacklistDao;
 import com.wl4g.devops.erm.handler.DnsZoneHandler;
 import com.wl4g.devops.erm.service.DnsPrivateBlacklistService;
 

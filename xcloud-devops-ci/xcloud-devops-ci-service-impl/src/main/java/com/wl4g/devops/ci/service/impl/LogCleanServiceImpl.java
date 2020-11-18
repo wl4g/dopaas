@@ -20,7 +20,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.ci.dao.LogCleanDao;
+import com.wl4g.devops.ci.data.LogCleanDao;
 import com.wl4g.devops.ci.service.LogCleanService;
 
 /**

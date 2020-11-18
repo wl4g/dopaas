@@ -29,10 +29,10 @@ import com.wl4g.devops.common.bean.doc.FileChanges;
 import com.wl4g.devops.common.bean.doc.FileLabel;
 import com.wl4g.devops.common.bean.doc.Share;
 import com.wl4g.devops.doc.config.DocProperties;
-import com.wl4g.devops.doc.dao.FileChangesDao;
-import com.wl4g.devops.doc.dao.FileLabelDao;
-import com.wl4g.devops.doc.dao.LabelDao;
-import com.wl4g.devops.doc.dao.ShareDao;
+import com.wl4g.devops.doc.data.FileChangesDao;
+import com.wl4g.devops.doc.data.FileLabelDao;
+import com.wl4g.devops.doc.data.LabelDao;
+import com.wl4g.devops.doc.data.ShareDao;
 import com.wl4g.devops.doc.service.DocService;
 import com.wl4g.iam.core.subject.IamPrincipal;
 

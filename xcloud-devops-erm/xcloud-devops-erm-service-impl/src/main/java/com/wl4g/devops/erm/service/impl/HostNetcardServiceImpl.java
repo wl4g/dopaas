@@ -21,9 +21,9 @@ import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.erm.HostNetcard;
 import com.wl4g.devops.common.bean.erm.HostTunnelOpenvpn;
 import com.wl4g.devops.common.bean.erm.HostTunnelPptp;
-import com.wl4g.devops.erm.dao.HostNetcardDao;
-import com.wl4g.devops.erm.dao.HostTunnelOpenvpnDao;
-import com.wl4g.devops.erm.dao.HostTunnelPptpDao;
+import com.wl4g.devops.erm.data.HostNetcardDao;
+import com.wl4g.devops.erm.data.HostTunnelOpenvpnDao;
+import com.wl4g.devops.erm.data.HostTunnelPptpDao;
 import com.wl4g.devops.erm.service.HostNetcardService;
 
 import org.springframework.beans.factory.annotation.Autowired;

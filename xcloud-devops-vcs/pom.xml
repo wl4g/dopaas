@@ -11,7 +11,7 @@
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-vcs-service-dao</module>
+		<module>xcloud-devops-vcs-service-data</module>
 		<module>xcloud-devops-vcs-operator</module>
 		<module>xcloud-devops-vcs-service-interface</module>
 		<module>xcloud-devops-vcs-service-impl</module>

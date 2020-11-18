@@ -23,7 +23,7 @@ import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.config.VcsProperties;
-import com.wl4g.devops.vcs.dao.VcsDao;
+import com.wl4g.devops.vcs.data.VcsDao;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.VcsOperator.SearchMeta;
 import com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;

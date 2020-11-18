@@ -17,9 +17,9 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.dao.PipelineDao;
-import com.wl4g.devops.ci.dao.ProjectDao;
-import com.wl4g.devops.ci.dao.TriggerDao;
+import com.wl4g.devops.ci.data.PipelineDao;
+import com.wl4g.devops.ci.data.ProjectDao;
+import com.wl4g.devops.ci.data.TriggerDao;
 import com.wl4g.devops.ci.pipeline.provider.TimingPipelineProvider;
 import com.wl4g.devops.common.bean.ci.Pipeline;
 import com.wl4g.devops.common.bean.ci.Trigger;
