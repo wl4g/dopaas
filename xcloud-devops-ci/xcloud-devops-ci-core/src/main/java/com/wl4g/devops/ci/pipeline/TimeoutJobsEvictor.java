@@ -32,8 +32,8 @@ import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.core.constants.CiDevOpsConstants.KEY_FINALIZER_INTERVALMS;
 import static com.wl4g.components.support.redis.jedis.JedisOperator.RedisProtoUtil.keyFormat;
+import static com.wl4g.devops.common.constant.CiConstants.KEY_FINALIZER_INTERVALMS;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;

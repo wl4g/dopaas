@@ -17,10 +17,10 @@ package com.wl4g.devops.doc.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.constants.DocDevOpsConstants;
 import com.wl4g.components.core.web.model.PageModel;
 import com.wl4g.devops.common.bean.doc.FileChanges;
 import com.wl4g.devops.common.bean.doc.Share;
+import com.wl4g.devops.common.constant.DocConstants;
 import com.wl4g.devops.doc.config.DocProperties;
 import com.wl4g.devops.doc.data.ShareDao;
 import com.wl4g.devops.doc.service.DocService;
@@ -111,10 +111,10 @@ public class ShareServiceImpl implements ShareService {
 	 * @return
 	 */
 	private String parse(String content) {
-		content = content.replaceAll(DocDevOpsConstants.SHARE_LINK_BASEURI, docProperties.getShareBaseUrl());
-		content = content.replaceAll(DocDevOpsConstants.SHARE_LINK_BASEURI_TRAN, docProperties.getShareBaseUrl());
-		content = content.replaceAll(DocDevOpsConstants.DOC_LINK_BASEURI, docProperties.getDocBaseUrl());
-		content = content.replaceAll(DocDevOpsConstants.DOC_LINK_BASEURI_TRAN, docProperties.getDocBaseUrl());
+		content = content.replaceAll(DocConstants.SHARE_LINK_BASEURI, docProperties.getShareBaseUrl());
+		content = content.replaceAll(DocConstants.SHARE_LINK_BASEURI_TRAN, docProperties.getShareBaseUrl());
+		content = content.replaceAll(DocConstants.DOC_LINK_BASEURI, docProperties.getDocBaseUrl());
+		content = content.replaceAll(DocConstants.DOC_LINK_BASEURI_TRAN, docProperties.getDocBaseUrl());
 		return content;
 	}
 
