@@ -15,7 +15,7 @@
  */
 package com.wl4g;
 
-import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
+import com.wl4g.components.data.annotation.EnableComponentsData;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
@@ -28,7 +28,7 @@ import static org.springframework.context.annotation.AdviceMode.ASPECTJ;
 @EnableIamClient
 @EnableShellServer
 @MapperScan("com.wl4g.devops.*.dao")
-@AutoConfigureComponentsDataSource
+@EnableComponentsData
 @EnableTransactionManagement(mode = ASPECTJ)
 @SpringBootApplication
 public class DevOpsServer {
