@@ -410,7 +410,7 @@ public class DefaultPipelineManager implements PipelineManager {
 			params.put("createDate", provider.getContext().getPipelineHistory().getCreateDate());
 			params.put("costTime", currentTimeMillis() - provider.getContext().getPipelineHistory().getCreateDate().getTime());
 
-			contactService.notificationWithTemplate("tpl3", params, groupIds);
+			contactService.notification("tpl3", params, groupIds);
 		} catch (Exception e) {
 			log.error("send message fail", e);
 		}
