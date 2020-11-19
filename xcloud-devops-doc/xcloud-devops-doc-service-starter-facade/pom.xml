@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-doc-service-interface</artifactId>
+	<artifactId>xcloud-devops-doc-service-starter-facade</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps Doc Service API</name>
+	<name>XCloud DevSecOps Doc Service Impl</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -15,7 +15,6 @@
 		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>
-		<!-- TODO remove dao -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-doc-service-data</artifactId>
@@ -23,8 +22,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-common</artifactId>
+			<artifactId>xcloud-devops-doc-service-facade</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-client</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

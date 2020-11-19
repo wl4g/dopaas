@@ -13,8 +13,8 @@
 	<modules>
 		<module>xcloud-devops-vcs-service-data</module>
 		<module>xcloud-devops-vcs-operator</module>
-		<module>xcloud-devops-vcs-service-interface</module>
-		<module>xcloud-devops-vcs-service-impl</module>
+		<module>xcloud-devops-vcs-service-facade</module>
+		<module>xcloud-devops-vcs-service-starter-facade</module>
 		<module>xcloud-devops-vcs-manager</module>
 	</modules>
 	<properties>
