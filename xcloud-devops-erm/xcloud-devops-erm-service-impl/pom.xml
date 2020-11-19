@@ -27,7 +27,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-service-interface</artifactId>
+			<artifactId>xcloud-iam-service-facade</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
