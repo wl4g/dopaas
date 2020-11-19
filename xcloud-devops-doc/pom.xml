@@ -12,8 +12,8 @@
 	</parent>
 	<modules>
 		<module>xcloud-devops-doc-service-data</module>
-		<module>xcloud-devops-doc-service-interface</module>
-		<module>xcloud-devops-doc-service-impl</module>
+		<module>xcloud-devops-doc-service-facade</module>
+		<module>xcloud-devops-doc-service-starter-facade</module>
 		<module>xcloud-devops-doc-manager</module>
 	</modules>
 	<properties>

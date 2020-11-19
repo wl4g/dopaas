@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-doc-service-impl</artifactId>
+			<artifactId>xcloud-devops-doc-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
