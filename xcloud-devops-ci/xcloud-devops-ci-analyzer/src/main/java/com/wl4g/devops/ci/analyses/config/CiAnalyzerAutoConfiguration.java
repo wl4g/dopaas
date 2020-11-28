@@ -21,8 +21,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
-import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
+import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator;
 import com.wl4g.devops.ci.analyses.coordinate.SpotbugsAnalysisCoordinator;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
@@ -38,7 +37,7 @@ import com.wl4g.devops.ci.analyses.web.CodesAnalyzerController;
  * @since
  */
 @Configuration
-public class CiAnalyzerAutoConfiguration extends AbstractHandlerMappingSupport {
+public class CiAnalyzerAutoConfiguration extends PrefixHandlerMappingSupport {
 
 	@Bean
 	@ConfigurationProperties(prefix = "spring.cloud.devops.ci.analyzers")
@@ -54,7 +53,7 @@ public class CiAnalyzerAutoConfiguration extends AbstractHandlerMappingSupport {
 	}
 
 	@Bean
-	public PrefixHandlerMapping codesAnalyzerControllerPrefixHandlerMapping() {
+	public Object codesAnalyzerControllerPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URL_ANALYZER_BASE_PATH,
 				com.wl4g.devops.ci.analyses.annotation.CodesAnalyzerController.class);
 	}

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist;
 
 /**

@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.erm.DockerCluster;
 import com.wl4g.devops.common.bean.erm.DockerInstance;
 import com.wl4g.devops.erm.data.DockerClusterDao;

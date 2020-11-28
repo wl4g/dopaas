@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.erm.HostNetcard;
 import com.wl4g.devops.common.bean.erm.HostTunnelOpenvpn;
 import com.wl4g.devops.common.bean.erm.HostTunnelPptp;

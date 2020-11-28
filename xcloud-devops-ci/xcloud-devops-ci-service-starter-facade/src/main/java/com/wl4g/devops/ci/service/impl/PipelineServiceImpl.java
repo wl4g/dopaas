@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.devops.ci.data.ClusterExtensionDao;
 import com.wl4g.devops.ci.data.PipeStageBuildingDao;
 import com.wl4g.devops.ci.data.PipeStageBuildingProjectDao;
