@@ -18,7 +18,7 @@ package com.wl4g.devops.erm.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.serialize.JacksonUtils;
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;

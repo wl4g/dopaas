@@ -18,7 +18,7 @@ package com.wl4g.devops.erm.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.devops.erm.data.DnsPrivateResolutionDao;
 import com.wl4g.devops.erm.data.DnsPrivateZoneDao;
 import com.wl4g.devops.erm.handler.DnsZoneHandler;

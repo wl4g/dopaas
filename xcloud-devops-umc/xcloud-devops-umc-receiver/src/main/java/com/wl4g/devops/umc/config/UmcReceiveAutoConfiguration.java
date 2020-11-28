@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;

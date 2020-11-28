@@ -18,7 +18,7 @@ package com.wl4g.devops.dts.codegen.service.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition.GenExtraOption;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;

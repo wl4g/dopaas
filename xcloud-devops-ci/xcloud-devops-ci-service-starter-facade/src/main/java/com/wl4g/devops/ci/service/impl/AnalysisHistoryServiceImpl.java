@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.devops.ci.data.AnalysisHistoryDao;
 import com.wl4g.devops.ci.service.AnalysisHistoryService;
 import com.wl4g.devops.common.bean.ci.AnalysisHistory;

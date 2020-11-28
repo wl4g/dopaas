@@ -25,7 +25,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wl4g.components.common.crypto.asymmetric.RSACryptor;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
-import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;

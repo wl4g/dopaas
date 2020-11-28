@@ -23,7 +23,7 @@ import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.web.model.PageModel;
+import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.common.bean.erm.Host;
