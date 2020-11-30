@@ -21,11 +21,15 @@ package com.wl4g.devops.doc.enterprise.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.doc.EnterpriseGroup;
+import com.wl4g.components.core.bean.doc.EnterpriseProject;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dao.doc.EnterpriseGroupDao;
+import com.wl4g.devops.dao.doc.EnterpriseProjectDao;
 import com.wl4g.devops.doc.enterprise.EnterpriseGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
@@ -44,10 +48,18 @@ public class EnterpriseGroupServiceImpl implements EnterpriseGroupService {
     @Autowired
     private EnterpriseGroupDao enterpriseGroupDao;
 
+    @Autowired
+    private EnterpriseProjectDao enterpriseProjectDao;
+
     @Override
     public PageModel<EnterpriseGroup> page(PageModel<EnterpriseGroup> pm, EnterpriseGroup enterpriseGroup) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(enterpriseGroupDao.list(enterpriseGroup));
+        List<EnterpriseGroup> list = enterpriseGroupDao.list(enterpriseGroup);
+        for(EnterpriseGroup li : list){
+            List<EnterpriseProject> enterpriseProjects = enterpriseProjectDao.selectByGroupId(li.getId());
+            li.setEnterpriseProjectList(enterpriseProjects);
+        }
+        pm.setRecords(list);
         return pm;
     }
 
