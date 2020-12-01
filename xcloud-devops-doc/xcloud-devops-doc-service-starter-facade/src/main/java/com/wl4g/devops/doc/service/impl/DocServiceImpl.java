@@ -34,7 +34,7 @@ import com.wl4g.devops.doc.data.FileLabelDao;
 import com.wl4g.devops.doc.data.LabelDao;
 import com.wl4g.devops.doc.data.ShareDao;
 import com.wl4g.devops.doc.service.DocService;
-import com.wl4g.iam.core.subject.IamPrincipal;
+import com.wl4g.iam.common.subject.IamPrincipal;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
