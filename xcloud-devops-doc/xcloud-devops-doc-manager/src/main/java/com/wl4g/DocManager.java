@@ -23,7 +23,7 @@ import com.wl4g.components.data.annotation.EnableComponentsData;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient
-@MapperScan("com.wl4g.devops.doc.dao")
+@MapperScan("com.wl4g.devops.doc.data")
 @EnableComponentsData
 @SpringBootApplication
 public class DocManager {
