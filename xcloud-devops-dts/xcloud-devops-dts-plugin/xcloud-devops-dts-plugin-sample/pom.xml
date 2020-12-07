@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-doc-sample-swagger</artifactId>
-	<name>XCloud DevSecOps Doc for Sample Swagger Plugin</name>
+	<artifactId>xcloud-devops-dts-plugin-sample</artifactId>
+	<name>XCloud DevSecOps Doc for Plugin Swagger Sample</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-doc</artifactId>
+		<artifactId>xcloud-devops-dts</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -41,7 +41,7 @@
 		<plugins>
 			<plugin>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-doc-plugin-swagger</artifactId>
+				<artifactId>xcloud-devops-dts-plugin-swagger</artifactId>
 				<version>master</version>
 				<executions>
 					<execution>
