@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-dts-kit-hbase-migrator</artifactId>
+	<artifactId>xcloud-devops-dts-tool-hbase-migrator</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSevOps DTS Kit for Hbase Migrator</name>
+	<name>XCloud DevSevOps DTS Tools for Hbase Migrator</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-dts-kit</artifactId>
+		<artifactId>xcloud-devops-dts-tool</artifactId>
 		<version>master</version>
 	</parent>
 	<properties>

@@ -13,8 +13,9 @@
 	<modules>
 		<module>xcloud-devops-dts-core</module>
 		<module>xcloud-devops-dts-codegen</module>
-		<module>xcloud-devops-dts-kit</module>
 		<module>xcloud-devops-dts-manager</module>
+		<module>xcloud-devops-dts-tool</module>
+		<module>xcloud-devops-dts-plugin</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
