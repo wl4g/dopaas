@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * {@link TableMetadata}

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.resolver;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata;
 

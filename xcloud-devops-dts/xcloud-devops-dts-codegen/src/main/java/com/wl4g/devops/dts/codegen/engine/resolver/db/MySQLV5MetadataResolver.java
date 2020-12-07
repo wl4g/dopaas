@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine.resolver;
+package com.wl4g.devops.dts.codegen.engine.resolver.db;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
+import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata;
 
@@ -43,7 +44,7 @@ import java.util.Date;
  * @sine v1.0.0
  * @see
  */
-public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
+public class MySQLV5MetadataResolver extends AbstractDbMetadataResolver {
 
 	/**
 	 * New {@link MySQLV5MetadataResolver}

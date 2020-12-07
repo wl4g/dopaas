@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition.GenExtraOption;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;

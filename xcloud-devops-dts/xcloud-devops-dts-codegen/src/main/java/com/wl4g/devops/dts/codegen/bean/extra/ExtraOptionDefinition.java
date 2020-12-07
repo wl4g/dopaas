@@ -27,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import com.wl4g.components.common.bean.ConfigOption;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 

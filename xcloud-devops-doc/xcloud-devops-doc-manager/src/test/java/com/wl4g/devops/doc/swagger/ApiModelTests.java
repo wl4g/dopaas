@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.bean.doc.model;
+package com.wl4g.devops.doc.swagger;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.System.out;
+
+import java.io.IOException;
 
 import org.junit.Test;
 
 import com.wl4g.components.common.resource.ResourceUtils2;
+
+import io.swagger.models.Swagger;
+import io.swagger.parser.Swagger20Parser;
 
 /**
  * {@link ApiModelTests}
@@ -29,17 +33,17 @@ import com.wl4g.components.common.resource.ResourceUtils2;
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-07
  * @sine v1.0
- * @see 
+ * @see
  */
 public class ApiModelTests {
 
 	final static String DEMO_SWAGGER2_JSON = ResourceUtils2.getResourceString(ApiModelTests.class, "demo-swagger2.json");
 
 	@Test
-	public void circularRefSerializeCase1() {
+	public void circularRefSerializeCase1() throws IOException {
 		// out.println(DEMO_SWAGGER2_JSON);
 
-		Swagger2ApiModel model = parseJSON(DEMO_SWAGGER2_JSON, Swagger2ApiModel.class);
+		Swagger model = new Swagger20Parser().parse(DEMO_SWAGGER2_JSON);
 
 		out.println("\n-------- App info: ---------");
 		out.println(toJSONString(model.getInfo()));
@@ -54,6 +58,8 @@ public class ApiModelTests {
 		model.getPaths().forEach((address, pathInfo) -> {
 			out.println("address: " + address);
 			out.println("pathInfo: " + toJSONString(pathInfo));
+			// out.println("---: " +
+			// pathInfo.getGet().getResponses().get("200").getResponseSchema().getProperties());
 		});
 
 		out.println("\n-------- Re-toJSONString: ---------");

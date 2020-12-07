@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.specs;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
