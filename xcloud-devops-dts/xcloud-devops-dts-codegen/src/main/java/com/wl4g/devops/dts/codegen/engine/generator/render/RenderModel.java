@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.devops.dts.codegen.exception.CannotOverridePropertyException;
 

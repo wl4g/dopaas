@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.engine.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.generator.render.RenderModel;

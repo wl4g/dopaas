@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.template;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import com.wl4g.components.common.lang.StringUtils2;
 
 import javax.validation.constraints.NotBlank;

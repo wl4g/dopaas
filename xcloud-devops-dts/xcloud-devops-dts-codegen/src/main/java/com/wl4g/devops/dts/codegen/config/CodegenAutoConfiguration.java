@@ -28,9 +28,9 @@ import com.wl4g.devops.dts.codegen.engine.generator.SpringDubboMvnGeneratorProvi
 import com.wl4g.devops.dts.codegen.engine.generator.IamSpringCloudMvnGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.generator.IamVueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
-import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5MetadataResolver;
-import com.wl4g.devops.dts.codegen.engine.resolver.OracleV11gMetadataResolver;
-import com.wl4g.devops.dts.codegen.engine.resolver.PostgreSQLV10MetadataResolver;
+import com.wl4g.devops.dts.codegen.engine.resolver.db.MySQLV5MetadataResolver;
+import com.wl4g.devops.dts.codegen.engine.resolver.db.OracleV11gMetadataResolver;
+import com.wl4g.devops.dts.codegen.engine.resolver.db.PostgreSQLV10MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.template.ClassPathGenTemplateLocator;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.devops.dts.codegen.i18n.CodegenResourceMessageBundler;

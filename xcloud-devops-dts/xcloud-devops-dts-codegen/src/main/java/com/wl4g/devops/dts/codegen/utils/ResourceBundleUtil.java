@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.utils;
 
 import com.google.common.io.Resources;
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import com.wl4g.components.common.resource.StreamResource;
 import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
 

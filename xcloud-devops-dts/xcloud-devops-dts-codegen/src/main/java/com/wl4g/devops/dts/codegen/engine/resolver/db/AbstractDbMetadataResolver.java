@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine.resolver;
+package com.wl4g.devops.dts.codegen.engine.resolver.db;
 
-import com.wl4g.components.common.annotation.Nullable;
+import javax.annotation.Nullable;
 import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 
 import static java.lang.String.format;
 
@@ -38,7 +39,7 @@ import static com.wl4g.components.common.reflect.ReflectionUtils2.findMethod;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.invokeMethod;
 
 /**
- * {@link AbstractMetadataResolver}
+ * {@link AbstractDbMetadataResolver}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
@@ -46,7 +47,7 @@ import static com.wl4g.components.common.reflect.ReflectionUtils2.invokeMethod;
  * @sine v1.0.0
  * @see
  */
-public abstract class AbstractMetadataResolver implements MetadataResolver {
+public abstract class AbstractDbMetadataResolver implements MetadataResolver {
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -57,14 +58,14 @@ public abstract class AbstractMetadataResolver implements MetadataResolver {
 	protected final String dbUrl;
 
 	/**
-	 * New parent of {@link AbstractMetadataResolver}
+	 * New parent of {@link AbstractDbMetadataResolver}
 	 * 
 	 * @param driverClassName
 	 * @param url
 	 * @param username
 	 * @param password
 	 */
-	protected AbstractMetadataResolver(@NotBlank String driverClassName, @NotBlank String url, @NotBlank String username,
+	protected AbstractDbMetadataResolver(@NotBlank String driverClassName, @NotBlank String url, @NotBlank String username,
 			@Nullable String password) {
 		hasTextOf(driverClassName, "driverClassName");
 		this.dbUrl = hasTextOf(url, "url");
@@ -93,7 +94,7 @@ public abstract class AbstractMetadataResolver implements MetadataResolver {
 	 * @throws IOException
 	 */
 	protected String loadResolvingSql(String sqlType, String filename, String... args) {
-		return readResource(AbstractMetadataResolver.class, "sql/", sqlType, filename, true, args);
+		return readResource(AbstractDbMetadataResolver.class, "sql/", sqlType, filename, true, args);
 	}
 
 	/**
