@@ -1,0 +1,58 @@
+package {{servicePackage}};
+
+import {{apiPackage}}.{{className}}Api;
+{{#importPackageList}}import {{className}};{{/importPackageList}}
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.PathParam;
+
+import javax.servlet.ServletException;
+
+@Service("{{servicePackage}}.{{className}}Service")
+@Path("{{urlPath}}")
+public class {{className}}Service {
+
+@Autowired
+private {{className}}Api delegateApi;
+{{#pathGetEntity}}
+    @GET
+    {{#pathGetEntity.urlPath}}@Path("{{pathGetEntity.urlPath}}"){{/pathGetEntity.urlPath}}
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    public {{pathGetEntity.responseType}} {{pathGetEntity.methodName}}({{#pathGetEntity.params}}@NotNull @QueryParam("{{paramName}}") {{paramType}} {{paramName}}{{/pathGetEntity.params}}) throws ServletException {
+        return delegateApi.{{pathGetEntity.methodName}}({{#pathGetEntity.params}}{{paramName}}{{/pathGetEntity.params}});
+    }
+{{/pathGetEntity}}{{#pathDeleteEntity}}
+    @DELETE
+    {{#pathDeleteEntity.urlPath}}@Path("{{pathDeleteEntity.urlPath}}"){{/pathDeleteEntity.urlPath}}
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    public void {{pathDeleteEntity.methodName}}({{#pathDeleteEntity.params}}@NotNull @PathParam("{{paramName}}") {{paramType}} {{paramName}}{{/pathDeleteEntity.params}}) throws ServletException {
+        delegateApi.{{pathDeleteEntity.methodName}}({{#pathDeleteEntity.params}}{{paramName}}{{/pathDeleteEntity.params}});
+    }
+{{/pathDeleteEntity}}{{#pathPostEntity}}
+    @POST
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    public void {{pathPostEntity.methodName}}({{#pathPostEntity.params}}{{paramType}} {{paramName}}{{/pathPostEntity.params}}) throws ServletException {
+        delegateApi.{{pathPostEntity.methodName}}({{#pathPostEntity.params}}{{paramName}}{{/pathPostEntity.params}});
+    }
+{{/pathPostEntity}}{{#pathPutEntity}}
+    @PUT
+    @Consumes({ "application/json" })
+    @Produces({ "application/json" })
+    public void {{pathPutEntity.methodName}}({{#pathPutEntity.params}}{{paramType}} {{paramName}}{{/pathPutEntity.params}}) throws ServletException {
+        delegateApi.{{pathPutEntity.methodName}}({{#pathPutEntity.params}}{{paramName}}{{/pathPutEntity.params}});
+    }
+{{/pathPutEntity}}
+}
