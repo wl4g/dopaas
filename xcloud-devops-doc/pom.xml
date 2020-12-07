@@ -15,8 +15,7 @@
 		<module>xcloud-devops-doc-service-facade</module>
 		<module>xcloud-devops-doc-service-starter-facade</module>
 		<module>xcloud-devops-doc-manager</module>
-		<!-- <module>xcloud-devops-doc-plugin-swagger</module> -->
-		<!-- <module>xcloud-devops-doc-sample-swagger</module> -->
+		<module>xcloud-devops-doc-plugin</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
