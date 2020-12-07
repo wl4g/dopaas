@@ -92,7 +92,7 @@
 		<!-- NLP (pinyin) -->
 		<belerweb.pinyin4j.version>2.5.1</belerweb.pinyin4j.version>
 		<!-- Testing's. -->
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<!-- 3Thirdparty's. -->
 		<aliyun-sdk-dysmsapi.version>2.1.0</aliyun-sdk-dysmsapi.version>
 		<aliyun-sdk-core.version>4.4.0</aliyun-sdk-core.version>

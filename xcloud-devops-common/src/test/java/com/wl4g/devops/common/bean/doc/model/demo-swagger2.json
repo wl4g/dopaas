@@ -1,0 +1,266 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "v1.0.0",
+        "title": "XCloud Docs demo API文档",
+        "contact": {
+            "name": "Wanglsir",
+            "url": "#",
+            "email": "Wanglsir"
+        },
+        "license": {}
+    },
+    "host": "demo.doc.devops.wl4g.com",
+    "basePath": "/demo",
+    "tags": [{
+        "name": "article/发布文章",
+        "description": "发布文章"
+    }],
+    "paths": {
+        "/article/del": {
+            "post": {
+                "tags": ["article/发布文章"],
+                "summary": "删除发布文章信息",
+                "operationId": "delUsingPOST_1",
+                "consumes": ["application/json"],
+                "produces": ["*/*"],
+                "parameters": [{
+                    "name": "id",
+                    "in": "query",
+                    "description": "待删除的发布文章信息ID",
+                    "required": true,
+                    "type": "ref"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/RespBase«object»"
+                        }
+                    }
+                },
+                "deprecated": false,
+                "x-order": "2147483647"
+            }
+        },
+        "/article/detail": {
+            "get": {
+                "tags": ["article/发布文章"],
+                "summary": "查询发布文章详细信息",
+                "operationId": "detailUsingGET_1",
+                "produces": ["*/*"],
+                "parameters": [{
+                    "name": "id",
+                    "in": "query",
+                    "description": "发布文章信息ID",
+                    "required": true,
+                    "type": "ref"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/RespBase«发布文章»"
+                        }
+                    }
+                },
+                "deprecated": false,
+                "x-order": "2147483647"
+            }
+        },
+        "/article/list": {
+            "get": {
+                "tags": ["article/发布文章"],
+                "summary": "查询发布文章信息（分页）",
+                "operationId": "listUsingGET_1",
+                "produces": ["*/*"],
+                "parameters": [{
+                    "name": "commentNum",
+                    "in": "query",
+                    "description": "评论次数",
+                    "required": false,
+                    "type": "integer",
+                    "format": "int64"
+                }, {
+                    "name": "content",
+                    "in": "query",
+                    "description": "内容",
+                    "required": false,
+                    "type": "string"
+                }, {
+                    "name": "pageNum",
+                    "description": "Page index",
+                    "required": false,
+                    "schema": {
+                        "$ref": "#/definitions/int32"
+                    }
+                }, {
+                    "name": "pageSize",
+                    "description": "Page records size.(Respond to all data when it is 0)",
+                    "required": false,
+                    "schema": {
+                        "$ref": "#/definitions/int32"
+                    }
+                }, {
+                    "name": "viewNum",
+                    "in": "query",
+                    "description": "阅读次数",
+                    "required": false,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/RespBase«Page query data«发布文章»»"
+                        }
+                    }
+                },
+                "deprecated": false,
+                "x-order": "2147483647"
+            }
+        },
+        "/article/save": {
+            "post": {
+                "tags": ["article/发布文章"],
+                "summary": "新增发布文章信息",
+                "operationId": "saveUsingPOST_1",
+                "consumes": ["application/json"],
+                "produces": ["*/*"],
+                "parameters": [{
+                    "in": "body",
+                    "name": "article",
+                    "description": "article",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/发布文章"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/RespBase«object»"
+                        }
+                    }
+                },
+                "deprecated": false,
+                "x-order": "2147483647"
+            }
+        }
+    },
+    "definitions": {
+        "发布文章": {
+            "type": "object",
+            "properties": {
+                "commentNum": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "评论次数"
+                },
+                "content": {
+                    "type": "string",
+                    "description": "内容"
+                },
+                "viewNum": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "阅读次数"
+                }
+            },
+            "title": "发布文章"
+        },
+        "RespBase«object»": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "data": {
+                    "type": "object"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            },
+            "title": "RespBase«object»"
+        },
+        "RespBase«发布文章»": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "data": {
+                    "$ref": "#/definitions/发布文章"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            },
+            "title": "RespBase«发布文章»"
+        },
+        "Page query data«发布文章»": {
+            "type": "object",
+            "properties": {
+                "pageNum": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "pageSize": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "records": {
+                    "type": "array",
+                    "readOnly": true,
+                    "items": {
+                        "$ref": "#/definitions/发布文章"
+                    }
+                },
+                "total": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            },
+            "title": "Page query data«发布文章»"
+        },
+        "RespBase«Page query data«发布文章»»": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "data": {
+                    "$ref": "#/definitions/Page query data«发布文章»"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            },
+            "title": "RespBase«Page query data«发布文章»»"
+        }
+    }
+}
