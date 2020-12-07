@@ -1,0 +1,112 @@
+swagger: "2.0"
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+host: www
+schemes:
+  - https
+basePath: /rest
+paths:
+  /test/v1/user:
+    post:
+      tags:
+        - "MyUser"
+      summary: "创建用户"
+      operationId: "createUser"
+      produces:
+        - "application/json"
+      consumes:
+        - "application/json"
+      parameters:
+        - name: "user"
+          in: body
+          description: "创建用户"
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: "创建用户成功."
+    put:
+      tags:
+        - "MyUser"
+      summary: "修改用户"
+      operationId: "modifyUser"
+      produces:
+        - "application/json"
+      consumes:
+        - "application/json"
+      parameters:
+        - name: "user"
+          in: body
+          description: "修改用户"
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: "修改用户成功."
+  /test/v1/user/{id}:
+    delete:
+      tags:
+        - "MyUser"
+      summary: "通过ID删除用户"
+      operationId: "deleteUserById"
+      produces:
+        - "application/json"
+      consumes:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: query
+          description: "通过ID删除用户"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "Delete family members by person id"
+    get:
+      tags:
+        - "MyUser"
+      summary: "通过ID获取用户信息"
+      operationId: "getUserById"
+      produces:
+        - "application/json"
+      consumes:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: query
+          description: "通过ID获取用户信息"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "Retrieves family members by person id"
+          schema:
+            $ref: '#/definitions/User'
+definitions:
+  User:
+    type: "object"
+    required:
+      - "id"
+      - "firstName"
+      - "lastName"
+      - "dateOfBirth"
+      - "gender"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      firstName:
+        type: "string"
+        example: "John"
+      lastName:
+        type: "string"
+        example: "Smith"
+      dateOfBirth:
+        type: "string"
+        example: "1992-10-05"
