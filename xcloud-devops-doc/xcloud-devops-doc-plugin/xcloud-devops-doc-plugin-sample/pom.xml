@@ -41,7 +41,7 @@
 		<plugins>
 			<plugin>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-devops-dts-plugin-swagger</artifactId>
+				<artifactId>xcloud-devops-doc-plugin-swagger</artifactId>
 				<version>master</version>
 				<executions>
 					<execution>
