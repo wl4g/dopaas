@@ -26,6 +26,11 @@
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-annotations</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>swagger-maven-example</groupId>
+			<artifactId>swagger-maven-example</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -33,16 +38,32 @@
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-devops-doc-plugin-swagger</artifactId>
 				<version>master</version>
+				<!-- <executions> -->
+				<!-- <execution> -->
+				<!-- <id>gendoc-stage</id> -->
+				<!-- <phase>compile</phase> -->
+				<!-- <goals> -->
+				<!-- <goal>gendoc</goal> -->
+				<!-- </goals> -->
+				<!-- <configuration> -->
+				<!-- <inputSpec>${project.basedir}/src/main/resources/user.yaml</inputSpec> -->
+				<!-- </configuration> -->
+				<!-- </execution> -->
+				<!-- </executions> -->
+				<configuration>
+					<outputDirectory>${basedir}/target/</outputDirectory>
+					<outputFilename>swagger</outputFilename>
+					<outputFormats>JSON,YAML</outputFormats>
+					<prettyPrint>true</prettyPrint>
+					<resourcePackages>
+						<resourcePackage>com.wl4g.devops.doc.plugin.sample</resourcePackage>
+					</resourcePackages>
+				</configuration>
 				<executions>
 					<execution>
-						<id>gendoc-stage</id>
-						<phase>compile</phase>
 						<goals>
-							<goal>gendoc</goal>
+							<goal>generate</goal>
 						</goals>
-						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/user.yaml</inputSpec>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
