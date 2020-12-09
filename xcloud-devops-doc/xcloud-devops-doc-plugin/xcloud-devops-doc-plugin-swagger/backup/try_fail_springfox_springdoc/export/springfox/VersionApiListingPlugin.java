@@ -13,27 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.export;
+package com.wl4g.devops.doc.plugin.swagger.export.springfox;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import java.util.List;
 
-import org.apache.maven.plugin.logging.Log;
+import springfox.documentation.service.ApiDescription;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.ApiListingScannerPlugin;
+import springfox.documentation.spi.service.contexts.DocumentationContext;
 
 /**
- * {@link AbstractDocumentionExporter}
+ * {@link VersionApiListingPlugin}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-08
  * @sine v1.0
  * @see
  */
-public abstract class AbstractDocumentionExporter<R> implements DocumentionExporter<R> {
+public class VersionApiListingPlugin implements ApiListingScannerPlugin {
 
-	/** Instance logger */
-	protected final Log log;
+	@Override
+	public boolean supports(DocumentationType delimiter) {
+		// TODO Auto-generated method stub
+		return delimiter == DocumentationType.SWAGGER_2;
+	}
 
-	public AbstractDocumentionExporter(Log log) {
-		this.log = notNullOf(log, "mvnLog");
+	@Override
+	public List<ApiDescription> apply(DocumentationContext context) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
