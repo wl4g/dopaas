@@ -31,8 +31,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.wl4g.components.common.remoting.RestClient;
-import com.wl4g.devops.doc.plugin.swagger.springfox.Bootstrap;
+import com.wl4g.devops.doc.plugin.swagger.springfox.EmbeddedBootstrap;
 import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
+import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.DocumentionProvider.OAS3;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
@@ -68,9 +69,9 @@ public class GenerateSpringfoxOas3Mojo extends AbstractMojo {
 	}
 
 	private OpenAPI resolveOAS3Documention() {
-		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(Bootstrap.class)
+		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedBootstrap.class)
 				/* .web(SERVLET) // auto-detection */
-				.bannerMode(Mode.OFF).headless(true).run(DocumentHolder.get().toSpringArgs());) {
+				.bannerMode(Mode.OFF).headless(true).run(DocumentHolder.get().toSpringArgs(OAS3));) {
 
 			RestClient rest = new RestClient();
 			Object res = rest.getForObject(URI.create(DEFAULT_SWAGGER3_API_URL), String.class);

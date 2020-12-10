@@ -31,8 +31,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.wl4g.components.common.remoting.RestClient;
-import com.wl4g.devops.doc.plugin.swagger.springfox.Bootstrap;
+import com.wl4g.devops.doc.plugin.swagger.springfox.EmbeddedBootstrap;
 import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
+import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.DocumentionProvider.SWAGGER2;
 
 import io.swagger.models.Swagger;
 
@@ -68,9 +69,9 @@ public class GenerateSpringfoxSwagger2Mojo extends AbstractMojo {
 	}
 
 	private Swagger resolveSwagger2Documention() {
-		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(Bootstrap.class)
+		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedBootstrap.class)
 				/* .web(SERVLET) // auto-detection */
-				.bannerMode(Mode.OFF).headless(true).run(DocumentHolder.get().toSpringArgs());) {
+				.bannerMode(Mode.OFF).headless(true).run(DocumentHolder.get().toSpringArgs(SWAGGER2));) {
 
 			RestClient rest = new RestClient();
 			Object res = rest.getForObject(URI.create(DEFAULT_SWAGGER2_API_URL), String.class);

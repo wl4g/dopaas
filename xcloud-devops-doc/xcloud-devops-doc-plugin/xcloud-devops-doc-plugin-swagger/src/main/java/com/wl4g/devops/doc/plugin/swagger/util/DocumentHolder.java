@@ -60,15 +60,26 @@ public class DocumentHolder {
 		this.scanBasePackages = asList(split(trimAllWhitespace(trimToEmpty(scanBasePackages)), ","));
 	}
 
-	public String[] toSpringArgs() {
+	public String[] toSpringArgs(DocumentionProvider provider) {
 		StringBuffer scans = new StringBuffer();
 		scanBasePackages.forEach(s -> scans.append(s).append(","));
-		return new String[] { ("--" + SCAN_BASE_PACKAGES + "=" + scans) };
+
+		String arg1 = "--" + SCAN_BASE_PACKAGES + "=" + scans;
+		String arg2 = "--" + PROPERTY_SWAGGER2 + "=true";
+		if (provider == DocumentionProvider.OAS3) {
+			arg2 = "--" + PROPERTY_OAS3 + "=true";
+		}
+
+		return new String[] { arg1, arg2 };
 	}
 
 	public static final String SCAN_BASE_PACKAGES = "scanBasePackages";
 
-	public static final String PROPERTY_OAS3 = "springfox.enable.oas3";
 	public static final String PROPERTY_SWAGGER2 = "springfox.enable.swagger2";
+	public static final String PROPERTY_OAS3 = "springfox.enable.oas3";
+
+	public static enum DocumentionProvider {
+		SWAGGER2, OAS3
+	}
 
 }
