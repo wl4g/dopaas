@@ -1,23 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.wl4g</groupId>
+	<!-- <groupId>com.wl4g</groupId> -->
 	<artifactId>xcloud-devops-doc-plugin-swagger</artifactId>
-	<version>master</version>
+	<!-- <version>master</version> -->
 	<packaging>maven-plugin</packaging>
 	<name>XCloud DevSecOps Doc for Plugin Swagger Exporter</name>
 	<url>http://xcloud.wl4g.com</url>
-	<!-- <parent> -->
-	<!-- <groupId>com.wl4g</groupId> -->
-	<!-- <artifactId>xcloud-devops-doc</artifactId> -->
-	<!-- <version>master</version> -->
-	<!-- <relativePath>../pom.xml</relativePath> -->
-	<!-- </parent> -->
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>xcloud-devops-doc</artifactId>
+		<version>master</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 	<properties>
 		<java.version>1.8</java.version>
+		<javassist.version>3.22.0-GA</javassist.version>
 		<jackson.core.version>2.10.1</jackson.core.version>
 		<guava.version>28.1-jre</guava.version>
-		<slf4j.version>1.7.29</slf4j.version>
 		<maven-plugin-tools.version>3.5</maven-plugin-tools.version>
 		<maven-plugin.version>3.6.0</maven-plugin.version>
 		<io.swagger.core.v3.version>2.1.4</io.swagger.core.v3.version>
@@ -30,44 +30,42 @@
 			<dependency>
 				<groupId>org.javassist</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.22.0-GA</version>
+				<version>${javassist.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>${jaxb-api.version}</version>
+				<optional>true</optional>
+			</dependency>
+			<!-- jackson version references from swagger has vulnerability -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.core.version}</version>
+			</dependency>
+			<!-- guava 20.0 has vulnerability -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-		<!-- <dependency> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>xcloud-devops-common</artifactId> -->
-		<!-- <version>${project.parent.version}</version> -->
-		<!-- <exclusions> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>xcloud-iam-common</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.maven</groupId> -->
-		<!-- <artifactId>maven-plugin-api</artifactId> -->
-		<!-- <version>3.6.0</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.maven.plugin-tools</groupId> -->
-		<!-- <artifactId>maven-plugin-annotations</artifactId> -->
-		<!-- <version>3.6.0</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.maven</groupId> -->
-		<!-- <artifactId>maven-project</artifactId> -->
-		<!-- <version>2.2.1</version> -->
-		<!-- </dependency> -->
-
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-common</artifactId>
+			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-iam-common</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
+		<!-- Maven plugin base dependencies. -->
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
 			<artifactId>maven-plugin-annotations</artifactId>
@@ -88,7 +86,20 @@
 			<artifactId>maven-artifact</artifactId>
 			<version>${maven-plugin.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+			<version>2.2.1</version>
+		</dependency>
 
+		<!-- Exportion documention for springMVC(OAS3/swagger2) dependencies. -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+		<!-- Exportion documention for jaxrs2(OAS3) dependencies. -->
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-jaxrs2</artifactId>
@@ -107,21 +118,16 @@
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
-			<version>${jaxb-api.version}</version>
 			<optional>true</optional>
 		</dependency>
-		<!-- jackson version references from swagger has vulnerability -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.core.version}</version>
-		</dependency>
-		<!-- guava 20.0 has vulnerability -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.fasterxml.jackson.core</groupId> -->
+		<!-- <artifactId>jackson-databind</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.google.guava</groupId> -->
+		<!-- <artifactId>guava</artifactId> -->
+		<!-- </dependency> -->
 
 		<!-- <dependency> -->
 		<!-- <groupId>io.springfox</groupId> -->
@@ -130,26 +136,11 @@
 		<!-- </dependency> -->
 
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-boot-starter</artifactId>
-			<version>3.0.0</version>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser</artifactId>
+			<version>2.0.20</version>
 		</dependency>
 
-		<!-- <dependency> -->
-		<!-- <groupId>io.swagger.parser.v3</groupId> -->
-		<!-- <artifactId>swagger-parser</artifactId> -->
-		<!-- <version>2.0.20</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>io.swagger.codegen.v3</groupId> -->
-		<!-- <artifactId>swagger-codegen</artifactId> -->
-		<!-- <version>3.0.21</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.alibaba</groupId> -->
-		<!-- <artifactId>fastjson</artifactId> -->
-		<!-- <version>1.2.70</version> -->
-		<!-- </dependency> -->
 	</dependencies>
 	<build>
 		<plugins>
