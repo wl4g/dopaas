@@ -7,7 +7,7 @@
     <url>http://xcloud.wl4g.com</url>
     <parent>
         <groupId>com.wl4g</groupId>
-        <artifactId>xcloud-devops</artifactId>
+        <artifactId>xcloud-devops-doc</artifactId>
         <version>master</version>
     </parent>
     <modules>
