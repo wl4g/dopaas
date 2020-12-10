@@ -6,9 +6,8 @@
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-doc</artifactId>
+		<artifactId>xcloud-devops-doc-plugin</artifactId>
 		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -25,11 +24,6 @@
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>swagger-maven-example</groupId>
-			<artifactId>swagger-maven-example</artifactId>
-			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
