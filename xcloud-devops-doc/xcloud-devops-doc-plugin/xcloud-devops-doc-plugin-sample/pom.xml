@@ -38,32 +38,25 @@
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-devops-doc-plugin-swagger</artifactId>
 				<version>master</version>
-				<!-- <executions> -->
-				<!-- <execution> -->
-				<!-- <id>gendoc-stage</id> -->
-				<!-- <phase>compile</phase> -->
-				<!-- <goals> -->
-				<!-- <goal>gendoc</goal> -->
-				<!-- </goals> -->
 				<!-- <configuration> -->
-				<!-- <inputSpec>${project.basedir}/src/main/resources/user.yaml</inputSpec> -->
+				<!-- <outputDirectory>${basedir}/target/</outputDirectory> -->
+				<!-- <outputFilename>swagger</outputFilename> -->
+				<!-- <outputFormats>JSON,YAML</outputFormats> -->
+				<!-- <prettyPrint>true</prettyPrint> -->
+				<!-- <resourcePackages> -->
+				<!-- <resourcePackage>com.wl4g.devops.doc.plugin.sample</resourcePackage> -->
+				<!-- </resourcePackages> -->
 				<!-- </configuration> -->
-				<!-- </execution> -->
-				<!-- </executions> -->
-				<configuration>
-					<outputDirectory>${basedir}/target/</outputDirectory>
-					<outputFilename>swagger</outputFilename>
-					<outputFormats>JSON,YAML</outputFormats>
-					<prettyPrint>true</prettyPrint>
-					<resourcePackages>
-						<resourcePackage>com.wl4g.devops.doc.plugin.sample</resourcePackage>
-					</resourcePackages>
-				</configuration>
 				<executions>
 					<execution>
+						<id>gendoc-stage</id>
 						<goals>
-							<goal>generate</goal>
+							<!-- <goal>gendoc-springfox-oas3</goal> -->
+							<goal>gendoc-springfox-swagger2</goal>
 						</goals>
+						<configuration>
+							<scanBasePackages>com.wl4g.devops,com.github</scanBasePackages>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
