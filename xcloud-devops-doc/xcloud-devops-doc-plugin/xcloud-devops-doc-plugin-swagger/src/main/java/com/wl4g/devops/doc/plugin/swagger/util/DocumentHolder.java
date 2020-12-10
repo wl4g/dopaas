@@ -66,7 +66,7 @@ public class DocumentHolder {
 
 		String arg1 = "--" + SCAN_BASE_PACKAGES + "=" + scans;
 		String arg2 = "--" + PROPERTY_SWAGGER2 + "=true";
-		if (provider == DocumentionProvider.OAS3) {
+		if (provider == DocumentionProvider.SPRINGFOX_OAS3) {
 			arg2 = "--" + PROPERTY_OAS3 + "=true";
 		}
 
@@ -79,7 +79,7 @@ public class DocumentHolder {
 	public static final String PROPERTY_OAS3 = "springfox.enable.oas3";
 
 	public static enum DocumentionProvider {
-		SWAGGER2, OAS3
+		SPRINGFOX_SWAGGER2, SPRINGFOX_OAS3
 	}
 
 }

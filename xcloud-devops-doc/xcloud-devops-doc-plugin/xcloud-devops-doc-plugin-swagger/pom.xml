@@ -15,13 +15,12 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<javassist.version>3.22.0-GA</javassist.version>
-		<jackson.core.version>2.10.1</jackson.core.version>
-		<guava.version>28.1-jre</guava.version>
 		<maven-plugin-tools.version>3.5</maven-plugin-tools.version>
 		<maven-plugin.version>3.6.0</maven-plugin.version>
-		<io.swagger.core.v3.version>2.1.4</io.swagger.core.v3.version>
+		<guava.version>28.1-jre</guava.version>
 		<org.reflections.version>0.9.11</org.reflections.version>
+		<javassist.version>3.22.0-GA</javassist.version>
+		<io.swagger.core.v3.version>2.1.4</io.swagger.core.v3.version>
 		<javax.ws.rs.version>2.1</javax.ws.rs.version>
 		<jaxb-api.version>2.3.0</jaxb-api.version>
 	</properties>
@@ -37,12 +36,6 @@
 				<artifactId>jaxb-api</artifactId>
 				<version>${jaxb-api.version}</version>
 				<optional>true</optional>
-			</dependency>
-			<!-- jackson version references from swagger has vulnerability -->
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>${jackson.core.version}</version>
 			</dependency>
 			<!-- guava 20.0 has vulnerability -->
 			<dependency>
@@ -92,7 +85,7 @@
 			<version>2.2.1</version>
 		</dependency>
 
-		<!-- Exportion documention for springMVC(OAS3/swagger2) dependencies. -->
+		<!-- Exportion documention for springMVC(OAS3) dependencies. -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-boot-starter</artifactId>
@@ -120,27 +113,6 @@
 			<artifactId>jaxb-api</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>com.fasterxml.jackson.core</groupId> -->
-		<!-- <artifactId>jackson-databind</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>com.google.guava</groupId> -->
-		<!-- <artifactId>guava</artifactId> -->
-		<!-- </dependency> -->
-
-		<!-- <dependency> -->
-		<!-- <groupId>io.springfox</groupId> -->
-		<!-- <artifactId>springfox-swagger2</artifactId> -->
-		<!-- <version>3.0.0</version> -->
-		<!-- </dependency> -->
-
-		<dependency>
-			<groupId>io.swagger.parser.v3</groupId>
-			<artifactId>swagger-parser</artifactId>
-			<version>2.0.20</version>
-		</dependency>
-
 	</dependencies>
 	<build>
 		<plugins>
