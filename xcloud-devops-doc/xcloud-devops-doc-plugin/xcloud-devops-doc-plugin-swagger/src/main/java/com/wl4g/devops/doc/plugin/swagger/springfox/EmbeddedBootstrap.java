@@ -16,22 +16,17 @@
 package com.wl4g.devops.doc.plugin.swagger.springfox;
 
 import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.SCAN_BASE_PACKAGES;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
-
-import springfox.documentation.oas.configuration.OpenApiDocumentationConfiguration;
 
 /**
- * {@link Bootstrap}
+ * {@link EmbeddedBootstrap}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-10
  * @sine v1.0
  * @see
  */
-@SpringBootApplication(scanBasePackages = "${" + SCAN_BASE_PACKAGES + "}"/*, exclude = { OpenApiDocumentationConfiguration.class,
-		DelegatingWebMvcConfiguration.class }*/)
-public class Bootstrap {
+@SpringBootApplication(scanBasePackages = "${" + SCAN_BASE_PACKAGES + "}")
+public class EmbeddedBootstrap {
 
 }

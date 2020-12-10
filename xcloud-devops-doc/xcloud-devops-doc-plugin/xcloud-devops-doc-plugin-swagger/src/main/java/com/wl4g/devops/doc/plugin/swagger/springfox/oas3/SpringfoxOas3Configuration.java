@@ -13,56 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springfox.swagger2;
+package com.wl4g.devops.doc.plugin.swagger.springfox.oas3;
 
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.PROPERTY_SWAGGER2;
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.SCAN_BASE_PACKAGES;
-
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
 
+import io.swagger.annotations.ApiOperation;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.oas.configuration.OpenApiDocumentationConfiguration;
+
+import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.PROPERTY_OAS3;
+import static springfox.documentation.builders.RequestHandlerSelectors.withMethodAnnotation;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-import springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration;
-import springfox.documentation.swagger2.web.Swagger2ControllerWebMvc;
 
 /**
- * {@link SpringfoxSwagger2Bootstrap}
+ * {@link SpringfoxOas3Configuration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-09
  * @sine v1.0
- * @see {@link Swagger2ControllerWebMvc}
- * @see {@link Swagger2Controller}
+ * @see {@link springfox.documentation.oas.web.OpenApiControllerWebMvc}
  */
-//@SpringBootApplication(scanBasePackages = "${" + SCAN_BASE_PACKAGES + "}", exclude = { OpenApiDocumentationConfiguration.class,
-//		DelegatingWebMvcConfiguration.class })
 @Configuration
-@ConditionalOnProperty(name = PROPERTY_SWAGGER2, matchIfMissing = false)
-@EnableSwagger2
-public class SpringfoxSwagger2Bootstrap {
+@ConditionalOnProperty(name = PROPERTY_OAS3, matchIfMissing = false)
+@EnableOpenApi
+@EnableWebMvc
+public class SpringfoxOas3Configuration {
 
 	@Bean
-	public Docket springfoxSwagger2Docket() {
+	public Docket springfoxOas3Docket() {
 		ApiInfo apiInfo = new ApiInfoBuilder().title("Demo API文档").description("").license("")
 				.contact(new Contact("Wanglsir", "#", "Wanglsir")).version("v1.0.0").build();
 
-		ApiSelectorBuilder builder = new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo).select().paths(PathSelectors.any());
-		// .apis(RequestHandlerSelectors.withMethodAnnotation(Api.class))
+		ApiSelectorBuilder builder = new Docket(DocumentationType.OAS_30).apiInfo(apiInfo).select().paths(PathSelectors.any());
+		// .apis(withMethodAnnotation(Api.class))
+		builder.apis(withMethodAnnotation(ApiOperation.class));
 		for (String scanBasePackage : DocumentHolder.get().getScanBasePackages()) {
 			builder.apis(RequestHandlerSelectors.basePackage(scanBasePackage));
 		}
