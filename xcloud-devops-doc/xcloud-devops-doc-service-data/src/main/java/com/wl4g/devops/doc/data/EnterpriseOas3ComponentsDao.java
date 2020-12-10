@@ -39,6 +39,8 @@ public interface EnterpriseOas3ComponentsDao {
 
     EnterpriseOas3Components selectByPrimaryKey(Long id);
 
+    List<EnterpriseOas3Components> selectByVersionId(Long versionId);
+
     int updateByPrimaryKeySelective(EnterpriseOas3Components enterpriseOas3Components);
 
     int updateByPrimaryKey(EnterpriseOas3Components enterpriseOas3Components);

@@ -40,6 +40,8 @@ public interface EnterpriseOas3ApiDao {
 
     EnterpriseOas3Api selectByPrimaryKey(Long id);
 
+    List<EnterpriseOas3Api> selectByVersionId(Long versionId);
+
     int updateByPrimaryKeySelective(EnterpriseOas3Api enterpriseOas3Api);
 
     int updateByPrimaryKey(EnterpriseOas3Api enterpriseOas3Api);
