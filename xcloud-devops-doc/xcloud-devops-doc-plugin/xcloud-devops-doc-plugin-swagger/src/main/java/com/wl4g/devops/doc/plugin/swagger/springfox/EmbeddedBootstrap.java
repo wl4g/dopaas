@@ -28,5 +28,4 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication(scanBasePackages = "${" + SCAN_BASE_PACKAGES + "}")
 public class EmbeddedBootstrap {
-
 }
