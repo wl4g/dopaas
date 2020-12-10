@@ -39,6 +39,8 @@ public interface EnterpriseOas3TagsDao {
 
     EnterpriseOas3Tags selectByPrimaryKey(Long id);
 
+    List<EnterpriseOas3Tags> selectByVersionId(Long versionId);
+
     int updateByPrimaryKeySelective(EnterpriseOas3Tags enterpriseOas3Tags);
 
     int updateByPrimaryKey(EnterpriseOas3Tags enterpriseOas3Tags);
