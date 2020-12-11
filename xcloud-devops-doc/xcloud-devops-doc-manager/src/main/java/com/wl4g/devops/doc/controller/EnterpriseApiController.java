@@ -19,8 +19,9 @@ package com.wl4g.devops.doc.controller;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.devops.common.bean.doc.EnterpriseApi;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.devops.common.bean.doc.ApisInfo;
+import com.wl4g.devops.common.bean.doc.EnterpriseApi;
 import com.wl4g.devops.doc.service.EnterpriseApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,6 +52,15 @@ public class EnterpriseApiController extends BaseController {
         resp.setData(enterpriseApiService.page(pm, enterpriseApi));
         return resp;
     }
+
+    @RequestMapping(value = "/getApisByVersionid", method = { GET })
+    public RespBase<ApisInfo> getApisByVersionid(Long versionId) {
+        RespBase<ApisInfo> resp = RespBase.create();
+        resp.setData(enterpriseApiService.getApisByVersionid(versionId));
+        return resp;
+    }
+
+
 
     @RequestMapping(value = "/save", method = { POST, PUT })
     public RespBase<?> save(@RequestBody EnterpriseApi enterpriseApi) {
