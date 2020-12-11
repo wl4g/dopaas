@@ -27,7 +27,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.PROPERTY_OAS3;
+import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.KEY_SPRINGFOX_OAS3;
 import static springfox.documentation.builders.RequestHandlerSelectors.withMethodAnnotation;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiInfo;
@@ -45,7 +45,7 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @see {@link springfox.documentation.oas.web.OpenApiControllerWebMvc}
  */
 @Configuration
-@ConditionalOnProperty(name = PROPERTY_OAS3, matchIfMissing = false)
+@ConditionalOnProperty(name = KEY_SPRINGFOX_OAS3, matchIfMissing = false)
 @EnableOpenApi
 @EnableWebMvc
 public class SpringfoxOas3Configuration {

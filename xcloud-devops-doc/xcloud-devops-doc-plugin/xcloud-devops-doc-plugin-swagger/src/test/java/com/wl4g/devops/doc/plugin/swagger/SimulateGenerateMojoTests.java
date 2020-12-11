@@ -52,22 +52,26 @@ public class SimulateGenerateMojoTests {
 
 	@Test
 	public void generateSpringfoxSwagger2MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateSpringfoxSwagger2Mojo.class).execute();
+		createMavenMojoInstance(GenerateSpringfoxSwagger2Mojo.class,
+				singletonList("com.wl4g.devops.doc.plugin.swagger.example.swagger2")).execute();
 	}
 
 	@Test
 	public void generateSpringfoxOas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateSpringfoxOas3Mojo.class).execute();
+		createMavenMojoInstance(GenerateSpringfoxOas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"))
+				.execute();
 	}
 
 	@Test
-	public void generateSpringdocMojoTest() throws Exception {
-		createMavenMojoInstance(GenerateSpringdocOas3Mojo.class).execute();
+	public void generateSpringdocOas3MojoTest() throws Exception {
+		createMavenMojoInstance(GenerateSpringdocOas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"))
+				.execute();
 	}
 
 	@Test
 	public void generateJaxrs2Oas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateJaxrs2Oas3Mojo.class).execute();
+		createMavenMojoInstance(GenerateJaxrs2Oas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"))
+				.execute();
 	}
 
 	@After
@@ -75,12 +79,13 @@ public class SimulateGenerateMojoTests {
 		exit(0);
 	}
 
-	public static AbstractMojo createMavenMojoInstance(Class<? extends AbstractMojo> mojoClass) throws Exception {
+	public static AbstractMojo createMavenMojoInstance(Class<? extends AbstractMojo> mojoClass, List<String> resourcePackages)
+			throws Exception {
 		AbstractMojo mojo = mojoClass.newInstance();
 		setField(findField(mojoClass, "project"), mojo, createMavenProject(), true);
 		setField(findField(mojoClass, "projectHelper"), mojo, createMavenProjectHelper(), true);
 		setField(findField(mojoClass, "skip"), mojo, false, true);
-		setField(findField(mojoClass, "resourcePackages"), mojo, singletonList("com.wl4g.devops.doc.plugin.example"), true);
+		setField(findField(mojoClass, "resourcePackages"), mojo, resourcePackages, true);
 		setField(findField(mojoClass, "prettyPrint"), mojo, true, true);
 		setField(findField(mojoClass, "outputFormats"), mojo, asList(JSON, YAML), true);
 		setField(findField(mojoClass, "outputDirectory"), mojo, new File(USER_DIR + "/target/outputdir"), true);

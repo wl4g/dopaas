@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springdoc;
 
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.SCAN_BASE_PACKAGES;
+import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.KEY_SCAN_BASE_PACKAGES;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
@@ -26,6 +26,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @sine v1.0
  * @see
  */
-@SpringBootApplication(scanBasePackages = "${" + SCAN_BASE_PACKAGES + "}")
+@SpringBootApplication(scanBasePackages = "${" + KEY_SCAN_BASE_PACKAGES + "}")
 public class EmbeddedSpringdocBootstrap {
 }

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox.swagger2;
 
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.PROPERTY_SWAGGER2;
+import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.KEY_SPRINGFOX_SWAGGER2;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +44,7 @@ import springfox.documentation.swagger2.web.Swagger2ControllerWebMvc;
  * @see {@link Swagger2Controller}
  */
 @Configuration
-@ConditionalOnProperty(name = PROPERTY_SWAGGER2, matchIfMissing = false)
+@ConditionalOnProperty(name = KEY_SPRINGFOX_SWAGGER2, matchIfMissing = false)
 @EnableSwagger2
 public class SpringfoxSwagger2Configuration {
 
