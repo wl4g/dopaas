@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.jaxrs2;
 
-import java.util.Collections;
-import java.util.HashSet;
+import static java.util.Collections.emptyList;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,13 +43,13 @@ class JaxRSScanner {
 
 	private final Log log;
 
-	private final Set<String> resourcePackages;
+	private final List<String> resourcePackages;
 
 	private final boolean useResourcePackagesChildren;
 
-	public JaxRSScanner(Log log, Set<String> resourcePackages, Boolean useResourcePackagesChildren) {
+	public JaxRSScanner(Log log, List<String> resourcePackages, Boolean useResourcePackagesChildren) {
 		this.log = log;
-		this.resourcePackages = resourcePackages == null ? Collections.emptySet() : new HashSet<>(resourcePackages);
+		this.resourcePackages = resourcePackages == null ? emptyList() : new ArrayList<>(resourcePackages);
 		this.useResourcePackagesChildren = useResourcePackagesChildren != null && useResourcePackagesChildren;
 	}
 
