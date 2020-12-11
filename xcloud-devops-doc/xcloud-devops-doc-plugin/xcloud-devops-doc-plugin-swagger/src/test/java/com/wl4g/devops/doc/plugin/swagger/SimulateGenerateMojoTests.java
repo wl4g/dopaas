@@ -48,7 +48,7 @@ import com.wl4g.devops.doc.plugin.swagger.springdoc.oas3.GenerateSpringdocOas3Mo
  * @sine v1.0
  * @see
  */
-public class SimpleGenerateMojoTests {
+public class SimulateGenerateMojoTests {
 
 	@Test
 	public void generateSpringfoxSwagger2MojoTest() throws Exception {
