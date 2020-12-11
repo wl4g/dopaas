@@ -17,7 +17,7 @@ package com.wl4g.devops.doc.plugin;
 
 import com.wl4g.devops.doc.plugin.swagger.springfox.oas3.GenerateSpringfoxOas3Mojo;
 import com.wl4g.devops.doc.plugin.swagger.springfox.swagger2.GenerateSpringfoxSwagger2Mojo;
-import com.wl4g.devops.doc.plugin.swagger.jaxrs2.GenerateJaxrs2Mojo;
+import com.wl4g.devops.doc.plugin.swagger.jaxrs2.GenerateJaxrs2Oas3Mojo;
 import com.wl4g.devops.doc.plugin.swagger.springdoc.GenerateSpringdocMojo;
 
 /**

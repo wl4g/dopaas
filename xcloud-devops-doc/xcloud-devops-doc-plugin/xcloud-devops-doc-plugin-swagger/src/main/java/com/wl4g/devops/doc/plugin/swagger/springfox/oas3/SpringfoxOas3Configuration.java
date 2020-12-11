@@ -58,7 +58,7 @@ public class SpringfoxOas3Configuration {
 		ApiSelectorBuilder builder = new Docket(DocumentationType.OAS_30).apiInfo(apiInfo).select().paths(PathSelectors.any());
 		// .apis(withMethodAnnotation(Api.class))
 		builder.apis(withMethodAnnotation(ApiOperation.class));
-		for (String scanBasePackage : DocumentHolder.get().getScanBasePackages()) {
+		for (String scanBasePackage : DocumentHolder.get().getResourcePackages()) {
 			builder.apis(RequestHandlerSelectors.basePackage(scanBasePackage));
 		}
 

@@ -55,7 +55,7 @@ public class SpringfoxSwagger2Configuration {
 
 		ApiSelectorBuilder builder = new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo).select().paths(PathSelectors.any());
 		// .apis(RequestHandlerSelectors.withMethodAnnotation(Api.class))
-		for (String scanBasePackage : DocumentHolder.get().getScanBasePackages()) {
+		for (String scanBasePackage : DocumentHolder.get().getResourcePackages()) {
 			builder.apis(RequestHandlerSelectors.basePackage(scanBasePackage));
 		}
 
