@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin;
+package com.wl4g.devops.doc.plugin.swagger;
 
 import static java.lang.System.out;
 import java.io.IOException;

@@ -22,7 +22,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
-import com.wl4g.devops.doc.plugin.swagger.springfox.EmbeddedBootstrap;
+import com.wl4g.devops.doc.plugin.swagger.springfox.EmbeddedSpringfoxBootstrap;
 import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
 import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.DocumentionProvider.SPRINGFOX_OAS3;
 
@@ -46,7 +46,7 @@ public class GenerateSpringfoxOas3Mojo extends AbstractGenDocMojo<OpenAPI> {
 	}
 
 	private OpenAPI resolveOAS3Documention() {
-		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedBootstrap.class)
+		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedSpringfoxBootstrap.class)
 				/* .web(SERVLET) // auto-detection */
 				.bannerMode(Mode.OFF).headless(true).run(DocumentHolder.get().toSpringArgs(SPRINGFOX_OAS3));) {
 
