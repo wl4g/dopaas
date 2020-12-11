@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox.oas3;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import springfox.documentation.service.ApiDescription;
@@ -39,8 +40,8 @@ public class VersionOas3ApiListingPlugin implements ApiListingScannerPlugin {
 
 	@Override
 	public List<ApiDescription> apply(DocumentationContext context) {
-		// TODO Auto-generated method stub
-		return null;
+		List<ApiDescription> apis = new ArrayList<>();
+		return apis;
 	}
 
 }

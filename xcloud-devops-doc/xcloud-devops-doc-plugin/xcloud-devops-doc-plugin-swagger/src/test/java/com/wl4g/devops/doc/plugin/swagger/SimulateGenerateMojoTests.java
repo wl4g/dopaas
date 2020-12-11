@@ -22,7 +22,6 @@ import static com.wl4g.devops.doc.plugin.swagger.util.OutputFormater.*;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.findField;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.setField;
 import static java.lang.String.format;
-import static java.lang.System.exit;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -34,7 +33,6 @@ import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.junit.After;
 import org.junit.Test;
 
 import com.wl4g.devops.doc.plugin.swagger.jaxrs2.GenerateJaxrs2Oas3Mojo;
@@ -53,34 +51,29 @@ public class SimulateGenerateMojoTests {
 	@Test
 	public void generateSpringfoxSwagger2MojoTest() throws Exception {
 		createMavenMojoInstance(GenerateSpringfoxSwagger2Mojo.class,
-				singletonList("com.wl4g.devops.doc.plugin.swagger.example.swagger2")).execute();
+				singletonList("com.wl4g.devops.doc.plugin.swagger.example.swagger2"), "swagger-swagger2-by-springfox").execute();
 	}
 
 	@Test
 	public void generateSpringfoxOas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateSpringfoxOas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"))
-				.execute();
+		createMavenMojoInstance(GenerateSpringfoxOas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"),
+				"swagger-oas3-by-springfox").execute();
 	}
 
-	@Test
+	// @Test
 	public void generateSpringdocOas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateSpringdocOas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"))
-				.execute();
+		createMavenMojoInstance(GenerateSpringdocOas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"),
+				"swagger-oas3-by-springdoc").execute();
 	}
 
-	@Test
+	// @Test
 	public void generateJaxrs2Oas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateJaxrs2Oas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"))
-				.execute();
+		createMavenMojoInstance(GenerateJaxrs2Oas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.jaxrs2"),
+				"swagger-oas3-by-jaxrs").execute();
 	}
 
-	@After
-	public void afterGenerateTests() {
-		exit(0);
-	}
-
-	public static AbstractMojo createMavenMojoInstance(Class<? extends AbstractMojo> mojoClass, List<String> resourcePackages)
-			throws Exception {
+	public static AbstractMojo createMavenMojoInstance(Class<? extends AbstractMojo> mojoClass, List<String> resourcePackages,
+			String outputFilename) throws Exception {
 		AbstractMojo mojo = mojoClass.newInstance();
 		setField(findField(mojoClass, "project"), mojo, createMavenProject(), true);
 		setField(findField(mojoClass, "projectHelper"), mojo, createMavenProjectHelper(), true);
@@ -88,7 +81,8 @@ public class SimulateGenerateMojoTests {
 		setField(findField(mojoClass, "resourcePackages"), mojo, resourcePackages, true);
 		setField(findField(mojoClass, "prettyPrint"), mojo, true, true);
 		setField(findField(mojoClass, "outputFormats"), mojo, asList(JSON, YAML), true);
-		setField(findField(mojoClass, "outputDirectory"), mojo, new File(USER_DIR + "/target/outputdir"), true);
+		setField(findField(mojoClass, "outputDirectory"), mojo, new File(USER_DIR + "/target/output-gendoc"), true);
+		setField(findField(mojoClass, "outputFilename"), mojo, outputFilename, true);
 		setField(findField(mojoClass, "attachSwaggerArtifact"), mojo, true, true);
 		return mojo;
 	}
