@@ -13,30 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin;
+package com.wl4g.devops.doc.plugin.swagger.example;
 
-import com.wl4g.devops.doc.plugin.swagger.springfox.oas3.GenerateSpringfoxOas3Mojo;
-import com.wl4g.devops.doc.plugin.swagger.springfox.swagger2.GenerateSpringfoxSwagger2Mojo;
-import com.wl4g.devops.doc.plugin.swagger.jaxrs2.GenerateJaxrs2Oas3Mojo;
-import com.wl4g.devops.doc.plugin.swagger.springdoc.GenerateSpringdocMojo;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
- * {@link MvnGenerateMojoTests}
+ * {@link Swagger2SampleController}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-12-09
+ * @version v1.0 2020-12-08
  * @sine v1.0
  * @see
  */
-@SuppressWarnings("unused")
-public class MvnGenerateMojoTests {
+@RestController
+@RequestMapping("/demo1")
+@Api
+public class Swagger2SampleController {
 
-	// Simulate mvn plugin execution
-	public static void main(String[] args) throws Exception {
-		new GenerateSpringfoxSwagger2Mojo().execute();
-		// new GenerateSpringfoxOas3Mojo().execute();
-		// new GenerateSpringdocMojo().execute();
-		// new GenerateJaxrs2Mojo().execute();
+	@ApiOperation("Obtain user info")
+	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
+	public String getUserInfo() {
+		return "This is user content content...";
 	}
 
 }

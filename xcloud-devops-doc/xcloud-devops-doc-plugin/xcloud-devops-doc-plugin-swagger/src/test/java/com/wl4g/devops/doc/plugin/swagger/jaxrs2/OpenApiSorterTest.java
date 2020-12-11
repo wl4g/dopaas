@@ -1,4 +1,4 @@
-package com.wl4g.devops.doc.plugin.jaxrs2;
+package com.wl4g.devops.doc.plugin.swagger.jaxrs2;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
