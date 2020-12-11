@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.example;
+package com.wl4g.devops.doc.plugin.swagger.example.swagger2;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
  * @see
  */
 @RestController
-@RequestMapping("/demo1")
+@RequestMapping("/demo/swagger2")
 @Api
 public class Swagger2SampleController {
 

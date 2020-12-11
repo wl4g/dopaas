@@ -1,4 +1,4 @@
-package com.wl4g.devops.doc.plugin.swagger.example;
+package com.wl4g.devops.doc.plugin.swagger.example.jaxrs2;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,14 +13,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.fileupload.FileUploadException;
 
-@Path("/hello")
+@Path("/demo/jaxrs2")
 public class Jaxrs2SampleController {
 
 	@GET
-	@Path("/get")
+	@Path("/getUserInfo")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public List<String> get(@Context HttpServletRequest request) throws FileUploadException {
+	public List<String> getUserInfo(@Context HttpServletRequest request) throws FileUploadException {
 		return Arrays.asList();
 	}
 
