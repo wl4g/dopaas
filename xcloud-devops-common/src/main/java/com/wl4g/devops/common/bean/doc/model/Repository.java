@@ -28,8 +28,8 @@ public class Repository {
     private Date createdAt;
     private Date updatedAt;
     private String deletedAt;
-    private Creator creator;
-    private Owner owner;
+    private Long creator;//创建者id
+    private Long owner;//所有者id
     private String locker;
     private List<String> members;
     private String organization;
