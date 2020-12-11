@@ -21,8 +21,12 @@ package com.wl4g.devops.doc.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.devops.common.bean.doc.ApisInfo;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
 import com.wl4g.devops.doc.data.EnterpriseApiDao;
+import com.wl4g.devops.doc.data.EnterpriseOas3ApiDao;
+import com.wl4g.devops.doc.data.EnterpriseOas3ComponentsDao;
+import com.wl4g.devops.doc.data.EnterpriseOas3TagsDao;
 import com.wl4g.devops.doc.service.EnterpriseApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,11 +48,29 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
     @Autowired
     private EnterpriseApiDao enterpriseApiDao;
 
+    @Autowired
+    private EnterpriseOas3ApiDao enterpriseOas3ApiDao;
+
+    @Autowired
+    private EnterpriseOas3ComponentsDao enterpriseOas3ComponentsDao;
+
+    @Autowired
+    private EnterpriseOas3TagsDao enterpriseOas3TagsDao;
+
     @Override
     public PageModel<EnterpriseApi> page(PageModel<EnterpriseApi> pm, EnterpriseApi enterpriseApi) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
         pm.setRecords(enterpriseApiDao.list(enterpriseApi));
         return pm;
+    }
+
+    @Override
+    public ApisInfo getApisByVersionid(Long versionId) {
+        ApisInfo apisInfo = new ApisInfo();
+        apisInfo.setEnterpriseOas3Apis(enterpriseOas3ApiDao.selectByVersionId(versionId));
+        apisInfo.setEnterpriseOas3Components(enterpriseOas3ComponentsDao.selectByVersionId(versionId));
+        apisInfo.setEnterpriseOas3Tags(enterpriseOas3TagsDao.selectByVersionId(versionId));
+        return apisInfo;
     }
 
     @Override

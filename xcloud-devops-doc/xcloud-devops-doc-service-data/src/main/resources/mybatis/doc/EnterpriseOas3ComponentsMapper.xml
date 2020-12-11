@@ -30,6 +30,15 @@
         </where>
     </select>
 
+    <select id="selectByVersionId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+               <include refid="Base_Column_List" />
+        FROM doc_enterprise_oas3_components
+        <where>
+            version_id = #{versionId, jdbcType=BIGINT}
+        </where>
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         DELETE FROM doc_enterprise_oas3_components
         <where>
