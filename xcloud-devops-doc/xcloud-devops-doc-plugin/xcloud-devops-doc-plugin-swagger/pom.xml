@@ -5,7 +5,7 @@
 	<artifactId>xcloud-devops-doc-plugin-swagger</artifactId>
 	<!-- <version>master</version> -->
 	<packaging>maven-plugin</packaging>
-	<name>XCloud DevSecOps Doc for Plugin Swagger Exporter</name>
+	<name>XCloud DevSecOps Doc for Plugin Swagger</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -22,6 +22,7 @@
 		<io.swagger.core.v3.version>2.1.4</io.swagger.core.v3.version>
 		<javax.ws.rs.version>2.1</javax.ws.rs.version>
 		<jaxb-api.version>2.3.0</jaxb-api.version>
+		<swagger-parser-v3.version>2.0.24</swagger-parser-v3.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -111,6 +112,23 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<optional>true</optional>
+		</dependency>
+
+		<!-- Swagger(OAS3) documention parser. -->
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser</artifactId>
+			<version>${swagger-parser-v3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser-v2-converter</artifactId>
+			<version>${swagger-parser-v3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-core</artifactId>
+			<version>2.1.6</version>
 		</dependency>
 	</dependencies>
 	<build>

@@ -15,11 +15,6 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.util;
 
-import static com.wl4g.components.common.lang.StringUtils2.trimAllWhitespace;
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.split;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +34,7 @@ public class DocumentHolder {
 	private static final DocumentHolder holder = new DocumentHolder();
 
 	@SuppressWarnings("serial")
-	private List<String> scanBasePackages = new ArrayList<String>() {
+	private List<String> resourcePackages = new ArrayList<String>() {
 		{
 			add("com.wl4g");
 		}
@@ -52,17 +47,19 @@ public class DocumentHolder {
 		return holder;
 	}
 
-	public List<String> getScanBasePackages() {
-		return this.scanBasePackages;
+	public List<String> getResourcePackages() {
+		return this.resourcePackages;
 	}
 
-	public void setScanBasePackages(String scanBasePackages) {
-		this.scanBasePackages = asList(split(trimAllWhitespace(trimToEmpty(scanBasePackages)), ","));
+	public void setResourcePackages(List<String> resourcePackages) {
+		// this.resourcePackages =
+		// asList(split(trimAllWhitespace(trimToEmpty(resourcePackages)), ","));
+		this.resourcePackages = resourcePackages;
 	}
 
 	public String[] toSpringArgs(DocumentionProvider provider) {
 		StringBuffer scans = new StringBuffer();
-		scanBasePackages.forEach(s -> scans.append(s).append(","));
+		resourcePackages.forEach(s -> scans.append(s).append(","));
 
 		String arg1 = "--" + SCAN_BASE_PACKAGES + "=" + scans;
 		String arg2 = "--" + PROPERTY_SWAGGER2 + "=true";

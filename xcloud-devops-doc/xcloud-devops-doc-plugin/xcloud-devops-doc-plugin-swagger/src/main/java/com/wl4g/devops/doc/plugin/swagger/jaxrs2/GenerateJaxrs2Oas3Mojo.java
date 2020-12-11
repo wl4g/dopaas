@@ -16,31 +16,24 @@
 package com.wl4g.devops.doc.plugin.swagger.jaxrs2;
 
 import javax.ws.rs.core.Application;
-import java.io.File;
-import java.io.IOException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.oas.models.OpenAPI;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 
+import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
 import com.wl4g.devops.doc.plugin.swagger.jaxrs2.model.SwaggerConfig;
 
 /**
@@ -52,13 +45,7 @@ import com.wl4g.devops.doc.plugin.swagger.jaxrs2.model.SwaggerConfig;
  * @see
  */
 @Mojo(name = "gendoc-jaxrs2", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
-public class GenerateJaxrs2Mojo extends AbstractMojo {
-
-	/**
-	 * Skip the execution.
-	 */
-	@Parameter(name = "skip", property = "openapi.generation.skip", required = false, defaultValue = "false")
-	private Boolean skip;
+public class GenerateJaxrs2Oas3Mojo extends AbstractGenDocMojo<OpenAPI> {
 
 	/**
 	 * Static information to provide for the generation.
@@ -67,42 +54,10 @@ public class GenerateJaxrs2Mojo extends AbstractMojo {
 	private SwaggerConfig swaggerConfig;
 
 	/**
-	 * List of packages which contains API resources. This is <i>not</i>
-	 * recursive.
-	 */
-	@Parameter
-	private Set<String> resourcePackages;
-
-	/**
 	 * Recurse into resourcePackages child packages.
 	 */
 	@Parameter(required = false, defaultValue = "false")
 	private Boolean useResourcePackagesChildren;
-
-	/**
-	 * Directory to contain generated documentation.
-	 */
-	@Parameter(defaultValue = "${project.build.directory}")
-	private File outputDirectory;
-
-	/**
-	 * Filename to use for the generated documentation.
-	 */
-	@Parameter
-	private String outputFilename = "swagger";
-
-	/**
-	 * Choosing the output format. Supports JSON or YAML.
-	 */
-	@Parameter
-	private Set<OutputFormat> outputFormats = Collections.singleton(OutputFormat.JSON);
-
-	/**
-	 * Attach generated documentation as artifact to the Maven project. If true
-	 * documentation will be deployed along with other artifacts.
-	 */
-	@Parameter(defaultValue = "false")
-	private boolean attachSwaggerArtifact;
 
 	/**
 	 * Specifies the implementation of {@link Application}. If the class is not
@@ -112,27 +67,8 @@ public class GenerateJaxrs2Mojo extends AbstractMojo {
 	@Parameter(name = "applicationClass", defaultValue = "")
 	private String applicationClass;
 
-	@Parameter(defaultValue = "${project}", readonly = true)
-	private MavenProject project;
-
-	/**
-	 * When true, the plugin produces a pretty-printed JSON Swagger
-	 * specification. Note that this parameter doesn't have any effect on the
-	 * generation of the YAML version because YAML is pretty-printed by nature.
-	 */
-	@Parameter(defaultValue = "false")
-	private boolean prettyPrint;
-
-	@Component
-	private MavenProjectHelper projectHelper;
-
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (skip != null && skip) {
-			getLog().info("OpenApi generation is skipped.");
-			return;
-		}
-
+	protected OpenAPI generateDocument() throws Exception {
 		ClassLoader origClzLoader = Thread.currentThread().getContextClassLoader();
 		ClassLoader clzLoader = createClassLoader(origClzLoader);
 
@@ -147,23 +83,7 @@ public class GenerateJaxrs2Mojo extends AbstractMojo {
 			Application application = resolveApplication(reflectiveScanner);
 			reader.setApplication(application);
 
-			OpenAPI swagger = OpenAPISorter.sort(reader.read(reflectiveScanner.classes()));
-
-			if (outputDirectory.mkdirs()) {
-				getLog().debug("Created output directory " + outputDirectory);
-			}
-
-			for (OutputFormat format : outputFormats) {
-				try {
-					File outputFile = new File(outputDirectory, outputFilename + "." + format.name().toLowerCase());
-					format.write(swagger, outputFile, prettyPrint);
-					if (attachSwaggerArtifact) {
-						projectHelper.attachArtifact(project, format.name().toLowerCase(), "swagger", outputFile);
-					}
-				} catch (IOException e) {
-					throw new RuntimeException("Unable write " + outputFilename + " document", e);
-				}
-			}
+			return OpenAPISorter.sort(reader.read(reflectiveScanner.classes()));
 		} finally {
 			// reset the TCCL back to the original class loader
 			Thread.currentThread().setContextClassLoader(origClzLoader);

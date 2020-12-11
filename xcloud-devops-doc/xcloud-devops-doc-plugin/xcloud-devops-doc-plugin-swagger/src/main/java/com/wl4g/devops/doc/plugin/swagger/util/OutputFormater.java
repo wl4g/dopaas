@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2;
+package com.wl4g.devops.doc.plugin.swagger.util;
+
+import static java.lang.String.format;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -24,24 +27,23 @@ import com.wl4g.devops.doc.plugin.swagger.jaxrs2.model.SwaggerServerVariable;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 
 /**
  * Supported output formats.
  */
-public enum OutputFormat {
+public enum OutputFormater {
 
 	JSON(new JSONWriter()), YAML(new YAMLWriter());
 
 	private final SwaggerWriter writer;
 
-	OutputFormat(SwaggerWriter writer) {
+	OutputFormater(SwaggerWriter writer) {
 		this.writer = writer;
 	}
 
-	public void write(OpenAPI swagger, File file, boolean prettyPrint) throws IOException {
-		writer.write(swagger, file, prettyPrint);
+	public void write(Object document, Object out, boolean prettyPrint) throws IOException {
+		writer.write(document, out, prettyPrint);
 	}
 
 	/**
@@ -50,7 +52,17 @@ public enum OutputFormat {
 	 */
 	@FunctionalInterface
 	interface SwaggerWriter {
-		void write(OpenAPI swagger, File file, boolean prettyPrint) throws IOException;
+		void write(Object document, Object out, boolean prettyPrint) throws IOException;
+
+		default void writeValue(ObjectMapper mapper, Object document, Object out) throws IOException {
+			if (out instanceof File) {
+				mapper.writeValue((File) out, document);
+			} else if (out instanceof OutputStream) {
+				mapper.writeValue((OutputStream) out, document);
+			} else {
+				throw new UnsupportedOperationException(format("No supported output parameter type.", out));
+			}
+		}
 	}
 
 	/**
@@ -60,13 +72,14 @@ public enum OutputFormat {
 	static class JSONWriter implements SwaggerWriter {
 
 		@Override
-		public void write(OpenAPI swagger, File file, boolean prettyPrint) throws IOException {
+		public void write(Object document, Object out, boolean prettyPrint) throws IOException {
 			ObjectMapper mapper = Json.mapper();
 			mapper.addMixIn(ServerVariable.class, SwaggerServerVariable.ServerVariableMixin.class);
 			if (prettyPrint) {
 				mapper.enable(SerializationFeature.INDENT_OUTPUT);
 			}
-			mapper.writeValue(file, swagger);
+
+			writeValue(mapper, document, out);
 		}
 	}
 
@@ -77,10 +90,10 @@ public enum OutputFormat {
 	static class YAMLWriter implements SwaggerWriter {
 
 		@Override
-		public void write(OpenAPI swagger, File file, boolean prettyPrint) throws IOException {
+		public void write(Object document, Object out, boolean prettyPrint) throws IOException {
 			ObjectMapper mapper = Yaml.mapper();
 			mapper.addMixIn(ServerVariable.class, SwaggerServerVariable.ServerVariableMixin.class);
-			mapper.writeValue(file, swagger);
+			writeValue(mapper, document, out);
 		}
 	}
 
