@@ -15,27 +15,23 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox.swagger2;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static java.lang.String.format;
-
 import java.net.URI;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.wl4g.components.common.remoting.RestClient;
+import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
 import com.wl4g.devops.doc.plugin.swagger.springfox.EmbeddedBootstrap;
 import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
+
 import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.DocumentionProvider.SPRINGFOX_SWAGGER2;
 
 import io.swagger.models.Swagger;
+import io.swagger.parser.SwaggerParser;
 
 /**
  * {@link GenerateSpringfoxSwagger2Mojo}
@@ -46,26 +42,11 @@ import io.swagger.models.Swagger;
  * @see
  */
 @Mojo(name = "gendoc-springfox-swagger2", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
-public class GenerateSpringfoxSwagger2Mojo extends AbstractMojo {
-
-	/**
-	 * Current Maven project, read only.
-	 */
-	@Parameter(readonly = true, required = true, defaultValue = "${project}")
-	private MavenProject mvnProject;
-
-	@Parameter(required = true)
-	private String scanBasePackages;
+public class GenerateSpringfoxSwagger2Mojo extends AbstractGenDocMojo<Swagger> {
 
 	@Override
-	public void execute() throws MojoExecutionException {
-		DocumentHolder.get().setScanBasePackages(scanBasePackages);
-
-		Swagger document = resolveSwagger2Documention();
-		if (getLog().isDebugEnabled()) {
-			getLog().debug(format("Exported swagger2 documention: %s", toJSONString(document)));
-		}
-
+	protected Swagger generateDocument() throws Exception {
+		return resolveSwagger2Documention();
 	}
 
 	private Swagger resolveSwagger2Documention() {
@@ -74,7 +55,8 @@ public class GenerateSpringfoxSwagger2Mojo extends AbstractMojo {
 				.bannerMode(Mode.OFF).headless(true).run(DocumentHolder.get().toSpringArgs(SPRINGFOX_SWAGGER2));) {
 
 			RestClient rest = new RestClient();
-			return rest.getForObject(URI.create(DEFAULT_SWAGGER2_API_URL), Swagger.class);
+			String swagger = rest.getForObject(URI.create(DEFAULT_SWAGGER2_API_URL), String.class);
+			return new SwaggerParser().parse(swagger);
 		}
 	}
 
