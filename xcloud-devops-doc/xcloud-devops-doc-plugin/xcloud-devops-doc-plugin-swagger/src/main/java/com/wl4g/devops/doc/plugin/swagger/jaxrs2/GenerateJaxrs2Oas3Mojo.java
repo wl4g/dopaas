@@ -17,6 +17,8 @@ package com.wl4g.devops.doc.plugin.swagger.jaxrs2;
 
 import javax.ws.rs.core.Application;
 
+import static java.util.Objects.nonNull;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -113,7 +115,9 @@ public class GenerateJaxrs2Oas3Mojo extends AbstractGenDocMojo<OpenAPI> {
 			URL[] urls = new URL[dependencies.size()];
 			int index = 0;
 			for (String dependency : dependencies) {
-				urls[index++] = Paths.get(dependency).toUri().toURL();
+				if (nonNull(dependency)) {
+					urls[index++] = Paths.get(dependency).toUri().toURL();
+				}
 			}
 			return new URLClassLoader(urls, parent);
 		} catch (MalformedURLException e) {
