@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
-import com.wl4g.devops.doc.service.EnterpriseDocumentService;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
+import com.wl4g.devops.doc.service.EnterpriseRepositoryVersionService;
 
 /**
-* {@link EnterpriseDocument}
+* {@link EnterpriseRepositoryVersion}
 *
 * @author root
 * @version 0.0.1-SNAPSHOT
@@ -40,37 +40,37 @@ import com.wl4g.devops.doc.service.EnterpriseDocumentService;
 * @since v1.0
 */
 @RestController
-@RequestMapping("/enterprisedocument")
-public class EnterpriseDocumentController extends BaseController {
+@RequestMapping("/enterpriserepositoryversion")
+public class EnterpriseRepositoryVersionController extends BaseController {
 
     @Autowired
-    private EnterpriseDocumentService enterpriseDocumentService;
+    private EnterpriseRepositoryVersionService enterpriseRepositoryVersionService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageModel<EnterpriseDocument>> list(PageModel<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument) {
-        RespBase<PageModel<EnterpriseDocument>> resp = RespBase.create();
-        resp.setData(enterpriseDocumentService.page(pm, enterpriseDocument));
+    public RespBase<PageModel<EnterpriseRepositoryVersion>> list(PageModel<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
+        RespBase<PageModel<EnterpriseRepositoryVersion>> resp = RespBase.create();
+        resp.setData(enterpriseRepositoryVersionService.page(pm, enterpriseRepositoryVersion));
         return resp;
     }
 
     @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseDocument enterpriseDocument) {
+    public RespBase<?> save(@RequestBody EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseDocumentService.save(enterpriseDocument);
+        enterpriseRepositoryVersionService.save(enterpriseRepositoryVersion);
         return resp;
     }
 
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseDocument> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseDocument> resp = RespBase.create();
-        resp.setData(enterpriseDocumentService.detail(id));
+    public RespBase<EnterpriseRepositoryVersion> detail(@RequestParam(required = true) Long id) {
+        RespBase<EnterpriseRepositoryVersion> resp = RespBase.create();
+        resp.setData(enterpriseRepositoryVersionService.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del", method = { POST, DELETE })
     public RespBase<?> del(@RequestParam(required = true) Long id) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseDocumentService.del(id);
+        enterpriseRepositoryVersionService.del(id);
         return resp;
     }
 

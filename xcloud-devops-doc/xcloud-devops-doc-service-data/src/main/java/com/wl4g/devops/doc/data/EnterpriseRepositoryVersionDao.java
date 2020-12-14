@@ -20,28 +20,28 @@ package com.wl4g.devops.doc.data;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
 
 /**
- * {@link EnterpriseDocument}
+ * {@link EnterpriseRepositoryVersion}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
  * @Date Dec 14, 2020
  * @since v1.0
  */
-public interface EnterpriseDocumentDao {
+public interface EnterpriseRepositoryVersionDao {
 
-    int insertSelective(EnterpriseDocument enterpriseDocument);
+    int insertSelective(EnterpriseRepositoryVersion enterpriseRepositoryVersion);
 
     int deleteByPrimaryKey(Long id);
 
-    EnterpriseDocument selectByPrimaryKey(Long id);
+    EnterpriseRepositoryVersion selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKeySelective(EnterpriseDocument enterpriseDocument);
+    int updateByPrimaryKeySelective(EnterpriseRepositoryVersion enterpriseRepositoryVersion);
 
-    int updateByPrimaryKey(EnterpriseDocument enterpriseDocument);
+    int updateByPrimaryKey(EnterpriseRepositoryVersion enterpriseRepositoryVersion);
 
-    List<EnterpriseDocument> list(@Param("enterpriseDocument") EnterpriseDocument enterpriseDocument);
+    List<EnterpriseRepositoryVersion> list(@Param("enterpriseRepositoryVersion") EnterpriseRepositoryVersion enterpriseRepositoryVersion);
 
 }

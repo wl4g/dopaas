@@ -24,10 +24,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * {@link EnterpriseApi}
+ * {@link EnterpriseApiProperties}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
@@ -37,14 +35,13 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class EnterpriseApi extends BaseBean {
-    private static final long serialVersionUID = 519730850945914176L;
+public class EnterpriseApiProperties extends BaseBean {
+    private static final long serialVersionUID = 986012073648842752L;
 
     /**
      * 
      */
-    @NotNull
-    private Long moduleId;
+    private Long apiId;
 
     /**
      * 
@@ -54,17 +51,27 @@ public class EnterpriseApi extends BaseBean {
     /**
      * 
      */
-    private String url;
+    private String scope;
 
     /**
      * 
      */
-    private String method;
+    private String type;
 
     /**
      * 
      */
-    private String bodyOption;
+    private Long pos;
+
+    /**
+     * 
+     */
+    private String rule;
+
+    /**
+     * 
+     */
+    private String value;
 
     /**
      * 
@@ -74,73 +81,73 @@ public class EnterpriseApi extends BaseBean {
     /**
      * 
      */
+    private Long parentid;
+
+    /**
+     * 
+     */
     private Long priority;
 
     /**
      * 
      */
-    private Long status;
+    private String required;
 
-    /**
-     * 
-     */
-    private Long lockerid;
-
-    /**
-     * 
-     */
-    private String locker;
-
-    public EnterpriseApi() {
+    public EnterpriseApiProperties() {
     }
 
-    public EnterpriseApi withModuleId(Long moduleId) {
-        setModuleId(moduleId);
+    public EnterpriseApiProperties withApiId(Long apiId) {
+        setApiId(apiId);
         return this;
     }
 
-    public EnterpriseApi withName(String name) {
+    public EnterpriseApiProperties withName(String name) {
         setName(name);
         return this;
     }
 
-    public EnterpriseApi withUrl(String url) {
-        setUrl(url);
+    public EnterpriseApiProperties withScope(String scope) {
+        setScope(scope);
         return this;
     }
 
-    public EnterpriseApi withMethod(String method) {
-        setMethod(method);
+    public EnterpriseApiProperties withType(String type) {
+        setType(type);
         return this;
     }
 
-    public EnterpriseApi withBodyOption(String bodyOption) {
-        setBodyOption(bodyOption);
+    public EnterpriseApiProperties withPos(Long pos) {
+        setPos(pos);
         return this;
     }
 
-    public EnterpriseApi withDescription(String description) {
+    public EnterpriseApiProperties withRule(String rule) {
+        setRule(rule);
+        return this;
+    }
+
+    public EnterpriseApiProperties withValue(String value) {
+        setValue(value);
+        return this;
+    }
+
+    public EnterpriseApiProperties withDescription(String description) {
         setDescription(description);
         return this;
     }
 
-    public EnterpriseApi withPriority(Long priority) {
+    public EnterpriseApiProperties withParentid(Long parentid) {
+        setParentid(parentid);
+        return this;
+    }
+
+    public EnterpriseApiProperties withPriority(Long priority) {
         setPriority(priority);
         return this;
     }
 
-    public EnterpriseApi withStatus(Long status) {
-        setStatus(status);
-        return this;
-    }
-
-    public EnterpriseApi withLockerid(Long lockerid) {
-        setLockerid(lockerid);
-        return this;
-    }
-
-    public EnterpriseApi withLocker(String locker) {
-        setLocker(locker);
+    public EnterpriseApiProperties withRequired(String required) {
+        setRequired(required);
         return this;
     }
 }

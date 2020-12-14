@@ -19,34 +19,34 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepository;
 
 /**
- *  service of {@link EnterpriseDocument}
+ *  service of {@link EnterpriseRepository}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
  * @Date 
  * @since v1.0
  */
-public interface EnterpriseDocumentService {
+public interface EnterpriseRepositoryService {
 
     /**
      *  page query.
      *
      * @param pm
-     * @param enterpriseDocument
+     * @param enterpriseRepository
      * @return 
      */
-    PageModel<EnterpriseDocument> page(PageModel<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument);
+    PageModel<EnterpriseRepository> page(PageModel<EnterpriseRepository> pm, EnterpriseRepository enterpriseRepository);
 
     /**
      *  save.
      *
-     * @param enterpriseDocument
+     * @param enterpriseRepository
      * @return 
      */
-    int save(EnterpriseDocument enterpriseDocument);
+    int save(EnterpriseRepository enterpriseRepository);
 
     /**
      *  detail query.
@@ -54,7 +54,7 @@ public interface EnterpriseDocumentService {
      * @param id
      * @return 
      */
-    EnterpriseDocument detail(Long id);
+    EnterpriseRepository detail(Long id);
 
     /**
      *  delete.

@@ -27,7 +27,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 
 /**
- * {@link EnterpriseTeam}
+ * {@link EnterpriseRepositoryGroup}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
@@ -37,8 +37,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class EnterpriseTeam extends BaseBean {
-    private static final long serialVersionUID = 445699589487838272L;
+public class EnterpriseRepositoryGroup extends BaseBean {
+    private static final long serialVersionUID = 745252807692442240L;
 
     /**
      * 
@@ -56,20 +56,20 @@ public class EnterpriseTeam extends BaseBean {
      */
     private String organizationCode;
 
-    public EnterpriseTeam() {
+    public EnterpriseRepositoryGroup() {
     }
 
-    public EnterpriseTeam withName(String name) {
+    public EnterpriseRepositoryGroup withName(String name) {
         setName(name);
         return this;
     }
 
-    public EnterpriseTeam withRemark(String remark) {
+    public EnterpriseRepositoryGroup withRemark(String remark) {
         setRemark(remark);
         return this;
     }
 
-    public EnterpriseTeam withOrganizationCode(String organizationCode) {
+    public EnterpriseRepositoryGroup withOrganizationCode(String organizationCode) {
         setOrganizationCode(organizationCode);
         return this;
     }

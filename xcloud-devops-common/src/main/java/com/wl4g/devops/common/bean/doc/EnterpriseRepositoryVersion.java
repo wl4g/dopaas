@@ -27,7 +27,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 
 /**
- * {@link EnterpriseDocument}
+ * {@link EnterpriseRepositoryVersion}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
@@ -37,13 +37,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class EnterpriseDocument extends BaseBean {
-    private static final long serialVersionUID = 164689327522762944L;
-
-    /**
-     * 父级id
-     */
-    private Long parentId;
+public class EnterpriseRepositoryVersion extends BaseBean {
+    private static final long serialVersionUID = 888336546651166464L;
 
     /**
      * 
@@ -58,79 +53,24 @@ public class EnterpriseDocument extends BaseBean {
     private String version;
 
     /**
-     * 文档标题
-     */
-    private String title;
-
-    /**
-     * md内容
-     */
-    private String content;
-
-    /**
-     * 同级菜单排序
-     */
-    private Long sort;
-
-    /**
-     * 语言
-     */
-    private String lang;
-
-    /**
-     * 
-     */
-    private String remark;
-
-    /**
      * 组织编码
      */
     private String organizationCode;
 
-    public EnterpriseDocument() {
+    public EnterpriseRepositoryVersion() {
     }
 
-    public EnterpriseDocument withParentId(Long parentId) {
-        setParentId(parentId);
-        return this;
-    }
-
-    public EnterpriseDocument withRepositoryId(Long repositoryId) {
+    public EnterpriseRepositoryVersion withRepositoryId(Long repositoryId) {
         setRepositoryId(repositoryId);
         return this;
     }
 
-    public EnterpriseDocument withVersion(String version) {
+    public EnterpriseRepositoryVersion withVersion(String version) {
         setVersion(version);
         return this;
     }
 
-    public EnterpriseDocument withTitle(String title) {
-        setTitle(title);
-        return this;
-    }
-
-    public EnterpriseDocument withContent(String content) {
-        setContent(content);
-        return this;
-    }
-
-    public EnterpriseDocument withSort(Long sort) {
-        setSort(sort);
-        return this;
-    }
-
-    public EnterpriseDocument withLang(String lang) {
-        setLang(lang);
-        return this;
-    }
-
-    public EnterpriseDocument withRemark(String remark) {
-        setRemark(remark);
-        return this;
-    }
-
-    public EnterpriseDocument withOrganizationCode(String organizationCode) {
+    public EnterpriseRepositoryVersion withOrganizationCode(String organizationCode) {
         setOrganizationCode(organizationCode);
         return this;
     }

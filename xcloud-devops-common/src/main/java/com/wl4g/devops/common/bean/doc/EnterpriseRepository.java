@@ -27,7 +27,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 
 /**
- * {@link EnterpriseDocument}
+ * {@link EnterpriseRepository}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
@@ -37,100 +37,122 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class EnterpriseDocument extends BaseBean {
-    private static final long serialVersionUID = 164689327522762944L;
-
-    /**
-     * 父级id
-     */
-    private Long parentId;
+public class EnterpriseRepository extends BaseBean {
+    private static final long serialVersionUID = 430237701501749952L;
 
     /**
      * 
      */
     @NotNull
-    private Long repositoryId;
+    private Long teamId;
 
     /**
      * 
      */
     @NotNull
-    private String version;
-
-    /**
-     * 文档标题
-     */
-    private String title;
-
-    /**
-     * md内容
-     */
-    private String content;
-
-    /**
-     * 同级菜单排序
-     */
-    private Long sort;
-
-    /**
-     * 语言
-     */
-    private String lang;
+    private Long groupId;
 
     /**
      * 
      */
-    private String remark;
+    private String name;
+
+    /**
+     * 
+     */
+    private String description;
+
+    /**
+     * 
+     */
+    private String logo;
+
+    /**
+     * 
+     */
+    private String token;
+
+    /**
+     * 可见性：1公开，2私有(team_id)
+     */
+    @NotNull
+    private String visibility;
+
+    /**
+     * 
+     */
+
+    private String canUserEdit;
+
+    /**
+     * 
+     */
+    private Long lockerId;
+
+    /**
+     * 
+     */
+    private String locker;
 
     /**
      * 组织编码
      */
     private String organizationCode;
 
-    public EnterpriseDocument() {
+    public EnterpriseRepository() {
     }
 
-    public EnterpriseDocument withParentId(Long parentId) {
-        setParentId(parentId);
+    public EnterpriseRepository withTeamId(Long teamId) {
+        setTeamId(teamId);
         return this;
     }
 
-    public EnterpriseDocument withRepositoryId(Long repositoryId) {
-        setRepositoryId(repositoryId);
+    public EnterpriseRepository withGroupId(Long groupId) {
+        setGroupId(groupId);
         return this;
     }
 
-    public EnterpriseDocument withVersion(String version) {
-        setVersion(version);
+    public EnterpriseRepository withName(String name) {
+        setName(name);
         return this;
     }
 
-    public EnterpriseDocument withTitle(String title) {
-        setTitle(title);
+    public EnterpriseRepository withDescription(String description) {
+        setDescription(description);
         return this;
     }
 
-    public EnterpriseDocument withContent(String content) {
-        setContent(content);
+    public EnterpriseRepository withLogo(String logo) {
+        setLogo(logo);
         return this;
     }
 
-    public EnterpriseDocument withSort(Long sort) {
-        setSort(sort);
+    public EnterpriseRepository withToken(String token) {
+        setToken(token);
         return this;
     }
 
-    public EnterpriseDocument withLang(String lang) {
-        setLang(lang);
+    public EnterpriseRepository withVisibility(String visibility) {
+        setVisibility(visibility);
         return this;
     }
 
-    public EnterpriseDocument withRemark(String remark) {
-        setRemark(remark);
+    public EnterpriseRepository withCanUserEdit(String canUserEdit) {
+        setCanUserEdit(canUserEdit);
         return this;
     }
 
-    public EnterpriseDocument withOrganizationCode(String organizationCode) {
+    public EnterpriseRepository withLockerId(Long lockerId) {
+        setLockerId(lockerId);
+        return this;
+    }
+
+    public EnterpriseRepository withLocker(String locker) {
+        setLocker(locker);
+        return this;
+    }
+
+    public EnterpriseRepository withOrganizationCode(String organizationCode) {
         setOrganizationCode(organizationCode);
         return this;
     }

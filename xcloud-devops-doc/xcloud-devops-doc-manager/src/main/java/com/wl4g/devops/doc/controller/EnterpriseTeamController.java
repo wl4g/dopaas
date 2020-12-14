@@ -19,8 +19,8 @@ package com.wl4g.devops.doc.controller;
 
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
 import com.wl4g.components.core.web.BaseController;
+import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
 import com.wl4g.devops.doc.service.EnterpriseTeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +34,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 * {@link EnterpriseTeam}
 *
 * @author root
-* @version master
+* @version 0.0.1-SNAPSHOT
 * @Date 
 * @since v1.0
 */

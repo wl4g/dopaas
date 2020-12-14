@@ -25,14 +25,14 @@ import com.wl4g.components.core.bean.BaseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
-import com.wl4g.devops.doc.data.EnterpriseDocumentDao;
-import com.wl4g.devops.doc.service.EnterpriseDocumentService;
+import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
+import com.wl4g.devops.doc.data.EnterpriseApiPropertiesDao;
+import com.wl4g.devops.doc.service.EnterpriseApiPropertiesService;
 
 import static java.util.Objects.isNull;
 
 /**
- *  service implements of {@link EnterpriseDocument}
+ *  service implements of {@link EnterpriseApiProperties}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
@@ -40,42 +40,42 @@ import static java.util.Objects.isNull;
  * @since v1.0
  */
 @Service
-public class EnterpriseDocumentServiceImpl implements EnterpriseDocumentService {
+public class EnterpriseApiPropertiesServiceImpl implements EnterpriseApiPropertiesService {
 
     @Autowired
-    private EnterpriseDocumentDao enterpriseDocumentDao;
+    private EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
 
     @Override
-    public PageModel<EnterpriseDocument> page(PageModel<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument) {
+    public PageModel<EnterpriseApiProperties> page(PageModel<EnterpriseApiProperties> pm, EnterpriseApiProperties enterpriseApiProperties) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(enterpriseDocumentDao.list(enterpriseDocument));
+        pm.setRecords(enterpriseApiPropertiesDao.list(enterpriseApiProperties));
         return pm;
     }
 
     @Override
-    public int save(EnterpriseDocument enterpriseDocument) {
-        if (isNull(enterpriseDocument.getId())) {
-        	enterpriseDocument.preInsert();
-            return enterpriseDocumentDao.insertSelective(enterpriseDocument);
+    public int save(EnterpriseApiProperties enterpriseApiProperties) {
+        if (isNull(enterpriseApiProperties.getId())) {
+        	enterpriseApiProperties.preInsert();
+            return enterpriseApiPropertiesDao.insertSelective(enterpriseApiProperties);
         } else {
-        	enterpriseDocument.preUpdate();
-            return enterpriseDocumentDao.updateByPrimaryKeySelective(enterpriseDocument);
+        	enterpriseApiProperties.preUpdate();
+            return enterpriseApiPropertiesDao.updateByPrimaryKeySelective(enterpriseApiProperties);
         }
     }
 
     @Override
-    public EnterpriseDocument detail(Long id) {
+    public EnterpriseApiProperties detail(Long id) {
         notNullOf(id, "id");
-        return enterpriseDocumentDao.selectByPrimaryKey(id);
+        return enterpriseApiPropertiesDao.selectByPrimaryKey(id);
     }
 
     @Override
     public int del(Long id) {
         notNullOf(id, "id");
-        EnterpriseDocument enterpriseDocument = new EnterpriseDocument();
-        enterpriseDocument.setId(id);
-        enterpriseDocument.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        return enterpriseDocumentDao.updateByPrimaryKeySelective(enterpriseDocument);
+        EnterpriseApiProperties enterpriseApiProperties = new EnterpriseApiProperties();
+        enterpriseApiProperties.setId(id);
+        enterpriseApiProperties.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        return enterpriseApiPropertiesDao.updateByPrimaryKeySelective(enterpriseApiProperties);
     }
 
 }

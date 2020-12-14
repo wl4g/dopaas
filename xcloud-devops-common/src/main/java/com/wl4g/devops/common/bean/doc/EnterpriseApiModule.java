@@ -24,10 +24,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * {@link EnterpriseTeam}
+ * {@link EnterpriseApiModule}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
@@ -37,40 +35,39 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class EnterpriseTeam extends BaseBean {
-    private static final long serialVersionUID = 445699589487838272L;
+public class EnterpriseApiModule extends BaseBean {
+    private static final long serialVersionUID = 857285162179757056L;
 
     /**
      * 
      */
-    @NotNull
+    private Long versionId;
+
+    /**
+     * 
+     */
+    private Long parentId;
+
+    /**
+     * 
+     */
     private String name;
 
-    /**
-     * 
-     */
-    private String remark;
-
-    /**
-     * 组织编码
-     */
-    private String organizationCode;
-
-    public EnterpriseTeam() {
+    public EnterpriseApiModule() {
     }
 
-    public EnterpriseTeam withName(String name) {
+    public EnterpriseApiModule withVersionId(Long versionId) {
+        setVersionId(versionId);
+        return this;
+    }
+
+    public EnterpriseApiModule withParentId(Long parentId) {
+        setParentId(parentId);
+        return this;
+    }
+
+    public EnterpriseApiModule withName(String name) {
         setName(name);
-        return this;
-    }
-
-    public EnterpriseTeam withRemark(String remark) {
-        setRemark(remark);
-        return this;
-    }
-
-    public EnterpriseTeam withOrganizationCode(String organizationCode) {
-        setOrganizationCode(organizationCode);
         return this;
     }
 }

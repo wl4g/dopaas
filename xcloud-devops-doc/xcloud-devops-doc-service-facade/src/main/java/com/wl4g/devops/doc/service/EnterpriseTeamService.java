@@ -25,7 +25,7 @@ import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
  *  service of {@link EnterpriseTeam}
  *
  * @author root
- * @version master
+ * @version 0.0.1-SNAPSHOT
  * @Date 
  * @since v1.0
  */

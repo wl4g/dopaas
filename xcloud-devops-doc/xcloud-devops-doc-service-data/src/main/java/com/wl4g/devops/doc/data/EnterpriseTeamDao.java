@@ -18,18 +18,16 @@
 
 package com.wl4g.devops.doc.data;
 
-
-import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
+import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
 
 /**
  * {@link EnterpriseTeam}
  *
  * @author root
- * @version master
- * @Date 2020-11-25
+ * @version 0.0.1-SNAPSHOT
+ * @Date Dec 14, 2020
  * @since v1.0
  */
 public interface EnterpriseTeamDao {
