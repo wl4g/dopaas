@@ -21,9 +21,9 @@ package com.wl4g.devops.doc.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
-import com.wl4g.devops.doc.data.EnterpriseTeamDao;
-import com.wl4g.devops.doc.service.EnterpriseTeamService;
+import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
+import com.wl4g.devops.doc.data.EnterpriseApiModuleDao;
+import com.wl4g.devops.doc.service.EnterpriseApiModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 /**
- *  service implements of {@link EnterpriseTeam}
+ *  service implements of {@link EnterpriseApiModule}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
@@ -39,42 +39,42 @@ import static java.util.Objects.isNull;
  * @since v1.0
  */
 @Service
-public class EnterpriseTeamServiceImpl implements EnterpriseTeamService {
+public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleService {
 
     @Autowired
-    private EnterpriseTeamDao enterpriseTeamDao;
+    private EnterpriseApiModuleDao enterpriseApiModuleDao;
 
     @Override
-    public PageModel<EnterpriseTeam> page(PageModel<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam) {
+    public PageModel<EnterpriseApiModule> page(PageModel<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(enterpriseTeamDao.list(enterpriseTeam));
+        pm.setRecords(enterpriseApiModuleDao.list(enterpriseApiModule));
         return pm;
     }
 
     @Override
-    public int save(EnterpriseTeam enterpriseTeam) {
-        if (isNull(enterpriseTeam.getId())) {
-        	enterpriseTeam.preInsert();
-            return enterpriseTeamDao.insertSelective(enterpriseTeam);
+    public int save(EnterpriseApiModule enterpriseApiModule) {
+        if (isNull(enterpriseApiModule.getId())) {
+        	enterpriseApiModule.preInsert();
+            return enterpriseApiModuleDao.insertSelective(enterpriseApiModule);
         } else {
-        	enterpriseTeam.preUpdate();
-            return enterpriseTeamDao.updateByPrimaryKeySelective(enterpriseTeam);
+        	enterpriseApiModule.preUpdate();
+            return enterpriseApiModuleDao.updateByPrimaryKeySelective(enterpriseApiModule);
         }
     }
 
     @Override
-    public EnterpriseTeam detail(Long id) {
+    public EnterpriseApiModule detail(Long id) {
         notNullOf(id, "id");
-        return enterpriseTeamDao.selectByPrimaryKey(id);
+        return enterpriseApiModuleDao.selectByPrimaryKey(id);
     }
 
     @Override
     public int del(Long id) {
         notNullOf(id, "id");
-        EnterpriseTeam enterpriseTeam = new EnterpriseTeam();
-        enterpriseTeam.setId(id);
-        enterpriseTeam.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        return enterpriseTeamDao.updateByPrimaryKeySelective(enterpriseTeam);
+        EnterpriseApiModule enterpriseApiModule = new EnterpriseApiModule();
+        enterpriseApiModule.setId(id);
+        enterpriseApiModule.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        return enterpriseApiModuleDao.updateByPrimaryKeySelective(enterpriseApiModule);
     }
 
 }

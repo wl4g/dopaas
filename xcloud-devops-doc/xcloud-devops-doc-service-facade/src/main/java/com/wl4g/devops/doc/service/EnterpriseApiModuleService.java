@@ -18,35 +18,36 @@
 
 package com.wl4g.devops.doc.service;
 
+
 import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
+import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
 
 /**
- *  service of {@link EnterpriseDocument}
+ *  service of {@link EnterpriseApiModule}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
  * @Date 
  * @since v1.0
  */
-public interface EnterpriseDocumentService {
+public interface EnterpriseApiModuleService {
 
     /**
      *  page query.
      *
      * @param pm
-     * @param enterpriseDocument
+     * @param enterpriseApiModule
      * @return 
      */
-    PageModel<EnterpriseDocument> page(PageModel<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument);
+    PageModel<EnterpriseApiModule> page(PageModel<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule);
 
     /**
      *  save.
      *
-     * @param enterpriseDocument
+     * @param enterpriseApiModule
      * @return 
      */
-    int save(EnterpriseDocument enterpriseDocument);
+    int save(EnterpriseApiModule enterpriseApiModule);
 
     /**
      *  detail query.
@@ -54,7 +55,7 @@ public interface EnterpriseDocumentService {
      * @param id
      * @return 
      */
-    EnterpriseDocument detail(Long id);
+    EnterpriseApiModule detail(Long id);
 
     /**
      *  delete.

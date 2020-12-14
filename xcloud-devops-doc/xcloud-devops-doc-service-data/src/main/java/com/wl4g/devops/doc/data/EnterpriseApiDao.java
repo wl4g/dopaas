@@ -23,12 +23,13 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+
 /**
  * {@link EnterpriseApi}
  *
  * @author root
- * @version master
- * @Date 2020-11-25
+ * @version 0.0.1-SNAPSHOT
+ * @Date Dec 14, 2020
  * @since v1.0
  */
 public interface EnterpriseApiDao {

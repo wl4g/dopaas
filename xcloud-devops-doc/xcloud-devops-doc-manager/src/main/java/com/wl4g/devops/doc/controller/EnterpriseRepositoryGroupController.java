@@ -18,21 +18,20 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
+import com.wl4g.devops.doc.service.EnterpriseRepositoryGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
-import com.wl4g.devops.doc.service.EnterpriseDocumentService;
-
 /**
-* {@link EnterpriseDocument}
+* {@link EnterpriseRepositoryGroup}
 *
 * @author root
 * @version 0.0.1-SNAPSHOT
@@ -40,37 +39,37 @@ import com.wl4g.devops.doc.service.EnterpriseDocumentService;
 * @since v1.0
 */
 @RestController
-@RequestMapping("/enterprisedocument")
-public class EnterpriseDocumentController extends BaseController {
+@RequestMapping("/enterpriserepositorygroup")
+public class EnterpriseRepositoryGroupController extends BaseController {
 
     @Autowired
-    private EnterpriseDocumentService enterpriseDocumentService;
+    private EnterpriseRepositoryGroupService enterpriseRepositoryGroupService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageModel<EnterpriseDocument>> list(PageModel<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument) {
-        RespBase<PageModel<EnterpriseDocument>> resp = RespBase.create();
-        resp.setData(enterpriseDocumentService.page(pm, enterpriseDocument));
+    public RespBase<PageModel<EnterpriseRepositoryGroup>> list(PageModel<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
+        RespBase<PageModel<EnterpriseRepositoryGroup>> resp = RespBase.create();
+        resp.setData(enterpriseRepositoryGroupService.page(pm, enterpriseRepositoryGroup));
         return resp;
     }
 
     @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseDocument enterpriseDocument) {
+    public RespBase<?> save(@RequestBody EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseDocumentService.save(enterpriseDocument);
+        enterpriseRepositoryGroupService.save(enterpriseRepositoryGroup);
         return resp;
     }
 
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseDocument> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseDocument> resp = RespBase.create();
-        resp.setData(enterpriseDocumentService.detail(id));
+    public RespBase<EnterpriseRepositoryGroup> detail(@RequestParam(required = true) Long id) {
+        RespBase<EnterpriseRepositoryGroup> resp = RespBase.create();
+        resp.setData(enterpriseRepositoryGroupService.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del", method = { POST, DELETE })
     public RespBase<?> del(@RequestParam(required = true) Long id) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseDocumentService.del(id);
+        enterpriseRepositoryGroupService.del(id);
         return resp;
     }
 

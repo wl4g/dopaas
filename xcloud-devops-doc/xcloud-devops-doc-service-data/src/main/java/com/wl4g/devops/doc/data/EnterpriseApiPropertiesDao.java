@@ -18,30 +18,31 @@
 
 package com.wl4g.devops.doc.data;
 
-import java.util.List;
+import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
 import org.apache.ibatis.annotations.Param;
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
+
+import java.util.List;
 
 /**
- * {@link EnterpriseDocument}
+ * {@link EnterpriseApiProperties}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
  * @Date Dec 14, 2020
  * @since v1.0
  */
-public interface EnterpriseDocumentDao {
+public interface EnterpriseApiPropertiesDao {
 
-    int insertSelective(EnterpriseDocument enterpriseDocument);
+    int insertSelective(EnterpriseApiProperties enterpriseApiProperties);
 
     int deleteByPrimaryKey(Long id);
 
-    EnterpriseDocument selectByPrimaryKey(Long id);
+    EnterpriseApiProperties selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKeySelective(EnterpriseDocument enterpriseDocument);
+    int updateByPrimaryKeySelective(EnterpriseApiProperties enterpriseApiProperties);
 
-    int updateByPrimaryKey(EnterpriseDocument enterpriseDocument);
+    int updateByPrimaryKey(EnterpriseApiProperties enterpriseApiProperties);
 
-    List<EnterpriseDocument> list(@Param("enterpriseDocument") EnterpriseDocument enterpriseDocument);
+    List<EnterpriseApiProperties> list(@Param("enterpriseApiProperties") EnterpriseApiProperties enterpriseApiProperties);
 
 }

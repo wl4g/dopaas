@@ -25,14 +25,14 @@ import com.wl4g.components.core.bean.BaseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
-import com.wl4g.devops.doc.data.EnterpriseDocumentDao;
-import com.wl4g.devops.doc.service.EnterpriseDocumentService;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
+import com.wl4g.devops.doc.data.EnterpriseRepositoryGroupDao;
+import com.wl4g.devops.doc.service.EnterpriseRepositoryGroupService;
 
 import static java.util.Objects.isNull;
 
 /**
- *  service implements of {@link EnterpriseDocument}
+ *  service implements of {@link EnterpriseRepositoryGroup}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
@@ -40,42 +40,42 @@ import static java.util.Objects.isNull;
  * @since v1.0
  */
 @Service
-public class EnterpriseDocumentServiceImpl implements EnterpriseDocumentService {
+public class EnterpriseRepositoryGroupServiceImpl implements EnterpriseRepositoryGroupService {
 
     @Autowired
-    private EnterpriseDocumentDao enterpriseDocumentDao;
+    private EnterpriseRepositoryGroupDao enterpriseRepositoryGroupDao;
 
     @Override
-    public PageModel<EnterpriseDocument> page(PageModel<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument) {
+    public PageModel<EnterpriseRepositoryGroup> page(PageModel<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(enterpriseDocumentDao.list(enterpriseDocument));
+        pm.setRecords(enterpriseRepositoryGroupDao.list(enterpriseRepositoryGroup));
         return pm;
     }
 
     @Override
-    public int save(EnterpriseDocument enterpriseDocument) {
-        if (isNull(enterpriseDocument.getId())) {
-        	enterpriseDocument.preInsert();
-            return enterpriseDocumentDao.insertSelective(enterpriseDocument);
+    public int save(EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
+        if (isNull(enterpriseRepositoryGroup.getId())) {
+        	enterpriseRepositoryGroup.preInsert();
+            return enterpriseRepositoryGroupDao.insertSelective(enterpriseRepositoryGroup);
         } else {
-        	enterpriseDocument.preUpdate();
-            return enterpriseDocumentDao.updateByPrimaryKeySelective(enterpriseDocument);
+        	enterpriseRepositoryGroup.preUpdate();
+            return enterpriseRepositoryGroupDao.updateByPrimaryKeySelective(enterpriseRepositoryGroup);
         }
     }
 
     @Override
-    public EnterpriseDocument detail(Long id) {
+    public EnterpriseRepositoryGroup detail(Long id) {
         notNullOf(id, "id");
-        return enterpriseDocumentDao.selectByPrimaryKey(id);
+        return enterpriseRepositoryGroupDao.selectByPrimaryKey(id);
     }
 
     @Override
     public int del(Long id) {
         notNullOf(id, "id");
-        EnterpriseDocument enterpriseDocument = new EnterpriseDocument();
-        enterpriseDocument.setId(id);
-        enterpriseDocument.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        return enterpriseDocumentDao.updateByPrimaryKeySelective(enterpriseDocument);
+        EnterpriseRepositoryGroup enterpriseRepositoryGroup = new EnterpriseRepositoryGroup();
+        enterpriseRepositoryGroup.setId(id);
+        enterpriseRepositoryGroup.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        return enterpriseRepositoryGroupDao.updateByPrimaryKeySelective(enterpriseRepositoryGroup);
     }
 
 }
