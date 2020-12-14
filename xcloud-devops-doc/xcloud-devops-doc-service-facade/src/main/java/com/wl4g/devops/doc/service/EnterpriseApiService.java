@@ -19,15 +19,13 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.devops.common.bean.doc.ApisInfo;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
-
 
 /**
  *  service of {@link EnterpriseApi}
  *
  * @author root
- * @version master
+ * @version 0.0.1-SNAPSHOT
  * @Date 
  * @since v1.0
  */
@@ -41,8 +39,6 @@ public interface EnterpriseApiService {
      * @return 
      */
     PageModel<EnterpriseApi> page(PageModel<EnterpriseApi> pm, EnterpriseApi enterpriseApi);
-
-    ApisInfo getApisByVersionid(Long versionId);
 
     /**
      *  save.

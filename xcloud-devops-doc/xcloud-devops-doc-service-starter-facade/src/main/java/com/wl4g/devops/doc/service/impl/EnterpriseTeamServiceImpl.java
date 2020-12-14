@@ -34,7 +34,7 @@ import static java.util.Objects.isNull;
  *  service implements of {@link EnterpriseTeam}
  *
  * @author root
- * @version master
+ * @version 0.0.1-SNAPSHOT
  * @Date 
  * @since v1.0
  */

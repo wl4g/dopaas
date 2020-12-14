@@ -18,23 +18,24 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.doc.service.EnterpriseDocumentService;
+import com.wl4g.components.core.bean.model.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+
+
+import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
+import com.wl4g.devops.doc.service.EnterpriseDocumentService;
 
 /**
 * {@link EnterpriseDocument}
 *
 * @author root
-* @version master
+* @version 0.0.1-SNAPSHOT
 * @Date 
 * @since v1.0
 */
