@@ -22,9 +22,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
+import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Properties;
 import com.wl4g.devops.doc.plugin.swagger.springfox.EmbeddedSpringfoxBootstrap;
-import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.DocumentionProvider.SPRINGFOX_OAS3;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
@@ -38,7 +39,12 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
  * @see
  */
 @Mojo(name = "gendoc-springfox-oas3", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
-public class GenerateSpringfoxOas3Mojo extends AbstractGenDocMojo<OpenAPI> {
+public class GenerateSpringfoxOas3Mojo extends AbstractGenDocMojo<Oas3Properties, OpenAPI> {
+
+	@Override
+	protected DocumentionProvider provider() {
+		return DocumentionProvider.SPRINGFOX_OAS3;
+	}
 
 	@Override
 	protected OpenAPI generateDocument() throws Exception {
@@ -48,12 +54,13 @@ public class GenerateSpringfoxOas3Mojo extends AbstractGenDocMojo<OpenAPI> {
 	private OpenAPI resolveOAS3Documention() {
 		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedSpringfoxBootstrap.class)
 				/* .web(SERVLET) // auto-detection */
-				.bannerMode(Mode.OFF).headless(true).run(DocumentHolder.get().toSpringArgs(SPRINGFOX_OAS3));) {
+				.bannerMode(Mode.OFF).headless(true).run();) {
 
-			return new OpenAPIV3Parser().read(DEFAULT_SWAGGER3_API_URL);
+			String apiDocUri = DEFAULT_SWAGGER3_API_URI + DocumentionHolder.get().getConfig().getSwaggerGroup();
+			return new OpenAPIV3Parser().read(apiDocUri);
 		}
 	}
 
-	public static final String DEFAULT_SWAGGER3_API_URL = "http://localhost:8080/v3/api-docs";
+	public static final String DEFAULT_SWAGGER3_API_URI = "http://localhost:8080/v3/api-docs?group=";
 
 }

@@ -36,7 +36,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 
 import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
-import com.wl4g.devops.doc.plugin.swagger.jaxrs2.model.SwaggerConfig;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
+import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Properties;
 
 /**
  * Maven mojo to generate OpenAPI documentation document based on Swagger.
@@ -47,13 +48,13 @@ import com.wl4g.devops.doc.plugin.swagger.jaxrs2.model.SwaggerConfig;
  * @see
  */
 @Mojo(name = "gendoc-jaxrs2", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
-public class GenerateJaxrs2Oas3Mojo extends AbstractGenDocMojo<OpenAPI> {
+public class GenerateJaxrs2Oas3Mojo extends AbstractGenDocMojo<Oas3Properties, OpenAPI> {
 
 	/**
 	 * Static information to provide for the generation.
 	 */
 	@Parameter
-	private SwaggerConfig swaggerConfig;
+	private Oas3Properties oas3Config;
 
 	/**
 	 * Recurse into resourcePackages child packages.
@@ -70,6 +71,11 @@ public class GenerateJaxrs2Oas3Mojo extends AbstractGenDocMojo<OpenAPI> {
 	private String applicationClass;
 
 	@Override
+	protected DocumentionProvider provider() {
+		return DocumentionProvider.JAXRS2_OAS3;
+	}
+
+	@Override
 	protected OpenAPI generateDocument() throws Exception {
 		ClassLoader origClzLoader = Thread.currentThread().getContextClassLoader();
 		ClassLoader clzLoader = createClassLoader(origClzLoader);
@@ -78,7 +84,7 @@ public class GenerateJaxrs2Oas3Mojo extends AbstractGenDocMojo<OpenAPI> {
 			// set the TCCL before everything else
 			Thread.currentThread().setContextClassLoader(clzLoader);
 
-			Reader reader = new Reader(swaggerConfig == null ? new OpenAPI() : swaggerConfig.createSwaggerModel());
+			Reader reader = new Reader(oas3Config == null ? new OpenAPI() : oas3Config.createSwaggerModel());
 
 			JaxRSScanner reflectiveScanner = new JaxRSScanner(getLog(), resourcePackages, useResourcePackagesChildren);
 

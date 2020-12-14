@@ -1,6 +1,7 @@
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import io.swagger.v3.oas.models.info.Contact;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.Map;
@@ -10,7 +11,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 /**
  * Configuring Swagger contact properties.
  */
-public class SwaggerContact {
+@Getter
+public class Oas3Contact {
 
 	/**
 	 * The identifying name of the contact person/organization.

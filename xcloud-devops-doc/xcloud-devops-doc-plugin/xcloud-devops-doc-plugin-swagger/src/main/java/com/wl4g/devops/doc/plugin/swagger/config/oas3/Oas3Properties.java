@@ -13,24 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import lombok.Getter;
+import springfox.documentation.spring.web.plugins.Docket;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionProperties;
+
 /**
  * Configuring Swagger in compliance with the way the com.github.kongchen
  * Swagger plugin does it.
  */
-public class SwaggerConfig {
+@Getter
+public class Oas3Properties implements DocumentionProperties {
+
+	/**
+	 * REQUIRED. The apis group name.
+	 */
+	private String groupName = Docket.DEFAULT_GROUP_NAME;
 
 	/**
 	 * REQUIRED. Provides metadata about the API. The metadata MAY be used by
@@ -40,7 +53,7 @@ public class SwaggerConfig {
 	 * annotation.
 	 */
 	@Parameter
-	private SwaggerInfo info;
+	private Oas3Info info = new Oas3Info();
 
 	/**
 	 * Convenience for reading the informational description from file instead
@@ -55,13 +68,13 @@ public class SwaggerConfig {
 	 * array, the default value would be a Server Object with a url value of /.
 	 */
 	@Parameter
-	private List<SwaggerServer> servers = Collections.emptyList();
+	private List<Oas3Server> servers = emptyList();
 
 	/**
 	 * An element to hold various schemas for the specification.
 	 */
 	@Parameter
-	private SwaggerComponents components;
+	private Oas3Components components = new Oas3Components();
 
 	/**
 	 * A declaration of which security mechanisms can be used across the API.
@@ -71,7 +84,7 @@ public class SwaggerConfig {
 	 * definition.
 	 */
 	@Parameter
-	private List<SwaggerSecurityRequirement> securityRequirements = Collections.emptyList();;
+	private List<Oas3SecurityRequirement> securityRequirements = emptyList();
 
 	/**
 	 * A list of tags used by the specification with additional metadata. The
@@ -81,19 +94,24 @@ public class SwaggerConfig {
 	 * based on the tools' logic. Each tag name in the list MUST be unique.
 	 */
 	@Parameter
-	private List<SwaggerTag> tags = Collections.emptyList();;
+	private List<Oas3Tag> tags = emptyList();;
 
 	/**
 	 * Additional external documentation.
 	 */
 	@Parameter
-	private SwaggerExternalDoc externalDoc;
+	private Oas3ExternalDoc externalDoc = new Oas3ExternalDoc();
 
 	/**
 	 * Providing extension attributes to the OpenAPI spec.
 	 */
 	@Parameter
-	private Map<String, Object> extensions = Collections.emptyMap();
+	private Map<String, Object> extensions = emptyMap();
+
+	@Override
+	public String getSwaggerGroup() {
+		return getGroupName();
+	}
 
 	public OpenAPI createSwaggerModel() {
 		OpenAPI spec = new OpenAPI();
@@ -129,4 +147,5 @@ public class SwaggerConfig {
 
 		return spec;
 	}
+
 }

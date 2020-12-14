@@ -1,4 +1,4 @@
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import java.util.Collections;
 import java.util.Map;
@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
+import lombok.Getter;
 
-public class SwaggerFlows {
+@Getter
+public class Oas3Flows {
 
 	/**
 	 * Configuration for the OAuth Implicit flow
