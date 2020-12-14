@@ -13,35 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springfox.oas3;
+package com.wl4g.devops.doc.plugin.swagger.example.swagger2;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import springfox.documentation.service.ApiDescription;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.ApiListingScannerPlugin;
-import springfox.documentation.spi.service.contexts.DocumentationContext;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
- * {@link VersionOas3ApiListingPlugin}
+ * {@link Swagger2SampleController}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-08
  * @sine v1.0
  * @see
  */
-public class VersionOas3ApiListingPlugin implements ApiListingScannerPlugin {
+@RestController
+@RequestMapping("/demo/swagger2")
+@Api
+public class Swagger2SampleController {
 
-	@Override
-	public boolean supports(DocumentationType delimiter) {
-		return delimiter == DocumentationType.OAS_30;
-	}
-
-	@Override
-	public List<ApiDescription> apply(DocumentationContext context) {
-		List<ApiDescription> apis = new ArrayList<>();
-		return apis;
+	@ApiOperation("Obtain user info")
+	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
+	public String getUserInfo() {
+		return "This is user content content...";
 	}
 
 }
