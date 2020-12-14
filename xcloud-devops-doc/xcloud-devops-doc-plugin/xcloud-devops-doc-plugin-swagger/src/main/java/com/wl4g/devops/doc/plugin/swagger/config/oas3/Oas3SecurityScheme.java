@@ -1,4 +1,4 @@
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import java.util.Map;
 
@@ -7,8 +7,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
+import lombok.Getter;
 
-public class SwaggerSecurityScheme {
+@Getter
+public class Oas3SecurityScheme {
 
 	/**
 	 * REQUIRED. The type of the security scheme. Valid values are "apiKey",
@@ -59,7 +61,7 @@ public class SwaggerSecurityScheme {
 	 * information for the flow types supported.
 	 */
 	@Parameter
-	private SwaggerFlows flows;
+	private Oas3Flows flows;
 
 	/**
 	 * If type is openIdConnect: REQUIRED. OpenId Connect URL to discover OAuth2

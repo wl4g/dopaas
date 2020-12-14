@@ -1,13 +1,17 @@
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import io.swagger.v3.oas.models.info.Info;
+import lombok.Getter;
+
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Configuring the Swagger info properties.
  */
-public class SwaggerInfo {
+@Getter
+public class Oas3Info {
 
 	/**
 	 * REQUIRED. The title of the application.
@@ -40,16 +44,16 @@ public class SwaggerInfo {
 	 * The contact information for the exposed API.
 	 */
 	@Parameter
-	private SwaggerContact contact;
+	private Oas3Contact contact = new Oas3Contact();
 
 	/**
 	 * The license information for the exposed API.
 	 */
 	@Parameter
-	private SwaggerLicense license;
+	private Oas3License license = new Oas3License();
 
 	@Parameter
-	private Map<String, Object> extensions;
+	private Map<String, Object> extensions = new LinkedHashMap<>(4);
 
 	public Info createInfoModel() {
 		Info info = new Info();
@@ -84,4 +88,5 @@ public class SwaggerInfo {
 
 		return info;
 	}
+
 }

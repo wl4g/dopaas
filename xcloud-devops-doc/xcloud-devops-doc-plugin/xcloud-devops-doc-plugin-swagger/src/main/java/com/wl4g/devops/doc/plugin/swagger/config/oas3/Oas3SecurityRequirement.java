@@ -1,4 +1,4 @@
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import java.util.Collections;
 import java.util.List;
@@ -6,8 +6,10 @@ import java.util.List;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import io.swagger.v3.oas.models.security.SecurityRequirement;
+import lombok.Getter;
 
-public class SwaggerSecurityRequirement {
+@Getter
+public class Oas3SecurityRequirement {
 
 	/**
 	 * Each name MUST correspond to a security scheme which is declared in the

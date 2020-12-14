@@ -15,13 +15,16 @@
  */
 package com.wl4g.devops.doc.plugin.swagger;
 
+import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -31,9 +34,13 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.springframework.core.ResolvableType;
 
-import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionProperties;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
 import com.wl4g.devops.doc.plugin.swagger.util.OutputFormater;
+
 import static com.wl4g.devops.doc.plugin.swagger.util.OutputFormater.JSON;
 
 /**
@@ -44,7 +51,7 @@ import static com.wl4g.devops.doc.plugin.swagger.util.OutputFormater.JSON;
  * @sine v1.0
  * @see
  */
-public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
+public abstract class AbstractGenDocMojo<C extends DocumentionProperties, D> extends AbstractMojo {
 
 	/**
 	 * Current maven project.
@@ -59,9 +66,15 @@ public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
 	protected MavenProjectHelper projectHelper;
 
 	/**
+	 * Documention init configuration properties.
+	 */
+	@Parameter
+	protected C config;
+
+	/**
 	 * Skip the execution.
 	 */
-	@Parameter(name = "skip", property = "xcloud.doc.gen.skip", required = false, defaultValue = "false")
+	@Parameter(name = "skip", property = "xcloud.gendoc.skip", required = false, defaultValue = "false")
 	protected Boolean skip = false;
 
 	/**
@@ -104,6 +117,8 @@ public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
 	@Parameter(defaultValue = "false")
 	protected boolean attachSwaggerArtifact = false;
 
+	protected abstract DocumentionProvider provider();
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (nonNull(skip) && skip) {
@@ -115,8 +130,8 @@ public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
 				getLog().debug("Created output directory " + outputDirectory);
 			}
 
-			// Sets config properties.
-			DocumentHolder.get().setResourcePackages(resourcePackages);
+			// Init config properties.
+			initPropertiesSet();
 
 			// Generation document.
 			D doc = generateDocument();
@@ -152,5 +167,28 @@ public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
 	 * @throws Exception
 	 */
 	protected abstract D generateDocument() throws Exception;
+
+	/**
+	 * Sets initialization config properties.
+	 * 
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	private void initPropertiesSet() throws Exception {
+		if (isNull(config)) {
+			Class<C> clazz = (Class<C>) ResolvableType.forClass(getClass()).getSuperType().getGeneric(0).resolve();
+			notNull(clazz, "Mojo super class generaic types is requires.");
+			// New default config instance.
+			this.config = clazz.newInstance();
+
+			StringWriter out = new StringWriter(128);
+			OutputFormater.JSON.write(config, out, false);
+			getLog().warn(format("Use default swagger config properties instance: %s", out));
+		}
+
+		DocumentionHolder.get().setConfig(config);
+		DocumentionHolder.get().setProvider(provider());
+		DocumentionHolder.get().setResourcePackages(resourcePackages);
+	}
 
 }

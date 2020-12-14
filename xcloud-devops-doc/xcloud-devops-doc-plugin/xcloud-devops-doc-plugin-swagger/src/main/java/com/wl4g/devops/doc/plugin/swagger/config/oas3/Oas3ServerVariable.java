@@ -1,4 +1,4 @@
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import java.util.Collections;
 import java.util.List;
@@ -7,9 +7,12 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.models.servers.ServerVariable;
+import lombok.Getter;
+
 import org.apache.maven.plugins.annotations.Parameter;
 
-public class SwaggerServerVariable {
+@Getter
+public class Oas3ServerVariable {
 
 	/**
 	 * REQUIRED. The default value to use for substitution, and to send, if an

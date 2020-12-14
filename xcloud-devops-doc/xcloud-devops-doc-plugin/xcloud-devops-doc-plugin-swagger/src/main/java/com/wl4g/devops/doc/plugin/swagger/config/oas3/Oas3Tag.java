@@ -1,12 +1,14 @@
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import java.util.Map;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
 import io.swagger.v3.oas.models.tags.Tag;
+import lombok.Getter;
 
-public class SwaggerTag {
+@Getter
+public class Oas3Tag {
 
 	/**
 	 * REQUIRED. The name of the tag.
@@ -25,7 +27,7 @@ public class SwaggerTag {
 	 * Additional external documentation for this tag.
 	 */
 	@Parameter
-	private SwaggerExternalDoc externalDoc;
+	private Oas3ExternalDoc externalDoc;
 
 	@Parameter
 	private Map<String, Object> extensions;

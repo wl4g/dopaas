@@ -1,4 +1,4 @@
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import java.util.Collections;
 import java.util.Map;
@@ -6,8 +6,10 @@ import java.util.Map;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import io.swagger.v3.oas.models.ExternalDocumentation;
+import lombok.Getter;
 
-public class SwaggerExternalDoc {
+@Getter
+public class Oas3ExternalDoc {
 
 	/**
 	 * A short description of the target documentation. CommonMark syntax MAY be

@@ -15,17 +15,27 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.springframework.context.annotation.Import;
 
 /**
- * {@link EmbeddedSpringfoxBootstrap} </br>
+ * {@link EnableDocumentionAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-12-10
+ * @version v1.0 2020-12-14
  * @sine v1.0
- * @see {@link DocumentionAutoConfigurationRegistrar}
+ * @see
  */
-@SpringBootApplication(scanBasePackages = "none")
-@EnableDocumentionAutoConfiguration
-public class EmbeddedSpringfoxBootstrap {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Import(DocumentionAutoConfigurationRegistrar.class)
+public @interface EnableDocumentionAutoConfiguration {
 }

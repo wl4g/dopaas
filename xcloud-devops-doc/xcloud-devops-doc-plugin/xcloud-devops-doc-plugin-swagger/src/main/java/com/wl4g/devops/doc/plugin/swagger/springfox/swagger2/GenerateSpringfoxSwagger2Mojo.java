@@ -25,10 +25,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import com.wl4g.components.common.remoting.RestClient;
 import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
+import com.wl4g.devops.doc.plugin.swagger.config.swagger2.Swagger2Properties;
 import com.wl4g.devops.doc.plugin.swagger.springfox.EmbeddedSpringfoxBootstrap;
-import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
-
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.DocumentionProvider.SPRINGFOX_SWAGGER2;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
@@ -42,7 +42,12 @@ import io.swagger.parser.SwaggerParser;
  * @see
  */
 @Mojo(name = "gendoc-springfox-swagger2", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
-public class GenerateSpringfoxSwagger2Mojo extends AbstractGenDocMojo<Swagger> {
+public class GenerateSpringfoxSwagger2Mojo extends AbstractGenDocMojo<Swagger2Properties, Swagger> {
+
+	@Override
+	protected DocumentionProvider provider() {
+		return DocumentionProvider.SPRINGFOX_SWAGGER2;
+	}
 
 	@Override
 	protected Swagger generateDocument() throws Exception {
@@ -52,14 +57,19 @@ public class GenerateSpringfoxSwagger2Mojo extends AbstractGenDocMojo<Swagger> {
 	private Swagger resolveSwagger2Documention() {
 		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedSpringfoxBootstrap.class)
 				/* .web(SERVLET) // auto-detection */
-				.bannerMode(Mode.OFF).headless(true).run(DocumentHolder.get().toSpringArgs(SPRINGFOX_SWAGGER2));) {
+				.bannerMode(Mode.OFF).headless(true).run();) {
 
 			RestClient rest = new RestClient();
-			String swagger = rest.getForObject(URI.create(DEFAULT_SWAGGER2_API_URL), String.class);
+			URI apiDocUri = URI.create(DEFAULT_SWAGGER2_API_URI + DocumentionHolder.get().getConfig().getSwaggerGroup());
+			String swagger = rest.getForObject(apiDocUri, String.class);
 			return new SwaggerParser().parse(swagger);
 		}
 	}
 
-	public static final String DEFAULT_SWAGGER2_API_URL = "http://localhost:8080/v2/api-docs";
+	/**
+	 * Refer to:
+	 * {@link springfox.documentation.swagger2.web.Swagger2ControllerWebMvc#getDocumentation()}
+	 */
+	public static final String DEFAULT_SWAGGER2_API_URI = "http://localhost:8080/v2/api-docs?group=";
 
 }

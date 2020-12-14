@@ -1,14 +1,16 @@
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariables;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.Map;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
-public class SwaggerServer {
+@Getter
+public class Oas3Server {
 
 	/**
 	 * REQUIRED. A URL to the target host. This URL supports Server Variables
@@ -31,7 +33,7 @@ public class SwaggerServer {
 	 * substitution in the server's URL template.
 	 */
 	@Parameter
-	private Map<String, SwaggerServerVariable> variables = Collections.emptyMap();
+	private Map<String, Oas3ServerVariable> variables = Collections.emptyMap();
 
 	@Parameter
 	private Map<String, Object> extensions = Collections.emptyMap();

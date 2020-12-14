@@ -13,33 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springdoc.oas3;
+package com.wl4g.devops.doc.plugin.swagger.springdoc.swagger2;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
-import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Properties;
+import com.wl4g.devops.doc.plugin.swagger.config.swagger2.Swagger2Properties;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
 /**
- * {@link GenerateSpringdocOas3Mojo}
+ * {@link GenerateSpringdocSwagger2Mojo}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-08
  * @sine v1.0
  * @see
  */
-@Mojo(name = "gendoc-springdoc-oas3", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
-public class GenerateSpringdocOas3Mojo extends AbstractGenDocMojo<Oas3Properties, OpenAPI> {
+@Mojo(name = "gendoc-springdoc-swagger2", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+public class GenerateSpringdocSwagger2Mojo extends AbstractGenDocMojo<Swagger2Properties, OpenAPI> {
 
 	// TODO
 
 	@Override
 	protected DocumentionProvider provider() {
-		return DocumentionProvider.SPRINGDOC_OAS3;
+		return DocumentionProvider.SPRINGDOC_SWAGGER2;
 	}
 
 	@Override

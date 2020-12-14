@@ -15,20 +15,22 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox.oas3;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
+import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Properties;
+import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Contact;
+import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Info;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
 
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.KEY_SPRINGFOX_OAS3;
+import static springfox.documentation.builders.RequestHandlerSelectors.withClassAnnotation;
 import static springfox.documentation.builders.RequestHandlerSelectors.withMethodAnnotation;
+import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
@@ -44,25 +46,35 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @sine v1.0
  * @see {@link springfox.documentation.oas.web.OpenApiControllerWebMvc}
  */
-@Configuration
-@ConditionalOnProperty(name = KEY_SPRINGFOX_OAS3, matchIfMissing = false)
 @EnableOpenApi
 @EnableWebMvc
 public class SpringfoxOas3Configuration {
 
 	@Bean
 	public Docket springfoxOas3Docket() {
-		ApiInfo apiInfo = new ApiInfoBuilder().title("Demo API文档").description("").license("")
-				.contact(new Contact("Wanglsir", "#", "Wanglsir")).version("v1.0.0").build();
+		Oas3Properties config = (Oas3Properties) DocumentionHolder.get().getConfig();
 
-		ApiSelectorBuilder builder = new Docket(DocumentationType.OAS_30).apiInfo(apiInfo).select().paths(PathSelectors.any());
-		// .apis(withMethodAnnotation(Api.class))
+		ApiSelectorBuilder builder = new Docket(DocumentationType.OAS_30).apiInfo(buildApiInfo(config)).select()
+				.paths(PathSelectors.any());
+		builder.apis(withClassAnnotation(Api.class));
 		builder.apis(withMethodAnnotation(ApiOperation.class));
-		for (String scanBasePackage : DocumentHolder.get().getResourcePackages()) {
-			builder.apis(RequestHandlerSelectors.basePackage(scanBasePackage));
+		for (String scanBasePackage : DocumentionHolder.get().getResourcePackages()) {
+			builder.apis(basePackage(scanBasePackage));
 		}
-
 		return builder.build();
+	}
+
+	@Bean
+	public VersionOas3ApiListingPlugin versionOas3ApiListingPlugin() {
+		return new VersionOas3ApiListingPlugin();
+	}
+
+	private ApiInfo buildApiInfo(Oas3Properties config) {
+		Oas3Info info = config.getInfo();
+		Oas3Contact contact = info.getContact();
+		return new ApiInfoBuilder().title(info.getTitle()).description(info.getDescription()).license(info.getLicense().getName())
+				.licenseUrl(info.getLicense().getUrl())
+				.contact(new Contact(contact.getName(), contact.getUrl(), contact.getEmail())).version(info.getVersion()).build();
 	}
 
 }

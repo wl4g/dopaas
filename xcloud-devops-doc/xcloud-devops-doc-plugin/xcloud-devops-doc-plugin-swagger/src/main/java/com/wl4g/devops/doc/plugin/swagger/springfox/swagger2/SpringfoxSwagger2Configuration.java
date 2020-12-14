@@ -15,17 +15,20 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox.swagger2;
 
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.KEY_SPRINGFOX_SWAGGER2;
+import static springfox.documentation.builders.RequestHandlerSelectors.withClassAnnotation;
+import static springfox.documentation.builders.RequestHandlerSelectors.withMethodAnnotation;
+import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
+import com.wl4g.devops.doc.plugin.swagger.config.swagger2.Swagger2Properties;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.models.Info;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
@@ -43,23 +46,35 @@ import springfox.documentation.swagger2.web.Swagger2ControllerWebMvc;
  * @see {@link Swagger2ControllerWebMvc}
  * @see {@link Swagger2Controller}
  */
-@Configuration
-@ConditionalOnProperty(name = KEY_SPRINGFOX_SWAGGER2, matchIfMissing = false)
 @EnableSwagger2
 public class SpringfoxSwagger2Configuration {
 
 	@Bean
 	public Docket springfoxSwagger2Docket() {
-		ApiInfo apiInfo = new ApiInfoBuilder().title("Demo API文档").description("").license("")
-				.contact(new Contact("Wanglsir", "#", "Wanglsir")).version("v1.0.0").build();
+		Swagger2Properties config = (Swagger2Properties) DocumentionHolder.get().getConfig();
 
-		ApiSelectorBuilder builder = new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo).select().paths(PathSelectors.any());
-		// .apis(RequestHandlerSelectors.withMethodAnnotation(Api.class))
-		for (String scanBasePackage : DocumentHolder.get().getResourcePackages()) {
-			builder.apis(RequestHandlerSelectors.basePackage(scanBasePackage));
+		ApiSelectorBuilder builder = new Docket(DocumentationType.SWAGGER_2).groupName(config.getGroupName())
+				.apiInfo(buildApiInfo(config)).select().paths(PathSelectors.any());
+		builder.apis(withClassAnnotation(Api.class));
+		builder.apis(withMethodAnnotation(ApiOperation.class));
+
+		for (String scanBasePackage : DocumentionHolder.get().getResourcePackages()) {
+			builder.apis(basePackage(scanBasePackage));
 		}
-
 		return builder.build();
+	}
+
+	@Bean
+	public VersionSwagger2ApiListingPlugin versionSwagger2ApiListingPlugin() {
+		return new VersionSwagger2ApiListingPlugin();
+	}
+
+	private ApiInfo buildApiInfo(Swagger2Properties config) {
+		Info info = config.getInfo();
+		io.swagger.models.Contact contact = info.getContact();
+		return new ApiInfoBuilder().title(info.getTitle()).description(info.getDescription()).license(info.getLicense().getName())
+				.licenseUrl(info.getLicense().getUrl())
+				.contact(new Contact(contact.getName(), contact.getUrl(), contact.getEmail())).version(info.getVersion()).build();
 	}
 
 }

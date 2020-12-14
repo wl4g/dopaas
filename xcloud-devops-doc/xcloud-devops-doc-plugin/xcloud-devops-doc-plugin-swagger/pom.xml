@@ -63,6 +63,10 @@
 					<groupId>com.wl4g</groupId>
 					<artifactId>xcloud-iam-common</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-freemarker</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -92,18 +96,18 @@
 			<artifactId>maven-project</artifactId>
 			<version>${maven-project.version}</version>
 		</dependency>
-		 <dependency>
-            <groupId>org.apache.maven.plugin-testing</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>${maven-plugin-testing.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-compat</artifactId>
-            <version>${maven-plugin.version}</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugin-testing</groupId>
+			<artifactId>maven-plugin-testing-harness</artifactId>
+			<version>${maven-plugin-testing.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-compat</artifactId>
+			<version>${maven-plugin.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- Exportion documention for springMVC(OAS3) dependencies. -->
 		<dependency>

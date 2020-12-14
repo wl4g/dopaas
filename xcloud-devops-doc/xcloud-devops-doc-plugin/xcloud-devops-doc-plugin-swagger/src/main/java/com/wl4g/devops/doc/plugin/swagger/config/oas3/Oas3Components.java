@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.jaxrs2.model;
+package com.wl4g.devops.doc.plugin.swagger.config.oas3;
 
 import java.util.Map;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
 import io.swagger.v3.oas.models.Components;
+import lombok.Getter;
 
-public class SwaggerComponents {
+@Getter
+public class Oas3Components {
 
 	/**
 	 * Security schemes (under Comtonents)
 	 */
 	@Parameter
-	private Map<String, SwaggerSecurityScheme> securitySchemes;
+	private Map<String, Oas3SecurityScheme> securitySchemes;
 
 	// TODO: implement schemas, responses, ... from
 	// https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#componentsObject

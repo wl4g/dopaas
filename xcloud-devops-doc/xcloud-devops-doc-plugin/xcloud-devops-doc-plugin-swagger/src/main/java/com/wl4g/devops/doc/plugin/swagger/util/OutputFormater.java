@@ -20,10 +20,11 @@ import static java.lang.String.format;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.wl4g.devops.doc.plugin.swagger.jaxrs2.model.SwaggerServerVariable;
+import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3ServerVariable;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
@@ -59,6 +60,8 @@ public enum OutputFormater {
 				mapper.writeValue((File) out, document);
 			} else if (out instanceof OutputStream) {
 				mapper.writeValue((OutputStream) out, document);
+			} else if (out instanceof Writer) {
+				mapper.writeValue((Writer) out, document);
 			} else {
 				throw new UnsupportedOperationException(format("No supported output parameter type.", out));
 			}
@@ -74,7 +77,7 @@ public enum OutputFormater {
 		@Override
 		public void write(Object document, Object out, boolean prettyPrint) throws IOException {
 			ObjectMapper mapper = Json.mapper();
-			mapper.addMixIn(ServerVariable.class, SwaggerServerVariable.ServerVariableMixin.class);
+			mapper.addMixIn(ServerVariable.class, Oas3ServerVariable.ServerVariableMixin.class);
 			if (prettyPrint) {
 				mapper.enable(SerializationFeature.INDENT_OUTPUT);
 			}
@@ -92,7 +95,7 @@ public enum OutputFormater {
 		@Override
 		public void write(Object document, Object out, boolean prettyPrint) throws IOException {
 			ObjectMapper mapper = Yaml.mapper();
-			mapper.addMixIn(ServerVariable.class, SwaggerServerVariable.ServerVariableMixin.class);
+			mapper.addMixIn(ServerVariable.class, Oas3ServerVariable.ServerVariableMixin.class);
 			writeValue(mapper, document, out);
 		}
 	}

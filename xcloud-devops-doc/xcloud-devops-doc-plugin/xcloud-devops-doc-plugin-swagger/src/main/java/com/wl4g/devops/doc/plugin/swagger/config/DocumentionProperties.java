@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springfox;
-
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package com.wl4g.devops.doc.plugin.swagger.config;
 
 /**
- * {@link EmbeddedSpringfoxBootstrap} </br>
+ * {@link DocumentionProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-12-10
+ * @version v1.0 2020-12-14
  * @sine v1.0
- * @see {@link DocumentionAutoConfigurationRegistrar}
+ * @see
  */
-@SpringBootApplication(scanBasePackages = "none")
-@EnableDocumentionAutoConfiguration
-public class EmbeddedSpringfoxBootstrap {
+public interface DocumentionProperties {
+
+	String getSwaggerGroup();
+
 }
