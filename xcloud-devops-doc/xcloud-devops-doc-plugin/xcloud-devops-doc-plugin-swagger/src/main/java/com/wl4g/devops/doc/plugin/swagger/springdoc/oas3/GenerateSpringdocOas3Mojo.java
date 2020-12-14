@@ -13,44 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springdoc;
+package com.wl4g.devops.doc.plugin.swagger.springdoc.oas3;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
+
+import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
+
+import io.swagger.v3.oas.models.OpenAPI;
 
 /**
- * {@link GenerateSpringdocMojo}
+ * {@link GenerateSpringdocOas3Mojo}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-08
  * @sine v1.0
  * @see
  */
-@Mojo(name = "gendoc-springdoc", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
-public class GenerateSpringdocMojo extends AbstractMojo {
-
-	/**
-	 * Current Maven project, read only.
-	 */
-	@Parameter(readonly = true, required = true, defaultValue = "${project}")
-	private MavenProject mvnProject;
+@Mojo(name = "gendoc-springdoc-oas3", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
+public class GenerateSpringdocOas3Mojo extends AbstractGenDocMojo<OpenAPI> {
 
 	@Override
-	public void execute() throws MojoExecutionException {
-		try {
-			doExecute();
-		} catch (Throwable e) {
-			throw new MojoExecutionException(e.getMessage(), e);
-		}
-	}
-
-	protected void doExecute() {
-		// TODO
-		throw new UnsupportedOperationException("No implements export documention for springdoc");
+	protected OpenAPI generateDocument() throws Exception {
+		throw new UnsupportedOperationException("Not yet implemented!!!");
 	}
 
 }

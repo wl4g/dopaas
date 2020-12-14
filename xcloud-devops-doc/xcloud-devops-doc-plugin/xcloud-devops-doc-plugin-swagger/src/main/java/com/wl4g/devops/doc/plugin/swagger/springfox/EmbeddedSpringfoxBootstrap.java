@@ -13,30 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin;
+package com.wl4g.devops.doc.plugin.swagger.springfox;
 
-import com.wl4g.devops.doc.plugin.swagger.springfox.oas3.GenerateSpringfoxOas3Mojo;
-import com.wl4g.devops.doc.plugin.swagger.springfox.swagger2.GenerateSpringfoxSwagger2Mojo;
-import com.wl4g.devops.doc.plugin.swagger.jaxrs2.GenerateJaxrs2Oas3Mojo;
-import com.wl4g.devops.doc.plugin.swagger.springdoc.GenerateSpringdocMojo;
+import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.KEY_SCAN_BASE_PACKAGES;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * {@link MvnGenerateMojoTests}
+ * {@link EmbeddedSpringfoxBootstrap}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-12-09
+ * @version v1.0 2020-12-10
  * @sine v1.0
  * @see
  */
-@SuppressWarnings("unused")
-public class MvnGenerateMojoTests {
-
-	// Simulate mvn plugin execution
-	public static void main(String[] args) throws Exception {
-		new GenerateSpringfoxSwagger2Mojo().execute();
-		// new GenerateSpringfoxOas3Mojo().execute();
-		// new GenerateSpringdocMojo().execute();
-		// new GenerateJaxrs2Mojo().execute();
-	}
-
+@SpringBootApplication(scanBasePackages = "${" + KEY_SCAN_BASE_PACKAGES + "}")
+public class EmbeddedSpringfoxBootstrap {
 }

@@ -13,4 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springdoc;
+package com.wl4g.devops.doc.plugin.swagger.example.jaxrs2;
+
+import javax.ws.rs.ApplicationPath;
+
+@ApplicationPath("/api")
+public class RestApplication extends javax.ws.rs.core.Application {
+
+}

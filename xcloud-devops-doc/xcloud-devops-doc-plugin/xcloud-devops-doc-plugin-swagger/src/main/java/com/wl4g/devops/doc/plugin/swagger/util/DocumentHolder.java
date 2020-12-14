@@ -61,22 +61,25 @@ public class DocumentHolder {
 		StringBuffer scans = new StringBuffer();
 		resourcePackages.forEach(s -> scans.append(s).append(","));
 
-		String arg1 = "--" + SCAN_BASE_PACKAGES + "=" + scans;
-		String arg2 = "--" + PROPERTY_SWAGGER2 + "=true";
+		String arg1 = "--" + KEY_SCAN_BASE_PACKAGES + "=" + scans;
+		String arg2 = "--" + KEY_SPRINGFOX_SWAGGER2 + "=true";
 		if (provider == DocumentionProvider.SPRINGFOX_OAS3) {
-			arg2 = "--" + PROPERTY_OAS3 + "=true";
+			arg2 = "--" + KEY_SPRINGFOX_OAS3 + "=true";
 		}
 
 		return new String[] { arg1, arg2 };
 	}
 
-	public static final String SCAN_BASE_PACKAGES = "scanBasePackages";
+	public static final String KEY_SCAN_BASE_PACKAGES = "scanBasePackages";
 
-	public static final String PROPERTY_SWAGGER2 = "springfox.enable.swagger2";
-	public static final String PROPERTY_OAS3 = "springfox.enable.oas3";
+	public static final String KEY_SPRINGFOX_SWAGGER2 = "xcloud.devops.gendoc.springfox.swagger2.enable";
+	public static final String KEY_SPRINGFOX_OAS3 = "xcloud.devops.gendoc.springfox.oas3.enable";
+
+	public static final String KEY_SPRINGDOC_SWAGGER2 = "xcloud.devops.gendoc.springdoc.swagger2.enable";
+	public static final String KEY_SPRINGDOC_OAS3 = "xcloud.devops.gendoc.springdoc.oas3.enable";
 
 	public static enum DocumentionProvider {
-		SPRINGFOX_SWAGGER2, SPRINGFOX_OAS3
+		SPRINGFOX_SWAGGER2, SPRINGFOX_OAS3, SPRINGDOC_SWAGGER2, SPRINGDOC_OAS3
 	}
 
 }

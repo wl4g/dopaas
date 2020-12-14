@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springfox;
+package com.wl4g.devops.doc.plugin.swagger.springdoc;
 
-import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.SCAN_BASE_PACKAGES;
+import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.KEY_SCAN_BASE_PACKAGES;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * {@link EmbeddedBootstrap}
+ * {@link EmbeddedSpringdocBootstrap}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-10
  * @sine v1.0
  * @see
  */
-@SpringBootApplication(scanBasePackages = "${" + SCAN_BASE_PACKAGES + "}")
-public class EmbeddedBootstrap {
+@SpringBootApplication(scanBasePackages = "${" + KEY_SCAN_BASE_PACKAGES + "}")
+public class EmbeddedSpringdocBootstrap {
 }

@@ -25,7 +25,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import com.wl4g.components.common.remoting.RestClient;
 import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
-import com.wl4g.devops.doc.plugin.swagger.springfox.EmbeddedBootstrap;
+import com.wl4g.devops.doc.plugin.swagger.springfox.EmbeddedSpringfoxBootstrap;
 import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
 
 import static com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder.DocumentionProvider.SPRINGFOX_SWAGGER2;
@@ -50,7 +50,7 @@ public class GenerateSpringfoxSwagger2Mojo extends AbstractGenDocMojo<Swagger> {
 	}
 
 	private Swagger resolveSwagger2Documention() {
-		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedBootstrap.class)
+		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedSpringfoxBootstrap.class)
 				/* .web(SERVLET) // auto-detection */
 				.bannerMode(Mode.OFF).headless(true).run(DocumentHolder.get().toSpringArgs(SPRINGFOX_SWAGGER2));) {
 

@@ -17,13 +17,12 @@ package com.wl4g.devops.doc.plugin.swagger;
 
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
-import static java.util.Collections.singleton;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.nonNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -35,6 +34,7 @@ import org.apache.maven.project.MavenProjectHelper;
 
 import com.wl4g.devops.doc.plugin.swagger.util.DocumentHolder;
 import com.wl4g.devops.doc.plugin.swagger.util.OutputFormater;
+import static com.wl4g.devops.doc.plugin.swagger.util.OutputFormater.JSON;
 
 /**
  * {@link AbstractGenDocMojo}
@@ -61,8 +61,8 @@ public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
 	/**
 	 * Skip the execution.
 	 */
-	@Parameter(name = "skip", property = "openapi.generation.skip", required = false, defaultValue = "false")
-	protected Boolean skip;
+	@Parameter(name = "skip", property = "xcloud.doc.gen.skip", required = false, defaultValue = "false")
+	protected Boolean skip = false;
 
 	/**
 	 * List of packages which contains API resources. This is <i>not</i>
@@ -77,13 +77,13 @@ public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
 	 * generation of the YAML version because YAML is pretty-printed by nature.
 	 */
 	@Parameter(defaultValue = "false")
-	protected boolean prettyPrint;
+	protected boolean prettyPrint = false;
 
 	/**
 	 * Choosing the output format. Supports JSON or YAML.
 	 */
 	@Parameter
-	protected Set<OutputFormater> outputFormats = singleton(OutputFormater.JSON);
+	protected List<OutputFormater> outputFormats = singletonList(JSON);
 
 	/**
 	 * Directory to contain generated documentation.
@@ -94,7 +94,7 @@ public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
 	/**
 	 * Filename to use for the generated documentation.
 	 */
-	@Parameter
+	@Parameter(defaultValue = "swagger")
 	protected String outputFilename = "swagger";
 
 	/**
@@ -102,7 +102,7 @@ public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
 	 * documentation will be deployed along with other artifacts.
 	 */
 	@Parameter(defaultValue = "false")
-	protected boolean attachSwaggerArtifact;
+	protected boolean attachSwaggerArtifact = false;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -145,6 +145,12 @@ public abstract class AbstractGenDocMojo<D> extends AbstractMojo {
 		}
 	}
 
+	/**
+	 * Do execution generation documents.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	protected abstract D generateDocument() throws Exception;
 
 }
