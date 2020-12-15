@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wl4g.components.core.web.versions.annotation.ApiVersion;
+import com.wl4g.components.core.web.versions.annotation.ApiVersionMapping;
+
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,10 +41,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Api
 public class Oas3SampleController {
 
+	@ApiVersionMapping({ @ApiVersion("1.0.1") })
 	@Operation(summary = "Obtain user info", tags = { "sys", "user" }, responses = {
 			@ApiResponse(responseCode = "200", headers = @Header(name = "X-OAS3-DEMO")) })
 	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
-	public String getUserInfo(@Parameter Long userId) {
+	public String getUserInfo_V1(@Parameter Long userId) {
+		return "This is user content content...";
+	}
+
+	@ApiVersionMapping({ @ApiVersion("1.2.0") })
+	@Operation(summary = "Obtain user info", tags = { "sys", "user" }, responses = {
+			@ApiResponse(responseCode = "200", headers = @Header(name = "X-OAS3-DEMO")) })
+	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
+	public String getUserInfo_V2(@Parameter Long userId) {
 		return "This is user content content...";
 	}
 

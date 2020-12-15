@@ -101,7 +101,7 @@ public abstract class AbstractGenDocMojo<C extends DocumentionProperties, D> ext
 	/**
 	 * Directory to contain generated documentation.
 	 */
-	@Parameter(defaultValue = "${project.build.directory}")
+	@Parameter(defaultValue = "${project.build.directory}/generated-docs")
 	protected File outputDirectory;
 
 	/**
@@ -183,7 +183,7 @@ public abstract class AbstractGenDocMojo<C extends DocumentionProperties, D> ext
 
 			StringWriter out = new StringWriter(128);
 			OutputFormater.JSON.write(config, out, false);
-			getLog().warn(format("Use default swagger config properties instance: %s", out));
+			getLog().warn(format("Use default swagger config properties: %s", out));
 		}
 
 		DocumentionHolder.get().setConfig(config);
