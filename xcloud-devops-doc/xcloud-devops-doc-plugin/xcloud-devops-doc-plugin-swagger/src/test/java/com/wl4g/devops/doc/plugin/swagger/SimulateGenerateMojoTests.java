@@ -81,7 +81,7 @@ public class SimulateGenerateMojoTests {
 		setField(findField(mojoClass, "resourcePackages"), mojo, resourcePackages, true);
 		setField(findField(mojoClass, "prettyPrint"), mojo, true, true);
 		setField(findField(mojoClass, "outputFormats"), mojo, asList(JSON, YAML), true);
-		setField(findField(mojoClass, "outputDirectory"), mojo, new File(USER_DIR + "/target/output-gendoc"), true);
+		setField(findField(mojoClass, "outputDirectory"), mojo, new File(USER_DIR + "/target/generated-docs"), true);
 		setField(findField(mojoClass, "outputFilename"), mojo, outputFilename, true);
 		setField(findField(mojoClass, "attachSwaggerArtifact"), mojo, true, true);
 		return mojo;

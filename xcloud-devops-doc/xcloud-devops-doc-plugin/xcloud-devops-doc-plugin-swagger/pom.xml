@@ -149,6 +149,13 @@
 			<artifactId>swagger-parser-v2-converter</artifactId>
 			<version>${swagger-parser-v3.version}</version>
 		</dependency>
+
+		<!-- For supportes. see: com.wl4g.devops.doc.plugin.swagger.springfox.plugin.ApiVersionPathsRequestHandlerCombiner#transformRequestHandler() -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webflux</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

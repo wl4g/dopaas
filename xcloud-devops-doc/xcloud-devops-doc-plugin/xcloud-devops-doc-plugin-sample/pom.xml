@@ -76,7 +76,7 @@
 								<resourcePackage>com.wl4g.devops.doc.plugin.sample.article</resourcePackage>
 								<resourcePackage>com.wl4g.devops.doc.plugin.sample.sys</resourcePackage>
 							</resourcePackages>
-							<outputDirectory>${project.build.directory}</outputDirectory> <!-- default: ${project.build.directory} -->
+							<outputDirectory>${project.build.directory}</outputDirectory> <!-- default: ${project.build.directory}/generated-docs -->
 							<outputFilename>swagger</outputFilename> <!-- default: swagger -->
 							<outputFormats>JSON,YAML</outputFormats> <!-- default: JSON -->
 							<prettyPrint>true</prettyPrint> <!-- default: false -->

@@ -21,8 +21,13 @@ import static springfox.documentation.builders.RequestHandlerSelectors.basePacka
 
 import org.springframework.context.annotation.Bean;
 
+import com.fasterxml.classmate.TypeResolver;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
 import com.wl4g.devops.doc.plugin.swagger.config.swagger2.Swagger2Properties;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.ApiVersionPathsRequestHandlerCombiner;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.AuthorOperationBuilderPlugin;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.OrderOperationBuilderPlugin;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.VersionSwagger2ApiListingPlugin;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,18 +60,35 @@ public class SpringfoxSwagger2Configuration {
 
 		ApiSelectorBuilder builder = new Docket(DocumentationType.SWAGGER_2).groupName(config.getGroupName())
 				.apiInfo(buildApiInfo(config)).select().paths(PathSelectors.any());
+
+		// Scanning apis conditions.
 		builder.apis(withClassAnnotation(Api.class));
 		builder.apis(withMethodAnnotation(ApiOperation.class));
-
-		for (String scanBasePackage : DocumentionHolder.get().getResourcePackages()) {
-			builder.apis(basePackage(scanBasePackage));
+		for (String scanPackage : DocumentionHolder.get().getResourcePackages()) {
+			builder.apis(basePackage(scanPackage));
 		}
+
 		return builder.build();
 	}
 
 	@Bean
-	public VersionSwagger2ApiListingPlugin versionSwagger2ApiListingPlugin() {
-		return new VersionSwagger2ApiListingPlugin();
+	public VersionSwagger2ApiListingPlugin versionSwagger2ApiListingPlugin(TypeResolver resolver) {
+		return new VersionSwagger2ApiListingPlugin(resolver);
+	}
+
+	@Bean
+	public AuthorOperationBuilderPlugin authorOperationBuilderPlugin() {
+		return new AuthorOperationBuilderPlugin();
+	}
+
+	@Bean
+	public OrderOperationBuilderPlugin orderOperationBuilderPlugin() {
+		return new OrderOperationBuilderPlugin();
+	}
+
+	@Bean
+	public ApiVersionPathsRequestHandlerCombiner apiVersionPathsRequestHandlerCombiner() {
+		return new ApiVersionPathsRequestHandlerCombiner();
 	}
 
 	private ApiInfo buildApiInfo(Swagger2Properties config) {

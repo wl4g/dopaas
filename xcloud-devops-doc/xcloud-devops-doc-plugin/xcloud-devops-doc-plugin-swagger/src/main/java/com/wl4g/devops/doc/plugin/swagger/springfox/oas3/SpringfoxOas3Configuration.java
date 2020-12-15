@@ -18,8 +18,13 @@ package com.wl4g.devops.doc.plugin.swagger.springfox.oas3;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.fasterxml.classmate.TypeResolver;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
 import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Properties;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.ApiVersionPathsRequestHandlerCombiner;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.AuthorOperationBuilderPlugin;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.OrderOperationBuilderPlugin;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.VersionSwagger2ApiListingPlugin;
 import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Contact;
 import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Info;
 
@@ -56,17 +61,35 @@ public class SpringfoxOas3Configuration {
 
 		ApiSelectorBuilder builder = new Docket(DocumentationType.OAS_30).apiInfo(buildApiInfo(config)).select()
 				.paths(PathSelectors.any());
+
+		// Scanning apis conditions.
 		builder.apis(withClassAnnotation(Api.class));
 		builder.apis(withMethodAnnotation(ApiOperation.class));
-		for (String scanBasePackage : DocumentionHolder.get().getResourcePackages()) {
-			builder.apis(basePackage(scanBasePackage));
+		for (String scanPackage : DocumentionHolder.get().getResourcePackages()) {
+			builder.apis(basePackage(scanPackage));
 		}
+
 		return builder.build();
 	}
 
 	@Bean
-	public VersionOas3ApiListingPlugin versionOas3ApiListingPlugin() {
-		return new VersionOas3ApiListingPlugin();
+	public VersionSwagger2ApiListingPlugin versionSwagger2ApiListingPlugin(TypeResolver resolver) {
+		return new VersionSwagger2ApiListingPlugin(resolver);
+	}
+
+	@Bean
+	public AuthorOperationBuilderPlugin authorOperationBuilderPlugin() {
+		return new AuthorOperationBuilderPlugin();
+	}
+
+	@Bean
+	public OrderOperationBuilderPlugin orderOperationBuilderPlugin() {
+		return new OrderOperationBuilderPlugin();
+	}
+
+	@Bean
+	public ApiVersionPathsRequestHandlerCombiner apiVersionPathsRequestHandlerCombiner() {
+		return new ApiVersionPathsRequestHandlerCombiner();
 	}
 
 	private ApiInfo buildApiInfo(Oas3Properties config) {
