@@ -86,7 +86,7 @@ public abstract class AbstractGenDocMojo<C extends SwaggerConfig, D> extends Abs
 	 * recursive.
 	 */
 	@Parameter
-	protected List<String> resourcePackages;
+	protected Set<String> resourcePackages;
 
 	/**
 	 * When true, the plugin produces a pretty-printed JSON Swagger

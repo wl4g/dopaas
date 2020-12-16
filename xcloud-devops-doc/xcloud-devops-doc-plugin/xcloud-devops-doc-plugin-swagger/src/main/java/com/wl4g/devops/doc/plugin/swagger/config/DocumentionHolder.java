@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.config;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.collection.Collections2.safeSet;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.StringUtils2.trimAllWhitespace;
 import static com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider.*;
@@ -27,8 +27,8 @@ import com.wl4g.devops.doc.plugin.swagger.springfox.oas3.SpringfoxOas3Configurat
 import com.wl4g.devops.doc.plugin.swagger.springdoc.swagger2.SpringdocSwagger2Configuration;
 import com.wl4g.devops.doc.plugin.swagger.springdoc.oas3.SpringdocOas3Configuration;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -44,7 +44,7 @@ import javax.validation.constraints.NotNull;
 public class DocumentionHolder {
 
 	private SwaggerConfig config;
-	private List<String> resourcePackages = new ArrayList<String>();
+	private Set<String> resourcePackages = new HashSet<String>();
 	private DocumentionProvider provider = SPRINGFOX_SWAGGER2;
 
 	private DocumentionHolder() {
@@ -62,12 +62,12 @@ public class DocumentionHolder {
 		this.config = notNullOf(config, "config");
 	}
 
-	public List<String> getResourcePackages() {
+	public Set<String> getResourcePackages() {
 		return this.resourcePackages;
 	}
 
-	public void setResourcePackages(List<String> resourcePackages) {
-		this.resourcePackages = safeList(resourcePackages).stream().map(s -> trimAllWhitespace(trimToEmpty(s))).collect(toList());
+	public void setResourcePackages(Set<String> resourcePackages) {
+		this.resourcePackages = safeSet(resourcePackages).stream().map(s -> trimAllWhitespace(trimToEmpty(s))).collect(toSet());
 	}
 
 	public DocumentionProvider getProvider() {
