@@ -25,8 +25,16 @@ import static java.util.Objects.nonNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -37,7 +45,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.springframework.core.ResolvableType;
 
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
-import com.wl4g.devops.doc.plugin.swagger.config.DocumentionProperties;
+import com.wl4g.devops.doc.plugin.swagger.config.SwaggerConfig;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
 import com.wl4g.devops.doc.plugin.swagger.util.OutputFormater;
 
@@ -51,7 +59,7 @@ import static com.wl4g.devops.doc.plugin.swagger.util.OutputFormater.JSON;
  * @sine v1.0
  * @see
  */
-public abstract class AbstractGenDocMojo<C extends DocumentionProperties, D> extends AbstractMojo {
+public abstract class AbstractGenDocMojo<C extends SwaggerConfig, D> extends AbstractMojo {
 
 	/**
 	 * Current maven project.
@@ -64,12 +72,6 @@ public abstract class AbstractGenDocMojo<C extends DocumentionProperties, D> ext
 	 */
 	@Component
 	protected MavenProjectHelper projectHelper;
-
-	/**
-	 * Documention init configuration properties.
-	 */
-	@Parameter
-	protected C config;
 
 	/**
 	 * Skip the execution.
@@ -121,30 +123,29 @@ public abstract class AbstractGenDocMojo<C extends DocumentionProperties, D> ext
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		// Skip mojo execution?
 		if (nonNull(skip) && skip) {
 			getLog().info("Swagger documention generation is skipped.");
 			return;
 		}
+
 		try {
+			// Init config properties.
+			initPropertiesSet();
+
+			// Init directorys.
 			if (!outputDirectory.exists() && outputDirectory.mkdirs()) {
 				getLog().debug("Created output directory " + outputDirectory);
 			}
 
-			// Init config properties.
-			initPropertiesSet();
+			// Generate apis document.
+			D document = generateDocument();
 
-			// Generation document.
-			D doc = generateDocument();
-
-			if (getLog().isDebugEnabled()) {
-				getLog().debug(format("Generated documention. - %s", toJSONString(doc)));
-			}
-
-			// Output documents.
+			// Output apis documents.
 			for (OutputFormater format : outputFormats) {
 				try {
 					File outputFile = new File(outputDirectory, outputFilename + "." + format.name().toLowerCase());
-					format.write(doc, outputFile, prettyPrint);
+					format.write(document, outputFile, prettyPrint);
 					getLog().info(format("Written generate document to %s", outputFile));
 
 					if (attachSwaggerArtifact) {
@@ -154,19 +155,56 @@ public abstract class AbstractGenDocMojo<C extends DocumentionProperties, D> ext
 					throw new IOException("Unable write " + outputFilename + " document", e);
 				}
 			}
-
 		} catch (Exception e) {
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
+
 	}
 
 	/**
-	 * Do execution generation documents.
+	 * Load swagger protocol documention initialization configuration
+	 * properties.
+	 */
+	protected abstract C loadSwaggerConfig();
+
+	/**
+	 * Generate apis document.
+	 * 
+	 * @return
+	 * @throws MojoExecutionException
+	 */
+	private final D generateDocument() throws MojoExecutionException {
+		D document = null;
+
+		ClassLoader origClzLoader = Thread.currentThread().getContextClassLoader();
+		try {
+			ClassLoader clzLoader = createClassLoader(origClzLoader);
+
+			// set the TCCL before everything else
+			Thread.currentThread().setContextClassLoader(clzLoader);
+
+			// Do generate apis document.
+			document = doGenerateDocumentInternal();
+			if (getLog().isDebugEnabled()) {
+				getLog().debug(format("Generated documention. - %s", toJSONString(document)));
+			}
+		} catch (Exception e) {
+			throw new MojoExecutionException(e.getMessage(), e);
+		} finally {
+			// reset the TCCL back to the original class loader
+			Thread.currentThread().setContextClassLoader(origClzLoader);
+		}
+
+		return document;
+	}
+
+	/**
+	 * Do generate api document.
 	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	protected abstract D generateDocument() throws Exception;
+	protected abstract D doGenerateDocumentInternal() throws Exception;
 
 	/**
 	 * Sets initialization config properties.
@@ -174,21 +212,56 @@ public abstract class AbstractGenDocMojo<C extends DocumentionProperties, D> ext
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private void initPropertiesSet() throws Exception {
-		if (isNull(config)) {
+	protected void initPropertiesSet() throws Exception {
+		// Load initialization swagger config.
+		SwaggerConfig swaggerConfig = loadSwaggerConfig();
+
+		if (isNull(swaggerConfig)) {
 			Class<C> clazz = (Class<C>) ResolvableType.forClass(getClass()).getSuperType().getGeneric(0).resolve();
 			notNull(clazz, "Mojo super class generaic types is requires.");
 			// New default config instance.
-			this.config = clazz.newInstance();
+			swaggerConfig = clazz.newInstance();
 
 			StringWriter out = new StringWriter(128);
-			OutputFormater.JSON.write(config, out, false);
+			OutputFormater.JSON.write(swaggerConfig, out, false);
 			getLog().warn(format("Use default swagger config properties: %s", out));
 		}
 
-		DocumentionHolder.get().setConfig(config);
+		DocumentionHolder.get().setConfig(swaggerConfig);
 		DocumentionHolder.get().setProvider(provider());
 		DocumentionHolder.get().setResourcePackages(resourcePackages);
+	}
+
+	private URLClassLoader createClassLoader(ClassLoader parent) {
+		try {
+			Collection<String> dependencies = getDependentClasspathElements();
+			URL[] urls = new URL[dependencies.size()];
+			int index = 0;
+			for (String dependency : dependencies) {
+				if (nonNull(dependency)) {
+					urls[index++] = Paths.get(dependency).toUri().toURL();
+				}
+			}
+			return new URLClassLoader(urls, parent);
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Unable to create class loader with compiled classes", e);
+		} catch (DependencyResolutionRequiredException e) {
+			throw new RuntimeException("Dependency resolution (runtime + compile) is required");
+		}
+	}
+
+	private Collection<String> getDependentClasspathElements() throws DependencyResolutionRequiredException {
+		Set<String> dependencies = new LinkedHashSet<>();
+		dependencies.add(project.getBuild().getOutputDirectory());
+		Collection<String> compileClasspathElements = project.getCompileClasspathElements();
+		if (compileClasspathElements != null) {
+			dependencies.addAll(compileClasspathElements);
+		}
+		Collection<String> runtimeClasspathElements = project.getRuntimeClasspathElements();
+		if (runtimeClasspathElements != null) {
+			dependencies.addAll(runtimeClasspathElements);
+		}
+		return dependencies;
 	}
 
 }

@@ -17,23 +17,12 @@ package com.wl4g.devops.doc.plugin.swagger.jaxrs2;
 
 import javax.ws.rs.core.Application;
 
-import static java.util.Objects.nonNull;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 
 import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
@@ -54,13 +43,13 @@ public class GenerateJaxrs2Oas3Mojo extends AbstractGenDocMojo<Oas3Properties, O
 	 * Static information to provide for the generation.
 	 */
 	@Parameter
-	private Oas3Properties oas3Config;
+	private Oas3Properties swaggerConfig;
 
 	/**
 	 * Recurse into resourcePackages child packages.
 	 */
-	@Parameter(required = false, defaultValue = "false")
-	private Boolean useResourcePackagesChildren;
+	@Parameter(required = false, defaultValue = "true")
+	private Boolean useResourcePackagesChildren = true;
 
 	/**
 	 * Specifies the implementation of {@link Application}. If the class is not
@@ -76,26 +65,19 @@ public class GenerateJaxrs2Oas3Mojo extends AbstractGenDocMojo<Oas3Properties, O
 	}
 
 	@Override
-	protected OpenAPI generateDocument() throws Exception {
-		ClassLoader origClzLoader = Thread.currentThread().getContextClassLoader();
-		ClassLoader clzLoader = createClassLoader(origClzLoader);
+	protected Oas3Properties loadSwaggerConfig() {
+		return swaggerConfig;
+	}
 
-		try {
-			// set the TCCL before everything else
-			Thread.currentThread().setContextClassLoader(clzLoader);
+	@Override
+	protected OpenAPI doGenerateDocumentInternal() throws Exception {
+		Reader reader = new Reader(swaggerConfig == null ? new OpenAPI() : swaggerConfig.createSwaggerModel());
+		JaxRSScanner reflectiveScanner = new JaxRSScanner(getLog(), resourcePackages, useResourcePackagesChildren);
 
-			Reader reader = new Reader(oas3Config == null ? new OpenAPI() : oas3Config.createSwaggerModel());
+		Application application = resolveApplication(reflectiveScanner);
+		reader.setApplication(application);
 
-			JaxRSScanner reflectiveScanner = new JaxRSScanner(getLog(), resourcePackages, useResourcePackagesChildren);
-
-			Application application = resolveApplication(reflectiveScanner);
-			reader.setApplication(application);
-
-			return OpenAPISorter.sort(reader.read(reflectiveScanner.classes()));
-		} finally {
-			// reset the TCCL back to the original class loader
-			Thread.currentThread().setContextClassLoader(origClzLoader);
-		}
+		return OpenAPISorter.sort(reader.read(reflectiveScanner.classes()));
 	}
 
 	private Application resolveApplication(JaxRSScanner reflectiveScanner) {
@@ -113,38 +95,6 @@ public class GenerateJaxrs2Oas3Mojo extends AbstractGenDocMojo<Oas3Properties, O
 		@SuppressWarnings("unchecked")
 		Class<? extends Application> appClazz = (Class<? extends Application>) clazz;
 		return ClassUtils.createInstance(appClazz);
-	}
-
-	private URLClassLoader createClassLoader(ClassLoader parent) {
-		try {
-			Collection<String> dependencies = getDependentClasspathElements();
-			URL[] urls = new URL[dependencies.size()];
-			int index = 0;
-			for (String dependency : dependencies) {
-				if (nonNull(dependency)) {
-					urls[index++] = Paths.get(dependency).toUri().toURL();
-				}
-			}
-			return new URLClassLoader(urls, parent);
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("Unable to create class loader with compiled classes", e);
-		} catch (DependencyResolutionRequiredException e) {
-			throw new RuntimeException("Dependency resolution (runtime + compile) is required");
-		}
-	}
-
-	private Collection<String> getDependentClasspathElements() throws DependencyResolutionRequiredException {
-		Set<String> dependencies = new LinkedHashSet<>();
-		dependencies.add(project.getBuild().getOutputDirectory());
-		Collection<String> compileClasspathElements = project.getCompileClasspathElements();
-		if (compileClasspathElements != null) {
-			dependencies.addAll(compileClasspathElements);
-		}
-		Collection<String> runtimeClasspathElements = project.getRuntimeClasspathElements();
-		if (runtimeClasspathElements != null) {
-			dependencies.addAll(runtimeClasspathElements);
-		}
-		return dependencies;
 	}
 
 }

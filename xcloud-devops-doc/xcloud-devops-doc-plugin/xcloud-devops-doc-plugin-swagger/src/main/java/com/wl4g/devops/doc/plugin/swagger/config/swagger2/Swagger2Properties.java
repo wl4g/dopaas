@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.config.swagger2;
 
-import com.wl4g.devops.doc.plugin.swagger.config.DocumentionProperties;
+import com.wl4g.devops.doc.plugin.swagger.config.SwaggerConfig;
 
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
@@ -33,7 +33,7 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @see
  */
 @Getter
-public class Swagger2Properties extends Swagger implements DocumentionProperties {
+public class Swagger2Properties extends Swagger implements SwaggerConfig {
 
 	/**
 	 * REQUIRED. The apis group name.

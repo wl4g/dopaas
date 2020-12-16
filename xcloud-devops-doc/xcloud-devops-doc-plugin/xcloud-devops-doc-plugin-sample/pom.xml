@@ -4,6 +4,7 @@
 	<artifactId>xcloud-devops-doc-plugin-sample</artifactId>
 	<name>XCloud DevSecOps Doc for Plugin Swagger Sample</name>
 	<url>http://xcloud.wl4g.com</url>
+	<description>XCloud DevSecOps Doc for Plugin Swagger Sample</description>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-devops-doc-plugin</artifactId>
@@ -14,17 +15,17 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-components-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-annotations</artifactId>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>io.swagger</groupId> -->
+		<!-- <artifactId>swagger-annotations</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>io.swagger.core.v3</groupId> -->
+		<!-- <artifactId>swagger-annotations</artifactId> -->
+		<!-- </dependency> -->
 	</dependencies>
 	<build>
 		<plugins>
@@ -53,15 +54,6 @@
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-devops-doc-plugin-swagger</artifactId>
 				<version>master</version>
-				<!-- <configuration> -->
-				<!-- <outputDirectory>${basedir}/target/</outputDirectory> -->
-				<!-- <outputFilename>swagger</outputFilename> -->
-				<!-- <outputFormats>JSON,YAML</outputFormats> -->
-				<!-- <prettyPrint>true</prettyPrint> -->
-				<!-- <resourcePackages> -->
-				<!-- <resourcePackage>com.wl4g.devops.doc.plugin.sample</resourcePackage> -->
-				<!-- </resourcePackages> -->
-				<!-- </configuration> -->
 				<executions>
 					<execution>
 						<id>gendoc-stage</id>
@@ -71,16 +63,40 @@
 							<goal>gendoc-springfox-swagger2</goal>
 						</goals>
 						<configuration>
-							<skip>false</skip> <!-- default: false -->
+							<swaggerConfig>
+								<info>
+									<termsOfService>TeamOfWL</termsOfService>
+									<title>${project.name}</title>
+									<version>${project.parent.version}</version>
+									<description>${project.parent.description}</description>
+									<contact>
+										<name>Wanglsir</name>
+										<url>http://blog.wl4g.com</url>
+										<email>wanglsir@gmail.com</email>
+									</contact>
+									<license>
+										<name>Apache License 2.0</name>
+										<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+									</license>
+								</info>
+							</swaggerConfig>
+							<!-- default: false -->
+							<skip>false</skip>
+							<!-- default is empty -->
 							<resourcePackages>
 								<resourcePackage>com.wl4g.devops.doc.plugin.sample.article</resourcePackage>
 								<resourcePackage>com.wl4g.devops.doc.plugin.sample.sys</resourcePackage>
 							</resourcePackages>
-							<outputDirectory>${project.build.directory}</outputDirectory> <!-- default: ${project.build.directory}/generated-docs -->
-							<outputFilename>swagger</outputFilename> <!-- default: swagger -->
-							<outputFormats>JSON,YAML</outputFormats> <!-- default: JSON -->
-							<prettyPrint>true</prettyPrint> <!-- default: false -->
-							<attachSwaggerArtifact>true</attachSwaggerArtifact> <!-- default: false -->
+							<!-- default: ${project.build.directory}/generated-docs -->
+							<outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
+							<!-- default: swagger -->
+							<outputFilename>swagger-swagger2-by-springfox</outputFilename>
+							<!-- default: JSON -->
+							<outputFormats>JSON,YAML</outputFormats>
+							<!-- default: false -->
+							<prettyPrint>true</prettyPrint>
+							<!-- default: false -->
+							<attachSwaggerArtifact>true</attachSwaggerArtifact>
 						</configuration>
 					</execution>
 				</executions>
