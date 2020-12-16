@@ -21,6 +21,7 @@ import static java.lang.String.format;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +45,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.springframework.core.ResolvableType;
 
+import com.wl4g.components.common.collection.CollectionUtils2;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
 import com.wl4g.devops.doc.plugin.swagger.config.SwaggerConfig;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
@@ -252,13 +254,16 @@ public abstract class AbstractGenDocMojo<C extends SwaggerConfig, D> extends Abs
 
 	private Collection<String> getDependentClasspathElements() throws DependencyResolutionRequiredException {
 		Set<String> dependencies = new LinkedHashSet<>();
-		dependencies.add(project.getBuild().getOutputDirectory());
+		String outputDir = project.getBuild().getOutputDirectory();
+		if (!isBlank(outputDir)) {
+			dependencies.add(outputDir);
+		}
 		Collection<String> compileClasspathElements = project.getCompileClasspathElements();
-		if (compileClasspathElements != null) {
+		if (!CollectionUtils2.isEmpty(compileClasspathElements)) {
 			dependencies.addAll(compileClasspathElements);
 		}
 		Collection<String> runtimeClasspathElements = project.getRuntimeClasspathElements();
-		if (runtimeClasspathElements != null) {
+		if (!CollectionUtils2.isEmpty(runtimeClasspathElements)) {
 			dependencies.addAll(runtimeClasspathElements);
 		}
 		return dependencies;
