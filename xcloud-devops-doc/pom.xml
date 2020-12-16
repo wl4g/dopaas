@@ -15,7 +15,8 @@
 		<module>xcloud-devops-doc-service-facade</module>
 		<module>xcloud-devops-doc-service-starter-facade</module>
 		<module>xcloud-devops-doc-manager</module>
-		<module>xcloud-devops-doc-plugin</module>
+		<!-- IDEA/Eclipse cannot directly build??? Need extra configuration??? but in the terminal use: 'mvn clean install' runs normally -->
+		<!-- <module>xcloud-devops-doc-plugin</module> -->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

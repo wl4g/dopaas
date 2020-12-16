@@ -15,14 +15,11 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox.plugin;
 
-import static com.wl4g.components.common.collection.Collections2.safeArrayToList;
+import static com.wl4g.components.common.web.WebUtils2.toQueryParams;
 
-import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.classmate.TypeResolver;
-import com.wl4g.components.core.web.versions.annotation.ApiVersion;
-import com.wl4g.components.core.web.versions.annotation.ApiVersionMapping;
 
 import springfox.documentation.service.ParameterType;
 import springfox.documentation.spi.DocumentationType;
@@ -31,22 +28,22 @@ import springfox.documentation.spring.web.readers.operation.AbstractOperationPar
 import springfox.documentation.spring.wrapper.NameValueExpression;
 
 /**
- * {@link VersionSwagger2ApiListingPlugin}
+ * {@link VersionedApiListingPlugin}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-08
  * @sine v1.0
  * @see
  */
-public class VersionSwagger2ApiListingPlugin extends AbstractOperationParameterRequestConditionReader {
+public class VersionedApiListingPlugin extends AbstractOperationParameterRequestConditionReader {
 
-	public VersionSwagger2ApiListingPlugin(TypeResolver resolver) {
+	public VersionedApiListingPlugin(TypeResolver resolver) {
 		super(resolver);
 	}
 
 	@Override
 	public boolean supports(DocumentationType delimiter) {
-		return delimiter == DocumentationType.SWAGGER_2;
+		return delimiter == DocumentationType.SWAGGER_2 || delimiter == DocumentationType.OAS_30;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -54,12 +51,26 @@ public class VersionSwagger2ApiListingPlugin extends AbstractOperationParameterR
 	public void apply(OperationContext context) {
 		Set<NameValueExpression<String>> params = context.params();
 
-		Optional<ApiVersionMapping> versionOpt = context.findAnnotation(ApiVersionMapping.class);
-		if (versionOpt.isPresent()) {
-			for (ApiVersion version : safeArrayToList(versionOpt.get().value())) {
-				// params.add(version.value());
-			}
-		}
+		// Addidition version info to query parameters.
+		toQueryParams(context.requestMappingPattern()).forEach((key, value) -> {
+			params.add(new NameValueExpression<String>() {
+
+				@Override
+				public boolean isNegated() {
+					return false;
+				}
+
+				@Override
+				public String getValue() {
+					return value;
+				}
+
+				@Override
+				public String getName() {
+					return key;
+				}
+			});
+		});
 
 		context.operationBuilder().parameters(getParameters(params, "query"))
 				.requestParameters(getRequestParameters(params, ParameterType.QUERY));

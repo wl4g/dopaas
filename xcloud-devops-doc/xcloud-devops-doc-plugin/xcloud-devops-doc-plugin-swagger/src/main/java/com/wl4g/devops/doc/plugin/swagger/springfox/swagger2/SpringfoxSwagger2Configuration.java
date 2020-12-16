@@ -17,23 +17,31 @@ package com.wl4g.devops.doc.plugin.swagger.springfox.swagger2;
 
 import static springfox.documentation.builders.RequestHandlerSelectors.withClassAnnotation;
 import static springfox.documentation.builders.RequestHandlerSelectors.withMethodAnnotation;
-import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
+
+import java.util.List;
+
+import static java.util.Optional.ofNullable;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.util.ClassUtils;
 
 import com.fasterxml.classmate.TypeResolver;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
 import com.wl4g.devops.doc.plugin.swagger.config.swagger2.Swagger2Properties;
 import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.ApiVersionPathsRequestHandlerCombiner;
 import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.AuthorOperationBuilderPlugin;
 import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.OrderOperationBuilderPlugin;
-import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.VersionSwagger2ApiListingPlugin;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.VersionedApiListingPlugin;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Info;
+import springfox.documentation.RequestHandler;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
@@ -54,6 +62,7 @@ import springfox.documentation.swagger2.web.Swagger2ControllerWebMvc;
 @EnableSwagger2
 public class SpringfoxSwagger2Configuration {
 
+	@SuppressWarnings("unchecked")
 	@Bean
 	public Docket springfoxSwagger2Docket() {
 		Swagger2Properties config = (Swagger2Properties) DocumentionHolder.get().getConfig();
@@ -64,16 +73,23 @@ public class SpringfoxSwagger2Configuration {
 		// Scanning apis conditions.
 		builder.apis(withClassAnnotation(Api.class));
 		builder.apis(withMethodAnnotation(ApiOperation.class));
-		for (String scanPackage : DocumentionHolder.get().getResourcePackages()) {
-			builder.apis(basePackage(scanPackage));
-		}
+
+		/**
+		 * Note: since there are multiple scan package paths, must use the 'or'
+		 * combination condition. refer to
+		 * {@link springfox.documentation.spring.web.scanners.ApiListingReferenceScanner#scan(DocumentationContext)}
+		 */
+		List<String> resourcePackages = DocumentionHolder.get().getResourcePackages();
+		Predicate<RequestHandler> allOrPredicate = Predicates.or(resourcePackages.stream()
+				.map(scanPackage -> createRequestHandlerPredicate(scanPackage)).toArray(Predicate[]::new));
+		builder.apis(allOrPredicate);
 
 		return builder.build();
 	}
 
 	@Bean
-	public VersionSwagger2ApiListingPlugin versionSwagger2ApiListingPlugin(TypeResolver resolver) {
-		return new VersionSwagger2ApiListingPlugin(resolver);
+	public VersionedApiListingPlugin versionedApiListingPlugin(TypeResolver resolver) {
+		return new VersionedApiListingPlugin(resolver);
 	}
 
 	@Bean
@@ -97,6 +113,18 @@ public class SpringfoxSwagger2Configuration {
 		return new ApiInfoBuilder().title(info.getTitle()).description(info.getDescription()).license(info.getLicense().getName())
 				.licenseUrl(info.getLicense().getUrl())
 				.contact(new Contact(contact.getName(), contact.getUrl(), contact.getEmail())).version(info.getVersion()).build();
+	}
+
+	/**
+	 * Refer to {@link RequestHandlerSelectors#basePackage(String)}
+	 * 
+	 * @param scanPackage
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	private Predicate<RequestHandler> createRequestHandlerPredicate(String scanPackage) {
+		return handler -> ofNullable(handler.declaringClass())
+				.map(clazz -> ClassUtils.getPackageName(clazz).startsWith(scanPackage)).orElse(true);
 	}
 
 }

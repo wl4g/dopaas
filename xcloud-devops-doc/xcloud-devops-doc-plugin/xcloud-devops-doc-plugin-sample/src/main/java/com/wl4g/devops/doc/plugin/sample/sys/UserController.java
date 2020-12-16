@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wl4g.components.core.web.versions.annotation.ApiVersion;
+import com.wl4g.components.core.web.versions.annotation.ApiVersionMapping;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -35,10 +38,18 @@ import io.swagger.annotations.ApiOperation;
 @Api
 public class UserController {
 
-	@ApiOperation("Obtain user info")
+	@ApiVersionMapping({ @ApiVersion(groups = "ios", value = "1.0.1") })
+	@ApiOperation("Obtain user info(V1)")
 	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
-	public String getUserInfo() {
-		return "This is user content content...";
+	public String getUserInfo_V1(Long userId) {
+		return "This is user content content(V1)...";
+	}
+
+	@ApiVersionMapping({ @ApiVersion(groups = "android", value = "1.2.0") })
+	@ApiOperation("Obtain user info(V2)")
+	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
+	public String getUserInfo_V2(Long userId) {
+		return "This is user content content(V2)...";
 	}
 
 }

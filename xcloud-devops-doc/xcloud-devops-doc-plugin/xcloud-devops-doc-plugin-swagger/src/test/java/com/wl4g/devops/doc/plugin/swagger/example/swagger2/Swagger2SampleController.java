@@ -24,6 +24,7 @@ import com.wl4g.components.core.web.versions.annotation.ApiVersionMapping;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 /**
  * {@link Swagger2SampleController}
@@ -41,14 +42,14 @@ public class Swagger2SampleController {
 	@ApiVersionMapping({ @ApiVersion(groups = "ios", value = "1.0.1") })
 	@ApiOperation("Obtain user info(V1)")
 	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
-	public String getUserInfo_V1(Long userId) {
+	public String getUserInfo_V1(@Parameter Long userId) {
 		return "This is user content content(V1)...";
 	}
 
 	@ApiVersionMapping({ @ApiVersion(groups = "android", value = "1.2.0") })
 	@ApiOperation("Obtain user info(V2)")
 	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
-	public String getUserInfo_V2(Long userId) {
+	public String getUserInfo_V2(@Parameter Long userId) {
 		return "This is user content content(V2)...";
 	}
 
