@@ -37,6 +37,15 @@
         </where>
     </select>
 
+    <select id="selectByGroupId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+               <include refid="Base_Column_List" />
+        FROM doc_enterprise_repository
+        <where>
+            group_id = #{groupId, jdbcType=BIGINT}
+        </where>
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         DELETE FROM doc_enterprise_repository
         <where>
