@@ -41,20 +41,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Api
 public class Oas3SampleController {
 
-	@ApiVersionMapping({ @ApiVersion("1.0.1") })
-	@Operation(summary = "Obtain user info", tags = { "sys", "user" }, responses = {
+	@ApiVersionMapping({ @ApiVersion(groups = "ios", value = "1.0.1") })
+	@Operation(summary = "Obtain user info(V1)", tags = { "sys", "user" }, responses = {
 			@ApiResponse(responseCode = "200", headers = @Header(name = "X-OAS3-DEMO")) })
 	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
 	public String getUserInfo_V1(@Parameter Long userId) {
-		return "This is user content content...";
+		return "This is user content content(V1)...";
 	}
 
-	@ApiVersionMapping({ @ApiVersion("1.2.0") })
-	@Operation(summary = "Obtain user info", tags = { "sys", "user" }, responses = {
+	@ApiVersionMapping({ @ApiVersion(groups = "android", value = "1.2.0") })
+	@Operation(summary = "Obtain user info(V2)", tags = { "sys", "user" }, responses = {
 			@ApiResponse(responseCode = "200", headers = @Header(name = "X-OAS3-DEMO")) })
 	@RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
 	public String getUserInfo_V2(@Parameter Long userId) {
-		return "This is user content content...";
+		return "This is user content content(V2)...";
 	}
 
 }
