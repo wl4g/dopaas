@@ -17,6 +17,7 @@ package com.wl4g.devops.doc.plugin.swagger.springdoc.oas3;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import com.wl4g.devops.doc.plugin.swagger.AbstractGenDocMojo;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
@@ -37,13 +38,21 @@ public class GenerateSpringdocOas3Mojo extends AbstractGenDocMojo<Oas3Properties
 
 	// TODO
 
+	@Parameter
+	private Oas3Properties swaggerConfig;
+
 	@Override
 	protected DocumentionProvider provider() {
 		return DocumentionProvider.SPRINGDOC_OAS3;
 	}
 
 	@Override
-	protected OpenAPI generateDocument() throws Exception {
+	protected Oas3Properties loadSwaggerConfig() {
+		return swaggerConfig;
+	}
+
+	@Override
+	protected OpenAPI doGenerateDocumentInternal() throws Exception {
 		throw new UnsupportedOperationException("Not yet implemented!!!");
 	}
 

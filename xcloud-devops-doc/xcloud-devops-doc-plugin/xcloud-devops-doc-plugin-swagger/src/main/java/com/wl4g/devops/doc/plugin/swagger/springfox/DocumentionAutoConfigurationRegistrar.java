@@ -73,8 +73,9 @@ public class DocumentionAutoConfigurationRegistrar
 	}
 
 	private void registerDocumentionApis(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator) {
-		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry, false, environment, resourceLoader);
+		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry, false, environment);
 		scanner.setBeanNameGenerator(beanNameGenerator);
+		scanner.setResourceLoader(resourceLoader);
 		scanner.addIncludeFilter(new AnnotationTypeFilter(RequestMapping.class, true, true));
 		scanner.addIncludeFilter(new AnnotationTypeFilter(Controller.class, true, true));
 		scanner.addIncludeFilter(new AnnotationTypeFilter(ControllerAdvice.class, true, true));

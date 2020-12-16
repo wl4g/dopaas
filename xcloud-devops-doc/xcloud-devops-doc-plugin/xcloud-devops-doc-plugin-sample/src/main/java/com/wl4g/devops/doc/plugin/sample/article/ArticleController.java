@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 /**
  * {@link ArticleController}
@@ -37,7 +38,7 @@ public class ArticleController {
 
 	@ApiOperation("Find article list")
 	@RequestMapping(value = "findArticleList", method = RequestMethod.GET)
-	public String findArticleList() {
+	public String findArticleList(@Parameter Long articleId) {
 		return "This is article content content...";
 	}
 

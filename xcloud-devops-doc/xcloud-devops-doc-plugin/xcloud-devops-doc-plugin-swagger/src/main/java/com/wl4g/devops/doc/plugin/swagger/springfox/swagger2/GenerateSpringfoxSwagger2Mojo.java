@@ -19,6 +19,7 @@ import java.net.URI;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -44,13 +45,21 @@ import io.swagger.parser.SwaggerParser;
 @Mojo(name = "gendoc-springfox-swagger2", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class GenerateSpringfoxSwagger2Mojo extends AbstractGenDocMojo<Swagger2Properties, Swagger> {
 
+	@Parameter
+	private Swagger2Properties swaggerConfig;
+
 	@Override
 	protected DocumentionProvider provider() {
 		return DocumentionProvider.SPRINGFOX_SWAGGER2;
 	}
 
 	@Override
-	protected Swagger generateDocument() throws Exception {
+	protected Swagger2Properties loadSwaggerConfig() {
+		return swaggerConfig;
+	}
+
+	@Override
+	protected Swagger doGenerateDocumentInternal() throws Exception {
 		return resolveSwagger2Documention();
 	}
 
