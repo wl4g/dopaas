@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * {@link EnterpriseRepositoryGroup}
@@ -55,6 +56,8 @@ public class EnterpriseRepositoryGroup extends BaseBean {
      * 组织编码
      */
     private String organizationCode;
+
+    private List<EnterpriseRepository> enterpriseRepositories;
 
     public EnterpriseRepositoryGroup() {
     }

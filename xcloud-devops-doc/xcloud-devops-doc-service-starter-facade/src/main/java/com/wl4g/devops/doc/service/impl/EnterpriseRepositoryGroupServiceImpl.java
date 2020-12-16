@@ -18,17 +18,19 @@
 
 package com.wl4g.devops.doc.service.impl;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import com.wl4g.components.core.bean.model.PageModel;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
+import com.wl4g.devops.doc.data.EnterpriseRepositoryDao;
+import com.wl4g.devops.doc.data.EnterpriseRepositoryGroupDao;
+import com.wl4g.devops.doc.service.EnterpriseRepositoryGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
-import com.wl4g.devops.doc.data.EnterpriseRepositoryGroupDao;
-import com.wl4g.devops.doc.service.EnterpriseRepositoryGroupService;
+import java.util.List;
 
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 /**
@@ -45,10 +47,17 @@ public class EnterpriseRepositoryGroupServiceImpl implements EnterpriseRepositor
     @Autowired
     private EnterpriseRepositoryGroupDao enterpriseRepositoryGroupDao;
 
+    @Autowired
+    private EnterpriseRepositoryDao enterpriseRepositoryDao;
+
     @Override
     public PageModel<EnterpriseRepositoryGroup> page(PageModel<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(enterpriseRepositoryGroupDao.list(enterpriseRepositoryGroup));
+        List<EnterpriseRepositoryGroup> list = enterpriseRepositoryGroupDao.list(enterpriseRepositoryGroup);
+        for (EnterpriseRepositoryGroup group : list) {
+            group.setEnterpriseRepositories(enterpriseRepositoryDao.selectByGroupId(group.getId()));
+        }
+        pm.setRecords(list);
         return pm;
     }
 
