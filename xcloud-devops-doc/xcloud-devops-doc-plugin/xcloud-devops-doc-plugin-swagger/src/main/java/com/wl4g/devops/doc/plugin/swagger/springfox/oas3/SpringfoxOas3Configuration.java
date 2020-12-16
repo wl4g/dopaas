@@ -24,7 +24,7 @@ import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Properties;
 import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.ApiVersionPathsRequestHandlerCombiner;
 import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.AuthorOperationBuilderPlugin;
 import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.OrderOperationBuilderPlugin;
-import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.VersionSwagger2ApiListingPlugin;
+import com.wl4g.devops.doc.plugin.swagger.springfox.plugin.VersionedApiListingPlugin;
 import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Contact;
 import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Info;
 
@@ -73,8 +73,8 @@ public class SpringfoxOas3Configuration {
 	}
 
 	@Bean
-	public VersionSwagger2ApiListingPlugin versionSwagger2ApiListingPlugin(TypeResolver resolver) {
-		return new VersionSwagger2ApiListingPlugin(resolver);
+	public VersionedApiListingPlugin versionedApiListingPlugin(TypeResolver resolver) {
+		return new VersionedApiListingPlugin(resolver);
 	}
 
 	@Bean
