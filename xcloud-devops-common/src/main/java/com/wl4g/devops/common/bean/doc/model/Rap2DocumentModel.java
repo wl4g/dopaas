@@ -19,13 +19,136 @@
  */
 package com.wl4g.devops.common.bean.doc.model;
 
+import java.util.Date;
+import java.util.List;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
- * {@link Rap2DocumentModel}
+ * RAP2 api interfaces data model.</br>
+ * </br>
+ * Refer to <a href="http://rap2.taobao.org/">http://rap2.taobao.org/</a>
+ * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-12-16 
+ * @version v1.0 2020-12-16
  * @sine v1.0
- * @see 
+ * @see
  */
+@Getter
+@Setter
+@Builder
 public class Rap2DocumentModel {
+
+	private DataInfo data;
+
+	@Getter
+	@Setter
+	@Builder
+	public static class DataInfo {
+		private long id;
+		private String name;
+		private String description;
+		private String logo;
+		private String token;
+		private boolean visibility;
+		private long ownerId;
+		private String organizationId;
+		private long creatorId;
+		private String lockerId;
+		private Date createdAt;
+		private Date updatedAt;
+		private String deletedAt;
+		private CreationInfo creator;
+		private OwnerInfo owner;
+		private String locker;
+		private List<String> members;
+		private String organization;
+		private List<String> collaborators;
+		private List<ModuleInfo> modules;
+		private boolean canUserEdit;
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	public static class OwnerInfo {
+		private long id;
+		private String fullname;
+		private String email;
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	public static class CreationInfo {
+		private long id;
+		private String fullname;
+		private String email;
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	public static class ModuleInfo {
+		private long id;
+		private String name;
+		private String description;
+		private int priority;
+		private long creatorId;
+		private long repositoryId;
+		private Date createdAt;
+		private Date updatedAt;
+		private String deletedAt;
+		private List<InterfaceInfo> interfaces;
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	public static class InterfaceInfo {
+		private long id;
+		private String name;
+		private String url;
+		private String method;
+		private String bodyOption;
+		private String description;
+		private int priority;
+		private int status;
+		private long creatorId;
+		private String lockerId;
+		private long moduleId;
+		private long repositoryId;
+		private Date createdAt;
+		private Date updatedAt;
+		private String deletedAt;
+		private String locker;
+		private List<PropertyInfo> properties;
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	public static class PropertyInfo {
+		private long id;
+		private String scope;
+		private String type;
+		private int pos;
+		private String name;
+		private String rule;
+		private String value;
+		private String description;
+		private int parentId;
+		private int priority;
+		private long interfaceId;
+		private long creatorId;
+		private long moduleId;
+		private long repositoryId;
+		private boolean required;
+		private Date createdAt;
+		private Date updatedAt;
+		private String deletedAt;
+	}
 
 }

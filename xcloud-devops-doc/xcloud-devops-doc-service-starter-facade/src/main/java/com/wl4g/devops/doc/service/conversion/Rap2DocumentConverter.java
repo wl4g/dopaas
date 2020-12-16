@@ -38,13 +38,13 @@ public class Rap2DocumentConverter extends AbstractDocumentConverter<Rap2Documen
 	}
 
 	@Override
-	public XCloudDocumentModel importDocument(Rap2DocumentModel document) {
+	public XCloudDocumentModel convertFrom(Rap2DocumentModel document) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Rap2DocumentModel exportDocument(XCloudDocumentModel document) {
+	public Rap2DocumentModel convertTo(XCloudDocumentModel document) {
 		// TODO Auto-generated method stub
 		return null;
 	}

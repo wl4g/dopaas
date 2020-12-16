@@ -39,17 +39,15 @@ public class Swagger2DocumentConverter extends AbstractDocumentConverter<Swagger
 	}
 
 	@Override
-	public XCloudDocumentModel importDocument(Swagger document) {
+	public XCloudDocumentModel convertFrom(Swagger document) {
 		// TODO Auto-generated method stub
-
-		XCloudDocumentModel model = new XCloudDocumentModel();
-		return model;
+		return super.convertFrom(document);
 	}
 
 	@Override
-	public Swagger exportDocument(XCloudDocumentModel document) {
+	public Swagger convertTo(XCloudDocumentModel document) {
 		// TODO Auto-generated method stub
-		return null;
+		return super.convertTo(document);
 	}
 
 }
