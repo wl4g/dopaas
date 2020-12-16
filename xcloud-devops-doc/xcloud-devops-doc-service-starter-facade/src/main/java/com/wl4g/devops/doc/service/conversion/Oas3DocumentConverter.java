@@ -39,15 +39,15 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
 	}
 
 	@Override
-	public XCloudDocumentModel importDocument(OpenAPI document) {
+	public XCloudDocumentModel convertFrom(OpenAPI document) {
 		// TODO Auto-generated method stub
-		return null;
+		return super.convertFrom(document);
 	}
 
 	@Override
-	public OpenAPI exportDocument(XCloudDocumentModel document) {
+	public OpenAPI convertTo(XCloudDocumentModel document) {
 		// TODO Auto-generated method stub
-		return null;
+		return super.convertTo(document);
 	}
 
 }

@@ -36,9 +36,13 @@ import com.wl4g.devops.doc.service.conversion.DocumentConverter.ConverterProvide
  */
 public interface DocumentConverter<T> extends Operator<ConverterProviderKind> {
 
-	XCloudDocumentModel importDocument(T document);
+	default XCloudDocumentModel convertFrom(T document) {
+		throw new UnsupportedOperationException();
+	}
 
-	T exportDocument(XCloudDocumentModel document);
+	default T convertTo(XCloudDocumentModel document) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Documention converter provider definitions.
