@@ -15,9 +15,18 @@
  */
 package com.wl4g.devops.doc.config;
 
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.wl4g.devops.doc.service.conversion.DocumentConverter.ConverterProviderKind;
+import com.wl4g.devops.doc.service.conversion.DocumentConverter;
+import com.wl4g.devops.doc.service.conversion.DocumentConverterAdapter;
+import com.wl4g.devops.doc.service.conversion.Oas3DocumentConverter;
+import com.wl4g.devops.doc.service.conversion.Rap2DocumentConverter;
+import com.wl4g.devops.doc.service.conversion.Swagger2DocumentConverter;
 
 /**
  * Doc auto configuration.
@@ -35,6 +44,28 @@ public class DocAutoConfiguration {
 	@ConfigurationProperties(prefix = "doc")
 	public DocProperties docProperties() {
 		return new DocProperties();
+	}
+
+	// --- Documention conversions. ---
+
+	@Bean
+	public Oas3DocumentConverter oas3DocumentConverter() {
+		return new Oas3DocumentConverter();
+	}
+
+	@Bean
+	public Swagger2DocumentConverter swagger2DocumentConverter() {
+		return new Swagger2DocumentConverter();
+	}
+
+	@Bean
+	public Rap2DocumentConverter rap2DocumentConverter() {
+		return new Rap2DocumentConverter();
+	}
+
+	@Bean
+	public DocumentConverterAdapter documentConverterAdapter(List<DocumentConverter<ConverterProviderKind>> conversions) {
+		return new DocumentConverterAdapter(conversions);
 	}
 
 }
