@@ -31,14 +31,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.wl4g.devops.doc.plugin.swagger.config.DocumentionProperties;
+import com.wl4g.devops.doc.plugin.swagger.config.SwaggerConfig;
 
 /**
  * Configuring Swagger in compliance with the way the com.github.kongchen
  * Swagger plugin does it.
  */
 @Getter
-public class Oas3Properties implements DocumentionProperties {
+public class Oas3Properties implements SwaggerConfig {
 
 	/**
 	 * REQUIRED. The apis group name.

@@ -43,7 +43,7 @@ import javax.validation.constraints.NotNull;
  */
 public class DocumentionHolder {
 
-	private DocumentionProperties config;
+	private SwaggerConfig config;
 	private List<String> resourcePackages = new ArrayList<String>();
 	private DocumentionProvider provider = SPRINGFOX_SWAGGER2;
 
@@ -54,11 +54,11 @@ public class DocumentionHolder {
 		return holder;
 	}
 
-	public DocumentionProperties getConfig() {
+	public SwaggerConfig getConfig() {
 		return config;
 	}
 
-	public void setConfig(@NotNull DocumentionProperties config) {
+	public void setConfig(@NotNull SwaggerConfig config) {
 		this.config = notNullOf(config, "config");
 	}
 

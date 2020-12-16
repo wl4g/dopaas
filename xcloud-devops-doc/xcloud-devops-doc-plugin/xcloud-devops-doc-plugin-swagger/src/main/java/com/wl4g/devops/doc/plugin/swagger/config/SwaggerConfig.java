@@ -16,14 +16,14 @@
 package com.wl4g.devops.doc.plugin.swagger.config;
 
 /**
- * {@link DocumentionProperties}
+ * {@link SwaggerConfig}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-14
  * @sine v1.0
  * @see
  */
-public interface DocumentionProperties {
+public interface SwaggerConfig {
 
 	String getSwaggerGroup();
 

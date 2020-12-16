@@ -17,6 +17,7 @@ package com.wl4g.devops.doc.plugin.swagger.springfox.oas3;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,13 +42,21 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
 @Mojo(name = "gendoc-springfox-oas3", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class GenerateSpringfoxOas3Mojo extends AbstractGenDocMojo<Oas3Properties, OpenAPI> {
 
+	@Parameter
+	private Oas3Properties swaggerConfig;
+
 	@Override
 	protected DocumentionProvider provider() {
 		return DocumentionProvider.SPRINGFOX_OAS3;
 	}
 
 	@Override
-	protected OpenAPI generateDocument() throws Exception {
+	protected Oas3Properties loadSwaggerConfig() {
+		return swaggerConfig;
+	}
+
+	@Override
+	protected OpenAPI doGenerateDocumentInternal() throws Exception {
 		return resolveOAS3Documention();
 	}
 
