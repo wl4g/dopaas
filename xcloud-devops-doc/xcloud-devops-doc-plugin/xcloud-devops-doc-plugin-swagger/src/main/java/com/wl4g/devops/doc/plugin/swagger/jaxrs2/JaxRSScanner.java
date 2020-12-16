@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.jaxrs2;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,10 +27,8 @@ import javax.ws.rs.core.Application;
 
 import org.apache.maven.plugin.logging.Log;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
+
+import com.wl4g.devops.doc.plugin.swagger.util.ScanReflections;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 
@@ -43,20 +40,18 @@ class JaxRSScanner {
 
 	private final Log log;
 
-	private final List<String> resourcePackages;
+	private final Set<String> resourcePackages;
 
 	private final boolean useResourcePackagesChildren;
 
-	public JaxRSScanner(Log log, List<String> resourcePackages, Boolean useResourcePackagesChildren) {
+	public JaxRSScanner(Log log, Set<String> resourcePackages, Boolean useResourcePackagesChildren) {
 		this.log = log;
-		this.resourcePackages = resourcePackages == null ? emptyList() : new ArrayList<>(resourcePackages);
+		this.resourcePackages = resourcePackages == null ? emptySet() : new HashSet<>(resourcePackages);
 		this.useResourcePackagesChildren = useResourcePackagesChildren != null && useResourcePackagesChildren;
 	}
 
 	Application applicationInstance() {
-		ConfigurationBuilder config = ConfigurationBuilder.build(resourcePackages).setScanners(new ResourcesScanner(),
-				new TypeAnnotationsScanner(), new SubTypesScanner());
-		Reflections reflections = new Reflections(config);
+		Reflections reflections = ScanReflections.createDefaultResourceReflections(resourcePackages);
 		Set<Class<? extends Application>> applicationClasses = reflections.getSubTypesOf(Application.class).stream()
 				.filter(this::filterClassByResourcePackages).collect(Collectors.toSet());
 		if (applicationClasses.isEmpty()) {
@@ -70,9 +65,7 @@ class JaxRSScanner {
 	}
 
 	Set<Class<?>> classes() {
-		ConfigurationBuilder config = ConfigurationBuilder.build(resourcePackages).setScanners(new ResourcesScanner(),
-				new TypeAnnotationsScanner(), new SubTypesScanner());
-		Reflections reflections = new Reflections(config);
+		Reflections reflections = ScanReflections.createDefaultResourceReflections(resourcePackages);
 		Stream<Class<?>> apiClasses = reflections.getTypesAnnotatedWith(Path.class).stream()
 				.filter(this::filterClassByResourcePackages);
 		Stream<Class<?>> defClasses = reflections.getTypesAnnotatedWith(OpenAPIDefinition.class).stream()
