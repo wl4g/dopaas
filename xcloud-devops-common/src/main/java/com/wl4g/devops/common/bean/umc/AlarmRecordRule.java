@@ -17,7 +17,7 @@ package com.wl4g.devops.common.bean.umc;
 
 import java.io.Serializable;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 public class AlarmRecordRule extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;

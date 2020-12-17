@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Wither;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 
 import java.util.Date;
 import java.util.List;

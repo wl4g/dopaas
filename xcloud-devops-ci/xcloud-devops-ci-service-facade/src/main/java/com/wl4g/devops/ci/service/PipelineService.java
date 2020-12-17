@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.ci.ClusterExtension;
 import com.wl4g.devops.common.bean.ci.PipeStageBuilding;
 import com.wl4g.devops.common.bean.ci.PipeStageInstanceCommand;

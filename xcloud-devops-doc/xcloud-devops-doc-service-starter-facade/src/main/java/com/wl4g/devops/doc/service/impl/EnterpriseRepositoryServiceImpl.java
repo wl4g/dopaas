@@ -18,10 +18,10 @@
 
 package com.wl4g.devops.doc.service.impl;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import com.wl4g.components.core.bean.model.PageModel;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

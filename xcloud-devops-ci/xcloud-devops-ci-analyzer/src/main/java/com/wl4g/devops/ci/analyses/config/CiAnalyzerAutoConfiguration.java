@@ -21,7 +21,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
+import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator;
 import com.wl4g.devops.ci.analyses.coordinate.SpotbugsAnalysisCoordinator;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;

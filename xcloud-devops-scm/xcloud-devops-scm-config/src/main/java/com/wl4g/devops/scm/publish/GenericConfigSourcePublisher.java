@@ -18,11 +18,11 @@ package com.wl4g.devops.scm.publish;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import static com.google.common.collect.Multimaps.synchronizedSetMultimap;
-import static com.wl4g.components.common.lang.Assert2.hasText;
-import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.hasText;
+import static com.wl4g.component.common.lang.Assert2.notNull;
 
-import com.wl4g.components.common.task.RunnerProperties;
-import com.wl4g.components.support.task.ApplicationTaskRunner;
+import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.component.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigNode;

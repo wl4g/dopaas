@@ -23,11 +23,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.wl4g.components.common.crypto.asymmetric.RSACryptor;
-import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
-import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
-import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
-import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.component.common.crypto.asymmetric.RSACryptor;
+import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
+import com.wl4g.component.core.config.mapping.PrefixHandlerMapping;
+import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;

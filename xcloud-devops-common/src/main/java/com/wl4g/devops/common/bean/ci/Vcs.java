@@ -18,7 +18,7 @@ package com.wl4g.devops.common.bean.ci;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;

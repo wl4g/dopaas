@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.components.common.task.RunnerProperties;
-import com.wl4g.components.support.task.ApplicationTaskRunner;
+import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.component.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.ci.config.CiProperties;
 
 /**

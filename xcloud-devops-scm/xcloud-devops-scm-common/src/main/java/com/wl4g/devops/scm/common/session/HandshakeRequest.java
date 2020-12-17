@@ -33,7 +33,7 @@ package com.wl4g.devops.scm.common.session;
 //
 //import javax.validation.constraints.NotBlank;
 //
-//import com.wl4g.components.core.bean.scm.model.GetRelease;
+//import com.wl4g.component.core.bean.scm.model.GetRelease;
 //
 ///**
 // * {@link HandshakeRequest}

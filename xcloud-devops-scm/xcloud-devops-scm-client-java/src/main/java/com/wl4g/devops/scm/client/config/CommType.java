@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.lang.StringUtils2.eqIgnCase;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.StringUtils2.eqIgnCase;
 
 /**
  * {@link CommType}

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.bean;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 /**
  * 对应表：scm_release_detail

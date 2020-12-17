@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.lang.Assert2.isTrueOf;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.lang.Assert2.isTrueOf;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.scm.common.SCMConstants.URI_S_BASE;
 import static com.wl4g.devops.scm.common.SCMConstants.URI_S_SOURCE_WATCH;
 import static java.util.Objects.isNull;
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.components.common.lang.SystemUtils2;
+import com.wl4g.component.common.lang.SystemUtils2;
 import com.wl4g.devops.common.utils.InetHolder;
 import com.wl4g.devops.common.utils.InetHolder.HostInfo;
 import com.wl4g.devops.common.utils.InetHolder.InetProperties;

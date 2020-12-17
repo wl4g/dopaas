@@ -19,7 +19,7 @@ import com.wl4g.devops.umc.rule.Aggregator;
 import com.wl4g.devops.umc.rule.LogicalOperator;
 import com.wl4g.devops.umc.rule.RelationOperator;
 
-import static com.wl4g.components.common.collection.Collections2.safeToList;
+import static com.wl4g.component.common.collection.Collections2.safeToList;
 import static java.util.stream.Collectors.summarizingDouble;
 
 /**

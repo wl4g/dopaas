@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.umc.timing;
 
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.log.SmartLoggerFactory;
-import com.wl4g.components.core.bean.umc.datasouces.BaseDataSource;
-import com.wl4g.components.core.bean.umc.datasouces.MysqlDataSource;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLoggerFactory;
+import com.wl4g.component.core.bean.umc.datasouces.BaseDataSource;
+import com.wl4g.component.core.bean.umc.datasouces.MysqlDataSource;
 import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
 import com.wl4g.devops.common.bean.umc.CustomDataSource;
 import com.wl4g.devops.common.bean.umc.CustomEngine;

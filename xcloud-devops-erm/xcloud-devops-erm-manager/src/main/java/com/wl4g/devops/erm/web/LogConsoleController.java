@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.erm.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.erm.Log;
 import com.wl4g.devops.common.bean.erm.QueryLogModel;
 import com.wl4g.devops.erm.service.LogConsoleService;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.service;
 
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 
 /**

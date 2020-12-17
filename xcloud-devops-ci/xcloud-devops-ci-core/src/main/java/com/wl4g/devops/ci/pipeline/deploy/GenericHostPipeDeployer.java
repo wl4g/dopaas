@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
-import com.wl4g.components.common.cli.ssh2.SSH2Holders;
+import com.wl4g.component.common.cli.ssh2.SSH2Holders;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
@@ -23,7 +23,7 @@ import com.wl4g.devops.common.bean.erm.AppInstance;
 import java.io.File;
 import java.util.List;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static org.springframework.util.Assert.hasText;
 
 /**

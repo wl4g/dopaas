@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.dts.codegen.engine.context;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

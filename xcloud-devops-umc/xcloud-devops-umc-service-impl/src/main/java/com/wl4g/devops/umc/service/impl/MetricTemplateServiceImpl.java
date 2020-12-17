@@ -16,8 +16,8 @@
 package com.wl4g.devops.umc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.data.page.PageModel;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 import com.wl4g.devops.dao.umc.MetricTemplateDao;
 import com.wl4g.devops.umc.service.MetricTemplateService;

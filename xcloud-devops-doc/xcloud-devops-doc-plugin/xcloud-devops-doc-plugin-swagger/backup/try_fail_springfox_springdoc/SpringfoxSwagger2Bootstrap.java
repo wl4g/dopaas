@@ -21,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.startsWithAny;
 import static org.apache.commons.lang3.StringUtils.trim;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
-import static com.wl4g.components.common.collection.Collections2.safeArrayToList;
+import static com.wl4g.component.common.collection.Collections2.safeArrayToList;
 import static com.wl4g.devops.doc.plugin.swagger.util.SpringUtils.SCAN_BASE_PACKAGES;
 //import static com.wl4g.devops.doc.plugin.swagger.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerExcludeFilter;
 //import static com.wl4g.devops.doc.plugin.swagger.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerIncludeFilter;

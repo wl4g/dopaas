@@ -19,24 +19,24 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox.plugin;
 
-import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.components.common.collection.Collections2.safeArrayToList;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.reflect.ReflectionUtils2.findField;
-import static com.wl4g.components.common.reflect.ReflectionUtils2.getField;
-import static com.wl4g.components.common.reflect.ObjectInstantiators.newInstance;
+import static com.wl4g.component.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.component.common.collection.Collections2.safeArrayToList;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.findField;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.component.common.reflect.ObjectInstantiators.newInstance;
 import static springfox.documentation.RequestHandler.sortedPaths;
 import static springfox.documentation.builders.BuilderDefaults.nullToEmptyList;
 import static springfox.documentation.spi.service.contexts.Orderings.byOperationName;
 import static springfox.documentation.spi.service.contexts.Orderings.byPatternsCondition;
 
-import com.wl4g.components.common.collection.CollectionUtils2;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.web.versions.VersionConditionSupport;
-import com.wl4g.components.core.web.versions.annotation.ApiVersionManagementWrapper;
-import com.wl4g.components.core.web.versions.annotation.ApiVersionMapping;
-import com.wl4g.components.core.web.versions.annotation.EnableApiVersionManagement;
-import com.wl4g.components.core.web.versions.annotation.ApiVersionMappingWrapper.ApiVersionWrapper;
+import com.wl4g.component.common.collection.CollectionUtils2;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.web.versions.VersionConditionSupport;
+import com.wl4g.component.core.web.versions.annotation.ApiVersionManagementWrapper;
+import com.wl4g.component.core.web.versions.annotation.ApiVersionMapping;
+import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
+import com.wl4g.component.core.web.versions.annotation.ApiVersionMappingWrapper.ApiVersionWrapper;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
 import com.wl4g.devops.doc.plugin.swagger.util.ScanReflections;
 

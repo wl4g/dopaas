@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.event;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ import javax.validation.constraints.NotNull;
 
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
-import com.wl4g.components.common.annotation.Nullable;
-import com.wl4g.components.common.eventbus.EventBusSupport;
+import com.wl4g.component.common.annotation.Nullable;
+import com.wl4g.component.common.eventbus.EventBusSupport;
 import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
 import com.wl4g.devops.scm.client.watch.RefreshWatcher;
 import com.wl4g.devops.scm.client.watch.internal.ReportingConfigListener;

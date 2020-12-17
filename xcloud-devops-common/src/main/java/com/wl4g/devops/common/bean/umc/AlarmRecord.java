@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.bean.umc;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.NotificationContact;
 
 import java.io.Serializable;

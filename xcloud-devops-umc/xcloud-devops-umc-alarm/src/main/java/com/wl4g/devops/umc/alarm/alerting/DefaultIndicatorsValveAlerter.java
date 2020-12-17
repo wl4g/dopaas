@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.umc.alarm.alerting;
 
-import com.wl4g.components.core.bean.umc.model.MetricValue;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.support.concurrent.locks.JedisLockManager;
-import com.wl4g.components.support.notification.GenericNotifyMessage;
-import com.wl4g.components.support.notification.MessageNotifier;
-import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.components.support.notification.mail.MailMessageNotifier;
-import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.component.core.bean.umc.model.MetricValue;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.support.notification.GenericNotifyMessage;
+import com.wl4g.component.support.notification.MessageNotifier;
+import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.component.support.notification.mail.MailMessageNotifier;
+import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.alarm.AlarmNote;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
@@ -48,9 +48,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.components.core.constants.UMCDevOpsConstants.ALARM_SATUS_SEND;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.core.constants.UMCDevOpsConstants.ALARM_SATUS_SEND;
 import static java.lang.Math.abs;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyMap;

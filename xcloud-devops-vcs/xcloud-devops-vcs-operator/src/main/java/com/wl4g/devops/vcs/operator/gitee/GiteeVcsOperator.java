@@ -27,7 +27,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.util.List;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.Collections2.safeList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.http.HttpMethod.*;

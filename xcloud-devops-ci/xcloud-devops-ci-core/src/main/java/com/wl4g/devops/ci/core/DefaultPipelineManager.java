@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.components.common.collection.CollectionUtils2;
-import com.wl4g.components.common.io.FileIOUtils.*;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.support.notification.MessageNotifier;
-import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.component.common.collection.CollectionUtils2;
+import com.wl4g.component.common.io.FileIOUtils.*;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.support.notification.MessageNotifier;
+import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.config.CiProperties;
@@ -67,14 +67,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.io.FileIOUtils.*;
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.lang.Exceptions.getStackTraceAsString;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.io.FileIOUtils.*;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.ci.pipeline.flow.FlowManager.FlowStatus.*;
 import static com.wl4g.devops.common.constant.CiConstants.*;
 import static java.lang.String.format;

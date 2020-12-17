@@ -16,9 +16,9 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.lang.Assert2;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.lang.Assert2;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.ci.data.ClusterExtensionDao;
 import com.wl4g.devops.ci.data.PipeStageBuildingDao;
 import com.wl4g.devops.ci.data.PipeStageBuildingProjectDao;
@@ -54,8 +54,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;

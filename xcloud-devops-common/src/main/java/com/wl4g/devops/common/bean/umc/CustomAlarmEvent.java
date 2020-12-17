@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.bean.umc;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 public class CustomAlarmEvent extends BaseBean {
 	private static final long serialVersionUID = 381411777614066880L;

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.dts.codegen.bean.extra;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
@@ -28,15 +28,15 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import javax.annotation.Nullable;
-import com.wl4g.components.common.bean.ConfigOption;
+import com.wl4g.component.common.bean.ConfigOption;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_SPINGCLOUD_MVN;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_VUEJS;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.NGJS;
-import static com.wl4g.components.common.collection.CollectionUtils2.isEmpty;
-import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.component.common.collection.CollectionUtils2.isEmpty;
+import static com.wl4g.component.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.component.common.lang.Assert2.*;
 
 /**
  * {@link GenProject} extensible configuration options definitions.

@@ -17,7 +17,7 @@ package com.wl4g.devops.common.bean.ci.param;
 
 import javax.validation.constraints.NotBlank;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.hasText;
 
 /**

@@ -16,8 +16,8 @@
 package com.wl4g.devops.scm.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.erm.AppCluster;
-import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.component.core.bean.erm.AppCluster;
+import com.wl4g.component.core.bean.erm.AppInstance;
 import com.wl4g.devops.scm.bean.*;
 import com.wl4g.devops.scm.common.model.*;
 import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigMeta;

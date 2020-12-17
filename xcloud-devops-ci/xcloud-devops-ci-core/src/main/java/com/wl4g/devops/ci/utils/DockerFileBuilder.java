@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.utils;
 
 import java.io.File;
 
-import com.wl4g.components.common.io.FileIOUtils;
+import com.wl4g.component.common.io.FileIOUtils;
 
 /**
  * @author vjay

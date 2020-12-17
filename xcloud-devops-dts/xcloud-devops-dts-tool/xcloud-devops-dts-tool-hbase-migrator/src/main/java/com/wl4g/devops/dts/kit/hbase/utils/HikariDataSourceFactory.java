@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.kit.hbase.utils;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static java.lang.String.format;
 
 import java.sql.Connection;

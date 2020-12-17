@@ -16,10 +16,10 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.serialize.JacksonUtils;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.ci.data.DependencyDao;
 import com.wl4g.devops.ci.data.ProjectDao;
 import com.wl4g.devops.ci.service.ProjectService;
@@ -41,8 +41,8 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.components.core.bean.BaseBean.ENABLED;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.component.core.bean.BaseBean.ENABLED;
 import static com.wl4g.devops.common.constant.CiConstants.TASK_LOCK_STATUS_UNLOCK;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;

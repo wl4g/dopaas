@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.event;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
@@ -25,7 +25,7 @@ import com.wl4g.devops.scm.client.repository.RefreshRecordsRepository;
 import com.wl4g.devops.scm.client.repository.ReleaseConfigSourceWrapper;
 import com.wl4g.devops.scm.common.config.ScmConfigSource;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
-import com.wl4g.components.common.annotation.Nullable;
+import com.wl4g.component.common.annotation.Nullable;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent.RefreshContext;
 
 /**

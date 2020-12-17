@@ -17,8 +17,8 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.serialize.JacksonUtils;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
@@ -39,7 +39,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
-import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
