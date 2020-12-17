@@ -21,6 +21,8 @@ package com.wl4g.devops.doc.service;
 import com.wl4g.components.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
 
+import java.util.List;
+
 /**
  *  service of {@link EnterpriseApi}
  *
@@ -39,6 +41,8 @@ public interface EnterpriseApiService {
      * @return 
      */
     PageModel<EnterpriseApi> page(PageModel<EnterpriseApi> pm, EnterpriseApi enterpriseApi);
+
+    List<EnterpriseApi> getByModuleId(Long moduleId);
 
     /**
      *  save.

@@ -36,6 +36,15 @@
         </where>
     </select>
 
+    <select id="getByModuleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+               <include refid="Base_Column_List" />
+        FROM doc_enterprise_api
+        <where>
+            module_id = #{moduleId, jdbcType=BIGINT}
+        </where>
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         DELETE FROM doc_enterprise_api
         <where>

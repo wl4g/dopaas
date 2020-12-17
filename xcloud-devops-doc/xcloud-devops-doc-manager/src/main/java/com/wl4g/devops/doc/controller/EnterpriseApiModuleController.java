@@ -18,18 +18,19 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
+import com.wl4g.devops.doc.service.EnterpriseApiModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-
-import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
-import com.wl4g.devops.doc.service.EnterpriseApiModuleService;
 
 /**
 * {@link EnterpriseApiModule}
@@ -50,6 +51,13 @@ public class EnterpriseApiModuleController extends BaseController {
     public RespBase<PageModel<EnterpriseApiModule>> list(PageModel<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule) {
         RespBase<PageModel<EnterpriseApiModule>> resp = RespBase.create();
         resp.setData(enterpriseApiModuleService.page(pm, enterpriseApiModule));
+        return resp;
+    }
+
+    @RequestMapping(value = "/getByVersionIdAndParentId", method = { GET })
+    public RespBase<List<EnterpriseApiModule>> getByVersionIdAndParentId(Long versionId, Long parentId) {
+        RespBase<List<EnterpriseApiModule>> resp = RespBase.create();
+        resp.setData(enterpriseApiModuleService.getByVersionIdAndParentId(versionId, parentId));
         return resp;
     }
 

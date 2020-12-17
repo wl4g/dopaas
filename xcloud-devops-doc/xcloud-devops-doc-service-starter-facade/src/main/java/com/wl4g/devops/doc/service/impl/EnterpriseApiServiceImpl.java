@@ -18,17 +18,23 @@
 
 package com.wl4g.devops.doc.service.impl;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import com.wl4g.components.core.bean.model.PageModel;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.devops.common.bean.doc.EnterpriseApi;
+import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
+import com.wl4g.devops.doc.data.EnterpriseApiDao;
+import com.wl4g.devops.doc.data.EnterpriseApiPropertiesDao;
+import com.wl4g.devops.doc.service.EnterpriseApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import com.wl4g.devops.common.bean.doc.EnterpriseApi;
-import com.wl4g.devops.doc.data.EnterpriseApiDao;
-import com.wl4g.devops.doc.service.EnterpriseApiService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 /**
@@ -45,6 +51,9 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
     @Autowired
     private EnterpriseApiDao enterpriseApiDao;
 
+    @Autowired
+    private EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
+
     @Override
     public PageModel<EnterpriseApi> page(PageModel<EnterpriseApi> pm, EnterpriseApi enterpriseApi) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
@@ -53,20 +62,74 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
     }
 
     @Override
+    public List<EnterpriseApi> getByModuleId(Long moduleId) {
+        return enterpriseApiDao.getByModuleId(moduleId);
+    }
+
+    @Override
     public int save(EnterpriseApi enterpriseApi) {
+
+        // insert or update Properties
+        List<EnterpriseApiProperties> properties = enterpriseApi.getProperties();
+        List<EnterpriseApiProperties> list = new ArrayList<>();
+        tree2List(properties, list);
+        for(EnterpriseApiProperties li : list){
+            li.preInsert();
+        }
+
+
+        int result = 0;
         if (isNull(enterpriseApi.getId())) {
         	enterpriseApi.preInsert();
-            return enterpriseApiDao.insertSelective(enterpriseApi);
+            result = enterpriseApiDao.insertSelective(enterpriseApi);
         } else {
         	enterpriseApi.preUpdate();
-            return enterpriseApiDao.updateByPrimaryKeySelective(enterpriseApi);
+            result = enterpriseApiDao.updateByPrimaryKeySelective(enterpriseApi);
+        }
+
+        enterpriseApiPropertiesDao.deleteByApiId(enterpriseApi.getId());
+        enterpriseApiPropertiesDao.insertBatch(list,enterpriseApi.getId());
+        return result;
+    }
+
+    private void tree2List(List<EnterpriseApiProperties> tree,List<EnterpriseApiProperties> list){
+        for(EnterpriseApiProperties enterpriseApiProperties : tree){
+            list.add(enterpriseApiProperties);
+            if(!CollectionUtils.isEmpty(enterpriseApiProperties.getChildren())){
+                tree2List(enterpriseApiProperties.getChildren(),list);
+            }
         }
     }
 
     @Override
     public EnterpriseApi detail(Long id) {
         notNullOf(id, "id");
-        return enterpriseApiDao.selectByPrimaryKey(id);
+        EnterpriseApi enterpriseApi = enterpriseApiDao.selectByPrimaryKey(id);
+        enterpriseApi.setProperties(getApiProperties(id));
+        return enterpriseApi;
+    }
+
+    private List<EnterpriseApiProperties> getApiProperties(Long apiId){
+        List<EnterpriseApiProperties> enterpriseApiProperties = enterpriseApiPropertiesDao.selectByApiId(apiId);
+
+        List<EnterpriseApiProperties> tops = enterpriseApiProperties.stream().filter(properties -> {
+            return properties.getParentId()<=0;
+        }).collect(Collectors.toList());
+
+        for(EnterpriseApiProperties top : tops){
+            top.setChildren(getChildren(enterpriseApiProperties,top.getId()));
+        }
+        return tops;
+    }
+
+    private List<EnterpriseApiProperties> getChildren(List<EnterpriseApiProperties> list,Long parentId){
+        List<EnterpriseApiProperties> children = list.stream().filter(properties -> {
+            return properties.getParentId().equals(parentId);
+        }).collect(Collectors.toList());
+        for(EnterpriseApiProperties child : children){
+            child.setChildren(getChildren(list, child.getId()));
+        }
+        return children;
     }
 
     @Override

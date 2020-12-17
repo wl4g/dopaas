@@ -27,6 +27,8 @@ import com.wl4g.devops.doc.service.EnterpriseApiModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
@@ -49,6 +51,11 @@ public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleServic
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
         pm.setRecords(enterpriseApiModuleDao.list(enterpriseApiModule));
         return pm;
+    }
+
+    @Override
+    public List<EnterpriseApiModule> getByVersionIdAndParentId(Long versionId, Long parentId) {
+        return enterpriseApiModuleDao.getByVersionIdAndParentId(versionId, parentId);
     }
 
     @Override

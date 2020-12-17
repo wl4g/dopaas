@@ -45,4 +45,6 @@ public interface EnterpriseApiModuleDao {
 
     List<EnterpriseApiModule> list(@Param("enterpriseApiModule") EnterpriseApiModule enterpriseApiModule);
 
+    List<EnterpriseApiModule> getByVersionIdAndParentId(@Param("versionId") Long versionId, @Param("parentId") Long parentId);
+
 }

@@ -46,4 +46,6 @@ public interface EnterpriseApiDao {
 
     List<EnterpriseApi> list(@Param("enterpriseApi") EnterpriseApi enterpriseApi);
 
+    List<EnterpriseApi> getByModuleId(Long moduleId);
+
 }

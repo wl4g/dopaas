@@ -102,7 +102,6 @@
             <include refid="Base_Column_List"/>
         FROM doc_enterprise_api_module
         <where>
-                AND del_flag != 1
             <if test="enterpriseApiModule.versionId != null" >
                 AND `version_id` = #{enterpriseApiModule.versionId}
             </if>
@@ -111,6 +110,20 @@
             </if>
             <if test="enterpriseApiModule.name != null and enterpriseApiModule.name != ''" >
                 AND `name` LIKE CONCAT('%','${enterpriseApiModule.name}','%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getByVersionIdAndParentId" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM doc_enterprise_api_module
+        <where>
+            <if test="versionId != null">
+                AND `version_id` = #{versionId}
+            </if>
+            <if test="parentId != null">
+                AND `parent_id` = #{parentId}
             </if>
         </where>
     </select>

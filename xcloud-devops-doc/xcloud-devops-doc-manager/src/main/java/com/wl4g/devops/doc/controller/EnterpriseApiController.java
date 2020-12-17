@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
@@ -49,6 +51,13 @@ public class EnterpriseApiController extends BaseController {
     public RespBase<PageModel<EnterpriseApi>> list(PageModel<EnterpriseApi> pm, EnterpriseApi enterpriseApi) {
         RespBase<PageModel<EnterpriseApi>> resp = RespBase.create();
         resp.setData(enterpriseApiService.page(pm, enterpriseApi));
+        return resp;
+    }
+
+    @RequestMapping(value = "/getByModuleId", method = { GET })
+    public RespBase<List<EnterpriseApi>> getByModuleId(Long moduleId) {
+        RespBase<List<EnterpriseApi>> resp = RespBase.create();
+        resp.setData(enterpriseApiService.getByModuleId(moduleId));
         return resp;
     }
 

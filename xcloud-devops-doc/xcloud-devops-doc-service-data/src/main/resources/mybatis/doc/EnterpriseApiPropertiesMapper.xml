@@ -14,13 +14,13 @@
         <result column="rule" jdbcType="VARCHAR" property="rule" />
         <result column="value" jdbcType="VARCHAR" property="value" />
         <result column="description" jdbcType="VARCHAR" property="description" />
-        <result column="parentId" jdbcType="INTEGER" property="parentid" />
+        <result column="parent_id" jdbcType="INTEGER" property="parentId" />
         <result column="priority" jdbcType="INTEGER" property="priority" />
         <result column="required" jdbcType="CHAR" property="required" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, api_id, name, scope, type, pos, rule, value, description, parentId, priority, required
+        id, api_id, name, scope, type, pos, rule, value, description, parent_id, priority, required
     </sql>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -32,10 +32,26 @@
         </where>
     </select>
 
+    <select id="selectByApiId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+               <include refid="Base_Column_List" />
+        FROM doc_enterprise_api_properties
+        <where>
+            api_id = #{apiId, jdbcType=BIGINT}
+        </where>
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         DELETE FROM doc_enterprise_api_properties
         <where>
             id = #{id, jdbcType=BIGINT}
+        </where>
+    </delete>
+
+    <delete id="deleteByApiId" parameterType="java.lang.Long">
+        DELETE FROM doc_enterprise_api_properties
+        <where>
+            api_id = #{apiId, jdbcType=BIGINT}
         </where>
     </delete>
 
@@ -69,8 +85,8 @@
             <if test="description != null">
                 description,
             </if>
-            <if test="parentid != null">
-                parentId,
+            <if test="parentId != null">
+                parent_id,
             </if>
             <if test="priority != null">
                 priority,
@@ -107,8 +123,8 @@
            <if test="description != null">
                #{description, jdbcType=VARCHAR},
            </if>
-           <if test="parentid != null">
-               #{parentid, jdbcType=INTEGER},
+           <if test="parentId != null">
+               #{parentId, jdbcType=BIGINT},
            </if>
            <if test="priority != null">
                #{priority, jdbcType=INTEGER},
@@ -117,6 +133,24 @@
                #{required, jdbcType=CHAR},
            </if>
         </trim>
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.Map">
+        insert into doc_enterprise_api_properties (id, api_id, `name`, scope, `type`, pos, rule, `value`, description, parent_id, priority, required) VALUES
+        <foreach collection="properties" item="property" separator=",">
+            (#{property.id,jdbcType=BIGINT},
+            #{apiId,jdbcType=BIGINT},
+            #{property.name,jdbcType=VARCHAR},
+            #{property.scope,jdbcType=VARCHAR},
+            #{property.type,jdbcType=VARCHAR},
+            #{property.pos,jdbcType=INTEGER},
+            #{property.rule,jdbcType=VARCHAR},
+            #{property.value,jdbcType=VARCHAR},
+            #{property.description,jdbcType=VARCHAR},
+            #{property.parentId,jdbcType=BIGINT},
+            #{property.priority,jdbcType=INTEGER},
+            #{property.required,jdbcType=CHAR})
+        </foreach>
     </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.doc.EnterpriseApiProperties">
@@ -149,8 +183,8 @@
             <if test="description != null">
                 description = #{description, jdbcType=VARCHAR},
             </if>
-            <if test="parentid != null">
-                parentId = #{parentid, jdbcType=INTEGER},
+            <if test="parentId != null">
+                parent_id = #{parentId, jdbcType=INTEGER},
             </if>
             <if test="priority != null">
                 priority = #{priority, jdbcType=INTEGER},
@@ -176,7 +210,7 @@
             rule = #{rule, jdbcType=VARCHAR},
             value = #{value, jdbcType=VARCHAR},
             description = #{description, jdbcType=VARCHAR},
-            parentId = #{parentid, jdbcType=INTEGER},
+            parent_id = #{parentId, jdbcType=INTEGER},
             priority = #{priority, jdbcType=INTEGER},
             required = #{required, jdbcType=CHAR},
         </set>
