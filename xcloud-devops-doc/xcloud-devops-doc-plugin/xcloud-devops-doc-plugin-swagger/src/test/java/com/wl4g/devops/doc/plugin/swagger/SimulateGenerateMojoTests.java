@@ -24,11 +24,12 @@ import static com.wl4g.components.common.reflect.ReflectionUtils2.setField;
 import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.singleton;
 import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
@@ -51,28 +52,28 @@ public class SimulateGenerateMojoTests {
 	@Test
 	public void generateSpringfoxSwagger2MojoTest() throws Exception {
 		createMavenMojoInstance(GenerateSpringfoxSwagger2Mojo.class,
-				singletonList("com.wl4g.devops.doc.plugin.swagger.example.swagger2"), "swagger-swagger2-by-springfox").execute();
+				singleton("com.wl4g.devops.doc.plugin.swagger.example.swagger2"), "swagger-swagger2-by-springfox").execute();
 	}
 
 	@Test
 	public void generateSpringfoxOas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateSpringfoxOas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"),
+		createMavenMojoInstance(GenerateSpringfoxOas3Mojo.class, singleton("com.wl4g.devops.doc.plugin.swagger.example.oas3"),
 				"swagger-oas3-by-springfox").execute();
 	}
 
 	// @Test
 	public void generateSpringdocOas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateSpringdocOas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.oas3"),
+		createMavenMojoInstance(GenerateSpringdocOas3Mojo.class, singleton("com.wl4g.devops.doc.plugin.swagger.example.oas3"),
 				"swagger-oas3-by-springdoc").execute();
 	}
 
 	// @Test
 	public void generateJaxrs2Oas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateJaxrs2Oas3Mojo.class, singletonList("com.wl4g.devops.doc.plugin.swagger.example.jaxrs2"),
+		createMavenMojoInstance(GenerateJaxrs2Oas3Mojo.class, singleton("com.wl4g.devops.doc.plugin.swagger.example.jaxrs2"),
 				"swagger-oas3-by-jaxrs").execute();
 	}
 
-	public static AbstractMojo createMavenMojoInstance(Class<? extends AbstractMojo> mojoClass, List<String> resourcePackages,
+	public static AbstractMojo createMavenMojoInstance(Class<? extends AbstractMojo> mojoClass, Set<String> resourcePackages,
 			String outputFilename) throws Exception {
 		AbstractMojo mojo = mojoClass.newInstance();
 		setField(findField(mojoClass, "project"), mojo, createMavenProject(), true);
