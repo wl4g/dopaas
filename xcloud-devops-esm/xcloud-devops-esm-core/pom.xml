@@ -18,7 +18,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
+			<artifactId>xcloud-component-support</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

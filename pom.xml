@@ -154,7 +154,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-components-bom</artifactId>
+				<artifactId>xcloud-component-bom</artifactId>
 				<version>master</version>
 				<type>pom</type>
 				<scope>import</scope>
@@ -162,23 +162,10 @@
 			<!-- XCloud shell dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-shell-common</artifactId>
-				<version>2.1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-shell-core</artifactId>
-				<version>2.1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-shell-springboot</artifactId>
-				<version>2.1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-shell-cli</artifactId>
-				<version>2.1.1</version>
+				<artifactId>xcloud-shell-bom</artifactId>
+				<version>2.2.0</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<!-- XCloud IAM dependentcie's -->
 			<dependency>

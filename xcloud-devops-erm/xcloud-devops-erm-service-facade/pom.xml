@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
+			<artifactId>xcloud-component-support</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
