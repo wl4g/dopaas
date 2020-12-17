@@ -18,9 +18,10 @@
 
 package com.wl4g.devops.doc.data;
 
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * {@link EnterpriseRepositoryVersion}
@@ -37,6 +38,8 @@ public interface EnterpriseRepositoryVersionDao {
     int deleteByPrimaryKey(Long id);
 
     EnterpriseRepositoryVersion selectByPrimaryKey(Long id);
+
+    List<EnterpriseRepositoryVersion> getVersionsByRepositoryId(Long repositoryId);
 
     int updateByPrimaryKeySelective(EnterpriseRepositoryVersion enterpriseRepositoryVersion);
 

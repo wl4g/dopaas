@@ -73,11 +73,7 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
         // insert or update Properties
         List<EnterpriseApiProperties> properties = enterpriseApi.getProperties();
         List<EnterpriseApiProperties> list = new ArrayList<>();
-        tree2List(properties, list);
-        for(EnterpriseApiProperties li : list){
-            li.preInsert();
-        }
-
+        tree2List(properties, list,0L);
 
         int result = 0;
         if (isNull(enterpriseApi.getId())) {
@@ -93,11 +89,13 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
         return result;
     }
 
-    private void tree2List(List<EnterpriseApiProperties> tree,List<EnterpriseApiProperties> list){
-        for(EnterpriseApiProperties enterpriseApiProperties : tree){
+    private void tree2List(List<EnterpriseApiProperties> tree, List<EnterpriseApiProperties> list, Long parentId) {
+        for (EnterpriseApiProperties enterpriseApiProperties : tree) {
+            enterpriseApiProperties.preInsert();
+            enterpriseApiProperties.setParentId(parentId);
             list.add(enterpriseApiProperties);
-            if(!CollectionUtils.isEmpty(enterpriseApiProperties.getChildren())){
-                tree2List(enterpriseApiProperties.getChildren(),list);
+            if (!CollectionUtils.isEmpty(enterpriseApiProperties.getChildren())) {
+                tree2List(enterpriseApiProperties.getChildren(), list, enterpriseApiProperties.getId());
             }
         }
     }

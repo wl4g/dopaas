@@ -18,18 +18,19 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
 import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
+import com.wl4g.devops.doc.service.EnterpriseRepositoryVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-
-import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
-import com.wl4g.devops.doc.service.EnterpriseRepositoryVersionService;
 
 /**
 * {@link EnterpriseRepositoryVersion}
@@ -50,6 +51,13 @@ public class EnterpriseRepositoryVersionController extends BaseController {
     public RespBase<PageModel<EnterpriseRepositoryVersion>> list(PageModel<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
         RespBase<PageModel<EnterpriseRepositoryVersion>> resp = RespBase.create();
         resp.setData(enterpriseRepositoryVersionService.page(pm, enterpriseRepositoryVersion));
+        return resp;
+    }
+
+    @RequestMapping(value = "/getVersionsByRepositoryId", method = { GET })
+    public RespBase<List<EnterpriseRepositoryVersion>> getVersionsByRepositoryId(Long repositoryId) {
+        RespBase<List<EnterpriseRepositoryVersion>> resp = RespBase.create();
+        resp.setData(enterpriseRepositoryVersionService.getVersionsByRepositoryId(repositoryId));
         return resp;
     }
 

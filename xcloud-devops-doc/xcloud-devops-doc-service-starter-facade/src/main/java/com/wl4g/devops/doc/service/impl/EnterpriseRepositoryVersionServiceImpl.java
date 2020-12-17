@@ -27,6 +27,8 @@ import com.wl4g.devops.doc.service.EnterpriseRepositoryVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
@@ -49,6 +51,11 @@ public class EnterpriseRepositoryVersionServiceImpl implements EnterpriseReposit
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
         pm.setRecords(enterpriseRepositoryVersionDao.list(enterpriseRepositoryVersion));
         return pm;
+    }
+
+    @Override
+    public List<EnterpriseRepositoryVersion> getVersionsByRepositoryId(Long repositoryId) {
+        return enterpriseRepositoryVersionDao.getVersionsByRepositoryId(repositoryId);
     }
 
     @Override

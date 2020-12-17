@@ -29,6 +29,15 @@
         </where>
     </select>
 
+    <select id="getVersionsByRepositoryId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+               <include refid="Base_Column_List" />
+        FROM doc_enterprise_repository_version
+        <where>
+            repository_id = #{repositoryId, jdbcType=BIGINT}
+        </where>
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         DELETE FROM doc_enterprise_repository_version
         <where>
