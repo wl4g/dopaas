@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.TypeMappingWrapper.MappedMatcher;
-import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.common.lang.StringUtils2.tokenizeToStringArray;
+import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.component.common.lang.StringUtils2.tokenizeToStringArray;
 import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtil.readResource;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 

@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci;
 
 import com.wl4g.CiServer;
-import com.wl4g.components.support.redis.jedis.JedisService;
-import com.wl4g.components.support.redis.jedis.ScanCursor;
+import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.devops.ci.bean.RunModel;
 
 import static com.wl4g.devops.ci.pipeline.flow.FlowManager.REDIS_CI_RUN_PRE;

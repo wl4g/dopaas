@@ -18,13 +18,13 @@ package com.wl4g.devops.ci.config;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 
 import java.io.File;
 import java.util.Objects;
 
-import static com.wl4g.components.common.lang.SystemUtils2.cleanSystemPath;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.lang.SystemUtils2.cleanSystemPath;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;

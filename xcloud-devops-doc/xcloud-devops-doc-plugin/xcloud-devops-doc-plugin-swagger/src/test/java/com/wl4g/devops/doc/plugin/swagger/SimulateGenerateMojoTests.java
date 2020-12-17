@@ -19,8 +19,8 @@ import com.wl4g.devops.doc.plugin.swagger.springfox.oas3.GenerateSpringfoxOas3Mo
 import com.wl4g.devops.doc.plugin.swagger.springfox.swagger2.GenerateSpringfoxSwagger2Mojo;
 import static com.wl4g.devops.doc.plugin.swagger.util.OutputFormater.*;
 
-import static com.wl4g.components.common.reflect.ReflectionUtils2.findField;
-import static com.wl4g.components.common.reflect.ReflectionUtils2.setField;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.findField;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.setField;
 import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
+import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.devops.scm.client.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.refresh.ScmLoggingRebinder;
 

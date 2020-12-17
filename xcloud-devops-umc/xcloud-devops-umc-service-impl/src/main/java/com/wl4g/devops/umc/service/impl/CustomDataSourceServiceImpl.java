@@ -16,12 +16,12 @@
 package com.wl4g.devops.umc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.serialize.JacksonUtils;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.umc.datasouces.BaseDataSource;
-import com.wl4g.components.core.bean.umc.datasouces.MysqlDataSource;
-import com.wl4g.components.core.bean.umc.model.DataSourceProvide;
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.umc.datasouces.BaseDataSource;
+import com.wl4g.component.core.bean.umc.datasouces.MysqlDataSource;
+import com.wl4g.component.core.bean.umc.model.DataSourceProvide;
+import com.wl4g.component.data.page.PageModel;
 import com.wl4g.devops.common.bean.umc.CustomDataSource;
 import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
 import com.wl4g.devops.dao.umc.CustomDataSourcePropertiesDao;
@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.components.core.bean.umc.model.DataSourceProvide.MYSQL;
+import static com.wl4g.component.core.bean.umc.model.DataSourceProvide.MYSQL;
 import static java.util.Arrays.asList;
 
 /**

@@ -16,10 +16,10 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.lang.Assert2;
-import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.components.support.cli.DestroableProcessManager;
-import com.wl4g.components.support.cli.destroy.DestroySignal;
+import com.wl4g.component.common.lang.Assert2;
+import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.support.cli.DestroableProcessManager;
+import com.wl4g.component.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.ci.data.PipelineDao;
 import com.wl4g.devops.ci.data.PipelineHistoryDao;
 import com.wl4g.devops.ci.data.PipelineHistoryInstanceDao;

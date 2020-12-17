@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline.provider;
 
-import com.wl4g.components.common.annotation.Stable;
+import com.wl4g.component.common.annotation.Stable;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 
 /**

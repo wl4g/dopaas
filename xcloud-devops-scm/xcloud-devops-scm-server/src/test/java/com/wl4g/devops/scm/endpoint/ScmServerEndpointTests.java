@@ -24,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.ScmServer;
-import com.wl4g.components.common.lang.ThreadUtils2;
+import com.wl4g.component.common.lang.ThreadUtils2;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigNode;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;

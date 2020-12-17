@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.vcs.config;
 
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.alicode.AlicodeVcsOperator;
 import com.wl4g.devops.vcs.operator.bitbucket.BitbucketVcsOperator;

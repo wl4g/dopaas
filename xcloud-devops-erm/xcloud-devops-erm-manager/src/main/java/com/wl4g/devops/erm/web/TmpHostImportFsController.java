@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.devops.erm.service.FsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;

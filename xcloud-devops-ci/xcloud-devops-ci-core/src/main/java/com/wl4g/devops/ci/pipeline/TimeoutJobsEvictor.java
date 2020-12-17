@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.task.RunnerProperties;
-import com.wl4g.components.support.concurrent.locks.JedisLockManager;
-import com.wl4g.components.support.redis.jedis.JedisService;
-import com.wl4g.components.support.task.ApplicationTaskRunner;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.component.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.data.PipelineHistoryDao;
 
@@ -30,9 +30,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.support.redis.jedis.JedisOperator.RedisProtoUtil.keyFormat;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.support.redis.jedis.JedisOperator.RedisProtoUtil.keyFormat;
 import static com.wl4g.devops.common.constant.CiConstants.KEY_FINALIZER_INTERVALMS;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;

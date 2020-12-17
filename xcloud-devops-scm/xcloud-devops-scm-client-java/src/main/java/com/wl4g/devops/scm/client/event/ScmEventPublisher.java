@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.scm.client.event;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 
 import javax.validation.constraints.NotNull;
 
 import com.github.rholder.retry.Attempt;
-import com.wl4g.components.common.eventbus.EventBusSupport;
+import com.wl4g.component.common.eventbus.EventBusSupport;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent.RefreshContext;
 import com.wl4g.devops.scm.client.repository.ReleaseConfigSourceWrapper;
 import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;

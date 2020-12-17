@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.devops.ci.config.CiProperties;
 
 import org.springframework.beans.factory.annotation.Autowired;

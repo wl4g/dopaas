@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.kit.hbase.rmdb;
 
-import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.notNull;
 import static java.util.Collections.unmodifiableMap;
 import static org.apache.commons.lang3.StringUtils.contains;
 

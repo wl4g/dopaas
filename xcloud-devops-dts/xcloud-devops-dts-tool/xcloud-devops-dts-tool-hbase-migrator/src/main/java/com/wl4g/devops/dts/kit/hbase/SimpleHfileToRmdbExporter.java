@@ -38,7 +38,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import com.wl4g.components.common.cli.CommandUtils.Builder;
+import com.wl4g.component.common.cli.CommandUtils.Builder;
 import com.wl4g.devops.dts.kit.hbase.mapred.SimpleHfileToRmdbMapper;
 import com.wl4g.devops.dts.kit.hbase.rmdb.RmdbMigrateManager;
 import com.wl4g.devops.dts.kit.hbase.utils.HbaseMigrateUtils;

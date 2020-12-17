@@ -16,8 +16,8 @@
 package com.wl4g.devops.vcs.operator;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.framework.operator.Operator;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.framework.operator.Operator;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
@@ -30,7 +30,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
 
 import org.apache.commons.lang3.StringUtils;

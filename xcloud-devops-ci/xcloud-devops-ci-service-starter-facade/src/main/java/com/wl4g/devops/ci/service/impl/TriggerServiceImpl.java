@@ -16,9 +16,9 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.lang.DateUtils2;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.lang.DateUtils2;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.ci.data.TriggerDao;
 import com.wl4g.devops.ci.pipeline.TimingPipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.constant.CiConstants.TASK_TYPE_TIMMING;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;

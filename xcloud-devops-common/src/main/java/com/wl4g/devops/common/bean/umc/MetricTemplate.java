@@ -17,7 +17,7 @@ package com.wl4g.devops.common.bean.umc;
 
 import java.io.Serializable;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 public class MetricTemplate extends BaseBean implements Serializable {
 

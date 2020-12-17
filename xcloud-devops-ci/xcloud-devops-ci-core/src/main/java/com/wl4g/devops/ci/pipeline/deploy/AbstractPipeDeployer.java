@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
-import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
-import com.wl4g.components.common.io.FileIOUtils;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.support.cli.DestroableProcessManager;
-import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
+import com.wl4g.component.common.codec.CodecSource;
+import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.component.common.io.FileIOUtils;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.support.cli.DestroableProcessManager;
+import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
@@ -41,10 +41,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.io.FileIOUtils.writeALineFile;
-import static com.wl4g.components.common.lang.DateUtils2.getDate;
-import static com.wl4g.components.common.lang.Exceptions.getStackTraceAsString;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.io.FileIOUtils.writeALineFile;
+import static com.wl4g.component.common.lang.DateUtils2.getDate;
+import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.common.constant.CiConstants.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;

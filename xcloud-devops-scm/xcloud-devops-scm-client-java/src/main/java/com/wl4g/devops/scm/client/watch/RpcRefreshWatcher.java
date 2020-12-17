@@ -17,8 +17,8 @@ package com.wl4g.devops.scm.client.watch;
 
 import java.util.Collection;
 
-import com.wl4g.components.common.annotation.Reserved;
-import com.wl4g.components.common.task.RunnerProperties;
+import com.wl4g.component.common.annotation.Reserved;
+import com.wl4g.component.common.task.RunnerProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.repository.RefreshRecordsRepository;

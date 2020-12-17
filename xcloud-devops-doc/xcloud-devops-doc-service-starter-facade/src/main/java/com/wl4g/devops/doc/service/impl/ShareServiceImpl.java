@@ -16,8 +16,8 @@
 package com.wl4g.devops.doc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.doc.FileChanges;
 import com.wl4g.devops.common.bean.doc.Share;
 import com.wl4g.devops.common.constant.DocConstants;
@@ -31,8 +31,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.wl4g.components.common.web.rest.RespBase.RetCode.NOT_FOUND_ERR;
-import static com.wl4g.components.common.web.rest.RespBase.RetCode.UNAUTHC;
+import static com.wl4g.component.common.web.rest.RespBase.RetCode.NOT_FOUND_ERR;
+import static com.wl4g.component.common.web.rest.RespBase.RetCode.UNAUTHC;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 

@@ -22,7 +22,7 @@ package com.wl4g.devops.doc.service.conversion;
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;
 
-import com.wl4g.components.core.framework.operator.Operator;
+import com.wl4g.component.core.framework.operator.Operator;
 import com.wl4g.devops.common.bean.doc.model.XCloudDocumentModel;
 import com.wl4g.devops.doc.service.conversion.DocumentConverter.ConverterProviderKind;
 

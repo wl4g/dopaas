@@ -16,8 +16,8 @@
 package com.wl4g.devops.vcs.operator.github;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.components.support.concurrent.locks.JedisLockManager;
-import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.component.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
@@ -36,9 +36,9 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.nonNull;

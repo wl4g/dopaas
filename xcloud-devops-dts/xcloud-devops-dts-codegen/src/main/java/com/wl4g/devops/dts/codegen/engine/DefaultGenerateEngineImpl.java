@@ -16,9 +16,9 @@
 package com.wl4g.devops.dts.codegen.engine;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.components.common.lang.StringUtils2;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.component.common.lang.StringUtils2;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
@@ -44,13 +44,13 @@ import static java.lang.String.valueOf;
 import java.io.IOException;
 import java.util.List;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.components.core.bean.BaseBean.DISABLED;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.core.bean.BaseBean.DISABLED;
 import static com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition.getProviders;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 

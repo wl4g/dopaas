@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
-import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.devops.ci.pipeline.provider.ViewNativePipelineProvider;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
@@ -26,8 +26,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.File;
 import java.util.List;

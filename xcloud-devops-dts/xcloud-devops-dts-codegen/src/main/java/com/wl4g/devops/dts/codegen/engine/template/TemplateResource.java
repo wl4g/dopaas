@@ -16,14 +16,14 @@
 package com.wl4g.devops.dts.codegen.engine.template;
 
 import javax.annotation.Nullable;
-import com.wl4g.components.common.lang.StringUtils2;
+import com.wl4g.component.common.lang.StringUtils2;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_MODULE_NAME;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_ENTITY_NAME;
 import static java.lang.String.valueOf;

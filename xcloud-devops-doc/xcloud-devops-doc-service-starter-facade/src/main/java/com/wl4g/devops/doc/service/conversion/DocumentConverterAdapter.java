@@ -21,7 +21,7 @@ package com.wl4g.devops.doc.service.conversion;
 
 import java.util.List;
 
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.doc.service.conversion.DocumentConverter.ConverterProviderKind;
 
 /**

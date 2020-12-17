@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox;
 
-import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.notNull;
 import static java.util.Objects.isNull;
 
 import javax.ws.rs.Path;

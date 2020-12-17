@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata;
 
-import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.getFieldValues;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.io.Closeable;

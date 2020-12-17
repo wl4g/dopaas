@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.notify;
 
-import static com.wl4g.components.common.log.SmartLoggerFactory.*;
+import static com.wl4g.component.common.log.SmartLoggerFactory.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,10 +26,10 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.serialize.JacksonUtils;
-import com.wl4g.components.core.constants.UMCDevOpsConstants;
-import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.component.core.constants.UMCDevOpsConstants;
+import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.model.StatusMessage;
 
 import de.codecentric.boot.admin.server.domain.entities.Instance;

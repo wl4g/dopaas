@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.dts.web;
 
-import com.wl4g.components.common.lang.Assert2;
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.common.lang.Assert2;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

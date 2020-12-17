@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.bean.umc.datasource;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 /**
  * @author vjay

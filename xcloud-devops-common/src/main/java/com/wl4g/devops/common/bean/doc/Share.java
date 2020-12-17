@@ -18,7 +18,7 @@ package com.wl4g.devops.common.bean.doc;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 public class Share extends BaseBean {
 

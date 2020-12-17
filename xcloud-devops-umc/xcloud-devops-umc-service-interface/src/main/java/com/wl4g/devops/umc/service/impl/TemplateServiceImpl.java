@@ -17,8 +17,8 @@ package com.wl4g.devops.umc.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.data.page.PageModel;
-import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
@@ -39,10 +39,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.components.core.bean.BaseBean.*;
-import static com.wl4g.components.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.core.bean.BaseBean.*;
+import static com.wl4g.component.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**

@@ -26,8 +26,8 @@ import javax.validation.constraints.NotNull;
 
 import java.util.List;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.*;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.lang.Assert2.*;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
