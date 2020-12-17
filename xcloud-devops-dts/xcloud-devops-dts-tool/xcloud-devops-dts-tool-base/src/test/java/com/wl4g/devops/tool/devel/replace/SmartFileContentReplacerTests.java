@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 
 import java.io.File;
 
-import com.wl4g.components.common.annotation.Reserved;
+import com.wl4g.component.common.annotation.Reserved;
 import com.wl4g.devops.dts.kit.replace.SmartFileContentReplacer;
 import com.wl4g.devops.dts.kit.replace.SmartFileContentReplacer.MatchStrategy;
 import com.wl4g.devops.dts.kit.replace.SmartFileContentReplacer.ReplaceStrategy;

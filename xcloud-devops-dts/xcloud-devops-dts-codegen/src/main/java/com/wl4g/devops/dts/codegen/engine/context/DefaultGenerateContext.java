@@ -28,7 +28,7 @@ import static java.lang.String.valueOf;
 
 import java.io.File;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 
 /**
  * {@link DefaultGenerateContext}

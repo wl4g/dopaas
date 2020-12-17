@@ -31,7 +31,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.components.common.io.FileSizeUtils;
+import com.wl4g.component.common.io.FileSizeUtils;
 
 /**
  * Custom operation system disk space performance indicator.<br/>

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.export;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;

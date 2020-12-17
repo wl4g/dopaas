@@ -21,7 +21,7 @@ package com.wl4g.devops.doc.plugin.swagger.springfox.plugin;
 
 import com.google.common.collect.Lists;
 
-import static com.wl4g.components.common.lang.StringUtils2.eqIgnCase;
+import static com.wl4g.component.common.lang.StringUtils2.eqIgnCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Optional;

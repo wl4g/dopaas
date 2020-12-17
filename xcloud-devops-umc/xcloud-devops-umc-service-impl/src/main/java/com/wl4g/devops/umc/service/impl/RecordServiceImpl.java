@@ -16,7 +16,7 @@
 package com.wl4g.devops.umc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.component.data.page.PageModel;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;

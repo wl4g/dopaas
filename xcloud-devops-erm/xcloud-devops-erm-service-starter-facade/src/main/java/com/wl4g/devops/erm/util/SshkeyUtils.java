@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.erm.util;
 
-import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.component.common.codec.CodecSource;
+import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
 
 import static com.google.common.base.Charsets.UTF_8;
 

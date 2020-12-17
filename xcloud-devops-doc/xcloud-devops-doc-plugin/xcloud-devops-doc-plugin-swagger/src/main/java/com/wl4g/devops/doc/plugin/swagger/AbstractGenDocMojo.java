@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.doc.plugin.swagger;
 
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
@@ -45,7 +45,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.springframework.core.ResolvableType;
 
-import com.wl4g.components.common.collection.CollectionUtils2;
+import com.wl4g.component.common.collection.CollectionUtils2;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
 import com.wl4g.devops.doc.plugin.swagger.config.SwaggerConfig;
 import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider;
@@ -86,7 +86,7 @@ public abstract class AbstractGenDocMojo<C extends SwaggerConfig, D> extends Abs
 	 * recursive.
 	 */
 	@Parameter
-	protected List<String> resourcePackages;
+	protected Set<String> resourcePackages;
 
 	/**
 	 * When true, the plugin produces a pretty-printed JSON Swagger

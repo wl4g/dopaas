@@ -17,8 +17,8 @@ package com.wl4g.devops.doc.plugin.swagger.springfox;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.components.core.web.method.mapping.WebMvcHandlerMappingConfigurer;
-import com.wl4g.components.core.web.versions.annotation.EnableApiVersionManagement;
+import com.wl4g.component.core.web.method.mapping.WebMvcHandlerMappingConfigurer;
+import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
 
 /**
  * {@link EmbeddedSpringfoxBootstrap} </br>

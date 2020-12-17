@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.bean.doc;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 public class FileLabel extends BaseBean {
 	private static final long serialVersionUID = -5720902148220736503L;

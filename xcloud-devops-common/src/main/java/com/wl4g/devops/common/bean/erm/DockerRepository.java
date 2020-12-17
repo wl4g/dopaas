@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.common.bean.erm;
 
-import com.wl4g.components.common.serialize.JacksonUtils;
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.component.core.bean.BaseBean;
 
 import org.apache.commons.lang3.StringUtils;
 

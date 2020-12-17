@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.bean.erm;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 import java.util.Date;
 import java.util.List;

@@ -15,7 +15,7 @@
  */
 package com.wl4g;
 
-import com.wl4g.components.data.annotation.EnableComponentsData;
+import com.wl4g.component.data.annotation.EnableComponentsData;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.shell.springboot.annotation.EnableShellServer;
 

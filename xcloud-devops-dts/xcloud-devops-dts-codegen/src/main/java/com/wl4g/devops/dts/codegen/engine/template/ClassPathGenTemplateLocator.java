@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.dts.codegen.engine.template;
 
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.resource.StreamResource;
-import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.common.resource.StreamResource;
+import com.wl4g.component.common.resource.resolver.ClassPathResourcePatternResolver;
 import freemarker.template.Template;
 import org.apache.commons.codec.net.URLCodec;
 
@@ -26,10 +26,10 @@ import java.util.*;
 
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.jvm.JvmRuntimeKit.isJVMDebugging;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.jvm.JvmRuntimeKit.isJVMDebugging;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;

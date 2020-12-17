@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.components.common.reflect.ReflectionUtils2.isCompatibleType;
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.isCompatibleType;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
 

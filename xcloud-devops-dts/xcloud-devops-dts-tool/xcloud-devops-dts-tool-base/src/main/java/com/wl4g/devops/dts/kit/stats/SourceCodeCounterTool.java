@@ -16,10 +16,10 @@
 package com.wl4g.devops.dts.kit.stats;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.io.FileIOUtils.*;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.SystemUtils2.*;
+import static com.wl4g.component.common.io.FileIOUtils.*;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.SystemUtils2.*;
 import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
@@ -43,9 +43,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.cli.CommandLine;
 
 import com.google.common.io.Resources;
-import com.wl4g.components.common.cli.CommandUtils.Builder;
-import com.wl4g.components.common.function.ProcessFunction;
-import com.wl4g.components.common.resource.resolver.ClassPathResourcePatternResolver;
+import com.wl4g.component.common.cli.CommandUtils.Builder;
+import com.wl4g.component.common.function.ProcessFunction;
+import com.wl4g.component.common.resource.resolver.ClassPathResourcePatternResolver;
 
 /**
  * Source code counter tools.

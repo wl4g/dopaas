@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.config;
 
-import com.wl4g.components.core.framework.beans.NamingPrototype;
+import com.wl4g.component.core.framework.beans.NamingPrototype;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.console.CodegenConsole;
 import com.wl4g.devops.dts.codegen.engine.DefaultGenerateEngineImpl;

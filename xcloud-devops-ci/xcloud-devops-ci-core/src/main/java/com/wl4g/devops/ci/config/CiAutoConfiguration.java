@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.config;
 
-import com.wl4g.components.core.framework.beans.NamingPrototype;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.core.framework.beans.NamingPrototype;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.ci.console.CiConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;

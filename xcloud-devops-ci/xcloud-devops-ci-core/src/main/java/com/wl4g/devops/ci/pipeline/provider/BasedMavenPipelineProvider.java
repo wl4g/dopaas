@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.pipeline.provider;
 
-import com.wl4g.components.support.cli.command.DestroableCommand;
-import com.wl4g.components.support.cli.command.LocalDestroableCommand;
+import com.wl4g.component.support.cli.command.DestroableCommand;
+import com.wl4g.component.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 

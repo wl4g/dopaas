@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.dts.codegen.web;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.service.GenDataSourceService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

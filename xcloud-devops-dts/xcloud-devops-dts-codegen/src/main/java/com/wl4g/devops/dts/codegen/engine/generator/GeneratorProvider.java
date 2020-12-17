@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.engine.generator;
 
 import java.io.Closeable;
 
-import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.getFieldValues;
 
 /**
  * {@link GeneratorProvider}

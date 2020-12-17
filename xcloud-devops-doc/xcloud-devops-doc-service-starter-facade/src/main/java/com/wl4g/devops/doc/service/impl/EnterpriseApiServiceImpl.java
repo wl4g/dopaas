@@ -18,9 +18,10 @@
 
 package com.wl4g.devops.doc.service.impl;
 
+
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
 import com.wl4g.devops.doc.data.EnterpriseApiDao;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 /**

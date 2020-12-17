@@ -31,7 +31,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-common</artifactId>
+			<artifactId>xcloud-component-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.github.rholder</groupId>

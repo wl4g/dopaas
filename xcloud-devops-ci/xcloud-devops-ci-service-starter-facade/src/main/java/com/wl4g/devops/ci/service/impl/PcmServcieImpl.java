@@ -17,11 +17,11 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.lang.Assert2;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.components.core.bean.model.SelectionModel;
+import com.wl4g.component.common.lang.Assert2;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.SelectionModel;
 import com.wl4g.devops.ci.data.PcmDao;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;

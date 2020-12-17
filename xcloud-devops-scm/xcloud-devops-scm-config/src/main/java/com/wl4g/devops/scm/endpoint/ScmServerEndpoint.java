@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.scm.endpoint;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;

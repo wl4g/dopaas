@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.pipeline.provider.container;
 
 import com.github.dockerjava.api.DockerClient;
-import com.wl4g.components.support.cli.command.DestroableCommand;
-import com.wl4g.components.support.cli.command.LocalDestroableCommand;
+import com.wl4g.component.support.cli.command.DestroableCommand;
+import com.wl4g.component.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.pipeline.provider.AbstractPipelineProvider;

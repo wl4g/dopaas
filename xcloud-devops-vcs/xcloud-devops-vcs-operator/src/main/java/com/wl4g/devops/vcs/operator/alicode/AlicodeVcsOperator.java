@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.vcs.operator.alicode;
 
-import com.wl4g.components.common.annotation.Reserved;
+import com.wl4g.component.common.annotation.Reserved;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;

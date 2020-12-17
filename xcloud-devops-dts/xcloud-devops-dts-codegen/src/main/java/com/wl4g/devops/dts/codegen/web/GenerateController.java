@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.web;
 
-import com.wl4g.components.common.io.FileIOUtils;
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.io.FileIOUtils;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition;
@@ -37,9 +37,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static com.wl4g.components.common.io.FileIOUtils.readFullyResourceString;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.io.FileIOUtils.readFullyResourceString;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**

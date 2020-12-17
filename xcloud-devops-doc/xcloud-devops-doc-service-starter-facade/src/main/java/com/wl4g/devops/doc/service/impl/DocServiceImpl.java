@@ -16,15 +16,15 @@
 package com.wl4g.devops.doc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.io.FileIOUtils;
-import com.wl4g.components.common.lang.Assert2;
-import com.wl4g.components.common.lang.DateUtils2;
-import com.wl4g.components.common.lang.TypeConverts;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.components.support.cli.DestroableProcessManager;
-import com.wl4g.components.support.cli.command.DestroableCommand;
-import com.wl4g.components.support.cli.command.LocalDestroableCommand;
+import com.wl4g.component.common.io.FileIOUtils;
+import com.wl4g.component.common.lang.Assert2;
+import com.wl4g.component.common.lang.DateUtils2;
+import com.wl4g.component.common.lang.TypeConverts;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.support.cli.DestroableProcessManager;
+import com.wl4g.component.support.cli.command.DestroableCommand;
+import com.wl4g.component.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.common.bean.doc.FileChanges;
 import com.wl4g.devops.common.bean.doc.FileLabel;
 import com.wl4g.devops.common.bean.doc.Share;
@@ -48,7 +48,7 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
 
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 
 /**

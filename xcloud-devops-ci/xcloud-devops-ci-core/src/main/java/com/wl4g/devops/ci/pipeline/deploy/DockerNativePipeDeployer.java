@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.github.dockerjava.api.DockerClient;
-import com.wl4g.components.common.cli.ssh2.SSH2Holders;
-import com.wl4g.components.common.io.FileIOUtils;
+import com.wl4g.component.common.cli.ssh2.SSH2Holders;
+import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.ci.utils.DockerJavaUtil;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;

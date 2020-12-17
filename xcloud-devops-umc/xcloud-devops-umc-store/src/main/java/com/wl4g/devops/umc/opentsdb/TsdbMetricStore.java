@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.opentsdb;
 
-import com.wl4g.components.core.bean.umc.model.proto.MetricModel;
+import com.wl4g.component.core.bean.umc.model.proto.MetricModel;
 import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
 import com.wl4g.devops.umc.opentsdb.client.bean.request.Point;
 import com.wl4g.devops.umc.store.MetricStore;

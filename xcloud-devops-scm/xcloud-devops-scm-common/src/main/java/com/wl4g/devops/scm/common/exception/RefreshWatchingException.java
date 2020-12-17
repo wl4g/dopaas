@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.common.exception;
 
-import com.wl4g.components.common.web.rest.FunctionalRuleRestrictException;
+import com.wl4g.component.common.web.rest.FunctionalRuleRestrictException;
 
 /**
  * {@link RefreshWatchingException}
