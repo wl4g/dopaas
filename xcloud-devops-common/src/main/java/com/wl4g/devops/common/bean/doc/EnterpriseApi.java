@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * {@link EnterpriseApi}
@@ -91,6 +92,8 @@ public class EnterpriseApi extends BaseBean {
      */
     private String locker;
 
+    private List<EnterpriseApiProperties> properties;
+
     public EnterpriseApi() {
     }
 
@@ -143,4 +146,6 @@ public class EnterpriseApi extends BaseBean {
         setLocker(locker);
         return this;
     }
+
+
 }

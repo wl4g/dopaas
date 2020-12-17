@@ -24,6 +24,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * {@link EnterpriseApiProperties}
  *
@@ -81,7 +83,7 @@ public class EnterpriseApiProperties extends BaseBean {
     /**
      * 
      */
-    private Long parentid;
+    private Long parentId;
 
     /**
      * 
@@ -92,6 +94,8 @@ public class EnterpriseApiProperties extends BaseBean {
      * 
      */
     private String required;
+
+    private List<EnterpriseApiProperties> children;
 
     public EnterpriseApiProperties() {
     }
@@ -136,8 +140,8 @@ public class EnterpriseApiProperties extends BaseBean {
         return this;
     }
 
-    public EnterpriseApiProperties withParentid(Long parentid) {
-        setParentid(parentid);
+    public EnterpriseApiProperties withParentId(Long parentId) {
+        setParentId(parentId);
         return this;
     }
 

@@ -35,9 +35,15 @@ public interface EnterpriseApiPropertiesDao {
 
     int insertSelective(EnterpriseApiProperties enterpriseApiProperties);
 
+    int insertBatch(@Param("properties") List<EnterpriseApiProperties> properties, @Param("apiId") Long apiId);
+
     int deleteByPrimaryKey(Long id);
 
+    int deleteByApiId(Long apiId);
+
     EnterpriseApiProperties selectByPrimaryKey(Long id);
+
+    List<EnterpriseApiProperties> selectByApiId(Long apiId);
 
     int updateByPrimaryKeySelective(EnterpriseApiProperties enterpriseApiProperties);
 
