@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.ci.analyses.coordinate.CompositeAnalysisCoordinatorAdapter;
 import com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator.AnalyzerKind;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;

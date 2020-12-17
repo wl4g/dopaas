@@ -16,8 +16,8 @@
 package com.wl4g.devops.dts.codegen.engine.generator;
 
 import javax.annotation.Nullable;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.utils.expression.SpelExpressions;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.utils.expression.SpelExpressions;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
@@ -46,14 +46,14 @@ import static com.google.common.base.Charsets.UTF_8;
 
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_PROJECT_FULLNAME;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_PROJECT_FULLPATH;
-import static com.wl4g.components.common.collection.Collections2.ensureMap;
-import static com.wl4g.components.common.io.FileIOUtils.writeFile;
-import static com.wl4g.components.common.lang.Assert2.*;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.view.Freemarkers.createDefault;
-import static com.wl4g.components.common.view.Freemarkers.renderingTemplateToString;
-import static com.wl4g.components.core.bean.BaseBean.DISABLED;
-import static com.wl4g.components.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
+import static com.wl4g.component.common.collection.Collections2.ensureMap;
+import static com.wl4g.component.common.io.FileIOUtils.writeFile;
+import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.view.Freemarkers.createDefault;
+import static com.wl4g.component.common.view.Freemarkers.renderingTemplateToString;
+import static com.wl4g.component.core.bean.BaseBean.DISABLED;
+import static com.wl4g.component.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.RenderUtil.convertToRenderingModel;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.*;
 import static java.io.File.separator;

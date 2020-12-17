@@ -31,7 +31,7 @@ import org.springframework.util.Assert;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.wl4g.components.core.exception.umc.UmcException;
+import com.wl4g.component.core.exception.umc.UmcException;
 import com.wl4g.devops.umc.client.indicator.TimeoutsHealthIndicator;
 
 /**

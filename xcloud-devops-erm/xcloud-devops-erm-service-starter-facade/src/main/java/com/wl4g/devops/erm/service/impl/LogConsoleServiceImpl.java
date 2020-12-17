@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.wl4g.components.common.lang.DateUtils2;
+import com.wl4g.component.common.lang.DateUtils2;
 import com.wl4g.devops.common.bean.erm.Log;
 import com.wl4g.devops.common.bean.erm.QueryLogModel;
 import com.wl4g.devops.common.bean.erm.Querycriteria;
@@ -38,8 +38,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.components.common.lang.Assert2.hasText;
-import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.hasText;
+import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.devops.common.constant.ERMConstants.KEY_DEFAULT_MSG;
 import static com.wl4g.devops.common.constant.ERMConstants.LOG_LEVEL;
 import static java.util.Objects.isNull;

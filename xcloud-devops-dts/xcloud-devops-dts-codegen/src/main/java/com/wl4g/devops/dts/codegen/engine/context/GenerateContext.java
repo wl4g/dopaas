@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.engine.context;
 
 import javax.annotation.Nullable;
-import com.wl4g.components.common.annotation.Reserved;
+import com.wl4g.component.common.annotation.Reserved;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;

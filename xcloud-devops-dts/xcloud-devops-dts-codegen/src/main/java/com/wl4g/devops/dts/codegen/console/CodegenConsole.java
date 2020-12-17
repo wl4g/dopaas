@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.console;
 
-import com.wl4g.components.common.io.FileDeletionUtils;
+import com.wl4g.component.common.io.FileDeletionUtils;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.shell.common.annotation.ShellMethod;

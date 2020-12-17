@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.web;
 
-import com.wl4g.components.core.web.BaseController;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.utils.HookCommandHolder;
 import com.wl4g.devops.ci.utils.HookCommandHolder.DeployCommand;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 

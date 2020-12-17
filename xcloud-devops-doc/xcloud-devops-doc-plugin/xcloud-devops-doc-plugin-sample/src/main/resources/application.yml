@@ -1,0 +1,3 @@
+api:
+  config:
+    versionParamName: _ver

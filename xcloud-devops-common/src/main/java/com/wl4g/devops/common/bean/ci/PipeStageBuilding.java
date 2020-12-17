@@ -17,7 +17,7 @@ package com.wl4g.devops.common.bean.ci;
 
 import java.util.List;
 
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 public class PipeStageBuilding extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;

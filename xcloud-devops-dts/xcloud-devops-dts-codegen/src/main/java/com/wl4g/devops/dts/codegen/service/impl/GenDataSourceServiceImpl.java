@@ -16,11 +16,11 @@
 package com.wl4g.devops.dts.codegen.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.log.SmartLoggerFactory;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLoggerFactory;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
@@ -32,9 +32,9 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;

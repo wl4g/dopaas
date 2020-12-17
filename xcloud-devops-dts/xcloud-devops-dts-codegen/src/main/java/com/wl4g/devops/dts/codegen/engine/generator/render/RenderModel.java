@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.engine.generator.render;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.isNull;
-import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.isNull;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.nonNull;
 
 import java.util.Collection;
@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.validation.constraints.NotBlank;
 
 import javax.annotation.Nullable;
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.devops.dts.codegen.exception.CannotOverridePropertyException;
 
 /**

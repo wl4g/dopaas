@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import com.wl4g.components.common.collection.Collections2;
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.common.collection.Collections2;
+import com.wl4g.component.core.bean.BaseBean;
 
 import org.apache.commons.lang3.math.NumberUtils;
 

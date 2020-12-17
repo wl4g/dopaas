@@ -8,9 +8,7 @@
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-devops-ci</artifactId>
-		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+		<version>master</version>	</parent>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -45,7 +43,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
+			<artifactId>xcloud-component-support</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

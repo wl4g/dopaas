@@ -16,9 +16,9 @@
 package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.lang.Assert2;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.lang.Assert2;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist;
 import com.wl4g.devops.erm.data.DnsPrivateBlacklistDao;
 import com.wl4g.devops.erm.handler.DnsZoneHandler;

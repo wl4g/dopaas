@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.bean.umc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.component.core.bean.BaseBean;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class AlarmTemplate extends BaseBean implements Serializable {

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.service;
 
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.component.data.page.PageModel;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 
 import java.util.List;

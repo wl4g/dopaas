@@ -15,7 +15,7 @@
 // */
 //package com.wl4g.devops.doc.plugin.swagger;
 //
-//import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+//import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 //import static java.lang.String.format;
 //
 //import org.apache.maven.plugin.AbstractMojo;

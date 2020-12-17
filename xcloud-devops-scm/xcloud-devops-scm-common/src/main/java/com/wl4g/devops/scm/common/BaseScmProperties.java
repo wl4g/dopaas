@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.scm.common;
 
-import static com.wl4g.components.common.lang.Assert2.stateOf;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.lang.Assert2.stateOf;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
 

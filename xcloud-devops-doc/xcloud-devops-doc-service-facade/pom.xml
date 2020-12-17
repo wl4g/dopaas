@@ -15,7 +15,6 @@
 		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>
-		<!-- TODO remove dao -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-doc-service-data</artifactId>
@@ -25,6 +24,16 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-common</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-models</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-models</artifactId>
+			<version>2.1.4</version>
 		</dependency>
 	</dependencies>
 	<build>

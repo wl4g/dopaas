@@ -18,7 +18,7 @@ package com.wl4g.devops.doc.plugin.swagger.springfox.swagger2;
 import static springfox.documentation.builders.RequestHandlerSelectors.withClassAnnotation;
 import static springfox.documentation.builders.RequestHandlerSelectors.withMethodAnnotation;
 
-import java.util.List;
+import java.util.Set;
 
 import static java.util.Optional.ofNullable;
 
@@ -79,7 +79,7 @@ public class SpringfoxSwagger2Configuration {
 		 * combination condition. refer to
 		 * {@link springfox.documentation.spring.web.scanners.ApiListingReferenceScanner#scan(DocumentationContext)}
 		 */
-		List<String> resourcePackages = DocumentionHolder.get().getResourcePackages();
+		Set<String> resourcePackages = DocumentionHolder.get().getResourcePackages();
 		Predicate<RequestHandler> allOrPredicate = Predicates.or(resourcePackages.stream()
 				.map(scanPackage -> createRequestHandlerPredicate(scanPackage)).toArray(Predicate[]::new));
 		builder.apis(allOrPredicate);

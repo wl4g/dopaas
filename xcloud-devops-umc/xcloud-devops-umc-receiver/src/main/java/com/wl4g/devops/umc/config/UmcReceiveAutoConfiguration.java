@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.components.core.web.method.PrefixHandlerMappingSupport;
-import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
+import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
+import com.wl4g.component.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
 import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static com.wl4g.devops.umc.config.UmcAlarmAutoConfiguration.*;
-import static com.wl4g.components.core.constants.UMCDevOpsConstants.URI_HTTP_RECEIVER_BASE;
+import static com.wl4g.component.core.constants.UMCDevOpsConstants.URI_HTTP_RECEIVER_BASE;
 import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
 
 /**

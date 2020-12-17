@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.components.core.bean.umc.*;
-import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.component.core.bean.umc.*;
+import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRecordRule;

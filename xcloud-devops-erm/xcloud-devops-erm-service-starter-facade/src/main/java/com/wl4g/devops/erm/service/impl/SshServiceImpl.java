@@ -16,10 +16,10 @@
 package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.bean.model.PageModel;
-import com.wl4g.components.support.cli.DestroableProcessManager;
-import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.support.cli.DestroableProcessManager;
+import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.common.bean.erm.SshBean;
 import com.wl4g.devops.erm.data.HostDao;

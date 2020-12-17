@@ -18,7 +18,7 @@ package com.wl4g.devops.doc.plugin.swagger.export.springfox;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.wl4g.components.common.remoting.RestClient;
+import com.wl4g.component.common.remoting.RestClient;
 import com.wl4g.devops.doc.plugin.swagger.export.AbstractDocumentionExporter;
 
 import java.net.URI;

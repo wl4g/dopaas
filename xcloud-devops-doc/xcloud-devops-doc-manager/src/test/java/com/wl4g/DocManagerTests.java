@@ -34,7 +34,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.components.data.annotation.EnableComponentsData;
+import com.wl4g.component.data.annotation.EnableComponentsData;
 import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
 
 @EnableIamMockAutoConfiguration

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.exception.ci;
 
-import com.wl4g.components.common.web.rest.LockStateException;
+import com.wl4g.component.common.web.rest.LockStateException;
 
 public class DependencyCurrentlyInBuildingException extends CiException implements LockStateException {
 	static final long serialVersionUID = -7034833390745766939L;

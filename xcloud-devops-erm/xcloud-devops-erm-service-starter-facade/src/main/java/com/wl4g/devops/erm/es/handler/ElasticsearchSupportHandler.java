@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.es.handler;
 
-import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.devops.erm.es.EnhancedRestHighLevelClient;
 import com.wl4g.devops.erm.es.listener.Listener;
 

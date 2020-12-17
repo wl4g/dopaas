@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import com.wl4g.components.common.cli.CommandUtils;
-import com.wl4g.components.common.lang.Assert2;
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.log.SmartLoggerFactory;
+import com.wl4g.component.common.cli.CommandUtils;
+import com.wl4g.component.common.lang.Assert2;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLoggerFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang3.StringUtils;

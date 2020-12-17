@@ -25,9 +25,9 @@ import com.google.common.net.HostAndPort;
 
 import javax.validation.constraints.*;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
 

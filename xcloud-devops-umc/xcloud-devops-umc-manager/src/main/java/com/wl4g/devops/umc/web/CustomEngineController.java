@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.components.common.task.QuartzCronUtils;
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.data.page.PageModel;
+import com.wl4g.component.common.task.QuartzCronUtils;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.component.data.page.PageModel;
 import com.wl4g.devops.common.bean.umc.CustomEngine;
 import com.wl4g.devops.common.bean.umc.CustomEngineModel;
 import com.wl4g.devops.umc.service.CustomEngineService;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.notNull;
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**

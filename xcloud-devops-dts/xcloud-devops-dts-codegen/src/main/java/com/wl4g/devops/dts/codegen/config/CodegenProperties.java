@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.dts.codegen.config;
 
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.log.SmartLogger;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.io.File;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipal;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;

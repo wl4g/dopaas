@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.exception.ci;
 
-import com.wl4g.components.common.web.rest.InvalidParametersException;
+import com.wl4g.component.common.web.rest.InvalidParametersException;
 
 public class PipelineIntegrationBuildingException extends CiException implements InvalidParametersException {
 	private static final long serialVersionUID = -7034899390745766939L;

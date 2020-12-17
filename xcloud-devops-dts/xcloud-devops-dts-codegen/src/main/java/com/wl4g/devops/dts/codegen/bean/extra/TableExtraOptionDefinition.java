@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.bean.extra;
 
 import javax.annotation.Nullable;
-import com.wl4g.components.common.bean.ConfigOption;
+import com.wl4g.component.common.bean.ConfigOption;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 
 import static java.util.Arrays.asList;
@@ -29,8 +29,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**

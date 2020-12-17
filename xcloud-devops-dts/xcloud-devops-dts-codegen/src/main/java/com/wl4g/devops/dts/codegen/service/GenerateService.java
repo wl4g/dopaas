@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.dts.codegen.service;
 
-import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.components.core.bean.model.PageModel;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.bean.model.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;

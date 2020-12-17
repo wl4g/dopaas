@@ -35,7 +35,7 @@ import static com.dangdang.ddframe.job.lite.config.LiteJobConfiguration.*;
 import static com.dangdang.ddframe.job.config.JobCoreConfiguration.*;
 
 import com.wl4g.devops.umc.fetch.ServiceIndicatorsMetaFetcher;
-import com.wl4g.components.common.annotation.Reserved;
+import com.wl4g.component.common.annotation.Reserved;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaFetcher;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaInfo;
 import com.wl4g.devops.umc.watch.ServiceIndicatorsStateWatcher;

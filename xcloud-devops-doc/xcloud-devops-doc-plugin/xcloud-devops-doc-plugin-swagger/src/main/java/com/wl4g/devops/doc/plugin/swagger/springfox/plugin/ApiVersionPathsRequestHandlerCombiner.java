@@ -19,20 +19,33 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox.plugin;
 
-import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.components.common.reflect.ReflectionUtils2.findField;
-import static com.wl4g.components.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.component.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.component.common.collection.Collections2.safeArrayToList;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.findField;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.component.common.reflect.ObjectInstantiators.newInstance;
 import static springfox.documentation.RequestHandler.sortedPaths;
 import static springfox.documentation.builders.BuilderDefaults.nullToEmptyList;
 import static springfox.documentation.spi.service.contexts.Orderings.byOperationName;
 import static springfox.documentation.spi.service.contexts.Orderings.byPatternsCondition;
+
+import com.wl4g.component.common.collection.CollectionUtils2;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.web.versions.VersionConditionSupport;
+import com.wl4g.component.core.web.versions.annotation.ApiVersionManagementWrapper;
+import com.wl4g.component.core.web.versions.annotation.ApiVersionMapping;
+import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
+import com.wl4g.component.core.web.versions.annotation.ApiVersionMappingWrapper.ApiVersionWrapper;
+import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
+import com.wl4g.devops.doc.plugin.swagger.util.ScanReflections;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,22 +53,20 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
 
+import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.web.versions.VersionConditionSupport;
-import com.wl4g.components.core.web.versions.annotation.ApiVersionManagementWrapper;
-import com.wl4g.components.core.web.versions.annotation.ApiVersionMapping;
-import com.wl4g.components.core.web.versions.annotation.ApiVersionMappingWrapper.ApiVersionWrapper;
 
 import springfox.documentation.RequestHandler;
 import springfox.documentation.service.ResolvedMethodParameter;
@@ -82,6 +93,15 @@ public class ApiVersionPathsRequestHandlerCombiner implements RequestHandlerComb
 
 	protected final SmartLogger log = getLogger(getClass());
 
+	/**
+	 * Obtain target project spring application annotation of
+	 * {@link EnableApiVersionManagement} metadata properties.
+	 */
+	private ApiVersionManagementWrapper metadataWrapper;
+
+	@Autowired
+	private ConfigurableEnvironment environment;
+
 	@Override
 	public List<RequestHandler> combine(List<RequestHandler> source) {
 		List<RequestHandler> combined = new ArrayList<RequestHandler>();
@@ -92,17 +112,17 @@ public class ApiVersionPathsRequestHandlerCombiner implements RequestHandlerComb
 			String pathKey = sortedPaths(handler.getPatternsCondition());
 
 			// Gets (webflux|webmvc) request mapping info.
-			Object requestMappingInfoObj = getField(findField(handler.getClass(), "requestMapping"), handler, true);
+			Object mappingObj = getField(findField(handler.getClass(), "requestMapping"), handler, true);
 
 			// Find custom condition.
 			VersionConditionSupport customCondition = null;
-			if (requestMappingInfoObj instanceof RequestMappingInfo) { // Webmvc
-				RequestMappingInfo mapping = (RequestMappingInfo) requestMappingInfoObj;
+			if (mappingObj instanceof RequestMappingInfo) { // Webmvc
+				RequestMappingInfo mapping = (RequestMappingInfo) mappingObj;
 				if (mapping.getCustomCondition() instanceof VersionConditionSupport) {
 					customCondition = (VersionConditionSupport) mapping.getCustomCondition();
 				}
-			} else if (requestMappingInfoObj instanceof org.springframework.web.reactive.result.method.RequestMappingInfo) { // Webflux
-				org.springframework.web.reactive.result.method.RequestMappingInfo mapping = (org.springframework.web.reactive.result.method.RequestMappingInfo) requestMappingInfoObj;
+			} else if (mappingObj instanceof org.springframework.web.reactive.result.method.RequestMappingInfo) { // Webflux
+				org.springframework.web.reactive.result.method.RequestMappingInfo mapping = (org.springframework.web.reactive.result.method.RequestMappingInfo) mappingObj;
 				if (mapping.getCustomCondition() instanceof VersionConditionSupport) {
 					customCondition = (VersionConditionSupport) mapping.getCustomCondition();
 				}
@@ -117,18 +137,14 @@ public class ApiVersionPathsRequestHandlerCombiner implements RequestHandlerComb
 				addRequestHandler(byPath, pathKey, handler); // by-default
 			} else {
 				// Each add version info to mapping.
-				ApiVersionManagementWrapper versionConfig = customCondition.getVersionMapping().getVersionConfig();
+				ApiVersionManagementWrapper versionConfig = obtainScanningApiVersionManagementWrapper(customCondition);
 				for (ApiVersionWrapper ver : customCondition.getVersionMapping().getApiVersions()) {
 					if (isEmptyArray(ver.getGroups())) {
-						// pathKey += toApiVersionParamString(versionConfig,
-						// null, ver.getValue());
-						addAllApiVersionRequestHandlers(versionConfig, null, ver.getValue(), byPath, pathKey, handler);
+						addAllRequestHandlersWithApiVersionParams(versionConfig, null, ver.getValue(), byPath, pathKey, handler);
 					} else {
 						for (String versionGroup : ver.getGroups()) {
-							// pathKey += toApiVersionParamString(versionConfig,
-							// versionGroup, ver.getValue());
-							addAllApiVersionRequestHandlers(versionConfig, versionGroup, ver.getValue(), byPath, pathKey,
-									handler);
+							addAllRequestHandlersWithApiVersionParams(versionConfig, versionGroup, ver.getValue(), byPath,
+									pathKey, handler);
 						}
 					}
 				}
@@ -170,8 +186,8 @@ public class ApiVersionPathsRequestHandlerCombiner implements RequestHandlerComb
 	 * @param pathKey
 	 * @param handler
 	 */
-	private void addAllApiVersionRequestHandlers(ApiVersionManagementWrapper versionConfig, String versionGroup, String version,
-			Map<String, List<RequestHandler>> byPath, String pathKey, RequestHandler handler) {
+	private void addAllRequestHandlersWithApiVersionParams(ApiVersionManagementWrapper versionConfig, String versionGroup,
+			String version, Map<String, List<RequestHandler>> byPath, String pathKey, RequestHandler handler) {
 		for (String groupParam : versionConfig.getGroupParams()) {
 			for (String versionParam : versionConfig.getVersionParams()) {
 				addRequestHandler(byPath, pathKey,
@@ -255,6 +271,52 @@ public class ApiVersionPathsRequestHandlerCombiner implements RequestHandlerComb
 			versionInfo = versionInfo.concat("&".concat(groupParam).concat("=").concat(versionGroup));
 		}
 		return versionInfo;
+	}
+
+	/**
+	 * Scanning obtain {@link EnableApiVersionManagement} annotation metadata
+	 * configuration properties. If no obtained by scanning, fackball the
+	 * default properties of {@link EmbeddedSpringfoxBootstrap} is used.
+	 * 
+	 * @param customCondition
+	 * @return
+	 */
+	private ApiVersionManagementWrapper obtainScanningApiVersionManagementWrapper(VersionConditionSupport customCondition) {
+		if (nonNull(metadataWrapper)) {
+			return metadataWrapper;
+		}
+
+		// First, you should scan the annotations of the spring application
+		// startup class that uses the target project.
+		Set<String> resourcePackages = new HashSet<>(DocumentionHolder.get().getResourcePackages());
+		resourcePackages = resourcePackages.stream().map(r -> r.substring(0, r.lastIndexOf("."))).collect(toSet());
+
+		Reflections reflections = ScanReflections.createDefaultResourceReflections(resourcePackages);
+		Set<Class<?>> annos = reflections.getTypesAnnotatedWith(EnableApiVersionManagement.class);
+		if (!CollectionUtils2.isEmpty(annos)) {
+			Class<?> configClass = annos.iterator().next();
+			EnableApiVersionManagement mgt = configClass.getAnnotation(EnableApiVersionManagement.class);
+
+			/**
+			 * [Notes]: If the configuration file for the target project is not
+			 * in the default directory, it is possible that it cannot be loaded
+			 * into the spring environment, and therefore the placeholder cannot
+			 * be resolved.
+			 */
+			String[] versionParams = safeArrayToList(mgt.versionParams()).stream().filter(g -> !isBlank(g))
+					.map(g -> environment.resolvePlaceholders(g)).toArray(String[]::new);
+			String[] groupParams = safeArrayToList(mgt.groupParams()).stream().filter(g -> !isBlank(g))
+					.map(g -> environment.resolvePlaceholders(g)).toArray(String[]::new);
+
+			return (metadataWrapper = new ApiVersionManagementWrapper(mgt.sensitiveParams(), versionParams, groupParams,
+					newInstance(mgt.versionComparator())));
+		}
+
+		/**
+		 * Fallback, use default configuration. refer to
+		 * {@link EmbeddedSpringfoxBootstrap}
+		 */
+		return (metadataWrapper = customCondition.getVersionMapping().getVersionConfig());
 	}
 
 	private Collection<RequestHandler> combined(Collection<RequestHandler> requestHandlers) {

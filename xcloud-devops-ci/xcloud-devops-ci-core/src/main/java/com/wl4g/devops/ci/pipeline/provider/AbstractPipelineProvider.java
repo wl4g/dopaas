@@ -15,16 +15,16 @@
  */
 package com.wl4g.devops.ci.pipeline.provider;
 
-import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
-import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.component.common.codec.CodecSource;
+import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
-import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.support.cli.DestroableProcessManager;
-import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
-import com.wl4g.components.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.support.cli.DestroableProcessManager;
+import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
+import com.wl4g.component.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
@@ -46,13 +46,13 @@ import java.io.File;
 import java.util.List;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.io.FileIOUtils.writeALineFile;
-import static com.wl4g.components.common.io.FileIOUtils.writeBLineFile;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.lang.DateUtils2.getDate;
-import static com.wl4g.components.common.lang.Exceptions.getStackTraceAsString;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.io.FileIOUtils.writeALineFile;
+import static com.wl4g.component.common.io.FileIOUtils.writeBLineFile;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.DateUtils2.getDate;
+import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.common.constant.CiConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constant.CiConstants.LOG_FILE_START;
 import static java.util.stream.Collectors.toList;

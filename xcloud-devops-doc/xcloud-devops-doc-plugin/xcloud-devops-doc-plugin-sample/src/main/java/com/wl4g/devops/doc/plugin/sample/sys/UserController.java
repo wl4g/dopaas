@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.components.core.web.versions.annotation.ApiVersion;
-import com.wl4g.components.core.web.versions.annotation.ApiVersionMapping;
+import com.wl4g.component.core.web.versions.annotation.ApiVersion;
+import com.wl4g.component.core.web.versions.annotation.ApiVersionMapping;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

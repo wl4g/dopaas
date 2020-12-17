@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pcm;
 
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;

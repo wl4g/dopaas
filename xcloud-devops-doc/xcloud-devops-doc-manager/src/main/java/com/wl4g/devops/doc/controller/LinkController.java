@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.doc.controller;
 
-import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.devops.doc.service.ShareService;
 
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

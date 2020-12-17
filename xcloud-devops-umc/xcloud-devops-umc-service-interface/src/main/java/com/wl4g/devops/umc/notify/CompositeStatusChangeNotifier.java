@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.umc.notify;
 
-import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.components.support.notification.GenericNotifyMessage;
-import com.wl4g.components.support.notification.MessageNotifier;
-import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.components.support.notification.mail.MailMessageNotifier;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.support.notification.GenericNotifyMessage;
+import com.wl4g.component.support.notification.MessageNotifier;
+import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.component.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.umc.model.StatusMessage;
 
 import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;

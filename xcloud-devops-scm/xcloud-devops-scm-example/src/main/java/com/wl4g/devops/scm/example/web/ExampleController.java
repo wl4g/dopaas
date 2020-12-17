@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.example.web;
 
-import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.devops.scm.example.service.ExampleService;
 import com.wl4g.iam.bean.User;
 import com.wl4g.iam.dao.UserDao;
