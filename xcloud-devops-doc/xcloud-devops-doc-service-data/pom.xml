@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-data</artifactId>
+			<artifactId>xcloud-component-data</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

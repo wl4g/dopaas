@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-core</artifactId>
+			<artifactId>xcloud-component-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
