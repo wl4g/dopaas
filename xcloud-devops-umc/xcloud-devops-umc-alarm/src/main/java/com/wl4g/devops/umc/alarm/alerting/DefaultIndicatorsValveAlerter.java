@@ -48,7 +48,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.component.core.constants.UMCDevOpsConstants.ALARM_SATUS_SEND;
 import static java.lang.Math.abs;

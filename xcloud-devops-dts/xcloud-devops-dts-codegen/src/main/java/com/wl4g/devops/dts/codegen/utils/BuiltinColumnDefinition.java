@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.utils;
 
-import static com.wl4g.component.common.collection.Collections2.safeArrayToList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeArrayToList;
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
 import static java.util.Arrays.asList;

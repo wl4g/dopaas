@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.wl4g.component.common.lang.TypeConverts.parseIntOrDefault;
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
