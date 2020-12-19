@@ -67,8 +67,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wl4g.component.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.io.FileIOUtils.*;
 import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;

@@ -46,7 +46,7 @@ import java.io.File;
 import java.util.List;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.component.common.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;

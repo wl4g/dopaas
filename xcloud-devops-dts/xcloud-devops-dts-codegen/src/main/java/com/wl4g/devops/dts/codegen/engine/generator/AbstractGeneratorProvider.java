@@ -46,7 +46,7 @@ import static com.google.common.base.Charsets.UTF_8;
 
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_PROJECT_FULLNAME;
 import static com.wl4g.devops.dts.codegen.engine.generator.render.ModelAttributeConstants.GEN_PROJECT_FULLPATH;
-import static com.wl4g.component.common.collection.Collections2.ensureMap;
+import static com.wl4g.component.common.collection.CollectionUtils2.ensureMap;
 import static com.wl4g.component.common.io.FileIOUtils.writeFile;
 import static com.wl4g.component.common.lang.Assert2.*;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
