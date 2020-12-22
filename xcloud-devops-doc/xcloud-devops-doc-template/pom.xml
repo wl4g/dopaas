@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-doc-manager</artifactId>
+	<artifactId>xcloud-devops-doc-template</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSevOps Doc Manager</name>
+	<name>XCloud DevSevOps Doc Template</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -13,19 +13,9 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>doc-manager</final.name>
+		<final.name>doc-template</final.name>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-doc-service-starter-facade</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-doc-template</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>io.swagger.parser.v3</groupId>
 			<artifactId>swagger-parser</artifactId>
@@ -36,15 +26,15 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.boot</groupId> -->
-		<!-- <artifactId>spring-boot-starter-test</artifactId> -->
-		<!-- <scope>test</scope> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-client-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-common</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

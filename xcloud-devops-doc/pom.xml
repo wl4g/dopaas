@@ -15,6 +15,7 @@
 		<module>xcloud-devops-doc-service-facade</module>
 		<module>xcloud-devops-doc-service-starter-facade</module>
 		<module>xcloud-devops-doc-manager</module>
+		<module>xcloud-devops-doc-template</module>
 		<!-- [Optional], if not used -->
 		<module>xcloud-devops-doc-plugin</module>
 	</modules>
