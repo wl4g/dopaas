@@ -15,10 +15,11 @@
  */
 package com.wl4g.devops.common.bean.ci;
 
-import com.wl4g.component.common.collection.Collections2;
 import com.wl4g.component.core.bean.BaseBean;
 
 import org.apache.commons.lang3.math.NumberUtils;
+
+import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class PipeStageNotification extends BaseBean {
 	}
 
 	public void setContactGroupId2(String[] contactGroupId) {
-		if (!Collections2.isEmptyArray(contactGroupId)) {
+		if (!isEmptyArray(contactGroupId)) {
 			List<Long> list = new ArrayList<>();
 			for (int i = 0; i < contactGroupId.length; i++) {
 				if (NumberUtils.isCreatable(contactGroupId[i])) {

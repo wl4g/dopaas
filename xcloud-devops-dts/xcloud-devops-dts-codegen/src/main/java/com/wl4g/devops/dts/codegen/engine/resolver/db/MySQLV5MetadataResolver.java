@@ -26,7 +26,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.lang.Assert2.notEmpty;
 import static com.wl4g.component.common.lang.StringUtils2.eqIgnCase;

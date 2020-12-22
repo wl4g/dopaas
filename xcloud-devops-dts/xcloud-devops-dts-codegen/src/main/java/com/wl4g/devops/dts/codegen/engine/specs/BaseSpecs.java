@@ -39,8 +39,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.component.common.collection.Collections2.disDupCollection;
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.disDupCollection;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.component.common.reflect.ReflectionUtils2.doWithLocalFields;

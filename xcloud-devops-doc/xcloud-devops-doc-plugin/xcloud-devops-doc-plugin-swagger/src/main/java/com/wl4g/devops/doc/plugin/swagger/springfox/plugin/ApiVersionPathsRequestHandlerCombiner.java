@@ -19,8 +19,8 @@
  */
 package com.wl4g.devops.doc.plugin.swagger.springfox.plugin;
 
-import static com.wl4g.component.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.component.common.collection.Collections2.safeArrayToList;
+import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeArrayToList;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.common.reflect.ReflectionUtils2.findField;
 import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
