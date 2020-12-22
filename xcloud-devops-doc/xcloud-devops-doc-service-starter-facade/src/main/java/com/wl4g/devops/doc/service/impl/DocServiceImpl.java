@@ -15,13 +15,12 @@
  */
 package com.wl4g.devops.doc.service.impl;
 
-import com.github.pagehelper.PageHelper;
 import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.lang.DateUtils2;
 import com.wl4g.component.common.lang.TypeConverts;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.DestroableCommand;
 import com.wl4g.component.support.cli.command.LocalDestroableCommand;
@@ -79,8 +78,8 @@ public class DocServiceImpl implements DocService {
 	protected DestroableProcessManager pm;
 
 	@Override
-	public PageModel<FileChanges> list(PageModel<FileChanges> pm, String name, String lang, Long labelId) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<FileChanges> list(PageHolder<FileChanges> pm, String name, String lang, Long labelId) {
+		pm.setCurrentPage();
 		List<FileChanges> list = fileChangesDao.list(name, lang, labelId);
 		pm.setRecords(list);
 		return pm;

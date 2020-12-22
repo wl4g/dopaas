@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPrivateServer;
 import com.wl4g.devops.erm.data.DnsPrivateServerDao;
 import com.wl4g.devops.erm.service.DnsPrivateServerService;
@@ -41,8 +41,8 @@ public class DnsPrivateServerServiceImpl implements DnsPrivateServerService {
 	private DnsPrivateServerDao dnsPrivateServerDao;
 
 	@Override
-	public PageModel<DnsPrivateServer> page(PageModel<DnsPrivateServer> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<DnsPrivateServer> page(PageHolder<DnsPrivateServer> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(dnsPrivateServerDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.ci.ClusterExtension;
 import com.wl4g.devops.common.bean.ci.PipeStageBuilding;
 import com.wl4g.devops.common.bean.ci.PipeStageInstanceCommand;
@@ -36,7 +36,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface PipelineService {
 
-	PageModel<Pipeline> list(PageModel<Pipeline> pm, String pipeName, String providerKind, String environment);
+	PageHolder<Pipeline> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment);
 
 	List<Pipeline> findList(List<String> organizationCodes, Long id, String pipeName, @Param("providerKind") String providerKind,
 			String environment, String clusterName);
@@ -55,7 +55,7 @@ public interface PipelineService {
 
 	List<Pipeline> getForSelect(String environment);
 
-	PageModel<ClusterExtension> clusterExtensionList(PageModel<ClusterExtension> pm, String clusterName);
+	PageHolder<ClusterExtension> clusterExtensionList(PageHolder<ClusterExtension> pm, String clusterName);
 
 	void saveClusterExtension(ClusterExtension clusterExtension);
 

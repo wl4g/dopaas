@@ -18,7 +18,7 @@
 
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
 
 /**
@@ -38,7 +38,7 @@ public interface EnterpriseApiPropertiesService {
      * @param enterpriseApiProperties
      * @return 
      */
-    PageModel<EnterpriseApiProperties> page(PageModel<EnterpriseApiProperties> pm, EnterpriseApiProperties enterpriseApiProperties);
+    PageHolder<EnterpriseApiProperties> page(PageHolder<EnterpriseApiProperties> pm, EnterpriseApiProperties enterpriseApiProperties);
 
     /**
      *  save.

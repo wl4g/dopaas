@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.IdcBean;
 import com.wl4g.devops.erm.data.IdcDao;
 import com.wl4g.devops.erm.service.IdcService;
@@ -43,8 +43,8 @@ public class IdcServiceImpl implements IdcService {
 	private IdcDao idcDao;
 
 	@Override
-	public PageModel<IdcBean> page(PageModel<IdcBean> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<IdcBean> page(PageHolder<IdcBean> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(idcDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

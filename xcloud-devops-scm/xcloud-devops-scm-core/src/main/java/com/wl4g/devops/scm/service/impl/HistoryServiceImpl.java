@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.erm.AppCluster;
 import com.wl4g.component.core.bean.erm.AppInstance;
 import com.wl4g.devops.scm.bean.*;
@@ -24,7 +24,7 @@ import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigMeta;
 import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigNode;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.page.PageHolder;
 import com.wl4g.devops.scm.dao.ConfigurationDao;
 import com.wl4g.devops.scm.dao.HistoryDao;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
@@ -97,8 +97,8 @@ public class HistoryServiceImpl implements HistoryService {
 		return historyDao.list(agl);
 	}
 
-	public PageModel<?> versionList(PageModel<?> pm,Map<String, Object> param) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<?> versionList(PageHolder<?> pm,Map<String, Object> param) {
+		pm.setCurrentContextPage();
 		pm.setRecords(historyDao.versionList(param));
 		return pm;
 	}

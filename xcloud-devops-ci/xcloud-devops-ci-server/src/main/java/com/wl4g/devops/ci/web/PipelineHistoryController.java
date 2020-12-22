@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.web;
 import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.pipeline.flow.FlowManager;
@@ -64,10 +64,10 @@ public class PipelineHistoryController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
-	public RespBase<?> list(PageModel<PipelineHistory> pm, String pipeName, String clusterName, String environment,
+	public RespBase<?> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName, String environment,
 			String startDate, String endDate, String providerKind) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel<?> list = pipelineHistoryService.list(pm, pipeName, clusterName, environment, startDate, endDate, providerKind);
+		PageHolder<?> list = pipelineHistoryService.list(pm, pipeName, clusterName, environment, startDate, endDate, providerKind);
 		resp.setData(list);
 		return resp;
 	}

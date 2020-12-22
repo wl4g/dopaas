@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.HostNetcard;
 import com.wl4g.devops.erm.service.HostNetcardService;
 
@@ -44,7 +44,7 @@ public class HostNetcardController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:netcard" }, logical = AND)
-	public RespBase<?> list(PageModel<HostNetcard> pm, Long hostId, String name) {
+	public RespBase<?> list(PageHolder<HostNetcard> pm, Long hostId, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostNetcardService.page(pm, hostId, name));
 		return resp;

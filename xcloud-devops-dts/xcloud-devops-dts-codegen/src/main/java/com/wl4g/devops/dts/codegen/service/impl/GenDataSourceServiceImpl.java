@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.dts.codegen.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.log.SmartLoggerFactory;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
@@ -55,8 +55,8 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 	private GenDataSourceDao genDSDao;
 
 	@Override
-	public PageModel<GenDataSource> page(PageModel<GenDataSource> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<GenDataSource> page(PageHolder<GenDataSource> pm, String name) {
+		pm.setCurrentPage();
 		// desensitization
 		pm.setRecords(safeList(genDSDao.list(name)).stream().map(ds -> ds.withPassword("******")).collect(toList()));
 		return pm;

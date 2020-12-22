@@ -15,10 +15,8 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
@@ -33,7 +31,6 @@ import com.wl4g.iam.service.DictService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -44,7 +41,6 @@ import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizati
 import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 @Service
-@Transactional
 public class AppClusterServiceImpl implements AppClusterService {
 
 	@Autowired
@@ -60,15 +56,17 @@ public class AppClusterServiceImpl implements AppClusterService {
 	private DictService dictService;
 
 	@Override
-	public Map<String, Object> list(PageModel<?> pm, String clusterName, Integer deployType) {
+	public Map<String, Object> list(PageHolder<?> pm, String clusterName, Integer deployType) {
 		Map<String, Object> data = new HashMap<>();
-		Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
+		pm.setCurrentPage();
+		// Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(),
+		// pm.getPageSize(), true);
 		List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(), clusterName, deployType);
 		for (AppCluster appCluster : list) {
 			Long count = appInstanceDao.countByClusterId(appCluster.getId());
 			appCluster.setInstanceCount(count);
 		}
-		pm.setTotal(page.getTotal());
+		pm.setTotal(PageHolder.getCurrentPage().getTotal());
 		data.put("page", pm);
 		data.put("list", list);
 		return data;

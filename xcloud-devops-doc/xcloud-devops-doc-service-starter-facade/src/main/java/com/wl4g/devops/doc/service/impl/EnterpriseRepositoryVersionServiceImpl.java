@@ -18,9 +18,9 @@
 
 package com.wl4g.devops.doc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
 import com.wl4g.devops.doc.data.EnterpriseRepositoryVersionDao;
 import com.wl4g.devops.doc.service.EnterpriseRepositoryVersionService;
@@ -47,8 +47,8 @@ public class EnterpriseRepositoryVersionServiceImpl implements EnterpriseReposit
     private EnterpriseRepositoryVersionDao enterpriseRepositoryVersionDao;
 
     @Override
-    public PageModel<EnterpriseRepositoryVersion> page(PageModel<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+    public PageHolder<EnterpriseRepositoryVersion> page(PageHolder<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
+        pm.setCurrentPage();
         pm.setRecords(enterpriseRepositoryVersionDao.list(enterpriseRepositoryVersion));
         return pm;
     }

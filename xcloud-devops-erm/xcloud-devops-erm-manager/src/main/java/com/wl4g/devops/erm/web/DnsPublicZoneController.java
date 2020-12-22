@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPublicZone;
 import com.wl4g.devops.erm.service.DnsPublicZoneService;
 
@@ -38,7 +38,7 @@ public class DnsPublicZoneController extends BaseController {
 	private DnsPublicZoneService dnsPublicDomainService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel<DnsPublicZone> pm, String zone) {
+	public RespBase<?> list(PageHolder<DnsPublicZone> pm, String zone) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPublicDomainService.page(pm, zone));
 		return resp;

@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist;
 import com.wl4g.devops.erm.service.DnsPrivateBlacklistService;
 
@@ -40,7 +40,7 @@ public class DnsPrivateBlacklistController extends BaseController {
 	private DnsPrivateBlacklistService dnsPrivateBlacklistService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel<DnsPrivateBlacklist> pm, String name) {
+	public RespBase<?> list(PageHolder<DnsPrivateBlacklist> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPrivateBlacklistService.page(pm, name));
 		return resp;

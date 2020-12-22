@@ -19,7 +19,7 @@ import com.wl4g.component.common.cli.ssh2.JschHolder;
 import com.wl4g.component.common.cli.ssh2.SSH2Holders;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.erm.service.AppInstanceService;
 
@@ -48,7 +48,7 @@ public class AppInstanceController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:instance" }, logical = AND)
-	public RespBase<?> list(PageModel<AppInstance> pm, String name, Long clusterId, String envType, Integer deployType) {
+	public RespBase<?> list(PageHolder<AppInstance> pm, String name, Long clusterId, String envType, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(appInstanceService.list(pm, name, clusterId, envType, deployType));
 		return resp;

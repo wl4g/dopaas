@@ -19,7 +19,7 @@
 package com.wl4g.devops.doc.service;
 
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public interface EnterpriseApiModuleService {
      * @param enterpriseApiModule
      * @return 
      */
-    PageModel<EnterpriseApiModule> page(PageModel<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule);
+    PageHolder<EnterpriseApiModule> page(PageHolder<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule);
 
 
     List<EnterpriseApiModule> getByVersionIdAndParentId(Long versionId, Long parentId);

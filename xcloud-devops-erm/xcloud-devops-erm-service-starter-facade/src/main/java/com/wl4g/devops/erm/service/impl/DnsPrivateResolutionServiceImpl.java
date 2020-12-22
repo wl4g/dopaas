@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.erm.data.DnsPrivateResolutionDao;
 import com.wl4g.devops.erm.data.DnsPrivateZoneDao;
 import com.wl4g.devops.erm.handler.DnsZoneHandler;
@@ -53,8 +53,8 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
 	private DnsPrivateZoneDao dnsPrivateZoneDao;
 
 	@Override
-	public PageModel<DnsPrivateResolution> page(PageModel<DnsPrivateResolution> pm, String host, Long domainId) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<DnsPrivateResolution> page(PageHolder<DnsPrivateResolution> pm, String host, Long domainId) {
+		pm.setCurrentPage();
 		pm.setRecords(privateResolutionDao.list(getRequestOrganizationCodes(), host, domainId));
 		return pm;
 	}

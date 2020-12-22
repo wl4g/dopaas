@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.service;
 
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomHistory;
 
 /**
@@ -24,7 +24,7 @@ import com.wl4g.devops.common.bean.umc.CustomHistory;
  */
 public interface CustomHistoryService {
 
-	PageModel<CustomHistory> list(PageModel<CustomHistory> pm, String name);
+	PageHolder<CustomHistory> list(PageHolder<CustomHistory> pm, String name);
 
 	CustomHistory detal(Long id);
 

@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.erm.service.AppClusterService;
@@ -48,7 +48,7 @@ public class AppClusterController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:cluster" })
-	public RespBase<?> list(PageModel<?> pm, String clusterName, Integer deployType) {
+	public RespBase<?> list(PageHolder<?> pm, String clusterName, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = appClusterService.list(pm, clusterName, deployType);
 		resp.setData(result);

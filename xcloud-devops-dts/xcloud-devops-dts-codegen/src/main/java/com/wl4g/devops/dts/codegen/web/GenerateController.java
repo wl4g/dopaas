@@ -18,7 +18,7 @@ package com.wl4g.devops.dts.codegen.web;
 import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition;
@@ -71,8 +71,8 @@ public class GenerateController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
-	public RespBase<PageModel<GenTable>> page(PageModel<GenTable> pm, String tableName, Long projectId) {
-		RespBase<PageModel<GenTable>> resp = RespBase.create();
+	public RespBase<PageHolder<GenTable>> page(PageHolder<GenTable> pm, String tableName, Long projectId) {
+		RespBase<PageHolder<GenTable>> resp = RespBase.create();
 		resp.setData(genService.page(pm, tableName, projectId));
 		return resp;
 	}

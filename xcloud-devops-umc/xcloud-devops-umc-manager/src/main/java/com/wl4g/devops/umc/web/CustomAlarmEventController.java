@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
 import com.wl4g.devops.umc.service.CustomAlarmEventService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -42,7 +42,7 @@ public class CustomAlarmEventController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:alarm:event" }, logical = AND)
-	public RespBase<?> list(String name, PageModel<CustomAlarmEvent> pm) {
+	public RespBase<?> list(String name, PageHolder<CustomAlarmEvent> pm) {
 		RespBase<Object> resp = RespBase.create();
 		return resp.withData(customAlarmEventService.list(pm, name));
 	}

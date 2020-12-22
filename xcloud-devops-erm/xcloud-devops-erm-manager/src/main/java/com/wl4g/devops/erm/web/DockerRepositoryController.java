@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DockerRepository;
 import com.wl4g.devops.erm.service.DockerRepositoryService;
 
@@ -48,7 +48,7 @@ public class DockerRepositoryController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:dockerrepository" }, logical = AND)
-	public RespBase<?> list(PageModel<DockerRepository> pm, String name) {
+	public RespBase<?> list(PageHolder<DockerRepository> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerRepositoryService.page(pm, name));
 		return resp;

@@ -16,7 +16,7 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.Share;
 
 /**
@@ -25,7 +25,7 @@ import com.wl4g.devops.common.bean.doc.Share;
  */
 public interface ShareService {
 
-	PageModel<Share> list(PageModel<Share> pm);
+	PageHolder<Share> list(PageHolder<Share> pm);
 
 	void cancelShare(Long id);
 

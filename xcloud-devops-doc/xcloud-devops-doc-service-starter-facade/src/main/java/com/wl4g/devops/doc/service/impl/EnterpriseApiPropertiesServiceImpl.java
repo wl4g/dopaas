@@ -19,8 +19,8 @@
 package com.wl4g.devops.doc.service.impl;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import com.wl4g.component.core.bean.model.PageModel;
-import com.github.pagehelper.PageHelper;
+import com.wl4g.component.core.bean.model.PageHolder;
+
 import com.wl4g.component.core.bean.BaseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,8 +46,8 @@ public class EnterpriseApiPropertiesServiceImpl implements EnterpriseApiProperti
     private EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
 
     @Override
-    public PageModel<EnterpriseApiProperties> page(PageModel<EnterpriseApiProperties> pm, EnterpriseApiProperties enterpriseApiProperties) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+    public PageHolder<EnterpriseApiProperties> page(PageHolder<EnterpriseApiProperties> pm, EnterpriseApiProperties enterpriseApiProperties) {
+        pm.setCurrentPage();
         pm.setRecords(enterpriseApiPropertiesDao.list(enterpriseApiProperties));
         return pm;
     }

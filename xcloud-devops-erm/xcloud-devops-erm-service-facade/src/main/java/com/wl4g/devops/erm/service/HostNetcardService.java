@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.HostNetcard;
 
 import java.util.Map;
@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public interface HostNetcardService {
 
-	PageModel<HostNetcard> page(PageModel<HostNetcard> pm, Long hostId, String name);
+	PageHolder<HostNetcard> page(PageHolder<HostNetcard> pm, Long hostId, String name);
 
 	void save(HostNetcard hostNetcard);
 

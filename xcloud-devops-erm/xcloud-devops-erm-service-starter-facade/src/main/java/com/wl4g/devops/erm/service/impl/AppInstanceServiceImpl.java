@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.wl4g.component.core.bean.model.PageModel;
+
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.common.bean.erm.AppInstance;
@@ -55,9 +55,9 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 	private DestroableProcessManager pm;
 
 	@Override
-	public PageModel<AppInstance> list(PageModel<AppInstance> pm, String name, Long instanceId, String envType,
+	public PageHolder<AppInstance> list(PageHolder<AppInstance> pm, String name, Long instanceId, String envType,
 			Integer deployType) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setCurrentPage();
 		pm.setRecords(appInstanceDao.list(getRequestOrganizationCodes(), name, instanceId, envType, deployType));
 		return pm;
 	}

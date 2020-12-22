@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.IdcBean;
 
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface IdcService {
 
-	PageModel<IdcBean> page(PageModel<IdcBean> pm, String name);
+	PageHolder<IdcBean> page(PageHolder<IdcBean> pm, String name);
 
 	List<IdcBean> getForSelect();
 

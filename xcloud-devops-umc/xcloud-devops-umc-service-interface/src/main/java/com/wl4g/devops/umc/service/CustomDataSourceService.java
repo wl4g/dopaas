@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.service;
 
 import com.wl4g.component.core.bean.umc.datasouces.BaseDataSource;
 import com.wl4g.component.core.bean.umc.model.DataSourceProvide;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomDataSource;
 import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
 
@@ -29,7 +29,7 @@ import java.util.List;
  */
 public interface CustomDataSourceService {
 
-	PageModel<CustomDataSource> list(PageModel<CustomDataSource> pm, String name);
+	PageHolder<CustomDataSource> list(PageHolder<CustomDataSource> pm, String name);
 
 	BaseDataSource detal(Long id);
 

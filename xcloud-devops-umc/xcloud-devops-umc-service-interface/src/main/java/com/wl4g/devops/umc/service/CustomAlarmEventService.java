@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.service;
 
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
 
 /**
@@ -24,7 +24,7 @@ import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
  */
 public interface CustomAlarmEventService {
 
-	PageModel<CustomAlarmEvent> list(PageModel<CustomAlarmEvent> pm, String name);
+	PageHolder<CustomAlarmEvent> list(PageHolder<CustomAlarmEvent> pm, String name);
 
 	CustomAlarmEvent detal(Long id);
 

@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomEngine;
 import com.wl4g.devops.dao.umc.CustomEngineDao;
 import com.wl4g.devops.umc.service.CustomEngineService;
@@ -39,8 +39,8 @@ public class CustomEngineServiceImpl implements CustomEngineService {
 	private EngineTaskScheduler engineTaskScheduler;
 
 	@Override
-	public PageModel<CustomEngine> list(PageModel<CustomEngine> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<CustomEngine> list(PageHolder<CustomEngine> pm, String name) {
+		pm.setCurrentContextPage();
 		pm.setRecords(customEngineDao.list(name));
 		return pm;
 	}

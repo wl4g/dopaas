@@ -18,7 +18,7 @@
 
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public interface EnterpriseRepositoryVersionService {
      * @param enterpriseRepositoryVersion
      * @return 
      */
-    PageModel<EnterpriseRepositoryVersion> page(PageModel<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion);
+    PageHolder<EnterpriseRepositoryVersion> page(PageHolder<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion);
 
     List<EnterpriseRepositoryVersion> getVersionsByRepositoryId(Long repositoryId);
     /**

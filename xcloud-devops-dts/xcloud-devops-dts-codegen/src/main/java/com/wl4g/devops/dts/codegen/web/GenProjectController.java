@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition;
 import com.wl4g.devops.dts.codegen.engine.GenProviderSetDefinition;
@@ -47,8 +47,8 @@ public class GenProjectController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "dts:codegen:project" }, logical = AND)
-	public RespBase<PageModel<GenProject>> list(PageModel<GenProject> pm, String projectName) {
-		RespBase<PageModel<GenProject>> resp = RespBase.create();
+	public RespBase<PageHolder<GenProject>> list(PageHolder<GenProject> pm, String projectName) {
+		RespBase<PageHolder<GenProject>> resp = RespBase.create();
 		resp.setData(genProjectService.page(pm, projectName));
 		return resp;
 	}

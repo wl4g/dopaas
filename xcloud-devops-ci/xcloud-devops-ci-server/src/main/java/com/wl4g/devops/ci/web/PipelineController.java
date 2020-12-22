@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.web;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.pipeline.flow.FlowManager;
@@ -73,9 +73,9 @@ public class PipelineController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
-	public RespBase<?> list(PageModel<Pipeline> pm, String pipeName, String providerKind, String environment) {
+	public RespBase<?> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel<?> list = pipelineService.list(pm, pipeName, providerKind, environment);
+		PageHolder<?> list = pipelineService.list(pm, pipeName, providerKind, environment);
 		resp.setData(list);
 		return resp;
 	}
@@ -181,7 +181,7 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/clusterExtensionList")
-	public RespBase<?> clusterExtensionList(PageModel<ClusterExtension> pm, String clusterName) {
+	public RespBase<?> clusterExtensionList(PageHolder<ClusterExtension> pm, String clusterName) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(pipelineService.clusterExtensionList(pm, clusterName));
 		return resp;

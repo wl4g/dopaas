@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist;
 
 /**
@@ -23,7 +23,7 @@ import com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist;
  */
 public interface DnsPrivateBlacklistService {
 
-	PageModel<DnsPrivateBlacklist> page(PageModel<DnsPrivateBlacklist> pm, String expression);
+	PageHolder<DnsPrivateBlacklist> page(PageHolder<DnsPrivateBlacklist> pm, String expression);
 
 	void save(DnsPrivateBlacklist dnsPrivateBlacklist);
 

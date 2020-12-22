@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.service;
 
 import java.util.List;
 
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 
 /**
@@ -26,7 +26,7 @@ import com.wl4g.devops.common.bean.umc.AlarmTemplate;
  */
 public interface TemplateService {
 
-	PageModel<AlarmTemplate> list(PageModel<AlarmTemplate> pm, String name, Long metricId, String classify);
+	PageHolder<AlarmTemplate> list(PageHolder<AlarmTemplate> pm, String name, Long metricId, String classify);
 
 	List<AlarmTemplate> getByClassify(String classify);
 

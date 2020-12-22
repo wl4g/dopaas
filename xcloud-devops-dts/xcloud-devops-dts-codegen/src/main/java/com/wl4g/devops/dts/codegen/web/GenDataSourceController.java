@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.service.GenDataSourceService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -46,8 +46,8 @@ public class GenDataSourceController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "dts:codegen:database" }, logical = AND)
-	public RespBase<PageModel<GenDataSource>> list(PageModel<GenDataSource> pm, String name) {
-		RespBase<PageModel<GenDataSource>> resp = RespBase.create();
+	public RespBase<PageHolder<GenDataSource>> list(PageHolder<GenDataSource> pm, String name) {
+		RespBase<PageHolder<GenDataSource>> resp = RespBase.create();
 		resp.setData(genDSService.page(pm, name));
 		return resp;
 	}

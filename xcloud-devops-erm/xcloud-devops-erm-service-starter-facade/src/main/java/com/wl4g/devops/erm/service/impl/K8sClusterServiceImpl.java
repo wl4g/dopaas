@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.K8sCluster;
 import com.wl4g.devops.common.bean.erm.K8sInstance;
 import com.wl4g.devops.erm.data.K8sClusterDao;
@@ -50,8 +50,8 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 	private K8sInstanceDao k8sInstanceDao;
 
 	@Override
-	public PageModel<K8sCluster> page(PageModel<K8sCluster> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<K8sCluster> page(PageHolder<K8sCluster> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(k8sClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

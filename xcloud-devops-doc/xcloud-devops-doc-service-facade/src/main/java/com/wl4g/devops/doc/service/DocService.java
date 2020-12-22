@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.FileChanges;
 import com.wl4g.devops.common.bean.doc.Share;
 
@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public interface DocService {
 
-	PageModel<FileChanges> list(PageModel<FileChanges> pm, String name, String lang, Long labelId);
+	PageHolder<FileChanges> list(PageHolder<FileChanges> pm, String name, String lang, Long labelId);
 
 	void save(FileChanges fileChanges);
 

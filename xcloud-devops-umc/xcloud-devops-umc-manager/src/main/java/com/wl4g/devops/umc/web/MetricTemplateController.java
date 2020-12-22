@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 import com.wl4g.devops.umc.service.MetricTemplateService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -42,7 +42,7 @@ public class MetricTemplateController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:metrictemplate" })
-	public RespBase<?> list(String metric, String classify, PageModel<MetricTemplate> pm) {
+	public RespBase<?> list(String metric, String classify, PageHolder<MetricTemplate> pm) {
 		RespBase<Object> resp = RespBase.create();
 		return resp.withData(metricTemplateService.list(pm, metric, classify));
 	}

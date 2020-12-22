@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.lang.DateUtils2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.data.TriggerDao;
 import com.wl4g.devops.ci.pipeline.TimingPipelineManager;
 import com.wl4g.devops.ci.service.TriggerService;
@@ -50,13 +50,13 @@ public class TriggerServiceImpl implements TriggerService {
 	private TimingPipelineManager timingManager;
 
 	@Override
-	public PageModel<Trigger> list(PageModel<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,
+	public PageHolder<Trigger> list(PageHolder<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,
 			String endDate) {
 		String endDateStr = null;
 		if (isNotBlank(endDate)) {
 			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
 		}
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setCurrentPage();
 		pm.setRecords(triggerDao.list(getRequestOrganizationCodes(), id, name, taskId, enable, startDate, endDateStr));
 		return pm;
 	}

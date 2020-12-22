@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DockerRepository;
 import com.wl4g.devops.common.bean.erm.model.RepositoryProject;
 import com.wl4g.devops.erm.data.DockerRepositoryDao;
@@ -66,8 +66,8 @@ public class DockerRepositoryServiceImpl implements DockerRepositoryService {
 	private DockerRepositoryDao dockerRepositoryDao;
 
 	@Override
-	public PageModel<DockerRepository> page(PageModel<DockerRepository> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<DockerRepository> page(PageHolder<DockerRepository> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(dockerRepositoryDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

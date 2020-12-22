@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DockerCluster;
 
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface DockerClusterService {
 
-	PageModel<DockerCluster> page(PageModel<DockerCluster> pm, String name);
+	PageHolder<DockerCluster> page(PageHolder<DockerCluster> pm, String name);
 
 	List<DockerCluster> getForSelect();
 

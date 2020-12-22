@@ -18,9 +18,9 @@
 
 package com.wl4g.devops.doc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
 import com.wl4g.devops.doc.data.EnterpriseRepositoryDao;
 import com.wl4g.devops.doc.data.EnterpriseRepositoryGroupDao;
@@ -51,8 +51,8 @@ public class EnterpriseRepositoryGroupServiceImpl implements EnterpriseRepositor
     private EnterpriseRepositoryDao enterpriseRepositoryDao;
 
     @Override
-    public PageModel<EnterpriseRepositoryGroup> page(PageModel<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+    public PageHolder<EnterpriseRepositoryGroup> page(PageHolder<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
+        pm.setCurrentPage();
         List<EnterpriseRepositoryGroup> list = enterpriseRepositoryGroupDao.list(enterpriseRepositoryGroup);
         for (EnterpriseRepositoryGroup group : list) {
             group.setEnterpriseRepositories(enterpriseRepositoryDao.selectByGroupId(group.getId()));

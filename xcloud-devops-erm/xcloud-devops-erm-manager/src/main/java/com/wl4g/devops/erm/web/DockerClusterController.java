@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DockerCluster;
 import com.wl4g.devops.erm.service.DockerClusterService;
 
@@ -44,7 +44,7 @@ public class DockerClusterController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:dockercluster" }, logical = AND)
-	public RespBase<?> list(PageModel<DockerCluster> pm, String name) {
+	public RespBase<?> list(PageHolder<DockerCluster> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerClusterService.page(pm, name));
 		return resp;

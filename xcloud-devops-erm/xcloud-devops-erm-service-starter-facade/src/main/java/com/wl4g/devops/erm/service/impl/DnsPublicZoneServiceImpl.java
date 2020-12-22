@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.wl4g.component.core.bean.model.PageModel;
+
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPublicZone;
 import com.wl4g.devops.erm.data.DnsPublicZoneDao;
 import com.wl4g.devops.erm.service.DnsPublicZoneService;
@@ -40,8 +40,8 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 	private DnsPublicZoneDao publicZoneDao;
 
 	@Override
-	public PageModel<DnsPublicZone> page(PageModel<DnsPublicZone> pm, String zone) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<DnsPublicZone> page(PageHolder<DnsPublicZone> pm, String zone) {
+		pm.setCurrentPage();
 		pm.setRecords(publicZoneDao.list(getRequestOrganizationCodes(), zone));
 		return pm;
 	}

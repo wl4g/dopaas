@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.service;
 
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomEngine;
 
 /**
@@ -24,7 +24,7 @@ import com.wl4g.devops.common.bean.umc.CustomEngine;
  */
 public interface CustomEngineService {
 
-	PageModel<CustomEngine> list(PageModel<CustomEngine> pm, String name);
+	PageHolder<CustomEngine> list(PageHolder<CustomEngine> pm, String name);
 
 	CustomEngine detal(Long id);
 

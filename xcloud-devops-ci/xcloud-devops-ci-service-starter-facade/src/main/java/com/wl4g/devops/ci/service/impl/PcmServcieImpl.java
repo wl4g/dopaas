@@ -16,11 +16,11 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.bean.model.SelectionModel;
 import com.wl4g.devops.ci.data.PcmDao;
 import com.wl4g.devops.ci.pcm.PcmOperator;
@@ -53,8 +53,8 @@ public class PcmServcieImpl implements PcmService {
 	private GenericOperatorAdapter<PcmKind, PcmOperator> pcmOperator;
 
 	@Override
-	public PageModel<Pcm> list(PageModel<Pcm> pm, String name, String providerKind, Integer authType) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<Pcm> list(PageHolder<Pcm> pm, String name, String providerKind, Integer authType) {
+		pm.setCurrentPage();
 		pm.setRecords(pcmDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;
 	}
