@@ -34,7 +34,7 @@ import com.wl4g.devops.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseContent;
 
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.lang.ThreadUtils2.sleep;

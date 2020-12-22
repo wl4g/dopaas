@@ -35,7 +35,7 @@ import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.Gen
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.IAM_VUEJS;
 import static com.wl4g.devops.dts.codegen.engine.generator.GeneratorProvider.GenProviderAlias.NGJS;
 import static com.wl4g.component.common.collection.CollectionUtils2.isEmpty;
-import static com.wl4g.component.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
 import static com.wl4g.component.common.lang.Assert2.*;
 
 /**

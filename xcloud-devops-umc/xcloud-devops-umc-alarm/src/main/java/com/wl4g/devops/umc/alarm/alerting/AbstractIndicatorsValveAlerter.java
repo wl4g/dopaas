@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.component.common.collection.Collections2.ensureList;
+import static com.wl4g.component.common.collection.CollectionUtils2.ensureList;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
 import static java.lang.Math.abs;

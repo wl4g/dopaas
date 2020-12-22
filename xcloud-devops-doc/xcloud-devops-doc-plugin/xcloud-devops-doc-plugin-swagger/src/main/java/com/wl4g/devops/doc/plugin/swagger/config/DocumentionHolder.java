@@ -17,7 +17,7 @@ package com.wl4g.devops.doc.plugin.swagger.config;
 
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static com.wl4g.component.common.collection.Collections2.safeSet;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeSet;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.lang.StringUtils2.trimAllWhitespace;
 import static com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder.DocumentionProvider.*;

@@ -58,7 +58,7 @@ import java.util.Set;
 
 import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.common.lang.Assert2.*;
 import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;

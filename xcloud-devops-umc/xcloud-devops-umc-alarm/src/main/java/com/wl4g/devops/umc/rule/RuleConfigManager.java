@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static com.wl4g.component.common.collection.Collections2.safeList;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
 import static org.springframework.util.CollectionUtils.isEmpty;
 

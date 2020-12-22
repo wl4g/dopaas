@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.collection.Collections2.safeSet;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeSet;
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
