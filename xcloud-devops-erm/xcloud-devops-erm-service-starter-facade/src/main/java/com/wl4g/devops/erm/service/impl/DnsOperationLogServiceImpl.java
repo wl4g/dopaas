@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsOperationLog;
 import com.wl4g.devops.erm.data.DnsOperationLogDao;
 import com.wl4g.devops.erm.service.DnsOperationLogService;
@@ -41,8 +41,8 @@ public class DnsOperationLogServiceImpl implements DnsOperationLogService {
 	private DnsOperationLogDao dnsOperationLogDao;
 
 	@Override
-	public PageModel<DnsOperationLog> page(PageModel<DnsOperationLog> pm, String domain) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<DnsOperationLog> page(PageHolder<DnsOperationLog> pm, String domain) {
+		pm.setCurrentPage();
 		pm.setRecords(dnsOperationLogDao.list(getRequestOrganizationCodes(), domain));
 		return pm;
 	}

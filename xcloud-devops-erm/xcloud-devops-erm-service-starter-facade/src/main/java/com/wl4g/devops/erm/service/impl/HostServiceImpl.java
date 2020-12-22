@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.google.common.base.Charsets;
 import com.wl4g.component.common.cli.ssh2.JschHolder;
 import com.wl4g.component.common.cli.ssh2.SSH2Holders;
@@ -23,7 +23,7 @@ import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.common.bean.erm.Host;
@@ -94,8 +94,8 @@ public class HostServiceImpl implements HostService {
 	}
 
 	@Override
-	public PageModel<Host> page(PageModel<Host> pm, String name, String hostname, Long idcId) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<Host> page(PageHolder<Host> pm, String name, String hostname, Long idcId) {
+		pm.setCurrentPage();
 		pm.setRecords(appHostDao.list(getRequestOrganizationCodes(), name, hostname, idcId));
 		return pm;
 	}

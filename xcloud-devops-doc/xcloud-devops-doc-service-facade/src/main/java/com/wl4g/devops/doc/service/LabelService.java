@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.Label;
 
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface LabelService {
 
-	PageModel<Label> list(PageModel<Label> pm, String name);
+	PageHolder<Label> list(PageHolder<Label> pm, String name);
 
 	void save(Label label);
 

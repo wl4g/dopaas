@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist;
 import com.wl4g.devops.erm.data.DnsPrivateBlacklistDao;
 import com.wl4g.devops.erm.handler.DnsZoneHandler;
@@ -53,8 +53,8 @@ public class DnsPrivateBlacklistServiceImpl implements DnsPrivateBlacklistServic
 	private DnsZoneHandler dnsServerInterface;
 
 	@Override
-	public PageModel<DnsPrivateBlacklist> page(PageModel<DnsPrivateBlacklist> pm, String expression) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<DnsPrivateBlacklist> page(PageHolder<DnsPrivateBlacklist> pm, String expression) {
+		pm.setCurrentPage();
 		pm.setRecords(dnsPrivateBlacklistDao.list(expression));
 		return pm;
 	}

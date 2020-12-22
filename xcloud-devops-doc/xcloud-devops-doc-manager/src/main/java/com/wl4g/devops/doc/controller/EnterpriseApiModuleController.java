@@ -19,7 +19,7 @@ package com.wl4g.devops.doc.controller;
 
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
 import com.wl4g.devops.doc.service.EnterpriseApiModuleService;
@@ -49,8 +49,8 @@ public class EnterpriseApiModuleController extends BaseController {
     private EnterpriseApiModuleService enterpriseApiModuleService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageModel<EnterpriseApiModule>> list(PageModel<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule) {
-        RespBase<PageModel<EnterpriseApiModule>> resp = RespBase.create();
+    public RespBase<PageHolder<EnterpriseApiModule>> list(PageHolder<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule) {
+        RespBase<PageHolder<EnterpriseApiModule>> resp = RespBase.create();
         resp.setData(enterpriseApiModuleService.page(pm, enterpriseApiModule));
         return resp;
     }

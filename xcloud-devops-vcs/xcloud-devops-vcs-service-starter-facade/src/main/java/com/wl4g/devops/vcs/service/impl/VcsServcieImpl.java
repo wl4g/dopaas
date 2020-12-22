@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.vcs.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.config.VcsProperties;
@@ -62,8 +62,8 @@ public class VcsServcieImpl implements VcsService {
 	private VcsProperties vcsProperties;
 
 	@Override
-	public PageModel<Vcs> list(PageModel<Vcs> pm, String name, String providerKind, Integer authType) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<Vcs> list(PageHolder<Vcs> pm, String name, String providerKind, Integer authType) {
+		pm.setCurrentPage();
 		pm.setRecords(vcsDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;
 	}
@@ -123,7 +123,7 @@ public class VcsServcieImpl implements VcsService {
 		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
 	}
 
-	public List<VcsProjectModel> getProjects(PageModel<?> pm, Long vcsId, Long groupId, String projectName) throws Exception {
+	public List<VcsProjectModel> getProjects(PageHolder<?> pm, Long vcsId, Long groupId, String projectName) throws Exception {
 		notNullOf(vcsId, "vcsId");
 		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);

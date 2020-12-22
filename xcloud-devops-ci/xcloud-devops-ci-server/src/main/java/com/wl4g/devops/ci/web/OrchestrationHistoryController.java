@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.service.OrchestrationHistoryService;
 import com.wl4g.devops.common.bean.ci.OrchestrationHistory;
 
@@ -53,7 +53,7 @@ public class OrchestrationHistoryController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci:orchestrationhistory" }, logical = AND)
-	public RespBase<?> list(PageModel<OrchestrationHistory> pm, String runId) {
+	public RespBase<?> list(PageHolder<OrchestrationHistory> pm, String runId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(orchestrationHistoryService.list(pm, runId));
 		return resp;

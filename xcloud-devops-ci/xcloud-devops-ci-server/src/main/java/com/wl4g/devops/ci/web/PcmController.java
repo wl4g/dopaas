@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.bean.model.SelectionModel;
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.ci.Pcm;
@@ -109,7 +109,7 @@ public class PcmController {
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
-	public RespBase<?> list(PageModel<Pcm> pm, String name, String providerKind, Integer authType) {
+	public RespBase<?> list(PageHolder<Pcm> pm, String name, String providerKind, Integer authType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(pcmService.list(pm, name, providerKind, authType));
 		return resp;

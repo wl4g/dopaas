@@ -18,7 +18,7 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
 import com.wl4g.devops.doc.service.EnterpriseRepositoryVersionService;
@@ -48,8 +48,8 @@ public class EnterpriseRepositoryVersionController extends BaseController {
     private EnterpriseRepositoryVersionService enterpriseRepositoryVersionService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageModel<EnterpriseRepositoryVersion>> list(PageModel<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
-        RespBase<PageModel<EnterpriseRepositoryVersion>> resp = RespBase.create();
+    public RespBase<PageHolder<EnterpriseRepositoryVersion>> list(PageHolder<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
+        RespBase<PageHolder<EnterpriseRepositoryVersion>> resp = RespBase.create();
         resp.setData(enterpriseRepositoryVersionService.page(pm, enterpriseRepositoryVersion));
         return resp;
     }

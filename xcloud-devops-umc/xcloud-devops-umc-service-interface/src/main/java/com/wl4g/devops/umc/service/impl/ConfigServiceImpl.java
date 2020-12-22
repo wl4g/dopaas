@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
@@ -46,8 +46,8 @@ public class ConfigServiceImpl implements ConfigService {
 	private AppInstanceDao appInstanceDao;
 
 	@Override
-	public PageModel<AlarmConfig> list(PageModel<AlarmConfig> pm, Long templateId, Long contactGroupId) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<AlarmConfig> list(PageHolder<AlarmConfig> pm, Long templateId, Long contactGroupId) {
+		pm.setCurrentContextPage();
 		pm.setRecords(alarmConfigDao.list(templateId, contactGroupId));
 		return pm;
 	}

@@ -18,7 +18,7 @@
 
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
 
 /**
@@ -38,7 +38,7 @@ public interface EnterpriseTeamService {
      * @param enterpriseTeam
      * @return 
      */
-    PageModel<EnterpriseTeam> page(PageModel<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam);
+    PageHolder<EnterpriseTeam> page(PageHolder<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam);
 
     /**
      *  save.

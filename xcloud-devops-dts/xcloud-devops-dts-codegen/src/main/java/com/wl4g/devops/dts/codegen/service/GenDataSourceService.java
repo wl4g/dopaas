@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 public interface GenDataSourceService {
 
-	PageModel<GenDataSource> page(PageModel<GenDataSource> pm, String name);
+	PageHolder<GenDataSource> page(PageHolder<GenDataSource> pm, String name);
 
 	List<GenDataSource> loadDatasources();
 

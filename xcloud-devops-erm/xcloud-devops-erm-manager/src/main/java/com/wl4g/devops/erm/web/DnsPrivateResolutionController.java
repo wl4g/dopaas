@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
 import com.wl4g.devops.erm.service.DnsPrivateResolutionService;
 
@@ -40,7 +40,7 @@ public class DnsPrivateResolutionController extends BaseController {
 	private DnsPrivateResolutionService dnsPrivateResolutionService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel<DnsPrivateResolution> pm, String host, Long domainId) {
+	public RespBase<?> list(PageHolder<DnsPrivateResolution> pm, String host, Long domainId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPrivateResolutionService.page(pm, host, domainId));
 		return resp;

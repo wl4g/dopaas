@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DockerCluster;
 import com.wl4g.devops.common.bean.erm.DockerInstance;
 import com.wl4g.devops.erm.data.DockerClusterDao;
@@ -50,8 +50,8 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 	private DockerInstanceDao dockerInstanceDao;
 
 	@Override
-	public PageModel<DockerCluster> page(PageModel<DockerCluster> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<DockerCluster> page(PageHolder<DockerCluster> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(dockerClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

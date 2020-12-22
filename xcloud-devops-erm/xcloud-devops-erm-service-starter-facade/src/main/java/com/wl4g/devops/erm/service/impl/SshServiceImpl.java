@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.common.bean.erm.Host;
@@ -64,8 +64,8 @@ public class SshServiceImpl implements SshService {
 	private DestroableProcessManager pm;
 
 	@Override
-	public PageModel<SshBean> page(PageModel<SshBean> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<SshBean> page(PageHolder<SshBean> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(sshDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
 import com.wl4g.devops.dao.umc.CustomAlarmEventDao;
 import com.wl4g.devops.umc.service.CustomAlarmEventService;
@@ -35,8 +35,8 @@ public class CustomAlarmEventServiceImpl implements CustomAlarmEventService {
 	private CustomAlarmEventDao customAlarmEventDao;
 
 	@Override
-	public PageModel<CustomAlarmEvent> list(PageModel<CustomAlarmEvent> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<CustomAlarmEvent> list(PageHolder<CustomAlarmEvent> pm, String name) {
+		pm.setCurrentContextPage();
 		pm.setRecords(customAlarmEventDao.list(name));
 		return pm;
 	}

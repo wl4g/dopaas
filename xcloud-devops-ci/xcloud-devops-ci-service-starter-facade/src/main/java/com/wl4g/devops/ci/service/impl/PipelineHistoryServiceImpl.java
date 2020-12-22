@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.ci.data.PipelineDao;
@@ -209,9 +209,9 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	}
 
 	@Override
-	public PageModel<PipelineHistory> list(PageModel<PipelineHistory> pm, String pipeName, String clusterName, String environment,
+	public PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName, String environment,
 			String startDate, String endDate, String providerKind) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setCurrentPage();
 		pm.setRecords(pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterName, environment, startDate,
 				endDate, providerKind, null, null));
 		return pm;

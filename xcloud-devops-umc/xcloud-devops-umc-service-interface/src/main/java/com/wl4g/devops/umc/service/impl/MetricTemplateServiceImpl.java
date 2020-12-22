@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 import com.wl4g.devops.dao.umc.MetricTemplateDao;
 import com.wl4g.devops.umc.service.MetricTemplateService;
@@ -37,8 +37,8 @@ public class MetricTemplateServiceImpl implements MetricTemplateService {
 	private MetricTemplateDao metricTemplateDao;
 
 	@Override
-	public PageModel<MetricTemplate> list(PageModel<MetricTemplate> pm, String metric, String classify) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<MetricTemplate> list(PageHolder<MetricTemplate> pm, String metric, String classify) {
+		pm.setCurrentContextPage();
 		pm.setRecords(metricTemplateDao.list(metric, classify));
 		return pm;
 	}

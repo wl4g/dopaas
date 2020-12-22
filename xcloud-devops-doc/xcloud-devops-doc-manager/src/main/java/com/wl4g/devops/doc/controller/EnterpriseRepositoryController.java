@@ -19,7 +19,7 @@ package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,8 +47,8 @@ public class EnterpriseRepositoryController extends BaseController {
     private EnterpriseRepositoryService enterpriseRepositoryService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageModel<EnterpriseRepository>> list(PageModel<EnterpriseRepository> pm, EnterpriseRepository enterpriseRepository) {
-        RespBase<PageModel<EnterpriseRepository>> resp = RespBase.create();
+    public RespBase<PageHolder<EnterpriseRepository>> list(PageHolder<EnterpriseRepository> pm, EnterpriseRepository enterpriseRepository) {
+        RespBase<PageHolder<EnterpriseRepository>> resp = RespBase.create();
         resp.setData(enterpriseRepositoryService.page(pm, enterpriseRepository));
         return resp;
     }

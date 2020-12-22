@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.service;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.engine.context.GeneratedResult;
@@ -36,7 +36,7 @@ public interface GenerateService {
 
 	// --- GenTable/GenColumns configuration. ---
 
-	PageModel<GenTable> page(PageModel<GenTable> pm, String tableName, Long projectId);
+	PageHolder<GenTable> page(PageHolder<GenTable> pm, String tableName, Long projectId);
 
 	/**
 	 * Find generate talbe metadata info.

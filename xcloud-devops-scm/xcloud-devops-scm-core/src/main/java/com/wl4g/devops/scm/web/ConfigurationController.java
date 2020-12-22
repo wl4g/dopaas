@@ -16,13 +16,13 @@
 package com.wl4g.devops.scm.web;
 
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.devops.scm.bean.*;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.common.web.rest.RespBase.RetCode;
 import com.wl4g.component.core.utils.PropertySources;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.page.PageHolder;
 import com.wl4g.devops.scm.service.ConfigurationService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -78,7 +78,7 @@ public class ConfigurationController extends BaseController {
 	 */
 	@RequestMapping(value = "config-list.json", method = RequestMethod.POST)
 	@RequiresPermissions(value = {"scm:configuration"})
-	public RespBase<?> list(ConfigVersionList agl, PageModel<?> pm) {
+	public RespBase<?> list(ConfigVersionList agl, PageHolder<?> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("ConfigList request ... {}, {}", agl, pm);
 		}

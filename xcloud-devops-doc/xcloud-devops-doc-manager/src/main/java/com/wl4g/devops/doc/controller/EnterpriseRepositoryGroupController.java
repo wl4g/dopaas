@@ -18,7 +18,7 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
 import com.wl4g.devops.doc.service.EnterpriseRepositoryGroupService;
@@ -46,8 +46,8 @@ public class EnterpriseRepositoryGroupController extends BaseController {
     private EnterpriseRepositoryGroupService enterpriseRepositoryGroupService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageModel<EnterpriseRepositoryGroup>> list(PageModel<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
-        RespBase<PageModel<EnterpriseRepositoryGroup>> resp = RespBase.create();
+    public RespBase<PageHolder<EnterpriseRepositoryGroup>> list(PageHolder<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
+        RespBase<PageHolder<EnterpriseRepositoryGroup>> resp = RespBase.create();
         resp.setData(enterpriseRepositoryGroupService.page(pm, enterpriseRepositoryGroup));
         return resp;
     }

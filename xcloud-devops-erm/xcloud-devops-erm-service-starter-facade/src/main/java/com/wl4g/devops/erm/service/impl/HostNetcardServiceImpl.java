@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.HostNetcard;
 import com.wl4g.devops.common.bean.erm.HostTunnelOpenvpn;
 import com.wl4g.devops.common.bean.erm.HostTunnelPptp;
@@ -55,8 +55,8 @@ public class HostNetcardServiceImpl implements HostNetcardService {
 	private HostTunnelPptpDao hostTunnelPptpDao;
 
 	@Override
-	public PageModel<HostNetcard> page(PageModel<HostNetcard> pm, Long hostId, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<HostNetcard> page(PageHolder<HostNetcard> pm, Long hostId, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(appHostNetCardDao.list(getRequestOrganizationCodes(), hostId, name));
 		return pm;
 	}

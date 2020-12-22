@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.ci.Project;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public interface ProjectService {
 
 	int removeById(Long id);
 
-	PageModel<Project> list(PageModel<Project> pm, String groupName, String projectName);
+	PageHolder<Project> list(PageHolder<Project> pm, String groupName, String projectName);
 
 	List<Project> getBySelect(Integer isBoot);
 

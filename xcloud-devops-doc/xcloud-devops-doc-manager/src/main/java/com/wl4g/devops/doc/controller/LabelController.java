@@ -17,7 +17,7 @@ package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.Label;
 import com.wl4g.devops.doc.service.LabelService;
 
@@ -41,7 +41,7 @@ public class LabelController extends BaseController {
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "doc:label" }, logical = AND)
-	public RespBase<?> list(PageModel<Label> pm, String name) {
+	public RespBase<?> list(PageHolder<Label> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(labelService.list(pm, name));
 		return resp;

@@ -17,7 +17,7 @@ package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.Share;
 import com.wl4g.devops.doc.service.ShareService;
 
@@ -41,7 +41,7 @@ public class ShareController extends BaseController {
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "doc:share" }, logical = AND)
-	public RespBase<?> list(PageModel<Share> pm, String name) {
+	public RespBase<?> list(PageHolder<Share> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(shareService.list(pm));
 		return resp;

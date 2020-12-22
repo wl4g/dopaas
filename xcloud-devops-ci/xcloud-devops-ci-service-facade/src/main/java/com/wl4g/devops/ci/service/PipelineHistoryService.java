@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.ci.param.HookParameter;
@@ -51,7 +51,7 @@ public interface PipelineHistoryService {
 
 	void updateCostTime(Long taskId, long costTime);
 
-	PageModel<PipelineHistory> list(PageModel<PipelineHistory> pm, String pipeName, String clusterName, String environment,
+	PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName, String environment,
 			String startDate, String endDate, String providerKind);
 
 	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Long pipeHisId);

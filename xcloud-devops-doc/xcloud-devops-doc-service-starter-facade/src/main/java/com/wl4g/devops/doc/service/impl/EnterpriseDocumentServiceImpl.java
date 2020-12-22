@@ -19,8 +19,8 @@
 package com.wl4g.devops.doc.service.impl;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import com.wl4g.component.core.bean.model.PageModel;
-import com.github.pagehelper.PageHelper;
+import com.wl4g.component.core.bean.model.PageHolder;
+
 import com.wl4g.component.core.bean.BaseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,8 +46,8 @@ public class EnterpriseDocumentServiceImpl implements EnterpriseDocumentService 
     private EnterpriseDocumentDao enterpriseDocumentDao;
 
     @Override
-    public PageModel<EnterpriseDocument> page(PageModel<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+    public PageHolder<EnterpriseDocument> page(PageHolder<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument) {
+        pm.setCurrentPage();
         pm.setRecords(enterpriseDocumentDao.list(enterpriseDocument));
         return pm;
     }

@@ -18,7 +18,7 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
 import com.wl4g.devops.doc.service.EnterpriseTeamService;
@@ -46,8 +46,8 @@ public class EnterpriseTeamController extends BaseController {
     private EnterpriseTeamService enterpriseTeamService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageModel<EnterpriseTeam>> list(PageModel<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam) {
-        RespBase<PageModel<EnterpriseTeam>> resp = RespBase.create();
+    public RespBase<PageHolder<EnterpriseTeam>> list(PageHolder<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam) {
+        RespBase<PageHolder<EnterpriseTeam>> resp = RespBase.create();
         resp.setData(enterpriseTeamService.page(pm, enterpriseTeam));
         return resp;
     }

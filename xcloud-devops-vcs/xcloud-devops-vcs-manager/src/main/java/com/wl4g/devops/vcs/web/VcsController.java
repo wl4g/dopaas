@@ -17,7 +17,7 @@ package com.wl4g.devops.vcs.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
@@ -47,8 +47,8 @@ public class VcsController extends BaseController {
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "vcs" }, logical = AND)
-	public RespBase<PageModel<Vcs>> list(PageModel<Vcs> pm, String name, String providerKind, Integer authType) {
-		RespBase<PageModel<Vcs>> resp = RespBase.create();
+	public RespBase<PageHolder<Vcs>> list(PageHolder<Vcs> pm, String name, String providerKind, Integer authType) {
+		RespBase<PageHolder<Vcs>> resp = RespBase.create();
 		resp.setData(vcsService.list(pm, name, providerKind, authType));
 		return resp;
 	}
@@ -101,9 +101,9 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getProjects")
-	public RespBase<PageModel<VcsProjectModel>> getProjects(PageModel<VcsProjectModel> pm, Long vcsId, Long groupId,
+	public RespBase<PageHolder<VcsProjectModel>> getProjects(PageHolder<VcsProjectModel> pm, Long vcsId, Long groupId,
 			String projectName) throws Exception {
-		RespBase<PageModel<VcsProjectModel>> resp = RespBase.create();
+		RespBase<PageHolder<VcsProjectModel>> resp = RespBase.create();
 		List<VcsProjectModel> projects = vcsService.getProjects(pm, vcsId, groupId, projectName);
 		pm.setRecords(projects);
 		resp.setData(pm);

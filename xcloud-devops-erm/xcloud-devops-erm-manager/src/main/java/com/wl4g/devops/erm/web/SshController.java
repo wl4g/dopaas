@@ -19,7 +19,7 @@ import com.wl4g.component.common.cli.ssh2.JschHolder;
 import com.wl4g.component.common.cli.ssh2.SSH2Holders;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.SshBean;
 import com.wl4g.devops.erm.service.SshService;
 
@@ -46,7 +46,7 @@ public class SshController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:ssh" }, logical = AND)
-	public RespBase<?> list(PageModel<SshBean> pm, String name) {
+	public RespBase<?> list(PageHolder<SshBean> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(sshService.page(pm, name));
 		return resp;

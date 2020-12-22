@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsOperationLog;
 import com.wl4g.devops.erm.service.DnsOperationLogService;
 
@@ -40,7 +40,7 @@ public class DnsOperationLogController extends BaseController {
 	private DnsOperationLogService dnsOperationLogService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel<DnsOperationLog> pm, String name) {
+	public RespBase<?> list(PageHolder<DnsOperationLog> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsOperationLogService.page(pm, name));
 		return resp;

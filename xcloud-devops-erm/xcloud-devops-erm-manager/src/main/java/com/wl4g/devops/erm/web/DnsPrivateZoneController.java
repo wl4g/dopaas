@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.erm.service.DnsPrivateZoneService;
 
@@ -40,7 +40,7 @@ public class DnsPrivateZoneController extends BaseController {
 	private DnsPrivateZoneService dnsPrivateDomainService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel<DnsPrivateZone> pm, String zone) {
+	public RespBase<?> list(PageHolder<DnsPrivateZone> pm, String zone) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dnsPrivateDomainService.page(pm, zone));
 		return resp;

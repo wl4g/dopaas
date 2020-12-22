@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 
 /**
@@ -26,7 +26,7 @@ import com.wl4g.devops.dts.codegen.bean.GenProject;
  */
 public interface GenProjectService {
 
-	PageModel<GenProject> page(PageModel<GenProject> pm, String name);
+	PageHolder<GenProject> page(PageHolder<GenProject> pm, String name);
 
 	void save(GenProject project);
 

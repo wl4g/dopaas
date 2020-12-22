@@ -18,9 +18,9 @@
 
 package com.wl4g.devops.doc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
 import com.wl4g.devops.doc.data.EnterpriseTeamDao;
 import com.wl4g.devops.doc.service.EnterpriseTeamService;
@@ -45,8 +45,8 @@ public class EnterpriseTeamServiceImpl implements EnterpriseTeamService {
     private EnterpriseTeamDao enterpriseTeamDao;
 
     @Override
-    public PageModel<EnterpriseTeam> page(PageModel<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+    public PageHolder<EnterpriseTeam> page(PageHolder<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam) {
+        pm.setCurrentPage();
         pm.setRecords(enterpriseTeamDao.list(enterpriseTeam));
         return pm;
     }

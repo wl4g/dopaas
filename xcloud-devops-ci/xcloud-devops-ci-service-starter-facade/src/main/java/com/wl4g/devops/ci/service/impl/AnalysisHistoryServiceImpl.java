@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.data.AnalysisHistoryDao;
 import com.wl4g.devops.ci.service.AnalysisHistoryService;
 import com.wl4g.devops.common.bean.ci.AnalysisHistory;
@@ -25,7 +25,7 @@ import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizati
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.github.pagehelper.PageHelper;
+
 
 /**
  * @author vjay
@@ -38,8 +38,8 @@ public class AnalysisHistoryServiceImpl implements AnalysisHistoryService {
 	private AnalysisHistoryDao analysisHistoryDao;
 
 	@Override
-	public PageModel<AnalysisHistory> list(PageModel<AnalysisHistory> pm) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<AnalysisHistory> list(PageHolder<AnalysisHistory> pm) {
+		pm.setCurrentPage();
 		pm.setRecords(analysisHistoryDao.list(getRequestOrganizationCodes()));
 		return pm;
 	}

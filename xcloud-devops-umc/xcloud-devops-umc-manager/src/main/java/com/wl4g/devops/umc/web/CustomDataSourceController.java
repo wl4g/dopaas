@@ -20,7 +20,7 @@ import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.umc.datasouces.MysqlDataSource;
 import com.wl4g.component.core.bean.umc.model.DataSourceProvide;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomDataSource;
 import com.wl4g.devops.umc.service.CustomDataSourceService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -45,7 +45,7 @@ public class CustomDataSourceController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:datasource" }, logical = AND)
-	public RespBase<?> list(String name, PageModel<CustomDataSource> pm) {
+	public RespBase<?> list(String name, PageHolder<CustomDataSource> pm) {
 		RespBase<Object> resp = RespBase.create();
 		return resp.withData(customDataSourceService.list(pm, name));
 	}

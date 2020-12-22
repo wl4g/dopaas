@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.common.bean.ci.Project;
 
@@ -57,7 +57,7 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> list(String groupName, String projectName, PageModel<Project> pm) {
+	public RespBase<?> list(String groupName, String projectName, PageHolder<Project> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
 		}

@@ -17,7 +17,7 @@ package com.wl4g.devops.erm.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.K8sCluster;
 import com.wl4g.devops.erm.service.K8sClusterService;
 
@@ -44,7 +44,7 @@ public class K8sClusterController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "erm:k8scluster" }, logical = AND)
-	public RespBase<?> list(PageModel<K8sCluster> pm, String name) {
+	public RespBase<?> list(PageHolder<K8sCluster> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(k8sClusterService.page(pm, name));
 		return resp;

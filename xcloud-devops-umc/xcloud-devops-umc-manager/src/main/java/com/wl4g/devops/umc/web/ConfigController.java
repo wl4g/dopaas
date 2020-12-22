@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.umc.service.ConfigService;
 
@@ -41,10 +41,10 @@ public class ConfigController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:config" })
-	public RespBase<PageModel<AlarmConfig>> list(PageModel<AlarmConfig> pm, Long templateId, Long contactGroupId) {
+	public RespBase<PageHolder<AlarmConfig>> list(PageHolder<AlarmConfig> pm, Long templateId, Long contactGroupId) {
 		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , pm = {} ", templateId,
 				contactGroupId, pm);
-		RespBase<PageModel<AlarmConfig>> resp = RespBase.create();
+		RespBase<PageHolder<AlarmConfig>> resp = RespBase.create();
 		return resp.withData(configService.list(pm, templateId, contactGroupId));
 	}
 

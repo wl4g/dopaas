@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.umc.service.TemplateService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -42,7 +42,7 @@ public class TemplateController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:templat" })
-	public RespBase<?> list(String name, Long metricId, String classify, PageModel<AlarmTemplate> pm) {
+	public RespBase<?> list(String name, Long metricId, String classify, PageHolder<AlarmTemplate> pm) {
 		log.info("into TemplateController.list prarms::" + "name = {} , metric = {} , classify = {} , pm = {} ", name, metricId,
 				classify, pm);
 

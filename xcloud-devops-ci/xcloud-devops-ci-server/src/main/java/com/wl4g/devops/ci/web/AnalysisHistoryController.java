@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.service.AnalysisHistoryService;
 import com.wl4g.devops.common.bean.ci.AnalysisHistory;
 
@@ -41,7 +41,7 @@ public class AnalysisHistoryController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci:analysis" }, logical = AND)
-	public RespBase<?> list(String groupName, String projectName, PageModel<AnalysisHistory> pm) {
+	public RespBase<?> list(String groupName, String projectName, PageHolder<AnalysisHistory> pm) {
 		log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(analysisHistoryService.list(pm));

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsOperationLog;
 
 /**
@@ -23,7 +23,7 @@ import com.wl4g.devops.common.bean.erm.DnsOperationLog;
  */
 public interface DnsOperationLogService {
 
-	PageModel<DnsOperationLog> page(PageModel<DnsOperationLog> pm, String domain);
+	PageHolder<DnsOperationLog> page(PageHolder<DnsOperationLog> pm, String domain);
 
 	void save(DnsOperationLog dnsOperationLog);
 

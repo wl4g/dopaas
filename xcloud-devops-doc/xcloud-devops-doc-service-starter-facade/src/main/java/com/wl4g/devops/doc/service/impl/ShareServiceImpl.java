@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.doc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.FileChanges;
 import com.wl4g.devops.common.bean.doc.Share;
 import com.wl4g.devops.common.constant.DocConstants;
@@ -53,8 +53,8 @@ public class ShareServiceImpl implements ShareService {
 	private DocProperties docProperties;
 
 	@Override
-	public PageModel<Share> list(PageModel<Share> pm) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<Share> list(PageHolder<Share> pm) {
+		pm.setCurrentPage();
 		List<Share> list = shareDao.list();
 		for (Share share : list) {
 			FileChanges fileChanges = docService.getLastByDocCode(share.getDocCode());

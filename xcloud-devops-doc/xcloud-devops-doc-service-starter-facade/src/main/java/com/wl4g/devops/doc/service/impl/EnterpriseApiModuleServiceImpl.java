@@ -18,9 +18,9 @@
 
 package com.wl4g.devops.doc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
 import com.wl4g.devops.doc.data.EnterpriseApiModuleDao;
 import com.wl4g.devops.doc.service.EnterpriseApiModuleService;
@@ -47,8 +47,8 @@ public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleServic
     private EnterpriseApiModuleDao enterpriseApiModuleDao;
 
     @Override
-    public PageModel<EnterpriseApiModule> page(PageModel<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+    public PageHolder<EnterpriseApiModule> page(PageHolder<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule) {
+        pm.setCurrentPage();
         pm.setRecords(enterpriseApiModuleDao.list(enterpriseApiModule));
         return pm;
     }

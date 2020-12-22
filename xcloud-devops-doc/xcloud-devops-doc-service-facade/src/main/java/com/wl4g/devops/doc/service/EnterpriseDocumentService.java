@@ -18,7 +18,7 @@
 
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
 
 /**
@@ -38,7 +38,7 @@ public interface EnterpriseDocumentService {
      * @param enterpriseDocument
      * @return 
      */
-    PageModel<EnterpriseDocument> page(PageModel<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument);
+    PageHolder<EnterpriseDocument> page(PageHolder<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument);
 
     /**
      *  save.

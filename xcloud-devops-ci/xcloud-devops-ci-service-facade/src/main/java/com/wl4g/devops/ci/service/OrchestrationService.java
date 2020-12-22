@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.ci.Orchestration;
 
 /**
@@ -24,7 +24,7 @@ import com.wl4g.devops.common.bean.ci.Orchestration;
  */
 public interface OrchestrationService {
 
-	PageModel<Orchestration> list(PageModel<Orchestration> pm, String name);
+	PageHolder<Orchestration> list(PageHolder<Orchestration> pm, String name);
 
 	void save(Orchestration orchestration);
 

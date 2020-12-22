@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 
 /**
@@ -23,7 +23,7 @@ import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
  */
 public interface DnsPrivateZoneService {
 
-	PageModel<DnsPrivateZone> page(PageModel<DnsPrivateZone> pm, String zone);
+	PageHolder<DnsPrivateZone> page(PageHolder<DnsPrivateZone> pm, String zone);
 
 	void save(DnsPrivateZone dnsPrivateDomain);
 

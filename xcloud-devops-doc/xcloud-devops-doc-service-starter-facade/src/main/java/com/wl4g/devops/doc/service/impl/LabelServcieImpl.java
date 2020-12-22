@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.doc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.Label;
 import com.wl4g.devops.doc.data.LabelDao;
 import com.wl4g.devops.doc.service.LabelService;
@@ -38,8 +38,8 @@ public class LabelServcieImpl implements LabelService {
 	private LabelDao labelDao;
 
 	@Override
-	public PageModel<Label> list(PageModel<Label> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<Label> list(PageHolder<Label> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(labelDao.list(name));
 		return pm;
 	}

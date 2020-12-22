@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.service.OrchestrationService;
 import com.wl4g.devops.common.bean.ci.Orchestration;
 
@@ -44,7 +44,7 @@ public class OrchestrationController extends BaseController {
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "ci:orchestration" }, logical = AND)
-	public RespBase<?> list(PageModel<Orchestration> pm, String name) {
+	public RespBase<?> list(PageHolder<Orchestration> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(orchestrationService.list(pm, name));
 		return resp;

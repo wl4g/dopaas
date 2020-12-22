@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.Host;
 
 import org.springframework.core.io.FileSystemResource;
@@ -34,7 +34,7 @@ public interface HostService {
 
 	List<Host> list(String name, String hostname, Long idcId);
 
-	PageModel<Host> page(PageModel<Host> pm, String name, String hostname, Long idcId);
+	PageHolder<Host> page(PageHolder<Host> pm, String name, String hostname, Long idcId);
 
 	void save(Host host);
 

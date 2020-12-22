@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.erm.data.DnsPrivateResolutionDao;
 import com.wl4g.devops.erm.data.DnsPrivateZoneDao;
 import com.wl4g.devops.erm.handler.DnsZoneHandler;
@@ -54,8 +54,8 @@ public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
 	private DnsZoneHandler dnsZoneHandler;
 
 	@Override
-	public PageModel<DnsPrivateZone> page(PageModel<DnsPrivateZone> pm, String zone) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<DnsPrivateZone> page(PageHolder<DnsPrivateZone> pm, String zone) {
+		pm.setCurrentPage();
 		List<DnsPrivateZone> list = dnsPrivateDomainDao.list(getRequestOrganizationCodes(), zone);
 		pm.setRecords(list);
 		return pm;

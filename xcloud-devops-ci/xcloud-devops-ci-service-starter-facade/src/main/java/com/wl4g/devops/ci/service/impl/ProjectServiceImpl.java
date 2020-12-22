@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.data.DependencyDao;
 import com.wl4g.devops.ci.data.ProjectDao;
 import com.wl4g.devops.ci.service.ProjectService;
@@ -132,8 +132,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public PageModel<Project> list(PageModel<Project> pm, String groupName, String projectName) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<Project> list(PageHolder<Project> pm, String groupName, String projectName) {
+		pm.setCurrentPage();
 		List<Project> list = projectDao.list(getRequestOrganizationCodes(), groupName, projectName, null);
 		for (Project project : list) {
 			project.setVcs(null);

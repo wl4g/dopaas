@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.devops.ci.bean.RunModel;
@@ -60,8 +60,8 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 	private JedisService jedisService;
 
 	@Override
-	public PageModel<Orchestration> list(PageModel<Orchestration> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<Orchestration> list(PageHolder<Orchestration> pm, String name) {
+		pm.setCurrentPage();
 		pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

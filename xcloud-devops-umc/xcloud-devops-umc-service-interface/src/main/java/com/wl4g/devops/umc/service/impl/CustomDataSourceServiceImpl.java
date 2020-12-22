@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.umc.datasouces.BaseDataSource;
 import com.wl4g.component.core.bean.umc.datasouces.MysqlDataSource;
 import com.wl4g.component.core.bean.umc.model.DataSourceProvide;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomDataSource;
 import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
 import com.wl4g.devops.dao.umc.CustomDataSourcePropertiesDao;
@@ -58,8 +58,8 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 	private CustomDataSourcePropertiesDao customDataSourcePropertiesDao;
 
 	@Override
-	public PageModel<CustomDataSource> list(PageModel<CustomDataSource> pm, String name) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<CustomDataSource> list(PageHolder<CustomDataSource> pm, String name) {
+		pm.setCurrentContextPage();
 		pm.setRecords(customDatasourceDao.list(name));
 		return pm;
 	}

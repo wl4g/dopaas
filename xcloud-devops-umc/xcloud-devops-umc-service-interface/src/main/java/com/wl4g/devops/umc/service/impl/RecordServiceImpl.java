@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.wl4g.component.data.page.PageModel;
+
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
@@ -53,8 +53,8 @@ public class RecordServiceImpl implements RecordService {
 	private NotificationContactDao notificationContactDao;
 
 	@Override
-	public PageModel<AlarmRecord> list(PageModel<AlarmRecord> pm, String name, String startDate, String endDate) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<AlarmRecord> list(PageHolder<AlarmRecord> pm, String name, String startDate, String endDate) {
+		pm.setCurrentContextPage();
 		pm.setRecords(alarmRecordDao.list(name, startDate, endDate));
 		return pm;
 	}

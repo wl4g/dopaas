@@ -16,12 +16,12 @@
 package com.wl4g.devops.dts.codegen.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.pagehelper.PageHelper;
+
 import com.wl4g.component.common.bean.BeanUtils2;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
-import com.wl4g.component.core.bean.model.PageModel;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
@@ -111,8 +111,8 @@ public class GenerateServiceImpl implements GenerateService {
 	// --- GenTable/GenColumns configuration. ---
 
 	@Override
-	public PageModel<GenTable> page(PageModel<GenTable> pm, String tableName, Long projectId) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+	public PageHolder<GenTable> page(PageHolder<GenTable> pm, String tableName, Long projectId) {
+		pm.setCurrentPage();
 		pm.setRecords(genTableDao.list(tableName, projectId));
 		return pm;
 	}

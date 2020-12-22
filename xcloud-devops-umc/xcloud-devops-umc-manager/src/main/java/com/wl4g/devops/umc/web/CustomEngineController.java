@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.web;
 import com.wl4g.component.common.task.QuartzCronUtils;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.data.page.PageModel;
+import com.wl4g.component.data.page.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomEngine;
 import com.wl4g.devops.common.bean.umc.CustomEngineModel;
 import com.wl4g.devops.umc.service.CustomEngineService;
@@ -48,7 +48,7 @@ public class CustomEngineController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:custom:engine" }, logical = AND)
-	public RespBase<?> list(String name, PageModel<CustomEngine> pm) {
+	public RespBase<?> list(String name, PageHolder<CustomEngine> pm) {
 		RespBase<Object> resp = RespBase.create();
 		return resp.withData(customEngineService.list(pm, name));
 	}
