@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Marked in the browse</title>
+    <!-- @see https://github.com/sindresorhus/github-markdown-css --->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css">
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+    <script src="js/marked.min.js"></script>
+    <script src="js/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+<div class="markdown-body"></div>
+<script>
+    //TODO Rendering Url should be config, not like this
+    let renderingUrl = location.protocol + '//' + location.hostname;
+    if(location.port){
+        renderingUrl = renderingUrl + ':' + location.port;
+    }
+    renderingUrl = renderingUrl + '/doc-manager/link/rendering';
+
+    var getContext = function () {
+        const code = getQueryString('code');
+        if(!code){
+            window.location.href = "403.html";
+        }
+        let passwd = getQueryString('passwd');
+
+        $.getJSON(renderingUrl, {code: code,passwd: passwd},
+            function (data) {
+                if(!data || !data.code){
+                    alert('服务器请求失败,请联系管理员');
+                }
+                if(data.code==200){//success
+                    $(".markdown-body").html(marked(data.data));
+                }else if(data.code==401){
+                    getContextByPasswd(code,"请输入密码：");
+                }else if(data.code==404){
+                    window.location.href = "403.html";
+                }else{
+                    alert('服务器请求失败,请联系管理员');
+                }
+            }
+        );
+    };
+
+    function getContextByPasswd(code,text){
+        let passwd = sessionStorage.getItem("share_doc_" + code);
+        if(!passwd){
+            passwd = prompt(text);
+        }
+        if(!passwd){
+            return;
+        }
+        $.getJSON(renderingUrl, {code: code,passwd: passwd},
+            function (data) {
+                if(!data || !data.code){
+                    alert('服务器请求失败,请联系管理员');
+                }
+                if(data.code==200){//success
+                    $(".markdown-body").html(marked(data.data));
+                    sessionStorage.setItem("share_doc_" + code, passwd);
+                }else if(data.code==401){
+                    sessionStorage.removeItem("share_doc_" + code);
+                    getContextByPasswd(code,"密码错误，请重新输入密码：");
+                }else{
+                    alert('服务器请求失败,请联系管理员');
+                }
+            }
+        );
+    }
+
+    function getQueryString(name) {
+        var t = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"),
+            n = window.location.search.substr(1).match(t);
+        return null != n ? unescape(n[2]) : null
+    }
+
+    getContext();
+</script>
+</body>
+</html>
