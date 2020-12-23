@@ -27,10 +27,17 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/fs")
-public class TemplateFsController {
+public class FsController {
 
 	@Autowired
 	private FsService fsService;
+
+	@RequestMapping("getTreeFiles")
+	RespBase<?> getTreeFiles(String parentPath){
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(fsService.getTreeFiles());
+		return resp;
+	}
 
 	@RequestMapping("getFilesByParent")
 	RespBase<?> getFilesByParent(String parentPath){
