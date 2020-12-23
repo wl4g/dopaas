@@ -115,13 +115,33 @@ public class FsServiceImpl implements FsService {
     }
 
     @Override
+    public void addDir(String path) throws IOException {
+        File file = new File(fsProperties.getBasePath() + path);
+        boolean newFile = file.mkdirs();
+        if (!newFile || !file.exists()) {
+            throw new IOException("create new dir fail");
+        }
+    }
+
+    @Override
     public void addFile(String path) throws IOException {
         File file = new File(fsProperties.getBasePath() + path);
-        boolean newFile = new File(path).createNewFile();
+        boolean newFile = file.createNewFile();
         if (!newFile || !file.exists()) {
             throw new IOException("create new file fail");
         }
     }
+
+    @Override
+    public void renameFile(String path, String toPath) throws IOException {
+        File file = new File(fsProperties.getBasePath() + path);
+        File toFile = new File(fsProperties.getBasePath() + toPath);
+        boolean b = file.renameTo(toFile);
+        if(!b || !toFile.exists()){
+            throw new IOException("rename file fail");
+        }
+    }
+
 
     @Override
     public void saveFile(String path, String content) {

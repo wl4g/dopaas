@@ -60,10 +60,24 @@ public class FsController {
 		return resp;
 	}
 
+	@RequestMapping("addDir")
+	RespBase<?> addDir(String path) throws IOException{
+		RespBase<Object> resp = RespBase.create();
+		fsService.addDir(path);
+		return resp;
+	}
+
 	@RequestMapping("addFile")
 	RespBase<?> addFile(String path) throws IOException{
 		RespBase<Object> resp = RespBase.create();
 		fsService.addFile(path);
+		return resp;
+	}
+
+	@RequestMapping("renameFile")
+	RespBase<?> renameFile(String path,String toPath) throws IOException{
+		RespBase<Object> resp = RespBase.create();
+		fsService.renameFile(path, toPath);
 		return resp;
 	}
 
