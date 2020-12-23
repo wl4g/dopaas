@@ -25,6 +25,8 @@ import java.util.List;
 
 public interface FsService {
 
+    List<FileInfo> getTreeFiles();
+
     List<FileInfo> getFilesByParent(String parentPath);
 
     FileInfo getFileInfo(String path) throws IOException;
