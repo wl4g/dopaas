@@ -20,7 +20,7 @@ import static com.wl4g.component.core.constants.UMCDevOpsConstants.KEY_CACHE_ALA
 import org.springframework.util.Assert;
 
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.component.support.notification.MessageNotifier;
 import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.component.support.redis.jedis.JedisService;

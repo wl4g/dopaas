@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.alarm.alerting;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.task.RunnerProperties;
 import com.wl4g.component.core.bean.umc.model.MetricValue;
-import com.wl4g.component.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
