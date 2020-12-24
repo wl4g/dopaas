@@ -60,7 +60,7 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@ConfigurationProperties(prefix = "spring.cloud.xcloud.dts.codegen")
+	@ConfigurationProperties(prefix = "spring.boot.xcloud.dts.codegen")
 	public CodegenProperties codegenProperties() {
 		return new CodegenProperties();
 	}
