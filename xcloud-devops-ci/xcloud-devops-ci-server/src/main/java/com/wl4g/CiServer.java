@@ -15,7 +15,7 @@
  */
 package com.wl4g;
 
-import com.wl4g.component.data.annotation.EnableComponentsData;
+import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableIamClient
 @EnableShellServer
 @MapperScan("com.wl4g.devops.ci.dao")
-@EnableComponentsData
+@EnableComponentDBConfiguration
 @EnableTransactionManagement(mode = ASPECTJ)
 @SpringBootApplication
 public class CiServer {

@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.alarm.alerting;
 
 import com.wl4g.component.core.bean.umc.model.MetricValue;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.support.concurrent.locks.JedisLockManager;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.component.support.notification.GenericNotifyMessage;
 import com.wl4g.component.support.notification.MessageNotifier;
 import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;

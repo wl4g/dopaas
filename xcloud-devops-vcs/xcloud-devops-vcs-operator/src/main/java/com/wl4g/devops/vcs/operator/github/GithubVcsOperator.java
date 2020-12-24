@@ -16,16 +16,14 @@
 package com.wl4g.devops.vcs.operator.github;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.support.concurrent.locks.JedisLockManager;
 import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
-
-import static org.springframework.http.HttpMethod.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -46,6 +44,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
