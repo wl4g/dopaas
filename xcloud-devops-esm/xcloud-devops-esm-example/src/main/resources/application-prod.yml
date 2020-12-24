@@ -17,7 +17,7 @@ example:
   lastName: tom
 
 spring:
-  cloud:
+  boot:
     xcloud:
       iam:
         client:

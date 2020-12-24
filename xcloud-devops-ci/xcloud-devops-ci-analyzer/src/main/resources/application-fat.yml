@@ -11,7 +11,7 @@
 # #### Environment(FAT) configuration. ####
 #
 spring:
-  cloud:
+  boot:
     xcloud:
       iam:
         cors:
