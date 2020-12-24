@@ -17,7 +17,7 @@ spring: # Base configuration.
   profiles:
     include: common,util
     active: dev
-  cloud: # Spring cloud configuration.
+  boot:
     # Devops configuration.
     xcloud: 
       scm.client: # SCM client configuration.
