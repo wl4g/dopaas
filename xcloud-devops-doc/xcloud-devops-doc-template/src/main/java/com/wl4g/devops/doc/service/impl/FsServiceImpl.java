@@ -44,6 +44,29 @@ public class FsServiceImpl implements FsService {
     private FsProperties fsProperties;
 
     @Override
+    public List<FileInfo> getTreeFiles() {
+        File basePath = new File(fsProperties.getBasePath());
+        List<FileInfo> fileInfos = new ArrayList<>();
+        getChildren(basePath, fileInfos);
+        return fileInfos;
+    }
+
+    private void getChildren(File path, List<FileInfo> fileInfos){
+        File[] files = path.listFiles();
+        if(files == null || files.length<=0){
+            return;
+        }
+        for(File file : files){
+            FileInfo fileInfo = new FileInfo();
+            fileInfo.setPath(getRelativePath(file.getAbsolutePath()));
+            fileInfo.setFileName(file.getName());
+            fileInfo.setDir(file.isDirectory());
+            fileInfos.add(fileInfo);
+            getChildren(file, fileInfo.getChildren());
+        }
+    }
+
+    @Override
     public List<FileInfo> getFilesByParent(String parentPath) {
 
         File file;
@@ -83,17 +106,42 @@ public class FsServiceImpl implements FsService {
 
     @Override
     public void delFile(String path) throws IOException {
-        FileIOUtils.deleteDirectory(new File(fsProperties.getBasePath() + path));
+        File file = new File(fsProperties.getBasePath() + path);
+        if(file.isFile()){
+            FileIOUtils.forceDelete(file);
+        }else{
+            FileIOUtils.deleteDirectory(file);
+        }
+    }
+
+    @Override
+    public void addDir(String path) throws IOException {
+        File file = new File(fsProperties.getBasePath() + path);
+        boolean newFile = file.mkdirs();
+        if (!newFile || !file.exists()) {
+            throw new IOException("create new dir fail");
+        }
     }
 
     @Override
     public void addFile(String path) throws IOException {
         File file = new File(fsProperties.getBasePath() + path);
-        boolean newFile = new File(path).createNewFile();
+        boolean newFile = file.createNewFile();
         if (!newFile || !file.exists()) {
             throw new IOException("create new file fail");
         }
     }
+
+    @Override
+    public void renameFile(String path, String toPath) throws IOException {
+        File file = new File(fsProperties.getBasePath() + path);
+        File toFile = new File(fsProperties.getBasePath() + toPath);
+        boolean b = file.renameTo(toFile);
+        if(!b || !toFile.exists()){
+            throw new IOException("rename file fail");
+        }
+    }
+
 
     @Override
     public void saveFile(String path, String content) {
@@ -111,7 +159,7 @@ public class FsServiceImpl implements FsService {
         String suffixName = fileName.substring(fileName.lastIndexOf("."));// 后缀名
         fileName = UUID.randomUUID() + suffixName;// 新文件名
         fileName = "/" + DateUtils2.formatDate(now, "yyyyMMddHHmmss") + "/" + fileName;// 加一级日期目录
-        String path = fsProperties.getBaseFilePath() + fileName;
+        String path = fsProperties.getBasePath() + fileName;
         saveFile(file, path);
 
         //TODO
@@ -125,7 +173,7 @@ public class FsServiceImpl implements FsService {
      */
     @Override
     public ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException {
-        File file = new File(fsProperties.getBaseFilePath() + "/" + path);
+        File file = new File(fsProperties.getBasePath() + "/" + path);
         return downloadFile(file);
     }
 
@@ -164,7 +212,7 @@ public class FsServiceImpl implements FsService {
 
 
     private String getRelativePath(String absolutePath) {
-        String baseFilePath = fsProperties.getBaseFilePath();
+        String baseFilePath = fsProperties.getBasePath();
         if (absolutePath.startsWith(baseFilePath)) {
             return absolutePath.substring(baseFilePath.length());
         } else {

@@ -25,13 +25,19 @@ import java.util.List;
 
 public interface FsService {
 
+    List<FileInfo> getTreeFiles();
+
     List<FileInfo> getFilesByParent(String parentPath);
 
     FileInfo getFileInfo(String path) throws IOException;
 
     void delFile(String path) throws IOException;
 
+    void addDir(String path) throws IOException;
+
     void addFile(String path) throws IOException;
+
+    void renameFile(String path,String toPath) throws IOException;
 
     void saveFile(String path, String content);
 
