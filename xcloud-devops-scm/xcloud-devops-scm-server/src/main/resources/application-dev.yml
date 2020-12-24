@@ -11,7 +11,7 @@
 # #### Environment(Dev) configuration. ####
 #
 spring:
-  cloud:
+  boot:
     xcloud:
       iam:
         cors:

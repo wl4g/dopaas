@@ -11,7 +11,7 @@
 # #### Environment(FAT Test) configuration. ####
 #
 spring:
-  cloud:
+  boot:
     xcloud:
       iam:
         cors:
