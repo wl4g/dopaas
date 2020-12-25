@@ -11,11 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: doc-manager
-  profiles:
-    include: common,support,util
-    active: dev
-  cloud:
+  boot:
     xcloud:
       embedded-webapps:
         enable: true # Default false

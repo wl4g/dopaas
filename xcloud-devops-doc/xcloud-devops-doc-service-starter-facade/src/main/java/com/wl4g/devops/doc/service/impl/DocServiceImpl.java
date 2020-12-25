@@ -37,6 +37,7 @@ import com.wl4g.iam.common.subject.IamPrincipal;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -75,6 +76,7 @@ public class DocServiceImpl implements DocService {
 	private ShareDao shareDao;
 
 	@Autowired
+	@Lazy
 	protected DestroableProcessManager pm;
 
 	@Override
