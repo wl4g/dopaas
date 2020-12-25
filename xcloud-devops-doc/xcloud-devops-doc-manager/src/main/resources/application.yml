@@ -9,6 +9,12 @@
 #
 # #### Environment base configuration. ####
 
+spring:
+  application.name: doc-manager
+  profiles:
+    include: common,support,util,boot
+    active: dev
+
 # Mybatis configuration.
 mybatis:
   configLocation: mybatis/mybatis-config.xml
