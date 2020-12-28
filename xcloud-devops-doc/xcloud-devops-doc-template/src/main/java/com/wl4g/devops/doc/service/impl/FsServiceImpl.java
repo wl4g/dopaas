@@ -16,7 +16,6 @@
 package com.wl4g.devops.doc.service.impl;
 
 import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.common.lang.DateUtils2;
 import com.wl4g.devops.doc.bean.FileInfo;
 import com.wl4g.devops.doc.config.FsProperties;
 import com.wl4g.devops.doc.service.FsService;
@@ -35,7 +34,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FsServiceImpl implements FsService {
@@ -153,16 +151,10 @@ public class FsServiceImpl implements FsService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file) {
-        Date now = new Date();
+    public String uploadFile(MultipartFile file, String path) {
         String fileName = file.getOriginalFilename();// 文件名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));// 后缀名
-        fileName = UUID.randomUUID() + suffixName;// 新文件名
-        fileName = "/" + DateUtils2.formatDate(now, "yyyyMMddHHmmss") + "/" + fileName;// 加一级日期目录
-        String path = fsProperties.getBasePath() + fileName;
+        path = fsProperties.getBasePath() + path + "/" + fileName;
         saveFile(file, path);
-
-        //TODO
         return fileName;
     }
 
