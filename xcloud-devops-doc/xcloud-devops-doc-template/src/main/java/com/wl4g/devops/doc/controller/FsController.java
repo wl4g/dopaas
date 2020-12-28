@@ -90,9 +90,9 @@ public class FsController {
 
 
 	@PostMapping(value = "/uploadFile")
-	public RespBase<?> uploadFile(@RequestParam(value = "file") MultipartFile file) {
+	public RespBase<?> uploadFile(@RequestParam(value = "file") MultipartFile file,String path) {
 		RespBase<Object> resp = RespBase.create();
-		String fileUrl = fsService.uploadFile(file);
+		String fileUrl = fsService.uploadFile(file, path);
 		resp.setData(fileUrl);
 		return resp;
 	}

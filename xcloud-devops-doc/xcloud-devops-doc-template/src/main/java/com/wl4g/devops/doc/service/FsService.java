@@ -41,7 +41,7 @@ public interface FsService {
 
     void saveFile(String path, String content);
 
-    String uploadFile(MultipartFile img);
+    String uploadFile(MultipartFile img,String path);
 
     ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException;
 
