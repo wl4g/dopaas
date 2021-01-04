@@ -18,6 +18,8 @@ public class FileInfo {
 
     private boolean isDir;
 
+    private String updateTime;
+
     private List<FileInfo> children = new ArrayList<>();
 
     public String getFileName() {
@@ -50,6 +52,14 @@ public class FileInfo {
 
     public void setDir(boolean dir) {
         isDir = dir;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 
     public List<FileInfo> getChildren() {

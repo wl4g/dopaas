@@ -16,6 +16,7 @@
 package com.wl4g.devops.doc.service.impl;
 
 import com.wl4g.component.common.io.FileIOUtils;
+import com.wl4g.component.common.lang.DateUtils2;
 import com.wl4g.devops.doc.bean.FileInfo;
 import com.wl4g.devops.doc.config.FsProperties;
 import com.wl4g.devops.doc.service.FsService;
@@ -96,6 +97,7 @@ public class FsServiceImpl implements FsService {
         fileInfo.setPath(getRelativePath(file.getAbsolutePath()));
         fileInfo.setFileName(file.getName());
         fileInfo.setDir(file.isDirectory());
+        fileInfo.setUpdateTime(DateUtils2.formatDateTime(new Date(file.lastModified())));
         if (file.isFile()) {
             fileInfo.setContent(FileIOUtils.readFileToString(file, "UTF-8"));
         }
@@ -166,6 +168,9 @@ public class FsServiceImpl implements FsService {
     @Override
     public ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException {
         File file = new File(fsProperties.getBasePath() + "/" + path);
+        if(file.isDirectory()){//TODO 暂不支持文件夹下载
+            throw new IOException("not support download dir yet");
+        }
         return downloadFile(file);
     }
 
@@ -191,8 +196,7 @@ public class FsServiceImpl implements FsService {
         }
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        String suffixName = file.getName().substring(file.getName().lastIndexOf("."));// 后缀名
-        headers.add("Content-Disposition", "attachment; filename=" + System.currentTimeMillis() + suffixName);
+        headers.add("Content-Disposition", "attachment; filename=" + file.getName());
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
         headers.add("Last-Modified", new Date().toString());
