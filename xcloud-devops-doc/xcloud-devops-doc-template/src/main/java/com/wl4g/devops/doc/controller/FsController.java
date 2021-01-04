@@ -39,12 +39,12 @@ public class FsController {
 		return resp;
 	}
 
-	@RequestMapping("getFilesByParent")
-	RespBase<?> getFilesByParent(String parentPath){
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(fsService.getFilesByParent(parentPath));
-		return resp;
-	}
+//	@RequestMapping("getFilesByParent")
+//	RespBase<?> getFilesByParent(String parentPath){
+//		RespBase<Object> resp = RespBase.create();
+//		resp.setData(fsService.getFilesByParent(parentPath));
+//		return resp;
+//	}
 
 	@RequestMapping("getFileInfo")
 	RespBase<?> getFileInfo(String path) throws IOException{
@@ -88,7 +88,6 @@ public class FsController {
 		return resp;
 	}
 
-
 	@PostMapping(value = "/uploadFile")
 	public RespBase<?> uploadFile(@RequestParam(value = "file") MultipartFile file,String path) {
 		RespBase<Object> resp = RespBase.create();
@@ -97,10 +96,10 @@ public class FsController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/downloadFile/{date}/{fileName:.+}")
-	public ResponseEntity<FileSystemResource> downloadFile(@PathVariable String date, @PathVariable String fileName)
+	@RequestMapping(value = "/downloadFile")
+	public ResponseEntity<FileSystemResource> downloadFile(String path)
 			throws IOException {
-		return fsService.downloadFile("/" + date + "/" + fileName);
+		return fsService.downloadFile(path);
 	}
 
 }
