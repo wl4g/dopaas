@@ -16,18 +16,30 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.DnsPrivateServer;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  */
+@SpringBootFeignClient("dnsPrivateServerService")
+@RequestMapping("/dnsPrivateServer")
 public interface DnsPrivateServerService {
 
-	PageHolder<DnsPrivateServer> page(PageHolder<DnsPrivateServer> pm, String name);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<DnsPrivateServer> page(@RequestBody PageHolder<DnsPrivateServer> pm,
+									  String name);
 
-	void save(DnsPrivateServer dnsPrivateServer);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody DnsPrivateServer dnsPrivateServer);
 
+	@RequestMapping(value = "/detail", method = POST)
 	DnsPrivateServer detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 }

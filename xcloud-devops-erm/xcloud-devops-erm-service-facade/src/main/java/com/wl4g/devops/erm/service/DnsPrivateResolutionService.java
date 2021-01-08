@@ -16,18 +16,31 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  */
+@SpringBootFeignClient("dnsPrivateResolutionService")
+@RequestMapping("/dnsPrivateResolution")
 public interface DnsPrivateResolutionService {
 
-	PageHolder<DnsPrivateResolution> page(PageHolder<DnsPrivateResolution> pm, String host, Long domainId);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<DnsPrivateResolution> page(@RequestBody PageHolder<DnsPrivateResolution> pm,
+										  String host,
+										  Long domainId);
 
-	void save(DnsPrivateResolution dnsPrivateResolution);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody DnsPrivateResolution dnsPrivateResolution);
 
+	@RequestMapping(value = "/detail", method = POST)
 	DnsPrivateResolution detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 }

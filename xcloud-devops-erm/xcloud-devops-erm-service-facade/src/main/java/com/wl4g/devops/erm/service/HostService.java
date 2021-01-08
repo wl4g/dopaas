@@ -16,33 +16,54 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.Host;
-
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 /**
  * @author vjay
  * @date 2019-11-14 14:10:00
  */
+@SpringBootFeignClient("hostService")
+@RequestMapping("/host")
 public interface HostService {
 
-	List<Host> list(String name, String hostname, Long idcId);
+	@RequestMapping(value = "/list", method = POST)
+	List<Host> list(String name,
+					String hostname,
+					Long idcId);
 
-	PageHolder<Host> page(PageHolder<Host> pm, String name, String hostname, Long idcId);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<Host> page(@RequestBody PageHolder<Host> pm,
+						  String name,
+						  String hostname,
+						  Long idcId);
 
-	void save(Host host);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody Host host);
 
+	@RequestMapping(value = "/detail", method = POST)
 	Host detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 
-	ResponseEntity<FileSystemResource> createAndDownloadTemplate(Long idcId, String organizationCode) throws IOException;
+	@RequestMapping(value = "/createAndDownloadTemplate", method = POST)
+	ResponseEntity<FileSystemResource> createAndDownloadTemplate(Long idcId,
+																 String organizationCode) throws IOException;
 
-	Map<String, Object> importHost(MultipartFile file, Integer force, Integer sshAutoCreate) throws IOException;
+	@RequestMapping(value = "/importHost", method = POST)
+	Map<String, Object> importHost(MultipartFile file,
+								   Integer force,
+								   Integer sshAutoCreate) throws IOException;
 }

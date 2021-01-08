@@ -16,22 +16,35 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.K8sCluster;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  */
+@SpringBootFeignClient("k8sClusterService")
+@RequestMapping("/k8sCluster")
 public interface K8sClusterService {
 
-	PageHolder<K8sCluster> page(PageHolder<K8sCluster> pm, String name);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<K8sCluster> page(@RequestBody PageHolder<K8sCluster> pm,
+								String name);
 
+	@RequestMapping(value = "/getForSelect", method = POST)
 	List<K8sCluster> getForSelect();
 
-	void save(K8sCluster k8sCluster);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody K8sCluster k8sCluster);
 
+	@RequestMapping(value = "/detail", method = POST)
 	K8sCluster detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 }

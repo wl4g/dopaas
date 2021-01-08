@@ -15,13 +15,21 @@
  */
 package com.wl4g.devops.erm.service;
 
-import java.util.List;
-
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.Log;
 import com.wl4g.devops.common.bean.erm.QueryLogModel;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+@SpringBootFeignClient("logConsoleService")
+@RequestMapping("/logConsole")
 public interface LogConsoleService {
 
-	List<Log> console(QueryLogModel model) throws Exception;
+	@RequestMapping(value = "/console", method = POST)
+	List<Log> console(@RequestBody QueryLogModel model) throws Exception;
 
 }

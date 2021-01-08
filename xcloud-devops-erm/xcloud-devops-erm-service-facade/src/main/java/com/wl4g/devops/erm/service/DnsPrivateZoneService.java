@@ -16,20 +16,33 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  */
+@SpringBootFeignClient("dnsPrivateZoneService")
+@RequestMapping("/dnsPrivateZone")
 public interface DnsPrivateZoneService {
 
-	PageHolder<DnsPrivateZone> page(PageHolder<DnsPrivateZone> pm, String zone);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<DnsPrivateZone> page(@RequestBody PageHolder<DnsPrivateZone> pm,
+									String zone);
 
-	void save(DnsPrivateZone dnsPrivateDomain);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody DnsPrivateZone dnsPrivateDomain);
 
+	@RequestMapping(value = "/detail", method = POST)
 	DnsPrivateZone detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 
+	@RequestMapping(value = "/loadDnsAtStart", method = POST)
 	void loadDnsAtStart();
 }

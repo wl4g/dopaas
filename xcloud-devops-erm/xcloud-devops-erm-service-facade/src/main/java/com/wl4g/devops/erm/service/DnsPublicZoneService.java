@@ -16,18 +16,30 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.DnsPublicZone;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  */
+@SpringBootFeignClient("dnsPublicZoneService")
+@RequestMapping("/dnsPublicZone")
 public interface DnsPublicZoneService {
 
-	PageHolder<DnsPublicZone> page(PageHolder<DnsPublicZone> pm, String name);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<DnsPublicZone> page(@RequestBody PageHolder<DnsPublicZone> pm,
+								   String name);
 
-	void save(DnsPublicZone dnsPublicDomain);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody DnsPublicZone dnsPublicDomain);
 
+	@RequestMapping(value = "/detail", method = POST)
 	DnsPublicZone detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 }

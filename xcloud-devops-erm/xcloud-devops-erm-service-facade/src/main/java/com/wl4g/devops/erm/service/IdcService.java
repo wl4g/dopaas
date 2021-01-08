@@ -16,22 +16,35 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.IdcBean;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  */
+@SpringBootFeignClient("idcService")
+@RequestMapping("/idc")
 public interface IdcService {
 
-	PageHolder<IdcBean> page(PageHolder<IdcBean> pm, String name);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<IdcBean> page(@RequestBody PageHolder<IdcBean> pm,
+							 String name);
 
+	@RequestMapping(value = "/getForSelect", method = POST)
 	List<IdcBean> getForSelect();
 
-	void save(IdcBean idc);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody IdcBean idc);
 
+	@RequestMapping(value = "/detail", method = POST)
 	IdcBean detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 }

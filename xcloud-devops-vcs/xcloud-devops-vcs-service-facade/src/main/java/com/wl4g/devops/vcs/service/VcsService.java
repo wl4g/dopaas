@@ -16,14 +16,20 @@
 package com.wl4g.devops.vcs.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.bean.vcs.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link VcsService}
@@ -34,33 +40,67 @@ import java.util.List;
  * @sine v1.0.0
  * @see
  */
+@SpringBootFeignClient("vcsService")
+@RequestMapping("/vcs")
 public interface VcsService {
 
-	PageHolder<Vcs> list(PageHolder<Vcs> pm, String name, String provider, Integer authType);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<Vcs> list(@RequestBody PageHolder<Vcs> pm,
+						 @RequestParam(name="name",required=false) String name,
+						 @RequestParam(name="provider",required=false) String provider,
+						 @RequestParam(name="authType",required=false) Integer authType);
 
-	void save(Vcs vcs);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody Vcs vcs);
 
-	void del(Long id);
+	@RequestMapping(value = "/del", method = POST)
+	void del(@RequestParam(name="id",required=false) Long id);
 
-	Vcs detail(Long id);
+	@RequestMapping(value = "/detail", method = POST)
+	Vcs detail(@RequestParam(name="id",required=false) Long id);
 
+	@RequestMapping(value = "/all", method = POST)
 	List<Vcs> all();
 
-	List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Long vcsId, String projectName) throws Exception;
+	@RequestMapping(value = "/getProjectsToCompositeBasic", method = POST)
+	List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(@RequestParam(name="vcsId",required=false) Long vcsId,
+																	@RequestParam(name="projectName",required=false) String projectName) throws Exception;
 
-	List<VcsGroupModel> getGroups(Long id, String groupName);
+	@RequestMapping(value = "/getGroups", method = POST)
+	List<VcsGroupModel> getGroups(@RequestParam(name="id",required=false) Long id,
+								  @RequestParam(name="groupName",required=false) String groupName);
 
-	List<VcsProjectModel> getProjects(PageHolder<?> pm, Long vcsId, Long groupId, String projectName) throws Exception;
+	@RequestMapping(value = "/getProjects", method = POST)
+	List<VcsProjectModel> getProjects(@RequestBody PageHolder<?> pm,
+									  @RequestParam(name="vcsId",required=false) Long vcsId,
+									  @RequestParam(name="groupId",required=false) Long groupId,
+									  @RequestParam(name="projectName",required=false) String projectName) throws Exception;
 
-	VcsProjectModel getProjectById(Long vcsId, Long projectId);
+	@RequestMapping(value = "/getProjectById", method = POST)
+	VcsProjectModel getProjectById(@RequestParam(name="vcsId",required=false) Long vcsId,
+								   @RequestParam(name="projectId",required=false) Long projectId);
 
-	List<VcsBranchModel> getBranchs(Long vcsId, Long projectId) throws Exception;
+	@RequestMapping(value = "/getBranchs", method = POST)
+	List<VcsBranchModel> getBranchs(@RequestParam(name="vcsId",required=false) Long vcsId,
+									@RequestParam(name="projectId",required=false) Long projectId) throws Exception;
 
-	List<VcsTagModel> getTags(Long vcsId, Long projectId) throws Exception;
+	@RequestMapping(value = "/getTags", method = POST)
+	List<VcsTagModel> getTags(@RequestParam(name="vcsId",required=false) Long vcsId,
+							  @RequestParam(name="projectId",required=false) Long projectId) throws Exception;
 
-	VcsBranchModel createBranch(Long vcsId, Long projectId, String branch, String ref) throws Exception;
+	@RequestMapping(value = "/createBranch", method = POST)
+	VcsBranchModel createBranch(@RequestParam(name="vcsId",required=false) Long vcsId,
+								@RequestParam(name="projectId",required=false) Long projectId,
+								@RequestParam(name="branch",required=false) String branch,
+								@RequestParam(name="ref",required=false) String ref) throws Exception;
 
-	VcsTagModel createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription)
+	@RequestMapping(value = "/createTag", method = POST)
+	VcsTagModel createTag(@RequestParam(name="vcsId",required=false) Long vcsId,
+						  @RequestParam(name="projectId",required=false) Long projectId,
+						  @RequestParam(name="tag",required=false) String tag,
+						  @RequestParam(name="ref",required=false) String ref,
+						  @RequestParam(name="message",required=false) String message,
+						  @RequestParam(name="releaseDescription",required=false) String releaseDescription)
 			throws Exception;
 
 }

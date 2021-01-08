@@ -16,9 +16,14 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * 应用组管理Service接口
@@ -26,18 +31,33 @@ import java.util.List;
  * @author sut
  * @date 2018年9月20日
  */
+@SpringBootFeignClient("appInstanceService")
+@RequestMapping("/appInstance")
 public interface AppInstanceService {
 
-	void save(AppInstance appInstance);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody AppInstance appInstance);
 
-	PageHolder<AppInstance> list(PageHolder<AppInstance> pm, String name, Long clusterId, String envType, Integer serverType);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<AppInstance> list(@RequestBody PageHolder<AppInstance> pm,
+								 String name,
+								 Long clusterId,
+								 String envType,
+								 Integer serverType);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long clusterId);
 
+	@RequestMapping(value = "/detail", method = POST)
 	AppInstance detail(Long instanceId);
 
-	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId, String envType);
+	@RequestMapping(value = "/getInstancesByClusterIdAndEnvType", method = POST)
+	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId,
+														String envType);
 
-	void testSSHConnect(Long hostId, String sshUser, String sshKey) throws Exception, InterruptedException;
+	@RequestMapping(value = "/testSSHConnect", method = POST)
+	void testSSHConnect(Long hostId,
+						String sshUser,
+						String sshKey) throws Exception, InterruptedException;
 
 }
