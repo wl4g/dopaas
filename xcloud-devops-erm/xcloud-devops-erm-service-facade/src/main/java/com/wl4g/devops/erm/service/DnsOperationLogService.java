@@ -16,18 +16,30 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.DnsOperationLog;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  */
+@SpringBootFeignClient("dnsOperationLogService")
+@RequestMapping("/dnsOperationLog")
 public interface DnsOperationLogService {
 
-	PageHolder<DnsOperationLog> page(PageHolder<DnsOperationLog> pm, String domain);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<DnsOperationLog> page(@RequestBody PageHolder<DnsOperationLog> pm,
+									 String domain);
 
-	void save(DnsOperationLog dnsOperationLog);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody DnsOperationLog dnsOperationLog);
 
+	@RequestMapping(value = "/detail", method = POST)
 	DnsOperationLog detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 }

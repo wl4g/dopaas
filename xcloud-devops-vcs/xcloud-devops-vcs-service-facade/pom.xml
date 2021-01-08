@@ -29,7 +29,11 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-data</artifactId>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>xcloud-component-rpc-springboot-feign</artifactId>
+        </dependency>
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>

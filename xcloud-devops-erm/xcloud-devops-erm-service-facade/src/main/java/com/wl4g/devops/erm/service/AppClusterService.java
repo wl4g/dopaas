@@ -16,12 +16,17 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * Application cluster information service of {@link AppClusterService}
@@ -31,20 +36,33 @@ import java.util.Map;
  * @sine v1.0
  * @see
  */
+@SpringBootFeignClient("appClusterService")
+@RequestMapping("/appCluster")
 public interface AppClusterService {
 
-	void save(AppCluster appCluster);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody AppCluster appCluster);
 
-	Map<String, Object> list(PageHolder<?> pm, String clusterName, Integer deployType);
+	@RequestMapping(value = "/list", method = POST)
+	Map<String, Object> list(@RequestBody PageHolder<?> pm,
+							 String clusterName,
+							 Integer deployType);
 
+	@RequestMapping(value = "/clusters", method = POST)
 	List<AppCluster> clusters();
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long clusterId);
 
+	@RequestMapping(value = "/detail", method = POST)
 	AppCluster detail(Long clusterId);
 
-	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId, String envType);
+	@RequestMapping(value = "/getInstancesByClusterIdAndEnvType", method = POST)
+	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId,
+														String envType);
 
-	AppEnvironment getAppClusterEnvironment(Long clusterId, String envType);
+	@RequestMapping(value = "/getAppClusterEnvironment", method = POST)
+	AppEnvironment getAppClusterEnvironment(Long clusterId,
+											String envType);
 
 }

@@ -16,24 +16,41 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.SshBean;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  */
+@SpringBootFeignClient("sshService")
+@RequestMapping("/ssh")
 public interface SshService {
 
-	PageHolder<SshBean> page(PageHolder<SshBean> pm, String name);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<SshBean> page(@RequestBody PageHolder<SshBean> pm,
+							 String name);
 
+	@RequestMapping(value = "/getForSelect", method = POST)
 	List<SshBean> getForSelect();
 
-	void save(SshBean ssh);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody SshBean ssh);
 
+	@RequestMapping(value = "/detail", method = POST)
 	SshBean detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 
-	void testSSHConnect(Long hostId, String sshUser, String sshKey, Long sshId) throws Exception, InterruptedException;
+	@RequestMapping(value = "/testSSHConnect", method = POST)
+	void testSSHConnect(Long hostId,
+						String sshUser,
+						String sshKey,
+						Long sshId) throws Exception, InterruptedException;
 }

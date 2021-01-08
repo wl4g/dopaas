@@ -15,19 +15,30 @@
  */
 package com.wl4g.devops.erm.service;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+@SpringBootFeignClient("fsService")
+@RequestMapping("/fs")
 public interface FsService {
 
-    String uploadFile(MultipartFile img);
+    @RequestMapping(value = "/uploadFile", method = POST)
+    String uploadFile(@RequestBody MultipartFile img);
 
+    @RequestMapping(value = "/downloadFile", method = POST)
     ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException;
 
-    String uploadImg(MultipartFile img);
+    @RequestMapping(value = "/uploadImg", method = POST)
+    String uploadImg(@RequestBody MultipartFile img);
 
+    @RequestMapping(value = "/downloadImg", method = POST)
     byte[] downloadImg(String path) throws IOException;
 }

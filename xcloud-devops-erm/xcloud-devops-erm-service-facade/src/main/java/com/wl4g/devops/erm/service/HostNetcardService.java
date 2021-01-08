@@ -16,23 +16,37 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.HostNetcard;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  * @date 2019-11-14 14:10:00
  */
+@SpringBootFeignClient("hostNetcardService")
+@RequestMapping("/hostNetcard")
 public interface HostNetcardService {
 
-	PageHolder<HostNetcard> page(PageHolder<HostNetcard> pm, Long hostId, String name);
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<HostNetcard> page(@RequestBody PageHolder<HostNetcard> pm,
+								 Long hostId,
+								 String name);
 
-	void save(HostNetcard hostNetcard);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody HostNetcard hostNetcard);
 
+	@RequestMapping(value = "/detail", method = POST)
 	HostNetcard detail(Long id);
 
+	@RequestMapping(value = "/del", method = POST)
 	void del(Long id);
 
+	@RequestMapping(value = "/getHostTunnel", method = POST)
 	Map<String, Object> getHostTunnel();
 }
