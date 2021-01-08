@@ -47,7 +47,7 @@ public class EnterpriseDocumentServiceImpl implements EnterpriseDocumentService 
 
     @Override
     public PageHolder<EnterpriseDocument> page(PageHolder<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument) {
-        pm.setCurrentPage();
+        pm.startPage();
         pm.setRecords(enterpriseDocumentDao.list(enterpriseDocument));
         return pm;
     }

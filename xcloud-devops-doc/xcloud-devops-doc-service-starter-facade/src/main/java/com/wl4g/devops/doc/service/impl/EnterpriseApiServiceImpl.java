@@ -57,7 +57,7 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
 
     @Override
     public PageHolder<EnterpriseApi> page(PageHolder<EnterpriseApi> pm, EnterpriseApi enterpriseApi) {
-        pm.setCurrentPage();
+        pm.startPage();
         pm.setRecords(enterpriseApiDao.list(enterpriseApi));
         return pm;
     }

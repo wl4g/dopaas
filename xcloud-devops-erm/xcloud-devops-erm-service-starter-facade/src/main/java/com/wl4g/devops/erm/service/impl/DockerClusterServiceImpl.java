@@ -51,7 +51,7 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 
 	@Override
 	public PageHolder<DockerCluster> page(PageHolder<DockerCluster> pm, String name) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(dockerClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

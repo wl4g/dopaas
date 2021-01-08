@@ -67,7 +67,7 @@ public class DockerRepositoryServiceImpl implements DockerRepositoryService {
 
 	@Override
 	public PageHolder<DockerRepository> page(PageHolder<DockerRepository> pm, String name) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(dockerRepositoryDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

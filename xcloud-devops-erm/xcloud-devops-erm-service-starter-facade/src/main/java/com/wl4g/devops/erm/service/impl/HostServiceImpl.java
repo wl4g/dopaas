@@ -95,7 +95,7 @@ public class HostServiceImpl implements HostService {
 
 	@Override
 	public PageHolder<Host> page(PageHolder<Host> pm, String name, String hostname, Long idcId) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(appHostDao.list(getRequestOrganizationCodes(), name, hostname, idcId));
 		return pm;
 	}

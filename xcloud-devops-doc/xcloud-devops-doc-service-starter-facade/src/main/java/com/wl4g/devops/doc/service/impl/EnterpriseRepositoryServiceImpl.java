@@ -47,7 +47,7 @@ public class EnterpriseRepositoryServiceImpl implements EnterpriseRepositoryServ
 
     @Override
     public PageHolder<EnterpriseRepository> page(PageHolder<EnterpriseRepository> pm, EnterpriseRepository enterpriseRepository) {
-        pm.setCurrentPage();
+        pm.startPage();
         pm.setRecords(enterpriseRepositoryDao.list(enterpriseRepository));
         return pm;
     }

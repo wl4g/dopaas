@@ -52,7 +52,7 @@ public class EnterpriseRepositoryGroupServiceImpl implements EnterpriseRepositor
 
     @Override
     public PageHolder<EnterpriseRepositoryGroup> page(PageHolder<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
-        pm.setCurrentPage();
+        pm.startPage();
         List<EnterpriseRepositoryGroup> list = enterpriseRepositoryGroupDao.list(enterpriseRepositoryGroup);
         for (EnterpriseRepositoryGroup group : list) {
             group.setEnterpriseRepositories(enterpriseRepositoryDao.selectByGroupId(group.getId()));

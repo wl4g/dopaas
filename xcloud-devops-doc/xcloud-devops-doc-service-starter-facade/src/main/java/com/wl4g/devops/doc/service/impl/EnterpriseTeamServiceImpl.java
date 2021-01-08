@@ -46,7 +46,7 @@ public class EnterpriseTeamServiceImpl implements EnterpriseTeamService {
 
     @Override
     public PageHolder<EnterpriseTeam> page(PageHolder<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam) {
-        pm.setCurrentPage();
+        pm.startPage();
         pm.setRecords(enterpriseTeamDao.list(enterpriseTeam));
         return pm;
     }

@@ -44,7 +44,7 @@ public class IdcServiceImpl implements IdcService {
 
 	@Override
 	public PageHolder<IdcBean> page(PageHolder<IdcBean> pm, String name) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(idcDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

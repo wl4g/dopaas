@@ -52,7 +52,7 @@ public class GenProjectServiceImpl implements GenProjectService {
 
 	@Override
 	public PageHolder<GenProject> page(PageHolder<GenProject> pm, String projectName) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(genProjectDao.list(projectName));
 		return pm;
 	}

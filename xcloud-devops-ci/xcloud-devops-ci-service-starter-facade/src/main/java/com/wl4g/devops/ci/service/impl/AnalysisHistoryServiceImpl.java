@@ -39,7 +39,7 @@ public class AnalysisHistoryServiceImpl implements AnalysisHistoryService {
 
 	@Override
 	public PageHolder<AnalysisHistory> list(PageHolder<AnalysisHistory> pm) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(analysisHistoryDao.list(getRequestOrganizationCodes()));
 		return pm;
 	}

@@ -54,7 +54,7 @@ public class ShareServiceImpl implements ShareService {
 
 	@Override
 	public PageHolder<Share> list(PageHolder<Share> pm) {
-		pm.setCurrentPage();
+		pm.startPage();
 		List<Share> list = shareDao.list();
 		for (Share share : list) {
 			FileChanges fileChanges = docService.getLastByDocCode(share.getDocCode());
