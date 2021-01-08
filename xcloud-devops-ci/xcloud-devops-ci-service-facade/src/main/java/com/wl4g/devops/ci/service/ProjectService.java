@@ -16,34 +16,59 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.ci.Project;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  * @date 2019-05-17 10:23:00
  */
+@SpringBootFeignClient("projectService")
+@RequestMapping("/project")
 public interface ProjectService {
 
-	void save(Project project);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody Project project);
 
-	int deleteById(Long id);
+	@RequestMapping(value = "/deleteById", method = POST)
+	int deleteById(@RequestParam(name="id",required=false) Long id);
 
-	int removeById(Long id);
+	@RequestMapping(value = "/removeById", method = POST)
+	int removeById(@RequestParam(name="id",required=false) Long id);
 
-	PageHolder<Project> list(PageHolder<Project> pm, String groupName, String projectName);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<Project> list(@RequestBody PageHolder<Project> pm,
+							 @RequestParam(name="groupName",required=false) String groupName,
+							 @RequestParam(name="projectName",required=false) String projectName);
 
-	List<Project> getBySelect(Integer isBoot);
+	@RequestMapping(value = "/getBySelect", method = POST)
+	List<Project> getBySelect(@RequestParam(name="isBoot",required=false) Integer isBoot);
 
-	Project selectByPrimaryKey(Long id);
+	@RequestMapping(value = "/selectByPrimaryKey", method = POST)
+	Project selectByPrimaryKey(@RequestParam(name="id",required=false) Long id);
 
-	Project getByAppClusterId(Long appClusteId);
+	@RequestMapping(value = "/getByAppClusterId", method = POST)
+	Project getByAppClusterId(@RequestParam(name="appClusteId",required=false) Long appClusteId);
 
-	int updateLockStatus(Long id, Integer lockStatus);
+	@RequestMapping(value = "/updateLockStatus", method = POST)
+	int updateLockStatus(@RequestParam(name="id",required=false) Long id,
+						 @RequestParam(name="lockStatus",required=false) Integer lockStatus);
 
-	List<String> getBranchs(Long appClusterId, Integer tagOrBranch) throws Exception;
+	@RequestMapping(value = "/getBranchs", method = POST)
+	List<String> getBranchs(@RequestParam(name="appClusterId",required=false) Long appClusterId,
+							@RequestParam(name="tagOrBranch",required=false) Integer tagOrBranch)
+			throws Exception;
 
-	List<String> getBranchsByProjectId(Long projectId, Integer tagOrBranch) throws Exception;
+	@RequestMapping(value = "/getBranchsByProjectId", method = POST)
+	List<String> getBranchsByProjectId(@RequestParam(name="projectId",required=false) Long projectId,
+									   @RequestParam(name="tagOrBranch",required=false) Integer tagOrBranch)
+			throws Exception;
 
 }

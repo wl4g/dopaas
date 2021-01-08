@@ -16,14 +16,23 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.ci.OrchestrationHistory;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  * @date 2019-11-12 11:05:00
  */
+@SpringBootFeignClient("orchestrationHistoryService")
+@RequestMapping("/orchestrationHistory")
 public interface OrchestrationHistoryService {
 
-	PageHolder<OrchestrationHistory> list(PageHolder<OrchestrationHistory> pm, String runId);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<OrchestrationHistory> list(@RequestBody PageHolder<OrchestrationHistory> pm, @RequestParam(name="runId",required=false) String runId);
 
 }

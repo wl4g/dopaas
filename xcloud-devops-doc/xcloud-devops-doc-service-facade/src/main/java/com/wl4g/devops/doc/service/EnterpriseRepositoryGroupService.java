@@ -19,7 +19,14 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryGroupPageRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *  service of {@link EnterpriseRepositoryGroup}
@@ -29,16 +36,17 @@ import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
  * @Date 
  * @since v1.0
  */
+@SpringBootFeignClient("enterpriseRepositoryGroupService")
+@RequestMapping("/enterpriseRepositoryGroup")
 public interface EnterpriseRepositoryGroupService {
 
     /**
      *  page query.
      *
-     * @param pm
-     * @param enterpriseRepositoryGroup
      * @return 
      */
-    PageHolder<EnterpriseRepositoryGroup> page(PageHolder<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup);
+    @RequestMapping(value = "/page", method = POST)
+    PageHolder<EnterpriseRepositoryGroup> page(@RequestBody EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest);
 
     /**
      *  save.
@@ -46,7 +54,8 @@ public interface EnterpriseRepositoryGroupService {
      * @param enterpriseRepositoryGroup
      * @return 
      */
-    int save(EnterpriseRepositoryGroup enterpriseRepositoryGroup);
+    @RequestMapping(value = "/save", method = POST)
+    int save(@RequestBody EnterpriseRepositoryGroup enterpriseRepositoryGroup);
 
     /**
      *  detail query.
@@ -54,7 +63,8 @@ public interface EnterpriseRepositoryGroupService {
      * @param id
      * @return 
      */
-    EnterpriseRepositoryGroup detail(Long id);
+    @RequestMapping(value = "/detail", method = POST)
+    EnterpriseRepositoryGroup detail(@RequestParam(name="id",required=false) Long id);
 
     /**
      *  delete.
@@ -62,7 +72,8 @@ public interface EnterpriseRepositoryGroupService {
      * @param id
      * @return 
      */
-    int del(Long id);
+    @RequestMapping(value = "/del", method = POST)
+    int del(@RequestParam(name="id",required=false) Long id);
 
 }
 

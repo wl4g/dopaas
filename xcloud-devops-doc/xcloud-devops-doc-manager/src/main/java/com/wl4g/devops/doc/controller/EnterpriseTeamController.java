@@ -22,6 +22,7 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
 import com.wl4g.devops.doc.service.EnterpriseTeamService;
+import com.wl4g.devops.doc.service.dto.EnterpriseTeamPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,9 +47,9 @@ public class EnterpriseTeamController extends BaseController {
     private EnterpriseTeamService enterpriseTeamService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseTeam>> list(PageHolder<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam) {
+    public RespBase<PageHolder<EnterpriseTeam>> list(EnterpriseTeamPageRequest enterpriseTeamPageRequest) {
         RespBase<PageHolder<EnterpriseTeam>> resp = RespBase.create();
-        resp.setData(enterpriseTeamService.page(pm, enterpriseTeam));
+        resp.setData(enterpriseTeamService.page(enterpriseTeamPageRequest));
         return resp;
     }
 

@@ -16,22 +16,39 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.ci.Orchestration;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  * @date 2019-11-12 11:05:00
  */
+@SpringBootFeignClient("orchestrationService")
+@RequestMapping("/orchestration")
 public interface OrchestrationService {
 
-	PageHolder<Orchestration> list(PageHolder<Orchestration> pm, String name);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<Orchestration> list(@RequestBody PageHolder<Orchestration> pm,@RequestParam(name="name",required=false) String name);
 
-	void save(Orchestration orchestration);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody Orchestration orchestration);
 
-	void del(Long id);
+	@RequestMapping(value = "/del", method = POST)
+	void del(@RequestParam(name="id",required=false)Long id);
 
-	Orchestration detail(Long id);
+	@RequestMapping(value = "/detail", method = POST)
+	Orchestration detail(@RequestParam(name="id",required=false)Long id);
 
-	void run(Long id, String remark, String taskTraceId, String taskTraceType, String annex);
+	@RequestMapping(value = "/run", method = POST)
+	void run(@RequestParam(name="id",required=false)Long id,
+			 @RequestParam(name="remark",required=false)String remark,
+			 @RequestParam(name="taskTraceId",required=false)String taskTraceId,
+			 @RequestParam(name="taskTraceType",required=false)String taskTraceType,
+			 @RequestParam(name="annex",required=false)String annex);
 
 }

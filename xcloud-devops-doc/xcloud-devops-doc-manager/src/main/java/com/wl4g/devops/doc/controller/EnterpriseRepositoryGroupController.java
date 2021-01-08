@@ -22,6 +22,7 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
 import com.wl4g.devops.doc.service.EnterpriseRepositoryGroupService;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryGroupPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,9 +47,9 @@ public class EnterpriseRepositoryGroupController extends BaseController {
     private EnterpriseRepositoryGroupService enterpriseRepositoryGroupService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseRepositoryGroup>> list(PageHolder<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
+    public RespBase<PageHolder<EnterpriseRepositoryGroup>> list(EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest) {
         RespBase<PageHolder<EnterpriseRepositoryGroup>> resp = RespBase.create();
-        resp.setData(enterpriseRepositoryGroupService.page(pm, enterpriseRepositoryGroup));
+        resp.setData(enterpriseRepositoryGroupService.page(enterpriseRepositoryGroupPageRequest));
         return resp;
     }
 

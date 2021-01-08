@@ -16,27 +16,48 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.ci.Trigger;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  * @date 2019-05-17 11:04:00
  */
+@SpringBootFeignClient("triggerService")
+@RequestMapping("/trigger")
 public interface TriggerService {
 
-	PageHolder<Trigger> list(PageHolder<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,
-			String endDate);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<Trigger> list(@RequestBody PageHolder<Trigger> pm,
+							 @RequestParam(name="id",required=false) Long id,
+							 @RequestParam(name="name",required=false) String name,
+							 @RequestParam(name="taskId",required=false) Long taskId,
+							 @RequestParam(name="enable",required=false) Integer enable,
+							 @RequestParam(name="startDate",required=false) String startDate,
+							 @RequestParam(name="endDate",required=false) String endDate);
 
-	void save(Trigger trigger);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody Trigger trigger);
 
-	int delete(Long id);
+	@RequestMapping(value = "/delete", method = POST)
+	int delete(@RequestParam(name="id",required=false) Long id);
 
-	void enable(Long id);
+	@RequestMapping(value = "/enable", method = POST)
+	void enable(@RequestParam(name="id",required=false) Long id);
 
-	void disable(Long id);
+	@RequestMapping(value = "/disable", method = POST)
+	void disable(@RequestParam(name="id",required=false) Long id);
 
-	void updateSha(Long id, String sha);
+	@RequestMapping(value = "/updateSha", method = POST)
+	void updateSha(@RequestParam(name="id",required=false) Long id,
+				   @RequestParam(name="sha",required=false) String sha);
 
-	Trigger getById(Long id);
+	@RequestMapping(value = "/getById", method = POST)
+	Trigger getById(@RequestParam(name="id",required=false) Long id);
 
 }

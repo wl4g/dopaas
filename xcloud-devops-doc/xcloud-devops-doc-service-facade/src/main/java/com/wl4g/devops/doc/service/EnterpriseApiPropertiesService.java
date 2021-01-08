@@ -19,7 +19,14 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
+import com.wl4g.devops.doc.service.dto.EnterpriseApiPropertiesPageRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *  service of {@link EnterpriseApiProperties}
@@ -29,16 +36,17 @@ import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
  * @Date 
  * @since v1.0
  */
+@SpringBootFeignClient("enterpriseApiPropertiesService")
+@RequestMapping("/enterpriseApiProperties")
 public interface EnterpriseApiPropertiesService {
 
     /**
      *  page query.
      *
-     * @param pm
-     * @param enterpriseApiProperties
      * @return 
      */
-    PageHolder<EnterpriseApiProperties> page(PageHolder<EnterpriseApiProperties> pm, EnterpriseApiProperties enterpriseApiProperties);
+    @RequestMapping(value = "/page", method = POST)
+    PageHolder<EnterpriseApiProperties> page(@RequestBody EnterpriseApiPropertiesPageRequest enterpriseApiPropertiesPageRequest);
 
     /**
      *  save.
@@ -46,7 +54,8 @@ public interface EnterpriseApiPropertiesService {
      * @param enterpriseApiProperties
      * @return 
      */
-    int save(EnterpriseApiProperties enterpriseApiProperties);
+    @RequestMapping(value = "/save", method = POST)
+    int save(@RequestBody EnterpriseApiProperties enterpriseApiProperties);
 
     /**
      *  detail query.
@@ -54,7 +63,8 @@ public interface EnterpriseApiPropertiesService {
      * @param id
      * @return 
      */
-    EnterpriseApiProperties detail(Long id);
+    @RequestMapping(value = "/detail", method = POST)
+    EnterpriseApiProperties detail(@RequestParam(name="id",required=false) Long id);
 
     /**
      *  delete.
@@ -62,7 +72,8 @@ public interface EnterpriseApiPropertiesService {
      * @param id
      * @return 
      */
-    int del(Long id);
+    @RequestMapping(value = "/del", method = POST)
+    int del(@RequestParam(name="id",required=false) Long id);
 
 }
 

@@ -18,18 +18,18 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepository;
+import com.wl4g.devops.doc.service.EnterpriseRepositoryService;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-
-import com.wl4g.devops.common.bean.doc.EnterpriseRepository;
-import com.wl4g.devops.doc.service.EnterpriseRepositoryService;
 
 /**
 * {@link EnterpriseRepository}
@@ -47,9 +47,9 @@ public class EnterpriseRepositoryController extends BaseController {
     private EnterpriseRepositoryService enterpriseRepositoryService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseRepository>> list(PageHolder<EnterpriseRepository> pm, EnterpriseRepository enterpriseRepository) {
+    public RespBase<PageHolder<EnterpriseRepository>> list(EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest) {
         RespBase<PageHolder<EnterpriseRepository>> resp = RespBase.create();
-        resp.setData(enterpriseRepositoryService.page(pm, enterpriseRepository));
+        resp.setData(enterpriseRepositoryService.page(enterpriseRepositoryPageRequest));
         return resp;
     }
 

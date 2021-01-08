@@ -18,18 +18,18 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
+import com.wl4g.devops.doc.service.EnterpriseApiPropertiesService;
+import com.wl4g.devops.doc.service.dto.EnterpriseApiPropertiesPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-
-import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
-import com.wl4g.devops.doc.service.EnterpriseApiPropertiesService;
 
 /**
 * {@link EnterpriseApiProperties}
@@ -47,9 +47,9 @@ public class EnterpriseApiPropertiesController extends BaseController {
     private EnterpriseApiPropertiesService enterpriseApiPropertiesService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseApiProperties>> list(PageHolder<EnterpriseApiProperties> pm, EnterpriseApiProperties enterpriseApiProperties) {
+    public RespBase<PageHolder<EnterpriseApiProperties>> list(EnterpriseApiPropertiesPageRequest enterpriseApiPropertiesPageRequest) {
         RespBase<PageHolder<EnterpriseApiProperties>> resp = RespBase.create();
-        resp.setData(enterpriseApiPropertiesService.page(pm, enterpriseApiProperties));
+        resp.setData(enterpriseApiPropertiesService.page(enterpriseApiPropertiesPageRequest));
         return resp;
     }
 

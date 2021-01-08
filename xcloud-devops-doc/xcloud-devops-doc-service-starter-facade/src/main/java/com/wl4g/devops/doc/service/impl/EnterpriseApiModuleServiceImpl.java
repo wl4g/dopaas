@@ -24,6 +24,8 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
 import com.wl4g.devops.doc.data.EnterpriseApiModuleDao;
 import com.wl4g.devops.doc.service.EnterpriseApiModuleService;
+import com.wl4g.devops.doc.service.dto.EnterpriseApiModulePageRequest;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +49,11 @@ public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleServic
     private EnterpriseApiModuleDao enterpriseApiModuleDao;
 
     @Override
-    public PageHolder<EnterpriseApiModule> page(PageHolder<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule) {
+    public PageHolder<EnterpriseApiModule> page(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest) {
+        PageHolder<EnterpriseApiModule> pm = enterpriseApiModulePageRequest.getPm();
         pm.startPage();
+        EnterpriseApiModule enterpriseApiModule = new EnterpriseApiModule();
+        BeanUtils.copyProperties(enterpriseApiModulePageRequest,enterpriseApiModule);
         pm.setRecords(enterpriseApiModuleDao.list(enterpriseApiModule));
         return pm;
     }

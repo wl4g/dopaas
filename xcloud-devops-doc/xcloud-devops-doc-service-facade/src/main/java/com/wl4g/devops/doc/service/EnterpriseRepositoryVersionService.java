@@ -19,9 +19,16 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryVersionPageRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *  service of {@link EnterpriseRepositoryVersion}
@@ -31,25 +38,27 @@ import java.util.List;
  * @Date 
  * @since v1.0
  */
+@SpringBootFeignClient("enterpriseRepositoryVersionService")
+@RequestMapping("/enterpriseRepositoryVersion")
 public interface EnterpriseRepositoryVersionService {
 
     /**
      *  page query.
-     *
-     * @param pm
-     * @param enterpriseRepositoryVersion
      * @return 
      */
-    PageHolder<EnterpriseRepositoryVersion> page(PageHolder<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion);
+    @RequestMapping(value = "/page", method = POST)
+    PageHolder<EnterpriseRepositoryVersion> page(@RequestBody EnterpriseRepositoryVersionPageRequest enterpriseRepositoryVersionPageRequest);
 
-    List<EnterpriseRepositoryVersion> getVersionsByRepositoryId(Long repositoryId);
+    @RequestMapping(value = "/getVersionsByRepositoryId", method = POST)
+    List<EnterpriseRepositoryVersion> getVersionsByRepositoryId(@RequestParam(name="repositoryId",required=false) Long repositoryId);
     /**
      *  save.
      *
      * @param enterpriseRepositoryVersion
      * @return 
      */
-    int save(EnterpriseRepositoryVersion enterpriseRepositoryVersion);
+    @RequestMapping(value = "/save", method = POST)
+    int save(@RequestBody EnterpriseRepositoryVersion enterpriseRepositoryVersion);
 
     /**
      *  detail query.
@@ -57,7 +66,8 @@ public interface EnterpriseRepositoryVersionService {
      * @param id
      * @return 
      */
-    EnterpriseRepositoryVersion detail(Long id);
+    @RequestMapping(value = "/detail", method = POST)
+    EnterpriseRepositoryVersion detail(@RequestParam(name="id",required=false) Long id);
 
     /**
      *  delete.
@@ -65,7 +75,8 @@ public interface EnterpriseRepositoryVersionService {
      * @param id
      * @return 
      */
-    int del(Long id);
+    @RequestMapping(value = "/del", method = POST)
+    int del(@RequestParam(name="id",required=false) Long id);
 
 }
 

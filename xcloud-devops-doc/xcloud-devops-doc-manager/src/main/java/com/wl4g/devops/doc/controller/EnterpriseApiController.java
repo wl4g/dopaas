@@ -22,6 +22,7 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
 import com.wl4g.devops.doc.service.EnterpriseApiService;
+import com.wl4g.devops.doc.service.dto.EnterpriseApiPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,9 +49,9 @@ public class EnterpriseApiController extends BaseController {
     private EnterpriseApiService enterpriseApiService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseApi>> list(PageHolder<EnterpriseApi> pm, EnterpriseApi enterpriseApi) {
+    public RespBase<PageHolder<EnterpriseApi>> list(EnterpriseApiPageRequest enterpriseApiPageRequest) {
         RespBase<PageHolder<EnterpriseApi>> resp = RespBase.create();
-        resp.setData(enterpriseApiService.page(pm, enterpriseApi));
+        resp.setData(enterpriseApiService.page(enterpriseApiPageRequest));
         return resp;
     }
 

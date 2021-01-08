@@ -16,14 +16,22 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.ci.AnalysisHistory;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  * @date 2019-12-16 16:13:00
  */
+@SpringBootFeignClient("analysisHistoryService")
+@RequestMapping("/analysisHistory")
 public interface AnalysisHistoryService {
 
-	PageHolder<AnalysisHistory> list(PageHolder<AnalysisHistory> pm);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<AnalysisHistory> list(@RequestBody PageHolder<AnalysisHistory> pm);
 
 }

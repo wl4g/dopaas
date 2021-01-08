@@ -19,7 +19,14 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
+import com.wl4g.devops.doc.service.dto.EnterpriseTeamPageRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *  service of {@link EnterpriseTeam}
@@ -29,16 +36,17 @@ import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
  * @Date 
  * @since v1.0
  */
+@SpringBootFeignClient("enterpriseTeamService")
+@RequestMapping("/enterpriseTeam")
 public interface EnterpriseTeamService {
 
     /**
      *  page query.
      *
-     * @param pm
-     * @param enterpriseTeam
      * @return 
      */
-    PageHolder<EnterpriseTeam> page(PageHolder<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam);
+    @RequestMapping(value = "/page", method = POST)
+    PageHolder<EnterpriseTeam> page(@RequestBody EnterpriseTeamPageRequest enterpriseTeamPageRequest);
 
     /**
      *  save.
@@ -46,7 +54,8 @@ public interface EnterpriseTeamService {
      * @param enterpriseTeam
      * @return 
      */
-    int save(EnterpriseTeam enterpriseTeam);
+    @RequestMapping(value = "/save", method = POST)
+    int save(@RequestBody EnterpriseTeam enterpriseTeam);
 
     /**
      *  detail query.
@@ -54,7 +63,8 @@ public interface EnterpriseTeamService {
      * @param id
      * @return 
      */
-    EnterpriseTeam detail(Long id);
+    @RequestMapping(value = "/detail", method = POST)
+    EnterpriseTeam detail(@RequestParam(name="id",required=false) Long id);
 
     /**
      *  delete.
@@ -62,7 +72,8 @@ public interface EnterpriseTeamService {
      * @param id
      * @return 
      */
-    int del(Long id);
+    @RequestMapping(value = "/del", method = POST)
+    int del(@RequestParam(name="id",required=false) Long id);
 
 }
 

@@ -25,6 +25,8 @@ import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
 import com.wl4g.devops.doc.data.EnterpriseRepositoryDao;
 import com.wl4g.devops.doc.data.EnterpriseRepositoryGroupDao;
 import com.wl4g.devops.doc.service.EnterpriseRepositoryGroupService;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryGroupPageRequest;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +53,11 @@ public class EnterpriseRepositoryGroupServiceImpl implements EnterpriseRepositor
     private EnterpriseRepositoryDao enterpriseRepositoryDao;
 
     @Override
-    public PageHolder<EnterpriseRepositoryGroup> page(PageHolder<EnterpriseRepositoryGroup> pm, EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
+    public PageHolder<EnterpriseRepositoryGroup> page(EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest) {
+        PageHolder<EnterpriseRepositoryGroup> pm = enterpriseRepositoryGroupPageRequest.getPm();
         pm.startPage();
+        EnterpriseRepositoryGroup enterpriseRepositoryGroup = new EnterpriseRepositoryGroup();
+        BeanUtils.copyProperties(enterpriseRepositoryGroupPageRequest, enterpriseRepositoryGroup);
         List<EnterpriseRepositoryGroup> list = enterpriseRepositoryGroupDao.list(enterpriseRepositoryGroup);
         for (EnterpriseRepositoryGroup group : list) {
             group.setEnterpriseRepositories(enterpriseRepositoryDao.selectByGroupId(group.getId()));

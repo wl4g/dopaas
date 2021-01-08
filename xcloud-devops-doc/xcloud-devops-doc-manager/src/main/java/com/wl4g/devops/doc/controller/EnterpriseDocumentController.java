@@ -18,18 +18,18 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
+import com.wl4g.devops.doc.service.EnterpriseDocumentService;
+import com.wl4g.devops.doc.service.dto.EnterpriseDocumentPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-
-
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
-import com.wl4g.devops.doc.service.EnterpriseDocumentService;
 
 /**
 * {@link EnterpriseDocument}
@@ -47,9 +47,9 @@ public class EnterpriseDocumentController extends BaseController {
     private EnterpriseDocumentService enterpriseDocumentService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseDocument>> list(PageHolder<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument) {
+    public RespBase<PageHolder<EnterpriseDocument>> list(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest) {
         RespBase<PageHolder<EnterpriseDocument>> resp = RespBase.create();
-        resp.setData(enterpriseDocumentService.page(pm, enterpriseDocument));
+        resp.setData(enterpriseDocumentService.page(enterpriseDocumentPageRequest));
         return resp;
     }
 
