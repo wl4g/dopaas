@@ -836,10 +836,10 @@ BEGIN;
 <#assign clusterType = 2 />
 <#if javaSpecs.isConf(extOpts, "iam.mode", "cluster")>
 <#assign clusterType = 1 />
-INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://iam.${devTopDomain}:14040', 'http://iam-services.${devTopDomain}:14040/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://iam.${fatTopDomain}', 'http://iam-services.${fatTopDomain}/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'uat', 'http://iam.${uatTopDomain}', 'http://iam-services.${uatTopDomain}/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
-INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'pro', 'http://iam.${proTopDomain}', 'http://iam-services.${proTopDomain}/iam-server', 'http://localhost:14040/iam-server', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://iam.${devTopDomain}:14040', 'http://iam-services.${devTopDomain}:14040/iam-web', 'http://localhost:14040/iam-web', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (8, 75, 'iam-server', 1, 'fat', 'http://iam.${fatTopDomain}', 'http://iam-services.${fatTopDomain}/iam-server', 'http://localhost:14040/iam-web', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (14, 75, 'iam-server', 1, 'uat', 'http://iam.${uatTopDomain}', 'http://iam-services.${uatTopDomain}/iam-server', 'http://localhost:14040/iam-web', 'IAM center service', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `sys_cluster_config` VALUES (28, 75, 'iam-server', 1, 'pro', 'http://iam.${proTopDomain}', 'http://iam-services.${proTopDomain}/iam-server', 'http://localhost:14040/iam-web', 'IAM center service', NULL, NULL, NULL, NULL, 0);
 </#if>
 INSERT INTO `sys_cluster_config` VALUES (39, ${clusterId}, '${serverName}', ${clusterType}, 'dev', 'http://${devTopDomain}:${devViewServicePort}', 'http://${devTopDomain}:${entryAppPort}/${serverName}', 'http://localhost:${entryAppPort}/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);
 INSERT INTO `sys_cluster_config` VALUES (40, ${clusterId}, '${serverName}', ${clusterType}, 'fat', 'http://${fatViewServiceHost}', 'http://${fatServiceHost}/${serverName}', 'http://localhost:${entryAppPort}/${serverName}', '${projectName?lower_case} service', NULL, NULL, NULL, NULL, 0);

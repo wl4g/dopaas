@@ -27,7 +27,7 @@ spring:
           allowIpRange: ${r'${'}X_IAM_ACL_ALLOW:127.0.0.1}
           denyIpRange: ${r'${'}X_IAM_ACL_DENY}
         client:
-          server-uri: http://localhost:14040/iam-server
+          server-uri: http://localhost:14040/iam-web
           unauthorized-uri: ${r'${'}spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://${devServiceHost}:${entryAppPort}/#/home
 <#elseif javaSpecs.isConf(extOpts, "iam.mode", "local")>
