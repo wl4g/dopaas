@@ -48,7 +48,7 @@ public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleServic
 
     @Override
     public PageHolder<EnterpriseApiModule> page(PageHolder<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule) {
-        pm.setCurrentPage();
+        pm.startPage();
         pm.setRecords(enterpriseApiModuleDao.list(enterpriseApiModule));
         return pm;
     }

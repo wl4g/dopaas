@@ -111,7 +111,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public PageHolder<Pipeline> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
-		pm.setCurrentPage();
+		pm.startPage();
 		List<Pipeline> pipes = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
 		for (Pipeline p : safeList(pipes)) {
 			p.setPipeStepBuildingProjects(pipeStepBuildingProjectDao.selectByPipeId(p.getId()));
@@ -411,7 +411,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public PageHolder<ClusterExtension> clusterExtensionList(PageHolder<ClusterExtension> pm, String clusterName) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(clusterExtensionDao.list(clusterName));
 		return pm;
 	}

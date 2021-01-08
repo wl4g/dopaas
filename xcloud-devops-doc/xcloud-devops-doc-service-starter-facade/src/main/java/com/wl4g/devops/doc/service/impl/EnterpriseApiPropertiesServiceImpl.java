@@ -47,7 +47,7 @@ public class EnterpriseApiPropertiesServiceImpl implements EnterpriseApiProperti
 
     @Override
     public PageHolder<EnterpriseApiProperties> page(PageHolder<EnterpriseApiProperties> pm, EnterpriseApiProperties enterpriseApiProperties) {
-        pm.setCurrentPage();
+        pm.startPage();
         pm.setRecords(enterpriseApiPropertiesDao.list(enterpriseApiProperties));
         return pm;
     }

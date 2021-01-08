@@ -51,7 +51,7 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 
 	@Override
 	public PageHolder<K8sCluster> page(PageHolder<K8sCluster> pm, String name) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(k8sClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

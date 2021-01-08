@@ -39,7 +39,7 @@ public class LabelServcieImpl implements LabelService {
 
 	@Override
 	public PageHolder<Label> list(PageHolder<Label> pm, String name) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(labelDao.list(name));
 		return pm;
 	}

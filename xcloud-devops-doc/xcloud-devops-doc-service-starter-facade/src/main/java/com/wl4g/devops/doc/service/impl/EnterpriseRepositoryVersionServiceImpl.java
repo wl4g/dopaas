@@ -48,7 +48,7 @@ public class EnterpriseRepositoryVersionServiceImpl implements EnterpriseReposit
 
     @Override
     public PageHolder<EnterpriseRepositoryVersion> page(PageHolder<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
-        pm.setCurrentPage();
+        pm.startPage();
         pm.setRecords(enterpriseRepositoryVersionDao.list(enterpriseRepositoryVersion));
         return pm;
     }

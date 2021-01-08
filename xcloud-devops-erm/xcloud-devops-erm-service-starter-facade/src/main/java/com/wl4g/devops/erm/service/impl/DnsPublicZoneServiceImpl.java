@@ -41,7 +41,7 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 
 	@Override
 	public PageHolder<DnsPublicZone> page(PageHolder<DnsPublicZone> pm, String zone) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(publicZoneDao.list(getRequestOrganizationCodes(), zone));
 		return pm;
 	}

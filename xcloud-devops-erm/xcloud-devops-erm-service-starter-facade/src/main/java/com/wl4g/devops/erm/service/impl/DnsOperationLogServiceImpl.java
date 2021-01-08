@@ -42,7 +42,7 @@ public class DnsOperationLogServiceImpl implements DnsOperationLogService {
 
 	@Override
 	public PageHolder<DnsOperationLog> page(PageHolder<DnsOperationLog> pm, String domain) {
-		pm.setCurrentPage();
+		pm.startPage();
 		pm.setRecords(dnsOperationLogDao.list(getRequestOrganizationCodes(), domain));
 		return pm;
 	}
