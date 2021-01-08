@@ -19,7 +19,14 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
+import com.wl4g.devops.doc.service.dto.EnterpriseDocumentPageRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *  service of {@link EnterpriseDocument}
@@ -29,16 +36,16 @@ import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
  * @Date 
  * @since v1.0
  */
+@SpringBootFeignClient("enterpriseDocumentService")
+@RequestMapping("/enterpriseDocument")
 public interface EnterpriseDocumentService {
 
     /**
      *  page query.
-     *
-     * @param pm
-     * @param enterpriseDocument
      * @return 
      */
-    PageHolder<EnterpriseDocument> page(PageHolder<EnterpriseDocument> pm, EnterpriseDocument enterpriseDocument);
+    @RequestMapping(value = "/page", method = POST)
+    PageHolder<EnterpriseDocument> page(@RequestBody EnterpriseDocumentPageRequest enterpriseDocumentPageRequest);
 
     /**
      *  save.
@@ -46,7 +53,8 @@ public interface EnterpriseDocumentService {
      * @param enterpriseDocument
      * @return 
      */
-    int save(EnterpriseDocument enterpriseDocument);
+    @RequestMapping(value = "/save", method = POST)
+    int save(@RequestBody EnterpriseDocument enterpriseDocument);
 
     /**
      *  detail query.
@@ -54,7 +62,8 @@ public interface EnterpriseDocumentService {
      * @param id
      * @return 
      */
-    EnterpriseDocument detail(Long id);
+    @RequestMapping(value = "/detail", method = POST)
+    EnterpriseDocument detail(@RequestParam(name="id",required=false) Long id);
 
     /**
      *  delete.
@@ -62,7 +71,8 @@ public interface EnterpriseDocumentService {
      * @param id
      * @return 
      */
-    int del(Long id);
+    @RequestMapping(value = "/del", method = POST)
+    int del(@RequestParam(name="id",required=false) Long id);
 
 }
 

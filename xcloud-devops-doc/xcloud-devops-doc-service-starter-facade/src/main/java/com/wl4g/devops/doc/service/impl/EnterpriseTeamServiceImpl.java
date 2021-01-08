@@ -24,6 +24,8 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
 import com.wl4g.devops.doc.data.EnterpriseTeamDao;
 import com.wl4g.devops.doc.service.EnterpriseTeamService;
+import com.wl4g.devops.doc.service.dto.EnterpriseTeamPageRequest;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,8 +47,11 @@ public class EnterpriseTeamServiceImpl implements EnterpriseTeamService {
     private EnterpriseTeamDao enterpriseTeamDao;
 
     @Override
-    public PageHolder<EnterpriseTeam> page(PageHolder<EnterpriseTeam> pm, EnterpriseTeam enterpriseTeam) {
+    public PageHolder<EnterpriseTeam> page(EnterpriseTeamPageRequest enterpriseTeamPageRequest) {
+        PageHolder<EnterpriseTeam> pm = enterpriseTeamPageRequest.getPm();
         pm.startPage();
+        EnterpriseTeam enterpriseTeam = new EnterpriseTeam();
+        BeanUtils.copyProperties(enterpriseTeamPageRequest, enterpriseTeam);
         pm.setRecords(enterpriseTeamDao.list(enterpriseTeam));
         return pm;
     }

@@ -20,9 +20,16 @@ package com.wl4g.devops.doc.service;
 
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
+import com.wl4g.devops.doc.service.dto.EnterpriseApiModulePageRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *  service of {@link EnterpriseApiModule}
@@ -32,19 +39,17 @@ import java.util.List;
  * @Date 
  * @since v1.0
  */
+@SpringBootFeignClient("enterpriseApiModuleService")
+@RequestMapping("/enterpriseApiModule")
 public interface EnterpriseApiModuleService {
 
-    /**
-     *  page query.
-     *
-     * @param pm
-     * @param enterpriseApiModule
-     * @return 
-     */
-    PageHolder<EnterpriseApiModule> page(PageHolder<EnterpriseApiModule> pm, EnterpriseApiModule enterpriseApiModule);
 
+    @RequestMapping(value = "/PageHolder", method = POST)
+    PageHolder<EnterpriseApiModule> page(@RequestBody EnterpriseApiModulePageRequest enterpriseApiModulePageRequest);
 
-    List<EnterpriseApiModule> getByVersionIdAndParentId(Long versionId, Long parentId);
+    @RequestMapping(value = "/getByVersionIdAndParentId", method = POST)
+    List<EnterpriseApiModule> getByVersionIdAndParentId(@RequestParam(name="versionId",required=false) Long versionId,
+                                                        @RequestParam(name="parentId",required=false) Long parentId);
 
     /**
      *  save.
@@ -52,7 +57,8 @@ public interface EnterpriseApiModuleService {
      * @param enterpriseApiModule
      * @return 
      */
-    int save(EnterpriseApiModule enterpriseApiModule);
+    @RequestMapping(value = "/save", method = POST)
+    int save(@RequestBody EnterpriseApiModule enterpriseApiModule);
 
     /**
      *  detail query.
@@ -60,7 +66,8 @@ public interface EnterpriseApiModuleService {
      * @param id
      * @return 
      */
-    EnterpriseApiModule detail(Long id);
+    @RequestMapping(value = "/detail", method = POST)
+    EnterpriseApiModule detail(@RequestParam(name="id",required=false) Long id);
 
     /**
      *  delete.
@@ -68,7 +75,8 @@ public interface EnterpriseApiModuleService {
      * @param id
      * @return 
      */
-    int del(Long id);
+    @RequestMapping(value = "/del", method = POST)
+    int del(@RequestParam(name="id",required=false) Long id);
 
 }
 

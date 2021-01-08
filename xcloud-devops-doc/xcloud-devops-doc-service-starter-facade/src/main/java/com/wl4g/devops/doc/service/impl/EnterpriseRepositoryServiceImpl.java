@@ -18,17 +18,17 @@
 
 package com.wl4g.devops.doc.service.impl;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import com.wl4g.component.core.bean.model.PageHolder;
-
 import com.wl4g.component.core.bean.BaseBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepository;
 import com.wl4g.devops.doc.data.EnterpriseRepositoryDao;
 import com.wl4g.devops.doc.service.EnterpriseRepositoryService;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryPageRequest;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 /**
@@ -46,8 +46,11 @@ public class EnterpriseRepositoryServiceImpl implements EnterpriseRepositoryServ
     private EnterpriseRepositoryDao enterpriseRepositoryDao;
 
     @Override
-    public PageHolder<EnterpriseRepository> page(PageHolder<EnterpriseRepository> pm, EnterpriseRepository enterpriseRepository) {
+    public PageHolder<EnterpriseRepository> page(EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest) {
+        PageHolder<EnterpriseRepository> pm = enterpriseRepositoryPageRequest.getPm();
         pm.startPage();
+        EnterpriseRepository enterpriseRepository = new EnterpriseRepository();
+        BeanUtils.copyProperties(enterpriseRepositoryPageRequest, enterpriseRepository);
         pm.setRecords(enterpriseRepositoryDao.list(enterpriseRepository));
         return pm;
     }

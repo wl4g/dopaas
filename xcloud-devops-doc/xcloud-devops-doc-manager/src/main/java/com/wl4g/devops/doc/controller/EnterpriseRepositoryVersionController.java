@@ -22,6 +22,7 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
 import com.wl4g.devops.doc.service.EnterpriseRepositoryVersionService;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryVersionPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,9 +49,9 @@ public class EnterpriseRepositoryVersionController extends BaseController {
     private EnterpriseRepositoryVersionService enterpriseRepositoryVersionService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseRepositoryVersion>> list(PageHolder<EnterpriseRepositoryVersion> pm, EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
+    public RespBase<PageHolder<EnterpriseRepositoryVersion>> list(EnterpriseRepositoryVersionPageRequest enterpriseRepositoryVersionPageRequest) {
         RespBase<PageHolder<EnterpriseRepositoryVersion>> resp = RespBase.create();
-        resp.setData(enterpriseRepositoryVersionService.page(pm, enterpriseRepositoryVersion));
+        resp.setData(enterpriseRepositoryVersionService.page(enterpriseRepositoryVersionPageRequest));
         return resp;
     }
 

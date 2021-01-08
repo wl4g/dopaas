@@ -19,7 +19,14 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.doc.EnterpriseRepository;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryPageRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  *  service of {@link EnterpriseRepository}
@@ -29,16 +36,16 @@ import com.wl4g.devops.common.bean.doc.EnterpriseRepository;
  * @Date 
  * @since v1.0
  */
+@SpringBootFeignClient("enterpriseRepositoryService")
+@RequestMapping("/enterpriseRepository")
 public interface EnterpriseRepositoryService {
 
     /**
      *  page query.
-     *
-     * @param pm
-     * @param enterpriseRepository
      * @return 
      */
-    PageHolder<EnterpriseRepository> page(PageHolder<EnterpriseRepository> pm, EnterpriseRepository enterpriseRepository);
+    @RequestMapping(value = "/page", method = POST)
+    PageHolder<EnterpriseRepository> page(@RequestBody EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest);
 
     /**
      *  save.
@@ -46,7 +53,8 @@ public interface EnterpriseRepositoryService {
      * @param enterpriseRepository
      * @return 
      */
-    int save(EnterpriseRepository enterpriseRepository);
+    @RequestMapping(value = "/save", method = POST)
+    int save(@RequestBody EnterpriseRepository enterpriseRepository);
 
     /**
      *  detail query.
@@ -54,7 +62,8 @@ public interface EnterpriseRepositoryService {
      * @param id
      * @return 
      */
-    EnterpriseRepository detail(Long id);
+    @RequestMapping(value = "/detail", method = POST)
+    EnterpriseRepository detail(@RequestParam(name="description",required=false) Long id);
 
     /**
      *  delete.
@@ -62,7 +71,8 @@ public interface EnterpriseRepositoryService {
      * @param id
      * @return 
      */
-    int del(Long id);
+    @RequestMapping(value = "/del", method = POST)
+    int del(@RequestParam(name="description",required=false) Long id);
 
 }
 

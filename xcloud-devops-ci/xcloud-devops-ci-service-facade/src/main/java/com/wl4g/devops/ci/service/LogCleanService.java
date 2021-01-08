@@ -15,6 +15,12 @@
  */
 package com.wl4g.devops.ci.service;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 /**
  * {@link LogCleanService}
  * 
@@ -24,10 +30,14 @@ package com.wl4g.devops.ci.service;
  * @sine v1.0.0
  * @see
  */
+@SpringBootFeignClient("logCleanService")
+@RequestMapping("/logClean")
 public interface LogCleanService {
 
-	int cleanOrchestrationHistory(Long cleanStopTime);
+	@RequestMapping(value = "/cleanOrchestrationHistory", method = POST)
+	int cleanOrchestrationHistory(@RequestParam(value = "cleanStopTime",required = false) Long cleanStopTime);
 
-	int cleanPipelineHistory(Long cleanStopTime);
+	@RequestMapping(value = "/cleanPipelineHistory", method = POST)
+	int cleanPipelineHistory(@RequestParam(value = "cleanStopTime",required = false) Long cleanStopTime);
 
 }

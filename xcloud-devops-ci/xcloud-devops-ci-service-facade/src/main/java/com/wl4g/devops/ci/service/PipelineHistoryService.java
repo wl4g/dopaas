@@ -16,13 +16,19 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.ci.param.HookParameter;
 import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * {@link PipelineHistoryService}
@@ -33,31 +39,55 @@ import java.util.List;
  * @sine v1.0.0
  * @see
  */
+@SpringBootFeignClient("pipelineHistoryService")
+@RequestMapping("/pipelineHistory")
 public interface PipelineHistoryService {
 
-	PipelineHistory createRunnerPipeline(RunParameter run);
+	@RequestMapping(value = "/createRunnerPipeline", method = POST)
+	PipelineHistory createRunnerPipeline(@RequestBody RunParameter run);
 
-	PipelineHistory createHookPipeline(HookParameter hook);
+	@RequestMapping(value = "/createHookPipeline", method = POST)
+	PipelineHistory createHookPipeline(@RequestBody HookParameter hook);
 
-	PipelineHistory createRollbackPipeline(RollbackParameter rollback);
+	@RequestMapping(value = "/createRollbackPipeline", method = POST)
+	PipelineHistory createRollbackPipeline(@RequestBody RollbackParameter rollback);
 
-	void updatePipeHisInstanceStatus(Long pipeInstanceId, int status);
+	@RequestMapping(value = "/updatePipeHisInstanceStatus", method = POST)
+	void updatePipeHisInstanceStatus(@RequestParam(name="pipeInstanceId",required=false) Long pipeInstanceId,
+									 @RequestParam(name="status",required=false)  int status);
 
-	void updateStatus(Long pipeId, int status);
+	@RequestMapping(value = "/updateStatus", method = POST)
+	void updateStatus(@RequestParam(name="pipeId",required=false) Long pipeId,
+					  @RequestParam(name="status",required=false) int status);
 
-	void updateStatusAndResultAndSha(Long pipeId, int status, String sha);
+	@RequestMapping(value = "/updateStatusAndResultAndSha", method = POST)
+	void updateStatusAndResultAndSha(@RequestParam(name="pipeId",required=false) Long pipeId,
+									 @RequestParam(name="status",required=false) int status,
+									 @RequestParam(name="sha",required=false) String sha);
 
-	void stopByPipeHisId(Long taskHisId);
+	@RequestMapping(value = "/stopByPipeHisId", method = POST)
+	void stopByPipeHisId(@RequestParam(name="taskHisId",required=false) Long taskHisId);
 
-	void updateCostTime(Long taskId, long costTime);
+	@RequestMapping(value = "/updateCostTime", method = POST)
+	void updateCostTime(@RequestParam(name="taskId",required=false) Long taskId,
+						@RequestParam(name="costTime",required=false) long costTime);
 
-	PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName, String environment,
-			String startDate, String endDate, String providerKind);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<PipelineHistory> list(@RequestBody PageHolder<PipelineHistory> pm,
+									 @RequestParam(name="pipeName",required=false) String pipeName,
+									 @RequestParam(name="clusterName",required=false) String clusterName,
+									 @RequestParam(name="environment",required=false) String environment,
+									 @RequestParam(name="startDate",required=false) String startDate,
+									 @RequestParam(name="endDate",required=false) String endDate,
+									 @RequestParam(name="providerKind",required=false) String providerKind);
 
-	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Long pipeHisId);
+	@RequestMapping(value = "/getPipeHisInstanceByPipeId", method = POST)
+	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(@RequestParam(name="pipeHisId",required=false) Long pipeHisId);
 
-	PipelineHistory detail(Long pipeHisId);
+	@RequestMapping(value = "/detail", method = POST)
+	PipelineHistory detail(@RequestParam(name="pipeHisId",required=false) Long pipeHisId);
 
-	PipelineHistory getById(Long pipeHisId);
+	@RequestMapping(value = "/getById", method = POST)
+	PipelineHistory getById(@RequestParam(name="pipeHisId",required=false) Long pipeHisId);
 
 }

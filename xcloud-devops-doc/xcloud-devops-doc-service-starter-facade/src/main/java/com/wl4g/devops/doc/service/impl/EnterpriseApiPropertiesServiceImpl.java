@@ -18,17 +18,17 @@
 
 package com.wl4g.devops.doc.service.impl;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import com.wl4g.component.core.bean.model.PageHolder;
-
 import com.wl4g.component.core.bean.BaseBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
 import com.wl4g.devops.doc.data.EnterpriseApiPropertiesDao;
 import com.wl4g.devops.doc.service.EnterpriseApiPropertiesService;
+import com.wl4g.devops.doc.service.dto.EnterpriseApiPropertiesPageRequest;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 /**
@@ -46,8 +46,11 @@ public class EnterpriseApiPropertiesServiceImpl implements EnterpriseApiProperti
     private EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
 
     @Override
-    public PageHolder<EnterpriseApiProperties> page(PageHolder<EnterpriseApiProperties> pm, EnterpriseApiProperties enterpriseApiProperties) {
+    public PageHolder<EnterpriseApiProperties> page( EnterpriseApiPropertiesPageRequest enterpriseApiPropertiesPageRequest) {
+        PageHolder<EnterpriseApiProperties> pm = enterpriseApiPropertiesPageRequest.getPm();
         pm.startPage();
+        EnterpriseApiProperties enterpriseApiProperties = new EnterpriseApiProperties();
+        BeanUtils.copyProperties(enterpriseApiPropertiesPageRequest,enterpriseApiProperties);
         pm.setRecords(enterpriseApiPropertiesDao.list(enterpriseApiProperties));
         return pm;
     }

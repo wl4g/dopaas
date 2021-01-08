@@ -15,16 +15,25 @@
  */
 package com.wl4g.devops.ci.service;
 
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.devops.common.bean.ci.Dependency;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.LinkedHashSet;
 
-import com.wl4g.devops.common.bean.ci.Dependency;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * @author vjay
  * @date 2019-05-22 11:33:00
  */
+@SpringBootFeignClient("dependencyService")
+@RequestMapping("/dependency")
 public interface DependencyService {
 
-	LinkedHashSet<Dependency> getHierarchyDependencys(Long projectId, LinkedHashSet<Dependency> set);
+	@RequestMapping(value = "/getHierarchyDependencys", method = POST)
+	LinkedHashSet<Dependency> getHierarchyDependencys(@RequestParam("projectId") Long projectId, @RequestBody LinkedHashSet<Dependency> set);
 
 }

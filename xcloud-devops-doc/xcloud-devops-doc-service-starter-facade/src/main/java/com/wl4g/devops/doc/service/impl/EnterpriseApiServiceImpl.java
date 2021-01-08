@@ -27,6 +27,8 @@ import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
 import com.wl4g.devops.doc.data.EnterpriseApiDao;
 import com.wl4g.devops.doc.data.EnterpriseApiPropertiesDao;
 import com.wl4g.devops.doc.service.EnterpriseApiService;
+import com.wl4g.devops.doc.service.dto.EnterpriseApiPageRequest;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -56,8 +58,11 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
     private EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
 
     @Override
-    public PageHolder<EnterpriseApi> page(PageHolder<EnterpriseApi> pm, EnterpriseApi enterpriseApi) {
+    public PageHolder<EnterpriseApi> page(EnterpriseApiPageRequest enterpriseApiPageRequest) {
+        PageHolder<EnterpriseApi> pm = enterpriseApiPageRequest.getPm();
         pm.startPage();
+        EnterpriseApi enterpriseApi = new EnterpriseApi();
+        BeanUtils.copyProperties(enterpriseApiPageRequest, enterpriseApi);
         pm.setRecords(enterpriseApiDao.list(enterpriseApi));
         return pm;
     }
