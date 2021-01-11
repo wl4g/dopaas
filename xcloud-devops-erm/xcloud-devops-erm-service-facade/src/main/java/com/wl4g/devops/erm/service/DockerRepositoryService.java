@@ -21,6 +21,7 @@ import com.wl4g.devops.common.bean.erm.DockerRepository;
 import com.wl4g.devops.common.bean.erm.model.RepositoryProject;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -38,7 +39,7 @@ public interface DockerRepositoryService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DockerRepository> page(@RequestBody PageHolder<DockerRepository> pm,
-									  String name);
+									  @RequestParam(name="name",required=false) String name);
 
 	@RequestMapping(value = "/getForSelect", method = POST)
 	List<DockerRepository> getForSelect();
@@ -47,15 +48,15 @@ public interface DockerRepositoryService {
 	void save(@RequestBody DockerRepository dockerRepository);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DockerRepository detail(Long id);
+	DockerRepository detail(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/getRepositoryProjects", method = POST)
-	List<RepositoryProject> getRepositoryProjects(Long id,
-												  String address,
-												  String name)
+	List<RepositoryProject> getRepositoryProjects(@RequestParam(name="id",required=false) Long id,
+												  @RequestParam(name="address",required=false) String address,
+												  @RequestParam(name="name",required=false) String name)
 			throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException;
 
 }

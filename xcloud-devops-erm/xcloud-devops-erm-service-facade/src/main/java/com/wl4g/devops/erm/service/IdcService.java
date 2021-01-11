@@ -20,6 +20,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.IdcBean;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public interface IdcService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<IdcBean> page(@RequestBody PageHolder<IdcBean> pm,
-							 String name);
+							 @RequestParam(name="name",required=false) String name);
 
 	@RequestMapping(value = "/getForSelect", method = POST)
 	List<IdcBean> getForSelect();
@@ -43,8 +44,8 @@ public interface IdcService {
 	void save(@RequestBody IdcBean idc);
 
 	@RequestMapping(value = "/detail", method = POST)
-	IdcBean detail(Long id);
+	IdcBean detail(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam(name="id",required=false) Long id);
 }

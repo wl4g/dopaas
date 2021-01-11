@@ -22,6 +22,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -39,31 +40,31 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public interface HostService {
 
 	@RequestMapping(value = "/list", method = POST)
-	List<Host> list(String name,
-					String hostname,
-					Long idcId);
+	List<Host> list(@RequestParam(name="name",required=false) String name,
+					@RequestParam(name="hostname",required=false) String hostname,
+					@RequestParam(name="idcId",required=false) Long idcId);
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<Host> page(@RequestBody PageHolder<Host> pm,
-						  String name,
-						  String hostname,
-						  Long idcId);
+						  @RequestParam(name="name",required=false) String name,
+						  @RequestParam(name="hostname",required=false) String hostname,
+						  @RequestParam(name="idcId",required=false) Long idcId);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody Host host);
 
 	@RequestMapping(value = "/detail", method = POST)
-	Host detail(Long id);
+	Host detail(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/createAndDownloadTemplate", method = POST)
-	ResponseEntity<FileSystemResource> createAndDownloadTemplate(Long idcId,
-																 String organizationCode) throws IOException;
+	ResponseEntity<FileSystemResource> createAndDownloadTemplate(@RequestParam(name="idcId",required=false) Long idcId,
+																 @RequestParam(name="organizationCode",required=false) String organizationCode) throws IOException;
 
 	@RequestMapping(value = "/importHost", method = POST)
 	Map<String, Object> importHost(MultipartFile file,
-								   Integer force,
-								   Integer sshAutoCreate) throws IOException;
+								   @RequestParam(name="force",required=false) Integer force,
+								   @RequestParam(name="sshAutoCreate",required=false) Integer sshAutoCreate) throws IOException;
 }

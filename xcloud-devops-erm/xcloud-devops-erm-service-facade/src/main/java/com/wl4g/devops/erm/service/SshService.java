@@ -20,6 +20,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.SshBean;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -43,14 +44,14 @@ public interface SshService {
 	void save(@RequestBody SshBean ssh);
 
 	@RequestMapping(value = "/detail", method = POST)
-	SshBean detail(Long id);
+	SshBean detail(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/testSSHConnect", method = POST)
-	void testSSHConnect(Long hostId,
-						String sshUser,
-						String sshKey,
-						Long sshId) throws Exception, InterruptedException;
+	void testSSHConnect(@RequestParam(name="hostId",required=false) Long hostId,
+						@RequestParam(name="sshUser",required=false) String sshUser,
+						@RequestParam(name="sshKey",required=false) String sshKey,
+						@RequestParam(name="sshId",required=false) Long sshId) throws Exception, InterruptedException;
 }

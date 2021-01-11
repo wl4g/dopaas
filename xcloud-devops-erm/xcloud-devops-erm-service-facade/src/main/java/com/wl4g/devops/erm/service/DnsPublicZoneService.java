@@ -20,6 +20,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.DnsPublicZone;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -32,14 +33,14 @@ public interface DnsPublicZoneService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DnsPublicZone> page(@RequestBody PageHolder<DnsPublicZone> pm,
-								   String name);
+								   @RequestParam(name="name",required=false) String name);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody DnsPublicZone dnsPublicDomain);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DnsPublicZone detail(Long id);
+	DnsPublicZone detail(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam(name="id",required=false) Long id);
 }
