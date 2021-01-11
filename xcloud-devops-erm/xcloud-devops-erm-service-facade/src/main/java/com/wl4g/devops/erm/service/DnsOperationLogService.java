@@ -20,6 +20,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.DnsOperationLog;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -32,14 +33,14 @@ public interface DnsOperationLogService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DnsOperationLog> page(@RequestBody PageHolder<DnsOperationLog> pm,
-									 String domain);
+									 @RequestParam(name="domain",required=false) String domain);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody DnsOperationLog dnsOperationLog);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DnsOperationLog detail(Long id);
+	DnsOperationLog detail(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam(name="id",required=false) Long id);
 }

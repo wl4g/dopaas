@@ -20,6 +20,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -34,11 +35,11 @@ public interface FsService {
     String uploadFile(@RequestBody MultipartFile img);
 
     @RequestMapping(value = "/downloadFile", method = POST)
-    ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException;
+    ResponseEntity<FileSystemResource> downloadFile(@RequestParam(name="path",required=false) String path) throws IOException;
 
     @RequestMapping(value = "/uploadImg", method = POST)
     String uploadImg(@RequestBody MultipartFile img);
 
     @RequestMapping(value = "/downloadImg", method = POST)
-    byte[] downloadImg(String path) throws IOException;
+    byte[] downloadImg(@RequestParam(name="path",required=false) String path) throws IOException;
 }

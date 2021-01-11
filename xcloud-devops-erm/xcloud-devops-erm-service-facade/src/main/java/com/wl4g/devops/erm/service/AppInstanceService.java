@@ -20,6 +20,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -40,24 +41,24 @@ public interface AppInstanceService {
 
 	@RequestMapping(value = "/list", method = POST)
 	PageHolder<AppInstance> list(@RequestBody PageHolder<AppInstance> pm,
-								 String name,
-								 Long clusterId,
-								 String envType,
-								 Integer serverType);
+								 @RequestParam(name="name",required=false) String name,
+								 @RequestParam(name="clusterId",required=false) Long clusterId,
+								 @RequestParam(name="envType",required=false) String envType,
+								 @RequestParam(name="serverType",required=false) Integer serverType);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long clusterId);
+	void del(@RequestParam(name="clusterId",required=false) Long clusterId);
 
 	@RequestMapping(value = "/detail", method = POST)
-	AppInstance detail(Long instanceId);
+	AppInstance detail(@RequestParam(name="instanceId",required=false) Long instanceId);
 
 	@RequestMapping(value = "/getInstancesByClusterIdAndEnvType", method = POST)
-	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId,
-														String envType);
+	List<AppInstance> getInstancesByClusterIdAndEnvType(@RequestParam(name="clusterId",required=false) Long clusterId,
+														@RequestParam(name="envType",required=false) String envType);
 
 	@RequestMapping(value = "/testSSHConnect", method = POST)
-	void testSSHConnect(Long hostId,
-						String sshUser,
-						String sshKey) throws Exception, InterruptedException;
+	void testSSHConnect(@RequestParam(name="hostId",required=false) Long hostId,
+						@RequestParam(name="sshUser",required=false) String sshUser,
+						@RequestParam(name="sshKey",required=false) String sshKey) throws Exception, InterruptedException;
 
 }

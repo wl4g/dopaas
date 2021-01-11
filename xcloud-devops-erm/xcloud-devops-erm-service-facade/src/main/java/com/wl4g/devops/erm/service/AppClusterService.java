@@ -22,6 +22,7 @@ import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -45,24 +46,24 @@ public interface AppClusterService {
 
 	@RequestMapping(value = "/list", method = POST)
 	Map<String, Object> list(@RequestBody PageHolder<?> pm,
-							 String clusterName,
-							 Integer deployType);
+							 @RequestParam(name="clusterName",required=false) String clusterName,
+							 @RequestParam(name="deployType",required=false) Integer deployType);
 
 	@RequestMapping(value = "/clusters", method = POST)
 	List<AppCluster> clusters();
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long clusterId);
+	void del(@RequestParam(name="clusterId",required=false) Long clusterId);
 
 	@RequestMapping(value = "/detail", method = POST)
-	AppCluster detail(Long clusterId);
+	AppCluster detail(@RequestParam(name="clusterId",required=false) Long clusterId);
 
 	@RequestMapping(value = "/getInstancesByClusterIdAndEnvType", method = POST)
-	List<AppInstance> getInstancesByClusterIdAndEnvType(Long clusterId,
-														String envType);
+	List<AppInstance> getInstancesByClusterIdAndEnvType(@RequestParam(name="clusterId",required=false) Long clusterId,
+														@RequestParam(name="envType",required=false) String envType);
 
 	@RequestMapping(value = "/getAppClusterEnvironment", method = POST)
-	AppEnvironment getAppClusterEnvironment(Long clusterId,
-											String envType);
+	AppEnvironment getAppClusterEnvironment(@RequestParam(name="clusterId",required=false) Long clusterId,
+											@RequestParam(name="envType",required=false) String envType);
 
 }

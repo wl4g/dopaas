@@ -20,6 +20,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.K8sCluster;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public interface K8sClusterService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<K8sCluster> page(@RequestBody PageHolder<K8sCluster> pm,
-								String name);
+								@RequestParam(name="name",required=false) String name);
 
 	@RequestMapping(value = "/getForSelect", method = POST)
 	List<K8sCluster> getForSelect();
@@ -43,8 +44,8 @@ public interface K8sClusterService {
 	void save(@RequestBody K8sCluster k8sCluster);
 
 	@RequestMapping(value = "/detail", method = POST)
-	K8sCluster detail(Long id);
+	K8sCluster detail(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam(name="id",required=false) Long id);
 }

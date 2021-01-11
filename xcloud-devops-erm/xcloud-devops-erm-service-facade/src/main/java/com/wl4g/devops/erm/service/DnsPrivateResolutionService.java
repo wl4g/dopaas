@@ -20,6 +20,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -32,15 +33,15 @@ public interface DnsPrivateResolutionService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DnsPrivateResolution> page(@RequestBody PageHolder<DnsPrivateResolution> pm,
-										  String host,
-										  Long domainId);
+										  @RequestParam(name="host",required=false) String host,
+										  @RequestParam(name="domainId",required=false) Long domainId);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody DnsPrivateResolution dnsPrivateResolution);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DnsPrivateResolution detail(Long id);
+	DnsPrivateResolution detail(@RequestParam(name="id",required=false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(Long id);
+	void del(@RequestParam(name="id",required=false) Long id);
 }
