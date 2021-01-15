@@ -15,6 +15,7 @@
  */
 package com.wl4g;
 
+import com.wl4g.component.core.web.mapping.annotation.EnableSmartMappingConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,6 +27,7 @@ import com.wl4g.iam.client.annotation.EnableIamClient;
 @MapperScan("com.wl4g.devops.doc.data")
 @EnableComponentDBConfiguration
 @SpringBootApplication
+@EnableSmartMappingConfiguration(overrideAmbiguousByOrder=true)
 public class DocManager {
 
 	public static void main(String[] args) {
