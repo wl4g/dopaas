@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2017 ~ 2025 the original author or authors.
- * <Wanglsir@gmail.com, 983708408@qq.com> Technology CO.LTD.
- * All rights reserved.
+ * Copyright 2017 ~ 2050 the original author or authors <Wanglsir@gmail.com, 983708408@qq.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +12,35 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- * Reference to website: http://wl4g.com
  */
-package com.wl4g.devops.common.bean.doc.model;
-
-import com.wl4g.devops.common.bean.doc.EnterpriseApi;
-import lombok.Getter;
-import lombok.Setter;
+package com.wl4g.devops.doc.service.template;
 
 import java.util.List;
 
 /**
- * {@link XCloudDocumentModel}
+ * {@link GenTemplateLocator}
+ * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-12-16 
- * @sine v1.0
- * @see 
+ * @version 2020-09-19
+ * @sine v1.0.0
+ * @see
  */
-@Getter
-@Setter
-public class XCloudDocumentModel {
+public interface GenTemplateLocator {
 
-    private List<EnterpriseApi> enterpriseApis;
+	/**
+	 * Locate generate templates.
+	 * 
+	 * @param provider
+	 * @return
+	 * @throws Exception
+	 */
+	List<TemplateResource> locate(String provider) throws Exception;
 
-    public XCloudDocumentModel(List<EnterpriseApi> enterpriseApis) {
-        this.enterpriseApis = enterpriseApis;
-    }
+	/**
+	 * Cleanup located templates cache all.
+	 * 
+	 * @return
+	 */
+	boolean cleanAll();
+
 }

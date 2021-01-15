@@ -15,18 +15,17 @@
  */
 package com.wl4g.devops.doc.config;
 
-import java.util.List;
-
+import com.wl4g.devops.doc.service.conversion.*;
+import com.wl4g.devops.doc.service.conversion.DocumentConverter.ConverterProviderKind;
+import com.wl4g.devops.doc.service.md.FileLocalMdLocator;
+import com.wl4g.devops.doc.service.md.MdLocator;
+import com.wl4g.devops.doc.service.template.FileLocalGenTemplateLocator;
+import com.wl4g.devops.doc.service.template.GenTemplateLocator;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.doc.service.conversion.DocumentConverter.ConverterProviderKind;
-import com.wl4g.devops.doc.service.conversion.DocumentConverter;
-import com.wl4g.devops.doc.service.conversion.DocumentConverterAdapter;
-import com.wl4g.devops.doc.service.conversion.Oas3DocumentConverter;
-import com.wl4g.devops.doc.service.conversion.Rap2DocumentConverter;
-import com.wl4g.devops.doc.service.conversion.Swagger2DocumentConverter;
+import java.util.List;
 
 /**
  * Doc auto configuration.
@@ -66,6 +65,16 @@ public class DocAutoConfiguration {
 	@Bean
 	public DocumentConverterAdapter documentConverterAdapter(List<DocumentConverter<ConverterProviderKind>> conversions) {
 		return new DocumentConverterAdapter(conversions);
+	}
+
+	@Bean
+	public GenTemplateLocator genTemplateLocator() {
+		return new FileLocalGenTemplateLocator();
+	}
+
+	@Bean
+	public MdLocator mdLocator() {
+		return new FileLocalMdLocator();
 	}
 
 }
