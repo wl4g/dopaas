@@ -47,8 +47,9 @@ public class EnterpriseRepositoryGroupController extends BaseController {
     private EnterpriseRepositoryGroupService enterpriseRepositoryGroupService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseRepositoryGroup>> list(EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest) {
+    public RespBase<PageHolder<EnterpriseRepositoryGroup>> list(EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest,PageHolder<EnterpriseRepositoryGroup> pm) {
         RespBase<PageHolder<EnterpriseRepositoryGroup>> resp = RespBase.create();
+        enterpriseRepositoryGroupPageRequest.setPm(pm);
         resp.setData(enterpriseRepositoryGroupService.page(enterpriseRepositoryGroupPageRequest));
         return resp;
     }
