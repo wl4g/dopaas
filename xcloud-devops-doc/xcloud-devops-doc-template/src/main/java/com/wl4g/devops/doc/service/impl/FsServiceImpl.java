@@ -43,8 +43,8 @@ public class FsServiceImpl implements FsService {
     private FsProperties fsProperties;
 
     @Override
-    public List<FileInfo> getTreeFiles() {
-        File basePath = new File(fsProperties.getBasePath());
+    public List<FileInfo> getTreeFiles(String subPath) {
+        File basePath = new File(fsProperties.getBasePath() + subPath);
         List<FileInfo> fileInfos = new ArrayList<>();
         getChildren(basePath, fileInfos);
         return fileInfos;

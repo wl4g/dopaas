@@ -38,6 +38,8 @@ public class FileLocalGenTemplateLocator implements GenTemplateLocator {
 
     protected final SmartLogger log = getLogger(getClass());
 
+    final private static String TEMPLATE_PATH = "/template";
+
     /**
      * Generate template {@link Template} cache.
      */
@@ -54,7 +56,7 @@ public class FileLocalGenTemplateLocator implements GenTemplateLocator {
                     tpls = new ArrayList<>();
 
                     String basePath = "";
-                    String path = basePath + "/" + provider;
+                    String path = basePath + TEMPLATE_PATH + "/" + provider;
 
                     Collection<File> files = FileIOUtils.listFiles(new File(path), null, true);
                     for (File file : files) {
