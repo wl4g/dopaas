@@ -11,76 +11,75 @@
 # #### Environment(Dev) configuration. ####
 #
 spring:
-  boot:
-    xcloud:
-      iam:
-        cors:
-          rules:
-            '[/**]':
-              allows-origins:
-                #- http://${DEVOPS_SERVICE_ZONE:wl4g.debug}
-                #- http://${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
-                #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
-                #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
-                #- http://localhost:8080
-                #- http://localhost:14040
-                #- http://127.0.0.1:8080
-                #- http://127.0.0.1:14040
-                - '*'
-        acl:
-          secure: false # Turn off protection will trust any same intranet IP.
-          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
-        client:
-          # To facilitate debugging, it is recommended to configure local hosts, wl4g.debug/wl4g.local/wl4g.dev
-          # resolve to 127.0.0.1 (consistent with the server deployment structure), and the relevant front-end
-          # logic is in global_variable.js:55, related database table: app_cluster_config
-          server-uri: http://wl4g.debug:14040/iam-web
-          unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://wl4g.debug:8080/#/ci/taskhis
-      ci:
-        pipeline: # Pipeline configuration.
-          #workspace: # Default by to {user.home}/.ci-workspace
-          executor:
-            concurrency: 10
-            accept-queue: 2
-          vcs:
-            gitlab:
-              search-projects-default-page-limit: 20
-          build:
-            job-max-clean-interval-ms: 30_000
-            job-timeout-ms: 3000_000
-            shared-dependency-try-timeout-ms: 1200_000
-          deploy:
-            #remoteHome-tmp-dir: # Default by to $HOME/.ci-temporary
-            cipher-key: 03DE18C2FC4E605F
-            transfer-timeout-ms: 300_000
-            docker-native:
-              docker-push-username: xburnerair00
-              docker-push-password: hwj13535248668
-          tested-report:
-            upload-path: /Users/vjay/Downloads/myupload
-            download-url: http://wl4g.debug:14046/ci-server/fs/download
-          docker:
-            #make docker image in where addr,e.g: tcp://localhost:2375 default port is 2375
-            make-image-addr: tcp://10.0.0.161:2375
-      support:
-        notification:
-          mail:
-            host: smtp.163.com
-            port: 465
-            username: babaa1f4@163.com
-            password: UDKTGOHTZOBOTHVL
-            protocol: smtp
-          sms:
-            aliyun:
-              accessKeyId: ${ALIYUN_KEY}
-              accessKeySecret: ${ALIYUN_SECRET}
-          vms:
-            aliyun:
-              accessKeyId: ${ALIYUN_KEY}
-              accessKeySecret: ${ALIYUN_SECRET}
-              calledShowNumber: 055162153866
+  xcloud:
+    iam:
+      cors:
+        rules:
+          '[/**]':
+            allows-origins:
+              #- http://${DEVOPS_SERVICE_ZONE:wl4g.debug}
+              #- http://${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
+              #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              #- http://localhost:8080
+              #- http://localhost:14040
+              #- http://127.0.0.1:8080
+              #- http://127.0.0.1:14040
+              - '*'
+      acl:
+        secure: false # Turn off protection will trust any same intranet IP.
+        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+      client:
+        # To facilitate debugging, it is recommended to configure local hosts, wl4g.debug/wl4g.local/wl4g.dev
+        # resolve to 127.0.0.1 (consistent with the server deployment structure), and the relevant front-end
+        # logic is in global_variable.js:55, related database table: app_cluster_config
+        server-uri: http://wl4g.debug:14040/iam-web
+        unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
+        success-uri: http://wl4g.debug:8080/#/ci/taskhis
+    ci:
+      pipeline: # Pipeline configuration.
+        #workspace: # Default by to {user.home}/.ci-workspace
+        executor:
+          concurrency: 10
+          accept-queue: 2
+        vcs:
+          gitlab:
+            search-projects-default-page-limit: 20
+        build:
+          job-max-clean-interval-ms: 30_000
+          job-timeout-ms: 3000_000
+          shared-dependency-try-timeout-ms: 1200_000
+        deploy:
+          #remoteHome-tmp-dir: # Default by to $HOME/.ci-temporary
+          cipher-key: 03DE18C2FC4E605F
+          transfer-timeout-ms: 300_000
+          docker-native:
+            docker-push-username: xburnerair00
+            docker-push-password: hwj13535248668
+        tested-report:
+          upload-path: /Users/vjay/Downloads/myupload
+          download-url: http://wl4g.debug:14046/ci-server/fs/download
+        docker:
+          #make docker image in where addr,e.g: tcp://localhost:2375 default port is 2375
+          make-image-addr: tcp://10.0.0.161:2375
+    support:
+      notification:
+        mail:
+          host: smtp.163.com
+          port: 465
+          username: babaa1f4@163.com
+          password: UDKTGOHTZOBOTHVL
+          protocol: smtp
+        sms:
+          aliyun:
+            accessKeyId: ${ALIYUN_KEY}
+            accessKeySecret: ${ALIYUN_SECRET}
+        vms:
+          aliyun:
+            accessKeyId: ${ALIYUN_KEY}
+            accessKeySecret: ${ALIYUN_SECRET}
+            calledShowNumber: 055162153866
 
   # Datasource configuration.
   datasource:

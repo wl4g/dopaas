@@ -11,52 +11,51 @@
 # #### Environment(Production) configuration. ####
 #
 spring:
-  boot:
-    xcloud:
-      iam:
-        cors:
-          rules:
-            '[/**]':
-              allows-origins:
-                - https://${DEVOPS_SERVICE_ZONE:wl4g.com}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.com}
-                - https://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
-                - http://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
-        acl:
-          secure: false # Turn off protection will trust any same intranet IP.
-          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
-        client:
-          server-uri: https://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-server
-          unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: https://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/ci/taskhis
-      ci:
-        analyzers: # CI analyses configuration.
-          executor:
-            concurrency: 10
-            accept-queue: 2
-          spotbugs:
-            analyzer-run-class: edu.umd.cs.findbugs.FindBugs2
-            jvm-args: 
-              -Xms1G -Xmx4G
-              -XX:+HeapDumpOnOutOfMemoryError
-              -XX:HeapDumpPath=${server.tomcat.basedir}/jvm_dump.hprof
-              -XX:+UseG1GC
-              -XX:MaxGCPauseMillis=20
-              -XX:InitiatingHeapOccupancyPercent=35
-              -XX:+DisableExplicitGC
-              -verbose:gc
-              -Xloggc:${server.tomcat.basedir}/gc.log
-              -XX:+PrintGCDetails
-              -XX:+PrintGCDateStamps
-              -XX:+PrintGCTimeStamps
-              -XX:+UseGCLogFileRotation
-              -XX:NumberOfGCLogFiles=10
-              -XX:GCLogFileSize=100M
-              -XX:GCLogFileSize=100M
-              -Dfile.encoding=UTF-8
-              -Djava.awt.headless=true
-              -Djava.security.egd=file:/dev/./urandom
+  xcloud:
+    iam:
+      cors:
+        rules:
+          '[/**]':
+            allows-origins:
+              - https://${DEVOPS_SERVICE_ZONE:wl4g.com}
+              - http://${DEVOPS_SERVICE_ZONE:wl4g.com}
+              - https://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
+              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
+      acl:
+        secure: false # Turn off protection will trust any same intranet IP.
+        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+      client:
+        server-uri: https://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-server
+        unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
+        success-uri: https://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/ci/taskhis
+    ci:
+      analyzers: # CI analyses configuration.
+        executor:
+          concurrency: 10
+          accept-queue: 2
+        spotbugs:
+          analyzer-run-class: edu.umd.cs.findbugs.FindBugs2
+          jvm-args: 
+            -Xms1G -Xmx4G
+            -XX:+HeapDumpOnOutOfMemoryError
+            -XX:HeapDumpPath=${server.tomcat.basedir}/jvm_dump.hprof
+            -XX:+UseG1GC
+            -XX:MaxGCPauseMillis=20
+            -XX:InitiatingHeapOccupancyPercent=35
+            -XX:+DisableExplicitGC
+            -verbose:gc
+            -Xloggc:${server.tomcat.basedir}/gc.log
+            -XX:+PrintGCDetails
+            -XX:+PrintGCDateStamps
+            -XX:+PrintGCTimeStamps
+            -XX:+UseGCLogFileRotation
+            -XX:NumberOfGCLogFiles=10
+            -XX:GCLogFileSize=100M
+            -XX:GCLogFileSize=100M
+            -Dfile.encoding=UTF-8
+            -Djava.awt.headless=true
+            -Djava.security.egd=file:/dev/./urandom
 
   # Datasource configuration.
   datasource:

@@ -17,24 +17,23 @@ spring: # Base configuration.
   profiles:
     include: common,util
     active: dev
-  boot:
-    # Devops configuration.
-    xcloud: 
-      scm.client: # SCM client configuration.
-        base-uri: http://127.0.0.1:14043/scm-server
-        #connect-timeout: 5000
-        #max-response-size: 65535
-        #fetch-read-timeout: 5000
-        #long-poll-delay: 2000
-        #long-poll-max-delay: 15000
-        #long-poll-timeout: 35000
-        #refresh-protect-interval-ms: 10_000
-        namespaces: application-${spring.profiles.active}.yml,application.yml
-        #retry:
-          #max-attempts: 5
-          #delay: 1000
-          #max-delay: 5000
-          #threshold-fastfail: true
+  # Devops configuration.
+  xcloud: 
+    scm.client: # SCM client configuration.
+      base-uri: http://127.0.0.1:14043/scm-server
+      #connect-timeout: 5000
+      #max-response-size: 65535
+      #fetch-read-timeout: 5000
+      #long-poll-delay: 2000
+      #long-poll-max-delay: 15000
+      #long-poll-timeout: 35000
+      #refresh-protect-interval-ms: 10_000
+      namespaces: application-${spring.profiles.active}.yml,application.yml
+      #retry:
+        #max-attempts: 5
+        #delay: 1000
+        #max-delay: 5000
+        #threshold-fastfail: true
 
 # #### Server configuration. ####
 server:
