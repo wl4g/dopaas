@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springfox;
+package com.wl4g.devops.doc.plugin.swagger;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springfox;
+package com.wl4g.devops.doc.plugin.swagger;
 
 import static com.wl4g.component.common.lang.Assert2.notNull;
 import static java.util.Objects.isNull;
@@ -44,7 +44,8 @@ import com.wl4g.devops.doc.plugin.swagger.config.DocumentionHolder;
 import io.swagger.annotations.Api;
 
 /**
- * {@link DocumentionAutoConfigurationRegistrar}
+ * The purpose is to dynamically register the startup class according to the
+ * document service provider.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2020-12-14
@@ -55,7 +56,6 @@ public class DocumentionAutoConfigurationRegistrar
 		implements ImportBeanDefinitionRegistrar, EnvironmentAware, ResourceLoaderAware {
 
 	private Environment environment;
-
 	private ResourceLoader resourceLoader;
 
 	@Override
