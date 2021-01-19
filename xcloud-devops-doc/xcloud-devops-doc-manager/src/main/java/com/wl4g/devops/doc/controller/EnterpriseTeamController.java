@@ -47,8 +47,9 @@ public class EnterpriseTeamController extends BaseController {
     private EnterpriseTeamService enterpriseTeamService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseTeam>> list(EnterpriseTeamPageRequest enterpriseTeamPageRequest) {
+    public RespBase<PageHolder<EnterpriseTeam>> list(EnterpriseTeamPageRequest enterpriseTeamPageRequest,PageHolder<EnterpriseTeam> pm) {
         RespBase<PageHolder<EnterpriseTeam>> resp = RespBase.create();
+        enterpriseTeamPageRequest.setPm(pm);
         resp.setData(enterpriseTeamService.page(enterpriseTeamPageRequest));
         return resp;
     }
