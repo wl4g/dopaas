@@ -72,6 +72,7 @@ redis:
 cipher-key: 03DE18C2FC4E605F
 
 doc:
+  base-path: /Users/vjay/doctestdir
   share-base-url: http://wl4g.debug:14051/share-manager
   doc-base-url: http://wl4g.debug:14060/doc-manager
 

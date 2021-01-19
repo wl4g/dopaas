@@ -28,6 +28,7 @@ import java.util.Map;
 
 import static com.wl4g.component.common.view.Freemarkers.createDefault;
 import static com.wl4g.component.common.view.Freemarkers.renderingTemplateToString;
+import static com.wl4g.devops.doc.util.PathUtils.splicePath;
 import static java.util.Collections.singletonList;
 
 /**
@@ -39,8 +40,7 @@ import static java.util.Collections.singletonList;
 @Component
 public class Md2Html {
 
-    final private static String TEMPLATE_PATH = "/template";
-    final private static String MD_PATH = "/md";
+
     final private static String HTML_OUTPUT_PATH = "/output";
 
     final private static String MATCH_START = "##[";
@@ -71,14 +71,14 @@ public class Md2Html {
     /**
      * 遍历模版和md文件，md转成html后渲染进template: 得到的文件是带有api标记的html文件
      */
-    public String formatTemplate(String provider) throws Exception {
+    public String formatTemplate(String templateName,String mdName) throws Exception {
 
-        List<MdResource> mdResources = mdLocator.locate(provider);
+        List<MdResource> mdResources = mdLocator.locate(mdName);
 
         // 暂时使用这种规则的输出路径地址
-        String baseWritePath = splicePath(docProperties.getBasePath(), HTML_OUTPUT_PATH, provider, String.valueOf(System.currentTimeMillis()));
+        String baseWritePath = splicePath(docProperties.getBasePath(), HTML_OUTPUT_PATH, templateName, String.valueOf(System.currentTimeMillis()));
 
-        List<TemplateResource> templateResources = genTemplateLocator.locate(provider);
+        List<TemplateResource> templateResources = genTemplateLocator.locate(templateName);
         for (TemplateResource res : templateResources) {
             if (res.isRender()) {
                 if (res.isForeachMds()) {
@@ -99,7 +99,8 @@ public class Md2Html {
                         String renderedString = renderingTemplateToString(template, templateFormatModel);
 
                         // output: write output file
-                        File writeFile = new File(splicePath(baseWritePath, res.getRawFilename()));
+                        File writeFile = new File(splicePath(baseWritePath,
+                                mergeTemplatePathAndMdPath(res.getRawFilename(),mdResource.getRawFilename())));
                         FileIOUtils.writeFile(writeFile, renderedString, false);
 
                     }
@@ -140,8 +141,8 @@ public class Md2Html {
             int j = sb.indexOf(MATCH_END, i);
             String apiId = sb.substring(i + MATCH_START.length(), j);
 
-            // get api md
-            String apiMd = buildTemplate(apiTemplate, apiId);
+            // get api html
+            String apiMd = aipTemplate2Html(apiTemplate, apiId);
 
             // replace
             sb.delete(i, j + MATCH_END.length());
@@ -153,9 +154,9 @@ public class Md2Html {
 
 
     /**
-     * 把api转成template
+     * 将api模版渲染成api的html
      */
-    private String buildTemplate(String apiTemplate, String apiId) throws IOException, TemplateException {
+    private String aipTemplate2Html(String apiTemplate, String apiId) throws IOException, TemplateException {
         EnterpriseApi enterpriseApi = enterpriseApiService.detail(Long.valueOf(apiId));
 
         //分类
@@ -180,27 +181,24 @@ public class Md2Html {
         return renderingTemplateToString(template, map);
     }
 
-    private String splicePath(String... paths) {
+    private String mergeTemplatePathAndMdPath(String templatePath, String mdPath){
 
-        if (null == paths || paths.length <= 0) {
-            return null;
+        if(templatePath.endsWith(".ftl")){
+            templatePath = templatePath.substring(0,templatePath.length()-4);
+        }
+        if(mdPath.endsWith(".md") || mdPath.endsWith(".MD")){
+            mdPath = mdPath.substring(0,mdPath.length()-3);
         }
 
-        if (paths.length == 1) {
-            return paths[0];
-        }
+        int i = templatePath.lastIndexOf("/");
+        int j = templatePath.lastIndexOf(".");
 
-        StringBuilder path = new StringBuilder(paths[0]);
-        for (int i = 1; i < paths.length; i++) {
+        String subPath = templatePath.substring(0,i);
+        String suffix = templatePath.substring(j);
 
-            if (!paths[i].startsWith("/")) {
-                path.append("/").append(paths[i]);
-            } else {
-                path.append(paths[i]);
-            }
-        }
-        return path.toString();
+        return subPath + mdPath + suffix;
     }
+
 
 
 }

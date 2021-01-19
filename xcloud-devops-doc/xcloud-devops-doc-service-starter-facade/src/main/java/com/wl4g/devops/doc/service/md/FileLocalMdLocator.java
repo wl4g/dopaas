@@ -38,6 +38,8 @@ public class FileLocalMdLocator implements MdLocator {
 
     protected final SmartLogger log = getLogger(getClass());
 
+    final private static String MD_PATH = "/md";
+
     /**
      * Generate template {@link Template} cache.
      */
@@ -54,7 +56,7 @@ public class FileLocalMdLocator implements MdLocator {
                     tpls = new ArrayList<>();
 
                     String basePath = "";
-                    String path = basePath + "/" + provider;
+                    String path = basePath + MD_PATH + "/" + provider;
 
                     Collection<File> files = FileIOUtils.listFiles(new File(path), null, true);
                     for (File file : files) {

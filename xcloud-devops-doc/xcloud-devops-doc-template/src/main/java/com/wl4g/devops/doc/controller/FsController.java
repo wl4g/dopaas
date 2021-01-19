@@ -20,10 +20,15 @@ import com.wl4g.devops.doc.service.FsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+
+import static com.wl4g.devops.doc.util.PathUtils.splicePath;
 
 @RestController
 @RequestMapping("/fs")
@@ -33,9 +38,9 @@ public class FsController {
 	private FsService fsService;
 
 	@RequestMapping("getTreeFiles")
-	RespBase<?> getTreeFiles(String parentPath){
+	RespBase<?> getTreeFiles(String subPath){
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(fsService.getTreeFiles());
+		resp.setData(fsService.getTreeFiles(subPath));
 		return resp;
 	}
 
@@ -47,59 +52,59 @@ public class FsController {
 //	}
 
 	@RequestMapping("getFileInfo")
-	RespBase<?> getFileInfo(String path) throws IOException{
+	RespBase<?> getFileInfo(String subPath,String path) throws IOException{
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(fsService.getFileInfo(path));
+		resp.setData(fsService.getFileInfo(splicePath(subPath , path)));
 		return resp;
 	}
 
 	@RequestMapping("delFile")
-	RespBase<?> delFile(String path) throws IOException{
+	RespBase<?> delFile(String subPath,String path) throws IOException{
 		RespBase<Object> resp = RespBase.create();
-		fsService.delFile(path);
+		fsService.delFile(splicePath(subPath , path));
 		return resp;
 	}
 
 	@RequestMapping("addDir")
-	RespBase<?> addDir(String path) throws IOException{
+	RespBase<?> addDir(String subPath, String path) throws IOException{
 		RespBase<Object> resp = RespBase.create();
-		fsService.addDir(path);
+		fsService.addDir(splicePath(subPath , path));
 		return resp;
 	}
 
 	@RequestMapping("addFile")
-	RespBase<?> addFile(String path) throws IOException{
+	RespBase<?> addFile(String subPath, String path) throws IOException{
 		RespBase<Object> resp = RespBase.create();
-		fsService.addFile(path);
+		fsService.addFile(splicePath(subPath , path));
 		return resp;
 	}
 
 	@RequestMapping("renameFile")
-	RespBase<?> renameFile(String path,String toPath) throws IOException{
+	RespBase<?> renameFile(String subPath,String path,String toPath) throws IOException{
 		RespBase<Object> resp = RespBase.create();
-		fsService.renameFile(path, toPath);
+		fsService.renameFile(splicePath(subPath , path), splicePath(subPath , toPath));
 		return resp;
 	}
 
 	@RequestMapping("saveFile")
-	RespBase<?> saveFile(String path, String content){
+	RespBase<?> saveFile(String subPath, String path, String content){
 		RespBase<Object> resp = RespBase.create();
-		fsService.saveFile(path, content);
+		fsService.saveFile(splicePath(subPath , path), content);
 		return resp;
 	}
 
 	@PostMapping(value = "/uploadFile")
-	public RespBase<?> uploadFile(@RequestParam(value = "file") MultipartFile file,String path) {
+	public RespBase<?> uploadFile(@RequestParam(value = "file") MultipartFile file,String path,String subPath) {
 		RespBase<Object> resp = RespBase.create();
-		String fileUrl = fsService.uploadFile(file, path);
+		String fileUrl = fsService.uploadFile(file, splicePath(subPath , path));
 		resp.setData(fileUrl);
 		return resp;
 	}
 
 	@RequestMapping(value = "/downloadFile")
-	public ResponseEntity<FileSystemResource> downloadFile(String path)
+	public ResponseEntity<FileSystemResource> downloadFile(String subPath,String path)
 			throws IOException {
-		return fsService.downloadFile(path);
+		return fsService.downloadFile(splicePath(subPath , path));
 	}
 
 }
