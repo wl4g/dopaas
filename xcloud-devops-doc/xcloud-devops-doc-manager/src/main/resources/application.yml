@@ -12,7 +12,7 @@
 spring:
   application.name: doc-manager
   profiles:
-    include: common,support,util,boot
+    include: common,support,util
     active: dev
 
 # Mybatis configuration.

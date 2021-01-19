@@ -11,25 +11,24 @@
 # #### Environment(FAT Test) configuration. ####
 #
 spring:
-  boot:
-    xcloud:
-      iam:
-        cors:
-          rules:
-            '[/**]':
-              allows-origins:
-                - https://${DEVOPS_SERVICE_ZONE:wl4g.fat}
-                - http://${DEVOPS_SERVICE_ZONE:wl4g.fat}
-                - https://*.${DEVOPS_SERVICE_ZONE:wl4g.fat}
-                - http://*.${DEVOPS_SERVICE_ZONE:wl4g.fat}
-        acl:
-          secure: false # Turn off protection will trust any same intranet IP.
-          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
-        client:
-          server-uri: http://iam.${DEVOPS_SERVICE_ZONE:wl4g.fat}/iam-server
-          unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.fat}/#/scm
+  xcloud:
+    iam:
+      cors:
+        rules:
+          '[/**]':
+            allows-origins:
+              - https://${DEVOPS_SERVICE_ZONE:wl4g.fat}
+              - http://${DEVOPS_SERVICE_ZONE:wl4g.fat}
+              - https://*.${DEVOPS_SERVICE_ZONE:wl4g.fat}
+              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.fat}
+      acl:
+        secure: false # Turn off protection will trust any same intranet IP.
+        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+      client:
+        server-uri: http://iam.${DEVOPS_SERVICE_ZONE:wl4g.fat}/iam-server
+        unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
+        success-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.fat}/#/scm
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
