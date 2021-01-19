@@ -49,8 +49,9 @@ public class EnterpriseApiController extends BaseController {
     private EnterpriseApiService enterpriseApiService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseApi>> list(EnterpriseApiPageRequest enterpriseApiPageRequest) {
+    public RespBase<PageHolder<EnterpriseApi>> list(EnterpriseApiPageRequest enterpriseApiPageRequest,PageHolder<EnterpriseApi> pm) {
         RespBase<PageHolder<EnterpriseApi>> resp = RespBase.create();
+        enterpriseApiPageRequest.setPm(pm);
         resp.setData(enterpriseApiService.page(enterpriseApiPageRequest));
         return resp;
     }

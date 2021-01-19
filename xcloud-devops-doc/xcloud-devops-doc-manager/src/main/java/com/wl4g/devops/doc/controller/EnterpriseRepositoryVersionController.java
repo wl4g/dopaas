@@ -49,8 +49,9 @@ public class EnterpriseRepositoryVersionController extends BaseController {
     private EnterpriseRepositoryVersionService enterpriseRepositoryVersionService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseRepositoryVersion>> list(EnterpriseRepositoryVersionPageRequest enterpriseRepositoryVersionPageRequest) {
+    public RespBase<PageHolder<EnterpriseRepositoryVersion>> list(EnterpriseRepositoryVersionPageRequest enterpriseRepositoryVersionPageRequest,PageHolder<EnterpriseRepositoryVersion> pm) {
         RespBase<PageHolder<EnterpriseRepositoryVersion>> resp = RespBase.create();
+        enterpriseRepositoryVersionPageRequest.setPm(pm);
         resp.setData(enterpriseRepositoryVersionService.page(enterpriseRepositoryVersionPageRequest));
         return resp;
     }

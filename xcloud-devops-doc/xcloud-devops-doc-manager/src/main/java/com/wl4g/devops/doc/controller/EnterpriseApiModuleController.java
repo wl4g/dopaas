@@ -50,8 +50,9 @@ public class EnterpriseApiModuleController extends BaseController {
     private EnterpriseApiModuleService enterpriseApiModuleService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseApiModule>> list(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest) {
+    public RespBase<PageHolder<EnterpriseApiModule>> list(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest,PageHolder<EnterpriseApiModule> pm) {
         RespBase<PageHolder<EnterpriseApiModule>> resp = RespBase.create();
+        enterpriseApiModulePageRequest.setPm(pm);
         resp.setData(enterpriseApiModuleService.page(enterpriseApiModulePageRequest));
         return resp;
     }

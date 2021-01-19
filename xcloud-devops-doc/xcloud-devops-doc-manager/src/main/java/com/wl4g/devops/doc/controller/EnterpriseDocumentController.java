@@ -47,8 +47,9 @@ public class EnterpriseDocumentController extends BaseController {
     private EnterpriseDocumentService enterpriseDocumentService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseDocument>> list(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest) {
+    public RespBase<PageHolder<EnterpriseDocument>> list(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest,PageHolder<EnterpriseDocument> pm) {
         RespBase<PageHolder<EnterpriseDocument>> resp = RespBase.create();
+        enterpriseDocumentPageRequest.setPm(pm);
         resp.setData(enterpriseDocumentService.page(enterpriseDocumentPageRequest));
         return resp;
     }
