@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.doc.controller;
 
+import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.devops.doc.service.FsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,8 @@ public class FsController {
 	@RequestMapping("getFileInfo")
 	RespBase<?> getFileInfo(String subPath,String path) throws IOException{
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(fsService.getFileInfo(splicePath(subPath , path)));
+		Assert2.hasTextOf(subPath,"subPath");
+		resp.setData(fsService.getFileInfo(path,subPath));
 		return resp;
 	}
 

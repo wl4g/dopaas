@@ -27,9 +27,7 @@ public interface FsService {
 
     List<FileInfo> getTreeFiles(String subPath);
 
-    List<FileInfo> getFilesByParent(String parentPath);
-
-    FileInfo getFileInfo(String path) throws IOException;
+    FileInfo getFileInfo(String path, String subPath) throws IOException;
 
     void delFile(String path) throws IOException;
 
