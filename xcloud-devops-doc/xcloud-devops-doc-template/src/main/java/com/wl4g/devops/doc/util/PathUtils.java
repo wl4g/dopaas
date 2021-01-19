@@ -16,6 +16,10 @@ public class PathUtils {
             return paths[0];
         }
 
+        if(paths[0] == null){
+            paths[0] = "";
+        }
+
         if(!paths[0].startsWith("/")){
             paths[0] = "/" + paths[0];
         }
