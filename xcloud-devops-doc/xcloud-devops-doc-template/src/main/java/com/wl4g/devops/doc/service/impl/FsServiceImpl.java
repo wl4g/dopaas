@@ -20,7 +20,6 @@ import com.wl4g.component.common.lang.DateUtils2;
 import com.wl4g.devops.doc.bean.FileInfo;
 import com.wl4g.devops.doc.config.FsProperties;
 import com.wl4g.devops.doc.service.FsService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.wl4g.devops.doc.util.PathUtils.splicePath;
+
 @Service
 public class FsServiceImpl implements FsService {
 
@@ -46,55 +47,30 @@ public class FsServiceImpl implements FsService {
     public List<FileInfo> getTreeFiles(String subPath) {
         File basePath = new File(fsProperties.getBasePath() + subPath);
         List<FileInfo> fileInfos = new ArrayList<>();
-        getChildren(basePath, fileInfos);
+        getChildren(basePath, fileInfos, subPath);
         return fileInfos;
     }
 
-    private void getChildren(File path, List<FileInfo> fileInfos){
+    private void getChildren(File path, List<FileInfo> fileInfos,String subPath){
         File[] files = path.listFiles();
         if(files == null || files.length<=0){
             return;
         }
         for(File file : files){
             FileInfo fileInfo = new FileInfo();
-            fileInfo.setPath(getRelativePath(file.getAbsolutePath()));
+            fileInfo.setPath(getRelativePath(file.getAbsolutePath(),subPath));
             fileInfo.setFileName(file.getName());
             fileInfo.setDir(file.isDirectory());
             fileInfos.add(fileInfo);
-            getChildren(file, fileInfo.getChildren());
+            getChildren(file, fileInfo.getChildren(),subPath);
         }
     }
 
     @Override
-    public List<FileInfo> getFilesByParent(String parentPath) {
-
-        File file;
-        if (StringUtils.isNotBlank(parentPath)) {
-            file = new File(fsProperties.getBasePath() + parentPath);
-        } else {
-            file = new File(fsProperties.getBasePath());
-        }
-
-        File[] files = file.listFiles();
-        if (files == null) {
-            return null;
-        }
-        List<FileInfo> fileInfos = new ArrayList<>();
-        for (File f : files) {
-            FileInfo fileInfo = new FileInfo();
-            fileInfo.setPath(getRelativePath(f.getAbsolutePath()));
-            fileInfo.setFileName(f.getName());
-            fileInfo.setDir(f.isDirectory());
-            fileInfos.add(fileInfo);
-        }
-        return fileInfos;
-    }
-
-    @Override
-    public FileInfo getFileInfo(String path) throws IOException {
-        File file = new File(fsProperties.getBasePath() + path);
+    public FileInfo getFileInfo(String path, String subPath) throws IOException {
+        File file = new File(fsProperties.getBasePath() + splicePath(subPath , path));
         FileInfo fileInfo = new FileInfo();
-        fileInfo.setPath(getRelativePath(file.getAbsolutePath()));
+        fileInfo.setPath(getRelativePath(file.getAbsolutePath(),subPath));
         fileInfo.setFileName(file.getName());
         fileInfo.setDir(file.isDirectory());
         fileInfo.setUpdateTime(DateUtils2.formatDateTime(new Date(file.lastModified())));
@@ -207,8 +183,8 @@ public class FsServiceImpl implements FsService {
     }
 
 
-    private String getRelativePath(String absolutePath) {
-        String baseFilePath = fsProperties.getBasePath();
+    private String getRelativePath(String absolutePath, String subPath) {
+        String baseFilePath = splicePath(fsProperties.getBasePath(),subPath);
         if (absolutePath.startsWith(baseFilePath)) {
             return absolutePath.substring(baseFilePath.length());
         } else {
