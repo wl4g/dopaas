@@ -12,12 +12,12 @@
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-ci-analyzer</module>
+		<module>xcloud-devops-ci-service-starter-analyzer</module>
 		<module>xcloud-devops-ci-core</module>
 		<module>xcloud-devops-ci-service-data</module>
 		<module>xcloud-devops-ci-service-facade</module>
 		<module>xcloud-devops-ci-service-starter-facade</module>
-		<module>xcloud-devops-ci-server</module>
+		<module>xcloud-devops-ci-service-starter-server</module>
 		<module>xcloud-devops-ci-example</module>
 	</modules>
 	<properties>

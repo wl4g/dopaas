@@ -13,7 +13,7 @@
 		<module>xcloud-devops-erm-service-data</module>
 		<module>xcloud-devops-erm-service-facade</module>
 		<module>xcloud-devops-erm-service-starter-facade</module>
-		<module>xcloud-devops-erm-manager</module>
+		<module>xcloud-devops-erm-service-starter-manager</module>
 		<!-- <module>xcloud-devops-erm-initializer</module> -->
 	</modules>
 	<properties>

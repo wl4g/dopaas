@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-ci-analyzer</artifactId>
+	<artifactId>xcloud-devops-ci-service-starter-server</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps CI Codes Analyzer Server</name>
-	<url>https://ci.xcloud-devops.wl4g.com</url>
+	<name>XCloud DevSecOps CI Server</name>
+	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-devops-ci</artifactId>
@@ -13,29 +13,19 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>ci-analyzer</final.name>
+		<maven-source-plugin.version>2.4</maven-source-plugin.version>
+		<final.name>ci-server</final.name>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-common</artifactId>
+			<artifactId>xcloud-devops-ci-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-cli</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-springboot</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.github.spotbugs</groupId>
-			<artifactId>spotbugs</artifactId>
+			<artifactId>xcloud-devops-ci-core</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
