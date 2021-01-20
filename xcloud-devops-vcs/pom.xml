@@ -15,7 +15,7 @@
 		<module>xcloud-devops-vcs-operator</module>
 		<module>xcloud-devops-vcs-service-facade</module>
 		<module>xcloud-devops-vcs-service-starter-facade</module>
-		<module>xcloud-devops-vcs-manager</module>
+		<module>xcloud-devops-vcs-service-starter-manager</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

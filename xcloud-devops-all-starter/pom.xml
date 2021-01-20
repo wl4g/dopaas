@@ -19,12 +19,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-ci-server</artifactId>
+			<artifactId>xcloud-devops-ci-service-starter-server</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-doc-manager</artifactId>
+			<artifactId>xcloud-devops-doc-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -34,12 +34,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-erm-manager</artifactId>
+			<artifactId>xcloud-devops-erm-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-vcs-manager</artifactId>
+			<artifactId>xcloud-devops-vcs-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

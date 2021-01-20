@@ -31,10 +31,10 @@ import static org.springframework.context.annotation.AdviceMode.ASPECTJ;
 @EnableComponentDBConfiguration
 @EnableTransactionManagement(mode = ASPECTJ)
 @SpringBootApplication
-public class DevOpsServer {
+public class LocalDevOpsServer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DevOpsServer.class, args);
+		SpringApplication.run(LocalDevOpsServer.class, args);
 	}
 
 }

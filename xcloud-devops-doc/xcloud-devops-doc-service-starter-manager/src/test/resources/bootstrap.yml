@@ -15,40 +15,40 @@ spring:
   profiles:
     include: common,support,util
     active: dev
-  cloud:
-    xcloud:
-      embedded-webapps:
-        enabled: true # Default false
-        base-uri: /view
-        webapp-location: classpath*:/default-webapps
+  xcloud:
+    component:
       support:
-        cli:
-          enable: true
-      iam: # IAM client configuration.
-        cors:
-          enabled: true # Default: true
-          rules:
-            '[/**]':
-              allows-methods: [GET,HEAD,OPTIONS,POST]
-              allows-headers: [X-Iam-*]
-              allow-credentials: true
-              #allows-origins:
-                #- '*'
-        xsrf:
-          enabled: true
-        replay:
-          enabled: true
-        xss:
-          enabled: true # Default: true
-        client: # IAM client configuration.
-          filter-chain:
-            '[/public/**]': anon # Public rule release
-            '[/view/**]': anon
-            '[/external/**]': anon
-          cipher:
-            enable-data-cipher: true # Default by true
-          session:
-            enable-access-token-validity: true # Default by true
+        cli.enable: true
+      web:
+        embedded-webapps:
+          enable: true # Default false
+          base-uri: /view
+          webapp-location: classpath*:/default-webapps
+    iam: # IAM client configuration.
+      cors:
+        enabled: true # Default: true
+        rules:
+          '[/**]':
+            allows-methods: [GET,HEAD,OPTIONS,POST]
+            allows-headers: [X-Iam-*]
+            allow-credentials: true
+            #allows-origins:
+              #- '*'
+      xsrf:
+        enabled: true
+      replay:
+        enabled: true
+      xss:
+        enabled: true # Default: true
+      client: # IAM client configuration.
+        filter-chain:
+          '[/public/**]': anon # Public rule release
+          '[/view/**]': anon
+          '[/external/**]': anon
+        cipher:
+          enable-data-cipher: true # Default by true
+        session:
+          enable-access-token-validity: true # Default by true
   servlet:
     http:
       multipart:

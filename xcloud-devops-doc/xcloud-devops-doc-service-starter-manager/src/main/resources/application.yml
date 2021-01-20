@@ -7,13 +7,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# #### Environment base configuration. ####
 
-# #### Spring cloud config server configuration. ####
-#
 spring:
   application.name: doc-manager
   profiles:
-    include: common,support,util
+    include: common,support,util,base
     active: dev
   xcloud:
     component:
@@ -32,8 +31,8 @@ spring:
             allows-methods: [GET,HEAD,OPTIONS,POST]
             allows-headers: [X-Iam-*]
             allow-credentials: true
-            #allows-origins:
-              #- '*'
+              #allows-origins:
+            #- '*'
       xsrf:
         enabled: true
       replay:
@@ -54,6 +53,33 @@ spring:
       multipart:
         max-file-size: 5000Mb
         max-request-size: 5000Mb
+
+# Mybatis configuration.
+mybatis:
+  configLocation: mybatis/mybatis-config.xml
+  mapperLocations: classpath:mybatis/**/*Mapper.xml
+  typeAliasesPackage: com.wl4g.devops.common.bean.*.*
+
+# Logging configuration.
+logging:
+  file: ${server.tomcat.basedir}/logs/${spring.application.name}.log
+  pattern:
+    #console: ${logging.pattern.file}
+    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.cloud.devops.iam.client.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+  root: INFO
+  # Custom configuration(Non spring-boot standard).
+  policy:
+    maxFileSize: 1GB
+    minIndex: 1
+    maxIndex: 10
+  level:
+    de.codecentric.boot.admin: INFO
+    org:
+      springframework: INFO
+      apache: INFO
+    com:
+      wl4g.devops.doc.dao: DEBUG
+
 # ### Server configuration. ###
 server:
   servlet:
@@ -70,3 +96,6 @@ server:
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds
     max-thread: 50 # Max worker threads(default:200).
+
+doc:
+   base-path: /mnt/disk1/doc-manager/data/
