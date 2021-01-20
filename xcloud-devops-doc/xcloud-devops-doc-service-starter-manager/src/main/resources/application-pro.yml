@@ -12,6 +12,14 @@
 #
 spring:
   xcloud:
+    component:
+      support:
+        # Redis configuration.
+        jedis:
+          passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
+          connect-timeout: 10000
+          max-attempts: 10
+          nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
     iam:
       cors:
         rules:
@@ -51,14 +59,6 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-
-# Redis configuration.
-redis:
-  passwd: zzx!@#$%
-  connect-timeout: 10000
-  max-attempts: 10
-  # Redis's cluster nodes.
-  nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
 
 cipher-key: 03DE18C2FC4E605F
 
