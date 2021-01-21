@@ -31,52 +31,56 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- *  service of {@link EnterpriseRepositoryVersion}
- *
- * @author root
- * @version 0.0.1-SNAPSHOT
- * @Date 
- * @since v1.0
+ * {@link EnterpriseApiService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author vjay
+ * @date 2020-01-14
+ * @sine v1.0
+ * @see
  */
-@SpringBootFeignClient("enterpriseRepositoryVersionService")
+@SpringBootFeignClient(name = "${provider.serviceId:enterpriseRepositoryVersionService}")
 @RequestMapping("/enterpriseRepositoryVersion")
 public interface EnterpriseRepositoryVersionService {
 
-    /**
-     *  page query.
-     * @return 
-     */
-    @RequestMapping(value = "/page", method = POST)
-    PageHolder<EnterpriseRepositoryVersion> page(@RequestBody EnterpriseRepositoryVersionPageRequest enterpriseRepositoryVersionPageRequest);
+	/**
+	 * page query.
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<EnterpriseRepositoryVersion> page(
+			@RequestBody EnterpriseRepositoryVersionPageRequest enterpriseRepositoryVersionPageRequest);
 
-    @RequestMapping(value = "/getVersionsByRepositoryId", method = POST)
-    List<EnterpriseRepositoryVersion> getVersionsByRepositoryId(@RequestParam(name="repositoryId",required=false) Long repositoryId);
-    /**
-     *  save.
-     *
-     * @param enterpriseRepositoryVersion
-     * @return 
-     */
-    @RequestMapping(value = "/save", method = POST)
-    int save(@RequestBody EnterpriseRepositoryVersion enterpriseRepositoryVersion);
+	@RequestMapping(value = "/getVersionsByRepositoryId", method = POST)
+	List<EnterpriseRepositoryVersion> getVersionsByRepositoryId(
+			@RequestParam(name = "repositoryId", required = false) Long repositoryId);
 
-    /**
-     *  detail query.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/detail", method = POST)
-    EnterpriseRepositoryVersion detail(@RequestParam(name="id",required=false) Long id);
+	/**
+	 * save.
+	 *
+	 * @param enterpriseRepositoryVersion
+	 * @return
+	 */
+	@RequestMapping(value = "/save", method = POST)
+	int save(@RequestBody EnterpriseRepositoryVersion enterpriseRepositoryVersion);
 
-    /**
-     *  delete.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/del", method = POST)
-    int del(@RequestParam(name="id",required=false) Long id);
+	/**
+	 * detail query.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/detail", method = POST)
+	EnterpriseRepositoryVersion detail(@RequestParam(name = "id", required = false) Long id);
+
+	/**
+	 * delete.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/del", method = POST)
+	int del(@RequestParam(name = "id", required = false) Long id);
 
 }
-
