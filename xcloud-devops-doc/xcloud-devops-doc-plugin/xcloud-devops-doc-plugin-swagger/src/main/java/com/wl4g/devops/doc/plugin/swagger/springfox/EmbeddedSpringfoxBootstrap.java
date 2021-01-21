@@ -18,7 +18,8 @@ package com.wl4g.devops.doc.plugin.swagger.springfox;
 import com.wl4g.component.core.boot.DefaultBootstrapAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.core.web.error.ErrorControllerAutoConfiguration;
+import com.wl4g.component.core.web.error.reactive.ReactiveErrorAutoConfiguration;
+import com.wl4g.component.core.web.error.servlet.ServletErrorAutoConfiguration;
 import com.wl4g.component.core.web.mapping.WebMvcSmartHandlerMappingConfigurer;
 import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
 import com.wl4g.devops.doc.plugin.swagger.DocumentionAutoConfigurationRegistrar;
@@ -34,7 +35,7 @@ import com.wl4g.devops.doc.plugin.swagger.EnableDocumentionAutoConfiguration;
  */
 @SpringBootApplication(scanBasePackages = "none", scanBasePackageClasses = {
 		WebMvcSmartHandlerMappingConfigurer.class }, exclude = { DefaultBootstrapAutoConfiguration.class,
-				ErrorControllerAutoConfiguration.class })
+				ReactiveErrorAutoConfiguration.class, ServletErrorAutoConfiguration.class })
 @EnableDocumentionAutoConfiguration
 @EnableApiVersionManagement // Supported multi version api docs
 public class EmbeddedSpringfoxBootstrap {
