@@ -43,6 +43,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-client-test</artifactId>
 			<scope>test</scope>
 		</dependency>
