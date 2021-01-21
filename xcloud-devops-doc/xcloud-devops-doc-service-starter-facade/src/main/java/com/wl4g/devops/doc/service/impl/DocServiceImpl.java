@@ -33,7 +33,7 @@ import com.wl4g.devops.doc.data.FileLabelDao;
 import com.wl4g.devops.doc.data.LabelDao;
 import com.wl4g.devops.doc.data.ShareDao;
 import com.wl4g.devops.doc.service.DocService;
-import com.wl4g.iam.common.subject.IamPrincipal;
+import com.wl4g.iam.common.utils.RpcIamSecurityUtils;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,6 @@ import java.security.InvalidParameterException;
 import java.util.*;
 
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipalInfo;
 
 /**
  * @author vjay
@@ -104,10 +103,10 @@ public class DocServiceImpl implements DocService {
 		Assert2.notNullOf(fileChanges, "fileChanges");
 		Assert2.hasTextOf(fileChanges.getDocCode(), "docCode");
 		Assert2.hasTextOf(fileChanges.getContent(), "content");
-		IamPrincipal info = getPrincipalInfo();
+		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
 		fileChanges.preInsert();
-		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
-		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
+		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(principalId));
+		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(principalId));
 		fileChanges.setIsLatest(1);
 		fileChanges.setAction("add");
 		fileChanges.setType("md");
@@ -138,10 +137,10 @@ public class DocServiceImpl implements DocService {
 	}
 
 	private void insert(FileChanges fileChanges) {
-		IamPrincipal info = getPrincipalInfo();
+		String principalId = RpcIamSecurityUtils.currentIamPrincipalId();
 		fileChanges.preInsert();
-		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
-		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(info.getPrincipalId()));
+		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(principalId));
+		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(principalId));
 		fileChanges.setIsLatest(1);
 		fileChanges.setAction("add");
 		fileChanges.setDocCode(UUID.randomUUID().toString().replaceAll("-", ""));
