@@ -31,54 +31,54 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- *  service of {@link EnterpriseApi}
- *
- * @author root
- * @version 0.0.1-SNAPSHOT
- * @Date 
- * @since v1.0
+ * {@link EnterpriseApiService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author vjay
+ * @date 2020-01-14
+ * @sine v1.0
+ * @see
  */
-@SpringBootFeignClient("enterpriseApiService")
+@SpringBootFeignClient(name = "${provider.serviceId:enterpriseApiService}")
 @RequestMapping("/enterpriseApi")
 public interface EnterpriseApiService {
 
-    /**
-     *  page query.
-     *
-     * @return
-     */
-    @RequestMapping(value = "/page", method = POST)
-    PageHolder<EnterpriseApi> page(@RequestBody EnterpriseApiPageRequest enterpriseApiPageRequest);
+	/**
+	 * page query.
+	 *
+	 * @return
+	 */
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<EnterpriseApi> page(@RequestBody EnterpriseApiPageRequest enterpriseApiPageRequest);
 
-    @RequestMapping(value = "/getByModuleId", method = POST)
-    List<EnterpriseApi> getByModuleId(@RequestParam(name="moduleId",required=false) Long moduleId);
+	@RequestMapping(value = "/getByModuleId", method = POST)
+	List<EnterpriseApi> getByModuleId(@RequestParam(name = "moduleId", required = false) Long moduleId);
 
-    /**
-     *  save.
-     *
-     * @param enterpriseApi
-     * @return 
-     */
-    @RequestMapping(value = "/save", method = POST)
-    int save(@RequestBody EnterpriseApi enterpriseApi);
+	/**
+	 * save.
+	 *
+	 * @param enterpriseApi
+	 * @return
+	 */
+	@RequestMapping(value = "/save", method = POST)
+	int save(@RequestBody EnterpriseApi enterpriseApi);
 
-    /**
-     *  detail query.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/detail", method = POST)
-    EnterpriseApi detail(@RequestParam(name="id",required=false) Long id);
+	/**
+	 * detail query.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/detail", method = POST)
+	EnterpriseApi detail(@RequestParam(name = "id", required = false) Long id);
 
-    /**
-     *  delete.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/del", method = POST)
-    int del(@RequestParam(name="id",required=false) Long id);
+	/**
+	 * delete.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/del", method = POST)
+	int del(@RequestParam(name = "id", required = false) Long id);
 
 }
-

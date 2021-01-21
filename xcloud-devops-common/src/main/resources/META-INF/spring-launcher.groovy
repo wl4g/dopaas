@@ -25,7 +25,7 @@ import com.wl4g.component.core.boot.listener.ISpringLauncherConfigurer
 /**
  * IAM web implementation of {@link ISpringLauncherConfigurer}
  */
-class IamWebSpringLauncherConfigurer implements ISpringLauncherConfigurer {
+class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 
 	@Override
 	def int getOrder() {

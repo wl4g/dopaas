@@ -29,50 +29,51 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- *  service of {@link EnterpriseDocument}
- *
- * @author root
- * @version 0.0.1-SNAPSHOT
- * @Date 
- * @since v1.0
+ * {@link EnterpriseDocumentService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author vjay
+ * @date 2020-01-14
+ * @sine v1.0
+ * @see
  */
-@SpringBootFeignClient("enterpriseDocumentService")
+@SpringBootFeignClient(name = "${provider.serviceId:enterpriseDocumentService}")
 @RequestMapping("/enterpriseDocument")
 public interface EnterpriseDocumentService {
 
-    /**
-     *  page query.
-     * @return 
-     */
-    @RequestMapping(value = "/page", method = POST)
-    PageHolder<EnterpriseDocument> page(@RequestBody EnterpriseDocumentPageRequest enterpriseDocumentPageRequest);
+	/**
+	 * page query.
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<EnterpriseDocument> page(@RequestBody EnterpriseDocumentPageRequest enterpriseDocumentPageRequest);
 
-    /**
-     *  save.
-     *
-     * @param enterpriseDocument
-     * @return 
-     */
-    @RequestMapping(value = "/save", method = POST)
-    int save(@RequestBody EnterpriseDocument enterpriseDocument);
+	/**
+	 * save.
+	 *
+	 * @param enterpriseDocument
+	 * @return
+	 */
+	@RequestMapping(value = "/save", method = POST)
+	int save(@RequestBody EnterpriseDocument enterpriseDocument);
 
-    /**
-     *  detail query.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/detail", method = POST)
-    EnterpriseDocument detail(@RequestParam(name="id",required=false) Long id);
+	/**
+	 * detail query.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/detail", method = POST)
+	EnterpriseDocument detail(@RequestParam(name = "id", required = false) Long id);
 
-    /**
-     *  delete.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/del", method = POST)
-    int del(@RequestParam(name="id",required=false) Long id);
+	/**
+	 * delete.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/del", method = POST)
+	int del(@RequestParam(name = "id", required = false) Long id);
 
 }
-
