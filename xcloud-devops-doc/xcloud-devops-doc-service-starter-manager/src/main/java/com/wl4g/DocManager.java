@@ -18,13 +18,11 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient
 @EnableSpringBootFeignClients("com.wl4g.devops.doc.service")
-@EnableComponentDBConfiguration("com.wl4g.devops.doc.data")
 @SpringBootApplication
 public class DocManager {
 

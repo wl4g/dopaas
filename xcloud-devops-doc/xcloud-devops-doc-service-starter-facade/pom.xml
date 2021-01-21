@@ -27,9 +27,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client</artifactId>
+			<artifactId>xcloud-component-support</artifactId>
 		</dependency>
-
 	</dependencies>
 	<build>
 		<plugins>

@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(FAT Test) configuration. ####
+# #### Environment(Dev) configuration. ####
 #
 spring:
   xcloud:
@@ -21,29 +21,12 @@ spring:
           max-attempts: 10
           # Redis's cluster nodes.
           nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
-    iam:
-      cors:
-        rules:
-          '[/**]':
-            allows-origins:
-              - https://${DEVOPS_SERVICE_ZONE:wl4g.fat}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.fat}
-              - https://*.${DEVOPS_SERVICE_ZONE:wl4g.fat}
-              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.fat}
-      acl:
-        secure: false # Turn off protection will trust any same intranet IP.
-        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
-      client:
-        server-uri: http://iam.${DEVOPS_SERVICE_ZONE:wl4g.fat}/iam-server
-        unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-        success-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.fat}/#/share
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
       username: ${DEVOPS_DB_USER:gzsm}
       password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
@@ -64,5 +47,9 @@ spring:
 cipher-key: 03DE18C2FC4E605F
 
 doc:
-  share-base-url: http://share.anjiancloud.alpha/share-manager
-  doc-base-url: http://share.anjiancloud.alpha/doc-manager
+  base-path: /Users/vjay/doctestdir
+  share-base-url: http://wl4g.debug:14051/share-manager
+  doc-base-url: http://wl4g.debug:14060/doc-manager
+
+tpl:
+  basePath: /Users/vjay/doctestdir

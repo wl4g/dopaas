@@ -10,49 +10,14 @@
 # #### Environment base configuration. ####
 
 spring:
-  application.name: doc-manager
+  application.name: doc-facade
   profiles:
-    include: common,support,util,base
+    include: common,support,util
     active: dev
   xcloud:
     component:
       support:
         cli.enable: true
-      web:
-        embedded-webapps:
-          enable: true # Default false
-          base-uri: /view
-          webapp-location: classpath*:/default-webapps
-    iam: # IAM client configuration.
-      cors:
-        enabled: true # Default: true
-        rules:
-          '[/**]':
-            allows-methods: [GET,HEAD,OPTIONS,POST]
-            allows-headers: [X-Iam-*]
-            allow-credentials: true
-              #allows-origins:
-            #- '*'
-      xsrf:
-        enabled: true
-      replay:
-        enabled: true
-      xss:
-        enabled: true # Default: true
-      client: # IAM client configuration.
-        filter-chain:
-          '[/public/**]': anon # Public rule release
-          '[/view/**]': anon
-          '[/external/**]': anon
-        cipher:
-          enable-data-cipher: true # Default by true
-        session:
-          enable-access-token-validity: true # Default by true
-  servlet:
-    http:
-      multipart:
-        max-file-size: 5000Mb
-        max-request-size: 5000Mb
 
 # Mybatis configuration.
 mybatis:
@@ -83,9 +48,10 @@ logging:
 # ### Server configuration. ###
 server:
   servlet:
-    contextPath: /${spring.application.name}
+    #contextPath: /${spring.application.name}
+    contextPath: /
   #address: 0.0.0.0
-  port: 14060
+  port: 14061
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8
