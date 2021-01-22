@@ -16,8 +16,9 @@ spring:
     include: common,support,util
     active: dev
   xcloud:
-    support:
-      cli.nable: true
+    component:
+      support:
+        cli.enable: true
       notification:
         mail:
           enable: true # Default[false]
