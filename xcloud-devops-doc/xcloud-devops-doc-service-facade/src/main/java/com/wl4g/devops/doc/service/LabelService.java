@@ -16,24 +16,45 @@
 package com.wl4g.devops.doc.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.doc.Label;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 /**
+ * {@link LabelService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2020-01-14 11:48:00
+ * @version v1.0 2020-01-14
+ * @sine v1.0
+ * @see
  */
+@SpringBootFeignClient(name = "${provider.serviceId:label-service}")
+@RequestMapping("/LabelService")
 public interface LabelService {
 
-	PageHolder<Label> list(PageHolder<Label> pm, String name);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<Label> list(@RequestBody PageHolder<Label> pm, @RequestParam(name = "name", required = false) String name);
 
-	void save(Label label);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody Label label);
 
-	Label detail(Long id);
+	@RequestMapping(value = "/detail", method = GET)
+	Label detail(@RequestParam(name = "id", required = false) Long id);
 
-	void del(Long id);
+	@RequestMapping(value = "/del", method = POST)
+	void del(@RequestParam(name = "id", required = false) Long id);
 
+	@RequestMapping(value = "/allLabel", method = GET)
 	List<Label> allLabel();
 
 }

@@ -19,11 +19,11 @@ import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.pipeline.flow.FlowManager;
+import com.wl4g.devops.ci.service.OrchestrationManagerAdapterService;
+import com.wl4g.devops.ci.service.PipelineManagerAdapterService;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
+import com.wl4g.devops.common.bean.ci.model.PipelineModel;
 import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -48,10 +48,10 @@ public class PipelineHistoryController extends BaseController {
 	private PipelineHistoryService pipelineHistoryService;
 
 	@Autowired
-	private PipelineManager pipe;
+	private PipelineManagerAdapterService pipelineManagerService;
 
 	@Autowired
-	private FlowManager flowManager;
+	private OrchestrationManagerAdapterService flowManagerService;
 
 	/**
 	 * Query search of page
@@ -67,7 +67,8 @@ public class PipelineHistoryController extends BaseController {
 	public RespBase<?> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName, String environment,
 			String startDate, String endDate, String providerKind) {
 		RespBase<Object> resp = RespBase.create();
-		PageHolder<?> list = pipelineHistoryService.list(pm, pipeName, clusterName, environment, startDate, endDate, providerKind);
+		PageHolder<?> list = pipelineHistoryService.list(pm, pipeName, clusterName, environment, startDate, endDate,
+				providerKind);
 		resp.setData(list);
 		return resp;
 	}
@@ -97,8 +98,8 @@ public class PipelineHistoryController extends BaseController {
 	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
 	public RespBase<?> rollback(Long pipeHisId) {
 		RespBase<Object> resp = RespBase.create();
-		PipelineModel pipelineModel = flowManager.buildPipeline(pipeHisId);
-		pipe.rollbackPipeline(new RollbackParameter(pipeHisId, "rollback"), pipelineModel);
+		PipelineModel pipeModel = flowManagerService.buildPipeline(pipeHisId);
+		pipelineManagerService.rollbackPipeline(new RollbackParameter(pipeHisId, "rollback", pipeModel));
 		return resp;
 	}
 
@@ -106,7 +107,7 @@ public class PipelineHistoryController extends BaseController {
 	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
 	public RespBase<?> readLog(Long pipeHisId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipe.logfile(pipeHisId, startPos, size);
+		FileIOUtils.ReadResult readResult = pipelineManagerService.logfile(pipeHisId, startPos, size);
 		resp.forMap().put("data", readResult);
 		return resp;
 	}
@@ -115,7 +116,7 @@ public class PipelineHistoryController extends BaseController {
 	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
 	public RespBase<?> readDetailLog(Long pipeHisId, Long instanceId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipe.logDetailFile(pipeHisId, instanceId, startPos, size);
+		FileIOUtils.ReadResult readResult = pipelineManagerService.logDetailFile(pipeHisId, instanceId, startPos, size);
 		resp.forMap().put("data", readResult);
 		return resp;
 	}

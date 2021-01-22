@@ -15,20 +15,39 @@
  */
 package com.wl4g.devops.doc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
 import com.wl4g.devops.common.bean.doc.Share;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 /**
+ * {@link ShareService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2020-02-19 16:22:00
+ * @version v1.0 2020-01-14
+ * @sine v1.0
+ * @see
  */
+@SpringBootFeignClient(name = "${provider.serviceId:share-service}")
+@RequestMapping("/ShareService")
 public interface ShareService {
 
-	PageHolder<Share> list(PageHolder<Share> pm);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<Share> list(@RequestBody PageHolder<Share> pm);
 
-	void cancelShare(Long id);
+	@RequestMapping(value = "/cancelShare", method = POST)
+	void cancelShare(@RequestParam(name = "id", required = false) Long id);
 
-	RespBase<?> rendering(String code, String passwd);
+	@RequestMapping(value = "/rendering", method = POST)
+	RespBase<?> rendering(@RequestParam(name = "code", required = false) String code,
+			@RequestParam(name = "passwd", required = false) String passwd);
 
 }

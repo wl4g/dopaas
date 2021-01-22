@@ -46,35 +46,3 @@ spring:
         server-uri: http://wl4g.debug:14040/iam-web
         unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
         success-uri: http://wl4g.debug:8080/#/umc/config
-  # Datasource configuration.
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
-    druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
-      username: ${DEVOPS_DB_USER:gzsm}
-      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true
-
-cipher-key: 03DE18C2FC4E605F
-
-doc:
-  base-path: /Users/vjay/doctestdir
-  share-base-url: http://wl4g.debug:14051/share-manager
-  doc-base-url: http://wl4g.debug:14060/doc-manager
-
-tpl:
-  basePath: /Users/vjay/doctestdir

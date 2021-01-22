@@ -57,9 +57,9 @@ public class TimingPipelineManager implements ApplicationRunner {
 	protected BeanFactory beanFactory;
 
 	@Autowired
-	private ThreadPoolTaskScheduler scheduler;
+	protected ThreadPoolTaskScheduler scheduler;
 	@Autowired
-	protected PipelineManager pipeline;
+	protected PipelineManager pipelineManager;
 
 	@Autowired
 	protected TriggerDao triggerDao;

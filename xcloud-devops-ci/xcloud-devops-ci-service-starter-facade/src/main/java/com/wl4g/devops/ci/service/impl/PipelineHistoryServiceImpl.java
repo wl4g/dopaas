@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
@@ -40,6 +39,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.common.constant.CiConstants.TASK_STATUS_CREATE;
 import static com.wl4g.devops.common.constant.CiConstants.TASK_STATUS_STOPING;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
@@ -66,61 +66,58 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	// --- Create Pipe Runner. ---
 
 	@Override
-	public PipelineHistory createRunnerPipeline(RunParameter param) {
-		Assert2.notNullOf(param, "newParameter");
-		Long pipeId = param.getPipeId();
-		String traceId = param.getTrackId();
-		String traceType = param.getTrackType();
-		String remark = param.getRemark();
-		String annex = param.getAnnex();
+	public PipelineHistory createRunnerPipeline(RunParameter runParam) {
+		Assert2.notNullOf(runParam, "runParam");
+		Long pipeId = notNullOf(runParam.getPipeId(), "pipeId");
+		String traceId = runParam.getTrackId();
+		String traceType = runParam.getTrackType();
+		String remark = runParam.getRemark();
+		String annex = runParam.getAnnex();
 
-		Assert2.notNullOf(pipeId, "pipeId");
 		Pipeline pipeline = pipelineDao.selectByPrimaryKey(pipeId);
 		Assert2.notNullOf(pipeline, "pipeline");
 
-		PipelineHistory pipelineHistory = new PipelineHistory();
-		pipelineHistory.preInsert(pipeline.getOrganizationCode());
-		pipelineHistory.setPipeId(pipeId);
-		pipelineHistory.setProviderKind(pipeline.getProviderKind());
-		pipelineHistory.setAnnex(annex);
-		pipelineHistory.setStatus(TASK_STATUS_CREATE);
-		pipelineHistory.setTrackId(traceId);
-		pipelineHistory.setTrackType(traceType);
-		pipelineHistory.setRemark(remark);
+		PipelineHistory pipeHistory = new PipelineHistory();
+		pipeHistory.preInsert(pipeline.getOrganizationCode());
+		pipeHistory.setPipeId(pipeId);
+		pipeHistory.setProviderKind(pipeline.getProviderKind());
+		pipeHistory.setAnnex(annex);
+		pipeHistory.setStatus(TASK_STATUS_CREATE);
+		pipeHistory.setTrackId(traceId);
+		pipeHistory.setTrackType(traceType);
+		pipeHistory.setRemark(remark);
 
-		pipelineHistory.setOrchestrationType(param.getOrchestrationType());
-		pipelineHistory.setOrchestrationId(param.getOrchestrationId());
+		pipeHistory.setOrchestrationType(runParam.getOrchestrationType());
+		pipeHistory.setOrchestrationId(runParam.getOrchestrationId());
 
-		pipelineHistoryDao.insertSelective(pipelineHistory);
-		createPipeHistoryInstance(pipeline.getId(), pipelineHistory.getId());
-		return pipelineHistory;
+		pipelineHistoryDao.insertSelective(pipeHistory);
+		createPipeHistoryInstance(pipeline.getId(), pipeHistory.getId());
+		return pipeHistory;
 
 	}
 
 	@Override
 	public PipelineHistory createHookPipeline(HookParameter param) {
-		Long pipeId = param.getPipeId();
+		Long pipeId = notNullOf(param.getPipeId(), "pipeId");
 		String remark = param.getRemark();
-		RunParameter newParameter = new RunParameter(pipeId, remark, null, null, null);
+		RunParameter runParam = new RunParameter(pipeId, remark, null, null, null, null);
 
-		Assert2.notNullOf(pipeId, "pipeId");
-		Pipeline pipeline = pipelineDao.selectByPrimaryKey(pipeId);
-		Assert2.notNullOf(pipeline, "pipeline");
+		Pipeline pipeline = notNullOf(pipelineDao.selectByPrimaryKey(pipeId), "pipeline");
 
-		PipelineHistory pipelineHistory = new PipelineHistory();
-		pipelineHistory.preInsert(getRequestOrganizationCode());
-		pipelineHistory.setPipeId(pipeId);
-		pipelineHistory.setProviderKind(pipeline.getProviderKind());
-		pipelineHistory.setAnnex(null);
-		pipelineHistory.setStatus(TASK_STATUS_CREATE);
-		pipelineHistory.setTrackId(null);
-		pipelineHistory.setTrackType(null);
-		pipelineHistory.setRemark(remark);
+		PipelineHistory pipeHistory = new PipelineHistory();
+		pipeHistory.preInsert(getRequestOrganizationCode());
+		pipeHistory.setPipeId(pipeId);
+		pipeHistory.setProviderKind(pipeline.getProviderKind());
+		pipeHistory.setAnnex(null);
+		pipeHistory.setStatus(TASK_STATUS_CREATE);
+		pipeHistory.setTrackId(null);
+		pipeHistory.setTrackType(null);
+		pipeHistory.setRemark(remark);
 
-		pipelineHistoryDao.insertSelective(pipelineHistory);
-		createPipeHistoryInstance(pipeline.getId(), pipelineHistory.getId());
+		pipelineHistoryDao.insertSelective(pipeHistory);
+		createPipeHistoryInstance(pipeline.getId(), pipeHistory.getId());
 
-		return createRunnerPipeline(newParameter);
+		return createRunnerPipeline(runParam);
 	}
 
 	@Override
@@ -209,8 +206,8 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	}
 
 	@Override
-	public PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName, String environment,
-			String startDate, String endDate, String providerKind) {
+	public PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName,
+			String environment, String startDate, String endDate, String providerKind) {
 		pm.startPage();
 		pm.setRecords(pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterName, environment, startDate,
 				endDate, providerKind, null, null));

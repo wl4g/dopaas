@@ -30,16 +30,12 @@ package com.wl4g;
  * limitations under the License.
  */
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.iam.test.mock.annotation.EnableIamMockAutoConfiguration;
 
 @EnableIamMockAutoConfiguration
-@MapperScan("com.wl4g.devops.dao.*")
-@EnableComponentDBConfiguration
 @SpringBootApplication
 public class DocManagerTests {
 

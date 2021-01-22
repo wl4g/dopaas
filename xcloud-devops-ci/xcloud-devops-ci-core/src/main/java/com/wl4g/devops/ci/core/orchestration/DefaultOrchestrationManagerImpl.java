@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.pipeline.flow;
+package com.wl4g.devops.ci.core.orchestration;
 
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.serialize.JacksonUtils;
@@ -21,9 +21,6 @@ import com.wl4g.component.common.task.RunnerProperties;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.component.support.task.ApplicationTaskRunner;
-import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.bean.RunModel;
-import com.wl4g.devops.ci.bean.RunModel.Pipeline;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.data.OrchestrationDao;
@@ -33,18 +30,22 @@ import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.common.bean.ci.OrchestrationHistory;
 import com.wl4g.devops.common.bean.ci.OrchestrationPipeline;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
+import com.wl4g.devops.common.bean.ci.model.PipelineModel;
+import com.wl4g.devops.common.bean.ci.model.RunModel;
+import com.wl4g.devops.common.bean.ci.model.RunModel.Pipeline;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
+import com.wl4g.devops.common.constant.CiConstants;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
-import static com.wl4g.devops.ci.pipeline.flow.FlowManager.FlowStatus.*;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.ci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.*;
 import static com.wl4g.devops.common.constant.CiConstants.*;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
@@ -53,15 +54,14 @@ import static java.util.Objects.isNull;
  * @author vjay
  * @date 2020-03-09 09:27:00
  */
-public class FlowManager {
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
+	protected final Logger log = getLogger(getClass());
 
 	@Autowired
 	private JedisService jedisService;
 
 	@Autowired
-	private PipelineManager pipeliner;
+	private PipelineManager pipelineManager;
 
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
@@ -218,7 +218,7 @@ public class FlowManager {
 				// Submit jobs & listen job timeout.
 				runner.getWorker().submitForComplete(jobs, (ex, completed, uncompleted) -> {
 					log.error("error", ex);
-				}, FLOW_TIME_OUT_MS);
+				}, CiConstants.FLOW_TIME_OUT_MS);
 			}
 		} catch (Exception e) {
 			log.error("flow run fail", e);
@@ -254,16 +254,16 @@ public class FlowManager {
 	}
 
 	/**
-	 * @param pipelineModel
+	 * @param pipeModel
 	 */
-	public void master2slave(OrchestrationHistory orchestrationHistory, PipelineModel pipelineModel, String remark,
+	public void master2slave(OrchestrationHistory orchestrationHistory, PipelineModel pipeModel, String remark,
 			String taskTraceId, String taskTraceType, String annex) throws Exception {
 		log.info(
 				"FlowManager.master2slave prarms::"
 						+ "pipelineModel = {} , remark = {} , taskTraceId = {} , taskTraceType = {} , annex = {} ",
-				pipelineModel, remark, taskTraceId, taskTraceType, annex);
-		pipeliner.runPipeline(new RunParameter(pipelineModel.getPipeId(), remark, taskTraceId, taskTraceType, annex, 2,
-				orchestrationHistory.getId()), pipelineModel);
+				pipeModel, remark, taskTraceId, taskTraceType, annex);
+		pipelineManager.runPipeline(new RunParameter(pipeModel.getPipeId(), remark, taskTraceId, taskTraceType, annex, 2,
+				orchestrationHistory.getId(), pipeModel));
 	}
 
 	private static ApplicationTaskRunner<RunnerProperties> createGenericTaskRunner(int concurrencyPoolSize) throws Exception {
@@ -506,7 +506,6 @@ public class FlowManager {
 	}
 
 	public static enum FlowStatus {
-
 		WAITING, RUNNING, RUNNING_BUILD, RUNNING_DEPLOY, FAILED, SUCCESS;
 
 		/**
@@ -537,15 +536,6 @@ public class FlowManager {
 			}
 			return null;
 		}
-
 	}
-
-	public static final String REDIS_CI_RUN_PRE = "CI_RUN_";// redis key
-	public static final int REDIS_CI_RUN_SCAN_BATCH = 100;// redis scan batch
-	// TODO config
-	private static String node = "master-1";
-	private static int REDIS_SAVE_TIME_S = 30 * 60;// cache ttl(defautl 30 min)
-	// flow time out(default 30min)
-	private static long FLOW_TIME_OUT_MS = 30 * 60 * 1000;
 
 }

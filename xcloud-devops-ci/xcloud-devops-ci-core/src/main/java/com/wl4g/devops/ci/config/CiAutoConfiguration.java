@@ -18,9 +18,12 @@ package com.wl4g.devops.ci.config;
 import com.wl4g.component.core.framework.beans.NamingPrototype;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.ci.console.CiConsole;
-import com.wl4g.devops.ci.core.DefaultPipelineManager;
+import com.wl4g.devops.ci.core.DefaultPipelineManagerImpl;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
+import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.core.orchestration.DefaultOrchestrationManagerImpl;
+import com.wl4g.devops.ci.core.orchestration.OrchestrationManager;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
@@ -28,7 +31,6 @@ import com.wl4g.devops.ci.pcm.redmine.RedminePcmOperator;
 import com.wl4g.devops.ci.pipeline.TimeoutJobsEvictor;
 import com.wl4g.devops.ci.pipeline.TimingPipelineManager;
 import com.wl4g.devops.ci.pipeline.deploy.*;
-import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.provider.*;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider.PipelineKind;
 import com.wl4g.devops.ci.pipeline.provider.container.DockerNativePipelineProvider;
@@ -38,6 +40,7 @@ import com.wl4g.devops.common.bean.ci.Pipeline;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.constant.CiConstants;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -62,7 +65,7 @@ public class CiAutoConfiguration {
 	// --- Basic's ---
 
 	@Bean
-	@ConfigurationProperties(prefix = "spring.cloud.devops.ci.pipeline")
+	@ConfigurationProperties(prefix = CiConstants.KEY_CI_CONFIG_PREFIX)
 	public CiProperties ciCdProperties() {
 		return new CiProperties();
 	}
@@ -78,8 +81,8 @@ public class CiAutoConfiguration {
 	}
 
 	@Bean
-	public DefaultPipelineManager defualtPipelineManager() {
-		return new DefaultPipelineManager();
+	public PipelineManager defaultPipelineManagerImpl() {
+		return new DefaultPipelineManagerImpl();
 	}
 
 	@Bean
@@ -94,10 +97,11 @@ public class CiAutoConfiguration {
 		return new CiConsole();
 	}
 
-	// --- Flow Manager ---
+	// --- Orchestration manager ---
+
 	@Bean
-	public FlowManager flowManager() {
-		return new FlowManager();
+	public OrchestrationManager defaultOrchestrationManagerImpl() {
+		return new DefaultOrchestrationManagerImpl();
 	}
 
 	// --- Pipeline providers. ---

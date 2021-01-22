@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.pipeline.provider;
 
-import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.service.ProjectService;
@@ -23,6 +22,7 @@ import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Pipeline;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Trigger;
+import com.wl4g.devops.common.bean.ci.model.PipelineModel;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.vcs.operator.VcsOperator;
@@ -42,7 +42,7 @@ import static com.wl4g.component.common.lang.Assert2.notNullOf;
 public class TimingPipelineProvider extends AbstractPipelineProvider implements Runnable {
 
 	@Autowired
-	protected PipelineManager pipeManager;
+	protected PipelineManager pipelineManager;
 	@Autowired
 	protected TriggerService triggerService;
 	@Autowired
@@ -77,7 +77,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 			// Creating pipeline task.
 			// TODO traceId???
 			PipelineModel pipeModel = flowManager.buildPipeline(pipeline.getId());
-			pipeManager.runPipeline(new RunParameter(pipeline.getId(), "rollback", "1", "1", null), pipeModel);
+			pipelineManager.runPipeline(new RunParameter(pipeline.getId(), "rollback", "1", "1", null, pipeModel));
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();

@@ -16,9 +16,9 @@
 package com.wl4g.devops.ci;
 
 import com.wl4g.CiFacade;
-import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.pipeline.flow.FlowManager;
+import com.wl4g.devops.ci.service.OrchestrationManagerAdapterService;
+import com.wl4g.devops.ci.service.PipelineManagerAdapterService;
+import com.wl4g.devops.common.bean.ci.model.PipelineModel;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
 
 import org.junit.Test;
@@ -28,24 +28,29 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
+ * {@link PipelineManagerTests}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-09-29 10:51:00
+ * @version v1.0 2019-09-29
+ * @sine v1.0
+ * @see
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CiFacade.class)
 public class PipelineManagerTests {
 
 	@Autowired
-	private PipelineManager pipeManager;
+	private PipelineManagerAdapterService pipelineManager;
 
 	@Autowired
-	private FlowManager flowManager;
+	private OrchestrationManagerAdapterService flowManagerService;
 
 	@Test
 	public void createTask() throws Exception {
 		Long taskId = 152L;
-		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
-		pipeManager.runPipeline(new RunParameter(taskId, null, null, null, null), pipelineModel);
+		PipelineModel pipeModel = flowManagerService.buildPipeline(taskId);
+		pipelineManager.runPipeline(new RunParameter(taskId, null, null, null, null, pipeModel));
 	}
 
 }

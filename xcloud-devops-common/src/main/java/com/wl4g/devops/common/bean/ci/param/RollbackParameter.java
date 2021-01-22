@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.bean.ci.param;
 
+import com.wl4g.devops.common.bean.ci.model.PipelineModel;
+
 /**
  * Roll-back pipeline handle parameter.
  * 
@@ -25,12 +27,23 @@ package com.wl4g.devops.common.bean.ci.param;
 public class RollbackParameter extends BaseParameter {
 	private static final long serialVersionUID = 1489325413465499589L;
 
+	private PipelineModel pipeModel;
+
 	public RollbackParameter() {
 		super();
 	}
 
-	public RollbackParameter(Long pipeId, String remark) {
+	public RollbackParameter(Long pipeId, String remark, PipelineModel pipeModel) {
 		super(pipeId, remark);
+		this.pipeModel = pipeModel;
+	}
+
+	public PipelineModel getPipeModel() {
+		return pipeModel;
+	}
+
+	public void setPipeModel(PipelineModel pipeModel) {
+		this.pipeModel = pipeModel;
 	}
 
 }
