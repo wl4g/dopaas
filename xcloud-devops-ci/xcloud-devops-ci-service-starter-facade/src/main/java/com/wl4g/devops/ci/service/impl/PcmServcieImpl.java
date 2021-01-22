@@ -33,8 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
 import java.util.List;
 import java.util.Objects;

@@ -37,48 +37,47 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public interface PcmService {
 
 	@RequestMapping(value = "/list", method = POST)
-	PageHolder<Pcm> list(@RequestBody PageHolder<Pcm> pm,
-						 @RequestParam(name="name",required=false) String name,
-						 @RequestParam(name="providerKind",required=false) String providerKind,
-						 @RequestParam(name="authType",required=false) Integer authType);
+	PageHolder<Pcm> list(@RequestBody PageHolder<Pcm> pm, @RequestParam(name = "name", required = false) String name,
+			@RequestParam(name = "providerKind", required = false) String providerKind,
+			@RequestParam(name = "authType", required = false) Integer authType);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody Pcm pcm);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/detail", method = POST)
-	Pcm detail(@RequestParam(name="id",required=false) Long id);
+	Pcm detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/all", method = POST)
 	List<Pcm> all();
 
 	@RequestMapping(value = "/getUsers", method = POST)
-	List<SelectionModel> getUsers(@RequestParam(name="pcmId",required=false) Long pcmId);
+	List<SelectionModel> getUsers(@RequestParam(name = "pcmId", required = false) Long pcmId);
 
 	@RequestMapping(value = "/getProjects", method = POST)
-	List<SelectionModel> getProjects(@RequestParam(name="pcmId",required=false) Long pcmId);
+	List<SelectionModel> getProjects(@RequestParam(name = "pcmId", required = false) Long pcmId);
 
 	@RequestMapping(value = "/getIssues", method = POST)
-	List<SelectionModel> getIssues(@RequestParam(name="pcmId",required=false) Long pcmId,
-								   @RequestParam(name="userId",required=false) String userId,
-								   @RequestParam(name="projectId",required=false) String projectId,
-								   @RequestParam(name="search",required=false) String search);
+	List<SelectionModel> getIssues(@RequestParam(name = "pcmId", required = false) Long pcmId,
+			@RequestParam(name = "userId", required = false) String userId,
+			@RequestParam(name = "projectId", required = false) String projectId,
+			@RequestParam(name = "search", required = false) String search);
 
 	@RequestMapping(value = "/getProjectsByPcmId", method = POST)
-	List<SelectionModel> getProjectsByPcmId(@RequestParam(name="pcmId",required=false) Long pcmId);
+	List<SelectionModel> getProjectsByPcmId(@RequestParam(name = "pcmId", required = false) Long pcmId);
 
 	@RequestMapping(value = "/getTrackers", method = POST)
-	List<SelectionModel> getTrackers(@RequestParam(name="pcmId",required=false) Long pcmId);
+	List<SelectionModel> getTrackers(@RequestParam(name = "pcmId", required = false) Long pcmId);
 
 	@RequestMapping(value = "/getStatuses", method = POST)
-	List<SelectionModel> getStatuses(@RequestParam(name="pcmId",required=false) Long pcmId);
+	List<SelectionModel> getStatuses(@RequestParam(name = "pcmId", required = false) Long pcmId);
 
 	@RequestMapping(value = "/getPriorities", method = POST)
-	List<SelectionModel> getPriorities(@RequestParam(name="pcmId",required=false) Long pcmId);
+	List<SelectionModel> getPriorities(@RequestParam(name = "pcmId", required = false) Long pcmId);
 
 	@RequestMapping(value = "/createIssues", method = POST)
-	void createIssues(Long pcmId, @RequestBody PipeHistoryPcm pipeHistoryPcm);
+	void createIssues(@RequestParam(name = "pcmId") Long pcmId, @RequestBody PipeHistoryPcm pipeHistoryPcm);
 
 }

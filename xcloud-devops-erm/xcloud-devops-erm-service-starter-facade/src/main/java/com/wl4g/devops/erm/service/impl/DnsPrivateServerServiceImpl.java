@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.DnsPrivateServer;
@@ -26,8 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**

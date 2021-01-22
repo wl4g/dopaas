@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.service.impl;
 
-
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.log.SmartLoggerFactory;
 import com.wl4g.component.core.bean.BaseBean;
@@ -35,7 +34,7 @@ import java.util.List;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 

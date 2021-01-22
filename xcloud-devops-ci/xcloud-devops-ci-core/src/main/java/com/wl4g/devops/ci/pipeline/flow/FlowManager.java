@@ -46,7 +46,7 @@ import java.util.*;
 
 import static com.wl4g.devops.ci.pipeline.flow.FlowManager.FlowStatus.*;
 import static com.wl4g.devops.common.constant.CiConstants.*;
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 
 /**

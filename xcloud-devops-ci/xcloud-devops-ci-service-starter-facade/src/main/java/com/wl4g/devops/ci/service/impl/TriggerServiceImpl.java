@@ -33,8 +33,8 @@ import org.springframework.util.Assert;
 
 import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.constant.CiConstants.TASK_TYPE_TIMMING;
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
 /**
  * @author vjay

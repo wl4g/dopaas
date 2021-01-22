@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci;
 
-import com.wl4g.CiServer;
+import com.wl4g.CiFacade;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.pipeline.flow.FlowManager;
@@ -32,7 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @date 2019-09-29 10:51:00
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = CiServer.class)
+@SpringBootTest(classes = CiFacade.class)
 public class PipelineManagerTests {
 
 	@Autowired
