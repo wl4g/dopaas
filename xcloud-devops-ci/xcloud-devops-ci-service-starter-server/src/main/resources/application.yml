@@ -10,12 +10,41 @@
 
 # #### Environment base configuration. ####
 #
-
-# Mybatis configuration.
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.devops.common.bean.*.*
+spring:
+  application.name: ci-server
+  profiles:
+    include: common,support,util
+    active: dev
+  xcloud:
+    iam: # IAM client configuration.
+      cors:
+        enabled: true # Default: true
+        rules:
+          '[/**]':
+            allows-methods: [GET,HEAD,POST,OPTIONS]
+            allows-headers: [X-Iam-*]
+            allow-credentials: true
+            ##allows-origins:
+              #- '*'
+      xsrf:
+        enabled: true
+      replay:
+        enabled: true
+      xss:
+        enabled: true # Default: true
+      client: # IAM client configuration.
+        filter-chain:
+          '[/public/**]': anon # Public rule release
+          '[/hook/**]': anon # Public rule release
+        cipher:
+          enable-data-cipher: true # Default by true
+        session:
+          enable-access-token-validity: true # Default by true
+  servlet:
+    http: # Upload file limit
+      multipart:
+        max-file-size: 50Mb
+        max-request-size: 50Mb
 
 # Logging configuration.
 logging:
@@ -35,4 +64,21 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.devops.ci.dao: DEBUG
+      wl4g.devops.ci.web: DEBUG
+
+# ### Server configuration. ###
+server:
+  servlet:
+    contextPath: /${spring.application.name}
+  #address: 0.0.0.0
+  port: 14046
+  sessionTimeout: 30
+  tomcat:
+    uri-encoding: UTF-8
+    protocolHeader: x-forwarded-proto
+    remoteIpHeader: x-forwarded-for
+    basedir: /tmp/${spring.application.name}
+    access-log-enabled: false
+    accesslog.directory: logs/
+    backgroundProcessorDelay: 30 #seconds
+    max-thread: 50 # Max worker threads(default:200).

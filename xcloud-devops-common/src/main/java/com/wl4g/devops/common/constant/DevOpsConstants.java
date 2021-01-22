@@ -15,8 +15,7 @@
  */
 package com.wl4g.devops.common.constant;
 
-import java.util.Collections;
-import java.util.Map;
+import com.wl4g.component.core.constant.BaseConstant;
 
 /**
  * DevOps constants definitions.
@@ -25,14 +24,6 @@ import java.util.Map;
  * @version v1.0 2019年7月5日
  * @since
  */
-public abstract class DevOpsConstants {
-
-	/** OS environment map cache. */
-	final protected static Map<String, String> ENV = Collections.unmodifiableMap(System.getenv());
-
-	/**
-	 * Controlling Spring-enabled Unified Exception Handling Stack Information
-	 */
-	final public static String PARAM_STACK_TRACE = ENV.getOrDefault("spring.error.stack.trace", "_stacktrace");
+public abstract class DevOpsConstants extends BaseConstant {
 
 }

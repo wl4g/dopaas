@@ -30,7 +30,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0.0
  * @see
  */
-@SpringBootFeignClient("logCleanService")
+@SpringBootFeignClient(name = "${provider.serviceId:logClean-service}")
 @RequestMapping("/logClean")
 public interface LogCleanService {
 
