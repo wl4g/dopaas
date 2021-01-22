@@ -23,6 +23,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
+import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
 import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
 /**
@@ -33,9 +34,9 @@ import com.wl4g.shell.springboot.annotation.EnableShellServer;
  * @sine v1.0
  * @see
  */
-// @EnableTransactionManagement(mode = ASPECTJ)
 @EnableShellServer
-@EnableComponentDBConfiguration("com.wl4g.devops.ci.dao")
+@EnableSpringBootFeignClients("com.wl4g.devops.erm.service")
+@EnableComponentDBConfiguration("com.wl4g.devops.ci.data")
 @SpringBootApplication
 public class CiFacade {
 
