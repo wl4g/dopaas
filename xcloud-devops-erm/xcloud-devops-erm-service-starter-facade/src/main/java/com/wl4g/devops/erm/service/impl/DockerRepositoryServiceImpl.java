@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.BaseBean;
@@ -49,8 +48,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**

@@ -33,9 +33,9 @@ import com.wl4g.shell.springboot.annotation.EnableShellServer;
  * @sine v1.0
  * @see
  */
+// @EnableTransactionManagement(mode = ASPECTJ)
 @EnableShellServer
 @EnableComponentDBConfiguration("com.wl4g.devops.ci.dao")
-// @EnableTransactionManagement(mode = ASPECTJ)
 @SpringBootApplication
 public class CiFacade {
 

@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.ci.data.OrchestrationHistoryDao;
 import com.wl4g.devops.ci.data.PipelineHistoryDao;
@@ -26,7 +25,7 @@ import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
 import java.util.List;
 

@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
@@ -38,8 +37,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.iam.core.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
 @Service
 @Transactional
