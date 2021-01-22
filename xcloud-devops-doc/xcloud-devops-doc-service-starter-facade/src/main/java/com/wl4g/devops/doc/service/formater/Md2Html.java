@@ -43,8 +43,8 @@ public class Md2Html {
 
     final private static String HTML_OUTPUT_PATH = "/output";
 
-    final private static String MATCH_START = "##[";
-    final private static String MATCH_END = "]##";
+    final private static String MATCH_START = "```api\n";
+    final private static String MATCH_END = "\n```";
 
     final private static String REQUEST = "Request";
     final private static String RESPONSE = "Response";
@@ -86,6 +86,7 @@ public class Md2Html {
 
                     for (MdResource mdResource : mdResources) {
                         String md2html = FlexmarkUtil.md2html(mdResource.getContentAsString());
+
                         TemplateFormatModel templateFormatModel = new TemplateFormatModel();
                         templateFormatModel.setPath(mdResource.getRawFilename());
 
@@ -125,11 +126,47 @@ public class Md2Html {
     //======================================================================
 
 
+    //单个api渲染
+    public String singleApiFormat(String apiId) throws IOException, TemplateException {
+
+        apiId = apiId.replaceAll("\n","");
+        apiId = apiId.trim();
+        EnterpriseApi enterpriseApi = enterpriseApiService.detail(Long.parseLong(apiId));
+
+        String macro = ResourceBundleUtil.readResource(Md2Html.class, "template", "macro-property.ftl", true);
+        String apiTemplate = ResourceBundleUtil.readResource(Md2Html.class, "template", "api-info.ftl", true);
+        String templateStr = macro + "\n" + apiTemplate;
+
+
+        //分类
+        List<EnterpriseApiProperties> request = new ArrayList();
+        List<EnterpriseApiProperties> response = new ArrayList();
+        for (EnterpriseApiProperties property : enterpriseApi.getProperties()) {
+            if (REQUEST.equals(property.getScope())) {
+                request.add(property);
+            }
+            if (RESPONSE.equals(property.getScope())) {
+                response.add(property);
+            }
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("enterpriseApi",enterpriseApi);
+        map.put("requestProperties",request);
+        map.put("responseProperties",response);
+
+        Template template = new Template("singleApiFormat" + apiId, templateStr, defaultGenConfigurer);
+
+        return renderingTemplateToString(template, map);
+    }
+
+
+
     /**
      * 向html文件填充api信息
      */
     private String filling(String html) throws IOException, TemplateException {
-        if(html.contains("MATCH_START")){
+        if(html.contains(MATCH_START)){
             String macro = ResourceBundleUtil.readResource(Md2Html.class, "template", "macro-property.ftl", true);
             html = macro + "\n" + html;
         }

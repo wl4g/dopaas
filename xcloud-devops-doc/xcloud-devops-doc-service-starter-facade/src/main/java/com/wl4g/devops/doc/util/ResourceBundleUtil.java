@@ -62,7 +62,7 @@ public abstract class ResourceBundleUtil {
 		try {
 			// First get from cache
 			String basePath = withLoadClass.getName().replace(".", "/").replace(withLoadClass.getSimpleName(), "")
-					.concat(subPath.endsWith("/") ? subPath.substring(0, subPath.length() - 1) : subPath).concat("/");
+					.concat(subPath.endsWith("/") ? subPath.substring(0, subPath.length() - 1) : subPath);
 			String path = basePath.concat("/").concat(filename);
 
 			String sqlStr = null;
