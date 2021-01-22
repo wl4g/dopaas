@@ -29,13 +29,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient("sshService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:ssh-service}")
 @RequestMapping("/ssh")
 public interface SshService {
 
 	@RequestMapping(value = "/page", method = POST)
-	PageHolder<SshBean> page(@RequestBody PageHolder<SshBean> pm,
-							 String name);
+	PageHolder<SshBean> page(@RequestBody PageHolder<SshBean> pm, @RequestParam(name = "name", required = false) String name);
 
 	@RequestMapping(value = "/getForSelect", method = POST)
 	List<SshBean> getForSelect();
@@ -44,14 +43,14 @@ public interface SshService {
 	void save(@RequestBody SshBean ssh);
 
 	@RequestMapping(value = "/detail", method = POST)
-	SshBean detail(@RequestParam(name="id",required=false) Long id);
+	SshBean detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/testSSHConnect", method = POST)
-	void testSSHConnect(@RequestParam(name="hostId",required=false) Long hostId,
-						@RequestParam(name="sshUser",required=false) String sshUser,
-						@RequestParam(name="sshKey",required=false) String sshKey,
-						@RequestParam(name="sshId",required=false) Long sshId) throws Exception, InterruptedException;
+	void testSSHConnect(@RequestParam(name = "hostId", required = false) Long hostId,
+			@RequestParam(name = "sshUser", required = false) String sshUser,
+			@RequestParam(name = "sshKey", required = false) String sshKey,
+			@RequestParam(name = "sshId", required = false) Long sshId) throws Exception, InterruptedException;
 }

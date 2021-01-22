@@ -36,7 +36,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
  * @author vjay
  * @date 2019-08-01 14:45:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId:pipelineManager-service}")
+@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:pipelineManager-service}")
 @RequestMapping("/pipelineManager")
 public interface PipelineManagerAdapterService {
 

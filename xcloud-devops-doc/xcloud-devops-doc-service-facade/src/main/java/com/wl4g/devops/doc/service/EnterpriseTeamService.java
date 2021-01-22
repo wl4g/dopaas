@@ -37,7 +37,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient(name = "${provider.serviceId:enterpriseTeamService}")
+@SpringBootFeignClient(name = "${provider.serviceId.doc-facade:enterpriseTeamService}")
 @RequestMapping("/enterpriseTeam")
 public interface EnterpriseTeamService {
 

@@ -28,7 +28,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-11-12 11:05:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId:orchestration-service}")
+@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:orchestration-service}")
 @RequestMapping("/orchestration")
 public interface OrchestrationService {
 

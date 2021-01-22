@@ -39,7 +39,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient(name = "${provider.serviceId:docService}")
+@SpringBootFeignClient(name = "${provider.serviceId.doc-facade:docService}")
 @RequestMapping("/doc")
 public interface DocService {
 

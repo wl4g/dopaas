@@ -27,19 +27,20 @@ import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-@SpringBootFeignClient("fsService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:fs-service}")
 @RequestMapping("/fs")
 public interface FsService {
 
-    @RequestMapping(value = "/uploadFile", method = POST)
-    String uploadFile(@RequestBody MultipartFile img);
+	@RequestMapping(value = "/uploadFile", method = POST)
+	String uploadFile(@RequestBody MultipartFile img);
 
-    @RequestMapping(value = "/downloadFile", method = POST)
-    ResponseEntity<FileSystemResource> downloadFile(@RequestParam(name="path",required=false) String path) throws IOException;
+	@RequestMapping(value = "/downloadFile", method = POST)
+	ResponseEntity<FileSystemResource> downloadFile(@RequestParam(name = "path", required = false) String path)
+			throws IOException;
 
-    @RequestMapping(value = "/uploadImg", method = POST)
-    String uploadImg(@RequestBody MultipartFile img);
+	@RequestMapping(value = "/uploadImg", method = POST)
+	String uploadImg(@RequestBody MultipartFile img);
 
-    @RequestMapping(value = "/downloadImg", method = POST)
-    byte[] downloadImg(@RequestParam(name="path",required=false) String path) throws IOException;
+	@RequestMapping(value = "/downloadImg", method = POST)
+	byte[] downloadImg(@RequestParam(name = "path", required = false) String path) throws IOException;
 }

@@ -15,16 +15,22 @@
  */
 package com.wl4g;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
+import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
+/**
+ * {@link ErmManager}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-01-22
+ * @sine v1.0
+ * @see
+ */
 @EnableIamClient
-@MapperScan("com.wl4g.devops.erm.dao")
-@EnableComponentDBConfiguration
+@EnableSpringBootFeignClients("com.wl4g.devops.erm.service")
 @SpringBootApplication
 public class ErmManager {
 

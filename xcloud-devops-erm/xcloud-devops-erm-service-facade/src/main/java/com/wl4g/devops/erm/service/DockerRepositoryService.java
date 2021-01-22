@@ -33,13 +33,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient("dockerRepositoryService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:dockerRepository-service}")
 @RequestMapping("/dockerRepository")
 public interface DockerRepositoryService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DockerRepository> page(@RequestBody PageHolder<DockerRepository> pm,
-									  @RequestParam(name="name",required=false) String name);
+			@RequestParam(name = "name", required = false) String name);
 
 	@RequestMapping(value = "/getForSelect", method = POST)
 	List<DockerRepository> getForSelect();
@@ -48,15 +48,15 @@ public interface DockerRepositoryService {
 	void save(@RequestBody DockerRepository dockerRepository);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DockerRepository detail(@RequestParam(name="id",required=false) Long id);
+	DockerRepository detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/getRepositoryProjects", method = POST)
-	List<RepositoryProject> getRepositoryProjects(@RequestParam(name="id",required=false) Long id,
-												  @RequestParam(name="address",required=false) String address,
-												  @RequestParam(name="name",required=false) String name)
+	List<RepositoryProject> getRepositoryProjects(@RequestParam(name = "id", required = false) Long id,
+			@RequestParam(name = "address", required = false) String address,
+			@RequestParam(name = "name", required = false) String name)
 			throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException;
 
 }

@@ -29,13 +29,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient("k8sClusterService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:k8sCluster-service}")
 @RequestMapping("/k8sCluster")
 public interface K8sClusterService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<K8sCluster> page(@RequestBody PageHolder<K8sCluster> pm,
-								@RequestParam(name="name",required=false) String name);
+			@RequestParam(name = "name", required = false) String name);
 
 	@RequestMapping(value = "/getForSelect", method = POST)
 	List<K8sCluster> getForSelect();
@@ -44,8 +44,8 @@ public interface K8sClusterService {
 	void save(@RequestBody K8sCluster k8sCluster);
 
 	@RequestMapping(value = "/detail", method = POST)
-	K8sCluster detail(@RequestParam(name="id",required=false) Long id);
+	K8sCluster detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 }

@@ -29,13 +29,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient("dockerClusterService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:dockerCluster-service}")
 @RequestMapping("/dockerCluster")
 public interface DockerClusterService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DockerCluster> page(@RequestBody PageHolder<DockerCluster> pm,
-								   @RequestParam(name="name",required=false) String name);
+			@RequestParam(name = "name", required = false) String name);
 
 	@RequestMapping(value = "/getForSelect", method = POST)
 	List<DockerCluster> getForSelect();
@@ -44,8 +44,8 @@ public interface DockerClusterService {
 	void save(@RequestBody DockerCluster dockerCluster);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DockerCluster detail(@RequestParam(name="id",required=false) Long id);
+	DockerCluster detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 }

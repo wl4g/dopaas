@@ -27,23 +27,22 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient("dnsPrivateBlacklistService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:dnsPrivateBlacklist-service}")
 @RequestMapping("/dnsPrivateBlacklist")
 public interface DnsPrivateBlacklistService {
 
-
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DnsPrivateBlacklist> page(@RequestBody PageHolder<DnsPrivateBlacklist> pm,
-										 @RequestParam(name="expression",required=false) String expression);
+			@RequestParam(name = "expression", required = false) String expression);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody DnsPrivateBlacklist dnsPrivateBlacklist);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DnsPrivateBlacklist detail(@RequestParam(name="id",required=false) Long id);
+	DnsPrivateBlacklist detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/loadBlacklistAtStart", method = POST)
 	void loadBlacklistAtStart();

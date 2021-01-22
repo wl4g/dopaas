@@ -32,7 +32,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-11-12 11:05:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId:pcm-service}")
+@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:pcm-service}")
 @RequestMapping("/pcm")
 public interface PcmService {
 

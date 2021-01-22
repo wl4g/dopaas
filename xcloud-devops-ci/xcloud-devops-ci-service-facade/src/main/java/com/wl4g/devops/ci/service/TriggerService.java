@@ -28,7 +28,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-05-17 11:04:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId:trigger-service}")
+@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:trigger-service}")
 @RequestMapping("/trigger")
 public interface TriggerService {
 

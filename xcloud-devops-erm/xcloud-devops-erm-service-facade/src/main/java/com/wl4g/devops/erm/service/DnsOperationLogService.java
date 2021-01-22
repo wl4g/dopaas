@@ -27,20 +27,20 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient("dnsOperationLogService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:dnsOperationLog-service}")
 @RequestMapping("/dnsOperationLog")
 public interface DnsOperationLogService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DnsOperationLog> page(@RequestBody PageHolder<DnsOperationLog> pm,
-									 @RequestParam(name="domain",required=false) String domain);
+			@RequestParam(name = "domain", required = false) String domain);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody DnsOperationLog dnsOperationLog);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DnsOperationLog detail(@RequestParam(name="id",required=false) Long id);
+	DnsOperationLog detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 }

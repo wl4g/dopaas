@@ -9,7 +9,7 @@
 #
 # #### Environment base configuration. ####
 spring:
-  application.name: erm-manager
+  application.name: erm-facade
   profiles:
     include: common,support,util,base
     active: dev
@@ -17,29 +17,12 @@ spring:
     component:
       support:
         cli.enable: true
-    iam: # IAM client configuration.
-      cors:
-        enabled: true # Default: true
-        rules:
-          '[/**]':
-            allows-methods: [GET,HEAD,OPTIONS,POST]
-            allows-headers: [X-Iam-*]
-            allow-credentials: true
-            #allows-origins:
-              #- '*'
-      xsrf:
-        enabled: true
-      replay:
-        enabled: true
-      xss:
-        enabled: true # Default: true
-      client: # IAM client configuration.
-        filter-chain:
-          '[/public/**]': anon # Public rule release
-        cipher:
-          enable-data-cipher: true # Default by true
-        session:
-          enable-access-token-validity: true # Default by true
+
+# Mybatis configuration.
+mybatis:
+  configLocation: mybatis/mybatis-config.xml
+  mapperLocations: classpath:mybatis/**/*Mapper.xml
+  typeAliasesPackage: com.wl4g.devops.common.bean.*.*
 
 # Logging configuration.
 logging:
@@ -59,14 +42,15 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.devops.erm.web: DEBUG
+      wl4g.devops.erm.data: DEBUG
 
 # ### Server configuration. ###
 server:
   servlet:
-    contextPath: /${spring.application.name}
+    #contextPath: /${spring.application.name}
+    contextPath: /
   #address: 0.0.0.0
-  port: 14051
+  port: 14052
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8

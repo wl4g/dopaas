@@ -27,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-12-16 16:13:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId:analysisHistory-service}")
+@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:analysisHistory-service}")
 @RequestMapping("/analysisHistory")
 public interface AnalysisHistoryService {
 
