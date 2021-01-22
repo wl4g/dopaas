@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.github.pagehelper.Page;
-
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
@@ -144,7 +142,7 @@ public class PcmServcieImpl implements PcmService {
 	private Pcm getPcm(Long pcmId) {
 		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
 		if (Objects.isNull(pcm)) {
-			Page<Pcm> list = pcmDao.list(getRequestOrganizationCodes(), null, null, null);
+			List<Pcm> list = pcmDao.list(getRequestOrganizationCodes(), null, null, null);
 			if (!CollectionUtils.isEmpty(list)) {
 				pcm = list.get(0);
 			}

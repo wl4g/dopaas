@@ -26,11 +26,11 @@ import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.core.orchestration.DefaultOrchestrationManagerImpl;
 import com.wl4g.devops.ci.data.PipeStageBuildingProjectDao;
 import com.wl4g.devops.ci.data.ProjectDao;
 import com.wl4g.devops.ci.pipeline.deploy.CossPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
-import com.wl4g.devops.ci.pipeline.flow.FlowManager;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.erm.AppInstance;
@@ -91,7 +91,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
-	protected FlowManager flowManager;
+	protected DefaultOrchestrationManagerImpl flowManager;
 
 	@Autowired
 	protected DependencyService dependencyService;

@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.devops.ci.core.PipelineManager;
+import com.wl4g.devops.ci.service.PipelineManagerAdapterService;
 import com.wl4g.devops.ci.utils.HookCommandHolder;
 import com.wl4g.devops.ci.utils.HookCommandHolder.DeployCommand;
 import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
@@ -45,7 +45,7 @@ import java.util.List;
 public class VcsHookController extends BaseController {
 
 	@Autowired
-	private PipelineManager pipeliner;
+	private PipelineManagerAdapterService pipelineManagerService;
 
 	/**
 	 * Receive GITLAB hook.
@@ -73,7 +73,7 @@ public class VcsHookController extends BaseController {
 			System.out.println(deployCommand.getEnv());
 		}
 
-		pipeliner.hookPipeline(hookCommand);
+		pipelineManagerService.hookPipeline(hookCommand);
 	}
 
 }

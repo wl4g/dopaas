@@ -31,7 +31,7 @@ import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static org.springframework.util.Assert.hasText;
 
 /**
- * CICD configuration properties.
+ * CI configuration properties.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月25日
@@ -65,11 +65,6 @@ public class CiProperties implements InitializingBean {
 	 * Pipeline deploy configuration properties.
 	 */
 	private DeployProperties deploy = new DeployProperties();
-
-	/**
-	 * Test and inspection report configuration.
-	 */
-	private TestedReportProperties testedReport = new TestedReportProperties();
 
 	/**
 	 * Docker Properties
@@ -135,14 +130,6 @@ public class CiProperties implements InitializingBean {
 		if (Objects.nonNull(deploy)) {
 			this.deploy = deploy;
 		}
-	}
-
-	public TestedReportProperties getTestedReport() {
-		return testedReport;
-	}
-
-	public void setTestedReport(TestedReportProperties testReport) {
-		this.testedReport = testReport;
 	}
 
 	public DockerProperties getDocker() {

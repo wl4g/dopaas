@@ -19,9 +19,8 @@ import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.pipeline.flow.FlowManager;
+import com.wl4g.devops.ci.service.OrchestrationManagerAdapterService;
+import com.wl4g.devops.ci.service.PipelineManagerAdapterService;
 import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.common.bean.ci.ClusterExtension;
 import com.wl4g.devops.common.bean.ci.Pipeline;
@@ -50,13 +49,13 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 public class PipelineController extends BaseController {
 
 	@Autowired
-	private PipelineManager pipeliner;
+	private PipelineManagerAdapterService pipelineManagerService;
+
+	@Autowired
+	private OrchestrationManagerAdapterService flowManagerService;
 
 	@Autowired
 	private PipelineService pipelineService;
-
-	@Autowired
-	private FlowManager flowManager;
 
 	/**
 	 * Page List
@@ -159,10 +158,10 @@ public class PipelineController extends BaseController {
 	 */
 	@RequestMapping(value = "/create")
 	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
-	public RespBase<?> create(RunParameter newParameter) throws Exception {
+	public RespBase<?> create(RunParameter runParam) throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		PipelineModel pipelineModel = flowManager.buildPipeline(newParameter.getPipeId());
-		pipeliner.runPipeline(newParameter, pipelineModel);
+		runParam.setPipeModel(flowManagerService.buildPipeline(runParam.getPipeId()));
+		pipelineManagerService.runPipeline(runParam);
 		return resp;
 	}
 

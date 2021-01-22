@@ -54,12 +54,6 @@ spring:
         max-file-size: 5000Mb
         max-request-size: 5000Mb
 
-# Mybatis configuration.
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.devops.common.bean.*.*
-
 # Logging configuration.
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log
@@ -96,6 +90,3 @@ server:
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds
     max-thread: 50 # Max worker threads(default:200).
-
-doc:
-   base-path: /mnt/disk1/doc-manager/data/

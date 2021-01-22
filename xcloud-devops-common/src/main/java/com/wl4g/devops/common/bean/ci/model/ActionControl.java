@@ -13,35 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.config;
+package com.wl4g.devops.common.bean.ci.model;
 
 /**
- * Test and inspection report configuration.
- * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @version 2020年1月7日 v1.0.0
- * @see
+ * @date 2020-08-21 10:24:00
  */
-public class TestedReportProperties {
+public class ActionControl {
 
-	private String uploadPath;
+    private boolean test = false;
 
-	private String downloadUrl;
+    private boolean deploy = true;
 
-	public String getUploadPath() {
-		return uploadPath;
-	}
+    private String branch;
 
-	public void setUploadPath(String uploadPath) {
-		this.uploadPath = uploadPath;
-	}
+    public boolean isTest() {
+        return test;
+    }
 
-	public String getDownloadUrl() {
-		return downloadUrl;
-	}
+    public void setTest(boolean test) {
+        this.test = test;
+    }
 
-	public void setDownloadUrl(String downloadUrl) {
-		this.downloadUrl = downloadUrl;
-	}
+    public boolean isDeploy() {
+        return deploy;
+    }
+
+    public void setDeploy(boolean deploy) {
+        this.deploy = deploy;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
 }

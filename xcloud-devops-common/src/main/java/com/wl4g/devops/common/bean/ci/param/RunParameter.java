@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.bean.ci.param;
 
+import com.wl4g.devops.common.bean.ci.model.PipelineModel;
+
 /**
  * Create pipeline handler parameter.
  * 
@@ -45,25 +47,29 @@ public class RunParameter extends BaseParameter {
 
 	private Long orchestrationId;
 
+	private PipelineModel pipeModel;
+
 	public RunParameter() {
 		super();
 	}
 
-	public RunParameter(Long pipeId, String remark, String trackId, String trackType, String annex) {
+	public RunParameter(Long pipeId, String remark, String trackId, String trackType, String annex, PipelineModel pipeModel) {
 		super(pipeId, remark);
 		setTrackId(trackId);
 		setTrackType(trackType);
 		setAnnex(annex);
+		setPipeModel(pipeModel);
 	}
 
 	public RunParameter(Long pipeId, String remark, String trackId, String trackType, String annex, Integer orchestrationType,
-			Long orchestrationId) {
+			Long orchestrationId, PipelineModel pipeModel) {
 		super(pipeId, remark);
 		setTrackId(trackId);
 		setTrackType(trackType);
 		setAnnex(annex);
 		setOrchestrationType(orchestrationType);
 		setOrchestrationId(orchestrationId);
+		setPipeModel(pipeModel);
 	}
 
 	public String getTrackId() {
@@ -107,4 +113,13 @@ public class RunParameter extends BaseParameter {
 	public void setOrchestrationId(Long orchestrationId) {
 		this.orchestrationId = orchestrationId;
 	}
+
+	public PipelineModel getPipeModel() {
+		return pipeModel;
+	}
+
+	public void setPipeModel(PipelineModel pipeModel) {
+		this.pipeModel = pipeModel;
+	}
+
 }

@@ -24,6 +24,15 @@ package com.wl4g.devops.common.constant;
  */
 public abstract class CiConstants extends DevOpsConstants {
 
+	// --- Flow pipeline constants. ---
+	public static final String REDIS_CI_RUN_PRE = "CI_RUN_";// redis key
+	public static final int REDIS_CI_RUN_SCAN_BATCH = 100;// redis scan batch
+	// TODO use config
+	public static String node = "master-1";
+	public static int REDIS_SAVE_TIME_S = 30 * 60;// cache ttl(defautl 30 min)
+	// flow time out(default 30min)
+	public static long FLOW_TIME_OUT_MS = 30 * 60 * 1000;
+
 	// task-create
 	public static final int TASK_STATUS_CREATE = 0;
 	// task-start running
@@ -77,6 +86,10 @@ public abstract class CiConstants extends DevOpsConstants {
 	// --- Codes analyzers. ---
 
 	/** Analyzers API base URI path. */
-	final public static String URL_ANALYZER_BASE_PATH = "/analyzer";
+	public static final String URL_ANALYZER_BASE_PATH = "/analyzer";
+
+	// --- CI configuration constants. ---
+
+	public static final String KEY_CI_CONFIG_PREFIX = "spring.xcloud.devops.ci";
 
 }

@@ -18,10 +18,10 @@ package com.wl4g.devops.ci;
 import com.wl4g.CiFacade;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
-import com.wl4g.devops.ci.bean.RunModel;
+import com.wl4g.devops.common.bean.ci.model.RunModel;
 
-import static com.wl4g.devops.ci.pipeline.flow.FlowManager.REDIS_CI_RUN_PRE;
-import static com.wl4g.devops.ci.pipeline.flow.FlowManager.REDIS_CI_RUN_SCAN_BATCH;
+import static com.wl4g.devops.common.constant.CiConstants.REDIS_CI_RUN_PRE;
+import static com.wl4g.devops.common.constant.CiConstants.REDIS_CI_RUN_SCAN_BATCH;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

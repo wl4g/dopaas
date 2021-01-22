@@ -15,19 +15,19 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
-import com.wl4g.devops.ci.bean.RunModel;
 import com.wl4g.devops.ci.data.OrchestrationDao;
 import com.wl4g.devops.ci.data.OrchestrationPipelineDao;
-import com.wl4g.devops.ci.pipeline.flow.FlowManager;
+import com.wl4g.devops.ci.service.OrchestrationManagerAdapterService;
 import com.wl4g.devops.ci.service.OrchestrationService;
 import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.common.bean.ci.OrchestrationPipeline;
+import com.wl4g.devops.common.bean.ci.model.RunModel;
+import com.wl4g.devops.common.constant.CiConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.ci.pipeline.flow.FlowManager.*;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
@@ -54,7 +53,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 	private OrchestrationPipelineDao orchestrationPipelineDao;
 
 	@Autowired
-	private FlowManager flowManager;
+	private OrchestrationManagerAdapterService flowManagerService;
 
 	@Autowired
 	private JedisService jedisService;
@@ -160,17 +159,17 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 		Assert2.notNullOf(orchestration, "orchestration");
 		orchestration.setStatus(1);
 		orchestrationDao.updateByPrimaryKeySelective(orchestration);
-		flowManager.runOrchestration(orchestration, remark, taskTraceId, taskTraceType, annex);
-
+		flowManagerService.runOrchestration(orchestration, remark, taskTraceId, taskTraceType, annex);
 	}
 
 	private boolean isMaxRuner() {
-		ScanCursor<RunModel> scan = jedisService.scan(REDIS_CI_RUN_PRE, REDIS_CI_RUN_SCAN_BATCH + 1, RunModel.class);
+		ScanCursor<RunModel> scan = jedisService.scan(CiConstants.REDIS_CI_RUN_PRE, CiConstants.REDIS_CI_RUN_SCAN_BATCH + 1,
+				RunModel.class);
 		int count = 0;
 		while (scan.hasNext()) {
 			scan.next();
 			count++;
-			if (count >= REDIS_CI_RUN_SCAN_BATCH) {
+			if (count >= CiConstants.REDIS_CI_RUN_SCAN_BATCH) {
 				return true;
 			}
 		}

@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.bean;
+package com.wl4g.devops.common.bean.ci.model;
 
 /**
+ * {@link PipelineModel}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2020-03-09 10:02:00
+ * @version v1.0 2020-03-09
+ * @sine v1.0
+ * @see
  */
 public class PipelineModel extends RunModel.Pipeline {
 

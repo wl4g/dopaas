@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.data;
 
-import com.github.pagehelper.Page;
 import com.wl4g.devops.common.bean.ci.Pcm;
 
 import org.apache.ibatis.annotations.Param;
@@ -35,6 +34,6 @@ public interface PcmDao {
 
 	int updateByPrimaryKey(Pcm record);
 
-	Page<Pcm> list(@Param("organizationCodes") List<String> organizationCodes, @Param("name") String name,
+	List<Pcm> list(@Param("organizationCodes") List<String> organizationCodes, @Param("name") String name,
 			@Param("providerKind") String providerKind, @Param("authType") Integer authType);
 }
