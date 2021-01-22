@@ -37,7 +37,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("appClusterService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:appCluster-service}")
 @RequestMapping("/appCluster")
 public interface AppClusterService {
 
@@ -46,24 +46,24 @@ public interface AppClusterService {
 
 	@RequestMapping(value = "/list", method = POST)
 	Map<String, Object> list(@RequestBody PageHolder<?> pm,
-							 @RequestParam(name="clusterName",required=false) String clusterName,
-							 @RequestParam(name="deployType",required=false) Integer deployType);
+			@RequestParam(name = "clusterName", required = false) String clusterName,
+			@RequestParam(name = "deployType", required = false) Integer deployType);
 
 	@RequestMapping(value = "/clusters", method = POST)
 	List<AppCluster> clusters();
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="clusterId",required=false) Long clusterId);
+	void del(@RequestParam(name = "clusterId", required = false) Long clusterId);
 
 	@RequestMapping(value = "/detail", method = POST)
-	AppCluster detail(@RequestParam(name="clusterId",required=false) Long clusterId);
+	AppCluster detail(@RequestParam(name = "clusterId", required = false) Long clusterId);
 
 	@RequestMapping(value = "/getInstancesByClusterIdAndEnvType", method = POST)
-	List<AppInstance> getInstancesByClusterIdAndEnvType(@RequestParam(name="clusterId",required=false) Long clusterId,
-														@RequestParam(name="envType",required=false) String envType);
+	List<AppInstance> getInstancesByClusterIdAndEnvType(@RequestParam(name = "clusterId", required = false) Long clusterId,
+			@RequestParam(name = "envType", required = false) String envType);
 
 	@RequestMapping(value = "/getAppClusterEnvironment", method = POST)
-	AppEnvironment getAppClusterEnvironment(@RequestParam(name="clusterId",required=false) Long clusterId,
-											@RequestParam(name="envType",required=false) String envType);
+	AppEnvironment getAppClusterEnvironment(@RequestParam(name = "clusterId", required = false) Long clusterId,
+			@RequestParam(name = "envType", required = false) String envType);
 
 }

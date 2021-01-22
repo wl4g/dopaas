@@ -9,4 +9,4 @@
 #
 
 # #### Environment(SpringCloud Feign for Uat) configuration. ####
-provider.serviceId: doc-facade
+provider.serviceId.iam-facade: iam-facade

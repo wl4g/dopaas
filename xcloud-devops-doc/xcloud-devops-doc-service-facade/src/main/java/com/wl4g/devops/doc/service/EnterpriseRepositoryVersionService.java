@@ -39,7 +39,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient(name = "${provider.serviceId:enterpriseRepositoryVersionService}")
+@SpringBootFeignClient(name = "${provider.serviceId.doc-facade:enterpriseRepositoryVersionService}")
 @RequestMapping("/enterpriseRepositoryVersion")
 public interface EnterpriseRepositoryVersionService {
 

@@ -36,7 +36,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient(name = "${provider.serviceId:share-service}")
+@SpringBootFeignClient(name = "${provider.serviceId.doc-facade:share-service}")
 @RequestMapping("/ShareService")
 public interface ShareService {
 

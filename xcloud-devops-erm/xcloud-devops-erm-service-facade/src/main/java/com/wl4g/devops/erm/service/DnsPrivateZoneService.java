@@ -27,22 +27,22 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient("dnsPrivateZoneService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:dnsPrivateZone-service}")
 @RequestMapping("/dnsPrivateZone")
 public interface DnsPrivateZoneService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DnsPrivateZone> page(@RequestBody PageHolder<DnsPrivateZone> pm,
-									@RequestParam(name="zone",required=false) String zone);
+			@RequestParam(name = "zone", required = false) String zone);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody DnsPrivateZone dnsPrivateDomain);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DnsPrivateZone detail(@RequestParam(name="id",required=false) Long id);
+	DnsPrivateZone detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/loadDnsAtStart", method = POST)
 	void loadDnsAtStart();

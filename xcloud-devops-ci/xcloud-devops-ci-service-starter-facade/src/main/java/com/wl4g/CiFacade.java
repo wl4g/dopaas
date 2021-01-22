@@ -35,7 +35,7 @@ import com.wl4g.shell.springboot.annotation.EnableShellServer;
  * @see
  */
 @EnableShellServer
-@EnableSpringBootFeignClients("com.wl4g.devops.erm.service")
+@EnableSpringBootFeignClients({ "com.wl4g.devops.erm.service", "com.wl4g.iam.service" })
 @EnableComponentDBConfiguration("com.wl4g.devops.ci.data")
 @SpringBootApplication
 public class CiFacade {

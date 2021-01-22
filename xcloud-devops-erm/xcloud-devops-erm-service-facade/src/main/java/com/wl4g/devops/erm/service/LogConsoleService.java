@@ -25,7 +25,7 @@ import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-@SpringBootFeignClient("logConsoleService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:logConsole-service}")
 @RequestMapping("/logConsole")
 public interface LogConsoleService {
 

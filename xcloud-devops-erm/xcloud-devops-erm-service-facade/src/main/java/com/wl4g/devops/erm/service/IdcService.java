@@ -29,13 +29,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient("idcService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:idc-service}")
 @RequestMapping("/idc")
 public interface IdcService {
 
 	@RequestMapping(value = "/page", method = POST)
-	PageHolder<IdcBean> page(@RequestBody PageHolder<IdcBean> pm,
-							 @RequestParam(name="name",required=false) String name);
+	PageHolder<IdcBean> page(@RequestBody PageHolder<IdcBean> pm, @RequestParam(name = "name", required = false) String name);
 
 	@RequestMapping(value = "/getForSelect", method = POST)
 	List<IdcBean> getForSelect();
@@ -44,8 +43,8 @@ public interface IdcService {
 	void save(@RequestBody IdcBean idc);
 
 	@RequestMapping(value = "/detail", method = POST)
-	IdcBean detail(@RequestParam(name="id",required=false) Long id);
+	IdcBean detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 }

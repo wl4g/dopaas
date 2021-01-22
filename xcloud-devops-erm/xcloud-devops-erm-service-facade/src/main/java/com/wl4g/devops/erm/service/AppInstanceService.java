@@ -32,7 +32,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author sut
  * @date 2018年9月20日
  */
-@SpringBootFeignClient("appInstanceService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:appInstance-service}")
 @RequestMapping("/appInstance")
 public interface AppInstanceService {
 
@@ -41,24 +41,24 @@ public interface AppInstanceService {
 
 	@RequestMapping(value = "/list", method = POST)
 	PageHolder<AppInstance> list(@RequestBody PageHolder<AppInstance> pm,
-								 @RequestParam(name="name",required=false) String name,
-								 @RequestParam(name="clusterId",required=false) Long clusterId,
-								 @RequestParam(name="envType",required=false) String envType,
-								 @RequestParam(name="serverType",required=false) Integer serverType);
+			@RequestParam(name = "name", required = false) String name,
+			@RequestParam(name = "clusterId", required = false) Long clusterId,
+			@RequestParam(name = "envType", required = false) String envType,
+			@RequestParam(name = "serverType", required = false) Integer serverType);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="clusterId",required=false) Long clusterId);
+	void del(@RequestParam(name = "clusterId", required = false) Long clusterId);
 
 	@RequestMapping(value = "/detail", method = POST)
-	AppInstance detail(@RequestParam(name="instanceId",required=false) Long instanceId);
+	AppInstance detail(@RequestParam(name = "instanceId", required = false) Long instanceId);
 
 	@RequestMapping(value = "/getInstancesByClusterIdAndEnvType", method = POST)
-	List<AppInstance> getInstancesByClusterIdAndEnvType(@RequestParam(name="clusterId",required=false) Long clusterId,
-														@RequestParam(name="envType",required=false) String envType);
+	List<AppInstance> getInstancesByClusterIdAndEnvType(@RequestParam(name = "clusterId", required = false) Long clusterId,
+			@RequestParam(name = "envType", required = false) String envType);
 
 	@RequestMapping(value = "/testSSHConnect", method = POST)
-	void testSSHConnect(@RequestParam(name="hostId",required=false) Long hostId,
-						@RequestParam(name="sshUser",required=false) String sshUser,
-						@RequestParam(name="sshKey",required=false) String sshKey) throws Exception, InterruptedException;
+	void testSSHConnect(@RequestParam(name = "hostId", required = false) Long hostId,
+			@RequestParam(name = "sshUser", required = false) String sshUser,
+			@RequestParam(name = "sshKey", required = false) String sshKey) throws Exception, InterruptedException;
 
 }

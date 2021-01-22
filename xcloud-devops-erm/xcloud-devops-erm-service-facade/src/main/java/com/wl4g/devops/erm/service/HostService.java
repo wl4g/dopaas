@@ -35,36 +35,34 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-11-14 14:10:00
  */
-@SpringBootFeignClient("hostService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:host-service}")
 @RequestMapping("/host")
 public interface HostService {
 
 	@RequestMapping(value = "/list", method = POST)
-	List<Host> list(@RequestParam(name="name",required=false) String name,
-					@RequestParam(name="hostname",required=false) String hostname,
-					@RequestParam(name="idcId",required=false) Long idcId);
+	List<Host> list(@RequestParam(name = "name", required = false) String name,
+			@RequestParam(name = "hostname", required = false) String hostname,
+			@RequestParam(name = "idcId", required = false) Long idcId);
 
 	@RequestMapping(value = "/page", method = POST)
-	PageHolder<Host> page(@RequestBody PageHolder<Host> pm,
-						  @RequestParam(name="name",required=false) String name,
-						  @RequestParam(name="hostname",required=false) String hostname,
-						  @RequestParam(name="idcId",required=false) Long idcId);
+	PageHolder<Host> page(@RequestBody PageHolder<Host> pm, @RequestParam(name = "name", required = false) String name,
+			@RequestParam(name = "hostname", required = false) String hostname,
+			@RequestParam(name = "idcId", required = false) Long idcId);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody Host host);
 
 	@RequestMapping(value = "/detail", method = POST)
-	Host detail(@RequestParam(name="id",required=false) Long id);
+	Host detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/createAndDownloadTemplate", method = POST)
-	ResponseEntity<FileSystemResource> createAndDownloadTemplate(@RequestParam(name="idcId",required=false) Long idcId,
-																 @RequestParam(name="organizationCode",required=false) String organizationCode) throws IOException;
+	ResponseEntity<FileSystemResource> createAndDownloadTemplate(@RequestParam(name = "idcId", required = false) Long idcId,
+			@RequestParam(name = "organizationCode", required = false) String organizationCode) throws IOException;
 
 	@RequestMapping(value = "/importHost", method = POST)
-	Map<String, Object> importHost(MultipartFile file,
-								   @RequestParam(name="force",required=false) Integer force,
-								   @RequestParam(name="sshAutoCreate",required=false) Integer sshAutoCreate) throws IOException;
+	Map<String, Object> importHost(MultipartFile file, @RequestParam(name = "force", required = false) Integer force,
+			@RequestParam(name = "sshAutoCreate", required = false) Integer sshAutoCreate) throws IOException;
 }

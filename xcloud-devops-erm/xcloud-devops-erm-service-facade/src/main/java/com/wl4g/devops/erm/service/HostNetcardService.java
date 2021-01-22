@@ -30,23 +30,23 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-11-14 14:10:00
  */
-@SpringBootFeignClient("hostNetcardService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:hostNetcard-service}")
 @RequestMapping("/hostNetcard")
 public interface HostNetcardService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<HostNetcard> page(@RequestBody PageHolder<HostNetcard> pm,
-								 @RequestParam(name="hostId",required=false) Long hostId,
-								 @RequestParam(name="name",required=false) String name);
+			@RequestParam(name = "hostId", required = false) Long hostId,
+			@RequestParam(name = "name", required = false) String name);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody HostNetcard hostNetcard);
 
 	@RequestMapping(value = "/detail", method = POST)
-	HostNetcard detail(@RequestParam(name="id",required=false) Long id);
+	HostNetcard detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/getHostTunnel", method = POST)
 	Map<String, Object> getHostTunnel();

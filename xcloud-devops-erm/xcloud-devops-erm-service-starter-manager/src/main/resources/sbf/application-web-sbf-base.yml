@@ -8,5 +8,9 @@
 # limitations under the License.
 #
 
-# #### Environment(SpringCloud Feign for Uat) configuration. ####
-provider.serviceId.ci-facade: ci-facade
+# #### Environment(SpringBoot Feign for Uat) configuration. ####
+#
+
+provider:
+  serverPort: 14052
+  contextPath: /

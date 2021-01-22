@@ -30,7 +30,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-05-17 10:23:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId:project-service}")
+@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:project-service}")
 @RequestMapping("/project")
 public interface ProjectService {
 

@@ -12,6 +12,14 @@
 #
 spring:
   xcloud:
+    component:
+      support:
+        # Redis configuration.
+        jedis:
+          passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
+          connect-timeout: 10000
+          max-attempts: 10
+          nodes: ${DEVOPS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
     iam:
       cors:
         rules:
@@ -29,44 +37,3 @@ spring:
         server-uri: http://iam.${DEVOPS_SERVICE_ZONE:wl4g.uat}/iam-server
         unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
         success-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.uat}/#/share
-  # Datasource configuration.
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
-    druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node5:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: ${DEVOPS_DB_USER:gzsm}
-      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true
-  es:
-    hosts: 10.0.0.160
-
-# Redis configuration.
-redis:
-  passwd: ${REDIS_PASSWD:zzx!@#$%}
-  connect-timeout: 10000
-  max-attempts: 10
-  # Redis's cluster nodes.
-  nodes: ${DEVOPS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
-
-cipher-key: 03DE18C2FC4E605F
-
-fs:
-  base-path: /mnt/disk1/upload
-  base-url: http://share.anjiancloud.alpha/share-manager
-
-dns:
-  prefix: "_dns:"

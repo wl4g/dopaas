@@ -27,21 +27,21 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient("dnsPrivateResolutionService")
+@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:dnsPrivateResolution-service}")
 @RequestMapping("/dnsPrivateResolution")
 public interface DnsPrivateResolutionService {
 
 	@RequestMapping(value = "/page", method = POST)
 	PageHolder<DnsPrivateResolution> page(@RequestBody PageHolder<DnsPrivateResolution> pm,
-										  @RequestParam(name="host",required=false) String host,
-										  @RequestParam(name="domainId",required=false) Long domainId);
+			@RequestParam(name = "host", required = false) String host,
+			@RequestParam(name = "domainId", required = false) Long domainId);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody DnsPrivateResolution dnsPrivateResolution);
 
 	@RequestMapping(value = "/detail", method = POST)
-	DnsPrivateResolution detail(@RequestParam(name="id",required=false) Long id);
+	DnsPrivateResolution detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false) Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 }
