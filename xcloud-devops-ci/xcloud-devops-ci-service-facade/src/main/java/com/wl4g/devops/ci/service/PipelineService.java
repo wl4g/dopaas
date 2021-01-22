@@ -38,7 +38,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient("pipelineService")
+@SpringBootFeignClient(name = "${provider.serviceId:pipeline-service}")
 @RequestMapping("/pipeline")
 public interface PipelineService {
 

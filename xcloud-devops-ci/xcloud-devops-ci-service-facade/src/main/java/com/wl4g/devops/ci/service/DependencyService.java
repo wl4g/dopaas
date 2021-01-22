@@ -29,7 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-05-22 11:33:00
  */
-@SpringBootFeignClient("dependencyService")
+@SpringBootFeignClient(name = "${provider.serviceId:dependency-service}")
 @RequestMapping("/dependency")
 public interface DependencyService {
 

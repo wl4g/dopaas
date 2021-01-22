@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(UAT Test) configuration. ####
+# #### Environment(FAT Test) configuration. ####
 #
 spring:
   xcloud:
@@ -19,24 +19,8 @@ spring:
           passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
-          nodes: ${DEVOPS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
-    iam:
-      cors:
-        rules:
-          '[/**]':
-            allows-origins:
-              - https://${DEVOPS_SERVICE_ZONE:wl4g.uat}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.uat}
-              - https://*.${DEVOPS_SERVICE_ZONE:wl4g.uat}
-              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.uat}
-      acl:
-        secure: false # Turn off protection will trust any same intranet IP.
-        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
-      client:
-        server-uri: http://iam.${DEVOPS_SERVICE_ZONE:wl4g.uat}/iam-server
-        unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-        success-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.uat}/#/ci/taskhis
+          # Redis's cluster nodes.
+          nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
     ci:
       pipeline: # Pipeline configuration.
         #workspace: # Default by to {user.home}/.ci-workspace
@@ -62,7 +46,7 @@ spring:
           download-url: http://ci.anjiancloud.alpha/ci-server/fs/download
         docker:
           #make docker image in where addr,e.g: tcp://localhost:2375 default port is 2375
-          make-image-addr: tcp://localhost:2375
+          make-image-addr: tcp://10.0.0.161:2375
     support:
       notification:
         mail:
@@ -80,3 +64,26 @@ spring:
             accessKeyId: ${ALIYUN_KEY}
             accessKeySecret: ${ALIYUN_SECRET}
             calledShowNumber: 055162153866
+
+  # Datasource configuration.
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    druid:
+      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false
+      username: ${DEVOPS_DB_USER:gzsm}
+      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall
+      log-slow-sql: true

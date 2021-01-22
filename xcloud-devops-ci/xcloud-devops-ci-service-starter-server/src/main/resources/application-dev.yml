@@ -12,6 +12,15 @@
 #
 spring:
   xcloud:
+    component:
+      support:
+        # Redis configuration.
+        jedis:
+          passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
+          connect-timeout: 10000
+          max-attempts: 10
+          # Redis's cluster nodes.
+          nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
     iam:
       cors:
         rules:
@@ -37,77 +46,3 @@ spring:
         server-uri: http://wl4g.debug:14040/iam-web
         unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
         success-uri: http://wl4g.debug:8080/#/ci/taskhis
-    ci:
-      pipeline: # Pipeline configuration.
-        #workspace: # Default by to {user.home}/.ci-workspace
-        executor:
-          concurrency: 10
-          accept-queue: 2
-        vcs:
-          gitlab:
-            search-projects-default-page-limit: 20
-        build:
-          job-max-clean-interval-ms: 30_000
-          job-timeout-ms: 3000_000
-          shared-dependency-try-timeout-ms: 1200_000
-        deploy:
-          #remoteHome-tmp-dir: # Default by to $HOME/.ci-temporary
-          cipher-key: 03DE18C2FC4E605F
-          transfer-timeout-ms: 300_000
-          docker-native:
-            docker-push-username: xburnerair00
-            docker-push-password: hwj13535248668
-        tested-report:
-          upload-path: /Users/vjay/Downloads/myupload
-          download-url: http://wl4g.debug:14046/ci-server/fs/download
-        docker:
-          #make docker image in where addr,e.g: tcp://localhost:2375 default port is 2375
-          make-image-addr: tcp://10.0.0.161:2375
-    support:
-      notification:
-        mail:
-          host: smtp.163.com
-          port: 465
-          username: babaa1f4@163.com
-          password: UDKTGOHTZOBOTHVL
-          protocol: smtp
-        sms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-        vms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-            calledShowNumber: 055162153866
-
-  # Datasource configuration.
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
-    druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
-      username: ${DEVOPS_DB_USER:gzsm}
-      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true
-
-# Redis configuration.
-redis:
-  passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
-  connect-timeout: 10000
-  max-attempts: 10
-  # Redis's cluster nodes.
-  nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
