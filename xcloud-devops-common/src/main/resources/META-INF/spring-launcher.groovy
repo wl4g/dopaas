@@ -42,13 +42,31 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-web-dev.yml'
 		def location = new StringBuffer("classpath:/")
+		def archConfigSuffix = ""
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
-			configName.append(",application-web-scf");
 			location.append(",classpath:/scf/")
+			archConfigSuffix = "scf"
 		} else if (isPresent("com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient")) {
-			configName.append(",application-web-sbf");
 			location.append(",classpath:/sbf/")
+			archConfigSuffix = "sbf"
 		}
+		configName.append(",ci-web-" + archConfigSuffix)
+		configName.append(",ci-facade-" + archConfigSuffix)
+		configName.append(",doc-web-" + archConfigSuffix)
+		configName.append(",doc-facade-" + archConfigSuffix)
+		configName.append(",dts-web-" + archConfigSuffix)
+		configName.append(",dts-facade-" + archConfigSuffix)
+		configName.append(",erm-web-" + archConfigSuffix)
+		configName.append(",erm-facade-" + archConfigSuffix)
+		configName.append(",esm-web-" + archConfigSuffix)
+		configName.append(",esm-facade-" + archConfigSuffix)
+		configName.append(",scm-web-" + archConfigSuffix)
+		configName.append(",scm-facade-" + archConfigSuffix)
+		configName.append(",umc-web-" + archConfigSuffix)
+		configName.append(",umc-facade-" + archConfigSuffix)
+		configName.append(",umc-receiver-" + archConfigSuffix)
+		configName.append(",vcs-web-" + archConfigSuffix)
+		configName.append(",vcs-facade-" + archConfigSuffix)
 
 		defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
 		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())

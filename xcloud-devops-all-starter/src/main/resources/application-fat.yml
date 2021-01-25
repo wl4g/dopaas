@@ -12,6 +12,15 @@
 #
 spring:
   xcloud:
+    component:
+      support:
+        # Redis configuration.
+        jedis:
+          passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
+          connect-timeout: 10000
+          max-attempts: 10
+          # Redis's cluster nodes.
+          nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
     iam:
       cors:
         rules:
@@ -29,34 +38,7 @@ spring:
         server-uri: http://iam.${DEVOPS_SERVICE_ZONE:wl4g.fat}/iam-server
         unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
         success-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.fat}/#/ci/taskhis
-
-  # Datasource configuration.
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
-    druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false
-      username: ${DEVOPS_DB_USER:gzsm}
-      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true
-
-# Redis configuration.
-redis:
-  passwd: ${REDIS_PASSWD:zzx!@#$%}
-  connect-timeout: 10000
-  max-attempts: 10
-  # Redis's cluster nodes.
-  nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+    devops.ci:
+      testing-report:
+        upload-path: /mnt/dist1/upload
+        download-url: http://ci.wl4g.fat/ci-server/fs/download
