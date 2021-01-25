@@ -22,7 +22,6 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-common</artifactId>
-			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
