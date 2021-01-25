@@ -37,7 +37,24 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
-		def configName = new StringBuffer("application,application-web,application-facade")
+		def configName = new StringBuffer("application")
+		configName.append(",ci-web")
+		configName.append(",ci-facade")
+		configName.append(",doc-web")
+		configName.append(",doc-facade")
+		configName.append(",dts-web")
+		configName.append(",dts-facade")
+		configName.append(",erm-web")
+		configName.append(",erm-facade")
+		configName.append(",esm-web")
+		configName.append(",esm-facade")
+		configName.append(",scm-web")
+		configName.append(",scm-facade")
+		configName.append(",umc-web")
+		configName.append(",umc-facade")
+		configName.append(",umc-receiver")
+		configName.append(",vcs-web")
+		configName.append(",vcs-facade")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-web-dev.yml'
@@ -50,6 +67,9 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 			location.append(",classpath:/sbf/")
 			archConfigSuffix = "sbf"
 		}
+		configName.append(",common-" + archConfigSuffix)
+		configName.append(",common-web-" + archConfigSuffix)
+		configName.append(",common-facade-" + archConfigSuffix)
 		configName.append(",ci-web-" + archConfigSuffix)
 		configName.append(",ci-facade-" + archConfigSuffix)
 		configName.append(",doc-web-" + archConfigSuffix)
