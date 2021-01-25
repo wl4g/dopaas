@@ -23,6 +23,44 @@
 		<result column="pcm_id" jdbcType="INTEGER" property="pcmId" />
 	</resultMap>
 
+
+	<resultMap id="InstanceBaseResultMap" type="com.wl4g.devops.common.bean.erm.AppInstance" >
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
+		<result column="endpoint" property="endpoint" jdbcType="VARCHAR" />
+		<result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
+		<result column="version_id" property="versionId" jdbcType="INTEGER" />
+		<result column="host_id" property="hostId" jdbcType="INTEGER" />
+		<result column="k8s_id" property="k8sId" jdbcType="INTEGER" />
+		<result column="docker_id" property="dockerId" jdbcType="INTEGER" />
+		<result column="coss_ref_bucket" property="cossRefBucket" jdbcType="VARCHAR" />
+		<result column="env_type" property="envType" jdbcType="VARCHAR" />
+		<result column="enable" property="enable" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_by" property="createBy" jdbcType="INTEGER" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="update_by" property="updateBy" jdbcType="INTEGER" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+
+		<result column="hostname" property="hostname" jdbcType="VARCHAR" />
+		<result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
+		<result column="deploy_type" property="deployType" jdbcType="INTEGER" />
+
+		<association property="dockerCluster" javaType="com.wl4g.devops.common.bean.erm.DockerCluster">
+			<id column="d.id" jdbcType="INTEGER" property="id" />
+			<result column="d.name" jdbcType="VARCHAR" property="name" />
+			<result column="d.organization_code" jdbcType="VARCHAR" property="organizationCode" />
+			<result column="d.master_addr" jdbcType="VARCHAR" property="masterAddr" />
+			<result column="d.create_date" jdbcType="TIMESTAMP" property="createDate" />
+			<result column="d.create_by" jdbcType="VARCHAR" property="createBy" />
+			<result column="d.update_date" jdbcType="TIMESTAMP" property="updateDate" />
+			<result column="d.update_by" jdbcType="VARCHAR" property="updateBy" />
+			<result column="d.del_flag" jdbcType="INTEGER" property="delFlag" />
+		</association>
+	</resultMap>
+
 	<resultMap id="ListResultMap" type="com.wl4g.devops.common.bean.ci.Pipeline" extends="BaseResultMap">
 		<collection property="instances" select="selectInstancesByDeployId" column="{deployId = deploy_id}"
 			ofType="com.wl4g.devops.common.bean.erm.AppInstance" javaType="java.util.List">
@@ -39,7 +77,7 @@
 		p.remark, p.create_date, p.create_by, p.update_date, p.update_by, p.del_flag
 	</sql>
 
-	<select id="selectInstancesByDeployId" resultMap="com.wl4g.devops.dao.erm.AppInstanceDao.BaseResultMap"
+	<select id="selectInstancesByDeployId" resultMap="InstanceBaseResultMap"
 		parameterType="java.util.Map">
 		select
 		i.id,h.`hostname`,i.remark
