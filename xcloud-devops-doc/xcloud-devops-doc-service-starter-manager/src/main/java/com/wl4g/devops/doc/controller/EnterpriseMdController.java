@@ -46,11 +46,10 @@ public class EnterpriseMdController extends BaseController {
     @Autowired
     private EnterpriseMdService enterpriseMdService;
 
-    @RequestMapping(value = "/formatHtml", method = { POST, GET })
-    public RespBase<?> formatHtml(String apiId) throws IOException, TemplateException {
+    @RequestMapping(value = "/mdToHtml", method = { POST, GET })
+    public RespBase<?> mdToHtml(String md) throws IOException, TemplateException {
         RespBase<Object> resp = RespBase.create();
-        //enterpriseDocumentService.save(enterpriseDocument);
-        resp.setData(enterpriseMdService.formatHtml(apiId));
+        resp.setData(enterpriseMdService.mdToHtml(md));
         return resp;
     }
 

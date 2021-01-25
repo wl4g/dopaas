@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 public class DocFileAutoConfiguration {
 
 	@Bean
-	@ConfigurationProperties(prefix = "tpl")
+	@ConfigurationProperties(prefix = "doc")
 	public FsProperties fsProperties() {
 		return new FsProperties();
 	}

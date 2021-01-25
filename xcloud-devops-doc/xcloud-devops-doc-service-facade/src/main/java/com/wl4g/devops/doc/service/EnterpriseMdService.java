@@ -42,8 +42,8 @@ public interface EnterpriseMdService {
 	/**
 	 * formatHtml.
 	 */
-	@RequestMapping(value = "/formatHtml", method = POST)
-	String formatHtml(@RequestParam("apiId") String apiId) throws IOException, TemplateException;
+	@RequestMapping(value = "/mdToHtml", method = POST)
+	String mdToHtml(@RequestParam("md") String md) throws IOException, TemplateException;
 
 
 
