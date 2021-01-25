@@ -43,8 +43,8 @@ public class Md2Html {
 
     final private static String HTML_OUTPUT_PATH = "/output";
 
-    final private static String MATCH_START = "```api\n";
-    final private static String MATCH_END = "\n```";
+    final private static String MATCH_START = "{#api_info_";
+    final private static String MATCH_END = "}";
 
     final private static String REQUEST = "Request";
     final private static String RESPONSE = "Response";
@@ -85,17 +85,12 @@ public class Md2Html {
                     Template template = new Template(res.getShortFilename(), res.getContentAsString(), defaultGenConfigurer);
 
                     for (MdResource mdResource : mdResources) {
-                        String md2html = FlexmarkUtil.md2html(mdResource.getContentAsString());
+                        String md2html = mdToHtml(mdResource.getContentAsString());
 
                         TemplateFormatModel templateFormatModel = new TemplateFormatModel();
                         templateFormatModel.setPath(mdResource.getRawFilename());
 
-
-                        //TODO 在这里可以直接把api信息渲染成template，节省后续遍历次数
-
-                        String filling = filling(md2html);
-
-                        templateFormatModel.setMdHtml(filling);
+                        templateFormatModel.setMdHtml(md2html);
 
                         String renderedString = renderingTemplateToString(template, templateFormatModel);
 
@@ -123,20 +118,48 @@ public class Md2Html {
     }
 
 
-    //======================================================================
 
+    public String mdToHtml(String md) throws IOException, TemplateException {
+        String afterFormatMd = apiFormatToMd(md);
+
+        //md to html
+        return FlexmarkUtil.md2html(afterFormatMd);
+    }
+
+
+    /**
+     * 将api信息转成md格式
+     */
+    public String apiFormatToMd(String md) throws IOException, TemplateException {
+        if(md.contains(MATCH_START)){
+            StringBuilder sb = new StringBuilder(md);
+            while (sb.indexOf(MATCH_START) >= 0) {
+                int i = sb.indexOf(MATCH_START);
+                int j = sb.indexOf(MATCH_END, i);
+                String apiId = sb.substring(i + MATCH_START.length(), j);
+
+                // Api Format To Md
+                String apiMd = apiIdToMd(apiId);
+
+                // Replace
+                sb.delete(i, j + MATCH_END.length());
+                sb.insert(i, apiMd);
+            }
+            return sb.toString();
+        }
+        return md;
+    }
 
     //单个api渲染
-    public String singleApiFormat(String apiId) throws IOException, TemplateException {
+    public String apiIdToMd(String apiId) throws IOException, TemplateException {
 
         apiId = apiId.replaceAll("\n","");
         apiId = apiId.trim();
         EnterpriseApi enterpriseApi = enterpriseApiService.detail(Long.parseLong(apiId));
 
-        String macro = ResourceBundleUtil.readResource(Md2Html.class, "template", "macro-property.ftl", true);
-        String apiTemplate = ResourceBundleUtil.readResource(Md2Html.class, "template", "api-info.ftl", true);
+        String macro = ResourceBundleUtil.readResource(Md2Html.class, "template", "md-macro-property.ftl", false);
+        String apiTemplate = ResourceBundleUtil.readResource(Md2Html.class, "template", "md-api-info.ftl", false);
         String templateStr = macro + "\n" + apiTemplate;
-
 
         //分类
         List<EnterpriseApiProperties> request = new ArrayList();

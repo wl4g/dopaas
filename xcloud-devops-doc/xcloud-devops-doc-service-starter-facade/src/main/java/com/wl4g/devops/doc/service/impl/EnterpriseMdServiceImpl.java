@@ -42,7 +42,7 @@ public class EnterpriseMdServiceImpl implements EnterpriseMdService {
     private Md2Html md2Html;
 
     @Override
-    public String formatHtml(String apiId) throws IOException, TemplateException {
-        return md2Html.singleApiFormat(apiId);
+    public String mdToHtml(String md) throws IOException, TemplateException {
+        return md2Html.mdToHtml(md);
     }
 }
