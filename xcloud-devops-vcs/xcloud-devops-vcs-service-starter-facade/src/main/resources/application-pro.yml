@@ -20,23 +20,6 @@ spring:
           connect-timeout: 10000
           max-attempts: 10
           nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
-    iam:
-      cors:
-        rules:
-          '[/**]':
-            allows-origins:
-              - https://${DEVOPS_SERVICE_ZONE:wl4g.com}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.com}
-              - https://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
-              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.com}      
-      acl:
-        secure: false # Turn off protection will trust any same intranet IP.
-        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
-      client:
-        server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-server
-        unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-        success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/share
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -59,5 +42,3 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-
-cipher-key: 03DE18C2FC4E605F

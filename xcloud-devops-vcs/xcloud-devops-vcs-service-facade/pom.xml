@@ -25,15 +25,28 @@
 			<artifactId>xcloud-devops-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+
+		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
+
+		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically configured. -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-component-rpc-springboot-feign</artifactId> -->
+		<!-- </dependency> -->
+
+		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-data</artifactId>
+			<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>com.wl4g</groupId>
-            <artifactId>xcloud-component-rpc-springboot-feign</artifactId>
-        </dependency>
-    </dependencies>
+
+		<!-- ③[SpringCloud + (Feign)Dubbo] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. Notes: 
+			Only relying on feign's interface annotation. -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-component-rpc-springcloud-feign-dubbo</artifactId> -->
+		<!-- </dependency> -->
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
