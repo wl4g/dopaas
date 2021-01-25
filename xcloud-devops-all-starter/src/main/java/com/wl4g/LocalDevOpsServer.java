@@ -19,17 +19,20 @@ import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import static org.springframework.context.annotation.AdviceMode.ASPECTJ;
 
+/**
+ * {@link LocalDevOpsServer}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-01-25
+ * @sine v1.0
+ * @see
+ */
 @EnableIamClient
 @EnableShellServer
-@MapperScan("com.wl4g.devops.*.dao")
-@EnableComponentDBConfiguration
-@EnableTransactionManagement(mode = ASPECTJ)
+@EnableComponentDBConfiguration("com.wl4g.devops.*.data")
 @SpringBootApplication
 public class LocalDevOpsServer {
 
