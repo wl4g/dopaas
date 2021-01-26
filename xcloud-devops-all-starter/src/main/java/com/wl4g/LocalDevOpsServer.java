@@ -32,7 +32,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @see
  */
 // Only this package is considered for mapping.
-@EnableSmartMappingConfiguration("com.wl4g.iam.web")
+@EnableSmartMappingConfiguration({ "com.wl4g.iam.web", "com.wl4g.devops.ci.web", "com.wl4g.devops.dts.web",
+		"com.wl4g.devops.dts.codegen.web", "com.wl4g.devops.doc.web", "com.wl4g.devops.erm.web", "com.wl4g.devops.vcs.web",
+		"com.wl4g.devops.umc.web" })
 @EnableIamClient
 @EnableShellServer
 @EnableComponentDBConfiguration({ "com.wl4g.devops.*.data", "com.wl4g.iam.data" })

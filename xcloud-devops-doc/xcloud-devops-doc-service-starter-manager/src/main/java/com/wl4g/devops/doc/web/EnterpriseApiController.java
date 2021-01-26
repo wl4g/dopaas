@@ -15,24 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.controller;
+package com.wl4g.devops.doc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup;
-import com.wl4g.devops.doc.service.EnterpriseRepositoryGroupService;
-import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryGroupPageRequest;
+import com.wl4g.devops.common.bean.doc.EnterpriseApi;
+import com.wl4g.devops.doc.service.EnterpriseApiService;
+import com.wl4g.devops.doc.service.dto.EnterpriseApiPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseRepositoryGroup}
+* {@link EnterpriseApi}
 *
 * @author root
 * @version 0.0.1-SNAPSHOT
@@ -40,38 +42,45 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 * @since v1.0
 */
 @RestController
-@RequestMapping("/enterpriserepositorygroup")
-public class EnterpriseRepositoryGroupController extends BaseController {
+@RequestMapping("/enterpriseapi")
+public class EnterpriseApiController extends BaseController {
 
     @Autowired
-    private EnterpriseRepositoryGroupService enterpriseRepositoryGroupService;
+    private EnterpriseApiService enterpriseApiService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseRepositoryGroup>> list(EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest,PageHolder<EnterpriseRepositoryGroup> pm) {
-        RespBase<PageHolder<EnterpriseRepositoryGroup>> resp = RespBase.create();
-        enterpriseRepositoryGroupPageRequest.setPm(pm);
-        resp.setData(enterpriseRepositoryGroupService.page(enterpriseRepositoryGroupPageRequest));
+    public RespBase<PageHolder<EnterpriseApi>> list(EnterpriseApiPageRequest enterpriseApiPageRequest,PageHolder<EnterpriseApi> pm) {
+        RespBase<PageHolder<EnterpriseApi>> resp = RespBase.create();
+        enterpriseApiPageRequest.setPm(pm);
+        resp.setData(enterpriseApiService.page(enterpriseApiPageRequest));
+        return resp;
+    }
+
+    @RequestMapping(value = "/getByModuleId", method = { GET })
+    public RespBase<List<EnterpriseApi>> getByModuleId(Long moduleId) {
+        RespBase<List<EnterpriseApi>> resp = RespBase.create();
+        resp.setData(enterpriseApiService.getByModuleId(moduleId));
         return resp;
     }
 
     @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
+    public RespBase<?> save(@RequestBody EnterpriseApi enterpriseApi) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseRepositoryGroupService.save(enterpriseRepositoryGroup);
+        enterpriseApiService.save(enterpriseApi);
         return resp;
     }
 
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseRepositoryGroup> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseRepositoryGroup> resp = RespBase.create();
-        resp.setData(enterpriseRepositoryGroupService.detail(id));
+    public RespBase<EnterpriseApi> detail(@RequestParam(required = true) Long id) {
+        RespBase<EnterpriseApi> resp = RespBase.create();
+        resp.setData(enterpriseApiService.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del", method = { POST, DELETE })
     public RespBase<?> del(@RequestParam(required = true) Long id) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseRepositoryGroupService.del(id);
+        enterpriseApiService.del(id);
         return resp;
     }
 

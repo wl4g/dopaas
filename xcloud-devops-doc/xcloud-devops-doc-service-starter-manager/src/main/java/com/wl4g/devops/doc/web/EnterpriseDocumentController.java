@@ -15,27 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.controller;
-
+package com.wl4g.devops.doc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.devops.common.bean.doc.EnterpriseApiModule;
-import com.wl4g.devops.doc.service.EnterpriseApiModuleService;
-import com.wl4g.devops.doc.service.dto.EnterpriseApiModulePageRequest;
+import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
+import com.wl4g.devops.doc.service.EnterpriseDocumentService;
+import com.wl4g.devops.doc.service.dto.EnterpriseDocumentPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseApiModule}
+* {@link EnterpriseDocument}
 *
 * @author root
 * @version 0.0.1-SNAPSHOT
@@ -43,45 +40,38 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 * @since v1.0
 */
 @RestController
-@RequestMapping("/enterpriseapimodule")
-public class EnterpriseApiModuleController extends BaseController {
+@RequestMapping("/enterprisedocument")
+public class EnterpriseDocumentController extends BaseController {
 
     @Autowired
-    private EnterpriseApiModuleService enterpriseApiModuleService;
+    private EnterpriseDocumentService enterpriseDocumentService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseApiModule>> list(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest,PageHolder<EnterpriseApiModule> pm) {
-        RespBase<PageHolder<EnterpriseApiModule>> resp = RespBase.create();
-        enterpriseApiModulePageRequest.setPm(pm);
-        resp.setData(enterpriseApiModuleService.page(enterpriseApiModulePageRequest));
-        return resp;
-    }
-
-    @RequestMapping(value = "/getByVersionIdAndParentId", method = { GET })
-    public RespBase<List<EnterpriseApiModule>> getByVersionIdAndParentId(Long versionId, Long parentId) {
-        RespBase<List<EnterpriseApiModule>> resp = RespBase.create();
-        resp.setData(enterpriseApiModuleService.getByVersionIdAndParentId(versionId, parentId));
+    public RespBase<PageHolder<EnterpriseDocument>> list(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest,PageHolder<EnterpriseDocument> pm) {
+        RespBase<PageHolder<EnterpriseDocument>> resp = RespBase.create();
+        enterpriseDocumentPageRequest.setPm(pm);
+        resp.setData(enterpriseDocumentService.page(enterpriseDocumentPageRequest));
         return resp;
     }
 
     @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseApiModule enterpriseApiModule) {
+    public RespBase<?> save(@RequestBody EnterpriseDocument enterpriseDocument) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseApiModuleService.save(enterpriseApiModule);
+        enterpriseDocumentService.save(enterpriseDocument);
         return resp;
     }
 
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseApiModule> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseApiModule> resp = RespBase.create();
-        resp.setData(enterpriseApiModuleService.detail(id));
+    public RespBase<EnterpriseDocument> detail(@RequestParam(required = true) Long id) {
+        RespBase<EnterpriseDocument> resp = RespBase.create();
+        resp.setData(enterpriseDocumentService.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del", method = { POST, DELETE })
     public RespBase<?> del(@RequestParam(required = true) Long id) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseApiModuleService.del(id);
+        enterpriseDocumentService.del(id);
         return resp;
     }
 

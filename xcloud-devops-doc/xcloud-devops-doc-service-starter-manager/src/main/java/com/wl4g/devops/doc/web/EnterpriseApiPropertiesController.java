@@ -15,26 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.controller;
+package com.wl4g.devops.doc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.devops.common.bean.doc.EnterpriseApi;
-import com.wl4g.devops.doc.service.EnterpriseApiService;
-import com.wl4g.devops.doc.service.dto.EnterpriseApiPageRequest;
+import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
+import com.wl4g.devops.doc.service.EnterpriseApiPropertiesService;
+import com.wl4g.devops.doc.service.dto.EnterpriseApiPropertiesPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseApi}
+* {@link EnterpriseApiProperties}
 *
 * @author root
 * @version 0.0.1-SNAPSHOT
@@ -42,45 +40,38 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 * @since v1.0
 */
 @RestController
-@RequestMapping("/enterpriseapi")
-public class EnterpriseApiController extends BaseController {
+@RequestMapping("/enterpriseapiproperties")
+public class EnterpriseApiPropertiesController extends BaseController {
 
     @Autowired
-    private EnterpriseApiService enterpriseApiService;
+    private EnterpriseApiPropertiesService enterpriseApiPropertiesService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseApi>> list(EnterpriseApiPageRequest enterpriseApiPageRequest,PageHolder<EnterpriseApi> pm) {
-        RespBase<PageHolder<EnterpriseApi>> resp = RespBase.create();
-        enterpriseApiPageRequest.setPm(pm);
-        resp.setData(enterpriseApiService.page(enterpriseApiPageRequest));
-        return resp;
-    }
-
-    @RequestMapping(value = "/getByModuleId", method = { GET })
-    public RespBase<List<EnterpriseApi>> getByModuleId(Long moduleId) {
-        RespBase<List<EnterpriseApi>> resp = RespBase.create();
-        resp.setData(enterpriseApiService.getByModuleId(moduleId));
+    public RespBase<PageHolder<EnterpriseApiProperties>> list(EnterpriseApiPropertiesPageRequest enterpriseApiPropertiesPageRequest,PageHolder<EnterpriseApiProperties> pm) {
+        RespBase<PageHolder<EnterpriseApiProperties>> resp = RespBase.create();
+        enterpriseApiPropertiesPageRequest.setPm(pm);
+        resp.setData(enterpriseApiPropertiesService.page(enterpriseApiPropertiesPageRequest));
         return resp;
     }
 
     @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseApi enterpriseApi) {
+    public RespBase<?> save(@RequestBody EnterpriseApiProperties enterpriseApiProperties) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseApiService.save(enterpriseApi);
+        enterpriseApiPropertiesService.save(enterpriseApiProperties);
         return resp;
     }
 
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseApi> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseApi> resp = RespBase.create();
-        resp.setData(enterpriseApiService.detail(id));
+    public RespBase<EnterpriseApiProperties> detail(@RequestParam(required = true) Long id) {
+        RespBase<EnterpriseApiProperties> resp = RespBase.create();
+        resp.setData(enterpriseApiPropertiesService.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del", method = { POST, DELETE })
     public RespBase<?> del(@RequestParam(required = true) Long id) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseApiService.del(id);
+        enterpriseApiPropertiesService.del(id);
         return resp;
     }
 

@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-all-bridge</artifactId>
+			<artifactId>xcloud-devops-all-dependencies</artifactId>
 			<version>${project.parent.version}</version>
 			<exclusions>
 				<exclusion>

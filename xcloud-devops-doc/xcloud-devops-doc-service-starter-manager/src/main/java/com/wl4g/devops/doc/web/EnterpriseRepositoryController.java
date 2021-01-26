@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.controller;
+package com.wl4g.devops.doc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
-import com.wl4g.devops.doc.service.EnterpriseDocumentService;
-import com.wl4g.devops.doc.service.dto.EnterpriseDocumentPageRequest;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepository;
+import com.wl4g.devops.doc.service.EnterpriseRepositoryService;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseDocument}
+* {@link EnterpriseRepository}
 *
 * @author root
 * @version 0.0.1-SNAPSHOT
@@ -40,38 +40,38 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 * @since v1.0
 */
 @RestController
-@RequestMapping("/enterprisedocument")
-public class EnterpriseDocumentController extends BaseController {
+@RequestMapping("/enterpriserepository")
+public class EnterpriseRepositoryController extends BaseController {
 
     @Autowired
-    private EnterpriseDocumentService enterpriseDocumentService;
+    private EnterpriseRepositoryService enterpriseRepositoryService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseDocument>> list(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest,PageHolder<EnterpriseDocument> pm) {
-        RespBase<PageHolder<EnterpriseDocument>> resp = RespBase.create();
-        enterpriseDocumentPageRequest.setPm(pm);
-        resp.setData(enterpriseDocumentService.page(enterpriseDocumentPageRequest));
+    public RespBase<PageHolder<EnterpriseRepository>> list(EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest,PageHolder<EnterpriseRepository> pm) {
+        RespBase<PageHolder<EnterpriseRepository>> resp = RespBase.create();
+        enterpriseRepositoryPageRequest.setPm(pm);
+        resp.setData(enterpriseRepositoryService.page(enterpriseRepositoryPageRequest));
         return resp;
     }
 
     @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseDocument enterpriseDocument) {
+    public RespBase<?> save(@RequestBody EnterpriseRepository enterpriseRepository) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseDocumentService.save(enterpriseDocument);
+        enterpriseRepositoryService.save(enterpriseRepository);
         return resp;
     }
 
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseDocument> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseDocument> resp = RespBase.create();
-        resp.setData(enterpriseDocumentService.detail(id));
+    public RespBase<EnterpriseRepository> detail(@RequestParam(required = true) Long id) {
+        RespBase<EnterpriseRepository> resp = RespBase.create();
+        resp.setData(enterpriseRepositoryService.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del", method = { POST, DELETE })
     public RespBase<?> del(@RequestParam(required = true) Long id) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseDocumentService.del(id);
+        enterpriseRepositoryService.del(id);
         return resp;
     }
 
