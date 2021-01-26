@@ -34,7 +34,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2020-01-14
  */
-@SpringBootFeignClient(name = "${provider.serviceId:enterpriseMdService}")
+@SpringBootFeignClient(name = "${provider.serviceId.doc-facade:enterpriseMdService}")
 @RequestMapping("/enterpriseMd")
 public interface EnterpriseMdService {
 
