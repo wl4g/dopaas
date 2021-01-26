@@ -53,7 +53,7 @@ spring:
 # Mybatis configuration.
 mybatis:
   configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
+  mapperLocations: classpath*:mybatis/**/*Mapper.xml
   typeAliasesPackage: com.wl4g.devops.common.bean.*.*
 
 # Logging configuration.
