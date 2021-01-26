@@ -15,6 +15,7 @@
  */
 package com.wl4g;
 
+import com.wl4g.component.core.web.mapping.annotation.EnableSmartMappingConfiguration;
 import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.shell.springboot.annotation.EnableShellServer;
@@ -30,6 +31,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @sine v1.0
  * @see
  */
+// Only this package is considered for mapping.
+@EnableSmartMappingConfiguration("com.wl4g.iam.web")
 @EnableIamClient
 @EnableShellServer
 @EnableComponentDBConfiguration({ "com.wl4g.devops.*.data", "com.wl4g.iam.data" })
