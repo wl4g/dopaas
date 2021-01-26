@@ -40,6 +40,7 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		def configName = new StringBuffer("application")
 		configName.append(",ci-web")
 		configName.append(",ci-facade")
+		configName.append(",ci-analyzer")
 		configName.append(",doc-web")
 		configName.append(",doc-facade")
 		configName.append(",dts-web")
@@ -68,8 +69,8 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 			archConfigSuffix = "sbf"
 		}
 		configName.append(",common-" + archConfigSuffix)
-		configName.append(",common-web-" + archConfigSuffix)
-		configName.append(",common-facade-" + archConfigSuffix)
+//		configName.append(",common-web-" + archConfigSuffix)
+//		configName.append(",common-facade-" + archConfigSuffix)
 		configName.append(",ci-web-" + archConfigSuffix)
 		configName.append(",ci-facade-" + archConfigSuffix)
 		configName.append(",doc-web-" + archConfigSuffix)

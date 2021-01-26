@@ -13,7 +13,7 @@
 spring:
   application.name: ci-facade
   profiles:
-    include: common,support,util
+    include: common,support,util,base
     active: dev
   xcloud:
     component:
@@ -71,7 +71,7 @@ logging:
     max-history: 30 # default to 7
   pattern:
     #console: ${logging.pattern.file}
-    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.cloud.devops.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.xcloud.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
   root: INFO
   level:
     de.codecentric.boot.admin: INFO

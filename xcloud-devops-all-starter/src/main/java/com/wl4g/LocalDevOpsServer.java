@@ -32,7 +32,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @EnableIamClient
 @EnableShellServer
-@EnableComponentDBConfiguration("com.wl4g.devops.*.data")
+@EnableComponentDBConfiguration({ "com.wl4g.devops.*.data", "com.wl4g.iam.data" })
 @SpringBootApplication
 public class LocalDevOpsServer {
 

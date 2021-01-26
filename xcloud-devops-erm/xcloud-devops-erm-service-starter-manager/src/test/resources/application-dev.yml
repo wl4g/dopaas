@@ -35,7 +35,7 @@ spring:
         # resolve to 127.0.0.1 (consistent with the server deployment structure), and the relevant front-end
         # logic is in global_variable.js:55, related database table: app_cluster_config
         server-uri: http://wl4g.debug:14040/iam-web
-        unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
+        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: http://wl4g.debug:8080/#/umc/config
   # Datasource configuration.
   datasource:
