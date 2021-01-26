@@ -36,7 +36,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
-public class FsServiceImpl implements FsService {
+public class ErmFsServiceImpl implements FsService {
 
 	@Autowired
 	private FsProperties fsProperties;
