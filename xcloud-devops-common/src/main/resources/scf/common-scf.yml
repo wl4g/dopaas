@@ -14,13 +14,14 @@ spring:
   util.timeout.sec: 60 # Default by 1sec
   xcloud:
     component:
-      spring-cloud-feign:
-        lb: # fallback default: RoundRobinLoadbalancer
-          random:
-            enable: false # Default false
-          #gray:
-          #  enable: false # Default false (Priority is lower than random LB, And random LB can only enable one of them)
-          #  chooseExpression: ''
+      rpc:
+        feign:
+          loadbalancer: # fallback default: RoundRobinLoadbalancer
+            random:
+              enabled: false # Default false
+            #gray:
+            #  enabled: false # Default false (Priority is lower than random LB, And random LB can only enable one of them)
+            #  chooseExpression: ''
   cloud:
     # see: org.springframework.cloud.commons.util.InetUtilsProperties
     inetutils:

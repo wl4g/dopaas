@@ -19,28 +19,28 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-ci-service-starter-server</artifactId>
+			<artifactId>xcloud-devops-all-bridge</artifactId>
 			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-component-rpc-springboot-feign</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-component-rpc-springcloud-dubbo</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		<!-- If there is a compiler dependent annotation such as @HystrixCommand, our only purpose is to enable it to be compiled and packaged -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-doc-service-starter-manager</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-erm-service-starter-manager</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-vcs-service-starter-manager</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-dts-manager</artifactId>
-			<version>${project.parent.version}</version>
+			<artifactId>xcloud-component-rpc-springboot-feign</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

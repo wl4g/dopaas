@@ -16,6 +16,10 @@ spring:
     include: common,support,util,base
     active: dev
   xcloud:
+    component:
+      support:
+        cli.enable: true
+      rpc.feign.enabled: false # Default by true, If you want to run in local mode, you should set false
     iam: # IAM client configuration.
       cors:
         enabled: true # Default: true
@@ -45,6 +49,12 @@ spring:
       multipart:
         max-file-size: 50Mb
         max-request-size: 50Mb
+
+# Mybatis configuration.
+mybatis:
+  configLocation: mybatis/mybatis-config.xml
+  mapperLocations: classpath:mybatis/**/*Mapper.xml
+  typeAliasesPackage: com.wl4g.devops.common.bean.*.*
 
 # Logging configuration.
 logging:
