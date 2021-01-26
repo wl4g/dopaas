@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-all-bridge</artifactId>
+	<artifactId>xcloud-devops-all-dependencies</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps All Bridge</name>
+	<name>XCloud DevSecOps All Dependencies(bridge)</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

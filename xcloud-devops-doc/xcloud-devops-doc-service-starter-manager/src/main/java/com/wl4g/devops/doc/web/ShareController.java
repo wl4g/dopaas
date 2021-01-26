@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.controller;
+package com.wl4g.devops.doc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.devops.common.bean.doc.Label;
-import com.wl4g.devops.doc.service.LabelService;
+import com.wl4g.devops.common.bean.doc.Share;
+import com.wl4g.devops.doc.service.ShareService;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,49 +33,25 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
  * @date 2019-11-12 11:03:00
  */
 @RestController
-@RequestMapping("/label")
-public class LabelController extends BaseController {
+@RequestMapping("/share")
+public class ShareController extends BaseController {
 
 	@Autowired
-	private LabelService labelService;
+	private ShareService shareService;
 
 	@RequestMapping("/list")
-	@RequiresPermissions(value = { "doc:label" }, logical = AND)
-	public RespBase<?> list(PageHolder<Label> pm, String name) {
+	@RequiresPermissions(value = { "doc:share" }, logical = AND)
+	public RespBase<?> list(PageHolder<Share> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(labelService.list(pm, name));
+		resp.setData(shareService.list(pm));
 		return resp;
 	}
 
-	@RequestMapping("/save")
-	@RequiresPermissions(value = { "doc:label" }, logical = AND)
-	public RespBase<?> save(Label label) {
-		RespBase<Object> resp = RespBase.create();
-		labelService.save(label);
-		return resp;
-	}
-
-	@RequestMapping("/del")
-	@RequiresPermissions(value = { "doc:label" }, logical = AND)
+	@RequestMapping("/cancelShare")
+	@RequiresPermissions(value = { "doc:share" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		labelService.del(id);
-		return resp;
-	}
-
-	@RequestMapping("/detail")
-	@RequiresPermissions(value = { "doc:label" }, logical = AND)
-	public RespBase<?> detail(Long id) {
-		RespBase<Object> resp = RespBase.create();
-		Label label = labelService.detail(id);
-		resp.setData(label);
-		return resp;
-	}
-
-	@RequestMapping("/allLabel")
-	public RespBase<?> allLabel() {
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(labelService.allLabel());
+		shareService.cancelShare(id);
 		return resp;
 	}
 

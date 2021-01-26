@@ -61,7 +61,7 @@
 		<!-- <module>xcloud-devops-umc</module> -->
 		<module>xcloud-devops-vcs</module>
 		<module>xcloud-devops-dts</module>
-		<module>xcloud-devops-all-bridge</module>
+		<module>xcloud-devops-all-dependencies</module>
 		<module>xcloud-devops-all-starter</module>
 	</modules>
 	<properties>

@@ -15,24 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.controller;
+package com.wl4g.devops.doc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.devops.common.bean.doc.EnterpriseRepository;
-import com.wl4g.devops.doc.service.EnterpriseRepositoryService;
-import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryPageRequest;
+import com.wl4g.devops.common.bean.doc.EnterpriseRepositoryVersion;
+import com.wl4g.devops.doc.service.EnterpriseRepositoryVersionService;
+import com.wl4g.devops.doc.service.dto.EnterpriseRepositoryVersionPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseRepository}
+* {@link EnterpriseRepositoryVersion}
 *
 * @author root
 * @version 0.0.1-SNAPSHOT
@@ -40,38 +42,45 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 * @since v1.0
 */
 @RestController
-@RequestMapping("/enterpriserepository")
-public class EnterpriseRepositoryController extends BaseController {
+@RequestMapping("/enterpriserepositoryversion")
+public class EnterpriseRepositoryVersionController extends BaseController {
 
     @Autowired
-    private EnterpriseRepositoryService enterpriseRepositoryService;
+    private EnterpriseRepositoryVersionService enterpriseRepositoryVersionService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseRepository>> list(EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest,PageHolder<EnterpriseRepository> pm) {
-        RespBase<PageHolder<EnterpriseRepository>> resp = RespBase.create();
-        enterpriseRepositoryPageRequest.setPm(pm);
-        resp.setData(enterpriseRepositoryService.page(enterpriseRepositoryPageRequest));
+    public RespBase<PageHolder<EnterpriseRepositoryVersion>> list(EnterpriseRepositoryVersionPageRequest enterpriseRepositoryVersionPageRequest,PageHolder<EnterpriseRepositoryVersion> pm) {
+        RespBase<PageHolder<EnterpriseRepositoryVersion>> resp = RespBase.create();
+        enterpriseRepositoryVersionPageRequest.setPm(pm);
+        resp.setData(enterpriseRepositoryVersionService.page(enterpriseRepositoryVersionPageRequest));
+        return resp;
+    }
+
+    @RequestMapping(value = "/getVersionsByRepositoryId", method = { GET })
+    public RespBase<List<EnterpriseRepositoryVersion>> getVersionsByRepositoryId(Long repositoryId) {
+        RespBase<List<EnterpriseRepositoryVersion>> resp = RespBase.create();
+        resp.setData(enterpriseRepositoryVersionService.getVersionsByRepositoryId(repositoryId));
         return resp;
     }
 
     @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseRepository enterpriseRepository) {
+    public RespBase<?> save(@RequestBody EnterpriseRepositoryVersion enterpriseRepositoryVersion) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseRepositoryService.save(enterpriseRepository);
+        enterpriseRepositoryVersionService.save(enterpriseRepositoryVersion);
         return resp;
     }
 
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseRepository> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseRepository> resp = RespBase.create();
-        resp.setData(enterpriseRepositoryService.detail(id));
+    public RespBase<EnterpriseRepositoryVersion> detail(@RequestParam(required = true) Long id) {
+        RespBase<EnterpriseRepositoryVersion> resp = RespBase.create();
+        resp.setData(enterpriseRepositoryVersionService.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del", method = { POST, DELETE })
     public RespBase<?> del(@RequestParam(required = true) Long id) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseRepositoryService.del(id);
+        enterpriseRepositoryVersionService.del(id);
         return resp;
     }
 

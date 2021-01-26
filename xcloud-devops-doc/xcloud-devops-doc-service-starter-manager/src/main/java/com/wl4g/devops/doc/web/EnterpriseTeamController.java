@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.controller;
+package com.wl4g.devops.doc.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
-import com.wl4g.devops.doc.service.EnterpriseApiPropertiesService;
-import com.wl4g.devops.doc.service.dto.EnterpriseApiPropertiesPageRequest;
+import com.wl4g.devops.common.bean.doc.EnterpriseTeam;
+import com.wl4g.devops.doc.service.EnterpriseTeamService;
+import com.wl4g.devops.doc.service.dto.EnterpriseTeamPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseApiProperties}
+* {@link EnterpriseTeam}
 *
 * @author root
 * @version 0.0.1-SNAPSHOT
@@ -40,38 +40,38 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 * @since v1.0
 */
 @RestController
-@RequestMapping("/enterpriseapiproperties")
-public class EnterpriseApiPropertiesController extends BaseController {
+@RequestMapping("/enterpriseteam")
+public class EnterpriseTeamController extends BaseController {
 
     @Autowired
-    private EnterpriseApiPropertiesService enterpriseApiPropertiesService;
+    private EnterpriseTeamService enterpriseTeamService;
 
     @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseApiProperties>> list(EnterpriseApiPropertiesPageRequest enterpriseApiPropertiesPageRequest,PageHolder<EnterpriseApiProperties> pm) {
-        RespBase<PageHolder<EnterpriseApiProperties>> resp = RespBase.create();
-        enterpriseApiPropertiesPageRequest.setPm(pm);
-        resp.setData(enterpriseApiPropertiesService.page(enterpriseApiPropertiesPageRequest));
+    public RespBase<PageHolder<EnterpriseTeam>> list(EnterpriseTeamPageRequest enterpriseTeamPageRequest,PageHolder<EnterpriseTeam> pm) {
+        RespBase<PageHolder<EnterpriseTeam>> resp = RespBase.create();
+        enterpriseTeamPageRequest.setPm(pm);
+        resp.setData(enterpriseTeamService.page(enterpriseTeamPageRequest));
         return resp;
     }
 
     @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseApiProperties enterpriseApiProperties) {
+    public RespBase<?> save(@RequestBody EnterpriseTeam enterpriseTeam) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseApiPropertiesService.save(enterpriseApiProperties);
+        enterpriseTeamService.save(enterpriseTeam);
         return resp;
     }
 
     @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseApiProperties> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseApiProperties> resp = RespBase.create();
-        resp.setData(enterpriseApiPropertiesService.detail(id));
+    public RespBase<EnterpriseTeam> detail(@RequestParam(required = true) Long id) {
+        RespBase<EnterpriseTeam> resp = RespBase.create();
+        resp.setData(enterpriseTeamService.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del", method = { POST, DELETE })
     public RespBase<?> del(@RequestParam(required = true) Long id) {
         RespBase<Object> resp = RespBase.create();
-        enterpriseApiPropertiesService.del(id);
+        enterpriseTeamService.del(id);
         return resp;
     }
 
