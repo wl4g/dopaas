@@ -36,7 +36,7 @@ spring:
         denyIpRange: ${DEVOPS_IAM_ACL_DENY}
       client:
         server-uri: http://iam.${DEVOPS_SERVICE_ZONE:wl4g.fat}/iam-server
-        unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
+        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.fat}/#/ci/taskhis
     devops.ci:
       testing-report:

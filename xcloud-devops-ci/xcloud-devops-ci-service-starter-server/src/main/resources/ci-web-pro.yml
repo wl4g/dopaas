@@ -35,48 +35,8 @@ spring:
         denyIpRange: ${DEVOPS_IAM_ACL_DENY}
       client:
         server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-server
-        unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
+        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/ci/taskhis
-    ci:
-      pipeline: # Pipeline configuration.
-        #workspace: # Default by to {user.home}/.ci-workspace
-        executor:
-          concurrency: 10
-          accept-queue: 2
-        vcs:
-          gitlab:
-            search-projects-default-page-limit: 20
-        build:
-          job-max-clean-interval-ms: 30_000
-          job-timeout-ms: 3000_000
-          shared-dependency-try-timeout-ms: 1200_000
-        deploy:
-          #remoteHome-tmp-dir: # Default by to $HOME/.ci-temporary
-          cipher-key: 03DE18C2FC4E605F
-          transfer-timeout-ms: 300_000
-          docker-native:
-            docker-push-username: xburnerair00
-            docker-push-password: hwj13535248668
-        docker:
-          #make docker image in where addr,e.g: tcp://localhost:2375 default port is 2375
-          make-image-addr: tcp://localhost:2375
-    support:
-      notification:
-        mail:
-          host: smtp.163.com
-          port: 465
-          username: babaa1f4@163.com
-          password: UDKTGOHTZOBOTHVL
-          protocol: smtp
-        sms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-        vms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-            calledShowNumber: 055162153866
     devops.ci:
       testing-report:
         upload-path: /mnt/dist1/upload

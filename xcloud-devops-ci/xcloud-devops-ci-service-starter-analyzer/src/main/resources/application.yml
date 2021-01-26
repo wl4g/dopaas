@@ -8,8 +8,46 @@
 # limitations under the License.
 #
 
-# #### Environment base configuration. ####
-#
+spring:
+  application.name: ci-analyzer
+  profiles:
+    include: common,support,util,base
+    active: dev
+  xcloud:
+    component:
+      support:
+        cli.enable: true
+    iam: # IAM client configuration.
+      cors:
+        enabled: true # Default: true
+        rules:
+          '[/**]':
+            allows-methods: [GET,HEAD,OPTIONS,POST]
+            allows-headers: [X-Iam-*]
+            allow-credentials: true
+              #allows-origins:
+            #- '*'
+      xsrf:
+        enabled: true
+      replay:
+        enabled: true
+      xss:
+        enabled: true # Default: true
+      client: # IAM client configuration.
+        filter-chain:
+          '[/public/**]': anon # Public rule release
+          '[/view/**]': anon
+          '[/external/**]': anon
+        cipher:
+          enable-data-cipher: true # Default by true
+        session:
+          enable-access-token-validity: true # Default by true
+  servlet:
+    http:
+      multipart:
+        max-file-size: 200Mb
+        max-request-size: 200Mb
+
 # Mybatis configuration.
 mybatis:
   configLocation: mybatis/mybatis-config.xml
@@ -34,4 +72,20 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.devops.dao: DEBUG
+      wl4g.devops: DEBUG
+
+# ### Server configuration. ###
+server:
+  servlet:
+    contextPath: /${spring.application.name}
+  #address: 0.0.0.0
+  port: 14055
+  tomcat:
+    uri-encoding: UTF-8
+    protocolHeader: x-forwarded-proto
+    remoteIpHeader: x-forwarded-for
+    basedir: /tmp/log/${spring.application.name}
+    access-log-enabled: false
+    accesslog.directory: logs/
+    backgroundProcessorDelay: 30 #seconds
+    max-thread: 50 # Max worker threads(default:200).
