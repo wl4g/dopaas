@@ -40,7 +40,7 @@ import static com.wl4g.devops.doc.util.PathUtils.splicePath;
 @Service
 public class FsServiceImpl implements FsService {
 
-//    @Autowired
+    @Autowired
     private FsProperties fsProperties;
 
     @Override
