@@ -16,15 +16,14 @@ import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.wl4g.component.common.view.Freemarkers.createDefault;
 import static com.wl4g.component.common.view.Freemarkers.renderingTemplateToString;
@@ -120,6 +119,9 @@ public class Md2Html {
 
 
     public String mdToHtml(String md) throws IOException, TemplateException {
+        if(StringUtils.isBlank(md)){
+            return StringUtils.EMPTY;
+        }
         String afterFormatMd = apiFormatToMd(md);
 
         //md to html
@@ -153,9 +155,16 @@ public class Md2Html {
     //单个api渲染
     public String apiIdToMd(String apiId) throws IOException, TemplateException {
 
+        if(!NumberUtils.isCreatable(apiId)){
+            return apiId;
+        }
+
         apiId = apiId.replaceAll("\n","");
         apiId = apiId.trim();
         EnterpriseApi enterpriseApi = enterpriseApiService.detail(Long.parseLong(apiId));
+        if(Objects.isNull(enterpriseApi)){
+            return apiId;
+        }
 
         String macro = ResourceBundleUtil.readResource(Md2Html.class, "template", "md-macro-property.ftl", false);
         String apiTemplate = ResourceBundleUtil.readResource(Md2Html.class, "template", "md-api-info.ftl", false);
