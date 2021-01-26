@@ -18,8 +18,9 @@ package com.wl4g.devops.doc.fsview.service.impl;
 import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.lang.DateUtils2;
 import com.wl4g.devops.doc.fsview.bean.FileInfo;
-import com.wl4g.devops.doc.fsview.config.DocProperties;
+import com.wl4g.devops.doc.fsview.config.FsViewerProperties;
 import com.wl4g.devops.doc.fsview.service.FsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -39,12 +40,12 @@ import static com.wl4g.devops.doc.fsview.util.PathUtils.splicePath;
 @Service
 public class FsServiceImpl implements FsService {
 
-    //@Autowired
-    private DocProperties fsProperties;
+    @Autowired
+    private FsViewerProperties fsViewerProperties;
 
     @Override
     public List<FileInfo> getTreeFiles(String subPath) {
-        File basePath = new File(fsProperties.getBasePath() + subPath);
+        File basePath = new File(fsViewerProperties.getBasePath() + subPath);
         List<FileInfo> fileInfos = new ArrayList<>();
         getChildren(basePath, fileInfos, subPath);
         return fileInfos;
@@ -67,7 +68,7 @@ public class FsServiceImpl implements FsService {
 
     @Override
     public FileInfo getFileInfo(String path, String subPath) throws IOException {
-        File file = new File(fsProperties.getBasePath() + splicePath(subPath , path));
+        File file = new File(fsViewerProperties.getBasePath() + splicePath(subPath , path));
         FileInfo fileInfo = new FileInfo();
         fileInfo.setPath(getRelativePath(file.getAbsolutePath(),subPath));
         fileInfo.setFileName(file.getName());
@@ -81,7 +82,7 @@ public class FsServiceImpl implements FsService {
 
     @Override
     public void delFile(String path) throws IOException {
-        File file = new File(fsProperties.getBasePath() + path);
+        File file = new File(fsViewerProperties.getBasePath() + path);
         if(file.isFile()){
             FileIOUtils.forceDelete(file);
         }else{
@@ -91,7 +92,7 @@ public class FsServiceImpl implements FsService {
 
     @Override
     public void addDir(String path) throws IOException {
-        File file = new File(fsProperties.getBasePath() + path);
+        File file = new File(fsViewerProperties.getBasePath() + path);
         boolean newFile = file.mkdirs();
         if (!newFile || !file.exists()) {
             throw new IOException("create new dir fail");
@@ -100,7 +101,7 @@ public class FsServiceImpl implements FsService {
 
     @Override
     public void addFile(String path) throws IOException {
-        File file = new File(fsProperties.getBasePath() + path);
+        File file = new File(fsViewerProperties.getBasePath() + path);
         boolean newFile = file.createNewFile();
         if (!newFile || !file.exists()) {
             throw new IOException("create new file fail");
@@ -109,8 +110,8 @@ public class FsServiceImpl implements FsService {
 
     @Override
     public void renameFile(String path, String toPath) throws IOException {
-        File file = new File(fsProperties.getBasePath() + path);
-        File toFile = new File(fsProperties.getBasePath() + toPath);
+        File file = new File(fsViewerProperties.getBasePath() + path);
+        File toFile = new File(fsViewerProperties.getBasePath() + toPath);
         boolean b = file.renameTo(toFile);
         if(!b || !toFile.exists()){
             throw new IOException("rename file fail");
@@ -120,7 +121,7 @@ public class FsServiceImpl implements FsService {
 
     @Override
     public void saveFile(String path, String content) {
-        File file = new File(fsProperties.getBasePath() + path);
+        File file = new File(fsViewerProperties.getBasePath() + path);
         if (!file.exists()) {
             return;
         }
@@ -130,7 +131,7 @@ public class FsServiceImpl implements FsService {
     @Override
     public String uploadFile(MultipartFile file, String path) {
         String fileName = file.getOriginalFilename();// 文件名
-        path = fsProperties.getBasePath() + path + "/" + fileName;
+        path = fsViewerProperties.getBasePath() + path + "/" + fileName;
         saveFile(file, path);
         return fileName;
     }
@@ -142,7 +143,7 @@ public class FsServiceImpl implements FsService {
      */
     @Override
     public ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException {
-        File file = new File(fsProperties.getBasePath() + "/" + path);
+        File file = new File(fsViewerProperties.getBasePath() + "/" + path);
         if(file.isDirectory()){//TODO 暂不支持文件夹下载
             throw new IOException("not support download dir yet");
         }
@@ -183,7 +184,7 @@ public class FsServiceImpl implements FsService {
 
 
     private String getRelativePath(String absolutePath, String subPath) {
-        String baseFilePath = splicePath(fsProperties.getBasePath(),subPath);
+        String baseFilePath = splicePath(fsViewerProperties.getBasePath(),subPath);
         if (absolutePath.startsWith(baseFilePath)) {
             return absolutePath.substring(baseFilePath.length());
         } else {
