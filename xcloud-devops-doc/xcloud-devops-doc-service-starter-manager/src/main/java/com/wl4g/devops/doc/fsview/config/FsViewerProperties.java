@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.fsview.config;
 
-public class DocProperties {
+public class FsViewerProperties {
 
     private String basePath;
 

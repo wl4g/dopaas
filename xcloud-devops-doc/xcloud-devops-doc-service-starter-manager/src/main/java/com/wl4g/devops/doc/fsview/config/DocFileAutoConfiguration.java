@@ -24,8 +24,8 @@ public class DocFileAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = "doc")
-	public DocProperties docProperties() {
-		return new DocProperties();
+	public FsViewerProperties fsViewerProperties() {
+		return new FsViewerProperties();
 	}
 
 }
