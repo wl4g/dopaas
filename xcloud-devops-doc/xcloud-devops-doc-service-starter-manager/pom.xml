@@ -21,11 +21,11 @@
 			<artifactId>xcloud-devops-doc-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-doc-template</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>io.swagger.parser.v3</groupId>
 			<artifactId>swagger-parser</artifactId>
