@@ -96,3 +96,15 @@ sudo systemctl restart docker
 - No matter how strong a person's personal ability is, he can't defeat a team. He hopes that his brothers and sisters can support him and contribute some of his own code to improve it together (^_^).
 
 [Share Code?](https://www.cnblogs.com/wenber/p/3630921.html)
+
+
+### FAQ
+- maven mirror config
+```xml
+<mirror>
+    <id>nexus-aliyun</id>
+    <mirrorOf>central</mirrorOf>
+    <name>Nexus aliyun</name>
+    <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+</mirror>
+```
