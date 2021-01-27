@@ -20,7 +20,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.wl4g.component.core.web.error.reactive.ReactiveErrorAutoConfiguration;
 import com.wl4g.component.core.web.error.servlet.ServletErrorAutoConfiguration;
-import com.wl4g.component.core.web.mapping.WebMvcSmartHandlerMappingConfigurer;
+import com.wl4g.component.core.web.mapping.annotation.WebFluxSmartHandlerMappingConfigurer;
+import com.wl4g.component.core.web.mapping.annotation.WebMvcSmartHandlerMappingConfigurer;
 import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
 import com.wl4g.devops.doc.plugin.swagger.DocumentionAutoConfigurationRegistrar;
 import com.wl4g.devops.doc.plugin.swagger.EnableDocumentionAutoConfiguration;
@@ -33,8 +34,8 @@ import com.wl4g.devops.doc.plugin.swagger.EnableDocumentionAutoConfiguration;
  * @sine v1.0
  * @see {@link DocumentionAutoConfigurationRegistrar}
  */
-@SpringBootApplication(scanBasePackages = "none", scanBasePackageClasses = {
-		WebMvcSmartHandlerMappingConfigurer.class }, exclude = { DefaultBootstrapAutoConfiguration.class,
+@SpringBootApplication(scanBasePackages = "none", scanBasePackageClasses = { WebMvcSmartHandlerMappingConfigurer.class,
+		WebFluxSmartHandlerMappingConfigurer.class }, exclude = { DefaultBootstrapAutoConfiguration.class,
 				ReactiveErrorAutoConfiguration.class, ServletErrorAutoConfiguration.class })
 @EnableDocumentionAutoConfiguration
 @EnableApiVersionManagement // Supported multi version api docs
