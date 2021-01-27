@@ -34,10 +34,10 @@ import com.wl4g.devops.doc.plugin.swagger.EnableDocumentionAutoConfiguration;
  * @sine v1.0
  * @see {@link DocumentionAutoConfigurationRegistrar}
  */
+@EnableDocumentionAutoConfiguration
+@EnableApiVersionManagement // Supported multi version api docs
 @SpringBootApplication(scanBasePackages = "none", scanBasePackageClasses = { WebMvcSmartHandlerMappingConfigurer.class,
 		WebFluxSmartHandlerMappingConfigurer.class }, exclude = { DefaultBootstrapAutoConfiguration.class,
 				ReactiveErrorAutoConfiguration.class, ServletErrorAutoConfiguration.class })
-@EnableDocumentionAutoConfiguration
-@EnableApiVersionManagement // Supported multi version api docs
 public class EmbeddedSpringfoxBootstrap {
 }
