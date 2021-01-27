@@ -28,7 +28,7 @@ mybatis:
 # Logging configuration.
 logging:
   file:
-    name: ${server.tomcat.basedir}/logs/${spring.application.name}.log
+    name: ${server.tomcat.basedir}/../log/${spring.application.name}/${spring.application.name}.log
     clean-history-on-start: false
     total-size-cap: 200GB # default to 200GB
     max-size: 1GB # default to 10MB
