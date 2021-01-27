@@ -67,12 +67,20 @@ public class DocumentionAutoConfigurationRegistrar
 			Class<?> autoConfigClass = DocumentionHolder.get().getProvider().getAutoConfigClass();
 			notNull(autoConfigClass, "Documention auto configuration class is requires.");
 
-			registerDocumentionBean(registry, beanNameGenerator, autoConfigClass);
-			registerDocumentionApis(registry, beanNameGenerator);
+			registerDocumentionConfigurerBean(registry, beanNameGenerator, autoConfigClass);
+			registerDocumentionApisBean(registry, beanNameGenerator);
 		}
 	}
 
-	private void registerDocumentionApis(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator) {
+	private void registerDocumentionConfigurerBean(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator,
+			Class<?> beanClass) {
+		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(beanClass);
+		AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
+		String beanName = beanNameGenerator.generateBeanName(beanDefinition, registry);
+		registry.registerBeanDefinition(beanName, beanDefinition);
+	}
+
+	private void registerDocumentionApisBean(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator) {
 		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry, false, environment);
 		scanner.setBeanNameGenerator(beanNameGenerator);
 		scanner.setResourceLoader(resourceLoader);
@@ -88,15 +96,6 @@ public class DocumentionAutoConfigurationRegistrar
 			// Registers scanned bean
 			scanner.scan(scanPackage);
 		}
-
-	}
-
-	private void registerDocumentionBean(BeanDefinitionRegistry registry, BeanNameGenerator beanNameGenerator,
-			Class<?> beanClass) {
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(beanClass);
-		AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
-		String beanName = beanNameGenerator.generateBeanName(beanDefinition, registry);
-		registry.registerBeanDefinition(beanName, beanDefinition);
 	}
 
 	@Override
