@@ -30,6 +30,7 @@ import com.wl4g.devops.doc.plugin.swagger.config.oas3.Oas3Info;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 
@@ -64,7 +65,7 @@ public class SpringfoxOas3Configuration {
 
 		// Scanning apis conditions.
 		builder.apis(withClassAnnotation(Api.class));
-		builder.apis(withMethodAnnotation(ApiOperation.class));
+		builder.apis(withMethodAnnotation(ApiOperation.class).or(withMethodAnnotation(Operation.class)));
 		for (String scanPackage : DocumentionHolder.get().getResourcePackages()) {
 			builder.apis(basePackage(scanPackage));
 		}
