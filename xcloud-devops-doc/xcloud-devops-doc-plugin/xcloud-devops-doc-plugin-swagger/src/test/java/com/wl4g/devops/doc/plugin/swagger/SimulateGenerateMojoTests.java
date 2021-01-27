@@ -53,7 +53,6 @@ public class SimulateGenerateMojoTests {
 	public void generateSpringfoxSwagger2MojoTest() throws Exception {
 		createMavenMojoInstance(GenerateSpringfoxSwagger2Mojo.class,
 				singleton("com.wl4g.devops.doc.plugin.swagger.example.swagger2"), "swagger-swagger2-by-springfox").execute();
-		Thread.sleep(99999999L);
 	}
 
 	@Test
