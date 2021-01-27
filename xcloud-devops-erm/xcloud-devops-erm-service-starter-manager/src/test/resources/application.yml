@@ -17,7 +17,7 @@ mybatis:
 
 # Logging configuration.
 logging:
-  file: ${server.tomcat.basedir}/logs/${spring.application.name}.log
+  file: ${server.tomcat.basedir}/../log/${spring.application.name}/${spring.application.name}.log
   pattern:
     #console: ${logging.pattern.file}
     #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.xcloud.iam.client.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'

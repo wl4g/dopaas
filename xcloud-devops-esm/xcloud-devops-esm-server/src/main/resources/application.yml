@@ -23,7 +23,7 @@ mybatis:
 
 # Logging configuration.
 logging:
-  file: ${server.tomcat.basedir}/logs/${spring.application.name}.log
+  file: ${server.tomcat.basedir}/../log/${spring.application.name}/${spring.application.name}.log
   root: INFO
   # Custom configuration(Non spring-boot standard).
   policy:
