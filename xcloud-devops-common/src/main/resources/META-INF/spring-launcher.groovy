@@ -68,9 +68,9 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 			location.append(",classpath:/sbf/")
 			archConfigSuffix = "sbf"
 		}
-		configName.append(",common-" + archConfigSuffix)
-//		configName.append(",common-web-" + archConfigSuffix)
-//		configName.append(",common-facade-" + archConfigSuffix)
+		configName.append(",default-" + archConfigSuffix)
+//		configName.append(",default-web-" + archConfigSuffix)
+//		configName.append(",default-facade-" + archConfigSuffix)
 		configName.append(",ci-web-" + archConfigSuffix)
 		configName.append(",ci-facade-" + archConfigSuffix)
 		configName.append(",doc-web-" + archConfigSuffix)
