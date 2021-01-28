@@ -19,7 +19,7 @@ spring:
     component:
       support:
         cli.enable: true
-      rpc.feign.enabled: false # Default by true, If you want to run in local mode, you should set false
+      rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
     iam: # IAM client configuration.
       cors:
         enabled: true # Default: true

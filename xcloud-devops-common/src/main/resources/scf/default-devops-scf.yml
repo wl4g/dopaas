@@ -16,7 +16,6 @@ spring:
     component:
       rpc:
         feign:
-          enabled: true # Default by false, If you want to run in cluster(feign rpc) mode, you should set true
           loadbalancer: # fallback default: RoundRobinLoadbalancer
             random:
               enabled: false # Default false
