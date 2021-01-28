@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.common.io.FileIOUtils.ReadResult;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
 import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
@@ -36,7 +36,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
  * @author vjay
  * @date 2019-08-01 14:45:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:pipelineManager-service}")
+@FeignConsumer(name = "${provider.serviceId.ci-facade:pipelineManager-service}")
 @RequestMapping("/pipelineManager")
 public interface PipelineManagerAdapterService {
 

@@ -23,7 +23,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
-import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
+import com.wl4g.component.rpc.feign.core.annotation.EnableFeignConsumers;
 
 /**
  * {@link ErmFacade}
@@ -33,7 +33,7 @@ import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignC
  * @sine v1.0
  * @see
  */
-@EnableSpringBootFeignClients("com.wl4g.iam.service")
+@EnableFeignConsumers("com.wl4g.iam.service")
 @EnableComponentDBConfiguration("com.wl4g.devops.erm.data")
 @SpringBootApplication
 public class ErmFacade {

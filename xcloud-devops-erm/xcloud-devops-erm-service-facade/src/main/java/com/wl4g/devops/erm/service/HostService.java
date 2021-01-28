@@ -16,7 +16,7 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.erm.Host;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-11-14 14:10:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:host-service}")
+@FeignConsumer(name = "${provider.serviceId.erm-facade:host-service}")
 @RequestMapping("/host")
 public interface HostService {
 

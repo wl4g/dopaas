@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -30,7 +30,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0.0
  * @see
  */
-@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:logClean-service}")
+@FeignConsumer(name = "${provider.serviceId.ci-facade:logClean-service}")
 @RequestMapping("/logClean")
 public interface LogCleanService {
 

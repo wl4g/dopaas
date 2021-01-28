@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.doc.Share;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -36,7 +36,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
  * @sine v1.0
  * @see
  */
-@SpringBootFeignClient(name = "${provider.serviceId.doc-facade:share-service}")
+@FeignConsumer(name = "${provider.serviceId.doc-facade:share-service}")
 @RequestMapping("/ShareService")
 public interface ShareService {
 

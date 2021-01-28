@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.erm.Log;
 import com.wl4g.devops.common.bean.erm.QueryLogModel;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:logConsole-service}")
+@FeignConsumer(name = "${provider.serviceId.erm-facade:logConsole-service}")
 @RequestMapping("/logConsole")
 public interface LogConsoleService {
 

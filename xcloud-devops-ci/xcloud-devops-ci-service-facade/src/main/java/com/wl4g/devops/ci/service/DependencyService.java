@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-05-22 11:33:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:dependency-service}")
+@FeignConsumer(name = "${provider.serviceId.ci-facade:dependency-service}")
 @RequestMapping("/dependency")
 public interface DependencyService {
 

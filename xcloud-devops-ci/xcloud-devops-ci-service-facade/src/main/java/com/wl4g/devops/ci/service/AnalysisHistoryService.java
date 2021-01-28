@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.ci.AnalysisHistory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-12-16 16:13:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:analysisHistory-service}")
+@FeignConsumer(name = "${provider.serviceId.ci-facade:analysisHistory-service}")
 @RequestMapping("/analysisHistory")
 public interface AnalysisHistoryService {
 

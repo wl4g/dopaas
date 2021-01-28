@@ -18,11 +18,11 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
+import com.wl4g.component.rpc.feign.core.annotation.EnableFeignConsumers;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient
-@EnableSpringBootFeignClients("com.wl4g.devops.doc.service")
+@EnableFeignConsumers("com.wl4g.devops.doc.service")
 @SpringBootApplication
 public class DocManager {
 
