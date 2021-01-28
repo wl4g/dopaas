@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:fs-service}")
+@FeignConsumer(name = "${provider.serviceId.erm-facade:fs-service}")
 @RequestMapping("/fs")
 public interface FsService {
 

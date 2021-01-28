@@ -16,7 +16,7 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.erm.K8sCluster;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:k8sCluster-service}")
+@FeignConsumer(name = "${provider.serviceId.erm-facade:k8sCluster-service}")
 @RequestMapping("/k8sCluster")
 public interface K8sClusterService {
 

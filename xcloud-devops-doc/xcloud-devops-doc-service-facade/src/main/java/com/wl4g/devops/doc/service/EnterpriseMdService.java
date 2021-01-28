@@ -18,7 +18,7 @@
 
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import freemarker.template.TemplateException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +34,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2020-01-14
  */
-@SpringBootFeignClient(name = "${provider.serviceId.doc-facade:enterpriseMdService}")
+@FeignConsumer(name = "${provider.serviceId.doc-facade:enterpriseMdService}")
 @RequestMapping("/enterpriseMd")
 public interface EnterpriseMdService {
 

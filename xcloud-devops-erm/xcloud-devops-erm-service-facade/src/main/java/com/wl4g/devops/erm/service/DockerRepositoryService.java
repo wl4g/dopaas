@@ -16,7 +16,7 @@
 package com.wl4g.devops.erm.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.erm.DockerRepository;
 import com.wl4g.devops.common.bean.erm.model.RepositoryProject;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +33,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 /**
  * @author vjay
  */
-@SpringBootFeignClient(name = "${provider.serviceId.erm-facade:dockerRepository-service}")
+@FeignConsumer(name = "${provider.serviceId.erm-facade:dockerRepository-service}")
 @RequestMapping("/dockerRepository")
 public interface DockerRepositoryService {
 

@@ -36,20 +36,20 @@
 		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically configured. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>xcloud-component-rpc-springboot-feign</artifactId> -->
+		<!-- <artifactId>xcloud-component-rpc-feign-core</artifactId> -->
 		<!-- </dependency> -->
 
 		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-rpc-springcloud-feign</artifactId>
+			<artifactId>xcloud-component-rpc-feign-springcloud</artifactId>
 		</dependency>
 
 		<!-- ③[SpringCloud + (Feign)Dubbo] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. Notes: 
 			Only relying on feign's interface annotation. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>xcloud-component-rpc-springcloud-feign-dubbo</artifactId> -->
+		<!-- <artifactId>xcloud-component-rpc-feign-springcloud-dubbo</artifactId> -->
 		<!-- </dependency> -->
 	</dependencies>
 	<build>

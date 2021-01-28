@@ -15,7 +15,7 @@
  */
 package com.wl4g;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
+import com.wl4g.component.rpc.feign.core.annotation.EnableFeignConsumers;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 import org.springframework.boot.SpringApplication;
@@ -30,7 +30,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @see
  */
 @EnableIamClient
-@EnableSpringBootFeignClients("com.wl4g.devops.ci.service")
+@EnableFeignConsumers("com.wl4g.devops.ci.service")
 @SpringBootApplication
 public class CiServer {
 

@@ -18,7 +18,7 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.rpc.springboot.feign.annotation.EnableSpringBootFeignClients;
+import com.wl4g.component.rpc.feign.core.annotation.EnableFeignConsumers;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 /**
@@ -30,7 +30,7 @@ import com.wl4g.iam.client.annotation.EnableIamClient;
  * @see
  */
 @EnableIamClient
-@EnableSpringBootFeignClients("com.wl4g.devops.vcs.service")
+@EnableFeignConsumers("com.wl4g.devops.vcs.service")
 @SpringBootApplication
 public class VcsManager {
 

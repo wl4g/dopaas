@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.ci.Project;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +30,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-05-17 10:23:00
  */
-@SpringBootFeignClient(name = "${provider.serviceId.ci-facade:project-service}")
+@FeignConsumer(name = "${provider.serviceId.ci-facade:project-service}")
 @RequestMapping("/project")
 public interface ProjectService {
 
