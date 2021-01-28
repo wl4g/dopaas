@@ -18,6 +18,7 @@ package com.wl4g.devops.erm.handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.devops.erm.service.DnsPrivateBlacklistService;
@@ -40,10 +41,16 @@ public class DnsZoneApplicationListener implements ApplicationRunner {
 	@Autowired
 	private DnsPrivateBlacklistService privateBWlistService;
 
+	@Autowired
+	ApplicationContext aaa;
+	
 	@Override
 	public void run(ApplicationArguments var) throws Exception {
 		try {
+			aaa.getBean(DnsPrivateZoneService.class);
 			privateZoneService.loadDnsAtStart();
+			
+			
 			privateBWlistService.loadBlacklistAtStart();
 		} catch (Exception e) {
 			e.printStackTrace();
