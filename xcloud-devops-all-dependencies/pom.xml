@@ -58,17 +58,22 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-dts-service-starter-facade</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-dts-service-starter-manager</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-service-starter-data</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-dts-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
