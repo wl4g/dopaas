@@ -31,7 +31,7 @@ spring:
         allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
         denyIpRange: ${DEVOPS_IAM_ACL_DENY}
       client:
-        server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-server
+        server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/ci/taskhis
     tool:
