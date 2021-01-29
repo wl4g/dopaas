@@ -28,9 +28,13 @@
 For the sake of brevity, each service only deploys a single node to the same physical machine, which has been regarded as a pseudo cluster.
 
 - step1：Compile
+
 ```
 cd xcloud-devops
-mvn -U clean install -DskipTests -T 2C
+# Packaged as a single executable jar
+mvn -U clean install -DskipTests -T 2C -P springExecJar
+# Packaged as general software release package (directory structure)
+# mvn -U clean install -DskipTests -T 2C -P mvnAssTar
 ```
 - step2, Initialize the db, First prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8/utf8_bin), and then use [Initial SQL script](../../../xcloud-devops-data/tree/master/db) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest)
 - step3, Configure hosts, Add local domain name resolution.（C:\Windows\System32\drivers\etc or vim /etc/hosts）：
