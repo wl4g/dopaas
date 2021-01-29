@@ -8,7 +8,7 @@
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-dts-tool</artifactId>
+		<artifactId>xcloud-devops-dts-tools</artifactId>
 		<version>master</version>
 	</parent>
 	<properties>
