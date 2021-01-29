@@ -27,9 +27,13 @@ English version goes [here](README.md)
 ### 快速开始示例：
 为了更简洁起见，每个服务仅部署单节点到同一台物理机，作为伪集群。
 - step1：编译
+
 ```
 cd xcloud-devops
-mvn -U clean install -DskipTests -T 2C
+# 打包为单个可执行jar
+mvn -U clean install -DskipTests -T 2C -P springExecJar
+# 打包为通用软件发布包(目录结构)
+# mvn -U clean install -DskipTests -T 2C -P mvnAssTar
 ```
 - step2：初始化数据库，首先准备一台CentOS6.5+以及MySQL5.6+实例，新建名为devops(utf8/utf8_bin)的数据库，再使用 [初始sql脚本](../../../xcloud-devops-data/tree/master/db) 进行初始化它。（注：此脚本与代码版本对应，我们会定期更新，请使用最新）
 - step3：配置hosts，添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
