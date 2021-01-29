@@ -15,17 +15,16 @@
  */
 package com.wl4g.devops.common.constant;
 
-import com.wl4g.component.core.constant.BaseConstant;
-
 /**
- * DevOps constants definitions.
+ * DTS constants
  * 
- * @author wangl.sir
- * @version v1.0 2019年7月5日
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-01-29
+ * @sine v1.0
+ * @see
  */
-public abstract class DevOpsConstants extends BaseConstant {
+public abstract class DTSConstants extends DevOpsConstants {
 
-	public final static String KEY_DEVOPS_BASE_PREFIX = "spring.xcloud.devops";
+	public final static String KEY_CODEGEN_PREFIX = KEY_DEVOPS_BASE_PREFIX + ".dts.codegen";
 
 }

@@ -9,4 +9,4 @@
 #
 
 # #### Environment(SpringCloud Feign) configuration. ####
-provider.serviceId.iam-facade: iam-facade
+provider.serviceId.dts-facade: dts-facade
