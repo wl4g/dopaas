@@ -112,7 +112,7 @@ public class GenerateServiceImpl implements GenerateService {
 
 	@Override
 	public PageHolder<GenTable> page(PageHolder<GenTable> pm, String tableName, Long projectId) {
-		pm.startPage();
+		pm.count().startPage();
 		pm.setRecords(genTableDao.list(tableName, projectId));
 		return pm;
 	}

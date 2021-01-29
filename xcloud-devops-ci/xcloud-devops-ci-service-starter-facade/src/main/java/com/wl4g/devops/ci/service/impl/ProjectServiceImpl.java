@@ -133,7 +133,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public PageHolder<Project> list(PageHolder<Project> pm, String groupName, String projectName) {
-		pm.startPage();
+		pm.count().startPage();
 		List<Project> list = projectDao.list(getRequestOrganizationCodes(), groupName, projectName, null);
 		for (Project project : list) {
 			project.setVcs(null);

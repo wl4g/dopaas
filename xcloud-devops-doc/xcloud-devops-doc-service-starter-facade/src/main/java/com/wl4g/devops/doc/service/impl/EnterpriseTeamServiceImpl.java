@@ -49,7 +49,7 @@ public class EnterpriseTeamServiceImpl implements EnterpriseTeamService {
     @Override
     public PageHolder<EnterpriseTeam> page(EnterpriseTeamPageRequest enterpriseTeamPageRequest) {
         PageHolder<EnterpriseTeam> pm = enterpriseTeamPageRequest.getPm();
-        pm.startPage();
+        pm.count().startPage();
         EnterpriseTeam enterpriseTeam = new EnterpriseTeam();
         BeanUtils.copyProperties(enterpriseTeamPageRequest, enterpriseTeam);
         pm.setRecords(enterpriseTeamDao.list(enterpriseTeam));

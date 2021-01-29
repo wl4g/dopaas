@@ -52,7 +52,7 @@ public class PcmServcieImpl implements PcmService {
 
 	@Override
 	public PageHolder<Pcm> list(PageHolder<Pcm> pm, String name, String providerKind, Integer authType) {
-		pm.startPage();
+		pm.count().startPage();
 		pm.setRecords(pcmDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;
 	}
