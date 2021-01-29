@@ -1,21 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-dts</artifactId>
+	<artifactId>xcloud-devops-dts-tools</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSevOps DTS(Develop Tool Suite Services)</name>
+	<name>XCloud DevSevOps DTS Tools</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops</artifactId>
+		<artifactId>xcloud-devops-dts</artifactId>
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-dts-tools</module>
-		<module>xcloud-devops-dts-codegen</module>
-		<module>xcloud-devops-dts-service-facade</module>
-		<module>xcloud-devops-dts-service-starter-facade</module>
-		<module>xcloud-devops-dts-service-starter-manager</module>
+		<module>xcloud-devops-dts-tools-devel</module>
+		<module>xcloud-devops-dts-tools-hbase-migrator</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
