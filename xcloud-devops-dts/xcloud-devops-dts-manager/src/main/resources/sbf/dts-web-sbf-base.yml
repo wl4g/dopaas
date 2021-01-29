@@ -8,5 +8,9 @@
 # limitations under the License.
 #
 
-# #### Environment(SpringCloud Feign) configuration. ####
-provider.serviceId.iam-facade: iam-facade
+# #### Environment(SpringBoot Feign) configuration. ####
+#
+
+provider:
+  serverPort: 14081
+  contextPath: /

@@ -8,5 +8,5 @@
 # limitations under the License.
 #
 
-# #### Environment(SpringCloud Feign for Uat) configuration. ####
+# #### Environment(SpringCloud Feign) configuration. ####
 provider.serviceId.doc-facade: doc-facade

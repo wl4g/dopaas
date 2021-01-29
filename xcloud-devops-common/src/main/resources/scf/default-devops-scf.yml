@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(SpringCloud Feign for Uat) configuration. ####
+# #### Environment(SpringCloud Feign) configuration. ####
 # see: https://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/2.2.2.RELEASE/reference/html
 spring:
   util.timeout.sec: 60 # Default by 1sec

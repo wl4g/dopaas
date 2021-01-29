@@ -16,6 +16,7 @@
 package com.wl4g.devops.dts.codegen.config;
 
 import com.wl4g.component.core.framework.beans.NamingPrototype;
+import com.wl4g.devops.common.constant.DTSConstants;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.console.CodegenConsole;
 import com.wl4g.devops.dts.codegen.engine.DefaultGenerateEngineImpl;
@@ -60,7 +61,7 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@ConfigurationProperties(prefix = "spring.boot.xcloud.dts.codegen")
+	@ConfigurationProperties(prefix = DTSConstants.KEY_CODEGEN_PREFIX)
 	public CodegenProperties codegenProperties() {
 		return new CodegenProperties();
 	}
