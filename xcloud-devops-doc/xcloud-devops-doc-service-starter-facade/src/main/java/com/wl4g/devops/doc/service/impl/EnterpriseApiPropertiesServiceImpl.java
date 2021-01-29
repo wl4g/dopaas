@@ -48,7 +48,7 @@ public class EnterpriseApiPropertiesServiceImpl implements EnterpriseApiProperti
     @Override
     public PageHolder<EnterpriseApiProperties> page( EnterpriseApiPropertiesPageRequest enterpriseApiPropertiesPageRequest) {
         PageHolder<EnterpriseApiProperties> pm = enterpriseApiPropertiesPageRequest.getPm();
-        pm.startPage();
+        pm.count().startPage();
         EnterpriseApiProperties enterpriseApiProperties = new EnterpriseApiProperties();
         BeanUtils.copyProperties(enterpriseApiPropertiesPageRequest,enterpriseApiProperties);
         pm.setRecords(enterpriseApiPropertiesDao.list(enterpriseApiProperties));

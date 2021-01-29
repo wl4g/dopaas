@@ -60,7 +60,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 
 	@Override
 	public PageHolder<Orchestration> list(PageHolder<Orchestration> pm, String name) {
-		pm.startPage();
+		pm.count().startPage();
 		pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

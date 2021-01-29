@@ -60,7 +60,7 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
     @Override
     public PageHolder<EnterpriseApi> page(EnterpriseApiPageRequest enterpriseApiPageRequest) {
         PageHolder<EnterpriseApi> pm = enterpriseApiPageRequest.getPm();
-        pm.startPage();
+        pm.count().startPage();
         EnterpriseApi enterpriseApi = new EnterpriseApi();
         BeanUtils.copyProperties(enterpriseApiPageRequest, enterpriseApi);
         pm.setRecords(enterpriseApiDao.list(enterpriseApi));

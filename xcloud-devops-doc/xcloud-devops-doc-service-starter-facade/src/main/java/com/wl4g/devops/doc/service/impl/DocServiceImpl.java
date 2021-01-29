@@ -80,7 +80,7 @@ public class DocServiceImpl implements DocService {
 
 	@Override
 	public PageHolder<FileChanges> list(PageHolder<FileChanges> pm, String name, String lang, Long labelId) {
-		pm.startPage();
+		pm.count().startPage();
 		List<FileChanges> list = fileChangesDao.list(name, lang, labelId);
 		pm.setRecords(list);
 		return pm;

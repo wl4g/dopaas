@@ -58,7 +58,7 @@ public class AppClusterServiceImpl implements AppClusterService {
 	@Override
 	public Map<String, Object> list(PageHolder<?> pm, String clusterName, Integer deployType) {
 		Map<String, Object> data = new HashMap<>();
-		pm.startPage();
+		pm.count().startPage();
 		// Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(),
 		// pm.getPageSize(), true);
 		List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(), clusterName, deployType);
@@ -66,7 +66,7 @@ public class AppClusterServiceImpl implements AppClusterService {
 			Long count = appInstanceDao.countByClusterId(appCluster.getId());
 			appCluster.setInstanceCount(count);
 		}
-		pm.setTotal(PageHolder.getCurrentPage().getTotal());
+		pm.setTotal(PageHolder.currentPage().getTotal());
 		data.put("page", pm);
 		data.put("list", list);
 		return data;

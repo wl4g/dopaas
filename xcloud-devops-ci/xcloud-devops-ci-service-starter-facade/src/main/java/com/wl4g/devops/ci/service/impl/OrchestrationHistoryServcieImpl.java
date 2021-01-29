@@ -44,7 +44,7 @@ public class OrchestrationHistoryServcieImpl implements OrchestrationHistoryServ
 
 	@Override
 	public PageHolder<OrchestrationHistory> list(PageHolder<OrchestrationHistory> pm, String runId) {
-		pm.startPage();
+		pm.count().startPage();
 		List<OrchestrationHistory> list = orchestrationHistoryDao.list(getRequestOrganizationCodes(), runId);
 		for (OrchestrationHistory orch : list) {
 			List<PipelineHistory> pipeHis = pipelineHistoryDao.list(getRequestOrganizationCodes(), null, null, null, null, null,

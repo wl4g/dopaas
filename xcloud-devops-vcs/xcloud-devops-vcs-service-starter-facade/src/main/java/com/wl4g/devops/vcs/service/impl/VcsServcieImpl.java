@@ -62,7 +62,7 @@ public class VcsServcieImpl implements VcsService {
 
 	@Override
 	public PageHolder<Vcs> list(PageHolder<Vcs> pm, String name, String providerKind, Integer authType) {
-		pm.startPage();
+		pm.count().startPage();
 		pm.setRecords(vcsDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;
 	}
