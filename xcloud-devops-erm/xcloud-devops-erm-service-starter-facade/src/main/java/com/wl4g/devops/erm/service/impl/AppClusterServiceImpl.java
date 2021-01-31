@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.erm.AppCluster;
@@ -36,12 +37,15 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
 @Service
 public class AppClusterServiceImpl implements AppClusterService {
+
+	protected SmartLogger log = getLogger(getClass());
 
 	@Autowired
 	private AppClusterDao appClusterDao;
@@ -62,11 +66,12 @@ public class AppClusterServiceImpl implements AppClusterService {
 		// Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(),
 		// pm.getPageSize(), true);
 		List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(), clusterName, deployType);
+		pm.setTotal(PageHolder.currentPage().getTotal());
+
 		for (AppCluster appCluster : list) {
 			Long count = appInstanceDao.countByClusterId(appCluster.getId());
 			appCluster.setInstanceCount(count);
 		}
-		pm.setTotal(PageHolder.currentPage().getTotal());
 		data.put("page", pm);
 		data.put("list", list);
 		return data;
