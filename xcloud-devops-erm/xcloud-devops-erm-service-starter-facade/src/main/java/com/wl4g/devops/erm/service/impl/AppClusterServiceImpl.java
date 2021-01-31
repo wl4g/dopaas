@@ -66,7 +66,7 @@ public class AppClusterServiceImpl implements AppClusterService {
 		// Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(),
 		// pm.getPageSize(), true);
 		List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(), clusterName, deployType);
-		pm.setTotal(PageHolder.currentPage().getTotal());
+		pm.setTotal(PageHolder.current().getTotal());
 
 		for (AppCluster appCluster : list) {
 			Long count = appInstanceDao.countByClusterId(appCluster.getId());
