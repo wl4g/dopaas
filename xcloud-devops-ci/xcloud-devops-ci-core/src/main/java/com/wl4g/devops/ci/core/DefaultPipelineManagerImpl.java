@@ -26,7 +26,7 @@ import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.core.orchestration.DefaultOrchestrationManagerImpl;
+import com.wl4g.devops.ci.core.orchestration.OrchestrationManager;
 import com.wl4g.devops.ci.data.PipeStageNotificationDao;
 import com.wl4g.devops.ci.pipeline.provider.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
@@ -94,7 +94,7 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
-	protected DefaultOrchestrationManagerImpl flowManager;
+	protected OrchestrationManager orchestrationManager;
 
 	@Autowired
 	protected AppInstanceService appInstanceService;
@@ -180,7 +180,7 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 				continue;
 			}
 			Pipeline pipeline = list.get(0);
-			PipelineModel pipeModel = flowManager.buildPipeline(pipeline.getId());
+			PipelineModel pipeModel = orchestrationManager.buildPipeline(pipeline.getId());
 			HookParameter hookParameter = new HookParameter();
 			hookParameter.setPipeId(pipeline.getId());
 			hookParameter.setRemark("Build for hook");
@@ -237,7 +237,7 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 		pipelineModel.setService(provider.getContext().getAppCluster().getName());
 		pipelineModel.setProvider(provider.getContext().getPipeline().getProviderKind());
 		pipelineModel.setStatus(RUNNING.toString());
-		flowManager.pipelineStateChange(pipelineModel);
+		orchestrationManager.pipelineStateChange(pipelineModel);
 
 		// Starting pipeline job.
 		jobExecutor.getWorker().execute(() -> {
@@ -258,7 +258,7 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 
 				// flow status
 				pipelineModel.setStatus(SUCCESS.toString());
-				flowManager.pipelineStateChange(pipelineModel);
+				orchestrationManager.pipelineStateChange(pipelineModel);
 
 				postPipelineRunSuccess(taskId, provider);
 
@@ -279,7 +279,7 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 
 				// flow status
 				pipelineModel.setStatus(FAILED.toString());
-				flowManager.pipelineStateChange(pipelineModel);
+				orchestrationManager.pipelineStateChange(pipelineModel);
 
 				// Failed process.
 				log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
@@ -289,7 +289,7 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for pipeline taskId: {}", taskId);
 				pipeHistoryService.updateCostTime(taskId, (currentTimeMillis() - startTime));
-				flowManager.pipelineComplete(provider.getContext().getPipelineModel().getRunId());
+				orchestrationManager.pipelineComplete(provider.getContext().getPipelineModel().getRunId());
 			}
 		});
 	}

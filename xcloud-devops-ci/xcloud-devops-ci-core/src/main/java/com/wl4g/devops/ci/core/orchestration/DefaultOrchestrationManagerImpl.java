@@ -51,27 +51,26 @@ import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizat
 import static java.util.Objects.isNull;
 
 /**
+ * {@link DefaultOrchestrationManagerImpl}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2020-03-09 09:27:00
+ * @sine v1.0
+ * @see
  */
 public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
 	protected final Logger log = getLogger(getClass());
 
 	@Autowired
 	private JedisService jedisService;
-
 	@Autowired
 	private PipelineManager pipelineManager;
-
 	@Autowired
-	protected PipelineJobExecutor jobExecutor;
-
+	private PipelineJobExecutor jobExecutor;
 	@Autowired
 	private OrchestrationDao orchestrationDao;
-
 	@Autowired
-	OrchestrationHistoryDao orchestrationHistoryDao;
-
+	private OrchestrationHistoryDao orchestrationHistoryDao;
 	@Autowired
 	private PipelineHistoryDao pipelineHistoryDao;
 
