@@ -62,7 +62,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.devops.vcs.dao: DEBUG
+      wl4g.devops.vcs.data: DEBUG
 
 # ### Server configuration. ###
 server:
