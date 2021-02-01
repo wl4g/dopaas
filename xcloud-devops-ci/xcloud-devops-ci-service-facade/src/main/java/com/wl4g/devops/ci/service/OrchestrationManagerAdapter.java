@@ -19,7 +19,7 @@ import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.common.bean.ci.model.PipelineModel;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +37,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  */
 @FeignConsumer(name = "${provider.serviceId.ci-facade:flowPipelineManager-service}")
 @RequestMapping("/flowPipelineManager")
-public interface OrchestrationManagerAdapterService {
+public interface OrchestrationManagerAdapter {
 
 	/**
 	 * Start to run orchestration
@@ -51,13 +51,13 @@ public interface OrchestrationManagerAdapterService {
 			@RequestParam(name = "taskTraceType", required = false) String taskTraceType,
 			@RequestParam(name = "annex", required = false) String annex);
 
+	// TODO add distributed locks
 	/**
 	 * for single pipeline
 	 *
 	 * @param pipelineId
 	 * @return
 	 */
-	// TODO 这里需要添加redis锁（）jedisService.setMap()
 	@RequestMapping(method = POST, path = "buildPipeline")
 	public PipelineModel buildPipeline(@RequestParam(name = "pipelineId", required = false) Long pipelineId);
 

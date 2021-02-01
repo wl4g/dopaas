@@ -23,12 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.devops.ci.core.orchestration.OrchestrationManager;
-import com.wl4g.devops.ci.service.OrchestrationManagerAdapterService;
+import com.wl4g.devops.ci.service.OrchestrationManagerAdapter;
 import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.common.bean.ci.model.PipelineModel;
 
 /**
- * {@link FlowPipelineManagerServiceImpl}
+ * {@link OrchestrationManagerAdapterImpl}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2021-01-22
@@ -36,20 +36,20 @@ import com.wl4g.devops.common.bean.ci.model.PipelineModel;
  * @see
  */
 @Service
-public class FlowPipelineManagerServiceImpl implements OrchestrationManagerAdapterService {
+public class OrchestrationManagerAdapterImpl implements OrchestrationManagerAdapter {
 
 	@Autowired
-	private OrchestrationManager flowManager;
+	private OrchestrationManager orchestrationManager;
 
 	@Override
 	public void runOrchestration(Orchestration orchestration, String remark, String taskTraceId, String taskTraceType,
 			String annex) {
-		flowManager.runOrchestration(orchestration, remark, taskTraceId, taskTraceType, annex);
+		orchestrationManager.runOrchestration(orchestration, remark, taskTraceId, taskTraceType, annex);
 	}
 
 	@Override
 	public PipelineModel buildPipeline(Long pipelineId) {
-		return flowManager.buildPipeline(pipelineId);
+		return orchestrationManager.buildPipeline(pipelineId);
 	}
 
 }

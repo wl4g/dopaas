@@ -24,13 +24,13 @@ import org.springframework.stereotype.Service;
 
 import com.wl4g.component.common.io.FileIOUtils.ReadResult;
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.service.PipelineManagerAdapterService;
+import com.wl4g.devops.ci.service.PipelineManagerAdapter;
 import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
 import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
 
 /**
- * {@link PipelineManagerServiceImpl}
+ * {@link PipelineManagerAdapterImpl}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2021-01-22
@@ -38,7 +38,7 @@ import com.wl4g.devops.common.bean.ci.param.RunParameter;
  * @see
  */
 @Service
-public class PipelineManagerServiceImpl implements PipelineManagerAdapterService {
+public class PipelineManagerAdapterImpl implements PipelineManagerAdapter {
 
 	@Autowired
 	private PipelineManager pipelineManager;

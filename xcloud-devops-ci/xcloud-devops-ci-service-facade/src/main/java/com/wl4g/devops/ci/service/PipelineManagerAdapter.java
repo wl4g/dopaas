@@ -27,7 +27,7 @@ import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
 import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * CICD pipeline entry management.
@@ -38,7 +38,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
  */
 @FeignConsumer(name = "${provider.serviceId.ci-facade:pipelineManager-service}")
 @RequestMapping("/pipelineManager")
-public interface PipelineManagerAdapterService {
+public interface PipelineManagerAdapter {
 
 	/**
 	 * New create pipeline task job.
@@ -53,7 +53,7 @@ public interface PipelineManagerAdapterService {
 	 * 
 	 * @param rollback
 	 */
-	@RequestMapping(method = POST, path = "runPipeline")
+	@RequestMapping(method = POST, path = "rollbackPipeline")
 	void rollbackPipeline(@RequestBody RollbackParameter rollback);
 
 	/**

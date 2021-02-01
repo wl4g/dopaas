@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci;
 
 import com.wl4g.CiFacade;
-import com.wl4g.devops.ci.service.OrchestrationManagerAdapterService;
-import com.wl4g.devops.ci.service.PipelineManagerAdapterService;
+import com.wl4g.devops.ci.service.OrchestrationManagerAdapter;
+import com.wl4g.devops.ci.service.PipelineManagerAdapter;
 import com.wl4g.devops.common.bean.ci.model.PipelineModel;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
 
@@ -41,10 +41,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class PipelineManagerTests {
 
 	@Autowired
-	private PipelineManagerAdapterService pipelineManager;
+	private PipelineManagerAdapter pipelineManager;
 
 	@Autowired
-	private OrchestrationManagerAdapterService flowManagerService;
+	private OrchestrationManagerAdapter flowManagerService;
 
 	@Test
 	public void createTask() throws Exception {
