@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.tool;
 
-import com.wl4g.component.common.annotation.Nullable;
 import com.wl4g.component.common.task.RunnerProperties;
 import com.wl4g.component.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.ci.config.CiProperties;
@@ -25,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 
 import java.util.Calendar;
+
+import javax.annotation.Nullable;
 
 import static com.wl4g.component.common.lang.TypeConverts.safeLongToInt;
 import static java.util.Objects.isNull;

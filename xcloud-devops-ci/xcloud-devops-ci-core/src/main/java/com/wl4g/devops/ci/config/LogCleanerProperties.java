@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.config;
 
 import static java.util.concurrent.TimeUnit.DAYS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 import java.io.Serializable;
 
@@ -33,12 +34,12 @@ public class LogCleanerProperties implements Serializable {
 	 * For example, the time (in seconds) to wait for initialization after
 	 * restart.
 	 */
-	private long initialDelaySec = 3 * 60;
+	private long initialDelaySec = MINUTES.toSeconds(1);
 
 	/**
 	 * Interval between log cleaner scans (seconds).
 	 */
-	private long periodSec = 30 * 60;
+	private long periodSec = MINUTES.toSeconds(30);
 
 	/**
 	 * Pipeline construction history, maximum age seconds saved, overdue will be
