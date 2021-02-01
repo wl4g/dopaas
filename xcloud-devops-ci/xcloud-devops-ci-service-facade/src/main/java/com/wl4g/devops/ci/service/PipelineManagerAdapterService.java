@@ -15,19 +15,17 @@
  */
 package com.wl4g.devops.ci.service;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.wl4g.component.common.io.FileIOUtils.ReadResult;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
 import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
-
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * CICD pipeline entry management.
@@ -53,7 +51,7 @@ public interface PipelineManagerAdapterService {
 	 * 
 	 * @param rollback
 	 */
-	@RequestMapping(method = POST, path = "runPipeline")
+	@RequestMapping(method = POST, path = "rollbackPipeline")
 	void rollbackPipeline(@RequestBody RollbackParameter rollback);
 
 	/**
