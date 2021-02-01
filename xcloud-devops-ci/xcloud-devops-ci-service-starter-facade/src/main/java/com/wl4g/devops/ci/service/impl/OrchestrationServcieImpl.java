@@ -22,7 +22,7 @@ import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.devops.ci.data.OrchestrationDao;
 import com.wl4g.devops.ci.data.OrchestrationPipelineDao;
-import com.wl4g.devops.ci.service.OrchestrationManagerAdapterService;
+import com.wl4g.devops.ci.service.OrchestrationManagerAdapter;
 import com.wl4g.devops.ci.service.OrchestrationService;
 import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.common.bean.ci.OrchestrationPipeline;
@@ -53,7 +53,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 	private OrchestrationPipelineDao orchestrationPipelineDao;
 
 	@Autowired
-	private OrchestrationManagerAdapterService flowManagerService;
+	private OrchestrationManagerAdapter flowManagerService;
 
 	@Autowired
 	private JedisService jedisService;

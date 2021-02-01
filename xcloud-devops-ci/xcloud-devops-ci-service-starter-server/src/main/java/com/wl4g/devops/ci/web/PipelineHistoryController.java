@@ -19,8 +19,8 @@ import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.devops.ci.service.OrchestrationManagerAdapterService;
-import com.wl4g.devops.ci.service.PipelineManagerAdapterService;
+import com.wl4g.devops.ci.service.OrchestrationManagerAdapter;
+import com.wl4g.devops.ci.service.PipelineManagerAdapter;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.model.PipelineModel;
@@ -48,10 +48,10 @@ public class PipelineHistoryController extends BaseController {
 	private PipelineHistoryService pipelineHistoryService;
 
 	@Autowired
-	private PipelineManagerAdapterService pipelineManagerService;
+	private PipelineManagerAdapter pipelineManagerService;
 
 	@Autowired
-	private OrchestrationManagerAdapterService flowManagerService;
+	private OrchestrationManagerAdapter flowManagerService;
 
 	/**
 	 * Query search of page
