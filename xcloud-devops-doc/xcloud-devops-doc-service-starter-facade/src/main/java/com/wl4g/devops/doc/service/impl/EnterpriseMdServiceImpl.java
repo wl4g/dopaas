@@ -45,4 +45,9 @@ public class EnterpriseMdServiceImpl implements EnterpriseMdService {
     public String mdToHtml(String md) throws IOException, TemplateException {
         return md2Html.mdToHtml(md);
     }
+
+    @Override
+    public void formatTemplate(String md, String template) throws Exception {
+        md2Html.formatTemplate(template, md);
+    }
 }

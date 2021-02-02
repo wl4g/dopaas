@@ -8,6 +8,7 @@ import com.wl4g.devops.doc.config.DocProperties;
 import com.wl4g.devops.doc.model.TemplateFormatModel;
 import com.wl4g.devops.doc.service.EnterpriseApiService;
 import com.wl4g.devops.doc.service.md.MdLocator;
+import com.wl4g.devops.doc.service.md.MdMenuTree;
 import com.wl4g.devops.doc.service.md.MdResource;
 import com.wl4g.devops.doc.service.template.GenTemplateLocator;
 import com.wl4g.devops.doc.service.template.TemplateResource;
@@ -74,6 +75,8 @@ public class Md2Html {
 
         List<MdResource> mdResources = mdLocator.locate(mdName);
 
+        List<MdMenuTree> mdMenuTrees = mdLocator.loadMenuTree(mdName);
+
         // 暂时使用这种规则的输出路径地址
         String baseWritePath = splicePath(docProperties.getBasePath(), HTML_OUTPUT_PATH, templateName, String.valueOf(System.currentTimeMillis()));
 
@@ -88,6 +91,8 @@ public class Md2Html {
 
                         TemplateFormatModel templateFormatModel = new TemplateFormatModel();
                         templateFormatModel.setPath(mdResource.getRawFilename());
+
+                        templateFormatModel.setMdMenuTrees(mdMenuTrees);
 
                         templateFormatModel.setMdHtml(md2html);
 
