@@ -15,8 +15,49 @@
  */
 package com.wl4g.devops.ci.core;
 
+import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.io.FileIOUtils.seekReadLines;
+import static com.wl4g.component.common.io.FileIOUtils.writeALineFile;
+import static com.wl4g.component.common.io.FileIOUtils.writeBLineFile;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.ci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.FAILED;
+import static com.wl4g.devops.ci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.RUNNING;
+import static com.wl4g.devops.ci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.SUCCESS;
+import static com.wl4g.devops.common.constant.CiConstants.LOG_FILE_END;
+import static com.wl4g.devops.common.constant.CiConstants.LOG_FILE_START;
+import static com.wl4g.devops.common.constant.CiConstants.TASK_STATUS_CREATE;
+import static com.wl4g.devops.common.constant.CiConstants.TASK_STATUS_FAIL;
+import static com.wl4g.devops.common.constant.CiConstants.TASK_STATUS_PART_SUCCESS;
+import static com.wl4g.devops.common.constant.CiConstants.TASK_STATUS_RUNNING;
+import static com.wl4g.devops.common.constant.CiConstants.TASK_STATUS_STOP;
+import static com.wl4g.devops.common.constant.CiConstants.TASK_STATUS_STOPING;
+import static com.wl4g.devops.common.constant.CiConstants.TASK_STATUS_SUCCESS;
+import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.springframework.util.Assert.notNull;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.io.FileIOUtils.*;
+import com.wl4g.component.common.io.FileIOUtils.ReadTailFrame;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
@@ -35,7 +76,15 @@ import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.utils.HookCommandHolder.BuildCommand;
 import com.wl4g.devops.ci.utils.HookCommandHolder.DeployCommand;
 import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
-import com.wl4g.devops.common.bean.ci.*;
+import com.wl4g.devops.common.bean.ci.ClusterExtension;
+import com.wl4g.devops.common.bean.ci.PipeStageBuilding;
+import com.wl4g.devops.common.bean.ci.PipeStageBuildingProject;
+import com.wl4g.devops.common.bean.ci.PipeStageInstanceCommand;
+import com.wl4g.devops.common.bean.ci.PipeStageNotification;
+import com.wl4g.devops.common.bean.ci.Pipeline;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
+import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
+import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.model.ActionControl;
 import com.wl4g.devops.common.bean.ci.model.PipelineModel;
 import com.wl4g.devops.common.bean.ci.param.HookParameter;
@@ -49,28 +98,6 @@ import com.wl4g.devops.erm.service.AppClusterService;
 import com.wl4g.devops.erm.service.AppInstanceService;
 import com.wl4g.devops.erm.service.DockerRepositoryService;
 import com.wl4g.iam.service.ContactService;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.File;
-import java.util.*;
-
-import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.io.FileIOUtils.*;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.ci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.*;
-import static com.wl4g.devops.common.constant.CiConstants.*;
-import static java.lang.String.format;
-import static java.lang.System.currentTimeMillis;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.Assert.notNull;
 
 /**
  * Default CI/CD pipeline management implements.
@@ -192,7 +219,7 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 	}
 
 	@Override
-	public ReadResult logfile(Long taskHisId, Long startPos, Integer size) {
+	public ReadTailFrame logfile(Long taskHisId, Long startPos, Integer size) {
 		if (isNull(startPos)) {
 			startPos = 0l;
 		}
@@ -205,7 +232,7 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 	}
 
 	@Override
-	public ReadResult logDetailFile(Long taskHisId, Long instanceId, Long startPos, Integer size) {
+	public ReadTailFrame logDetailFile(Long taskHisId, Long instanceId, Long startPos, Integer size) {
 		if (isNull(startPos)) {
 			startPos = 0l;
 		}

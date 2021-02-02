@@ -21,7 +21,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.component.common.io.FileIOUtils.ReadResult;
+import com.wl4g.component.common.io.FileIOUtils.ReadTailFrame;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
 import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
@@ -73,7 +73,7 @@ public interface PipelineManagerAdapter {
 	 * @return
 	 */
 	@RequestMapping(method = GET, path = "logfile")
-	ReadResult logfile(@RequestParam(name = "taskHisId", required = false) Long taskHisId,
+	ReadTailFrame logfile(@RequestParam(name = "taskHisId", required = false) Long taskHisId,
 			@RequestParam(name = "startPos", required = false) Long startPos,
 			@RequestParam(name = "size", required = false) Integer size);
 
@@ -87,7 +87,7 @@ public interface PipelineManagerAdapter {
 	 * @return
 	 */
 	@RequestMapping(method = GET, path = "logDetailFile")
-	ReadResult logDetailFile(@RequestParam(name = "taskHisId", required = false) Long taskHisId,
+	ReadTailFrame logDetailFile(@RequestParam(name = "taskHisId", required = false) Long taskHisId,
 			@RequestParam(name = "instanceId", required = false) Long instanceId,
 			@RequestParam(name = "startPos", required = false) Long startPos,
 			@RequestParam(name = "size", required = false) Integer size);

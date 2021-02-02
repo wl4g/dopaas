@@ -107,7 +107,7 @@ public class PipelineHistoryController extends BaseController {
 	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
 	public RespBase<?> readLog(Long pipeHisId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipelineManagerService.logfile(pipeHisId, startPos, size);
+		FileIOUtils.ReadTailFrame readResult = pipelineManagerService.logfile(pipeHisId, startPos, size);
 		resp.forMap().put("data", readResult);
 		return resp;
 	}
@@ -116,7 +116,7 @@ public class PipelineHistoryController extends BaseController {
 	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
 	public RespBase<?> readDetailLog(Long pipeHisId, Long instanceId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
-		FileIOUtils.ReadResult readResult = pipelineManagerService.logDetailFile(pipeHisId, instanceId, startPos, size);
+		FileIOUtils.ReadTailFrame readResult = pipelineManagerService.logDetailFile(pipeHisId, instanceId, startPos, size);
 		resp.forMap().put("data", readResult);
 		return resp;
 	}

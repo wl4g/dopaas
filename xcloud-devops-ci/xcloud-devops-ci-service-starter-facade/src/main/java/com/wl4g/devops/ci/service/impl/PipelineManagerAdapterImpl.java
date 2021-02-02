@@ -22,7 +22,7 @@ package com.wl4g.devops.ci.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.component.common.io.FileIOUtils.ReadResult;
+import com.wl4g.component.common.io.FileIOUtils.ReadTailFrame;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.service.PipelineManagerAdapter;
 import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
@@ -59,12 +59,12 @@ public class PipelineManagerAdapterImpl implements PipelineManagerAdapter {
 	}
 
 	@Override
-	public ReadResult logfile(Long taskHisId, Long startPos, Integer size) {
+	public ReadTailFrame logfile(Long taskHisId, Long startPos, Integer size) {
 		return pipelineManager.logfile(taskHisId, startPos, size);
 	}
 
 	@Override
-	public ReadResult logDetailFile(Long taskHisId, Long instanceId, Long startPos, Integer size) {
+	public ReadTailFrame logDetailFile(Long taskHisId, Long instanceId, Long startPos, Integer size) {
 		return pipelineManager.logDetailFile(taskHisId, instanceId, startPos, size);
 	}
 

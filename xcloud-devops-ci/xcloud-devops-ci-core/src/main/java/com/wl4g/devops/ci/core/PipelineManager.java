@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.component.common.io.FileIOUtils.ReadResult;
+import com.wl4g.component.common.io.FileIOUtils.ReadTailFrame;
 import com.wl4g.devops.ci.utils.HookCommandHolder.HookCommand;
 import com.wl4g.devops.common.bean.ci.param.RollbackParameter;
 import com.wl4g.devops.common.bean.ci.param.RunParameter;
@@ -58,7 +58,7 @@ public interface PipelineManager {
 	 * @param size
 	 * @return
 	 */
-	ReadResult logfile(Long taskHisId, Long startPos, Integer size);
+	ReadTailFrame logfile(Long taskHisId, Long startPos, Integer size);
 
 	/**
 	 * Reader pipeline task detail deploying logs.
@@ -69,6 +69,6 @@ public interface PipelineManager {
 	 * @param size
 	 * @return
 	 */
-	ReadResult logDetailFile(Long taskHisId, Long instanceId, Long startPos, Integer size);
+	ReadTailFrame logDetailFile(Long taskHisId, Long instanceId, Long startPos, Integer size);
 
 }
