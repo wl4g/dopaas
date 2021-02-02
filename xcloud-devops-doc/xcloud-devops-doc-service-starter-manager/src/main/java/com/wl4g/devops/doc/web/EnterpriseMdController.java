@@ -67,6 +67,14 @@ public class EnterpriseMdController extends BaseController {
         return resp;
     }
 
+    @RequestMapping(value = "/formatTemplate", method = { POST, GET })
+    public RespBase<?> formatTemplate(String md,String template) throws Exception {
+        RespBase<Object> resp = RespBase.create();
+        enterpriseMdService.formatTemplate(md, template);
+        //resp.setData();
+        return resp;
+    }
+
 
 
 }

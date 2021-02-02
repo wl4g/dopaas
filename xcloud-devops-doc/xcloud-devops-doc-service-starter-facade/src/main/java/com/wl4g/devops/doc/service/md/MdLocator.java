@@ -36,11 +36,8 @@ public interface MdLocator {
 	 */
 	List<MdResource> locate(String provider) throws Exception;
 
-	/**
-	 * Cleanup located templates cache all.
-	 * 
-	 * @return
-	 */
-	boolean cleanAll();
+
+	List<MdMenuTree> loadMenuTree(String provider) throws Exception;
+
 
 }

@@ -40,7 +40,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public final class TemplateResource implements Serializable {
 	private static final long serialVersionUID = 4336198329362479594L;
 
-	final public static String GEN_MD_NAME = "mdName";
+	final public static String GEN_MD_NAME = "mdPath";
 
 	/**
 	 * Raw template resource filename.</br>
