@@ -38,3 +38,6 @@ spring:
         server-uri: http://iam.${DEVOPS_SERVICE_ZONE:wl4g.fat}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.fat}/#/share
+
+doc:
+  base-path: /mnt/disk1/doc-manager/data
