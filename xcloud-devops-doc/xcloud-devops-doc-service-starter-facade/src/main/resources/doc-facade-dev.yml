@@ -50,6 +50,3 @@ doc:
   base-path: /Users/vjay/doctestdir
   share-base-url: http://wl4g.debug:14051/share-manager
   doc-base-url: http://wl4g.debug:14060/doc-manager
-
-tpl:
-  basePath: /Users/vjay/doctestdir
