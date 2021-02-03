@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
@@ -68,11 +69,12 @@ public class EnterpriseMdController extends BaseController {
     }
 
     @RequestMapping(value = "/formatTemplate", method = { POST, GET })
-    public RespBase<?> formatTemplate(String md,String template) throws Exception {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseMdService.formatTemplate(md, template);
+    public void formatTemplate(HttpServletResponse response, String md, String template) throws Exception {
+        //RespBase<Object> resp = RespBase.create();
+        String genPath = enterpriseMdService.formatTemplate(md, template);
         //resp.setData();
-        return resp;
+        writeZip(response, genPath, "codegen-".concat(md).concat("-").concat(template));
+        //return resp;
     }
 
 
