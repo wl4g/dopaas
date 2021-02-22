@@ -19,13 +19,13 @@ set -e
 
 # Global definition.
 currDir=$([ "$currDir" == "" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir) && cd $currDir
-scriptBaseUrl="https://github.com/wl4g/xcloud-devops/tree/master/script/deploy"
+scriptBaseUrl="https://gitee.com/wl4g/xcloud-devops/tree/master/script/deploy"
 
 # Download deploy scripts.
-curl --connect-timeout 10 -m 10 -O $scriptBaseUrl/deploy-env.sh
-curl --connect-timeout 10 -m 10 -O $scriptBaseUrl/deploy-common.sh
-curl --connect-timeout 10 -m 10 -O $scriptBaseUrl/deploy-host.sh
-curl --connect-timeout 10 -m 10 -O $scriptBaseUrl/deploy-docker.sh
+curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-env.sh"
+curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-common.sh"
+curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-host.sh"
+curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-docker.sh"
 
 # Choose deploy mode.
 while true
@@ -36,7 +36,7 @@ do
     break;
   elif [ -n "$(echo $deployMode|egrep -i 'docker|DOCKER')" ]; then
     deployMode="DOCKER"
-    logErr "Docker deployment is not supported yet, please look forward to it! Welcome to join us, contact: <wanglsir@gmail.com, 983708408@qq.com>"
+    echo "Docker deployment is not supported yet, please look forward to it! Welcome to join us, contact: <wanglsir@gmail.com, 983708408@qq.com>"
     exit -1;
   else
     echo "Please reenter it!"
@@ -49,5 +49,8 @@ if [ "$deployMode" == "HOST" ]; then
 elif [ "$deployMode" == "DOCKER" ]; then
   bash $currDir/deploy-docker.sh
 else
-  logErr "Unknown deploy mode!"
+  echo "Unknown deploy mode!"
 fi
+
+# Cleanup
+\rm -rf "$currDir/deploy-*.sh"
