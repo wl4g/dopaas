@@ -19,13 +19,29 @@ set -e
 
 # Global definition.
 currDir=$([ "$currDir" == "" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir) && cd $currDir
-scriptBaseUrl="https://gitee.com/wl4g/xcloud-devops/tree/master/script/deploy"
+gitBaseUri="https://github.com/wl4g"
+scriptBaseUrl="$gitBaseUri/xcloud-devops/tree/master/script/deploy"
 
 # Download deploy scripts.
 curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-env.sh"
 curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-common.sh"
 curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-host.sh"
+curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-host.csv"
 curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-docker.sh"
+
+# Choose deploy config.
+while true
+do
+  read -t 10 -p "Do you want to install with the default configuration(yes|no)? (Modify to customize configuration: $currDir/deploy-env.sh)" confirm
+  if [ "$(echo $confirm|egrep -i 'yes')" ]; then
+    break;
+  elif [ "$(echo $confirm|egrep -i 'no')" ]; then
+    echo "Please try again after modified: $currDir/deploy-env.sh"
+    exit 0
+  else
+    echo "Please reenter it!"
+  fi
+done
 
 # Choose deploy mode.
 while true
