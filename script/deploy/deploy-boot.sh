@@ -25,12 +25,12 @@ secondaryScriptBaseUrl="https://gitee.com/wl4g/xcloud-devops/raw/master/script/d
 # Download deploy scripts.
 function downloadScripts() {
   local baseUrl=$1
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-env.sh"
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-common.sh"
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.sh"
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.csv"
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-docker.sh"
-  return $?
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-env.sh"; [ $? -ne 0 ] && return $?
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-common.sh"; [ $? -ne 0 ] && return $?
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.sh"; [ $? -ne 0 ] && return $?
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.csv"; [ $? -ne 0 ] && return $?
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-docker.sh"; [ $? -ne 0 ] && return $?
+  return 0
 }
 downloadScripts $scriptBaseUrl
 if [ $? -ne 0 ]; then
