@@ -30,6 +30,7 @@ function downloadScripts() {
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.sh"
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.csv"
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-docker.sh"
+  return $?
 }
 downloadScripts $scriptBaseUrl
 if [ $? -ne 0 ]; then
