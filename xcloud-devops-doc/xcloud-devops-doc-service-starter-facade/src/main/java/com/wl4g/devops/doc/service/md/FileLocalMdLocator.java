@@ -17,14 +17,17 @@ package com.wl4g.devops.doc.service.md;
 
 import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.devops.doc.config.DocProperties;
+import com.wl4g.devops.doc.util.PathUtils;
 import freemarker.template.Template;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import static com.wl4g.component.common.jvm.JvmRuntimeKit.isJVMDebugging;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static java.util.Objects.isNull;
 
 /**
  * {@link FileLocalMdLocator}
@@ -40,40 +43,66 @@ public class FileLocalMdLocator implements MdLocator {
 
     final private static String MD_PATH = "/md";
 
-    /**
-     * Generate template {@link Template} cache.
-     */
-    private final Map<String, List<MdResource>> templatesCache = new HashMap<>();
+    @Autowired
+    private DocProperties docProperties;
 
 
     @Override
     public List<MdResource> locate(String provider) throws Exception {
-        List<MdResource> tpls = templatesCache.get(provider);
-        if (isJVMDebugging || isNull(tpls)) {
-            synchronized (this) {
-                tpls = templatesCache.get(provider);
-                if (isJVMDebugging || isNull(tpls)) {
-                    tpls = new ArrayList<>();
 
-                    String basePath = "";
-                    String path = basePath + MD_PATH + "/" + provider;
+        List<MdResource> tpls = new ArrayList<>();
 
-                    Collection<File> files = FileIOUtils.listFiles(new File(path), null, true);
-                    for (File file : files) {
-                        tpls.add(wrapTemplate(path, file));
-                    }
-                    templatesCache.put(provider, tpls);
-                }
-            }
+        String basePath = docProperties.getBasePath();
+        String path = PathUtils.splicePath(basePath, MD_PATH, provider);
+
+        Collection<File> files = FileIOUtils.listFiles(new File(path), null, true);
+        for (File file : files) {
+            tpls.add(wrapTemplate(path, file));
         }
+        ;
+
         return tpls;
     }
 
     @Override
-    public boolean cleanAll() {
-        templatesCache.clear();
-        return true;
+    public List<MdMenuTree> loadMenuTree(String provider) throws Exception {
+
+        String basePath = docProperties.getBasePath();
+        String path = PathUtils.splicePath(basePath, MD_PATH, provider);
+        List<MdMenuTree> mdMenuTrees = new ArrayList<>();
+
+
+        File[] files = new File(path).listFiles();
+
+        getChildren(path, mdMenuTrees, files);
+        return mdMenuTrees;
     }
+
+    private void getChildren(String basePath, List<MdMenuTree> mdMenuTrees, File[] files) {
+        for (File file : files) {
+            MdMenuTree mdMenuTree = new MdMenuTree();
+
+            int i = file.getAbsolutePath().indexOf(basePath);
+            String pathname = null;
+            if (i >= 0) {
+                pathname = file.getAbsolutePath().substring(i + basePath.length());
+            }
+            mdMenuTree.setName(file.getName());
+            mdMenuTree.setPath(pathname);
+            mdMenuTree.setDir(file.isDirectory()?"true":"false");
+            mdMenuTrees.add(mdMenuTree);
+
+            if (file.isDirectory()) {
+                //Collection<File> childrenFiles = FileIOUtils.listFilesAndDirs(file, null, null);
+                File[] childrenFiles = file.listFiles();
+                if (childrenFiles != null && childrenFiles.length > 0) {
+                    getChildren(basePath, mdMenuTree.getChildren(), childrenFiles);
+                }
+            }
+        }
+
+    }
+
 
     /**
      * Wrapper {@link Template}
@@ -91,8 +120,6 @@ public class FileLocalMdLocator implements MdLocator {
         }
         return new MdResource(pathname, FileIOUtils.readFileToByteArray(file));
     }
-
-
 
 
 }

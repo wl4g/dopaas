@@ -23,21 +23,21 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_enterprise_repository_group
+        FROM doc_ee_api_repo_group
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        DELETE FROM doc_enterprise_repository_group
+        DELETE FROM doc_ee_api_repo_group
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
     </delete>
 
     <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup">
-        INSERT INTO doc_enterprise_repository_group
+        INSERT INTO doc_ee_api_repo_group
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -99,7 +99,7 @@
     </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup">
-        UPDATE doc_enterprise_repository_group
+        UPDATE doc_ee_api_repo_group
         <set>
             <if test="id != null">
                 id = #{id, jdbcType=BIGINT},
@@ -135,7 +135,7 @@
     </update>
 
     <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup">
-        UPDATE doc_enterprise_repository_group
+        UPDATE doc_ee_api_repo_group
         <set>
             id = #{id, jdbcType=BIGINT},
             name = #{name, jdbcType=VARCHAR},
@@ -155,7 +155,7 @@
     <select id="list" resultMap="BaseResultMap" parameterType="com.wl4g.devops.common.bean.doc.EnterpriseRepositoryGroup" >
         SELECT
             <include refid="Base_Column_List"/>
-        FROM doc_enterprise_repository_group
+        FROM doc_ee_api_repo_group
         <where>
                 AND del_flag != 1
             <if test="enterpriseRepositoryGroup.name != null and enterpriseRepositoryGroup.name != ''" >
