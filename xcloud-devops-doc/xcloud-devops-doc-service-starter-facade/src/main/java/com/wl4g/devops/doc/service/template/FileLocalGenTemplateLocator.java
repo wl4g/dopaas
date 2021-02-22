@@ -17,14 +17,17 @@ package com.wl4g.devops.doc.service.template;
 
 import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.devops.doc.config.DocProperties;
+import com.wl4g.devops.doc.util.PathUtils;
 import freemarker.template.Template;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import static com.wl4g.component.common.jvm.JvmRuntimeKit.isJVMDebugging;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static java.util.Objects.isNull;
 
 /**
  * {@link FileLocalGenTemplateLocator}
@@ -40,41 +43,26 @@ public class FileLocalGenTemplateLocator implements GenTemplateLocator {
 
     final private static String TEMPLATE_PATH = "/template";
 
-    /**
-     * Generate template {@link Template} cache.
-     */
-    private final Map<String, List<TemplateResource>> templatesCache = new HashMap<>();
+    @Autowired
+    private DocProperties docProperties;
 
 
     @Override
     public List<TemplateResource> locate(String provider) throws Exception {
-        List<TemplateResource> tpls = templatesCache.get(provider);
-        if (isJVMDebugging || isNull(tpls)) {
-            synchronized (this) {
-                tpls = templatesCache.get(provider);
-                if (isJVMDebugging || isNull(tpls)) {
-                    tpls = new ArrayList<>();
 
-                    String basePath = "";
-                    String path = basePath + TEMPLATE_PATH + "/" + provider;
+        List<TemplateResource> tpls = new ArrayList<>();
 
-                    Collection<File> files = FileIOUtils.listFiles(new File(path), null, true);
-                    for (File file : files) {
-                        tpls.add(wrapTemplate(path, file));
-                    }
+        String basePath = docProperties.getBasePath();
+        String path = PathUtils.splicePath(basePath, TEMPLATE_PATH, provider);
 
-                    templatesCache.put(provider, tpls);
-                }
-            }
+        Collection<File> files = FileIOUtils.listFiles(new File(path), null, true);
+        for (File file : files) {
+            tpls.add(wrapTemplate(path, file));
         }
+
         return tpls;
     }
 
-    @Override
-    public boolean cleanAll() {
-        templatesCache.clear();
-        return true;
-    }
 
     /**
      * Wrapper {@link Template}
@@ -92,8 +80,6 @@ public class FileLocalGenTemplateLocator implements GenTemplateLocator {
         }
         return new TemplateResource(pathname, FileIOUtils.readFileToByteArray(file));
     }
-
-
 
 
 }

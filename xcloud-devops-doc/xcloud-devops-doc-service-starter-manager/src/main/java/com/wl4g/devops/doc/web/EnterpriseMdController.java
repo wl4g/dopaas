@@ -20,12 +20,15 @@ package com.wl4g.devops.doc.web;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseDocument;
+import com.wl4g.devops.doc.fsview.config.FsViewerProperties;
 import com.wl4g.devops.doc.service.EnterpriseMdService;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -46,12 +49,34 @@ public class EnterpriseMdController extends BaseController {
     @Autowired
     private EnterpriseMdService enterpriseMdService;
 
+    @Autowired
+    private FsViewerProperties fsViewerProperties;
+
     @RequestMapping(value = "/mdToHtml", method = { POST, GET })
     public RespBase<?> mdToHtml(String md) throws IOException, TemplateException {
         RespBase<Object> resp = RespBase.create();
         resp.setData(enterpriseMdService.mdToHtml(md));
         return resp;
     }
+
+    @RequestMapping(value = "/getTemplate", method = { POST, GET })
+    public RespBase<?> getTemplate() {
+        RespBase<Object> resp = RespBase.create();
+        String templatePath = fsViewerProperties.getBasePath() + "/template";
+        File templateDir = new File(templatePath);
+        resp.setData(templateDir.list());
+        return resp;
+    }
+
+    @RequestMapping(value = "/formatTemplate", method = { POST, GET })
+    public void formatTemplate(HttpServletResponse response, String md, String template) throws Exception {
+        //RespBase<Object> resp = RespBase.create();
+        String genPath = enterpriseMdService.formatTemplate(md, template);
+        //resp.setData();
+        writeZip(response, genPath, "codegen-".concat(md).concat("-").concat(template));
+        //return resp;
+    }
+
 
 
 }
