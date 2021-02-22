@@ -19,15 +19,23 @@ set -e
 
 # Global definition.
 currDir=$([ "$currDir" == "" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir) && cd $currDir
-gitBaseUri="https://github.com/wl4g"
-scriptBaseUrl="$gitBaseUri/xcloud-devops/tree/master/script/deploy"
+scriptBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy"
+secondaryScriptBaseUrl="https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy"
 
 # Download deploy scripts.
-curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-env.sh"
-curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-common.sh"
-curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-host.sh"
-curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-host.csv"
-curl --connect-timeout 10 -m 20 -O "$scriptBaseUrl/deploy-docker.sh"
+function downloadScripts() {
+  local baseUrl=$1
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-env.sh"
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-common.sh"
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.sh"
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.csv"
+  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-docker.sh"
+}
+downloadScripts $scriptBaseUrl
+if [ $? -ne 0 ]; then
+  echo "Downloading from backup address: $secondaryScriptBaseUrl ..."
+  downloadScripts $secondaryScriptBaseUrl # e.g connection refused, fuck gfw!
+fi
 
 # Choose deploy config.
 while true

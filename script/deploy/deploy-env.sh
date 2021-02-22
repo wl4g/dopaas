@@ -34,7 +34,9 @@ apacheMvnLocalRepoDir="/home/ci-server/.m2/repository/"
 # ----------------------- Deployment environment variables. ------------------------------------
 
 # Git definition.
-gitBaseUri="https://github.com/wl4g" # Options(e.g): https://github.com/wl4g|https://gitee.com/wl4g
+if [ "$gitBaseUri" == "" ]; then
+  gitBaseUri="https://github.com/wl4g" # for example options: https://github.com/wl4g or https://gitee.com/wl4g
+fi
 gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
 gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
 gitXCloudDevOpsUrl="${gitBaseUri}/xcloud-devops"
