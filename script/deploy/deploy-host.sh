@@ -145,7 +145,7 @@ function doDeployAndStartupToClusterInstance() {
     logErr "[$appName/cluster/$host] Invalid config buildPkgType: $buildPkgType"
     exit -1
   fi
-  
+
   log "[$appName/cluster/$host] Restarting for $appName ..."
   doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true"
   log "[$appName/cluster/$host] Deployed $appName completed."
