@@ -50,7 +50,7 @@ do
   if [ "$(echo $confirm|egrep -i 'yes')" ]; then
     break;
   elif [ "$(echo $confirm|egrep -i 'no')" ]; then
-    echo "Please customize edit \"./$currDir/deploy-boot.sh\" before executing \"$currDir/deploy-env.sh\""
+    echo "Please customize edit \"$currDir/deploy-env.sh\" first, and then re-execute \".$currDir/deploy-boot.sh\" to deploying !"
     exit 0
   else
     echo "Please reenter it !"
