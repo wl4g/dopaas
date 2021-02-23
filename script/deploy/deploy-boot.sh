@@ -73,6 +73,19 @@ do
   fi
 done
 
+# Smart configuration.
+echo "In intelligent analysis configuration resources ..."
+ipArea=$(curl --connect-timeout 10 -m 20 -sSL cip.cc)
+if [ $? == 0 ]; then
+  isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo N)
+else # Fallback
+  ipArea=$(curl --connect-timeout 10 -m 20 -sSL ipinfo.io)
+  isNetworkInGfwWall=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo N)
+fi
+if [ "$isNetworkInGfwWall" == "Y" ]; then
+  export gitBaseUri="https://gitee.com/wl4g" # for speed-up, fuck gfw!
+fi
+
 # Call deployer.
 if [ "$deployMode" == "host" ]; then
   bash $currDir/deploy-host.sh
