@@ -24,7 +24,14 @@
 - Other environment dependencies (if necessary): Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
 
 
-### Quick start example:
+### Quick start:
+```
+curl -O https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy/deploy-boot.sh && chmod 750 ./deploy-boot.sh && ./deploy-boot.sh
+# 或者
+# curl -O https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy/deploy-boot.sh && chmod 750 ./deploy-boot.sh && ./deploy-boot.sh
+```
+
+### Manual install example：
 For the sake of brevity, each service only deploys a single node to the same physical machine, which has been regarded as a pseudo cluster.
 
 - step1：Compile

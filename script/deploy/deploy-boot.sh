@@ -15,7 +15,10 @@
 # * See the License for the specific language governing permissions and
 # * limitations under the License.
 # */
-set -e
+
+if [[ "$(echo groups)" == "root" ]]; then
+  logErr "Please execute the scripts as a user with root privileges !" && exit -1
+fi
 
 # Global definition.
 currDir=$([ "$currDir" == "" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir) && cd $currDir
@@ -25,42 +28,44 @@ secondaryScriptBaseUrl="https://gitee.com/wl4g/xcloud-devops/raw/master/script/d
 # Download deploy scripts.
 function downloadScripts() {
   local baseUrl=$1
+  cd $currDir
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-env.sh"; [ $? -ne 0 ] && return $?
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-common.sh"; [ $? -ne 0 ] && return $?
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.sh"; [ $? -ne 0 ] && return $?
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.csv"; [ $? -ne 0 ] && return $?
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-docker.sh"; [ $? -ne 0 ] && return $?
+  chmod 750 "$currDir/deploy-*.sh"
   return 0
 }
 downloadScripts $scriptBaseUrl
 if [ $? -ne 0 ]; then
-  echo "Downloading from backup address: $secondaryScriptBaseUrl ..."
+  echo "Downloading from backup URL: $secondaryScriptBaseUrl ..."
   downloadScripts $secondaryScriptBaseUrl # e.g connection refused, fuck gfw!
 fi
 
 # Choose deploy config.
 while true
 do
-  read -t 10 -p "Do you want to install with the default configuration(yes|no)? (Modify to customize configuration: $currDir/deploy-env.sh)" confirm
+  read -t 10 -p "Do you want to install with the default configuration(yes|no)? " confirm
   if [ "$(echo $confirm|egrep -i 'yes')" ]; then
     break;
   elif [ "$(echo $confirm|egrep -i 'no')" ]; then
-    echo "Please try again after modified: $currDir/deploy-env.sh"
+    echo "Please customize edit \"./$currDir/deploy-boot.sh\" before executing \"$currDir/deploy-env.sh\""
     exit 0
   else
-    echo "Please reenter it!"
+    echo "Please reenter it !"
   fi
 done
 
 # Choose deploy mode.
 while true
 do
-  read -t 10 -p "Please choose deployment mode? (host|docker)" deployMode
+  read -t 20 -p "Please choose deployment mode (host|docker)? " deployMode
   if [ -n "$(echo $deployMode|egrep -i 'host|HOST')" ]; then
-    deployMode="HOST"
+    deployMode="host"
     break;
   elif [ -n "$(echo $deployMode|egrep -i 'docker|DOCKER')" ]; then
-    deployMode="DOCKER"
+    deployMode="docker"
     echo "Docker deployment is not supported yet, please look forward to it! Welcome to join us, contact: <wanglsir@gmail.com, 983708408@qq.com>"
     exit -1;
   else
@@ -68,14 +73,14 @@ do
   fi
 done
 
-# Deploying
-if [ "$deployMode" == "HOST" ]; then
+# Call deployer.
+if [ "$deployMode" == "host" ]; then
   bash $currDir/deploy-host.sh
-elif [ "$deployMode" == "DOCKER" ]; then
+elif [ "$deployMode" == "docker" ]; then
   bash $currDir/deploy-docker.sh
 else
-  echo "Unknown deploy mode!"
+  echo "Unknown deploy mode of \"$deployMode\" !"
 fi
 
 # Cleanup
-\rm -rf "$currDir/deploy-*.sh"
+ls $currDir/deploy-*.sh|grep -v $0|xargs \rm -rf

@@ -135,7 +135,7 @@ function doDeployAndStartupToClusterInstance() {
   doRemoteCmd "$user" "$passwd" "$host" "rm -rf $appInstallDir/*" "true"
   log "[$appName/cluster/$host] Transfer \"$buildFilePath\" to remote \"$appInstallDir\" ..."
   doScp "$user" "$passwd" "$host" "$buildFilePath" "$appInstallDir/$buildFileName" "true"
-  
+
   if [ "$buildPkgType" == "mvnAssTar" ]; then
     log "[$appName/cluster/$host] Uncompress \"$appInstallDir/$buildFileName\" to \"$appInstallDir/\" ..."
     doRemoteCmd "$user" "$passwd" "$host" "tar -xf $appInstallDir/$buildFileName -C $appInstallDir" "true"
@@ -145,6 +145,9 @@ function doDeployAndStartupToClusterInstance() {
     logErr "[$appName/cluster/$host] Invalid config buildPkgType: $buildPkgType"
     exit -1
   fi
+
+  log "[$appName/cluster/$host] Checking for app services installization ..."
+  checkInstallService "$appName" "$user" "$passwd" "$host"
 
   log "[$appName/cluster/$host] Restarting for $appName ..."
   doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true"
