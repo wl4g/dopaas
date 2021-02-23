@@ -34,7 +34,7 @@ function downloadScripts() {
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.sh"; [ $? -ne 0 ] && return $?
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.csv"; [ $? -ne 0 ] && return $?
   curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-docker.sh"; [ $? -ne 0 ] && return $?
-  chmod 750 "$currDir/deploy-*.sh"
+  chmod 750 $currDir/deploy-*.sh
   return 0
 }
 downloadScripts $scriptBaseUrl
