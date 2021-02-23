@@ -20,7 +20,7 @@
 currDir=$([ "$currDir" == "" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir)
 
 # ----------------------- Base environment variables. ------------------------------------------
-workspaceDir="$currDir/.deploy-workspace" && mkdir -p $workspaceDir && cd $workspaceDir
+workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir && cd $workspaceDir
 logFile="${workspaceDir}/install_"$(date -d today +"%Y-%m-%d_%H%M%S")".log"
 asyncDeploy="true" # true|false
 

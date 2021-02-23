@@ -24,7 +24,14 @@ English version goes [here](README.md)
 - 其他环境依赖（若需要）：Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
 
 
-### 快速开始示例：
+### 自动安装用法：
+```
+curl -O https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy/deploy-boot.sh && chmod 750 ./deploy-boot.sh && ./deploy-boot.sh
+# 或者
+# curl -O https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy/deploy-boot.sh && chmod 750 ./deploy-boot.sh && ./deploy-boot.sh
+```
+
+### 手动安装示例：
 为了更简洁起见，每个服务仅部署单节点到同一台物理机，作为伪集群。
 - step1：编译
 
