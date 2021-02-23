@@ -112,9 +112,10 @@ function installSshpass() {
     elif [ -n "$(command -v apt-get)" ]; then
       sudo apt-get install -y sshpass
     else
-      logErr "Failed to auto install sshpass! Please manual installation!"
-      exit -1
+      logErr "Failed to auto install sshpass! Please manual installation!"; exit -1
     fi
+    # Check installization
+    [ $? -ne 0 ] && logErr "Failed to auto install sshpass! Please manual installation!"; exit -1
   fi
 }
 
