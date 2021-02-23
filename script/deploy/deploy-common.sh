@@ -87,19 +87,26 @@ function checkPreDependencies() {
       logErr "Failed to auto install git! Please manual installation!"
       exit -1
     fi
+    # Check installization
+    [ $? -ne 0 ] && logErr "Failed to auto install git! Please manual installation!" && exit -1
   fi
   # Check maven
   if [ ! -n "$(command -v mvn)" ]; then
     log "No such command mvn, auto installing maven ..."
-    if [ ! -n "$(command -v wget)" ]; then
-      wget $apacheMvnDownloadTarUrl
-    else
-      curl -O $apacheMvnDownloadTarUrl
+    cd $currDir
+    curl -O "$apacheMvnDownloadTarUrl"
+    if [ $? -ne 0 ]; then # Fallback
+      curl -O "$secondaryApacheMvnDownloadTarUrl"
     fi
-    tar -xf apache-maven-*-bin.tar.gz
-    mv apache-maven-* $apacheMvnInstallDir
-    cmdMvn="$apacheMvnInstallDir/bin/mvn"
+    # Check installization result.
+    [ $? -ne 0 ] && logErr "Failed to auto install mvn! Please manual installation!" && exit -1
+    local mvnHome="$apacheMvnInstallDir/apache-maven-current"
+    mkdir -p $mvnHome
+    \rm -rf $mvnHome/* # Cleanup older
+    tar -zxf apache-maven-*-bin.tar.gz -C $mvnHome
+    cmdMvn="$mvnHome/bin/mvn"
   fi
+  log "Use installed maven command: $cmdMvn"
 }
 
 function installSshpass() {
@@ -114,8 +121,8 @@ function installSshpass() {
     else
       logErr "Failed to auto install sshpass! Please manual installation!"; exit -1
     fi
-    # Check installization
-    [ $? -ne 0 ] && logErr "Failed to auto install sshpass! Please manual installation!"; exit -1
+    # Check installization result.
+    [ $? -ne 0 ] && logErr "Failed to auto install sshpass! Please manual installation!" && exit -1
   fi
 }
 
