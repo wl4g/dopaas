@@ -25,8 +25,9 @@ logFile="${workspaceDir}/install_"$(date -d today +"%Y-%m-%d_%H%M%S")".log"
 asyncDeploy="true" # true|false
 
 # ----------------------- Maven environment variables. -----------------------------------------
-apacheMvnDownloadTarUrl="https://mirror.bit.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
-apacheMvnInstallDir="/opt/apps/"
+apacheMvnDownloadTarUrl="https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
+secondaryApacheMvnDownloadTarUrl="https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
+apacheMvnInstallDir="/opt/apps"
 # You can customize the overlay. (for example: mvn -Dmaven.repo.local=$HOME/.m2/repository/ -f $HOME/myproject_dir/pom.xml clean install)
 #apacheMvnLocalRepoDir="$HOME/.m2/repository/"
 apacheMvnLocalRepoDir="/home/ci-server/.m2/repository/"
