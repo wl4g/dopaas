@@ -101,7 +101,7 @@ EOF
       continue
     fi
   done
-  #bash $workspaceDir/deploy-host.sh
+  bash $workspaceDir/deploy-host.sh
 elif [ "$deployMode" == "docker" ]; then
   bash $workspaceDir/deploy-docker.sh
 else
