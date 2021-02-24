@@ -104,6 +104,7 @@ function checkPreDependencies() {
     mkdir -p $mvnHome
     \rm -rf $mvnHome/* # Cleanup older
     tar -zxf apache-maven-*-bin.tar.gz -C $mvnHome
+    \rm -rf apache-maven-*-bin.tar.gz # Cleanup trash
     cmdMvn="$mvnHome/bin/mvn"
   fi
   log "Use installed maven command: $cmdMvn"

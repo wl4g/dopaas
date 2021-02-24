@@ -47,9 +47,9 @@ fi
 while true
 do
   read -t 10 -p "Do you want to install with the default configuration(yes|no)? " confirm
-  if [ "$(echo $confirm|egrep -i 'yes')" ]; then
+  if [ "$(echo $confirm|grep -i 'yes')" ]; then
     break;
-  elif [ "$(echo $confirm|egrep -i 'no')" ]; then
+  elif [ "$(echo $confirm|grep -i 'no')" ]; then
     echo "Please customize edit \"$currDir/deploy-env.sh\" first, and then re-execute \".$currDir/deploy-boot.sh\" to deploying !"
     exit 0
   else
@@ -61,10 +61,10 @@ done
 while true
 do
   read -t 20 -p "Please choose deployment mode (host|docker)? " deployMode
-  if [ -n "$(echo $deployMode|egrep -i 'host|HOST')" ]; then
+  if [ -n "$(echo $deployMode|grep -i 'host')" ]; then
     deployMode="host"
     break;
-  elif [ -n "$(echo $deployMode|egrep -i 'docker|DOCKER')" ]; then
+  elif [ -n "$(echo $deployMode|grep -i 'docker')" ]; then
     deployMode="docker"
     echo "Docker deployment is not supported yet, please look forward to it! Welcome to join us, contact: <wanglsir@gmail.com, 983708408@qq.com>"
     exit -1;
@@ -74,7 +74,7 @@ do
 done
 
 # Smart configuration.
-echo "In intelligent analysis configuration resources ..."
+echo "Analyzing network and intelligent configuration resources ..."
 ipArea=$(curl --connect-timeout 10 -m 20 -sSL cip.cc)
 if [ $? == 0 ]; then
   isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo N)
