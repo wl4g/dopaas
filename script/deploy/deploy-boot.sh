@@ -65,8 +65,8 @@ cd $workspaceDir
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env.sh"; [ $? -ne 0 ] && exit -1
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv"; [ $? -ne 0 ] && exit -1
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-docker.sh"; [ $? -ne 0 ] && exit -1
+cd $currDir && curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv"; [ $? -ne 0 ] && exit -1
 chmod 750 $workspaceDir/deploy-*.sh
 
 # Confirm deploy environments.
@@ -89,7 +89,7 @@ if [ "$deployMode" == "host" ]; then
     read -t 300 -p "Do you just want to deploy to the local node first (yes|no)? " confirm2
     if [ "$confirm2" == "yes" ]; then
       # Auto generate localhost to deploy-host.csv
-cat<<EOF>$workspaceDir/deploy-host.csv
+cat<<EOF>$currDir/deploy-host.csv
 Host,User,Password
 localhost,$USER,
 EOF
