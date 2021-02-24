@@ -17,7 +17,7 @@
 # */
 
 # Initialization.
-currDir=$([ "$currDir" == "" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir)
+currDir=$([ -z "$currDir" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir)
 . ${currDir}/deploy-env.sh
 
 # Common variables.

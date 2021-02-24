@@ -21,41 +21,11 @@ if [[ "$(echo groups)" == "root" ]]; then
 fi
 
 # Global definition.
-currDir=$([ "$currDir" == "" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir) && cd $currDir
-scriptBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy"
-secondaryScriptBaseUrl="https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy"
-
-# Download deploy scripts.
-function downloadScripts() {
-  local baseUrl=$1
-  cd $currDir
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-env.sh"; [ $? -ne 0 ] && return $?
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-common.sh"; [ $? -ne 0 ] && return $?
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.sh"; [ $? -ne 0 ] && return $?
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-host.csv"; [ $? -ne 0 ] && return $?
-  curl --connect-timeout 10 -m 20 -O "$baseUrl/deploy-docker.sh"; [ $? -ne 0 ] && return $?
-  chmod 750 $currDir/deploy-*.sh
-  return 0
-}
-downloadScripts $scriptBaseUrl
-if [ $? -ne 0 ]; then
-  echo "Downloading from backup URL: $secondaryScriptBaseUrl ..."
-  downloadScripts $secondaryScriptBaseUrl # e.g connection refused, fuck gfw!
-fi
-
-# Choose deploy config.
-while true
-do
-  read -t 10 -p "Do you want to install with the default configuration(yes|no)? " confirm
-  if [ "$(echo $confirm|grep -i 'yes')" ]; then
-    break;
-  elif [ "$(echo $confirm|grep -i 'no')" ]; then
-    echo "Please customize edit \"$currDir/deploy-env.sh\" first, and then re-execute \".$currDir/deploy-boot.sh\" to deploying !"
-    exit 0
-  else
-    echo "Please reenter it !"
-  fi
-done
+currDir=$([ -z "$currDir" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir)
+scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy"
+scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy"
+gitBaseUrl="https://github.com/wl4g"
+gitBaseUrlBackup1="https://gitee.com/wl4g"
 
 # Choose deploy mode.
 while true
@@ -73,7 +43,7 @@ do
   fi
 done
 
-# Smart configuration.
+# Detect the host network and choose the fast resources intelligently.
 echo "Analyzing network and intelligent configuration resources ..."
 ipArea=$(curl --connect-timeout 10 -m 20 -sSL cip.cc)
 if [ $? == 0 ]; then
@@ -82,12 +52,56 @@ else # Fallback
   ipArea=$(curl --connect-timeout 10 -m 20 -sSL ipinfo.io)
   isNetworkInGfwWall=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo N)
 fi
+# Choose best resources URL.
 if [ "$isNetworkInGfwWall" == "Y" ]; then
-  export gitBaseUri="https://gitee.com/wl4g" # for speed-up, fuck gfw!
+  export gitBaseUri="$gitBaseUrlBackup1" # for speed-up, fuck gfw!
+  export scriptsBaseUrl="$scriptsBaseUrlBackup1"
 fi
+
+# Download deploy dependencies scripts.
+[ -f $currDir/deploy-*.sh ] && ls $currDir/deploy-*.sh|grep -v $0|xargs \rm -rf # Cleanup scripts.
+cd $currDir
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env.sh"; [ $? -ne 0 ] && exit -1
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv"; [ $? -ne 0 ] && exit -1
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-docker.sh"; [ $? -ne 0 ] && exit -1
+chmod 750 $currDir/deploy-*.sh
+
+# Confirm deploy environments.
+while true
+do
+  read -t 300 -p "Please confirm use the default deployment configuration(yes|no)? (if you need to customize please modify \"$currDir/deploy-env.sh\") " confirm1
+  if [ "$(echo $confirm1|grep -i 'yes')" ]; then
+    break;
+  elif [ "$(echo $confirm1|grep -i 'no')" ]; then
+    echo "Please customize edit \"$currDir/deploy-env.sh\" first, and then re-execute \".$currDir/deploy-boot.sh\" to deploying !" && exit 0
+  else
+    echo "Please reenter it !"
+  fi
+done
 
 # Call deployer.
 if [ "$deployMode" == "host" ]; then
+  # Confirm deploy hosts.
+  deployHostsContent=`cat "$currDir/deploy-host.csv"`
+  while true
+  do
+    read -t 300 -p "
+The deployment will be applied to the following remote hosts:
+----------------------
+$deployHostsContent
+----------------------
+To customize please modify \"$currDir/deploy-host.csv\", please confirm(yes|no)? " confirm2
+    if [ "$(echo $confirm2|grep -i 'yes')" ]; then
+      break;
+    elif [ "$(echo $confirm2|grep -i 'no')" ]; then
+      echo "Please customize edit \"$currDir/deploy-host.csv\" first, and then re-execute \".$currDir/deploy-boot.sh\" to deploying !"
+      exit 0
+    else
+      echo "Please reenter it !"
+    fi
+  done
   bash $currDir/deploy-host.sh
 elif [ "$deployMode" == "docker" ]; then
   bash $currDir/deploy-docker.sh
@@ -95,5 +109,5 @@ else
   echo "Unknown deploy mode of \"$deployMode\" !"
 fi
 
-# Cleanup
-ls $currDir/deploy-*.sh|grep -v $0|xargs \rm -rf
+[ -f $currDir/deploy-*.sh ] && ls $currDir/deploy-*.sh|grep -v $0|xargs \rm -rf # Cleanup scripts.
+exit 0

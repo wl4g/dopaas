@@ -17,7 +17,7 @@
 # */
 
 # ----------------------- Initialization. ------------------------------------------------------
-currDir=$([ "$currDir" == "" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir)
+currDir=$([ -z "$currDir" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir)
 
 # ----------------------- Base environment variables. ------------------------------------------
 workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir && cd $workspaceDir
@@ -29,15 +29,12 @@ apacheMvnDownloadTarUrl="https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/
 secondaryApacheMvnDownloadTarUrl="https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
 apacheMvnInstallDir="/opt/apps"
 # You can customize the overlay. (for example: mvn -Dmaven.repo.local=$HOME/.m2/repository/ -f $HOME/myproject_dir/pom.xml clean install)
-#apacheMvnLocalRepoDir="$HOME/.m2/repository/"
-apacheMvnLocalRepoDir="/home/ci-server/.m2/repository/"
+apacheMvnLocalRepoDir="$HOME/.m2/repository/"
 
 # ----------------------- Deployment environment variables. ------------------------------------
 
 # Git definition.
-if [ "$gitBaseUri" == "" ]; then
-  gitBaseUri="https://github.com/wl4g" # for example options: https://github.com/wl4g or https://gitee.com/wl4g
-fi
+[ -z "$gitBaseUri" ] && export gitBaseUri="https://github.com/wl4g" # for example options: https://github.com/wl4g or https://gitee.com/wl4g
 gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
 gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
 gitXCloudDevOpsUrl="${gitBaseUri}/xcloud-devops"
