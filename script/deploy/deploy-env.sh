@@ -17,46 +17,46 @@
 # */
 
 # ----------------------- Initialization. ------------------------------------------------------
-currDir=$([ -z "$currDir" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir)
+[ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
 
 # ----------------------- Base environment variables. ------------------------------------------
-workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir && cd $workspaceDir
-logFile="${workspaceDir}/install_"$(date -d today +"%Y-%m-%d_%H%M%S")".log"
-asyncDeploy="true" # true|false
+[ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir && cd $workspaceDir
+[ -z "$logFile" ] && export logFile="${workspaceDir}/install_"$(date -d today +"%Y-%m-%d_%H%M%S")".log"
+[ -z "$asyncDeploy" ] && export asyncDeploy="true" # true|false
 
 # ----------------------- Maven environment variables. -----------------------------------------
-apacheMvnDownloadTarUrl="https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
-secondaryApacheMvnDownloadTarUrl="https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
-apacheMvnInstallDir="/opt/apps"
+[ -z "$apacheMvnDownloadTarUrl" ] && export apacheMvnDownloadTarUrl="https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
+[ -z "$secondaryApacheMvnDownloadTarUrl" ] && export secondaryApacheMvnDownloadTarUrl="https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
+[ -z "$apacheMvnInstallDir" ] && export apacheMvnInstallDir="/opt/apps"
 # You can customize the overlay. (for example: mvn -Dmaven.repo.local=$HOME/.m2/repository/ -f $HOME/myproject_dir/pom.xml clean install)
-apacheMvnLocalRepoDir="$HOME/.m2/repository/"
+[ -z "$apacheMvnLocalRepoDir" ] && export apacheMvnLocalRepoDir="$HOME/.m2/repository/"
 
 # ----------------------- Deployment environment variables. ------------------------------------
 
 # Git definition.
 [ -z "$gitBaseUri" ] && export gitBaseUri="https://github.com/wl4g" # for example options: https://github.com/wl4g or https://gitee.com/wl4g
-gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
-gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
-gitXCloudDevOpsUrl="${gitBaseUri}/xcloud-devops"
+[ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
+[ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
+[ -z "$gitXCloudDevOpsUrl" ] && export gitXCloudDevOpsUrl="${gitBaseUri}/xcloud-devops"
 
 # Build definition.
-buildPkgType="mvnAssTar" # Options: mvnAssTar|springExecJar
-buildPkgVersion="master"
-rebuildOfGitPullAlreadyUpToDate="true"
+[ -z "$buildPkgType" ] && export buildPkgType="mvnAssTar" # Options: mvnAssTar|springExecJar
+[ -z "$buildPkgVersion" ] && export buildPkgVersion="master"
+[ -z "$rebuildOfGitPullAlreadyUpToDate" ] && export rebuildOfGitPullAlreadyUpToDate="true"
 
 # Deploy common definition.
-deployMode="cluster" # Options: standalone|cluster
-deployBaseDir="/opt/apps/acm"
+[ -z "$deployMode" ] && export deployMode="cluster" # Options: standalone|cluster
+[ -z "$deployBaseDir" ] && export deployBaseDir="/opt/apps/acm"
 
 # Delopy(standalone) modules definition.
-deployStandaloneBuildTargets=(
+export deployStandaloneBuildTargets=(
   "${currDir}/xcloud-iam/xcloud-iam-service-starter-all/target"
   "${currDir}/xcloud-devops/xcloud-devops-all-starter/target"
 )
 
 # Deploy(cluster) definition.
-deployClusterNodesConfigPath="$currDir/deploy-host.csv"
-deployClusterBuildTargets=(
+export deployClusterNodesConfigPath="$currDir/deploy-host.csv"
+export deployClusterBuildTargets=(
   "${currDir}/xcloud-iam/xcloud-iam-service-starter-data/target"
   "${currDir}/xcloud-iam/xcloud-iam-service-starter-facade/target"
   "${currDir}/xcloud-iam/xcloud-iam-service-starter-web/target"
