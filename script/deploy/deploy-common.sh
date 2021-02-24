@@ -17,7 +17,7 @@
 # */
 
 # Initialization.
-currDir=$([ -z "$currDir" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir)
+[ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
 . ${currDir}/deploy-env.sh
 
 # Common variables.
@@ -32,7 +32,7 @@ else
 fi
 
 function getCurrPid() {
-  pid=$!
+  local pid=$!
   if [ "$pid" == "" ]; then
     echo "main"
     return 0

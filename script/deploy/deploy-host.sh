@@ -17,7 +17,7 @@
 # */
 
 # Initialization
-currDir=$([ -z "$currDir" ] && echo "$(cd "`dirname "$0"`"/; pwd)" || echo $currDir)
+[ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
 . ${currDir}/deploy-common.sh
 [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
 
@@ -29,13 +29,15 @@ log " Wiki(CN): https://gitee.com/wl4g/xcloud-devops/blob/master/README_CN.md"
 log " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
 log " Version: 2.0.0"
 log " Time: $(date -d today +'%Y-%m-%d %H:%M:%S')"
+#log " Installation logs writing: $logFile"
+log " -----------------------------------------------------------------------"
 log ""
 
 # Pull and compile.
 function pullAndCompile() {
-  projectName=$1 # e.g xcloud-devops
-  cloneUrl=$2
-  projectDir="$currDir/$projectName"
+  local projectName=$1 # e.g xcloud-devops
+  local cloneUrl=$2
+  local projectDir="$currDir/$projectName"
   if [ ! -d "$projectDir" ]; then
     log "Git clone $projectName from $cloneUrl ..."
     cd $currDir && git clone $cloneUrl 2>&1 | tee -a $logFile
@@ -105,8 +107,8 @@ function deployAndStartupAllWithCluster() {
     local host=$(echo $node|awk -F ',' '{print $1}'|sed -e 's/^\s*//' -e 's/\s*$//')
     local user=$(echo $node|awk -F ',' '{print $2}'|sed -e 's/^\s*//' -e 's/\s*$//')
     local passwd=$(echo $node|awk -F ',' '{print $3}'|sed -e 's/^\s*//' -e 's/\s*$//')
-    if [[ "$host" == "" || "$user" == "" || "$passwd" == "" ]]; then
-      logErr "[$appName/cluster] Invalid cluster node info. host: $host, user: $user, password: $passwd"
+    if [[ "$host" == "" || "$user" == "" ]]; then
+      logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"
       exit -1
     fi
 
