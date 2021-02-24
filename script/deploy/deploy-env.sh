@@ -15,12 +15,13 @@
 # * See the License for the specific language governing permissions and
 # * limitations under the License.
 # */
+# @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
 # ----------------------- Initialization. ------------------------------------------------------
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
 
 # ----------------------- Base environment variables. ------------------------------------------
-[ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir && cd $workspaceDir
+[ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir
 [ -z "$logFile" ] && export logFile="${workspaceDir}/install_"$(date -d today +"%Y-%m-%d_%H%M%S")".log"
 [ -z "$asyncDeploy" ] && export asyncDeploy="true" # true|false
 
