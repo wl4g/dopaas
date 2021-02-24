@@ -60,8 +60,8 @@ if [ "$isNetworkInGfwWall" == "Y" ]; then
 fi
 
 # Download deploy dependencies scripts.
-cd $workspaceDir
-[ -n "$(ls deploy-*.sh 2>/dev/null)" ] && \rm -rf $(ls deploy-*.sh) # Cleanup scripts.
+mkdir -p $workspaceDir; cd $workspaceDir
+[ -n "$(ls deploy-*.sh 2>/dev/null)" ] && \rm -rf $(ls deploy-*.sh|grep -v $0) # Cleanup scripts.
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env.sh"; [ $? -ne 0 ] && exit -1
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
@@ -101,12 +101,12 @@ EOF
       continue
     fi
   done
-  bash $workspaceDir/deploy-host.sh
+  #bash $workspaceDir/deploy-host.sh
 elif [ "$deployMode" == "docker" ]; then
   bash $workspaceDir/deploy-docker.sh
 else
   echo "Unknown deploy mode of \"$deployMode\" !"
 fi
 
-cd $workspaceDir && [ -n "$(ls deploy-*.sh 2>/dev/null)" ] && \rm -rf $(ls deploy-*.sh) # Cleanup scripts.
+cd $workspaceDir && [ -n "$(ls deploy-*.sh 2>/dev/null)" ] && \rm -rf $(ls deploy-*.sh|grep -v $0) # Cleanup scripts.
 exit 0
