@@ -48,17 +48,17 @@ public class DocAutoConfiguration {
 	// --- Documention conversions. ---
 
 	@Bean
-	public Oas3DocumentConverter oas3DocumentConverter() {
+	public DocumentConverter oas3DocumentConverter() {
 		return new Oas3DocumentConverter();
 	}
 
 	@Bean
-	public Swagger2DocumentConverter swagger2DocumentConverter() {
+	public DocumentConverter swagger2DocumentConverter() {
 		return new Swagger2DocumentConverter();
 	}
 
 	@Bean
-	public Rap2DocumentConverter rap2DocumentConverter() {
+	public DocumentConverter rap2DocumentConverter() {
 		return new Rap2DocumentConverter();
 	}
 

@@ -21,6 +21,8 @@ package com.wl4g.devops.doc.service.conversion;
 
 import com.wl4g.devops.common.bean.doc.model.Rap2DocumentModel;
 import com.wl4g.devops.common.bean.doc.model.XCloudDocumentModel;
+import io.swagger.models.Swagger;
+import io.swagger.parser.SwaggerParser;
 
 /**
  * {@link Rap2DocumentConverter}
@@ -31,6 +33,11 @@ import com.wl4g.devops.common.bean.doc.model.XCloudDocumentModel;
  * @see
  */
 public class Rap2DocumentConverter extends AbstractDocumentConverter<Rap2DocumentModel> {
+	@Override
+	public XCloudDocumentModel convertFrom(String documentJson) {
+		Swagger swagger = new SwaggerParser().parse(documentJson);
+		return null;
+	}
 
 	@Override
 	public ConverterProviderKind kind() {

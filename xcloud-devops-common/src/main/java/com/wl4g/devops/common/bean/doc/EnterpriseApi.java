@@ -60,7 +60,7 @@ public class EnterpriseApi extends BaseBean {
     /**
      * 
      */
-    private String method;
+    private String method = "";
 
     /**
      * 

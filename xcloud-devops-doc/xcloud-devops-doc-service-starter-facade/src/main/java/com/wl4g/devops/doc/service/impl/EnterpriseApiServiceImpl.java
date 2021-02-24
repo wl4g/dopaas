@@ -19,14 +19,15 @@
 package com.wl4g.devops.doc.service.impl;
 
 
-
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
+import com.wl4g.devops.common.bean.doc.model.XCloudDocumentModel;
 import com.wl4g.devops.doc.data.EnterpriseApiDao;
 import com.wl4g.devops.doc.data.EnterpriseApiPropertiesDao;
 import com.wl4g.devops.doc.service.EnterpriseApiService;
+import com.wl4g.devops.doc.service.conversion.DocumentConverterAdapter;
 import com.wl4g.devops.doc.service.dto.EnterpriseApiPageRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,11 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
 
     @Autowired
     private EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
+
+    @Autowired
+    private DocumentConverterAdapter documentConverterAdapter;
+    //private GenericOperatorAdapter<DocumentConverter.ConverterProviderKind, Rap2DocumentConverter> documentConverterAdapter;
+
 
     @Override
     public PageHolder<EnterpriseApi> page(EnterpriseApiPageRequest enterpriseApiPageRequest) {
@@ -143,6 +149,13 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
         enterpriseApi.setId(id);
         enterpriseApi.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         return enterpriseApiDao.updateByPrimaryKeySelective(enterpriseApi);
+    }
+
+    @Override
+    public void importApi(String kind,String json){
+        XCloudDocumentModel xCloudDocumentModel = documentConverterAdapter.forOperator(kind).convertFrom(json);
+        //TODO save into db -- xCloudDocumentModel
+
     }
 
 }

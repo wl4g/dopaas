@@ -14,6 +14,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<final.name>doc-facade</final.name>
+		<swagger-parser-v3.version>2.0.24</swagger-parser-v3.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -33,6 +34,18 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-support</artifactId>
+		</dependency>
+
+		<!-- Swagger(OAS3) documention parser. -->
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser</artifactId>
+			<version>${swagger-parser-v3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser-v2-converter</artifactId>
+			<version>${swagger-parser-v3.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

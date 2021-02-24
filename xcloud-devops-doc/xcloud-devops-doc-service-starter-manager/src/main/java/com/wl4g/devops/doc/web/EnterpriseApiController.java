@@ -84,4 +84,11 @@ public class EnterpriseApiController extends BaseController {
         return resp;
     }
 
+    @RequestMapping(value = "/importApi", method = { POST })
+    public RespBase<?> importApi(String kind, String json) {
+        RespBase<Object> resp = RespBase.create();
+        enterpriseApiService.importApi(kind,json);
+        return resp;
+    }
+
 }
