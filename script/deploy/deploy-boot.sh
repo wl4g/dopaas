@@ -48,10 +48,10 @@ done
 echo "Analyzing network and intelligent configuration resources ..."
 ipArea=$(curl --connect-timeout 10 -m 20 -sSL cip.cc)
 if [ $? == 0 ]; then
-  isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo N)
+  export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo N)
 else # Fallback
   ipArea=$(curl --connect-timeout 10 -m 20 -sSL ipinfo.io)
-  isNetworkInGfwWall=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo N)
+  export isNetworkInGfwWall=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo N)
 fi
 # Choose best resources URL.
 if [ "$isNetworkInGfwWall" == "Y" ]; then
@@ -72,10 +72,10 @@ chmod 750 $workspaceDir/deploy-*.sh
 # Confirm deploy environments.
 while true
 do
-  read -t 300 -p "Please confirm use the default configuration deployment (yes|no)? (if you need to custom please edit \"$currDir/deploy-env.sh\") " confirm1
-  if [ "$confirm1" == "yes" ]; then
+  read -t 300 -p "Please confirm use the default configuration deployment (y|n)? (if you need to custom please edit \"$currDir/deploy-env.sh\") " confirm1
+  if [ "$confirm1" == "y" ]; then
     break
-  elif [ "$confirm1" == "no" ]; then
+  elif [ "$confirm1" == "n" ]; then
     echo "Please custom edit \"$currDir/deploy-env.sh\" first, and then re-execute \".$currDir/deploy-boot.sh\" to deploying !" && exit 0
   else
     continue
@@ -86,15 +86,15 @@ done
 if [ "$deployMode" == "host" ]; then
   while true
   do
-    read -t 300 -p "Do you just want to deploy to the local node first (yes|no)? " confirm2
-    if [ "$confirm2" == "yes" ]; then
+    read -t 300 -p "Do you just want to deploy to the local node first (y|n)? " confirm2
+    if [ "$confirm2" == "y" ]; then
       # Auto generate localhost to deploy-host.csv
 cat<<EOF>$currDir/deploy-host.csv
 Host,User,Password
 localhost,$USER,
 EOF
       break
-    elif [ "$confirm2" == "no" ]; then
+    elif [ "$confirm2" == "n" ]; then
       echo "You have chosen to deploy to the remote cluster node, so you need to configure the remote node information first. Please edit \"$currDir/deploy-host.csv\", and then re-execute \".$currDir/deploy-boot.sh\" again"
       exit 0
     else
