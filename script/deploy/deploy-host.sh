@@ -18,7 +18,7 @@
 
 # Initialization
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
-. ${currDir}/deploy-common.sh
+. ${workspaceDir}/deploy-common.sh
 [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
 
 log ""
