@@ -81,4 +81,13 @@ public interface EnterpriseApiService {
 	@RequestMapping(value = "/del", method = POST)
 	int del(@RequestParam(name = "id", required = false) Long id);
 
+	/**
+	 * importApi.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/importApi", method = POST)
+	void importApi(@RequestParam(name = "kind", required = false)String kind,@RequestBody String json);
+
 }

@@ -30,7 +30,7 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_enterprise_api
+        FROM doc_ee_api
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
@@ -39,21 +39,21 @@
     <select id="getByModuleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_enterprise_api
+        FROM doc_ee_api
         <where>
             module_id = #{moduleId, jdbcType=BIGINT}
         </where>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        DELETE FROM doc_enterprise_api
+        DELETE FROM doc_ee_api
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
     </delete>
 
     <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.doc.EnterpriseApi">
-        INSERT INTO doc_enterprise_api
+        INSERT INTO doc_ee_api
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -157,7 +157,7 @@
     </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.doc.EnterpriseApi">
-        UPDATE doc_enterprise_api
+        UPDATE doc_ee_api
         <set>
             <if test="id != null">
                 id = #{id, jdbcType=BIGINT},
@@ -214,7 +214,7 @@
     </update>
 
     <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.doc.EnterpriseApi">
-        UPDATE doc_enterprise_api
+        UPDATE doc_ee_api
         <set>
             id = #{id, jdbcType=BIGINT},
             module_id = #{moduleId, jdbcType=BIGINT},
@@ -241,7 +241,7 @@
     <select id="list" resultMap="BaseResultMap" parameterType="com.wl4g.devops.common.bean.doc.EnterpriseApi" >
         SELECT
             <include refid="Base_Column_List"/>
-        FROM doc_enterprise_api
+        FROM doc_ee_api
         <where>
                 AND del_flag != 1
             <if test="enterpriseApi.name != null and enterpriseApi.name != ''" >
