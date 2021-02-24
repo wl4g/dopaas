@@ -93,18 +93,18 @@ function checkPreDependencies() {
   # Check maven
   if [ ! -n "$(command -v mvn)" ]; then
     log "No such command mvn, auto installing maven ..."
-    cd $currDir
-    curl -O "$apacheMvnDownloadTarUrl"
+    cd $workspaceDir
+    local tmpTarFile="$workspaceDir/apache-maven-current.tar"
+    curl -o "$tmpTarFile" "$apacheMvnDownloadTarUrl"
     if [ $? -ne 0 ]; then # Fallback
-      curl -O "$secondaryApacheMvnDownloadTarUrl"
+      curl -o "$tmpTarFile" "$secondaryApacheMvnDownloadTarUrl"
     fi
     # Check installization result.
     [ $? -ne 0 ] && logErr "Failed to auto install mvn! Please manual installation!" && exit -1
-    local mvnHome="$apacheMvnInstallDir/apache-maven-current"
-    mkdir -p $mvnHome
-    \rm -rf $mvnHome/* # Cleanup older
-    tar -zxf apache-maven-*-bin.tar.gz -C $mvnHome
-    \rm -rf apache-maven-*-bin.tar.gz # Cleanup trash
+    local mvnHome="$apacheMvnInstallDir/apache-maven-current" && mkdir -p $mvnHome
+    \rm -rf $mvnHome/* # Rmove old files(if necessary)
+    tar -xf "$tmpTarFile" --strip-components=1 -C "$mvnHome"
+    \rm -rf $tmpTarFile # Cleanup
     cmdMvn="$mvnHome/bin/mvn"
   fi
   log "Use installed maven command: $cmdMvn"
