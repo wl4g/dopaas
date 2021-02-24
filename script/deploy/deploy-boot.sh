@@ -88,7 +88,7 @@ if [ "$deployMode" == "host" ]; then
   while true
   do
     read -t 300 -p "
-The deployment will be applied to the following remote hosts:
+The deployment will be xcloud apps to the following remote hosts:
 ----------------------
 $deployHostsContent
 ----------------------
