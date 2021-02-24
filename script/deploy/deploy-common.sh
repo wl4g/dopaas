@@ -18,7 +18,7 @@
 
 # Initialization.
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
-. ${currDir}/deploy-env.sh
+. ${workspaceDir}/deploy-env.sh
 
 # Common variables.
 cmdMvn="$(command -v mvn)"
