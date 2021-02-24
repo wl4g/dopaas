@@ -15,10 +15,11 @@
 # * See the License for the specific language governing permissions and
 # * limitations under the License.
 # */
+# @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
 # Initialization
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
-. ${workspaceDir}/deploy-common.sh
+. ${currDir}/deploy-common.sh
 [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
 
 log ""
@@ -43,6 +44,7 @@ function pullAndCompile() {
     cd $currDir && git clone $cloneUrl 2>&1 | tee -a $logFile
     log "Compiling $projectName ..."
     cd $projectDir && $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
+    [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   else
     log "Git pull $projectName from $cloneUrl ..."
     # Check update remote url
@@ -53,9 +55,10 @@ function pullAndCompile() {
     fi
     # Check already updated?
     pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
-    if [[ "$pullResult" == "Already up-to-date" || "$rebuildOfGitPullAlreadyUpToDate" == "true" ]]; then
+    if [[ "$pullResult" != "Already up-to-date" || "$rebuildOfGitPullAlreadyUpToDate" == "true" ]]; then
       log "Compiling $projectName ..."
       cd $projectDir && $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
+      [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
     else
       log "Skip build of $projectName(latest)"
     fi
@@ -82,9 +85,9 @@ function deployAndStartupAllWithStandalone() {
     log "[$appName/standalone/Local] Copying $buildFilePath to $appInstallDir/ ..."
     cp -R ${appName}-${buildPkgVersion}-bin.jar $appInstallDir/
   else
-    logErr "[$appName/standalone/Local] Invalid config buildPkgType: $buildPkgType"
-    exit -1
+    logErr "[$appName/standalone/Local] Invalid config buildPkgType: $buildPkgType"; exit -1
   fi
+  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   exec $cmdRestart
 }
 
@@ -102,22 +105,20 @@ function deployAndStartupAllWithCluster() {
     if [ $k == 1 ]; then # Skip title row(first)
       continue
     fi
-
     # Extract node info & trim
     local host=$(echo $node|awk -F ',' '{print $1}'|sed -e 's/^\s*//' -e 's/\s*$//')
     local user=$(echo $node|awk -F ',' '{print $2}'|sed -e 's/^\s*//' -e 's/\s*$//')
     local passwd=$(echo $node|awk -F ',' '{print $3}'|sed -e 's/^\s*//' -e 's/\s*$//')
     if [[ "$host" == "" || "$user" == "" ]]; then
-      logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"
-      exit -1
+      logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
     fi
-
     # Do deploy to instance.
     if [ "$asyncDeploy" == "true" ]; then
       doDeployAndStartupToClusterInstance $appName $appInstallDir $buildFilePath $buildPkgType $host $user $passwd &
     else
       doDeployAndStartupToClusterInstance $appName $appInstallDir $buildFilePath $buildPkgType $host $user $passwd
     fi
+    [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   done
   [ "$asyncDeploy" == "true" ] && wait # Wait all instances async deploy complete.
 }
@@ -135,24 +136,28 @@ function doDeployAndStartupToClusterInstance() {
   # Deployement to remote.
   log "[$appName/cluster/$host] Cleanup older install files: \"$appInstallDir/*\" ..."
   doRemoteCmd "$user" "$passwd" "$host" "rm -rf $appInstallDir/*" "true"
+  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   log "[$appName/cluster/$host] Transfer \"$buildFilePath\" to remote \"$appInstallDir\" ..."
   doScp "$user" "$passwd" "$host" "$buildFilePath" "$appInstallDir/$buildFileName" "true"
+  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
   if [ "$buildPkgType" == "mvnAssTar" ]; then
     log "[$appName/cluster/$host] Uncompress \"$appInstallDir/$buildFileName\" to \"$appInstallDir/\" ..."
     doRemoteCmd "$user" "$passwd" "$host" "tar -xf $appInstallDir/$buildFileName -C $appInstallDir" "true"
+    [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   elif [ "$buildPkgType" == "springExecJar" ]; then
     log "" # Nothing
   else
-    logErr "[$appName/cluster/$host] Invalid config buildPkgType: $buildPkgType"
-    exit -1
+    logErr "[$appName/cluster/$host] Invalid config buildPkgType: $buildPkgType"; exit -1
   fi
 
   log "[$appName/cluster/$host] Checking for app services installization ..."
   checkInstallService "$appName" "$user" "$passwd" "$host"
+  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
   log "[$appName/cluster/$host] Restarting for $appName ..."
   doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true"
+  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   log "[$appName/cluster/$host] Deployed $appName completed."
 }
 
@@ -163,8 +168,7 @@ function deployAndStartupAll() {
   elif [ "$deployMode" == "cluster" ]; then # The 'cluster' mode is deploy to the remote hosts
     deployBuildTargets=("${deployClusterBuildTargets[@]}") # Copy build targets array
   else
-    logErr "Invalid config deployMode: $deployMode"
-    exit -1
+    logErr "Invalid config deployMode: $deployMode"; exit -1
   fi
   # Call deploying
   deployBuildTargetsLen=${#deployBuildTargets[@]}
@@ -173,8 +177,7 @@ function deployAndStartupAll() {
       local buildTargetDir=${deployBuildTargets[i]}
       local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.tar|*-${buildPkgVersion}-bin.jar")
       if [ -z "$buildFileName" ]; then
-         logErr "Failed to read build assets from target direct: $buildTargetDir"
-         exit -1
+         logErr "Failed to read build assets from target direct: $buildTargetDir"; exit -1
       fi
       local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
       local cmdRestart="/etc/init.d/${appName}.service restart"
@@ -185,6 +188,7 @@ function deployAndStartupAll() {
         else
           deployAndStartupAllWithStandalone "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName"
         fi
+        [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
         log "[$appName/standalone] deployed to local completed !"
       elif [ "$deployMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
         log "[$appName/cluster] deploying to remote all hosts ..."
@@ -193,6 +197,7 @@ function deployAndStartupAll() {
         else
           deployAndStartupAllWithCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName"
         fi
+        [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
         log "[$appName/cluster] deployed remote all hosts completed !"
       fi
     done;
@@ -201,18 +206,18 @@ function deployAndStartupAll() {
 }
 
 # ----- Main call. -----
-beginTime=`date +%s`
 if [[ "$(echo groups)" == "root" ]]; then
   logErr "Please execute the scripts as a user with root privileges !" && exit -1
 fi
 
+beginTime=`date +%s`
 checkPreDependencies
 pullAndCompile "xcloud-component" $gitXCloudComponentUrl
 pullAndCompile "xcloud-iam" $gitXCloudIamUrl
 pullAndCompile "xcloud-devops" $gitXCloudDevOpsUrl
 deployAndStartupAll
-
 costTime=$[$(echo `date +%s`)-$beginTime]
+
 log " ---------------------------------------------------------------------"
 log " DEPLOY FINISHED"
 log " ---------------------------------------------------------------------"

@@ -15,10 +15,11 @@
 # * See the License for the specific language governing permissions and
 # * limitations under the License.
 # */
+# @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
 # Initialization.
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
-. ${workspaceDir}/deploy-env.sh
+. ${currDir}/deploy-env.sh
 
 # Common variables.
 cmdMvn="$(command -v mvn)"
@@ -108,6 +109,7 @@ function checkPreDependencies() {
     cmdMvn="$mvnHome/bin/mvn"
     # Use china fast maven mirror to settings.xml
     if [ "$isNetworkInGfwWall" == "Y" ]; then # see: deploy-boot.sh
+      log "Currently in china gfw network, configuring aliyun maven fast mirror ..."
 cat<<EOF>$mvnHome/conf/settings.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -153,10 +155,14 @@ function doRemoteCmd() {
   local host=$3
   local cmd=$4
   local exitOnFail=$5
-  # Check args.
+  # Check must args.
   if [[ $# < 5 || "$user" == "" || "$host" == "" ]]; then
-    log "ssh-passwordless authorization User/Host/Command must required or args should be at least 4"
-    exit -1
+    log "ssh-passwordless authorization User/Host/Command must required or args should be at least 4"; exit -1
+  fi
+  # Check host is locally? (directly exec local command)
+  if [[ "$host" == "localhost" || "$host" == "127.0.0.1" ]]; then
+    bash -c $cmd
+    return $?
   fi
   # Check whether it is login passwordless.(When the password is empty)
   if [ "$password" == "" ]; then
