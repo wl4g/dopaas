@@ -214,7 +214,7 @@ deployAndStartupAll
 
 costTime=$[$(echo `date +%s`)-$beginTime]
 log " ---------------------------------------------------------------------"
-log " DEPLOY SUCCESS"
+log " DEPLOY FINISHED"
 log " ---------------------------------------------------------------------"
 log " Total time: ${costTime} s (Wall Clock)"
 log " Finished at: $(date -d today +'%Y-%m-%d %H:%M:%S')"
