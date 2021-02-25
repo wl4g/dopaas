@@ -43,7 +43,7 @@
 # Build definition.
 [ -z "$buildPkgType" ] && export buildPkgType="mvnAssTar" # Options: mvnAssTar|springExecJar
 [ -z "$buildPkgVersion" ] && export buildPkgVersion="master"
-[ -z "$rebuildOfGitPullAlreadyUpToDate" ] && export rebuildOfGitPullAlreadyUpToDate="true"
+[ -z "$rebuildOfGitPullAlreadyUpToDate" ] && export rebuildOfGitPullAlreadyUpToDate="false"
 
 # Deploy common definition.
 [ -z "$runtimeMode" ] && export runtimeMode="cluster" # Options: standalone|cluster
@@ -75,4 +75,11 @@ export deployClusterBuildTargets=(
   "${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-facade/target"
   "${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-manager/target"
 )
+
+# Runtime dependency external services configuration.
+[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8"
+[ -z "$runtimeMysqlUser" ] && export runtimeMysqlUser="root"
+[ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"
+[ -z "$runtimeRedisNodes" ] && export runtimeRedisNodes="localhost:6379"
+[ -z "$runtimeRedisPassword" ] && export runtimeRedisPassword="123456"
 
