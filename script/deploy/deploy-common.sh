@@ -32,6 +32,14 @@ else
   exit -1
 fi
 
+# Security delete local object.
+function secDeleteLocal() {
+  local targetPath=$1
+  if [[ "$targetPath" != "" && "$targetPath" != "/" && "$targetPath" != "/bin"* && "$targetPath" != "/sbin"* ]]; then
+    \rm -rf $tmpServiceFile
+  fi
+}
+
 function getCurrPid() {
   local pid=$!
   if [ "$pid" == "" ]; then
@@ -103,9 +111,9 @@ function checkPreDependencies() {
     # Check installization result.
     [ $? -ne 0 ] && logErr "Failed to auto install mvn! Please manual installation!" && exit -1
     local mvnHome="$apacheMvnInstallDir/apache-maven-current" && mkdir -p $mvnHome
-    \rm -rf $mvnHome/* # Rmove old files(if necessary)
+    secDeleteLocal "$mvnHome/*" # Rmove old files(if necessary)
     tar -xf "$tmpTarFile" --strip-components=1 -C "$mvnHome"
-    \rm -rf $tmpTarFile # Cleanup
+    secDeleteLocal "$tmpTarFile" # Cleanup
     cmdMvn="$mvnHome/bin/mvn"
     # Use china fast maven mirror to settings.xml
     if [ "$isNetworkInGfwWall" == "Y" ]; then # see: deploy-boot.sh
@@ -156,8 +164,8 @@ function doRemoteCmd() {
   local cmd=$4
   local exitOnFail=$5
   # Check must args.
-  if [[ $# < 5 || "$user" == "" || "$host" == "" ]]; then
-    log "ssh-passwordless authorization User/Host/Command must required or args should be at least 4"; exit -1
+  if [[ $# < 4 || "$user" == "" || "$host" == "" || "$cmd" == "" ]]; then
+    log "ssh-passwordless authorization User/Host/Command is required and args should be 4"; exit -1
   fi
   # Check host is locally? (direct exec local command)
   if [[ "$host" == "localhost" || "$host" == "127.0.0.1" ]]; then
@@ -191,14 +199,14 @@ function doScp() {
   local host=$3
   local localPath=$4
   local remotePath=$5
-  local exitOnFail=$6
+  local exitOnFail=$6 # optional
   # Check args.
-  if [[ $# < 6 || "$user" == "" || "$host" == "" ]]; then
-    log "ssh-passwordless authorization User/Host/LocalPath/RemotePath must required or args should be at least 5"; exit -1
+  if [[ $# < 5 || "$user" == "" || "$host" == "" || "$localPath" == "" || "$remotePath" == "" ]]; then
+    log "ssh-passwordless authorization User/Host/LocalPath/RemotePath is required and args should be 5"; exit -1
   fi
   # Check host is locally? (direct exec local command)
   if [[ "$host" == "localhost" || "$host" == "127.0.0.1" ]]; then
-    unalias cp
+    unalias -a cp
     cp -Rf "$localPath" "$remotePath"
     return $?
   fi
@@ -220,16 +228,15 @@ function doScp() {
   fi
 }
 
-# Installization app services scripts.
-# for testing => checkInstallService "iam-data" "root" "cn#!7%7^^" "10.0.0.160"
-function checkInstallService() {
+# Check remote has services scripts.
+# for testing => checkRemoteHasService "iam-data" "root" "cn#!7%7^^" "10.0.0.160"
+function checkRemoteHasService() {
   local appName=$1
   local user=$2
   local password=$3
   local host=$4
   if [[ $# < 4 || "$appName" == "" || "$user" == "" || "$host" == "" ]]; then
-    logErr "Cannot installization app services, args appName/user/host is required !"
-    return -1
+    logErr "Cannot installization app services, args appName/user/host is required and args should be 4 !"; exit -1
   fi
   # Check & install app services(if necessary)
   local hasServiceFile=$(doRemoteCmd "$user" "$password" "$host" "echo $([ -f /etc/init.d/$appName.service ] && echo Y || echo N)" "true")
@@ -351,7 +358,7 @@ function start() {
       fi
     done
     echo -e "\nStarted $appName on "\$pids
-    \rm -rf $appLogStdoutFile
+    [[ "$appLogStdoutFile" != "" && "$appLogStdoutFile" != "/" ]] && \rm -rf "$appLogStdoutFile"
   else
     echo "$appName process is running "\$pids
   fi
@@ -421,6 +428,6 @@ EOF
   # Transfer services script to remote.
   doScp "$user" "$password" "$host" "$tmpServiceFile" "/etc/init.d/${appName}.service" "true"
   doRemoteCmd "$user" "$password" "$host" "chmod 750 /etc/init.d/${appName}.service" "true"
-  \rm -rf $tmpServiceFile
+  secDeleteLocal $tmpServiceFile
 }
 

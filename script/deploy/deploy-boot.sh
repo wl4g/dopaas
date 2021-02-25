@@ -29,8 +29,8 @@ export gitBaseUrl="https://github.com/wl4g"
 export gitBaseUrlBackup1="https://gitee.com/wl4g"
 
 # Detect the host network and choose the fast resources intelligently.
-echo "Analyzing network and intelligent configuration resources ..."
-ipArea=$(curl --connect-timeout 10 -m 20 -sSL cip.cc)
+echo "Analyzing network to best packages resources are automatically allocated ..."
+ipArea=$(curl --connect-timeout 10 -m 20 -sSL cip.cc 2>/dev/null)
 if [ $? == 0 ]; then
   export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo N)
 else # Fallback
@@ -57,11 +57,14 @@ chmod 750 $currDir/deploy-*.sh
 # Choose deployment mode.
 while true
 do
-  read -t 20 -p "Please choose deployment mode (host|docker)? " deployMode
-  if [ -n "$(echo $deployMode|grep -i 'host')" ]; then
+  read -t 20 -p """Option 1: Choose deployment mode:
+    [1] If you choose host deploy mode, next the app services is deployed to the remote host;
+    [2] If you choose docker deploy mode, next the app services is deployed to the remote docker;
+    please choose to (1|2|default:1)? """ deployMode
+  if [[ "$deployMode" == "" || "$deployMode" == "1" ]]; then
     deployMode="host"
     break
-  elif [ -n "$(echo $deployMode|grep -i 'docker')" ]; then
+  elif [ "$deployMode" == "2" ]; then
     deployMode="docker"
     echo "Docker deployment is not supported yet, please look forward to it! Welcome to join us, contact: <wanglsir@gmail.com, 983708408@qq.com>"
     exit -1;
@@ -73,16 +76,15 @@ done
 # Choose runtime mode.
 while true
 do
-  read -t 300 -p """Please choose apps services runtime mode:
-  Notes:
-    If you choose stand-alone mode, it will be deployed to the local host in the smallest mode;
-    If you choose cluster mode, it will be deployed to multiple remote hosts as distributed microservices, 
-    you need to edit 11 files to define the host list.
-    please choose (standalone|cluster)? """ runtimeMode
-  if [ "$runtimeMode" == "standalone" ]; then
+  read -t 300 -p """Option 2: Choose apps services runtime mode:
+    [1] If you choose standalone runtime mode, it will be deployed to the local host in the smallest mode;
+    [2] If you choose cluster runtime mode, it will be deployed to multiple remote hosts as distributed
+    microservices, you need to edit 11 files to define the host list.
+    please choose to (1|2|default:1)? """ runtimeMode
+  if [[ "$runtimeMode" == "" || "$runtimeMode" == "1" ]]; then
     export runtimeMode="standalone"
     break
-  elif [ "$runtimeMode" == "cluster" ]; then
+  elif [ "$runtimeMode" == "2" ]; then
     export runtimeMode="cluster"
     echo "Please edit \"$currDir/deploy-host.csv\", and then re-execute \".$currDir/deploy-boot.sh\" again"
     exit 0
@@ -100,5 +102,5 @@ else
   echo "Unknown deploy mode of \"$deployMode\" !"
 fi
 
-#cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
+cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
 exit 0
