@@ -10,27 +10,35 @@
 			<directory>src/main/resources/script</directory>
 			<outputDirectory>bin</outputDirectory>
 			<includes>
-				<include>*.*</include>
+				<include>**/*.sh</include>
 			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/script/windows</directory>
 			<outputDirectory>bin/windows</outputDirectory>
 			<includes>
-				<include>*.*</include>
+				<include>**/*.bat</include>
+				<include>**/*.cmd</include>
 			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources</directory>
 			<outputDirectory>conf</outputDirectory>
 			<excludes>
-				<exclude>script/**</exclude>
 				<exclude>static/**</exclude>
+				<exclude>script/**</exclude>
 			</excludes>
 			<includes>
-				<include>*.yml</include>
-				<include>*.yaml</include>
-				<include>*.properties</include>
+				<include>**/*.yml</include>
+				<include>**/*.yaml</include>
+                <include>**/*.properties</include>
+                <include>**/*.conf</include>
+                <include>**/*.json</include>
+                <include>**/*.xml</include>
+                <include>**/*.txt</include>
+                <include>**/*.sql</include>
+                <include>**/*.db</include>
+                <include>**/*.dat</include>
 			</includes>
 		</fileSet>
 		<fileSet>
@@ -43,26 +51,16 @@
 		<fileSet>
 			<directory>src/main/resources</directory>
 			<outputDirectory>site-docs</outputDirectory>
-			<excludes>
-				<exclude>*.*</exclude>
-				<exclude>script/**</exclude>
-			</excludes>
+            <excludes>
+                <exclude>**/*.*</exclude>
+            </excludes>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources</directory>
-			<outputDirectory>logs</outputDirectory>
-			<excludes>
-				<exclude>*.*</exclude>
-				<exclude>script/**</exclude>
-			</excludes>
-		</fileSet>
-		<fileSet>
-			<directory>src/main/resources</directory>
-			<outputDirectory>src</outputDirectory>
-			<excludes>
-				<exclude>*.*</exclude>
-				<exclude>script/**</exclude>
-			</excludes>
+            <outputDirectory>logs</outputDirectory>
+            <excludes>
+                <exclude>**/*.*</exclude>
+            </excludes>
 		</fileSet>
 	</fileSets>
 	<dependencySets>

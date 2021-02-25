@@ -18,7 +18,7 @@
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
 # ----------------------- Initialization. ------------------------------------------------------
-[ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
+[ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 
 # ----------------------- Base environment variables. ------------------------------------------
 [ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir

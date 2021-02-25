@@ -18,7 +18,7 @@
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
 # Initialization.
-[ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
+[ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 . ${currDir}/deploy-env.sh
 
 # Common variables.
@@ -159,9 +159,9 @@ function doRemoteCmd() {
   if [[ $# < 5 || "$user" == "" || "$host" == "" ]]; then
     log "ssh-passwordless authorization User/Host/Command must required or args should be at least 4"; exit -1
   fi
-  # Check host is locally? (directly exec local command)
+  # Check host is locally? (direct exec local command)
   if [[ "$host" == "localhost" || "$host" == "127.0.0.1" ]]; then
-    bash -c $cmd
+    bash -c "$cmd"
     return $?
   fi
   # Check whether it is login passwordless.(When the password is empty)
@@ -195,6 +195,12 @@ function doScp() {
   # Check args.
   if [[ $# < 6 || "$user" == "" || "$host" == "" ]]; then
     log "ssh-passwordless authorization User/Host/LocalPath/RemotePath must required or args should be at least 5"; exit -1
+  fi
+  # Check host is locally? (direct exec local command)
+  if [[ "$host" == "localhost" || "$host" == "127.0.0.1" ]]; then
+    unalias cp
+    cp -Rf "$localPath" "$remotePath"
+    return $?
   fi
   # Check whether it is login passwordless.(When the password is empty)
   if [ "$password" == "" ]; then
