@@ -15,14 +15,14 @@
 # * See the License for the specific language governing permissions and
 # * limitations under the License.
 # */
+# @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
 if [[ "$(echo groups)" == "root" ]]; then
-  logErr "Please execute the scripts as a user with root privileges !" && exit -1
+  logErr "Please execute the scripts as a user with root privileges !"; exit -1
 fi
 
 # Global definition.
-[ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
-export workspaceDir="/tmp/.deploy-workspace"
+[ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy"
 export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy"
 export gitBaseUrl="https://github.com/wl4g"
@@ -60,14 +60,14 @@ if [ "$isNetworkInGfwWall" == "Y" ]; then
 fi
 
 # Download deploy dependencies scripts.
-mkdir -p $workspaceDir; cd $workspaceDir
-[ -n "$(ls deploy-*.sh 2>/dev/null)" ] && \rm -rf $(ls deploy-*.sh|grep -v $0) # Cleanup scripts.
+cd $currDir
+\rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env.sh"; [ $? -ne 0 ] && exit -1
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
 curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-docker.sh"; [ $? -ne 0 ] && exit -1
-cd $currDir && curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv"; [ $? -ne 0 ] && exit -1
-chmod 750 $workspaceDir/deploy-*.sh
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv"; [ $? -ne 0 ] && exit -1
+chmod 750 $currDir/deploy-*.sh
 
 # Confirm deploy environments.
 while true
@@ -101,12 +101,12 @@ EOF
       continue
     fi
   done
-  bash $workspaceDir/deploy-host.sh
+  bash $currDir/deploy-host.sh
 elif [ "$deployMode" == "docker" ]; then
-  bash $workspaceDir/deploy-docker.sh
+  bash $currDir/deploy-docker.sh
 else
   echo "Unknown deploy mode of \"$deployMode\" !"
 fi
 
-cd $workspaceDir && [ -n "$(ls deploy-*.sh 2>/dev/null)" ] && \rm -rf $(ls deploy-*.sh|grep -v $0) # Cleanup scripts.
+cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
 exit 0
