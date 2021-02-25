@@ -75,20 +75,25 @@ function deployAndStartupAllWithStandalone() {
   local buildFileName=$2
   local cmdRestart=$3
   local appName=$4
-  local appInstallDir=${deployBaseDir}/${appName}-package
-  log "[$appName/standalone/Local] Cleanup older install files: $appInstallDir/* ..."
-  rm -rf $appInstallDir/*
+  local appInstallDir=${deployBaseDir}/${appName}-package && mkdir -p $appInstallDir
+  log "[$appName/standalone] Cleanup older install files: $appInstallDir/* ..."
+  secDeleteLocal "$appInstallDir/*"
+  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
   if [ "$buildPkgType" == "mvnAssTar" ]; then
-    log "[$appName/standalone/Local] Uncompress $buildFilePath to $appInstallDir ..."
+    log "[$appName/standalone/local] Uncompress $buildFilePath to $appInstallDir ..."
     tar -xf $buildFilePath -C $appInstallDir/
   elif [ "$buildPkgType" == "springExecJar" ]; then
-    log "[$appName/standalone/Local] Copying $buildFilePath to $appInstallDir/ ..."
-    cp -R ${appName}-${buildPkgVersion}-bin.jar $appInstallDir/
+    log "[$appName/standalone/local] Copying $buildFilePath to $appInstallDir/ ..."
+    unalias -a cp
+    cp -Rf ${appName}-${buildPkgVersion}-bin.jar $appInstallDir/
   else
-    logErr "[$appName/standalone/Local] Invalid config buildPkgType: $buildPkgType"; exit -1
+    logErr "[$appName/standalone/local] Invalid config buildPkgType: $buildPkgType"; exit -1
   fi
-  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
+  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
+  log "[$appName/standalone/local] Checking for app services installization ..."
+  checkRemoteHasService "$appName" "$USER" "$passwd" "localhost"
   exec $cmdRestart
+  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
 }
 
 # Deploy & startup all(cluster).
@@ -135,7 +140,8 @@ function doDeployAndStartupToClusterInstance() {
 
   # Deployement to remote.
   log "[$appName/cluster/$host] Cleanup older install files: \"$appInstallDir/*\" ..."
-  doRemoteCmd "$user" "$passwd" "$host" "rm -rf $appInstallDir/*" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "[ $appInstallDir != \"\" && $appInstallDir != \"/\" ] && rm -rf $appInstallDir/*" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appInstallDir/*" "true"
   [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   log "[$appName/cluster/$host] Transfer \"$buildFilePath\" to remote \"$appInstallDir\" ..."
   doScp "$user" "$passwd" "$host" "$buildFilePath" "$appInstallDir/$buildFileName" "true"
@@ -152,7 +158,7 @@ function doDeployAndStartupToClusterInstance() {
   fi
 
   log "[$appName/cluster/$host] Checking for app services installization ..."
-  checkInstallService "$appName" "$user" "$passwd" "$host"
+  checkRemoteHasService "$appName" "$user" "$passwd" "$host"
   [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
   log "[$appName/cluster/$host] Restarting for $appName ..."
@@ -219,7 +225,7 @@ deployAndStartupAll
 costTime=$[$(echo `date +%s`)-$beginTime]
 
 log " ---------------------------------------------------------------------"
-log " DEPLOY SUCCESS"
+log " DEPLOY FINISHED"
 log " ---------------------------------------------------------------------"
 log " Total time: ${costTime} s (Wall Clock)"
 log " Finished at: $(date -d today +'%Y-%m-%d %H:%M:%S')"
