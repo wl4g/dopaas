@@ -165,7 +165,7 @@ function doRemoteCmd() {
   local exitOnFail=$5
   # Check must args.
   if [[ $# < 4 || "$user" == "" || "$host" == "" || "$cmd" == "" ]]; then
-    log "ssh-passwordless authorization User/Host/Command is required and args should be 4"; exit -1
+    log "Exec remote command User/Host/Command is required and args should be 4"; exit -1
   fi
   # Check host is locally? (direct exec local command)
   if [[ "$host" == "localhost" || "$host" == "127.0.0.1" ]]; then
@@ -181,8 +181,7 @@ function doRemoteCmd() {
       ssh -o StrictHostKeyChecking=no -p 22 -i $HOME/.ssh/id_rsa.pub $user@$host $cmd
       [[ $? -ne 0 && "$exitOnFail" == "true" ]] && exit -1
     else
-      logErr "Failed to exec remote, bacause not ssh-passwordless authorized!"
-      exit -1
+      logErr "Failed to exec remote, bacause not ssh-passwordless authorized!"; exit -1
     fi
   else # Exec remote by sshpass
     installSshpass
@@ -244,7 +243,7 @@ function checkRemoteHasService() {
 
   log "[$appName/$host] Not detected /etc/init.d/$appName.services script, installing ..."
   local appVersion="master"
-  local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)}') #eg: doc-manager => DocManager
+  local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: doc-manager => DocManager
   local appInstallDir="${deployBaseDir}/${appName}-package"
   local appHome="$appInstallDir/${appName}-${appVersion}-bin"
   local appClasspath=".:$appHome/conf:$appHome/libs/*"

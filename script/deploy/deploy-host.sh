@@ -48,19 +48,23 @@ function pullAndCompile() {
   else
     log "Git pull $projectName from $cloneUrl ..."
     # Check update remote url
-    oldRemoteUrl=$(cd $projectDir && git remote -v|grep fetch|awk '{print $2}';cd ..)
+    local oldRemoteUrl=$(cd $projectDir && git remote -v|grep fetch|awk '{print $2}';cd ..)
     if [ ! "$oldRemoteUrl" == "$cloneUrl" ]; then
       log "Updating origin remote url to \"$cloneUrl\" ..."
       cd $projectDir && git remote set-url origin $cloneUrl
     fi
     # Check already updated?
-    pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
-    if [[ "$pullResult" != "Already up-to-date" || "$rebuildOfGitPullAlreadyUpToDate" == "true" ]]; then
+    local pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
+    if [[ "$pullResult" != "Already up-to-date."* || "$rebuildOfGitPullAlreadyUpToDate" == "true" ]]; then
       log "Compiling $projectName ..."
       cd $projectDir && $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
       [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
     else
       log "Skip build of $projectName(latest)"
+      # Tips usage rebuild
+      if [ "$rebuildOfGitPullAlreadyUpToDate" != "true" ]; then
+        log " [Tips]: If you still want to recompile, usage: export rebuildOfGitPullAlreadyUpToDate=\"true\" before execution !!!"
+      fi
     fi
   fi
   # If the mvn command is currently executed as root, but the local warehouse directory owner is another user, 
@@ -90,7 +94,8 @@ function deployAndStartupAllWithStandalone() {
     logErr "[$appName/standalone/local] Invalid config buildPkgType: $buildPkgType"; exit -1
   fi
   [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
-  log "[$appName/standalone/local] Checking for app services installization ..."
+  # Check app services script.
+  log "[$appName/standalone/local] Checking for app services script ..."
   checkRemoteHasService "$appName" "$USER" "$passwd" "localhost"
   exec $cmdRestart
   [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
@@ -140,30 +145,25 @@ function doDeployAndStartupToClusterInstance() {
 
   # Deployement to remote.
   log "[$appName/cluster/$host] Cleanup older install files: \"$appInstallDir/*\" ..."
-  doRemoteCmd "$user" "$passwd" "$host" "[ $appInstallDir != \"\" && $appInstallDir != \"/\" ] && rm -rf $appInstallDir/*" "true"
-  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appInstallDir/*" "true"
-  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
+  [[ "$appInstallDir" != "" && "$appInstallDir" != "/" ]] && doRemoteCmd "$user" "$passwd" "$host" "rm -rf $appInstallDir/*" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appInstallDir" "false"
   log "[$appName/cluster/$host] Transfer \"$buildFilePath\" to remote \"$appInstallDir\" ..."
   doScp "$user" "$passwd" "$host" "$buildFilePath" "$appInstallDir/$buildFileName" "true"
-  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
-
   if [ "$buildPkgType" == "mvnAssTar" ]; then
     log "[$appName/cluster/$host] Uncompress \"$appInstallDir/$buildFileName\" to \"$appInstallDir/\" ..."
-    doRemoteCmd "$user" "$passwd" "$host" "tar -xf $appInstallDir/$buildFileName -C $appInstallDir" "true"
-    [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
+    doRemoteCmd "$user" "$passwd" "$host" "tar -xf $appInstallDir/$buildFileName -C $appInstallDir && rm -rf $appInstallDir/$buildFileName" "true"
   elif [ "$buildPkgType" == "springExecJar" ]; then
     log "" # Nothing
   else
     logErr "[$appName/cluster/$host] Invalid config buildPkgType: $buildPkgType"; exit -1
   fi
-
+  # Check installed services script?
   log "[$appName/cluster/$host] Checking for app services installization ..."
   checkRemoteHasService "$appName" "$user" "$passwd" "$host"
   [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
-
+  # Exec restart
   log "[$appName/cluster/$host] Restarting for $appName ..."
   doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true"
-  [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   log "[$appName/cluster/$host] Deployed $appName completed."
 }
 
@@ -195,16 +195,16 @@ function deployAndStartupAll() {
           deployAndStartupAllWithStandalone "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName"
         fi
         [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
-        log "[$appName/standalone] deployed to local completed !"
+        log "[$appName/standalone] Deployed to local completed !"
       elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
-        log "[$appName/cluster] deploying to remote all hosts ..."
+        log "[$appName/cluster] Deploying to remote all nodes ..."
         if [ "$asyncDeploy" == "true" ]; then
           deployAndStartupAllWithCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" &
         else
           deployAndStartupAllWithCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName"
         fi
         [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
-        log "[$appName/cluster] deployed remote all hosts completed !"
+        log "[$appName/cluster] Deployed to remote all nodes !"
       fi
     done;
     [ "$asyncDeploy" == "true" ] && wait # Wait all apps async deploy complete.
@@ -215,19 +215,20 @@ function deployAndStartupAll() {
 if [[ "$(echo groups)" == "root" ]]; then
   logErr "Please execute the scripts as a user with root privileges !" && exit -1
 fi
-
 beginTime=`date +%s`
+
 checkPreDependencies
 pullAndCompile "xcloud-component" $gitXCloudComponentUrl
 pullAndCompile "xcloud-iam" $gitXCloudIamUrl
 pullAndCompile "xcloud-devops" $gitXCloudDevOpsUrl
 deployAndStartupAll
-costTime=$[$(echo `date +%s`)-$beginTime]
+deployStatus=$([ ${PIPESTATUS[0]} -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
 
+costTime=$[$(echo `date +%s`)-$beginTime]
 log " ---------------------------------------------------------------------"
-log " DEPLOY FINISHED"
+log " DEPLOY $deployStatus"
 log " ---------------------------------------------------------------------"
-log " Total time: ${costTime} s (Wall Clock)"
+log " Total time: ${costTime} sec (Wall Clock)"
 log " Finished at: $(date -d today +'%Y-%m-%d %H:%M:%S')"
 log " More details logs see: $logFile"
 log " ---------------------------------------------------------------------"
