@@ -163,12 +163,12 @@ function doDeployAndStartupToClusterInstance() {
 
 # Deploy & startup all.
 function deployAndStartupAll() {
-  if [ "$deployMode" == "standalone" ]; then
+  if [ "$runtimeMode" == "standalone" ]; then
     deployBuildTargets=("${deployStandaloneBuildTargets[@]}") # Copy build targets array
-  elif [ "$deployMode" == "cluster" ]; then # The 'cluster' mode is deploy to the remote hosts
+  elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deploy to the remote hosts
     deployBuildTargets=("${deployClusterBuildTargets[@]}") # Copy build targets array
   else
-    logErr "Invalid config deployMode: $deployMode"; exit -1
+    logErr "Invalid config runtimeMode: $runtimeMode"; exit -1
   fi
   # Call deploying
   deployBuildTargetsLen=${#deployBuildTargets[@]}
@@ -181,7 +181,7 @@ function deployAndStartupAll() {
       fi
       local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
       local cmdRestart="/etc/init.d/${appName}.service restart"
-      if [ "$deployMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
+      if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
         log "[$appName/standalone] deploying to local ..."
         if [ "$asyncDeploy" == "true" ]; then
           deployAndStartupAllWithStandalone "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" &
@@ -190,7 +190,7 @@ function deployAndStartupAll() {
         fi
         [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
         log "[$appName/standalone] deployed to local completed !"
-      elif [ "$deployMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
+      elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
         log "[$appName/cluster] deploying to remote all hosts ..."
         if [ "$asyncDeploy" == "true" ]; then
           deployAndStartupAllWithCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" &
@@ -219,7 +219,7 @@ deployAndStartupAll
 costTime=$[$(echo `date +%s`)-$beginTime]
 
 log " ---------------------------------------------------------------------"
-log " DEPLOY FINISHED"
+log " DEPLOY SUCCESS"
 log " ---------------------------------------------------------------------"
 log " Total time: ${costTime} s (Wall Clock)"
 log " Finished at: $(date -d today +'%Y-%m-%d %H:%M:%S')"

@@ -46,7 +46,7 @@
 [ -z "$rebuildOfGitPullAlreadyUpToDate" ] && export rebuildOfGitPullAlreadyUpToDate="true"
 
 # Deploy common definition.
-[ -z "$deployMode" ] && export deployMode="cluster" # Options: standalone|cluster
+[ -z "$runtimeMode" ] && export runtimeMode="cluster" # Options: standalone|cluster
 [ -z "$deployBaseDir" ] && export deployBaseDir="/opt/apps/acm"
 
 # Delopy(standalone) modules definition.

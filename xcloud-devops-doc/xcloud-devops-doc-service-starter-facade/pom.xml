@@ -133,6 +133,10 @@
 						<configuration>
 							<mainClass>com.wl4g.DocFacade</mainClass>
 							<finalName>${final.name}-${project.version}-bin</finalName>
+							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
+                            <!-- @see:https://www.baeldung.com/spring-boot-main-class -->
+                            <!-- @see:https://www.jianshu.com/p/66a101c85485 -->
+                            <layout>ZIP</layout>
 						</configuration>
 						<executions>
 							<execution>
