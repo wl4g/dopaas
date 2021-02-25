@@ -64,9 +64,9 @@ function logErr() {
 # Check pre dependencies.
 function checkPreDependencies() {
   log "Checking OS software pre dependencies ..."
-  # Check java
-  if [ ! -n "$(command -v java)" ]; then
-    log "JDK package not detected, please install at least jdk8+ first!"
+  # Check java/javac
+  if [[ "$(command -v java)" == "" || "$(command -v javac)" == "" ]]; then
+    log "Not detected java and javac, please install at least jdk8+, note not just JRE !"
     exit -1
   fi
   local javaVersion=$(java -version 2>&1 | sed '1!d' | sed -e 's/"//g' | awk '{print $3}')
@@ -240,7 +240,7 @@ function checkInstallService() {
   local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)}') #eg: doc-manager => DocManager
   local appInstallDir="${deployBaseDir}/${appName}-package"
   local appHome="$appInstallDir/${appName}-${appVersion}-bin"
-  local appClasspath="$appHome/libs"
+  local appClasspath=".:$appHome/conf:$appHome/libs/*"
   local appLogDir="/mnt/disk1/log/$appName"
   local appLogFile="$appLogDir/$appName.log"
   local appLogStdoutFile="$appLogDir/$appName.stdout"
@@ -270,8 +270,10 @@ function checkInstallService() {
     local appShellRunCmd="$javaExec -client -Dprompt=$appName -Dservname=$appName $shellPort -cp .:$appHome/libs/* com.wl4g.ShellBootstrap"
   elif [ "$buildPkgType" == "springExecJar" ]; then
     local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -jar ${appName}-${appVersion}-bin.jar $appOpts"
-    # TODO, The mainclass of jar cannot be executed as specified by classpath. 
-    #local appShellRunCmd="$javaExec -client -Dprompt=$appName -Dservname=$appName $shellPort -cp .:$appHome/${appName}-${appVersion}-bin.jar com.wl4g.ShellBootstrap"
+    # for example using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher
+    # see: xcloud-devops/xcloud-devops-ci/xcloud-devops-ci-service-starter-facade/pom.xml#profile.id=springExecJar
+    # refer to: https://www.baeldung.com/spring-boot-main-class, https://www.jianshu.com/p/66a101c85485
+    local appShellRunCmd="$javaExec -client -Dloader.main=com.wl4g.ShellBootstrap -Dprompt=$appName -Dservname=$appName $shellPort -jar .:$appHome/${appName}-${appVersion}-bin.jar"
   fi
 
   mkdir -p $appInstallDir

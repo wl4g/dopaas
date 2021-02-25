@@ -28,7 +28,33 @@ export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-devops/raw/master/sc
 export gitBaseUrl="https://github.com/wl4g"
 export gitBaseUrlBackup1="https://gitee.com/wl4g"
 
-# Choose deploy mode.
+# Detect the host network and choose the fast resources intelligently.
+echo "Analyzing network and intelligent configuration resources ..."
+ipArea=$(curl --connect-timeout 10 -m 20 -sSL cip.cc)
+if [ $? == 0 ]; then
+  export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo N)
+else # Fallback
+  ipArea=$(curl --connect-timeout 10 -m 20 -sSL ipinfo.io)
+  export isNetworkInGfwWall=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo N)
+fi
+# Choose best resources.
+if [ "$isNetworkInGfwWall" == "Y" ]; then
+  export gitBaseUri="$gitBaseUrlBackup1" # for speed-up, fuck gfw!
+  export scriptsBaseUrl="$scriptsBaseUrlBackup1"
+fi
+
+# Download deploy dependencies scripts.
+cd $currDir
+\rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
+echo "Downloading deploy scripts dependencies ..."
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env.sh"; [ $? -ne 0 ] && exit -1
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-docker.sh"; [ $? -ne 0 ] && exit -1
+curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv"; [ $? -ne 0 ] && exit -1
+chmod 750 $currDir/deploy-*.sh
+
+# Choose deployment mode.
 while true
 do
   read -t 20 -p "Please choose deployment mode (host|docker)? " deployMode
@@ -44,39 +70,22 @@ do
   fi
 done
 
-# Detect the host network and choose the fast resources intelligently.
-echo "Analyzing network and intelligent configuration resources ..."
-ipArea=$(curl --connect-timeout 10 -m 20 -sSL cip.cc)
-if [ $? == 0 ]; then
-  export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo N)
-else # Fallback
-  ipArea=$(curl --connect-timeout 10 -m 20 -sSL ipinfo.io)
-  export isNetworkInGfwWall=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo N)
-fi
-# Choose best resources URL.
-if [ "$isNetworkInGfwWall" == "Y" ]; then
-  export gitBaseUri="$gitBaseUrlBackup1" # for speed-up, fuck gfw!
-  export scriptsBaseUrl="$scriptsBaseUrlBackup1"
-fi
-
-# Download deploy dependencies scripts.
-cd $currDir
-\rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env.sh"; [ $? -ne 0 ] && exit -1
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-docker.sh"; [ $? -ne 0 ] && exit -1
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv"; [ $? -ne 0 ] && exit -1
-chmod 750 $currDir/deploy-*.sh
-
-# Confirm deploy environments.
+# Choose runtime mode.
 while true
 do
-  read -t 300 -p "Please confirm use the default configuration deployment (y|n)? (if you need to custom please edit \"$currDir/deploy-env.sh\") " confirm1
-  if [ "$confirm1" == "y" ]; then
+  read -t 300 -p """Please choose apps services runtime mode:
+  Notes:
+    If you choose stand-alone mode, it will be deployed to the local host in the smallest mode;
+    If you choose cluster mode, it will be deployed to multiple remote hosts as distributed microservices, 
+    you need to edit 11 files to define the host list.
+    please choose (standalone|cluster)? """ runtimeMode
+  if [ "$runtimeMode" == "standalone" ]; then
+    export runtimeMode="standalone"
     break
-  elif [ "$confirm1" == "n" ]; then
-    echo "Please custom edit \"$currDir/deploy-env.sh\" first, and then re-execute \".$currDir/deploy-boot.sh\" to deploying !" && exit 0
+  elif [ "$runtimeMode" == "cluster" ]; then
+    export runtimeMode="cluster"
+    echo "Please edit \"$currDir/deploy-host.csv\", and then re-execute \".$currDir/deploy-boot.sh\" again"
+    exit 0
   else
     continue
   fi
@@ -84,23 +93,6 @@ done
 
 # Call deployer.
 if [ "$deployMode" == "host" ]; then
-  while true
-  do
-    read -t 300 -p "Do you just want to deploy to the local node first (y|n)? " confirm2
-    if [ "$confirm2" == "y" ]; then
-      # Auto generate localhost to deploy-host.csv
-cat<<EOF>$currDir/deploy-host.csv
-Host,User,Password
-localhost,$USER,
-EOF
-      break
-    elif [ "$confirm2" == "n" ]; then
-      echo "You have chosen to deploy to the remote cluster node, so you need to configure the remote node information first. Please edit \"$currDir/deploy-host.csv\", and then re-execute \".$currDir/deploy-boot.sh\" again"
-      exit 0
-    else
-      continue
-    fi
-  done
   bash $currDir/deploy-host.sh
 elif [ "$deployMode" == "docker" ]; then
   bash $currDir/deploy-docker.sh
@@ -108,5 +100,5 @@ else
   echo "Unknown deploy mode of \"$deployMode\" !"
 fi
 
-cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
+#cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
 exit 0
