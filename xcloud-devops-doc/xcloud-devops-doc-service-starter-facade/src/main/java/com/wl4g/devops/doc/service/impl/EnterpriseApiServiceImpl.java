@@ -19,6 +19,8 @@
 package com.wl4g.devops.doc.service.impl;
 
 
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
+import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
@@ -29,6 +31,7 @@ import com.wl4g.devops.doc.data.EnterpriseApiPropertiesDao;
 import com.wl4g.devops.doc.service.EnterpriseApiService;
 import com.wl4g.devops.doc.service.conversion.DocumentConverterAdapter;
 import com.wl4g.devops.doc.service.dto.EnterpriseApiPageRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,12 +99,15 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
         }
 
         enterpriseApiPropertiesDao.deleteByApiId(enterpriseApi.getId());
-        enterpriseApiPropertiesDao.insertBatch(list,enterpriseApi.getId());
+        if(list.size()>0){
+            enterpriseApiPropertiesDao.insertBatch(list,enterpriseApi.getId());
+        }
         return result;
     }
 
     private void tree2List(List<EnterpriseApiProperties> tree, List<EnterpriseApiProperties> list, Long parentId) {
         for (EnterpriseApiProperties enterpriseApiProperties : tree) {
+            enterpriseApiProperties.setId(SnowflakeIdGenerator.getDefault().nextId());
             enterpriseApiProperties.preInsert();
             enterpriseApiProperties.setParentId(parentId);
             list.add(enterpriseApiProperties);
@@ -152,10 +158,32 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
     }
 
     @Override
-    public void importApi(String kind,String json){
+    public void importApi(String kind,String json, Long moduleId){
+        Assert2.hasTextOf(kind,"kind");
+        Assert2.hasTextOf(json,"json");
+        Assert2.notNullOf(moduleId,"moduleId");
+
         XCloudDocumentModel xCloudDocumentModel = documentConverterAdapter.forOperator(kind).convertFrom(json);
         //TODO save into db -- xCloudDocumentModel
-
+        List<EnterpriseApi> enterpriseApis = xCloudDocumentModel.getEnterpriseApis();
+        if(CollectionUtils.isEmpty(enterpriseApis)){
+            return;
+        }
+        for(EnterpriseApi enterpriseApi : enterpriseApis){
+            EnterpriseApi enterpriseApiFormDB = enterpriseApiDao.selectByModuleIdAndUrl(moduleId, enterpriseApi.getUrl());
+            enterpriseApi.setModuleId(moduleId);
+            if(enterpriseApiFormDB !=null){//update
+                enterpriseApi.setId(enterpriseApiFormDB.getId());
+            }
+            if(StringUtils.isBlank(enterpriseApi.getName())){
+                if(StringUtils.isNotBlank(enterpriseApi.getDescription())){
+                    enterpriseApi.setName(enterpriseApi.getDescription());
+                }else{
+                    enterpriseApi.setName(enterpriseApi.getUrl());
+                }
+            }
+            save(enterpriseApi);
+        }
     }
 
 }
