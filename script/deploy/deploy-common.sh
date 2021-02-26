@@ -35,9 +35,14 @@ fi
 # Security delete local object.
 function secDeleteLocal() {
   local targetPath=$1
+  local result=""
   if [[ "$targetPath" != "" && "$targetPath" != "/" && "$targetPath" != "/bin"* && "$targetPath" != "/sbin"* ]]; then
-    \rm -rf $tmpServiceFile
+    unalias -a rm
+    result=$(\rm -rf $targetPath)
   fi
+  local delStatus="$?"
+  [ "$delStatus" -ne 0 ] && echo "Deletion can't seem to success. target: $targetPath, causeBy: $result"
+  return $delStatus
 }
 
 function getCurrPid() {
@@ -69,9 +74,9 @@ function logErr() {
   log "ERROR" "$@"
 }
 
-# Check pre dependencies.
-function checkPreDependencies() {
-  log "Checking OS software pre dependencies ..."
+# Check and install basic software.
+function checkInstallBasicSoftware() {
+  log "Checking basic software pre dependencies ..."
   # Check java/javac
   if [[ "$(command -v java)" == "" || "$(command -v javac)" == "" ]]; then
     log "Not detected java and javac, please install at least jdk8+, note not just JRE !"

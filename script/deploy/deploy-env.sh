@@ -22,7 +22,8 @@
 
 # ----------------------- Base environment variables. ------------------------------------------
 [ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir
-[ -z "$logFile" ] && export logFile="${workspaceDir}/install_"$(date -d today +"%Y-%m-%d_%H%M%S")".log"
+currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
+[ -z "$logFile" ] && export logFile="${workspaceDir}/install_${currDate}.log" && touch $logFile
 [ -z "$asyncDeploy" ] && export asyncDeploy="true" # true|false
 
 # ----------------------- Maven environment variables. -----------------------------------------
@@ -55,7 +56,7 @@ export deployStandaloneBuildTargets=(
   "${currDir}/xcloud-devops/xcloud-devops-all-starter/target"
 )
 
-# Deploy(cluster) definition.
+# Deploy(cluster) modules definition.
 export deployClusterNodesConfigPath="$currDir/deploy-host.csv"
 export deployClusterBuildTargets=(
   "${currDir}/xcloud-iam/xcloud-iam-service-starter-data/target"
@@ -75,6 +76,9 @@ export deployClusterBuildTargets=(
   "${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-facade/target"
   "${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-manager/target"
 )
+
+# Deploy pre-depends eureka module definition.
+export deployDependsEurekaTarget="${currDir}/xcloud-component/xcloud-component-rpc/xcloud-component-rpc-springcloud-eureka-server"
 
 # Runtime dependency external services configuration.
 [ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8"
