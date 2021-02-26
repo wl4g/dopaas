@@ -39,7 +39,7 @@ globalAllNodesString=""
 globalDeployStatsMsg="" # Deployed stats message.
 
 # Init configuration.
-function init() {
+function initConfig() {
   # Init read nodes information.
   local k=0
   local index=0
@@ -268,7 +268,7 @@ fi
 [ "$asyncDeploy" == "true" ] && log "Using asynchronous deployment, you can usage: export asyncDeploy=\"false\" to set it."
 beginTime=`date +%s`
 
-init
+initConfig
 checkInstallBasicSoftware
 checkDeployDependServices &
 pullAndCompile "xcloud-component" $gitXCloudComponentUrl

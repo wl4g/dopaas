@@ -22,7 +22,7 @@
 . ${currDir}/deploy-env.sh
 
 # Common variables.
-cmdMvn="$(command -v mvn)"
+export cmdMvn="$(command -v mvn)"
 if [ "$(echo $apacheMvnLocalRepoDir|cut -c 1-5)" == "/root" ]; then
   apacheMvnLocalRepoDirOfUser="root"
 elif [ "$(echo $apacheMvnLocalRepoDir|cut -c 1-5)" == "/home" ]; then
@@ -79,14 +79,12 @@ function checkInstallBasicSoftware() {
   log "Checking basic software pre dependencies ..."
   # Check java/javac
   if [[ "$(command -v java)" == "" || "$(command -v javac)" == "" ]]; then
-    log "Not detected java and javac, please install at least jdk8+, note not just JRE !"
-    exit -1
+    log "Not detected java and javac, please install at least jdk8+, note not just JRE !"; exit -1
   fi
   local javaVersion=$(java -version 2>&1 | sed '1!d' | sed -e 's/"//g' | awk '{print $3}')
   local numJavaVersion=$(echo $javaVersion|sed 's/\.//g'|sed 's/_//g')
   if [[ ${numJavaVersion} -lt 18 ]]; then # must is jdk1.8+
-    log "Installed java version: ${javaVersionJDK}, must be jdk8+, please reinstallation!"
-    exit -1
+    log "Installed java version: ${javaVersionJDK}, must be jdk8+, please reinstallation!"; exit -1
   fi
   # Check git
   if [ ! -n "$(command -v git)" ]; then
@@ -98,14 +96,15 @@ function checkInstallBasicSoftware() {
     elif [ -n "$(command -v apt-get)" ]; then
       sudo apt-get install -y git
     else
-      logErr "Failed to auto install git! Please manual installation!"
-      exit -1
+      logErr "Failed to auto install git! Please manual installation!"; exit -1
     fi
     # Check installization
     [ $? -ne 0 ] && logErr "Failed to auto install git! Please manual installation!" && exit -1
   fi
   # Check maven
-  if [ ! -n "$(command -v mvn)" ]; then
+  local mvnHome="$apacheMvnInstallDir/apache-maven-current"
+  export cmdMvn="$mvnHome/bin/mvn"
+  if [[ ! ("$(command -v mvn)" != "" || -d "$mvnHome") ]]; then
     log "No such command mvn, auto installing maven ..."
     cd $workspaceDir
     local tmpTarFile="$workspaceDir/apache-maven-current.tar"
@@ -115,11 +114,10 @@ function checkInstallBasicSoftware() {
     fi
     # Check installization result.
     [ $? -ne 0 ] && logErr "Failed to auto install mvn! Please manual installation!" && exit -1
-    local mvnHome="$apacheMvnInstallDir/apache-maven-current" && mkdir -p $mvnHome
+    mkdir -p $mvnHome
     secDeleteLocal "$mvnHome/*" # Rmove old files(if necessary)
     tar -xf "$tmpTarFile" --strip-components=1 -C "$mvnHome"
     secDeleteLocal "$tmpTarFile" # Cleanup
-    cmdMvn="$mvnHome/bin/mvn"
     # Use china fast maven mirror to settings.xml
     if [ "$isNetworkInGfwWall" == "Y" ]; then # see: deploy-boot.sh
       log "Currently in china gfw network, configuring aliyun maven fast mirror ..."
