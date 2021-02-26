@@ -40,6 +40,8 @@ public interface EnterpriseApiDao {
 
     EnterpriseApi selectByPrimaryKey(Long id);
 
+    EnterpriseApi selectByModuleIdAndUrl(@Param("moduleId") Long moduleId,@Param("url") String url);
+
     int updateByPrimaryKeySelective(EnterpriseApi enterpriseApi);
 
     int updateByPrimaryKey(EnterpriseApi enterpriseApi);
