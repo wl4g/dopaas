@@ -19,9 +19,9 @@
  */
 package com.wl4g.devops.doc.service.conversion;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-
 import com.wl4g.component.common.log.SmartLogger;
+
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * {@link AbstractDocumentConverter}
@@ -33,5 +33,8 @@ import com.wl4g.component.common.log.SmartLogger;
  */
 public abstract class AbstractDocumentConverter<T> implements DocumentConverter<T> {
 	protected final SmartLogger log = getLogger(getClass());
+
+	protected final static String REQUEST = "Request";
+	protected final static String RESPONSE = "Response";
 
 }

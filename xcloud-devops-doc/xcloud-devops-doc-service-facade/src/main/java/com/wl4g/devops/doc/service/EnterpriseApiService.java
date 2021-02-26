@@ -88,6 +88,7 @@ public interface EnterpriseApiService {
 	 * @return
 	 */
 	@RequestMapping(value = "/importApi", method = POST)
-	void importApi(@RequestParam(name = "kind", required = false)String kind,@RequestBody String json);
+	void importApi(@RequestParam(name = "kind", required = false)String kind,@RequestBody String json,
+				   @RequestParam(name = "moduleId", required = false) Long moduleId);
 
 }
