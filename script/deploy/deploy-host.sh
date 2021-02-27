@@ -266,8 +266,8 @@ if [[ "$(echo groups)" == "root" ]]; then
   logErr "Please execute the scripts as a user with root privileges !" && exit -1
 fi
 [ "$asyncDeploy" == "true" ] && log "Using asynchronous deployment, you can usage: export asyncDeploy=\"false\" to set it."
-beginTime=`date +%s`
 
+beginTime=`date +%s`
 initConfig
 checkInstallBasicSoftware
 checkDeployDependServices &
@@ -275,10 +275,8 @@ pullAndCompile "xcloud-component" $gitXCloudComponentUrl
 pullAndCompile "xcloud-iam" $gitXCloudIamUrl
 pullAndCompile "xcloud-devops" $gitXCloudDevOpsUrl
 deployAndStartupApps
-
 deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
 costTime=$[$(echo `date +%s`)-$beginTime]
-
 echo -n "---------------------------------------------------------------"
 echo -e "\nDeployed apps statistics details:\n${globalDeployStatsMsg}"
 log "-------------------------------------------------------------------"
