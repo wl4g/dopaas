@@ -221,7 +221,7 @@ function doScp() {
       scp $localPath $user@$host:$remotePath
       [[ $? -ne 0 && "$exitOnFail" == "true" ]] && exit -1
     else
-      logErr "Failed to scp files to remote, bacause not ssh-passwordless authorized!"; exit -1
+      logErr "Failed to scp \"$localPath\" to remote, bacause not ssh-passwordless authorized!"; exit -1
     fi
   else # Exec remote by sshpass
     installSshpass
@@ -230,36 +230,39 @@ function doScp() {
   fi
 }
 
-# Check remote has services scripts.
-# for testing => checkRemoteHasService "iam-data" "root" "cn#!7%7^^" "10.0.0.160"
-function checkRemoteHasService() {
+# Check and install remote services script.
+# for testing => checkInstallServiceScript "iam-data" "root" "cn#!7%7^^" "10.0.0.160"
+function checkInstallServiceScript() {
   local appName=$1
   local user=$2
   local password=$3
   local host=$4
+  local springProfilesActive=$5
+  local isCheckInstalled=$6
   if [[ $# < 4 || "$appName" == "" || "$user" == "" || "$host" == "" ]]; then
-    logErr "Cannot installization app services, args appName/user/host is required and args should be 4 !"; exit -1
+    logErr "[$appName/$host] Cannot installization app services, args appName/user/host is required and args should be 4 !"; exit -1
   fi
-  # Check & install app services(if necessary)
-  local hasServiceFile=$(doRemoteCmd "$user" "$password" "$host" "echo $([ -f /etc/init.d/$appName.service ] && echo Y || echo N)" "true")
-  [ "$hasServiceFile" == "Y" ] && return 0 # Skip installed
-
+  # Check installed service script?
+  if [ "$isCheckInstalled" == "true" ]; then
+    local hasServiceFile=$(doRemoteCmd "$user" "$password" "$host" "echo $([ -f /etc/init.d/$appName.service ] && echo Y || echo N)" "true")
+    [ "$hasServiceFile" == "Y" ] && return 0 # Skip installed
+  fi
   log "[$appName/$host] Not detected /etc/init.d/$appName.services script, installing ..."
   local appVersion="master"
   local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: doc-manager => DocManager
-  local appInstallDir="${deployBaseDir}/${appName}-package"
-  local appHome="$appInstallDir/${appName}-${appVersion}-bin"
-  local appClasspath=".:$appHome/conf:$appHome/libs/*"
-  local appLogDir="/mnt/disk1/log/$appName"
-  local appLogFile="$appLogDir/$appName.log"
-  local appLogStdoutFile="$appLogDir/$appName.stdout"
-  local appDataDir="/mnt/disk1/$appName"
+  local appInstallDir="${deployAppBaseDir}/${appName}-package"
+  local appHome="${appInstallDir}/${appName}-${appVersion}-bin"
+  local appClasspath=".:$appHome/conf:${appHome}/libs/*"
+  local appDataDir="${deployAppDataBaseDir}/${appName}"
+  local appLogDir="${deployAppLogBaseDir}/${appName}"
+  local appLogFile="${appLogDir}/${appName}_\${SPRING_PROFILES_ACTIVE}.log"
+  local appLogStdoutFile="${appLogDir}/${appName}.stdout"
   local appUser="$appName"
   local appGroup="$appUser"
-  local appOpts="$appOpts --spring.application.name=${appName}"
-  local appOpts="$appOpts --spring.profiles.active=pro"
   local appOpts="$appOpts --server.tomcat.basedir=${appDataDir}"
-  local appOpts="$appOpts --logging.file=${appLogFile}"
+  local appOpts="$appOpts --logging.file.name=${appLogFile}"
+  local appOpts="$appOpts --spring.application.name=${appName}"
+  local appOpts="$appOpts --spring.profiles.active=\${SPRING_PROFILES_ACTIVE}"
 
   local javaExec="java"
   #local jvmDebugOpts="-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n"
@@ -278,7 +281,7 @@ function checkRemoteHasService() {
     local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -cp $appClasspath $appMainClass $appOpts"
     local appShellRunCmd="$javaExec -client -Dprompt=$appName -Dservname=$appName $shellPort -cp .:$appHome/libs/* com.wl4g.ShellBootstrap"
   elif [ "$buildPkgType" == "springExecJar" ]; then
-    local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -jar ${appName}-${appVersion}-bin.jar $appOpts"
+    local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -jar ${appHome}/${appName}-${appVersion}-bin.jar $appOpts"
     # for example using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher
     # see: xcloud-devops/xcloud-devops-ci/xcloud-devops-ci-service-starter-facade/pom.xml#profile.id=springExecJar
     # refer to: https://www.baeldung.com/spring-boot-main-class, https://www.jianshu.com/p/66a101c85485
@@ -305,7 +308,7 @@ function checkRemoteHasService() {
   chown -R $appUser:$appGroup $appLogDir
   chown -R $appUser:$appGroup $appDataDir
 
-  # Make app service script.
+  # Make app services script.
   local tmpServiceFile=$workspaceDir/${appName}.service
 cat<<EOF>$tmpServiceFile
 #!/bin/bash
@@ -341,6 +344,9 @@ if [ "\$USER" == "root" ]; then
   . "/root/.bash_profile"
   . "/root/.bashrc"
 fi
+
+# Default profiles active.
+[ -z "\$SPRING_PROFILES_ACTIVE" ] && SPRING_PROFILES_ACTIVE="$springProfilesActive"
 
 function start() {
   local pids=\$(getPids)

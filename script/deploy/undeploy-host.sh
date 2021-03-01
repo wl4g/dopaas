@@ -44,7 +44,7 @@ function removeTmpApacheMaven() {
 
 # Removing all apps resources.
 function removeAllAppsResources() {
-  local deployBuildTargetsLen=0
+  local deployBuildTargetsSize=0
   if [ "$runtimeMode" == "standalone" ]; then
     deployBuildTargets=("${deployStandaloneBuildTargets[@]}") # Copy build targets array
   elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deploy to the remote hosts
@@ -52,8 +52,11 @@ function removeAllAppsResources() {
   else
     logErr "Invalid config runtimeMode: $runtimeMode"; exit -1
   fi
-  deployBuildTargetsLen=${#deployBuildTargets[@]}
-  if [ $deployBuildTargetsLen -gt 0 ]; then
+  # Add other apps resources.
+  deployBuildTargets[${#deployBuildTargets[@]}]="$deployEurekaBuildTarget"
+  # Do undeploy apps.
+  deployBuildTargetsSize=${#deployBuildTargets[@]}
+  if [ $deployBuildTargetsSize -gt 0 ]; then
     for ((i=0;i<${#deployBuildTargets[@]};i++)) do
       local buildTargetDir=${deployBuildTargets[i]}
       local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.tar|*-${buildPkgVersion}-bin.jar")
@@ -91,16 +94,16 @@ function removeAppFilesWithRemoteInstance() {
   local user=$2
   local passwd=$3
   local host=$4
-  local appHome="$deployBaseDir/$appName-package/$appName-$buildPkgVersion-bin"
-  local appDataBaseDir="/mnt/disk1/$appName"
-  local appLogDir="/mnt/disk1/log/$appName"
-  local appServiceFile="/etc/init.d/$appName.service"
+  local appHomeParent="${deployAppBaseDir}/${appName}-package"
+  local appDataBaseDir="${deployAppDataBaseDir}/${appName}"
+  local appLogDir="${deployAppLogBaseDir}/${appName}"
+  local appServiceFile="/etc/init.d/${appName}.service"
   # First stopping all running services.
-  log "[$appName/$host] Checking if $appName has stopped ..."
+  log "[$appName/$host] Checking if ${appName} has stopped ..."
   doRemoteCmd "$user" "$passwd" "$host" "[ -f \"$appServiceFile\" ] && $appServiceFile stop" "false"
   # Remove installed all files.
-  log "[$appName/$host] Removing directory $appHome"
-  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appHome\" ] && rm -rf $appHome" "false"
+  log "[$appName/$host] Removing directory $appHomeParent"
+  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appHomeParent\" ] && rm -rf $appHomeParent" "false"
   log "[$appName/$host] Removing directory $appDataBaseDir"
   doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appDataBaseDir\" ] && rm -rf $appDataBaseDir" "false"
   log "[$appName/$host] Removing directory $appLogDir"

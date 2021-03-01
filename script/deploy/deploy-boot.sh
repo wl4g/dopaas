@@ -33,6 +33,7 @@ export gitBaseUrlBackup1="https://gitee.com/wl4g"
 [ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"
 [ -z "$runtimeRedisNodes" ] && export runtimeRedisNodes="localhost:6379"
 [ -z "$runtimeRedisPassword" ] && export runtimeRedisPassword="123456"
+[ -z "$runtimeAppSpringProfilesActive" ] && export runtimeAppSpringProfilesActive="pro"
 
 # Check runtime dependency external services. (e.g: mysql/redis/...)
 echo ""
@@ -44,6 +45,7 @@ do
     export runtimeMysqlPassword=\"$runtimeMysqlPassword\"
     export runtimeRedisNodes=\"$runtimeRedisNodes\"
     export runtimeRedisPassword=\"$runtimeRedisPassword\"
+    export runtimeAppSpringProfilesActive=\"pro\"
   [y] Confirm to use the above configuration;
   [n] Exit and then customize the reconfiguration;
   please confirm to (y|n)? """ confirm
