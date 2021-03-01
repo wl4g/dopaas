@@ -292,8 +292,6 @@ function checkInstallServiceScript() {
   mkdir -p $appHome
   mkdir -p $appLogDir
   mkdir -p $appDataDir
-  touch $appLogFile
-  touch $appLogStdoutFile
   if [ "$appGroup" != "root" ]; then
     if [ -z "$(grep "^$appGroup" /etc/group)" ]; then
       groupadd $appGroup
@@ -367,7 +365,7 @@ function start() {
         sleep 0.8;
       else
         echo \$pids >"${appDataDir}/${appName}.pid"
-        break;
+        break
       fi
     done
     echo -e "\nStarted $appName on "\$pids
@@ -389,7 +387,7 @@ function stop() {
       pids=\$(getPids)
       if [ "\$pids" == "" ]; then
         \rm -f ${appDataDir}/${appName}.pid
-        break;
+        break
       else
         echo -n ".";
         sleep 0.8;
