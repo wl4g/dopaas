@@ -36,7 +36,7 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 # ----------------------- Deployment environment variables. ------------------------------------
 
 # Git definition.
-[ -z "$gitBaseUri" ] && export gitBaseUri="https://github.com/wl4g" # for example options: https://github.com/wl4g or https://gitee.com/wl4g
+[ -z "$gitBaseUri" ] && export gitBaseUri="https://gitee.com/wl4g" # for example options: https://github.com/wl4g or https://gitee.com/wl4g
 [ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
 [ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
 [ -z "$gitXCloudDevOpsUrl" ] && export gitXCloudDevOpsUrl="${gitBaseUri}/xcloud-devops"
@@ -48,7 +48,9 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 
 # Deploy common definition.
 [ -z "$runtimeMode" ] && export runtimeMode="cluster" # Options: standalone|cluster
-[ -z "$deployBaseDir" ] && export deployBaseDir="/opt/apps/acm"
+[ -z "$deployAppBaseDir" ] && export deployAppBaseDir="/opt/apps/acm"
+[ -z "$deployAppDataBaseDir" ] && export deployAppDataBaseDir="/mnt/disk1"
+[ -z "$deployAppLogBaseDir" ] && export deployAppLogBaseDir="${deployAppDataBaseDir}/log"
 
 # Delopy(standalone) modules definition.
 export deployStandaloneBuildTargets=(
@@ -62,6 +64,8 @@ export deployClusterBuildTargets=(
   "${currDir}/xcloud-iam/xcloud-iam-service-starter-data/target"
   "${currDir}/xcloud-iam/xcloud-iam-service-starter-facade/target"
   "${currDir}/xcloud-iam/xcloud-iam-service-starter-web/target"
+  "${currDir}/xcloud-devops/xcloud-devops-erm/xcloud-devops-erm-service-starter-facade/target"
+  "${currDir}/xcloud-devops/xcloud-devops-erm/xcloud-devops-erm-service-starter-manager/target"
   "${currDir}/xcloud-devops/xcloud-devops-ci/xcloud-devops-ci-service-starter-facade/target"
   "${currDir}/xcloud-devops/xcloud-devops-ci/xcloud-devops-ci-service-starter-server/target"
   "${currDir}/xcloud-devops/xcloud-devops-doc/xcloud-devops-doc-service-starter-facade/target"
@@ -76,9 +80,8 @@ export deployClusterBuildTargets=(
   "${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-facade/target"
   "${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-manager/target"
 )
-
-# Deploy pre-depends eureka module definition.
-export deployDependsEurekaTarget="${currDir}/xcloud-component/xcloud-component-rpc/xcloud-component-rpc-springcloud-eureka-server"
+# Eureka target.
+export deployEurekaBuildTarget="${currDir}/xcloud-component/xcloud-component-rpc/xcloud-component-rpc-springcloud-eureka-server/target"
 
 # Runtime dependency external services configuration.
 [ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8"
@@ -86,4 +89,4 @@ export deployDependsEurekaTarget="${currDir}/xcloud-component/xcloud-component-r
 [ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"
 [ -z "$runtimeRedisNodes" ] && export runtimeRedisNodes="localhost:6379"
 [ -z "$runtimeRedisPassword" ] && export runtimeRedisPassword="123456"
-
+[ -z "$runtimeAppSpringProfilesActive" ] && export runtimeAppSpringProfilesActive="pro"
