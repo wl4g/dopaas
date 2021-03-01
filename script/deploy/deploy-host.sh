@@ -125,7 +125,7 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
   # Check install services script?
   log "[$appName/standalone/local] Checking app services script installation ..."
   checkInstallServiceScript "$appName" "$USER" "$passwd" "localhost" "$springProfilesActive" "false"
-  export "SPRING_PROFILES_ACTIVE=$springProfilesActive" && $cmdRestart
+  $cmdRestart
 }
 
 # Deploy app to all nodes. (cluster)
@@ -195,11 +195,11 @@ function doDeployToNodeOfCluster() {
   [ $? -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   # Exec restart
   log "[$appName/cluster/$host] Restarting for $appName ..."
-  doRemoteCmd "$user" "$passwd" "$host" "export SPRING_PROFILES_ACTIVE=${springProfilesActive} && $cmdRestart" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true"
   log "[$appName/cluster/$host] Deployed $appName completed."
 }
 
-# Deploy app.
+# Do deploy app.
 function doDeployApp() {
   local buildTargetDir=$1
   if [ -z "$buildTargetDir" ]; then
