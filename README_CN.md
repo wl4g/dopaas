@@ -1,4 +1,4 @@
-![SuperDevops](shots/logo.jpg)
+![XCloud DevSecOps](shots/logo.jpg)
 ## 一站式的 Micoservice + DevSecOps云平台(SaaS)，基于SpringCloud开发, 主要功能模块: 持续交付CI/CD(支持分布式编译,pptpVPN/openVPN/SSH隧道部署等)、认证中心、监控中心、配置中心、资源管理中心、调度中心、弹性伸缩、shell工具、各种工具组件(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
 
 [![Build Status](https://travis-ci.org/wl4g/xcloud-devops.svg)](https://travis-ci.org/wl4g/xcloud-devops)
@@ -24,14 +24,14 @@ English version goes [here](README.md)
 - 其他环境依赖（若需要）：Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
 
 
-### 自动安装用法：
+### 一键自动部署：
 ```
-curl -O https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy/deploy-boot.sh && chmod 750 ./deploy-boot.sh && ./deploy-boot.sh
+bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy/deploy-boot.sh)"
 # 或者
-# curl -O https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy/deploy-boot.sh && chmod 750 ./deploy-boot.sh && ./deploy-boot.sh
+bash -c "$(curl -L https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy/deploy-boot.sh)"
 ```
 
-### 手动安装示例：
+### 手动编译：
 为了更简洁起见，每个服务仅部署单节点到同一台物理机，作为伪集群。
 - step1：编译
 
@@ -82,7 +82,7 @@ sudo systemctl restart docker
 - 4.1 pull的时候将镜像名(wl4g/redis-cluster:latest)改为: registry.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
 - 4.2 如果是阿里vpc的机器, 走vpc内网更快地飞起来(限华南1): registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
 
-### 所有子系统文档
+### 其他子系统
 - [CI](xcloud-devops-ci/README_CN.md)               持续集成部署模块（持续迭代）, CICD构建流等
 - [UMC](xcloud-devops-umc/README_CN.md)             统一监控运维中心, 提供应用健康实时监控、实时追踪、实时告警等
 - [VCS](xcloud-devops-vcs/README_CN.md)             版本控制服务, 软件源码、释放包版本管理

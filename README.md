@@ -26,9 +26,9 @@
 
 ### Quick start:
 ```
-curl -O https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy/deploy-boot.sh && chmod 750 ./deploy-boot.sh && ./deploy-boot.sh
-# 或者
-# curl -O https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy/deploy-boot.sh && chmod 750 ./deploy-boot.sh && ./deploy-boot.sh
+bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy/deploy-boot.sh)"
+# or:
+bash -c "$(curl -L https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy/deploy-boot.sh)"
 ```
 
 ### Manual install example：
