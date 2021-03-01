@@ -223,7 +223,7 @@ function doDeployApp() {
        Profiles Active: ${springProfilesActive}
               PID File: /mnt/disk1/${appName}/${appName}.pid
        Restart Command: /etc/init.d/$appName.service restart
-             Logs File: /mnt/disk1/log/${appName}.log
+             Logs File: /mnt/disk1/log/${appName}/${appName}.log
         Deployed Hosts:""")
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
@@ -281,7 +281,7 @@ function deployPreDependsServices() {
 function deployEurekaServers() {
   if [ ${#globalAllNodes[@]} == 1 ]; then # use standalone mode.
     local node=${globalAllNodes[0]}
-    local host=$(echo $node1|awk -F 'ξ' '{print $1}')
+    local host=$(echo $node|awk -F 'ξ' '{print $1}')
     log "[eureka/$host] Deploy eureka by standalone ..."
     doDeployApp "$deployEurekaBuildTarget" "standalone" "$node"
   elif [ ${#globalAllNodes[@]} -ge 2 ]; then # use cluster mode.

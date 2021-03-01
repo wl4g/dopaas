@@ -40,18 +40,18 @@ echo ""
 while true
 do
   read -t 300 -p """Option1: Do you use the following dependent middleware configuration:
-    export runtimeMysqlUrl=\"$runtimeMysqlUrl\"
-    export runtimeMysqlUser=\"$runtimeMysqlUser\"
-    export runtimeMysqlPassword=\"$runtimeMysqlPassword\"
-    export runtimeRedisNodes=\"$runtimeRedisNodes\"
-    export runtimeRedisPassword=\"$runtimeRedisPassword\"
-    export runtimeAppSpringProfilesActive=\"$runtimeAppSpringProfilesActive\"
+    export runtimeMysqlUrl='$runtimeMysqlUrl'
+    export runtimeMysqlUser='$runtimeMysqlUser'
+    export runtimeMysqlPassword='$runtimeMysqlPassword'
+    export runtimeRedisNodes='$runtimeRedisNodes'
+    export runtimeRedisPassword='$runtimeRedisPassword'
+    export runtimeAppSpringProfilesActive='$runtimeAppSpringProfilesActive'
   [y] Confirm to use the above configuration;
   [n] Exit and then customize the reconfiguration;
   please confirm to (y|n)? """ confirm
   if [[ "$confirm" == "n" ]]; then
-    echo "Please the re-export environment variables, re-execute \"$currDir/deploy-boot.sh\""
-    exit -1;
+    echo "Please the reexport environment variables, re-execute '$currDir/deploy-boot.sh'"
+    exit -1
   elif [ "$confirm" == "y" ]; then
     break
   else
@@ -126,7 +126,7 @@ if [ "$runtimeMode" == "" ]; then
       export runtimeMode="cluster"
       if [ ! -f "$currDir/deploy-host.csv" ]; then
         echo "Please create \"$currDir/deploy-host.csv\" from \"$currDir/deploy-host.csv.tpl\", and then re-execute \".$currDir/deploy-boot.sh\" again !"
-        exit 0
+        exit -1
       else
         break
       fi
@@ -147,5 +147,5 @@ else
   echo "Unknown deploy mode of \"$deployMode\" !"
 fi
 
-cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
+cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0|grep -v "undeploy-host.sh") # Cleanup scripts.
 exit 0
