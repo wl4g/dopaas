@@ -39,7 +39,7 @@ export gitBaseUrlBackup1="https://gitee.com/wl4g"
 echo ""
 while true
 do
-  read -t 300 -p """Option1: Do you use the following dependent middleware configuration:
+  read -t 300 -p """Option1: The services that will be deploy depends on are configuration in the form of environment variables:
     export runtimeMysqlUrl='$runtimeMysqlUrl'
     export runtimeMysqlUser='$runtimeMysqlUser'
     export runtimeMysqlPassword='$runtimeMysqlPassword'
@@ -78,12 +78,13 @@ fi
 cd $currDir
 \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
 echo "Downloading deploy scripts dependencies ..."
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env.sh"; [ $? -ne 0 ] && exit -1
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-docker.sh"; [ $? -ne 0 ] && exit -1
-curl --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv.tpl"; [ $? -ne 0 ] && exit -1
-chmod 750 $currDir/deploy-*.sh
+curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env.sh"; [ $? -ne 0 ] && exit -1
+curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
+curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
+curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-docker.sh"; [ $? -ne 0 ] && exit -1
+curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv.tpl"; [ $? -ne 0 ] && exit -1
+curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/undeploy-host.sh"; [ $? -ne 0 ] && exit -1
+chmod 750 $currDir/*deploy-*.sh
 
 # Choose deployment mode.
 if [ "$deployMode" == "" ]; then
@@ -147,5 +148,5 @@ else
   echo "Unknown deploy mode of \"$deployMode\" !"
 fi
 
-cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0|grep -v "undeploy-host.sh") # Cleanup scripts.
+#cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v "deploy-boot.sh"|grep -v "undeploy-host.sh") # Cleanup scripts.
 exit 0
