@@ -113,6 +113,21 @@ function removeAppFilesWithRemoteInstance() {
 }
 
 # ----- Main call. -----
+while true
+do
+  read -t 300 -p """
+【WARNING】 Are you sure you want to uninstall all instance nodes of all apps,
+remove the irrecoverable data files at the same time. please handle with caution !!!
+Do you want to continue to uninstall? (yes|no) """ confirm
+  if [[ "$confirm" == "yes" ]]; then
+    break
+  elif [ "$confirm" == "no" ]; then
+    echo "Uninstall task was cancelled !"
+    exit 0
+  else
+    continue
+  fi
+done
 [ "$asyncDeploy" == "true" ] && log "Using asynchronous deployment, you can usage: export asyncDeploy=\"false\" to set it."
 beginTime=`date +%s`
 removeTmpApacheMaven

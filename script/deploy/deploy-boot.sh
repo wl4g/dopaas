@@ -45,7 +45,7 @@ do
     export runtimeMysqlPassword=\"$runtimeMysqlPassword\"
     export runtimeRedisNodes=\"$runtimeRedisNodes\"
     export runtimeRedisPassword=\"$runtimeRedisPassword\"
-    export runtimeAppSpringProfilesActive=\"pro\"
+    export runtimeAppSpringProfilesActive=\"$runtimeAppSpringProfilesActive\"
   [y] Confirm to use the above configuration;
   [n] Exit and then customize the reconfiguration;
   please confirm to (y|n)? """ confirm

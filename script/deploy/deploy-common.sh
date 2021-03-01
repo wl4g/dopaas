@@ -345,8 +345,13 @@ if [ "\$USER" == "root" ]; then
   . "/root/.bashrc"
 fi
 
-# Default profiles active.
-[ -z "\$SPRING_PROFILES_ACTIVE" ] && SPRING_PROFILES_ACTIVE="$springProfilesActive"
+# Ref external configuration.
+[ -z "\$SPRING_PROFILES_ACTIVE" ] && export SPRING_PROFILES_ACTIVE="$springProfilesActive"
+[ -z "\$DEVOPS_DB_URL" ] && export DEVOPS_DB_URL="\$runtimeMysqlUrl"
+[ -z "\$DEVOPS_DB_USER" ] && export DEVOPS_DB_USER="\$runtimeMysqlUser"
+[ -z "\$DEVOPS_DB_PASSWD" ] && export DEVOPS_DB_PASSWD="\$runtimeMysqlPassword"
+[ -z "\$DEVOPS_REDIS_NODES" ] && export DEVOPS_REDIS_NODES="\$runtimeRedisNodes"
+[ -z "\$DEVOPS_REDIS_PASSWD" ] && export DEVOPS_REDIS_PASSWD="\$runtimeRedisPassword"
 
 function start() {
   local pids=\$(getPids)
@@ -438,4 +443,3 @@ EOF
   doRemoteCmd "$user" "$password" "$host" "chmod 750 /etc/init.d/${appName}.service" "true"
   secDeleteLocal $tmpServiceFile
 }
-
