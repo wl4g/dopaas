@@ -17,10 +17,12 @@
  */
 package com.wl4g.devops.doc.web;
 
+import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
+import com.wl4g.devops.doc.fsview.config.FsViewerProperties;
 import com.wl4g.devops.doc.service.EnterpriseApiService;
 import com.wl4g.devops.doc.service.dto.EnterpriseApiPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -47,6 +52,9 @@ public class EnterpriseApiController extends BaseController {
 
     @Autowired
     private EnterpriseApiService enterpriseApiService;
+
+    @Autowired
+    private FsViewerProperties fsViewerProperties;
 
     @RequestMapping(value = "/list", method = { GET })
     public RespBase<PageHolder<EnterpriseApi>> list(EnterpriseApiPageRequest enterpriseApiPageRequest,PageHolder<EnterpriseApi> pm) {
@@ -88,6 +96,16 @@ public class EnterpriseApiController extends BaseController {
     public RespBase<?> importApi(String kind, String json, Long moduleId) {
         RespBase<Object> resp = RespBase.create();
         enterpriseApiService.importApi(kind,json,moduleId);
+        return resp;
+    }
+
+    @RequestMapping(value = "/exportApi", method = { POST,GET })
+    public RespBase<?> exportApi(HttpServletResponse response, String kind, Long moduleId) throws IOException {
+        RespBase<Object> resp = RespBase.create();
+        String s = enterpriseApiService.exportApi(kind, moduleId);
+        File file = new File(fsViewerProperties.getBasePath()+ "/tmp/exportApi.json");
+        FileIOUtils.writeFile(file, s, false);
+        writeFile(response, file,"exportApi.json");
         return resp;
     }
 

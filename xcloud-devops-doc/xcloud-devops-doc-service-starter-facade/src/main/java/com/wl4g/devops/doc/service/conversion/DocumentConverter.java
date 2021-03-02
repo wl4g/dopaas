@@ -23,6 +23,8 @@ import com.wl4g.component.core.framework.operator.Operator;
 import com.wl4g.devops.common.bean.doc.model.XCloudDocumentModel;
 import com.wl4g.devops.doc.service.conversion.DocumentConverter.ConverterProviderKind;
 
+import java.io.IOException;
+
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;
 
@@ -41,6 +43,10 @@ public interface DocumentConverter<T> extends Operator<ConverterProviderKind> {
 	}
 
 	default XCloudDocumentModel convertFrom(T document) {
+		throw new UnsupportedOperationException();
+	}
+
+	default String convertToJson(XCloudDocumentModel document) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 

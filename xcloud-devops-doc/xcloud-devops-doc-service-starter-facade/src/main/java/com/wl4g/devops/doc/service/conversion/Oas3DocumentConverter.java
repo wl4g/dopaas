@@ -19,23 +19,26 @@
  */
 package com.wl4g.devops.doc.service.conversion;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
 import com.wl4g.devops.common.bean.doc.model.XCloudDocumentModel;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.PathItem;
-import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.*;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {@link Oas3DocumentConverter}
@@ -117,7 +120,7 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
                 //request body
                 if (operation.getRequestBody() != null) {
                     String requestBodyRef = getRequestBodyRef(operation);
-                    if(StringUtils.isNotBlank(requestBodyRef)){
+                    if (StringUtils.isNotBlank(requestBodyRef)) {
                         convertBodyProperties(document, requestBodyRef, properties, REQUEST);
                     }
                 }
@@ -125,7 +128,7 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
                 //response body
                 if (operation.getResponses() != null) {
                     String responseBodyRef = getResponseBodyRef(operation);
-                    if(StringUtils.isNotBlank(responseBodyRef)){
+                    if (StringUtils.isNotBlank(responseBodyRef)) {
                         convertBodyProperties(document, responseBodyRef, properties, RESPONSE);
                     }
                 }
@@ -145,9 +148,73 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
     }
 
     @Override
+    public String convertToJson(XCloudDocumentModel document) throws IOException {
+        OpenAPI openAPI = convertTo(document);
+        ObjectMapper mapper = Json.mapper();
+        String json = mapper.writeValueAsString(openAPI);
+        return json;
+    }
+
+    @Override
     public OpenAPI convertTo(XCloudDocumentModel document) {
         // TODO Auto-generated method stub
-        return super.convertTo(document);
+        OpenAPI openAPI = new OpenAPI();
+
+        List<EnterpriseApi> enterpriseApis = document.getEnterpriseApis();
+
+        Paths paths = new Paths();
+
+        for (EnterpriseApi enterpriseApi : enterpriseApis) {
+            PathItem item = new PathItem();
+            item.setDescription(enterpriseApi.getDescription());
+            item.setSummary(enterpriseApi.getDescription());
+
+            List<EnterpriseApiProperties> requestProperties = getPropertiesByScope(enterpriseApi.getProperties(), REQUEST);
+            List<EnterpriseApiProperties> responseProperties = getPropertiesByScope(enterpriseApi.getProperties(), RESPONSE);
+
+            Operation operation = new Operation();
+            if (enterpriseApi.getMethod().contains("GET")) {
+                List<Parameter> parameters = new ArrayList<>();
+                for (EnterpriseApiProperties enterpriseApiProperties : requestProperties) {
+                    Parameter parameter = new Parameter();
+                    parameter.setName(enterpriseApiProperties.getName());
+                    parameter.setDescription(enterpriseApiProperties.getDescription());
+                    parameter.setRequired("1".equals(enterpriseApiProperties.getRequired()));
+
+                    if ("object".equals(enterpriseApiProperties.getType())) {
+                        //TODO
+                    } else {
+                        Schema schema = new Schema();
+                        schema.setType(enterpriseApiProperties.getType());
+                        parameter.setSchema(schema);
+                    }
+                    parameters.add(parameter);
+                }
+
+                operation.setParameters(parameters);
+                item.setGet(operation);
+            } else {
+                setRequestBodyRef(openAPI, operation, requestProperties, enterpriseApi.getName() + "RequestBody");
+                if (enterpriseApi.getMethod().contains("POST")) {
+                    item.setPost(operation);
+                }
+                if (enterpriseApi.getMethod().contains("PUT")) {
+                    item.setPost(operation);
+                }
+                if (enterpriseApi.getMethod().contains("DELETE")) {
+                    item.setPost(operation);
+                }
+
+            }
+
+            setResponseBodyRef(openAPI, operation, responseProperties, enterpriseApi.getName() + "ResponseBody");
+
+            paths.addPathItem(enterpriseApi.getUrl(), item);
+        }
+
+        openAPI.setPaths(paths);
+
+        return openAPI;
     }
 
     private void convertProperties(Schema schema, EnterpriseApiProperties enterpriseApiProperties) {
@@ -177,10 +244,10 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
 
     private void convertBodyProperties(OpenAPI document, String ref, List<EnterpriseApiProperties> properties, String scope) {
         Map<String, Schema> bodyProperties = document.getComponents().getSchemas().get(ref).getProperties();
-        convertBodyProperties(document,bodyProperties, properties, scope);
+        convertBodyProperties(document, bodyProperties, properties, scope);
     }
 
-    private void convertBodyProperties(OpenAPI document,Map<String, Schema> bodyProperties, List<EnterpriseApiProperties> properties, String scope) {
+    private void convertBodyProperties(OpenAPI document, Map<String, Schema> bodyProperties, List<EnterpriseApiProperties> properties, String scope) {
         for (Map.Entry<String, Schema> entry : bodyProperties.entrySet()) {
             EnterpriseApiProperties enterpriseApiProperties = new EnterpriseApiProperties();
             enterpriseApiProperties.setName(entry.getKey());
@@ -190,9 +257,9 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
             enterpriseApiProperties.setScope(scope);
 
             //TODO 递归 子属性
-            if(StringUtils.isNotBlank(value.get$ref())){
+            if (StringUtils.isNotBlank(value.get$ref())) {
                 List<EnterpriseApiProperties> children = new ArrayList<>();
-                convertBodyProperties(document,value.get$ref().substring(21),children,scope);
+                convertBodyProperties(document, value.get$ref().substring(21), children, scope);
                 enterpriseApiProperties.setChildren(children);
             }
 
@@ -216,15 +283,108 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
 
     //TODO ResponseBody 获取的方式有点深，暂时这么写
     private String getResponseBodyRef(Operation operation) {
-        if(operation == null || operation.getResponses() == null || operation.getResponses().get("200") == null
-        || operation.getResponses().get("200").getContent() == null
-        || operation.getResponses().get("200").getContent().values().size() <=0
-        ||operation.getResponses().get("200").getContent().values().stream().findFirst().get().getSchema() == null
-        ||StringUtils.isBlank(operation.getResponses().get("200").getContent().values().stream().findFirst().get().getSchema().get$ref())
-        ||operation.getResponses().get("200").getContent().values().stream().findFirst().get().getSchema().get$ref().length() <= 21){
+        if (operation == null || operation.getResponses() == null || operation.getResponses().get("200") == null
+                || operation.getResponses().get("200").getContent() == null
+                || operation.getResponses().get("200").getContent().values().size() <= 0
+                || operation.getResponses().get("200").getContent().values().stream().findFirst().get().getSchema() == null
+                || StringUtils.isBlank(operation.getResponses().get("200").getContent().values().stream().findFirst().get().getSchema().get$ref())
+                || operation.getResponses().get("200").getContent().values().stream().findFirst().get().getSchema().get$ref().length() <= 21) {
             return null;
         }
         return operation.getResponses().get("200").getContent().values().stream().findFirst().get().getSchema().get$ref().substring(21);
+    }
+
+
+    private List<EnterpriseApiProperties> getPropertiesByScope(List<EnterpriseApiProperties> enterpriseApiProperties, String scope) {
+        if (CollectionUtils.isEmpty(enterpriseApiProperties)) {
+            return Collections.emptyList();
+        }
+        List<EnterpriseApiProperties> result = enterpriseApiProperties.stream()
+                .filter((EnterpriseApiProperties e) -> (e.getScope().equals(scope)))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    private void setRequestBodyRef(OpenAPI openAPI, Operation operation, List<EnterpriseApiProperties> properties, String bodyName) {
+        RequestBody requestBody = new RequestBody();
+        operation.setRequestBody(requestBody);
+
+        Content content = new Content();
+        requestBody.setContent(content);
+
+        MediaType item = new MediaType();
+        Schema schema = new Schema();
+        Schema schemasItem = new Schema();
+        convertBackBodyProperties(openAPI, schemasItem, properties, REQUEST, bodyName);
+
+        schema.set$ref(schemasItem.get$ref());
+        item.setSchema(schema);
+        content.addMediaType("application/json", item);//TODO
+
+    }
+
+    private void setResponseBodyRef(OpenAPI openAPI, Operation operation, List<EnterpriseApiProperties> properties, String bodyName) {
+        ApiResponses apiResponses = new ApiResponses();
+        operation.setResponses(apiResponses);
+
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponses.addApiResponse("200", apiResponse);
+
+        Content content = new Content();
+        apiResponse.setContent(content);
+
+        MediaType item = new MediaType();
+        Schema schema = new Schema();
+        Schema schemasItem = new Schema();
+        convertBackBodyProperties(openAPI, schemasItem, properties, RESPONSE, bodyName);
+
+        schema.set$ref(schemasItem.get$ref());
+
+        item.setSchema(schema);
+        content.addMediaType("*/*", item);
+
+    }
+
+    private void convertBackBodyProperties(OpenAPI document, Schema schemasItem, List<EnterpriseApiProperties> properties, String scope, String subref) {
+
+        Components components = document.getComponents();
+        if (null == components) {
+            components = new Components();
+        }
+        document.setComponents(components);
+
+        String ref = "#/components/schemas/" + subref;
+        components.addSchemas(ref, schemasItem);
+
+        schemasItem.setTitle(subref);
+
+        Map<String, Schema> bodyProperties = new HashMap<>();
+        convertBackBodyProperties(document, schemasItem, bodyProperties, properties, scope,subref);
+        schemasItem.setProperties(bodyProperties);
+        //TODO set ref or return ref
+        schemasItem.set$ref(ref);
+    }
+
+    private void convertBackBodyProperties(OpenAPI document, Schema schemasItem, Map<String, Schema> bodyProperties, List<EnterpriseApiProperties> properties, String scope,String subref) {
+        for (EnterpriseApiProperties enterpriseApiProperties : properties) {
+
+            Schema schema = new Schema();
+            schema.setType(enterpriseApiProperties.getType());
+            schema.setDescription(enterpriseApiProperties.getDescription());
+
+            if (!CollectionUtils.isEmpty(enterpriseApiProperties.getChildren())) {
+                Schema childSchema = new Schema();
+                String obName = subref + "." + enterpriseApiProperties.getName();
+                convertBackBodyProperties(document, childSchema, enterpriseApiProperties.getChildren(), scope, obName);
+                schema.set$ref(childSchema.get$ref());
+            }
+
+            bodyProperties.put(enterpriseApiProperties.getName(), schema);
+
+        }
+        schemasItem.setProperties(bodyProperties);
+
+
     }
 
 
