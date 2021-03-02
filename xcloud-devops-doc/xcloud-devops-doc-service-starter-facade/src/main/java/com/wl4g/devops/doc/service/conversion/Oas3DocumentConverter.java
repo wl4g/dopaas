@@ -81,15 +81,15 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
                 enterpriseApi.setMethod(enterpriseApi.getMethod() + "GET ");
             }
             if (pathItem.getPost() != null) {
-                operation = pathItem.getPost();
+                operation = operation==null?pathItem.getPost():operation;
                 enterpriseApi.setMethod(enterpriseApi.getMethod() + "POST ");
             }
             if (pathItem.getPut() != null) {
-                operation = pathItem.getPut();
+                operation = operation==null?pathItem.getPut():operation;
                 enterpriseApi.setMethod(enterpriseApi.getMethod() + "PUT ");
             }
             if (pathItem.getDelete() != null) {
-                operation = pathItem.getDelete();
+                operation = operation==null?pathItem.getDelete():operation;
                 enterpriseApi.setMethod(enterpriseApi.getMethod() + "DELETE ");
             }
 
@@ -174,13 +174,14 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
 
             Operation operation = new Operation();
             operation.setSummary(enterpriseApi.getDescription());
-            if (enterpriseApi.getMethod().contains("GET")) {
+            if (enterpriseApi.getMethod().contains("GET") || enterpriseApi.getMethod().contains("DELETE")) {
                 List<Parameter> parameters = new ArrayList<>();
                 for (EnterpriseApiProperties enterpriseApiProperties : requestProperties) {
                     Parameter parameter = new Parameter();
                     parameter.setName(enterpriseApiProperties.getName());
                     parameter.setDescription(enterpriseApiProperties.getDescription());
                     parameter.setRequired("1".equals(enterpriseApiProperties.getRequired()));
+                    parameter.setIn("query");
 
                     if ("object".equals(enterpriseApiProperties.getType())) {
                         //TODO
@@ -193,17 +194,20 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
                 }
 
                 operation.setParameters(parameters);
-                item.setGet(operation);
+                if(enterpriseApi.getMethod().contains("GET")){
+                    item.setGet(operation);
+                }
+                if(enterpriseApi.getMethod().contains("DELETE")){
+                    item.setDelete(operation);
+                }
+
             } else {
                 setRequestBodyRef(openAPI, operation, requestProperties, enterpriseApi.getName() + "RequestBody");
                 if (enterpriseApi.getMethod().contains("POST")) {
                     item.setPost(operation);
                 }
                 if (enterpriseApi.getMethod().contains("PUT")) {
-                    item.setPost(operation);
-                }
-                if (enterpriseApi.getMethod().contains("DELETE")) {
-                    item.setPost(operation);
+                    item.setPut(operation);
                 }
 
             }
