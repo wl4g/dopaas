@@ -24,6 +24,7 @@
 [ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir
 currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$logFile" ] && export logFile="${workspaceDir}/install_${currDate}.log" && touch $logFile
+[ -z "$deployDebug" ] && export deployDebug="false"
 [ -z "$asyncDeploy" ] && export asyncDeploy="true" # true|false
 
 # ----------------------- Maven environment variables. -----------------------------------------

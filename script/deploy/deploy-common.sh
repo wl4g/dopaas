@@ -17,7 +17,7 @@
 # */
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
-# Initialization.
+# Init.
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 . ${currDir}/deploy-env.sh
 
@@ -28,8 +28,7 @@ if [ "$(echo $apacheMvnLocalRepoDir|cut -c 1-5)" == "/root" ]; then
 elif [ "$(echo $apacheMvnLocalRepoDir|cut -c 1-5)" == "/home" ]; then
   apacheMvnLocalRepoDirOfUser="$(echo $apacheMvnLocalRepoDir|awk -F '/' '{print $3}')"
 else
-  logErr "Invalid maven local repository path. for example: \$USER/.m2/repository"
-  exit -1
+  logErr "Invalid maven local repository path. for example: \$USER/.m2/repository"; exit -1
 fi
 
 # Security delete local object.
@@ -440,4 +439,19 @@ EOF
   doScp "$user" "$password" "$host" "$tmpServiceFile" "/etc/init.d/${appName}.service" "true"
   doRemoteCmd "$user" "$password" "$host" "chmod 750 /etc/init.d/${appName}.service" "true"
   secDeleteLocal $tmpServiceFile
+}
+
+# Load i18n config scripts.
+function loadi18n() {
+  local isCN="N"
+  if [ -n "$isNetworkInGfwWall" ]; then
+    isCN="$isNetworkInGfwWall"
+  else
+    isCN=$([[ "$LANG" == *"zh_CN"* ]] && echo Y || echo N)
+  fi
+  if [ "$isCN" == "Y" ]; then
+    . $currDir/deploy-i18n-zh_CN.sh
+  else
+    . $currDir/deploy-i18n-en_US.sh
+  fi
 }
