@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -186,4 +187,15 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
         }
     }
 
+    @Override
+    public String exportApi(String kind, Long moduleId) throws IOException {
+        List<EnterpriseApi> enterpriseApis = enterpriseApiDao.getByModuleId(moduleId);
+        List<EnterpriseApi> enterpriseApiList = new ArrayList<>();
+        for(EnterpriseApi enterpriseApi : enterpriseApis){
+            EnterpriseApi detail = detail(enterpriseApi.getId());
+            enterpriseApiList.add(detail);
+        }
+        XCloudDocumentModel xCloudDocumentModel = new XCloudDocumentModel(enterpriseApiList);
+        return documentConverterAdapter.forOperator(kind).convertToJson(xCloudDocumentModel);
+    }
 }

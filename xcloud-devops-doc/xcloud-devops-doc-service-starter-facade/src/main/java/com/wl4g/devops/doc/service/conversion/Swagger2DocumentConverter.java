@@ -19,6 +19,7 @@
  */
 package com.wl4g.devops.doc.service.conversion;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wl4g.devops.common.bean.doc.EnterpriseApi;
 import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
 import com.wl4g.devops.common.bean.doc.model.XCloudDocumentModel;
@@ -30,8 +31,10 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.parser.SwaggerParser;
+import io.swagger.v3.core.util.Json;
 import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +145,14 @@ public class Swagger2DocumentConverter extends AbstractDocumentConverter<Swagger
 
 
 		return new XCloudDocumentModel(enterpriseApis);
+	}
+
+	@Override
+	public String convertToJson(XCloudDocumentModel document) throws IOException {
+		Swagger swagger = convertTo(document);
+		ObjectMapper mapper = Json.mapper();
+		String json = mapper.writeValueAsString(swagger);
+		return json;
 	}
 
 	@Override
