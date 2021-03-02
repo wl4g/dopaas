@@ -24,6 +24,8 @@ import com.wl4g.devops.common.bean.doc.model.XCloudDocumentModel;
 import com.wl4g.devops.doc.service.conversion.DocumentConverter.ConverterProviderKind;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;
@@ -111,6 +113,14 @@ public interface DocumentConverter<T> extends Operator<ConverterProviderKind> {
 			ConverterProviderKind type = safeOf(provider);
 			notNull(type, String.format("Unsupported document converter provider for %s", provider));
 			return type;
+		}
+
+		final public static List<String> getNames() {
+			List<String> names = new ArrayList<>();
+			for (ConverterProviderKind t : values()) {
+				names.add(t.name());
+			}
+			return names;
 		}
 
 	}

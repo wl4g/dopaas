@@ -173,6 +173,7 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
             List<EnterpriseApiProperties> responseProperties = getPropertiesByScope(enterpriseApi.getProperties(), RESPONSE);
 
             Operation operation = new Operation();
+            operation.setSummary(enterpriseApi.getDescription());
             if (enterpriseApi.getMethod().contains("GET")) {
                 List<Parameter> parameters = new ArrayList<>();
                 for (EnterpriseApiProperties enterpriseApiProperties : requestProperties) {
@@ -315,9 +316,9 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
         MediaType item = new MediaType();
         Schema schema = new Schema();
         Schema schemasItem = new Schema();
-        convertBackBodyProperties(openAPI, schemasItem, properties, REQUEST, bodyName);
+        String ref = convertBackBodyProperties(openAPI, schemasItem, properties, REQUEST, bodyName);
 
-        schema.set$ref(schemasItem.get$ref());
+        schema.set$ref(ref);
         item.setSchema(schema);
         content.addMediaType("application/json", item);//TODO
 
@@ -336,16 +337,16 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
         MediaType item = new MediaType();
         Schema schema = new Schema();
         Schema schemasItem = new Schema();
-        convertBackBodyProperties(openAPI, schemasItem, properties, RESPONSE, bodyName);
+        String ref = convertBackBodyProperties(openAPI, schemasItem, properties, RESPONSE, bodyName);
 
-        schema.set$ref(schemasItem.get$ref());
+        schema.set$ref(ref);
 
         item.setSchema(schema);
         content.addMediaType("*/*", item);
 
     }
 
-    private void convertBackBodyProperties(OpenAPI document, Schema schemasItem, List<EnterpriseApiProperties> properties, String scope, String subref) {
+    private String convertBackBodyProperties(OpenAPI document, Schema schemasItem, List<EnterpriseApiProperties> properties, String scope, String subref) {
 
         Components components = document.getComponents();
         if (null == components) {
@@ -354,7 +355,7 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
         document.setComponents(components);
 
         String ref = "#/components/schemas/" + subref;
-        components.addSchemas(ref, schemasItem);
+        components.addSchemas(subref, schemasItem);
 
         schemasItem.setTitle(subref);
 
@@ -362,7 +363,8 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
         convertBackBodyProperties(document, schemasItem, bodyProperties, properties, scope,subref);
         schemasItem.setProperties(bodyProperties);
         //TODO set ref or return ref
-        schemasItem.set$ref(ref);
+        //schemasItem.set$ref(ref);
+        return ref;
     }
 
     private void convertBackBodyProperties(OpenAPI document, Schema schemasItem, Map<String, Schema> bodyProperties, List<EnterpriseApiProperties> properties, String scope,String subref) {
@@ -375,8 +377,8 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
             if (!CollectionUtils.isEmpty(enterpriseApiProperties.getChildren())) {
                 Schema childSchema = new Schema();
                 String obName = subref + "." + enterpriseApiProperties.getName();
-                convertBackBodyProperties(document, childSchema, enterpriseApiProperties.getChildren(), scope, obName);
-                schema.set$ref(childSchema.get$ref());
+                String ref = convertBackBodyProperties(document, childSchema, enterpriseApiProperties.getChildren(), scope, obName);
+                schema.set$ref(ref);
             }
 
             bodyProperties.put(enterpriseApiProperties.getName(), schema);

@@ -29,6 +29,7 @@ import com.wl4g.devops.common.bean.doc.model.XCloudDocumentModel;
 import com.wl4g.devops.doc.data.EnterpriseApiDao;
 import com.wl4g.devops.doc.data.EnterpriseApiPropertiesDao;
 import com.wl4g.devops.doc.service.EnterpriseApiService;
+import com.wl4g.devops.doc.service.conversion.DocumentConverter;
 import com.wl4g.devops.doc.service.conversion.DocumentConverterAdapter;
 import com.wl4g.devops.doc.service.dto.EnterpriseApiPageRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -156,6 +157,11 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
         enterpriseApi.setId(id);
         enterpriseApi.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         return enterpriseApiDao.updateByPrimaryKeySelective(enterpriseApi);
+    }
+
+    @Override
+    public List<String> getConverterProviderKind() {
+        return DocumentConverter.ConverterProviderKind.getNames();
     }
 
     @Override
