@@ -92,6 +92,14 @@ public class EnterpriseApiController extends BaseController {
         return resp;
     }
 
+    @RequestMapping(value = "/getConverterProviderKind", method = { POST,GET })
+    public RespBase<?> getDataType() {
+        RespBase<Object> resp = RespBase.create();
+        List<String> dataTypes = enterpriseApiService.getConverterProviderKind();
+        resp.setData(dataTypes);
+        return resp;
+    }
+
     @RequestMapping(value = "/importApi", method = { POST })
     public RespBase<?> importApi(String kind, String json, Long moduleId) {
         RespBase<Object> resp = RespBase.create();
@@ -100,13 +108,14 @@ public class EnterpriseApiController extends BaseController {
     }
 
     @RequestMapping(value = "/exportApi", method = { POST,GET })
-    public RespBase<?> exportApi(HttpServletResponse response, String kind, Long moduleId) throws IOException {
-        RespBase<Object> resp = RespBase.create();
+    public void exportApi(HttpServletResponse response, String kind, Long moduleId) throws IOException {
         String s = enterpriseApiService.exportApi(kind, moduleId);
         File file = new File(fsViewerProperties.getBasePath()+ "/tmp/exportApi.json");
         FileIOUtils.writeFile(file, s, false);
         writeFile(response, file,"exportApi.json");
-        return resp;
     }
+
+
+
 
 }

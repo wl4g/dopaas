@@ -82,6 +82,9 @@ public interface EnterpriseApiService {
 	@RequestMapping(value = "/del", method = POST)
 	int del(@RequestParam(name = "id", required = false) Long id);
 
+	@RequestMapping(value = "/getConverterProviderKind", method = POST)
+	List<String> getConverterProviderKind();
+
 	/**
 	 * importApi.
 	 *
