@@ -223,7 +223,7 @@ function doDeployApp() {
        Profiles Active: ${springProfilesActive}
               PID File: /mnt/disk1/${appName}/${appName}.pid
        Restart Command: /etc/init.d/$appName.service restart
-             Logs File: /mnt/disk1/log/${appName}/${appName}.log
+             Logs File: /mnt/disk1/log/${appName}/${appName}_${springProfilesActive}.log
         Deployed Hosts:""")
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
