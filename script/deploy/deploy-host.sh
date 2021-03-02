@@ -28,7 +28,13 @@ globalDeployStatsMsg="" # Deployed stats message.
 
 # Init configuration.
 function initConfig() {
-  # Init read nodes information.
+  # Check hosts file existed?
+  if [[ "$runtimeMode" == "cluster" && ! -f "$deployClusterNodesConfigPath" ]]; then
+    logErr "No found configuration file: '$currDir/deploy-host.csv', because you have selected the runtime mode is 'cluster',
+please refer to the template file: '$currDir/deploy-host.csv.tpl'"
+    exit -1
+  fi
+  # Init read nodes info.
   local k=0
   local index=0
   for node in `cat $deployClusterNodesConfigPath`; do
@@ -279,32 +285,36 @@ function deployPreDependsServices() {
 
 # Check and deploy eureka servers.
 function deployEurekaServers() {
-  if [ ${#globalAllNodes[@]} == 1 ]; then # use standalone mode.
-    local node=${globalAllNodes[0]}
-    local host=$(echo $node|awk -F 'ξ' '{print $1}')
-    log "[eureka/$host] Deploy eureka by standalone ..."
-    doDeployApp "$deployEurekaBuildTarget" "standalone" "$node"
-  elif [ ${#globalAllNodes[@]} -ge 2 ]; then # use cluster mode.
-    # Assign eureka nodes.
-    # Node1:
-    local node1=${globalAllNodes[0]}
-    local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
-    log "[eureka/$host1] Deploy eureka by peer1 ..."
-    doDeployApp "$deployEurekaBuildTarget" "ha,peer1" "$node1"
-
-    # Node2:
-    local node2=${globalAllNodes[1]}
-    local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
-    log "[eureka/$host3] Deploy eureka by peer2 ..."
-    doDeployApp "$deployEurekaBuildTarget" "ha,peer2" "$node2"
-
-    # Node3: (When the cluster nodes size is 2, the second host deployment starts two instances by default.)
-    [ ${#globalAllNodes[@]} -ge 3 ] && local node3=${globalAllNodes[2]} || local node3=${globalAllNodes[1]}
-    local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
-    log "[eureka/$host3] Deploy eureka by peer3 ..."
-    doDeployApp "$deployEurekaBuildTarget" "ha,peer3" "$node3"
+  if [ "$runtimeMode" == "cluster" ]; then
+    if [ ${#globalAllNodes[@]} == 1 ]; then # use standalone mode.
+      local node=${globalAllNodes[0]}
+      local host=$(echo $node|awk -F 'ξ' '{print $1}')
+      log "[eureka/$host] Deploy eureka by standalone ..."
+      doDeployApp "$deployEurekaBuildTarget" "standalone" "$node"
+    elif [ ${#globalAllNodes[@]} -ge 2 ]; then # use cluster mode.
+      # Assign eureka nodes.
+      # Node1:
+      local node1=${globalAllNodes[0]}
+      local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
+      log "[eureka/$host1] Deploy eureka by peer1 ..."
+      doDeployApp "$deployEurekaBuildTarget" "ha,peer1" "$node1"
+    
+      # Node2:
+      local node2=${globalAllNodes[1]}
+      local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
+      log "[eureka/$host3] Deploy eureka by peer2 ..."
+      doDeployApp "$deployEurekaBuildTarget" "ha,peer2" "$node2"
+    
+      # Node3: (When the cluster nodes size is 2, the second host deployment starts two instances by default.)
+      [ ${#globalAllNodes[@]} -ge 3 ] && local node3=${globalAllNodes[2]} || local node3=${globalAllNodes[1]}
+      local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
+      log "[eureka/$host3] Deploy eureka by peer3 ..."
+      doDeployApp "$deployEurekaBuildTarget" "ha,peer3" "$node3"
+    else
+      logErr "Cannot deploy eureka servers, nodes sise must be greater than or equal to 1."; exit -1
+    fi
   else
-    logErr "Cannot deploy eureka servers, nodes sise must be greater than or equal to 1."
+    log "Skip eureka servers deploy, because runtime mode is standalone."
   fi
 }
 
