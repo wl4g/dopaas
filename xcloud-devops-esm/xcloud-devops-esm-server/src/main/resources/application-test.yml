@@ -47,7 +47,7 @@ redis:
   passwd: zzx!@#$%
   connect-timeout: 10000
   max-attempts: 10
-  # Redis's cluster nodes.
+  # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
   nodes:
     - owner-node1:6379
     - owner-node1:6380
