@@ -20,6 +20,12 @@
 package com.wl4g.devops.doc.service.conversion;
 
 import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.devops.common.bean.doc.EnterpriseApiProperties;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
@@ -36,5 +42,16 @@ public abstract class AbstractDocumentConverter<T> implements DocumentConverter<
 
 	protected final static String REQUEST = "Request";
 	protected final static String RESPONSE = "Response";
+
+
+	protected List<EnterpriseApiProperties> getPropertiesByScope(List<EnterpriseApiProperties> enterpriseApiProperties, String scope) {
+		if (CollectionUtils.isEmpty(enterpriseApiProperties)) {
+			return Collections.emptyList();
+		}
+		List<EnterpriseApiProperties> result = enterpriseApiProperties.stream()
+				.filter((EnterpriseApiProperties e) -> (e.getScope().equals(scope)))
+				.collect(Collectors.toList());
+		return result;
+	}
 
 }

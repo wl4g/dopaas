@@ -38,7 +38,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * {@link Oas3DocumentConverter}
@@ -300,15 +299,7 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
     }
 
 
-    private List<EnterpriseApiProperties> getPropertiesByScope(List<EnterpriseApiProperties> enterpriseApiProperties, String scope) {
-        if (CollectionUtils.isEmpty(enterpriseApiProperties)) {
-            return Collections.emptyList();
-        }
-        List<EnterpriseApiProperties> result = enterpriseApiProperties.stream()
-                .filter((EnterpriseApiProperties e) -> (e.getScope().equals(scope)))
-                .collect(Collectors.toList());
-        return result;
-    }
+
 
     private void setRequestBodyRef(OpenAPI openAPI, Operation operation, List<EnterpriseApiProperties> properties, String bodyName) {
         RequestBody requestBody = new RequestBody();
