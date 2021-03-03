@@ -342,13 +342,13 @@ if [ "\$USER" == "root" ]; then
   . "/root/.bashrc"
 fi
 
-# Ref external configuration.
+# Ref external configuration, fallback use defaults.
 [ -z "\$SPRING_PROFILES_ACTIVE" ] && export SPRING_PROFILES_ACTIVE="$springProfilesActive"
-[ -z "\$DEVOPS_DB_URL" ] && export DEVOPS_DB_URL="\$runtimeMysqlUrl"
-[ -z "\$DEVOPS_DB_USER" ] && export DEVOPS_DB_USER="\$runtimeMysqlUser"
-[ -z "\$DEVOPS_DB_PASSWD" ] && export DEVOPS_DB_PASSWD="\$runtimeMysqlPassword"
-[ -z "\$DEVOPS_REDIS_NODES" ] && export DEVOPS_REDIS_NODES="\$runtimeRedisNodes"
-[ -z "\$DEVOPS_REDIS_PASSWD" ] && export DEVOPS_REDIS_PASSWD="\$runtimeRedisPassword"
+[ -z "\$DEVOPS_DB_URL" ] && export DEVOPS_DB_URL="$runtimeMysqlUrl"
+[ -z "\$DEVOPS_DB_USER" ] && export DEVOPS_DB_USER="$runtimeMysqlUser"
+[ -z "\$DEVOPS_DB_PASSWD" ] && export DEVOPS_DB_PASSWD="$runtimeMysqlPassword"
+[ -z "\$DEVOPS_REDIS_NODES" ] && export DEVOPS_REDIS_NODES="$runtimeRedisNodes"
+[ -z "\$DEVOPS_REDIS_PASSWD" ] && export DEVOPS_REDIS_PASSWD="$runtimeRedisPassword"
 
 function start() {
   local pids=\$(getPids)
