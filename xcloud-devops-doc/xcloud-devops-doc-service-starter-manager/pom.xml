@@ -58,6 +58,13 @@
 				</excludes>
 			</resource>
 			<resource>
+				<directory>src/test/java</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.json</include>
+				</includes>
+			</resource>
+			<resource>
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*.*</include>
