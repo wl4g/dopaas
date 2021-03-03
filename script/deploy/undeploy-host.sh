@@ -44,26 +44,22 @@ function removeTmpApacheMaven() {
 
 # Removing all apps resources.
 function removeAllAppsResources() {
-  local deployBuildTargetsSize=0
+  local deployBuildModulesSize=0
   if [ "$runtimeMode" == "standalone" ]; then
-    deployBuildTargets=("${deployStandaloneBuildTargets[@]}") # Copy build targets array
+    local deployBuildModules=("${deployStandaloneBuildModules[@]}") # Copy build targets array
   elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deploy to the remote hosts
-    deployBuildTargets=("${deployClusterBuildTargets[@]}") # Copy build targets array
+    local deployBuildModules=("${deployClusterBuildModules[@]}") # Copy build targets array
   else
-    logErr "Invalid config runtimeMode: $runtimeMode"; exit -1
+    logErr "Invalid config runtime mode: $runtimeMode"; exit -1
   fi
   # Add other apps resources.
-  deployBuildTargets[${#deployBuildTargets[@]}]="$deployEurekaBuildTarget"
+  deployBuildModules[${#deployBuildModules[@]}]="$deployEurekaBuildModule"
   # Do undeploy apps.
-  deployBuildTargetsSize=${#deployBuildTargets[@]}
-  if [ $deployBuildTargetsSize -gt 0 ]; then
-    for ((i=0;i<${#deployBuildTargets[@]};i++)) do
-      local buildTargetDir=${deployBuildTargets[i]}
-      local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.tar|*-${buildPkgVersion}-bin.jar")
-      if [ -z "$buildFileName" ]; then
-         logErr "Failed to read build assets from target direct: $buildTargetDir"; exit -1
-      fi
-      local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
+  deployBuildModulesSize=${#deployBuildModules[@]}
+  if [ $deployBuildModulesSize -gt 0 ]; then
+    for ((i=0;i<${#deployBuildModules[@]};i++)) do
+      local buildModule=${deployBuildModules[i]}
+      local appName=$(echo "$buildModule"|awk -F ',' '{print $1}')
       # Uninstall app all nodes.
       local k=0
       for node in `cat $deployClusterNodesConfigPath`; do

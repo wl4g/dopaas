@@ -19,7 +19,6 @@
 
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
 . ${currDir}/deploy-common.sh
-[ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
 
 # Global variables.
 globalAllNodes=()
@@ -28,32 +27,33 @@ globalDeployStatsMsg="" # Deployed stats message.
 
 # Init configuration.
 function initConfig() {
-  # Check hosts file existed?
-  if [[ "$runtimeMode" == "cluster" && ! -f "$deployClusterNodesConfigPath" ]]; then
-    logErr "No found configuration file: '$currDir/deploy-host.csv', because you have selected the runtime mode is 'cluster',
+  if [ "$runtimeMode" == "cluster" ]; then # Only cluster mode need a hosts csv file.
+    if [ ! -f "$deployClusterNodesConfigPath" ]; then
+      logErr "No found configuration file: '$currDir/deploy-host.csv', because you have selected the runtime mode is 'cluster',
 please refer to the template file: '$currDir/deploy-host.csv.tpl'"
-    exit -1
+      exit -1
+    fi
+    # Init nodes info.
+    local k=0
+    local index=0
+    for node in `cat $deployClusterNodesConfigPath`; do
+      ((k+=1))
+      [ $k == 1 ] && continue # Skip title row(first)
+      # Extract node info & trim
+      local host=$(echo $node|awk -F ',' '{print $1}'|sed -e 's/^\s*//' -e 's/\s*$//')
+      local user=$(echo $node|awk -F ',' '{print $2}'|sed -e 's/^\s*//' -e 's/\s*$//')
+      local passwd=$(echo $node|awk -F ',' '{print $3}'|sed -e 's/^\s*//' -e 's/\s*$//')
+      if [[ "$host" == "" || "$user" == "" ]]; then
+        logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
+      fi
+      globalAllNodes[index]="${host}ξ${user}ξ${passwd}"
+      if [ "$globalAllHostsString" == "" ]; then
+        globalAllHostsString="$host"
+      else
+        globalAllHostsString="${globalAllHostsString}, $host"
+      fi
+    done
   fi
-  # Init read nodes info.
-  local k=0
-  local index=0
-  for node in `cat $deployClusterNodesConfigPath`; do
-    ((k+=1))
-    [ $k == 1 ] && continue # Skip title row(first)
-    # Extract node info & trim
-    local host=$(echo $node|awk -F ',' '{print $1}'|sed -e 's/^\s*//' -e 's/\s*$//')
-    local user=$(echo $node|awk -F ',' '{print $2}'|sed -e 's/^\s*//' -e 's/\s*$//')
-    local passwd=$(echo $node|awk -F ',' '{print $3}'|sed -e 's/^\s*//' -e 's/\s*$//')
-    if [[ "$host" == "" || "$user" == "" ]]; then
-      logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
-    fi
-    globalAllNodes[index]="${host}ξ${user}ξ${passwd}"
-    if [ "$globalAllHostsString" == "" ]; then
-      globalAllHostsString="$host"
-    else
-      globalAllHostsString="${globalAllHostsString}, $host"
-    fi
-  done
 }
 
 # Pull and compile.
@@ -207,18 +207,24 @@ function doDeployToNodeOfCluster() {
 
 # Do deploy app.
 function doDeployApp() {
-  local buildTargetDir=$1
-  if [ -z "$buildTargetDir" ]; then
-    logErr "Failed to deploy! all args: \"$@\""; exit -1
-  fi
-  local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.tar|*-${buildPkgVersion}-bin.jar")
-  if [ -z "$buildFileName" ]; then
-    logErr "Failed to deploy! all args: \"$@\""; exit -1
-  fi
+  local buildModule=$1
   local springProfilesActive="${runtimeAppSpringProfilesActive}"
   [ "$2" != "" ] && springProfilesActive=$2 # Priority custom active.
   local nodeArr=$3
-  local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
+  # Gets build info.
+  local appName=$(echo "$buildModule"|awk -F ',' '{print $1}')
+  if [ -z "$appName" ]; then
+    logErr "Failed to deploy, appName is required! all args: '$@'"; exit -1
+  fi
+  local buildTargetDir=$(echo "$buildModule"|awk -F ',' '{print $2}')
+  if [ -z "$buildTargetDir" ]; then
+    logErr "Failed to deploy, buildTargetDir is required! all args: '$@'"; exit -1
+  fi
+  local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.tar|*-${buildPkgVersion}-bin.jar")
+  if [ -z "$buildFileName" ]; then
+    logErr "Failed to deploy, buildFileName is required! all args: '$@'"; exit -1
+  fi
+  #local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
   local cmdRestart="/etc/init.d/${appName}.service restart"
 
   # Add deployed xcloud-devops primary services name.
@@ -259,19 +265,19 @@ function doDeployApp() {
 
 # Deploy and startup devops all apps.
 function deployDevopsAppsAll() {
-  local deployBuildTargetsSize=0
+  local deployBuildModulesSize=0
   if [ "$runtimeMode" == "standalone" ]; then
-    deployBuildTargets=("${deployStandaloneBuildTargets[@]}") # Copy build targets array
+    local deployBuildModules=("${deployStandaloneBuildModules[@]}") # Copy build targets array
   elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deploy to the remote hosts
-    deployBuildTargets=("${deployClusterBuildTargets[@]}") # Copy build targets array
+    local deployBuildModules=("${deployClusterBuildModules[@]}") # Copy build targets array
   else
     logErr "Invalid config runtime mode: $runtimeMode"; exit -1
   fi
-  deployBuildTargetsSize=${#deployBuildTargets[@]}
-  if [ $deployBuildTargetsSize -gt 0 ]; then
-    for ((i=0;i<${#deployBuildTargets[@]};i++)) do
-      local buildTargetDir=${deployBuildTargets[i]}
-      doDeployApp "$buildTargetDir" "" "${globalAllNodes[*]}"
+  deployBuildModulesSize=${#deployBuildModules[@]}
+  if [ $deployBuildModulesSize -gt 0 ]; then
+    for ((i=0;i<${#deployBuildModules[@]};i++)) do
+      local buildModule=${deployBuildModules[i]}
+      doDeployApp "$buildModule" "" "${globalAllNodes[*]}"
     done
     [ "$asyncDeploy" == "true" ] && wait # Wait all apps async deploy complete.
   fi
@@ -290,26 +296,26 @@ function deployEurekaServers() {
       local node=${globalAllNodes[0]}
       local host=$(echo $node|awk -F 'ξ' '{print $1}')
       log "[eureka/$host] Deploy eureka by standalone ..."
-      doDeployApp "$deployEurekaBuildTarget" "standalone" "$node"
+      doDeployApp "$deployEurekaBuildModule" "standalone" "$node"
     elif [ ${#globalAllNodes[@]} -ge 2 ]; then # use cluster mode.
       # Assign eureka nodes.
       # Node1:
       local node1=${globalAllNodes[0]}
       local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
       log "[eureka/$host1] Deploy eureka by peer1 ..."
-      doDeployApp "$deployEurekaBuildTarget" "ha,peer1" "$node1"
+      doDeployApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
     
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
       log "[eureka/$host3] Deploy eureka by peer2 ..."
-      doDeployApp "$deployEurekaBuildTarget" "ha,peer2" "$node2"
+      doDeployApp "$deployEurekaBuildModule" "ha,peer2" "$node2"
     
       # Node3: (When the cluster nodes size is 2, the second host deployment starts two instances by default.)
       [ ${#globalAllNodes[@]} -ge 3 ] && local node3=${globalAllNodes[2]} || local node3=${globalAllNodes[1]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
       log "[eureka/$host3] Deploy eureka by peer3 ..."
-      doDeployApp "$deployEurekaBuildTarget" "ha,peer3" "$node3"
+      doDeployApp "$deployEurekaBuildModule" "ha,peer3" "$node3"
     else
       logErr "Cannot deploy eureka servers, nodes sise must be greater than or equal to 1."; exit -1
     fi
@@ -320,6 +326,7 @@ function deployEurekaServers() {
 
 # ----- Main call. -----
 function main() {
+  [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
   log ""
   log "「 Welcome to XCloud DevOps Deployer(Host) 」"
   log ""

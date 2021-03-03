@@ -29,9 +29,10 @@ export choosingDeployModeTip1Msg="[1] 如果选择主机部署模式, 则下一�
 export choosingDeployModeTip2Msg="[2] 如果选择docker部署模式，那么接下来就会将程序服务将部署到远程docker上;"
 export choosingDeployModeTip3Msg="请输入(1|2|默认:1)?"
 export choosingDeployModeTip4Msg="目前还不支持Docker模式部署, 敬请期待！也欢迎加入我们, 请联系: <wanglsir@gmail.com, 983708408@qq.com>"
-export choosingDeployModeTip5Msg="已选择部署模式为"
+export choosingDeployModeTip5Msg="已选择要部署方式为"
 export choosingRuntimeModeMsg="选项3: 请选择即将要部署服务的运行模式:"
-export choosingRuntimeModeTip1Msg="[1] 如果您选择了单机运行时模式, 则它将以最小的规模部署到本地主机运行(非微服务);"
-export choosingRuntimeModeTip2Msg="[2] 如果您选择了集群运行时模式, 则它将以分布式架构部署到多个远程主机上(微服务)
+export choosingRuntimeModeTip1Msg="[1] 如果您选择单机运行时模式, 则将以最小的规模部署到本地主机运行(非微服务);"
+export choosingRuntimeModeTip2Msg="[2] 如果您选择集群运行时模式, 则将以分布式架构部署到多个远程主机上(微服务)
 , 同时您还需要创建 '$currDir/deploy-host.csv' 文件来配置要发布的主机列表."
 export choosingRuntimeModeTip3Msg="请输入 (1|2|默认:1)?"
+export choosingRuntimeModeTip4Msg="已选择即将要部署的程序服务运行时模式为"
