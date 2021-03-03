@@ -56,7 +56,7 @@ redis:
   passwd: ${REDIS_PASSWD:zzx!@#$%}
   connect-timeout: 10000
   max-attempts: 10
-  # Redis's cluster nodes.
+  # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
   nodes: ${DEVOPS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
 
 cipher-key: 03DE18C2FC4E605F
