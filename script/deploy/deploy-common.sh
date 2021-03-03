@@ -292,12 +292,12 @@ function checkInstallServiceScript() {
   mkdir -p $appLogDir
   mkdir -p $appDataDir
   if [ "$appGroup" != "root" ]; then
-    if [ -z "$(grep "^$appGroup" /etc/group)" ]; then
+    if [ -z "$(grep "^$appGroup:" /etc/group)" ]; then
       groupadd $appGroup
     fi
   fi
   if [ "$appUser" != "root" ]; then
-    if [ -z "$(grep "^$appUser" /etc/passwd)" ]; then
+    if [ -z "$(grep "^$appUser:" /etc/passwd)" ]; then
       useradd -g $appGroup $appUser
     fi
   fi

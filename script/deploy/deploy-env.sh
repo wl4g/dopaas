@@ -54,35 +54,35 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$deployAppLogBaseDir" ] && export deployAppLogBaseDir="${deployAppDataBaseDir}/log"
 
 # Delopy(standalone) modules definition.
-export deployStandaloneBuildTargets=(
-  "${currDir}/xcloud-iam/xcloud-iam-service-starter-all/target"
-  "${currDir}/xcloud-devops/xcloud-devops-all-starter/target"
+export deployStandaloneBuildModules=(
+  "standalone-iam,${currDir}/xcloud-iam/xcloud-iam-service-starter-all/target"
+  "standalone-devops,${currDir}/xcloud-devops/xcloud-devops-all-starter/target"
 )
 
 # Deploy(cluster) modules definition.
 export deployClusterNodesConfigPath="$currDir/deploy-host.csv"
-export deployClusterBuildTargets=(
-  "${currDir}/xcloud-iam/xcloud-iam-service-starter-data/target"
-  "${currDir}/xcloud-iam/xcloud-iam-service-starter-facade/target"
-  "${currDir}/xcloud-iam/xcloud-iam-service-starter-web/target"
-  "${currDir}/xcloud-devops/xcloud-devops-erm/xcloud-devops-erm-service-starter-facade/target"
-  "${currDir}/xcloud-devops/xcloud-devops-erm/xcloud-devops-erm-service-starter-manager/target"
-  "${currDir}/xcloud-devops/xcloud-devops-ci/xcloud-devops-ci-service-starter-facade/target"
-  "${currDir}/xcloud-devops/xcloud-devops-ci/xcloud-devops-ci-service-starter-server/target"
-  "${currDir}/xcloud-devops/xcloud-devops-doc/xcloud-devops-doc-service-starter-facade/target"
-  "${currDir}/xcloud-devops/xcloud-devops-doc/xcloud-devops-doc-service-starter-manager/target"
-  "${currDir}/xcloud-devops/xcloud-devops-dts/xcloud-devops-dts-service-starter-facade/target"
-  "${currDir}/xcloud-devops/xcloud-devops-dts/xcloud-devops-dts-service-starter-manager/target"
-  #"${currDir}/xcloud-devops/xcloud-devops-scm/xcloud-devops-scm-service-starter-facade/target"
-  #"${currDir}/xcloud-devops/xcloud-devops-scm/xcloud-devops-scm-service-starter-server/target"
-  #"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-facade/target"
-  #"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-manager/target"
-  #"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-receiver/target"
-  "${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-facade/target"
-  "${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-manager/target"
+export deployClusterBuildModules=(
+  "iam-data,${currDir}/xcloud-iam/xcloud-iam-service-starter-data/target"
+  "iam-facade,${currDir}/xcloud-iam/xcloud-iam-service-starter-facade/target"
+  "iam-web,${currDir}/xcloud-iam/xcloud-iam-service-starter-web/target"
+  "erm-facade,${currDir}/xcloud-devops/xcloud-devops-erm/xcloud-devops-erm-service-starter-facade/target"
+  "erm-manager,${currDir}/xcloud-devops/xcloud-devops-erm/xcloud-devops-erm-service-starter-manager/target"
+  "ci-facade,${currDir}/xcloud-devops/xcloud-devops-ci/xcloud-devops-ci-service-starter-facade/target"
+  "ci-server,${currDir}/xcloud-devops/xcloud-devops-ci/xcloud-devops-ci-service-starter-server/target"
+  "doc-facade,${currDir}/xcloud-devops/xcloud-devops-doc/xcloud-devops-doc-service-starter-facade/target"
+  "doc-manager,${currDir}/xcloud-devops/xcloud-devops-doc/xcloud-devops-doc-service-starter-manager/target"
+  "dts-facade,${currDir}/xcloud-devops/xcloud-devops-dts/xcloud-devops-dts-service-starter-facade/target"
+  "dts-manager,${currDir}/xcloud-devops/xcloud-devops-dts/xcloud-devops-dts-service-starter-manager/target"
+  #scm-facade,"${currDir}/xcloud-devops/xcloud-devops-scm/xcloud-devops-scm-service-starter-facade/target"
+  #scm-server,"${currDir}/xcloud-devops/xcloud-devops-scm/xcloud-devops-scm-service-starter-server/target"
+  #umc-facade,"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-facade/target"
+  #umc-manager,"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-manager/target"
+  #umc-receiver,"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-receiver/target"
+  "vcs-facade,${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-facade/target"
+  "vcs-manager,${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-manager/target"
 )
-# Eureka target.
-export deployEurekaBuildTarget="${currDir}/xcloud-component/xcloud-component-rpc/xcloud-component-rpc-springcloud-eureka-server/target"
+# Eureka build module info.
+export deployEurekaBuildModule="eureka-server,${currDir}/xcloud-component/xcloud-component-rpc/xcloud-component-rpc-springcloud-eureka-server/target"
 
 # Runtime dependency external services configuration.
 [ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8"

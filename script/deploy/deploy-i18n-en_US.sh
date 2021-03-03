@@ -35,3 +35,4 @@ export choosingRuntimeModeTip1Msg="[1] If you choose standalone runtime mode, it
 export choosingRuntimeModeTip2Msg="[2] If you choose cluster runtime mode, it will be deployed to multiple remote hosts as distributed 
 microservices, you need to create \"$currDir/deploy-host.csv\" to define the hosts list."
 export choosingRuntimeModeTip3Msg="Please choose to (1|2|default:1)?"
+export choosingRuntimeModeTip4Msg="Choosed apps services runtime mode is"

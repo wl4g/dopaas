@@ -20,6 +20,7 @@
 if [[ "$(echo groups)" == "root" ]]; then
   logErr "Please execute the scripts as a user with root privileges !"; exit -1
 fi
+[ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
 
 # Global definition.
 export currDir=$(cd "`dirname $0`"/ ; pwd)
@@ -38,28 +39,39 @@ export currDir=$(cd "`dirname $0`"/ ; pwd)
 [ -z "$runtimeRedisPassword" ] && export runtimeRedisPassword="123456"
 [ -z "$runtimeAppSpringProfilesActive" ] && export runtimeAppSpringProfilesActive="pro"
 
-# Detection the host network and choose the fast resources intelligently.
-export isNetworkInGfwWall="$(cat $workspaceDir/isNetworkInGfwWall 2>/dev/null)"
-if [ -z "$isNetworkInGfwWall" ]; then
-  echo "Analyzing network to best packages resources are automatically allocate ..."
-  ipArea=$(curl --connect-timeout 10 -m 20 -sSL cip.cc 2>/dev/null)
-  if [ $? == 0 ]; then
-    export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo N)
-  else # Fallback
-    ipArea=$(curl --connect-timeout 10 -m 20 -sSL ipinfo.io)
-    export isNetworkInGfwWall=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo N)
-  fi
-  echo "$isNetworkInGfwWall" > "$workspaceDir/isNetworkInGfwWall"
-  # Choose best resources.
-  if [ "$isNetworkInGfwWall" == "Y" ]; then
-    export gitBaseUri="$gitBaseUrlBackup1" # for speed-up, fuck gfw!
-    export scriptsBaseUrl="$scriptsBaseUrlBackup1"
-  fi
+# Checking the host networking.
+echo "Checking network to best resources and automatically allocating  ..."
+export isNetworkInGfwWall="$(cat $workspaceDir/isNetworkInGfwWall 2>/dev/null)" # Load last configuration first.
+if [ -z "$isNetworkInGfwWall" ]; then # Checking url1
+  ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ip.taobao.com/outGetIpInfo?ip=113.109.55.66&accessKey=alibaba-inc" 2>/dev/null)
+  export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo "")
+fi
+if [ -z "$isNetworkInGfwWall" ]; then # Checking url2
+  echo "Try checking the network again with http://cip.cc ..."
+  ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://cip.cc" 2>/dev/null)
+  export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo "")
+fi
+if [ -z "$isNetworkInGfwWall" ]; then # Checking url3
+  echo "Try checking the network again with http://ipinfo.io ..."
+  ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ipinfo.io" 2>/dev/null)
+  export isNetworkInGfwWall=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo "")
+fi
+if [ -z "$isNetworkInGfwWall" ]; then # Checking url4
+  echo "Try checking the network again with https://api.myip.com ..."
+  ipArea=$(curl --connect-timeout 10 -m 20 -sSL "https://api.myip.com" 2>/dev/null)
+  export isNetworkInGfwWall=$([[ "$ipArea" =~ "China" ]] && echo Y || echo "")
+fi
+[ "$isNetworkInGfwWall" != "Y" ] && export isNetworkInGfwWall="N"
+echo "$isNetworkInGfwWall" > "$workspaceDir/isNetworkInGfwWall"
+# Choose best fast-resources intelligently.
+if [ "$isNetworkInGfwWall" == "Y" ]; then
+  export gitBaseUri="$gitBaseUrlBackup1" # for speed-up, fuck gfw!
+  export scriptsBaseUrl="$scriptsBaseUrlBackup1"
 fi
 
 # Download deploy dependencies scripts.
-cd $currDir
-if [ "$deployDebug" == "false" ]; then
+if [ "$deployDebug" == "false" ]; then # Debug mode does not need to download depend scripts.
+  cd $currDir
   \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
   echo "Downloading deploy scripts dependencies ..."
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-i18n-zh_CN.sh"; [ $? -ne 0 ] && exit -1
@@ -102,56 +114,50 @@ do
 done
 
 # Option2: Choose deployment mode.
-if [ "$deployMode" == "" ]; then
-  echo ""
-  while true
-  do
-    read -t 300 -p """$choosingDeployModeMsg
-    $choosingDeployModeTip1Msg
-    $choosingDeployModeTip2Msg
-    $choosingDeployModeTip3Msg """ depMode
-    if [[ "$depMode" == "" || "$depMode" == "1" ]]; then
-      export deployMode="host"
-      break
-    elif [ "$depMode" == "2" ]; then
-      export deployMode="docker"
-      echo "$choosingDeployModeTip4Msg"
-      exit -1
-    else
-      continue
-    fi
-  done
-else
-  echo "$choosingDeployModeTip5Msg '$deployMode'"
-fi
+echo ""
+while true
+do
+  read -t 300 -p """$choosingDeployModeMsg
+  $choosingDeployModeTip1Msg
+  $choosingDeployModeTip2Msg
+  $choosingDeployModeTip3Msg """ depMode
+  if [[ "$depMode" == "" || "$depMode" == "1" ]]; then
+    export deployMode="host"
+    break
+  elif [ "$depMode" == "2" ]; then
+    export deployMode="docker"
+    echo "$choosingDeployModeTip4Msg"
+    exit -1
+  else
+    continue
+  fi
+done
+echo "$choosingDeployModeTip5Msg '$deployMode'"
 
 # Option3: Choose runtime mode.
-if [ "$runtimeMode" == "" ]; then
-  echo ""
-  while true
-  do
-    read -t 300 -p """$choosingRuntimeModeMsg
-    $choosingRuntimeModeTip1Msg
-    $choosingRuntimeModeTip2Msg
-    $choosingRuntimeModeTip3Msg """ rtMode
-    if [[ "$rtMode" == "" || "$rtMode" == "1" ]]; then
-      export runtimeMode="standalone"
-      break
-    elif [ "$rtMode" == "2" ]; then
-      export runtimeMode="cluster"
-      if [ ! -f "$currDir/deploy-host.csv" ]; then
-        echo "Please create '$currDir/deploy-host.csv' from '$currDir/deploy-host.csv.tpl', and then re-execute '.$currDir/deploy-boot.sh' again !"
-        exit -1
-      else
-        break
-      fi
+echo ""
+while true
+do
+  read -t 300 -p """$choosingRuntimeModeMsg
+  $choosingRuntimeModeTip1Msg
+  $choosingRuntimeModeTip2Msg
+  $choosingRuntimeModeTip3Msg """ rtMode
+  if [[ "$rtMode" == "" || "$rtMode" == "1" ]]; then
+    export runtimeMode="standalone"
+    break
+  elif [ "$rtMode" == "2" ]; then
+    export runtimeMode="cluster"
+    if [ ! -f "$currDir/deploy-host.csv" ]; then
+      echo "Please create '$currDir/deploy-host.csv' from '$currDir/deploy-host.csv.tpl', and then re-execute '.$currDir/deploy-boot.sh' again !"
+      exit -1
     else
-      continue
+      break
     fi
-  done
-else
-  echo "Option3: Choosed apps services runtime mode use \"$runtimeMode\""
-fi
+  else
+    continue
+  fi
+done
+echo "$choosingRuntimeModeTip4Msg '$runtimeMode'"
 
 # Call deployer.
 if [ "$deployMode" == "host" ]; then
@@ -159,7 +165,7 @@ if [ "$deployMode" == "host" ]; then
 elif [ "$deployMode" == "docker" ]; then
   bash $currDir/deploy-docker.sh
 else
-  echo "Unknown deploy mode of \"$deployMode\" !"
+  echo "Unknown deploy mode of '$deployMode' !"; exit -1
 fi
 
 #cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v "deploy-boot.sh"|grep -v "undeploy-host.sh") # Cleanup scripts.
