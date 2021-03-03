@@ -25,6 +25,7 @@
 			<artifactId>xcloud-devops-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<!-- @see: https://github.com/elastic/elasticsearch/blob/v6.2.3/buildSrc/version.properties -->
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>elasticsearch-rest-high-level-client</artifactId>

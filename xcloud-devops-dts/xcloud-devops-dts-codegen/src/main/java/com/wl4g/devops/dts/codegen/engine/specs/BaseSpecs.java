@@ -15,30 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.engine.specs;
 
-import com.google.common.collect.Lists;
-import javax.annotation.Nullable;
-import com.wl4g.component.common.bean.ConfigOption;
-import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.lang.StringUtils2;
-import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition.GenExtraOption;
-import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition.GenTableExtraOption;
-import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import org.apdplat.word.WordSegmenter;
-import org.apdplat.word.segmentation.Word;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.wl4g.component.common.collection.CollectionUtils2.disDupCollection;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
@@ -59,6 +35,30 @@ import static org.apache.commons.lang3.StringUtils.replaceEach;
 import static org.apache.commons.lang3.StringUtils.replacePattern;
 import static org.apache.commons.lang3.StringUtils.trim;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+
+//import org.apdplat.word.WordSegmenter;
+//import org.apdplat.word.segmentation.Word;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import com.google.common.collect.Lists;
+import com.wl4g.component.common.bean.ConfigOption;
+import com.wl4g.component.common.collection.CollectionUtils2;
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
+import com.wl4g.component.common.lang.StringUtils2;
+import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
+import com.wl4g.devops.dts.codegen.bean.extra.ExtraOptionDefinition.GenExtraOption;
+import com.wl4g.devops.dts.codegen.bean.extra.TableExtraOptionDefinition.GenTableExtraOption;
+import com.wl4g.devops.dts.codegen.utils.BuiltinColumnDefinition;
 
 /**
  * Generic base specification utility.
@@ -476,23 +476,23 @@ public class BaseSpecs {
 		 * case1: 统计类型(1.计划完成 2.实际完成) => words[统计, 类型, 1, 计划, 2]
 		 * </pre>
 		 */
-		wordSeg(str -> {
-			// Chinese word segmentation keyword extraction.
-			List<Word> words = safeList(WordSegmenter.seg(str));
-			if (words.isEmpty()) {
-				return str;
-			}
-			StringBuffer comment = new StringBuffer();
-			for (int i = 0; i < words.size(); i++) {
-				Word word = words.get(i);
-				if (comment.length() <= 4) {
-					comment.append(word.getText());
-				} else {
-					break;
-				}
-			}
-			return comment.toString().replace("表", EMPTY);
-		}),
+		// wordSeg(str -> {
+		// // Chinese word segmentation keyword extraction.
+		// List<Word> words = safeList(WordSegmenter.seg(str));
+		// if (words.isEmpty()) {
+		// return str;
+		// }
+		// StringBuffer comment = new StringBuffer();
+		// for (int i = 0; i < words.size(); i++) {
+		// Word word = words.get(i);
+		// if (comment.length() <= 4) {
+		// comment.append(word.getText());
+		// } else {
+		// break;
+		// }
+		// }
+		// return comment.toString().replace("表", EMPTY);
+		// }),
 
 		/**
 		 * <pre>
