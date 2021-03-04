@@ -285,7 +285,7 @@ public class Swagger2DocumentConverter extends AbstractDocumentConverter<Swagger
                 property.setType(apiProperties.getType());
             }
             if(!CollectionUtils.isEmpty(apiProperties.getChildren())){
-                boolean childIsArray = apiProperties.getType().equalsIgnoreCase("array");
+                boolean childIsArray = "array".equalsIgnoreCase(apiProperties.getType());
                 convertBackBodyProperties(swagger,ref+ "."+apiProperties.getName(),apiProperties.getChildren(),childIsArray);
             }
         }
