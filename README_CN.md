@@ -43,7 +43,7 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy
 </mirror>
 ```
 
-- 编译
+- 后端编译
 > 按项目依赖顺序进行编译, 其中 `mvn -P` 选项有：`springExecJar` (打包为单个可执行jar)、`mvnAssTar` (打包为通用软件发布包)，默认
 ```
 git clone https://github.com/wl4g/xcloud-component.git # 上游较新（推荐）
@@ -59,13 +59,28 @@ git clone https://github.com/wl4g/xcloud-devops.git # 上游较新（推荐）
 mvn -f xcloud-devops -U clean install -DskipTests -T 2C
 ```
 
+- 前端编译
+```
+git clone https://github.com/wl4g/xcloud-devops-view.git # 上游较新（推荐）
+或者 git clone https://gitee.com/wl4g/xcloud-devops-view.git
+npm run dev # 开发调试
+npm run build # 生产打包
+```
+
 - 初始数据库：首先准备一台MySQL5.6+实例，创建名为devops(utf8/utf8_bin)的库，再 [初始数据库](../../../xcloud-devops-db)。（注：sql脚本需与源码版本对应，我们会定期更新，建议都使用最新）
+
 - 配置本地DNS：添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
 127.0.0.1   wl4g.debug # 对应表字段.extranet_base_uri
 ```
+
 - 快速搭建redis/docker集群(可选)
 > [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或者 [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)
+
+- 浏览器访问（建议使用Chrome）
+> http://wl4g.debug
+
+> 默认账号密码：root/wl4g.com
 
 
 ### 子模块文档

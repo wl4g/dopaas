@@ -43,7 +43,7 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy
 </mirror>
 ```
 
-- Compiling
+- Backend compiling
 > Compile according to the order of project dependency. The `mvn -P` options are: `springExecJar` (packaged as a single executable jar) and `mvnAssTar` (packaged as a general software release package), default. 
 
 ```
@@ -60,7 +60,15 @@ git clone https://github.com/wl4g/xcloud-devops.git # Relatively new upstream (r
 mvn -f xcloud-devops -U clean install -DskipTests -T 2C
 ```
 
-- Init DB: first, prepare a MySQL5.6+ instance and create a database named `devops`(utf8/utf8)_bin), and then [Initial DB sql](../../../xcloud-devops-db). (Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
+- Frontend compiling
+```
+git clone https://github.com/wl4g/xcloud-devops-view.git # Relatively new upstream (recommended)
+或者 git clone https://gitee.com/wl4g/xcloud-devops-view.git
+npm run dev # Development debugging
+npm run build # Production building
+```
+
+- Initial DB: first, prepare a MySQL5.6+ instance and create a database named `devops`(utf8/utf8)_bin), and then [Initial DB sql](../../../xcloud-devops-db). (Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
 
 - Configure local DNS: add local virtual domain name resolution （C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
@@ -69,6 +77,11 @@ mvn -f xcloud-devops -U clean install -DskipTests -T 2C
 
 - Quickly build a redis cluster/docker (optional)
 > [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或者 [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)
+
+- Browser Access (Chrome recommended)
+> http://wl4g.debug
+
+> Default account password: root/wl4g.com
 
 
 ### Submodule documentation
