@@ -1,7 +1,7 @@
 ## XCloud DevOps
 ![XCloud DevSecOps](shots/logo.jpg)
 
-[中文文档](README_CN.md)]
+[中文文档](README_CN.md) | English version goes [here](README.md)
 
 ### One stop Devops solution SaaS platform is developed based on spring cloud / docker / istio, Main modules: continuous delivery of CI / CD (distributed compilation and deployment), Iam Certification Center, unified monitoring center, unified configuration center, unified resource management, task scheduling center, flexible scaling, shell tools, various tool chains (such as HBase / OSS operation and maintenance), document management, timely communication, lightweight risk control, private object storage, version control, etc
 
@@ -60,7 +60,7 @@ git clone https://github.com/wl4g/xcloud-devops.git # Relatively new upstream (r
 mvn -f xcloud-devops -U clean install -DskipTests -T 2C
 ```
 
-- Init DB: first, prepare a MySQL5.6+ instance and create a database named `devops`(utf8/utf8)_bin), and then [Init DB SQL](../../../xcloud-devops-data/tree/master/db). (Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
+- Init DB: first, prepare a MySQL5.6+ instance and create a database named `devops`(utf8/utf8)_bin), and then [Initial DB sql](../../../xcloud-devops-db). (Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
 
 - Configure local DNS: add local virtual domain name resolution （C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
