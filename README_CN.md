@@ -1,7 +1,7 @@
 ## XCloud DevOps
 ![XCloud DevSecOps](shots/logo.jpg)
 
-English version goes [here](README.md)
+[中文文档](README_CN.md) | English version goes [here](README.md)
 
 ### 一站式 DevOps 解决方案SaaS平台，基于SpringCloud/Docker/Istio开发, 主要模块：持续交付CI/CD(分布式编译部署)、IAM认证中心、统一监控中心、统一配置中心、统一资源管理、任务调度中心、弹性伸缩、shell工具、各种工具链(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
 
@@ -59,7 +59,7 @@ git clone https://github.com/wl4g/xcloud-devops.git # 上游较新（推荐）
 mvn -f xcloud-devops -U clean install -DskipTests -T 2C
 ```
 
-- 初始数据库：首先准备一台MySQL5.6+实例，创建名为devops(utf8/utf8_bin)的库，再 [初始数据库sql](../../../xcloud-devops-data/tree/master/db)。（注：sql脚本需与源码版本对应，我们会定期更新，建议都使用最新）
+- 初始数据库：首先准备一台MySQL5.6+实例，创建名为devops(utf8/utf8_bin)的库，再 [初始数据库](../../../xcloud-devops-db)。（注：sql脚本需与源码版本对应，我们会定期更新，建议都使用最新）
 - 配置本地DNS：添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
 127.0.0.1   wl4g.debug # 对应表字段.extranet_base_uri
