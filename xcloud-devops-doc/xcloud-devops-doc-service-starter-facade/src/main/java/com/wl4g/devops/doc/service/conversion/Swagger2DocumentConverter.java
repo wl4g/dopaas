@@ -30,6 +30,7 @@ import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.v3.core.util.Json;
 import org.springframework.util.CollectionUtils;
@@ -137,6 +138,9 @@ public class Swagger2DocumentConverter extends AbstractDocumentConverter<Swagger
 
     private void convertBodyProperties(Swagger swagger, String ref, List<EnterpriseApiProperties> properties, String scope) {
         Model model = swagger.getDefinitions().get(ref);
+        if (null == model) {
+            return;
+        }
         Map<String, Property> propertiesModel = model.getProperties();
 
         for (Map.Entry<String, Property> entry : propertiesModel.entrySet()) {
@@ -195,15 +199,29 @@ public class Swagger2DocumentConverter extends AbstractDocumentConverter<Swagger
         for (EnterpriseApi enterpriseApi : enterpriseApis) {
             Path path = new Path();
             Operation operation = new Operation();
+            operation.setSummary(enterpriseApi.getDescription());
 
             List<EnterpriseApiProperties> properties = enterpriseApi.getProperties();
             List<EnterpriseApiProperties> requestProperties = getPropertiesByScope(properties, REQUEST);
             List<EnterpriseApiProperties> responseProperties = getPropertiesByScope(properties, RESPONSE);
 
-            if(enterpriseApi.getMethod().contains("GET") || enterpriseApi.getMethod().contains("DELETE")){
+            if (enterpriseApi.getMethod().contains("GET")) {
+                path.setGet(operation);
+            }
+            if (enterpriseApi.getMethod().contains("POST")) {
+                path.setGet(operation);
+            }
+            if (enterpriseApi.getMethod().contains("PUT")) {
+                path.setGet(operation);
+            }
+            if (enterpriseApi.getMethod().contains("DELETE")) {
+                path.setDelete(operation);
+            }
+
+            if (!CollectionUtils.isEmpty(requestProperties)) {
                 List<Parameter> parameters = new ArrayList<Parameter>();
 
-                for(EnterpriseApiProperties enterpriseApiProperties : requestProperties){
+                for (EnterpriseApiProperties enterpriseApiProperties : requestProperties) {
                     //TODO 除了QueryParameter，还有其他
                     QueryParameter queryParameter = new QueryParameter();
                     queryParameter.setName(enterpriseApiProperties.getName());
@@ -212,20 +230,13 @@ public class Swagger2DocumentConverter extends AbstractDocumentConverter<Swagger
                     parameters.add(queryParameter);
                 }
                 operation.setParameters(parameters);
-
-                if(enterpriseApi.getMethod().contains("GET")){
-                    path.setGet(operation);
-                }
-                if(enterpriseApi.getMethod().contains("DELETE")){
-                    path.setDelete(operation);
-                }
             }
 
-            if(enterpriseApi.getMethod().contains("POST") || enterpriseApi.getMethod().contains("PUT")){
-                convertBackOperation(swagger, operation,enterpriseApi.getName(), responseProperties);
+            if (!CollectionUtils.isEmpty(responseProperties)) {
+                convertBackOperation(swagger, operation, enterpriseApi.getName(), responseProperties);
             }
 
-            paths.put(enterpriseApi.getUrl() ,path);
+            paths.put(enterpriseApi.getUrl(), path);
         }
         swagger.setPaths(paths);
 
@@ -234,61 +245,73 @@ public class Swagger2DocumentConverter extends AbstractDocumentConverter<Swagger
     }
 
 
-    private void convertBackOperation(Swagger swagger,Operation operation,String objName,List<EnterpriseApiProperties> properties){
+    private void convertBackOperation(Swagger swagger, Operation operation, String objName, List<EnterpriseApiProperties> properties) {
         Map<String, Response> responses = new LinkedHashMap<String, Response>();
 
         Response response = new Response();
 
         Model responseSchema = new RefModel();
 
-        String ref = "#/definitions/" + objName;
-        responseSchema.setReference(ref);//TODO
+        responseSchema.setReference(getTotalRef(objName));//TODO
 
         response.setResponseSchema(responseSchema);
 
-        responses.put("200",response);
+        responses.put("200", response);
 
-        convertBackBodyProperties(swagger, ref, properties,false);
+        convertBackBodyProperties(swagger, objName, properties);
 
         operation.setResponses(responses);
     }
 
 
-    private void convertBackBodyProperties(Swagger swagger,String ref, List<EnterpriseApiProperties> enterpriseApiProperties, boolean isArray) {
+    private void convertBackBodyProperties(Swagger swagger, String objName, List<EnterpriseApiProperties> enterpriseApiProperties) {
 
         Map<String, Model> definitions = swagger.getDefinitions();
-        if(CollectionUtils.isEmpty(definitions)){
+        if (CollectionUtils.isEmpty(definitions)) {
             definitions = new LinkedHashMap<String, Model>();
+            swagger.setDefinitions(definitions);
         }
-        Model model = definitions.get(ref);
-        if(Objects.isNull(model)){
-            model = new RefModel();
+        Model model = definitions.get(objName);
+        if (Objects.isNull(model)) {
+            model = new ModelImpl();
+            definitions.put(objName, model);
         }
 
-        Map<String, Property> properties = new HashMap<>();
+        Map<String, Property> properties = new LinkedHashMap<String, Property>();
+
+        for (EnterpriseApiProperties apiProperties : enterpriseApiProperties) {
+            if ("array".equalsIgnoreCase(apiProperties.getType()) && !CollectionUtils.isEmpty(apiProperties.getChildren())) {
+                ArrayProperty arrayProperty = new ArrayProperty();
+                RefProperty property = new RefProperty(getTotalRef(objName) + "." + apiProperties.getName());
+                arrayProperty.setItems(property);
+                properties.put(apiProperties.getName(), arrayProperty);
+                property.setDescription(apiProperties.getDescription());
+                property.setRequired("1".equals(apiProperties.getRequired()));
+                property.setType(apiProperties.getType());
+            } else if (!CollectionUtils.isEmpty(apiProperties.getChildren())) {
+                RefProperty property = new RefProperty(getTotalRef(objName) + "." + apiProperties.getName());
+                properties.put(apiProperties.getName(), property);
+                property.setDescription(apiProperties.getDescription());
+                property.setRequired("1".equals(apiProperties.getRequired()));
+                property.setType(apiProperties.getType());
+            } else {
+                StringProperty property = new StringProperty();
+                properties.put(apiProperties.getName(), property);
+                property.setDescription(apiProperties.getDescription());
+                property.setRequired("1".equals(apiProperties.getRequired()));
+                property.setType(apiProperties.getType());
+            }
+            if (!CollectionUtils.isEmpty(apiProperties.getChildren())) {
+                convertBackBodyProperties(swagger, objName + "." + apiProperties.getName(), apiProperties.getChildren());
+            }
+        }
         model.setProperties(properties);
 
-        for(EnterpriseApiProperties apiProperties : enterpriseApiProperties){
-            if(isArray){
-                ArrayProperty arrayProperty = new ArrayProperty();
-                RefProperty property = new RefProperty();
-                arrayProperty.setItems(property);
-                properties.put(apiProperties.getName(),property);
-                property.setDescription(apiProperties.getDescription());
-                property.setRequired("1".equals(apiProperties.getRequired()));
-                property.setType(apiProperties.getType());
-            }else{
-                RefProperty property = new RefProperty();
-                properties.put(apiProperties.getName(),property);
-                property.setDescription(apiProperties.getDescription());
-                property.setRequired("1".equals(apiProperties.getRequired()));
-                property.setType(apiProperties.getType());
-            }
-            if(!CollectionUtils.isEmpty(apiProperties.getChildren())){
-                boolean childIsArray = "array".equalsIgnoreCase(apiProperties.getType());
-                convertBackBodyProperties(swagger,ref+ "."+apiProperties.getName(),apiProperties.getChildren(),childIsArray);
-            }
-        }
+    }
+
+
+    private String getTotalRef(String objName) {
+        return "#/definitions/" + objName;
     }
 
 }
