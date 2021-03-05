@@ -187,7 +187,7 @@ function doRemoteCmd() {
     fi
   else # Exec remote by sshpass
     installSshpass
-    sshpass -p $password ssh -o StrictHostKeyChecking=no -p 22 $user@$host $cmd
+    sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd"
     [[ $? -ne 0 && "$exitOnFail" == "true" ]] && exit -1
   fi
 }
@@ -405,7 +405,7 @@ function console() {
 }
 
 function getPids() {
-  local pids=\$(ps ax | grep java | grep -i $appHome | grep -v grep | awk '{print \$1}')
+  local pids=\$(ps ax | grep java | grep -i "${appHome}" | grep "spring.profiles.active=\${SPRING_PROFILES_ACTIVE}" | grep -v grep | awk '{print \$1}')
   echo \$pids # Output execution result value.
   return 0 # Return the execution result code.
 }
