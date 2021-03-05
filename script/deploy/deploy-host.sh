@@ -117,10 +117,10 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
 
   log "[$appName/standalone] Cleanup older install files: $appInstallDir/* ..."
   secDeleteLocal "$appInstallDir/*"
-  if [ "$buildPkgType" == "mvnAssTar" ]; then
+  if [[ "$buildPkgType" == "mvnAssTar" ]]; then
     log "[$appName/standalone/local] Uncompress $buildFilePath to $appInstallDir ..."
     tar -xf $buildFilePath -C $appInstallDir/
-  elif [ "$buildPkgType" == "springExecJar" ]; then
+  elif [[ "$buildPkgType" == "springExecJar" ]]; then
     log "[$appName/standalone/local] Copying $buildFilePath to $appInstallDir/ ..."
     unalias -a cp
     cp -Rf ${appName}-${buildPkgVersion}-bin.jar $appInstallDir/
@@ -178,10 +178,10 @@ function doDeployToNodeOfCluster() {
   local passwd=$6
   local springProfilesActive=$7
   # Deployement to remote.
-  log "[$appName/cluster/$host] Cleanup older install files: \"$appInstallDir/*\" ..."
+  log "[$appName/cluster/$host] Cleanup older install files: '$appInstallDir/*' ..."
   [[ "$appInstallDir" != "" && "$appInstallDir" != "/" ]] && doRemoteCmd "$user" "$passwd" "$host" "rm -rf $appInstallDir/*" "true"
   doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appInstallDir" "false"
-  log "[$appName/cluster/$host] Transfer \"$buildFilePath\" to remote \"$appInstallDir\" ..."
+  log "[$appName/cluster/$host] Transfer '$buildFilePath' to remote '$appInstallDir' ..."
   doScp "$user" "$passwd" "$host" "$buildFilePath" "$appInstallDir/$buildFileName" "true"
   if [ "$buildPkgType" == "mvnAssTar" ]; then
     if [ -n "$(echo $buildFileName|grep .tar)" ]; then
@@ -220,7 +220,11 @@ function doDeployApp() {
   if [ -z "$buildTargetDir" ]; then
     logErr "Failed to deploy, buildTargetDir is required! all args: '$@'"; exit -1
   fi
-  local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.tar|*-${buildPkgVersion}-bin.jar")
+  if [ "$buildPkgType" == "mvnAssTar" ]; then
+    local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.tar")
+  elif [ "$buildPkgType" == "springExecJar" ]; then
+    local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.jar")
+  fi
   if [ -z "$buildFileName" ]; then
     logErr "Failed to deploy, buildFileName is required! all args: '$@'"; exit -1
   fi
@@ -304,13 +308,11 @@ function deployEurekaServers() {
       local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
       log "[eureka/$host1] Deploy eureka by peer1 ..."
       doDeployApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
-    
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
       log "[eureka/$host3] Deploy eureka by peer2 ..."
       doDeployApp "$deployEurekaBuildModule" "ha,peer2" "$node2"
-    
       # Node3: (When the cluster nodes size is 2, the second host deployment starts two instances by default.)
       [ ${#globalAllNodes[@]} -ge 3 ] && local node3=${globalAllNodes[2]} || local node3=${globalAllNodes[1]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')

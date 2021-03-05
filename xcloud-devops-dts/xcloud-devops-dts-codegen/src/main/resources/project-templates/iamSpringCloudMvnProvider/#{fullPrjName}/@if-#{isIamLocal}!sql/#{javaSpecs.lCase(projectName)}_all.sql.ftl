@@ -659,7 +659,7 @@ CREATE TABLE `sys_user` (
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` VALUES (1, 'root', NULL, '系统根超级管理员', '05ca1afb242f770c44b98ca144a013a6', 'a3e0b320c73020aa81ebf87bd8611bf1', 0, 1, 0, '983708408@qq.com', '18127968606', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '商物云系统管理员1', NULL, NULL, NULL, '2019-11-17 18:13:34', 0);
+INSERT INTO `sys_user` VALUES (1, 'root', NULL, '系统根超级管理员', '05ca1afb242f770c44b98ca144a013a6', 'a3e0b320c73020aa81ebf87bd8611bf1', 0, 1, 0, '983708408@qq.com', '18127968606', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'root系统管理员1', NULL, NULL, NULL, '2019-11-17 18:13:34', 0);
 INSERT INTO `sys_user` VALUES (5, 'liuxl', NULL, '刘兴龙', '81d206f6f32bf1d48728fc351cdde734a658b908cac178d3ab3be6bfff9644f169548439c0ab4e5c40b834807ef5dcdbd33476f53466795ce693e61ae548cf9a', 'cb93f6efd291fbc66d59d082e4014c12', 0, 1, 0, 'zhangsan@gmail.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '测试人员-刘兴龙', 1, '2019-10-30 11:16:05', -1, '2020-10-30 08:35:41', 0);
 INSERT INTO `sys_user` VALUES (7, 'hwjie', NULL, '何伟杰', '9bc434a8c2fb6f0ff3d218198bc2eea4ce4376c900b1a7f752098c0aad080e2d6f8c3c3a9f9117f1840fc9584f809718', '36c9ebe0f18dfb0464f80dbc21180803', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 15:01:05', -1, '2020-10-29 11:12:39', 0);
 INSERT INTO `sys_user` VALUES (8, 'wanglsir', NULL, 'wanglsir', '2b64fa319015f13fbec894d6eba5f5a71211a727dbb18a80ab45c3101d98ea85c88879dd81ee215e06b2817a69270ade', 'd553592177c116c3458f02007577fc09', 0, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 18:11:00', -1, '2020-10-29 11:12:59', 0);
