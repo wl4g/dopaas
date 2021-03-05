@@ -1,1 +1,1 @@
-已迁移至 [super-devops-view](../../../../super-devops-view)
+已迁移至 [xcloud-devops-view](../../../../xcloud-devops-view)

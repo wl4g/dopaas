@@ -72,7 +72,7 @@ fi
 # Download deploy dependencies scripts.
 if [ "$deployDebug" == "false" ]; then # Debug mode does not need to download depend scripts.
   cd $currDir
-  \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
+  #\rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
   echo "Downloading deploy scripts dependencies ..."
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-i18n-zh_CN.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-i18n-en_US.sh"; [ $? -ne 0 ] && exit -1
@@ -170,3 +170,4 @@ fi
 
 #cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v "deploy-boot.sh"|grep -v "undeploy-host.sh") # Cleanup scripts.
 exit 0
+
