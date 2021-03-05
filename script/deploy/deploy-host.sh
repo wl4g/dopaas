@@ -53,6 +53,10 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
         globalAllHostsString="${globalAllHostsString}, $host"
       fi
     done
+    # Check nodes must > 0
+    if [ ${#globalAllNodes[@]} -le 0 ]; then
+      logErr "Please reconfigure '$currDir/deploy-host.csv', deploy at least one cluster node !"
+    fi
   fi
 }
 
@@ -106,7 +110,7 @@ function deployToLocalOfStandalone() {
   local springProfilesActive=$5
   # Check args.
   if [[ "$buildFilePath" == "" || "$buildFileName" == "" || "$cmdRestart" == "" || "$appName" == "" ]]; then
-    logErr "Failed to deploy to nodes, because buildFilePath/buildFileName/cmdRestart/appName is required!
+    logErr "Failed to deploy to local, because buildFilePath/buildFileName/cmdRestart/appName is required!
 buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdRestart, appName=$appName"
     exit -1
   fi
@@ -208,8 +212,7 @@ function doDeployToNodeOfCluster() {
 # Do deploy app.
 function doDeployApp() {
   local buildModule=$1
-  local springProfilesActive="${runtimeAppSpringProfilesActive}"
-  [ "$2" != "" ] && springProfilesActive=$2 # Priority custom active.
+  local springProfilesActive=$2 # Priority custom active.
   local nodeArr=$3
   # Gets build info.
   local appName=$(echo "$buildModule"|awk -F ',' '{print $1}')
@@ -231,7 +234,7 @@ function doDeployApp() {
   #local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
   local cmdRestart="/etc/init.d/${appName}.service restart"
 
-  # Add deployed xcloud-devops primary services name.
+  # Add deployed xcloud-devops primary services names.
   globalDeployStatsMsg="${globalDeployStatsMsg}"$(echo -n -e """
 [${appName}]:
           Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/
@@ -281,7 +284,7 @@ function deployDevopsAppsAll() {
   if [ $deployBuildModulesSize -gt 0 ]; then
     for ((i=0;i<${#deployBuildModules[@]};i++)) do
       local buildModule=${deployBuildModules[i]}
-      doDeployApp "$buildModule" "" "${globalAllNodes[*]}"
+      doDeployApp "$buildModule" "${runtimeAppSpringProfilesActive}" "${globalAllNodes[*]}"
     done
     [ "$asyncDeploy" == "true" ] && wait # Wait all apps async deploy complete.
   fi
@@ -296,13 +299,25 @@ function deployPreDependsServices() {
 # Check and deploy eureka servers.
 function deployEurekaServers() {
   if [ "$runtimeMode" == "cluster" ]; then
-    if [ ${#globalAllNodes[@]} == 1 ]; then # use standalone mode.
-      local node=${globalAllNodes[0]}
-      local host=$(echo $node|awk -F 'ξ' '{print $1}')
-      log "[eureka/$host] Deploy eureka by standalone ..."
-      doDeployApp "$deployEurekaBuildModule" "standalone" "$node"
-    elif [ ${#globalAllNodes[@]} -ge 2 ]; then # use cluster mode.
-      # Assign eureka nodes.
+    if [ ${#globalAllNodes[@]} -lt 3 ]; then # Building pseudo cluster.
+      local appName=$(echo "$deployEurekaBuildModule"|awk -F ',' '{print $1}')
+      local cmdRestart="/etc/init.d/${appName}.service restart"
+      local node1=${globalAllNodes[0]}
+      local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
+      local user1=$(echo $node1|awk -F 'ξ' '{print $2}')
+      local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
+      # Node1:
+      log "[eureka/$host1] Deploy eureka by peer1 (Pseudo) ..."
+      doDeployApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
+      # Due to the asynchronous call of the previous function, we have to wait for 
+      # synchronous execution to ensure the integrity of the first build package.
+      wait
+      # Node2 and Node3: (only start new instance)
+      log "[eureka/$host1] Deploy eureka by peer2 (Pseudo) ..."
+      doRemoteCmd "$user1" "$passwd1" "$host1" "export SPRING_PROFILES_ACTIVE='ha,peer2' && $cmdRestart" "true" &
+      log "[eureka/$host1] Deploy eureka by peer3 (Pseudo) ..."
+      doRemoteCmd "$user1" "$passwd1" "$host1" "export SPRING_PROFILES_ACTIVE='ha,peer3' && $cmdRestart" "true" &
+    else # Building a real cluster.
       # Node1:
       local node1=${globalAllNodes[0]}
       local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
@@ -311,19 +326,18 @@ function deployEurekaServers() {
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
-      log "[eureka/$host3] Deploy eureka by peer2 ..."
+      log "[eureka/$host2] Deploy eureka by peer2 ..."
       doDeployApp "$deployEurekaBuildModule" "ha,peer2" "$node2"
-      # Node3: (When the cluster nodes size is 2, the second host deployment starts two instances by default.)
-      [ ${#globalAllNodes[@]} -ge 3 ] && local node3=${globalAllNodes[2]} || local node3=${globalAllNodes[1]}
+      # Node3:
+      local node3=${globalAllNodes[2]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
       log "[eureka/$host3] Deploy eureka by peer3 ..."
       doDeployApp "$deployEurekaBuildModule" "ha,peer3" "$node3"
-    else
-      logErr "Cannot deploy eureka servers, nodes sise must be greater than or equal to 1."; exit -1
     fi
-  else
+  else # In standalone mode, Eureka does not need to be deployed.
     log "Skip eureka servers deploy, because runtime mode is standalone."
   fi
+  exit 0
 }
 
 # ----- Main call. -----
