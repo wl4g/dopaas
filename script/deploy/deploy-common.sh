@@ -262,12 +262,13 @@ function checkInstallServiceScript() {
   local appOpts="$appOpts --logging.file.name=${appLogFile}"
   local appOpts="$appOpts --spring.application.name=${appName}"
   local appOpts="$appOpts --spring.profiles.active=\${SPRING_PROFILES_ACTIVE}"
-
   local javaExec="java"
   #local jvmDebugOpts="-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n"
   #local jvmJmxOpts="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=5000"
   local jvmHeapOpts="-Xms256M -Xmx1G"
-  local jvmPerformanceOpts="-XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+DisableExplicitGC -Djava.awt.headless=true"
+  local jvmPerformanceOpts="-XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 \
+-XX:+DisableExplicitGC -Djava.awt.headless=true -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${appLogDir}/jvm_dump.hprof \
+-XX:-OmitStackTraceInFastThrow"
   local jvmJavaOpts="-Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom"
   local jvmGcLogFile="${appLogDir}/${appName}-gc.log"
   local jvmGcLogOpts="-Xloggc:${jvmGcLogFile} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
