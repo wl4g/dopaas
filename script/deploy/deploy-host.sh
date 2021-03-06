@@ -337,7 +337,6 @@ function deployEurekaServers() {
   else # In standalone mode, Eureka does not need to be deployed.
     log "Skip eureka servers deploy, because runtime mode is standalone."
   fi
-  exit 0
 }
 
 # ----- Main call. -----
