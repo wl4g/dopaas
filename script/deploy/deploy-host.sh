@@ -27,6 +27,7 @@ globalDeployStatsMsg="" # Deployed stats message.
 
 # Init configuration.
 function initConfig() {
+  # 1. Load cluster nodes information.
   if [ "$runtimeMode" == "cluster" ]; then # Only cluster mode need a hosts csv file.
     if [ ! -f "$deployClusterNodesConfigPath" ]; then
       logErr "No found configuration file: '$currDir/deploy-host.csv', because you have selected the runtime mode is 'cluster',
@@ -57,6 +58,15 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
     if [ ${#globalAllNodes[@]} -le 0 ]; then
       logErr "Please reconfigure '$currDir/deploy-host.csv', deploy at least one cluster node !"
     fi
+  fi
+  # 2. Maven local repo user.
+  local localRepoPathPrefix="$(echo $apacheMvnLocalRepoDir|cut -c 1-5)"
+  if [ "$localRepoPathPrefix" == "/root" ]; then
+    export apacheMvnLocalRepoDirOfUser="root"
+  elif [[ "$localRepoPathPrefix" == "/home" || "$localRepoPathPrefix" == "/Users" ]]; then # fix: MacOS(/Users/)
+    export apacheMvnLocalRepoDirOfUser="$(echo $apacheMvnLocalRepoDir|awk -F '/' '{print $3}')"
+  else
+    logErr "Invalid maven local repository path. for example: \$USER/.m2/repository"; exit -1
   fi
 }
 
