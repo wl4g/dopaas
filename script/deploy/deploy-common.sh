@@ -21,16 +21,6 @@
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 . ${currDir}/deploy-env.sh
 
-# Common variables.
-export cmdMvn="$(command -v mvn)"
-if [ "$(echo $apacheMvnLocalRepoDir|cut -c 1-5)" == "/root" ]; then
-  apacheMvnLocalRepoDirOfUser="root"
-elif [ "$(echo $apacheMvnLocalRepoDir|cut -c 1-5)" == "/home" ]; then
-  apacheMvnLocalRepoDirOfUser="$(echo $apacheMvnLocalRepoDir|awk -F '/' '{print $3}')"
-else
-  logErr "Invalid maven local repository path. for example: \$USER/.m2/repository"; exit -1
-fi
-
 # Security delete local object.
 function secDeleteLocal() {
   local targetPath=$1
