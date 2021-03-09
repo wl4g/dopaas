@@ -54,7 +54,7 @@ function log() {
     logLevel=$(echo "$1" | tr 'a-z' 'A-Z') # To UpperCase
     logContent=$2
   fi
-  local logMsg="[$logLevel] "$(date -d today +'%y%m%d/%H:%M:%S')" - [$(getCurrPid)] $logContent"
+  local logMsg="[$logLevel] "$(date '+%Y-%m-%d %H:%M:%S')" - [$(getCurrPid)] $logContent"
   echo -e $logMsg
   echo -e $logMsg >> ${logFile}
 }

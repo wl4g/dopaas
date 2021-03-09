@@ -361,7 +361,7 @@ function main() {
   log " Wiki(CN): https://gitee.com/wl4g/xcloud-devops/blob/master/README_CN.md"
   log " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
   log " Version: 2.0.0"
-  log " Time: $(date -d today +'%Y-%m-%d %H:%M:%S')"
+  log " Time: $(date '+%Y-%m-%d %H:%M:%S')"
   log " Installation logs writing: $logFile"
   log " -------------------------------------------------------------------"
   log ""
@@ -385,7 +385,7 @@ function main() {
   log "DEPLOY $deployStatus"
   log "-------------------------------------------------------------------"
   log "Total time: ${costTime} sec (Wall Clock)"
-  log "Finished at: $(date -d today +'%Y-%m-%d %H:%M:%S')"
+  log "Finished at: $(date '+%Y-%m-%d %H:%M:%S')"
   log "Installing details logs see: $logFile"
   log "-------------------------------------------------------------------"
 }
