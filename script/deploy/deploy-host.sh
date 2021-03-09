@@ -60,13 +60,13 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
     fi
   fi
   # 2. Maven local repo user.
-  local localRepoPathPrefix="$(echo $apacheMvnLocalRepoDir|cut -c 1-5)"
-  if [ "$localRepoPathPrefix" == "/root" ]; then
+  local localRepoPathPrefix="$(echo $apacheMvnLocalRepoDir|cut -c 1-6)"
+  if [ "$localRepoPathPrefix" == "/root/" ]; then
     export apacheMvnLocalRepoDirOfUser="root"
-  elif [[ "$localRepoPathPrefix" == "/home" || "$localRepoPathPrefix" == "/Users" ]]; then # fix: MacOS(/Users/)
+  elif [[ "$localRepoPathPrefix" == "/home/" || "$localRepoPathPrefix" == "/Users" ]]; then # fix: MacOS(/Users/)
     export apacheMvnLocalRepoDirOfUser="$(echo $apacheMvnLocalRepoDir|awk -F '/' '{print $3}')"
   else
-    logErr "Invalid maven local repository path. for example: \$USER/.m2/repository"; exit -1
+    logErr "Invalid maven local repository path. for example: $USER/.m2/repository"; exit -1
   fi
 }
 
@@ -80,12 +80,14 @@ function pullAndCompile() {
     log "Git clone $projectName from ($branch)$cloneUrl ..."
     cd $currDir && git clone $cloneUrl 2>&1 | tee -a $logFile
     cd $projectDir && git checkout $branch
+    [ $? -ne 0 ] && exit -1
     log "Compiling $projectName ..."
     $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   else
     log "Git pull $projectName from ($branch)$cloneUrl ..."
     cd $projectDir && git checkout $branch
+    [ $? -ne 0 ] && exit -1
     # Check and update remote url.
     local oldRemoteUrl=$(cd $projectDir && git remote -v|grep fetch|awk '{print $2}';cd ..)
     if [ "$oldRemoteUrl" != "$cloneUrl" ]; then
