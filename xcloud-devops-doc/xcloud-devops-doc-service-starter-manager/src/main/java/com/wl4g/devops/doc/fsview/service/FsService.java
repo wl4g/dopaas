@@ -25,22 +25,40 @@ import java.util.List;
 
 public interface FsService {
 
-    List<FileInfo> getTreeFiles(String subPath);
+    default  List<FileInfo> getTreeFiles(String subPath){
+        throw new UnsupportedOperationException();
+    }
 
-    FileInfo getFileInfo(String path, String subPath) throws IOException;
+    default FileInfo getFileInfo(String path, String subPath) throws IOException{
+        throw new UnsupportedOperationException();
+    }
 
-    void delFile(String path) throws IOException;
+    default void delFile(String path) throws IOException{
+        throw new UnsupportedOperationException();
+    }
 
-    void addDir(String path) throws IOException;
+    default void addDir(String path) throws IOException{
+        throw new UnsupportedOperationException();
+    }
 
-    void addFile(String path) throws IOException;
+    default void addFile(String path) throws IOException{
+        throw new UnsupportedOperationException();
+    }
 
-    void renameFile(String path, String toPath) throws IOException;
+    default void renameFile(String path, String toPath) throws IOException{
+        throw new UnsupportedOperationException();
+    }
 
-    void saveFile(String path, String content);
+    default void saveFile(String path, String content){
+        throw new UnsupportedOperationException();
+    }
 
-    String uploadFile(MultipartFile img, String path);
+    default String uploadFile(MultipartFile img, String path){
+        throw new UnsupportedOperationException();
+    }
 
-    ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException;
+    default ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException{
+        throw new UnsupportedOperationException();
+    }
 
 }

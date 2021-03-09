@@ -48,4 +48,5 @@ spring:
         success-uri: http://wl4g.debug:8080/#/umc/config
 
 doc:
+  storage-type: local # local(本地存储) ｜ minio | ....
   base-path: /Users/vjay/doctestdir
