@@ -32,7 +32,7 @@ export currDir=$(cd "`dirname $0`"/ ; pwd)
 [ -z "$gitBaseUrl" ] && export gitBaseUrl="https://github.com/wl4g"
 [ -z "$gitBaseUrlBackup1" ] && export gitBaseUrlBackup1="https://gitee.com/wl4g"
 # Deploy services runtime depend environment variables.
-[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8"
+[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false"
 [ -z "$runtimeMysqlUser" ] && export runtimeMysqlUser="root"
 [ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"
 [ -z "$runtimeRedisNodes" ] && export runtimeRedisNodes="localhost:6379"

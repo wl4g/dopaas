@@ -71,7 +71,15 @@ npm run build # 生产打包
 
 - 配置本地DNS：添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
-127.0.0.1   wl4g.debug # 对应表字段.extranet_base_uri
+# 注：多种环境数据库默认配置的虚拟域名不同，极少情况可能由于版本模块变化导致与文档不对应，具体请检查保持表(sys_cluster_config.extranet_base_uri)配置对应即可，如下hosts配置供参考：
+# dev:
+127.0.0.1 wl4g.debug
+# fat:
+127.0.0.1 wl4g.fat devops.wl4g.fat iam.wl4g.fat erm.wl4g.fat ci.wl4g.fat dts.wl4g.fat vcs.wl4g.fat umc.wl4g.fat
+# uat:
+127.0.0.1 wl4g.uat devops.wl4g.uat iam.wl4g.uat erm.wl4g.uat ci.wl4g.uat dts.wl4g.uat vcs.wl4g.uat umc.wl4g.uat
+# pro:
+127.0.0.1 wl4g.com devops.wl4g.com iam.wl4g.com erm.wl4g.com ci.wl4g.com dts.wl4g.com vcs.wl4g.com umc.wl4g.com
 ```
 
 - 快速搭建redis/docker集群(可选)
