@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.service;
-
-import com.wl4g.component.data.page.PageHolder;
-import com.wl4g.devops.common.bean.umc.CustomHistory;
+package com.wl4g.devops.umc.watch.fetch;
 
 /**
- * @author vjay
- * @date 2019-08-05 16:01:00
+ * Indicators meta info.
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年7月4日
+ * @since
  */
-public interface CustomHistoryService {
+public interface IndicatorsMetaInfo {
 
-	PageHolder<CustomHistory> list(PageHolder<CustomHistory> pm, String name);
-
-	CustomHistory detal(Long id);
-
-	void save(CustomHistory customDatasource);
-
-	void del(Long id);
+	/**
+	 * Get collection meta target. </br>
+	 * e.g. instanceId(instance node identifier), dtuId(lot device identifier),
+	 * etc
+	 * 
+	 * @return
+	 */
+	String getTargetIdentifier();
 
 }

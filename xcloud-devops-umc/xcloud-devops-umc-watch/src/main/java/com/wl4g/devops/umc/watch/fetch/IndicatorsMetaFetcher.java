@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.fetch;
+package com.wl4g.devops.umc.watch.fetch;
+
+import java.util.List;
+
+import com.dangdang.ddframe.job.api.ShardingContext;
 
 /**
- * Indicators meta info.
+ * Watch indicators target fetcher.
  * 
- * @author wangl.sir
- * @version v1.0 2019年7月4日
- * @since
  */
-public interface IndicatorsMetaInfo {
+public interface IndicatorsMetaFetcher {
 
-	/**
-	 * Get collection meta target. </br>
-	 * e.g. instanceId(instance node identifier), dtuId(lot device identifier),
-	 * etc
-	 * 
-	 * @return
-	 */
-	String getTargetIdentifier();
+	List<IndicatorsMetaInfo> fetch(ShardingContext sctx);
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.config;
+package com.wl4g.devops.umc.watch.config;
 
 import com.wl4g.component.common.task.RunnerProperties;
 

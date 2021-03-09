@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.derby;
 
-import com.wl4g.component.core.bean.umc.model.proto.MetricModel;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel;
 import com.wl4g.devops.umc.store.MetricStore;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;

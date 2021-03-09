@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.config;
+package com.wl4g.devops.umc.watch.config;
 
 import javax.sql.DataSource; 
 
@@ -34,13 +34,13 @@ import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
 import static com.dangdang.ddframe.job.lite.config.LiteJobConfiguration.*;
 import static com.dangdang.ddframe.job.config.JobCoreConfiguration.*;
 
-import com.wl4g.devops.umc.fetch.ServiceIndicatorsMetaFetcher;
 import com.wl4g.component.common.annotation.Reserved;
-import com.wl4g.devops.umc.fetch.IndicatorsMetaFetcher;
-import com.wl4g.devops.umc.fetch.IndicatorsMetaInfo;
 import com.wl4g.devops.umc.watch.ServiceIndicatorsStateWatcher;
 import com.wl4g.devops.umc.watch.WatchJobListener;
 import com.wl4g.devops.umc.watch.WatchScheduler;
+import com.wl4g.devops.umc.watch.fetch.IndicatorsMetaFetcher;
+import com.wl4g.devops.umc.watch.fetch.IndicatorsMetaInfo;
+import com.wl4g.devops.umc.watch.fetch.ServiceIndicatorsMetaFetcher;
 
 /**
  * UMC watching auto configuration.
