@@ -40,5 +40,5 @@ spring:
         success-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.fat}/#/share
 
 doc:
-  storage-type: local-storage # local-storage(本地存储) ｜ minio | ....
+  storage-type: local # local(本地存储) ｜ minio | ....
   base-path: /mnt/disk1/doc-manager/data
