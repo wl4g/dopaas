@@ -33,7 +33,7 @@ import com.wl4g.devops.doc.data.FileLabelDao;
 import com.wl4g.devops.doc.data.LabelDao;
 import com.wl4g.devops.doc.data.ShareDao;
 import com.wl4g.devops.doc.service.DocService;
-import com.wl4g.iam.common.utils.RpcContextSecurityUtils;
+import com.wl4g.iam.common.utils.RpcContextIamSecurityUtils;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +103,7 @@ public class DocServiceImpl implements DocService {
 		Assert2.notNullOf(fileChanges, "fileChanges");
 		Assert2.hasTextOf(fileChanges.getDocCode(), "docCode");
 		Assert2.hasTextOf(fileChanges.getContent(), "content");
-		String principalId = RpcContextSecurityUtils.currentIamPrincipalId();
+		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
 		fileChanges.preInsert();
 		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(principalId));
 		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(principalId));
@@ -137,7 +137,7 @@ public class DocServiceImpl implements DocService {
 	}
 
 	private void insert(FileChanges fileChanges) {
-		String principalId = RpcContextSecurityUtils.currentIamPrincipalId();
+		String principalId = RpcContextIamSecurityUtils.currentIamPrincipalId();
 		fileChanges.preInsert();
 		fileChanges.setCreateBy(TypeConverts.parseLongOrNull(principalId));
 		fileChanges.setUpdateBy(TypeConverts.parseLongOrNull(principalId));
