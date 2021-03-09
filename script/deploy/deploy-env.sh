@@ -24,7 +24,7 @@
 [ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir
 currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$logFile" ] && export logFile="${workspaceDir}/install_${currDate}.log" && touch $logFile
-[ -z "$deployDebug" ] && export deployDebug="false"
+[ -z "$deployDebug" ] && export deployDebug="false" # true|false
 [ -z "$asyncDeploy" ] && export asyncDeploy="true" # true|false
 
 # ----------------------- Maven environment variables. -----------------------------------------
@@ -36,11 +36,16 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 
 # ----------------------- Deployment environment variables. ------------------------------------
 
-# Git definition.
+# Git URLs definition.
 [ -z "$gitBaseUri" ] && export gitBaseUri="https://gitee.com/wl4g" # for example options: https://github.com/wl4g or https://gitee.com/wl4g
 [ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
 [ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
 [ -z "$gitXCloudDevOpsUrl" ] && export gitXCloudDevOpsUrl="${gitBaseUri}/xcloud-devops"
+# Git pull branchs.
+[ -z "$defaultGitBranch" ] && export defaultGitBranch="master"
+[ -z "$xcloudComponentGitBranch" ] && export xcloudComponentGitBranch="${defaultGitBranch}"
+[ -z "$xcloudIamGitBranch" ] && export xcloudIamGitBranch="${defaultGitBranch}"
+[ -z "$xcloudDevOpsGitBranch" ] && export xcloudDevOpsGitBranch="${defaultGitBranch}"
 
 # Build definition.
 [ -z "$buildPkgType" ] && export buildPkgType="mvnAssTar" # Options: mvnAssTar|springExecJar
@@ -85,7 +90,7 @@ export deployClusterBuildModules=(
 export deployEurekaBuildModule="eureka-server,${currDir}/xcloud-component/xcloud-component-rpc/xcloud-component-rpc-springcloud-eureka-server/target"
 
 # Runtime dependency external services configuration.
-[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8"
+[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false"
 [ -z "$runtimeMysqlUser" ] && export runtimeMysqlUser="root"
 [ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"
 [ -z "$runtimeRedisNodes" ] && export runtimeRedisNodes="localhost:6379"
