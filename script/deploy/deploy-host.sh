@@ -382,7 +382,7 @@ function main() {
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   echo -n "---------------------------------------------------------------"
-  echo -e "\nDeployed apps statistics details:\n${globalDeployStatsMsg}"
+  echo -e "\nDeployed app services information:\n${globalDeployStatsMsg}"
   log "-------------------------------------------------------------------"
   log "DEPLOY $deployStatus"
   log "-------------------------------------------------------------------"
