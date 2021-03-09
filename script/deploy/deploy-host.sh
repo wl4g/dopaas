@@ -74,16 +74,18 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
 function pullAndCompile() {
   local projectName=$1 # e.g xcloud-devops
   local cloneUrl=$2
+  local branch=$3
   local projectDir="$currDir/$projectName"
   if [ ! -d "$projectDir" ]; then
-    log "Git clone $projectName from $cloneUrl ..."
+    log "Git clone $projectName from ($branch)$cloneUrl ..."
     cd $currDir && git clone $cloneUrl 2>&1 | tee -a $logFile
+    cd $projectDir && git checkout $branch
     log "Compiling $projectName ..."
-    cd $projectDir
     $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   else
-    log "Git pull $projectName from $cloneUrl ..."
+    log "Git pull $projectName from ($branch)$cloneUrl ..."
+    cd $projectDir && git checkout $branch
     # Check and update remote url.
     local oldRemoteUrl=$(cd $projectDir && git remote -v|grep fetch|awk '{print $2}';cd ..)
     if [ "$oldRemoteUrl" != "$cloneUrl" ]; then
@@ -370,9 +372,9 @@ function main() {
   beginTime=`date +%s`
   initConfig
   checkInstallBasicSoftware
-  pullAndCompile "xcloud-component" $gitXCloudComponentUrl
-  pullAndCompile "xcloud-iam" $gitXCloudIamUrl
-  pullAndCompile "xcloud-devops" $gitXCloudDevOpsUrl
+  pullAndCompile "xcloud-component" "$gitXCloudComponentUrl" "$xcloudComponentGitBranch"
+  pullAndCompile "xcloud-iam" "$gitXCloudIamUrl" "$xcloudIamGitBranch"
+  pullAndCompile "xcloud-devops" "$gitXCloudDevOpsUrl" "$xcloudDevOpsGitBranch"
   deployPreDependsServices
   deployDevopsAppsAll
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
