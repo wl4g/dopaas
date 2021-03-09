@@ -21,11 +21,12 @@ import com.wl4g.devops.doc.fsview.bean.FileInfo;
 import com.wl4g.devops.doc.fsview.config.FsViewerProperties;
 import com.wl4g.devops.doc.fsview.service.FsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,8 +38,10 @@ import java.util.List;
 
 import static com.wl4g.devops.doc.fsview.util.PathUtils.splicePath;
 
-@Service
-public class FsServiceImpl implements FsService {
+//@Service
+@Configuration
+@ConditionalOnProperty(name="doc.storage-type",havingValue = "local")
+public class LocalStorageServiceImpl implements FsService {
 
     @Autowired
     private FsViewerProperties fsViewerProperties;
