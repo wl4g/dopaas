@@ -58,7 +58,7 @@
 		<module>xcloud-devops-doc</module>
 		<module>xcloud-devops-erm</module>
 		<!-- <module>xcloud-devops-scm</module> -->
-		<!-- <module>xcloud-devops-umc</module> -->
+		<module>xcloud-devops-umc</module>
 		<module>xcloud-devops-vcs</module>
 		<module>xcloud-devops-dts</module>
 		<module>xcloud-devops-all-dependencies</module>

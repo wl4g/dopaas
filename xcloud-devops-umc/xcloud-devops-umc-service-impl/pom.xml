@@ -9,7 +9,6 @@
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-devops-umc</artifactId>
 		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -23,6 +22,20 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-umc-alarm</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-component-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-component-core</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

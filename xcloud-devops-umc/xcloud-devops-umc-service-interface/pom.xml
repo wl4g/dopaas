@@ -9,7 +9,6 @@
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-devops-umc</artifactId>
 		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -17,7 +16,16 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-umc-alarm</artifactId>
+			<artifactId>xcloud-devops-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-component-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-component-core</artifactId>
 		</dependency>
 		<!-- Spring Boot -->
 		<dependency>
@@ -49,8 +57,7 @@
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
 				</exclusion>
-				<!-- Is there a bug? In version 1.5.13, TomcatEmbeddedServletContainerFacotry#line:234 is 
-					interchanged with 235 rows in sequence. -->
+				<!-- Is there a bug? In version 1.5.13, TomcatEmbeddedServletContainerFacotry#line:234 is interchanged with 235 rows in sequence. -->
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot</artifactId>

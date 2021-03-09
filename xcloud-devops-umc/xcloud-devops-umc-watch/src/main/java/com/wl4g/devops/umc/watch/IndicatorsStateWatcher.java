@@ -16,11 +16,12 @@
 package com.wl4g.devops.umc.watch;
 
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.component.core.constants.UMCDevOpsConstants.KEY_CACHE_FETCH_META;
+import static com.wl4g.devops.common.constant.UMCConstants.KEY_CACHE_FETCH_META;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.dataflow.DataflowJob;
 import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.devops.umc.config.WatchProperties;
-import com.wl4g.devops.umc.fetch.IndicatorsMetaFetcher;
-import com.wl4g.devops.umc.fetch.IndicatorsMetaInfo;
+import com.wl4g.devops.umc.watch.config.WatchProperties;
+import com.wl4g.devops.umc.watch.fetch.IndicatorsMetaFetcher;
+import com.wl4g.devops.umc.watch.fetch.IndicatorsMetaInfo;
 
 /**
  * Indicators metric state watcher of based.

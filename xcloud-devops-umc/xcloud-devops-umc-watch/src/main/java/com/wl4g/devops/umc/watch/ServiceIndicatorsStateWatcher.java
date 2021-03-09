@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.watch;
 
 import java.util.List;
 
-import com.wl4g.devops.umc.fetch.IndicatorsMetaInfo;
+import com.wl4g.devops.umc.watch.fetch.IndicatorsMetaInfo;
 
 /**
  * 
