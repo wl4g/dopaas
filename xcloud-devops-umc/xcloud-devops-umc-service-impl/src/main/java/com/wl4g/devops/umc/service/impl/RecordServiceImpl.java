@@ -15,23 +15,22 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-
-import com.wl4g.component.data.page.PageHolder;
-import com.wl4g.devops.common.bean.umc.AlarmRecord;
-import com.wl4g.devops.common.bean.umc.AlarmRule;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.umc.AlarmRecordDao;
-import com.wl4g.devops.dao.umc.AlarmRuleDao;
-import com.wl4g.devops.dao.umc.AlarmTemplateDao;
-import com.wl4g.devops.umc.service.RecordService;
-import com.wl4g.iam.bean.NotificationContact;
-import com.wl4g.iam.dao.NotificationContactDao;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.List;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.devops.common.bean.umc.AlarmRecord;
+import com.wl4g.devops.common.bean.umc.AlarmRule;
+import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.umc.dao.AlarmRecordDao;
+import com.wl4g.devops.umc.dao.AlarmRuleDao;
+import com.wl4g.devops.umc.dao.AlarmTemplateDao;
+import com.wl4g.devops.umc.service.RecordService;
+import com.wl4g.iam.common.bean.NotificationContact;
+import com.wl4g.iam.service.NotificationContactService;
 
 /**
  * @author vjay
@@ -40,21 +39,14 @@ import java.util.List;
 @Service
 public class RecordServiceImpl implements RecordService {
 
-	@Autowired
-	private AlarmRecordDao alarmRecordDao;
-
-	@Autowired
-	private AlarmRuleDao alarmRuleDao;
-
-	@Autowired
-	private AlarmTemplateDao alarmTemplateDao;
-
-	@Autowired
-	private NotificationContactDao notificationContactDao;
+	private @Autowired AlarmRecordDao alarmRecordDao;
+	private @Autowired AlarmRuleDao alarmRuleDao;
+	private @Autowired AlarmTemplateDao alarmTemplateDao;
+	private @Autowired NotificationContactService notificationContactService;
 
 	@Override
 	public PageHolder<AlarmRecord> list(PageHolder<AlarmRecord> pm, String name, String startDate, String endDate) {
-		pm.setCurrentContextPage();
+		pm.startPage();
 		pm.setRecords(alarmRecordDao.list(name, startDate, endDate));
 		return pm;
 	}
@@ -67,7 +59,7 @@ public class RecordServiceImpl implements RecordService {
 		List<AlarmRule> alarmRules = alarmRuleDao.selectByRecordId(id);
 		AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmRecord.getTemplateId());
 		Assert.notNull(alarmTemplate, "alarmTemplate is null");
-		List<NotificationContact> notificationContacts = notificationContactDao.getByRecordId(id);
+		List<NotificationContact> notificationContacts = notificationContactService.getByRecordId(id);
 		alarmRecord.setNotificationContacts(notificationContacts);
 		alarmRecord.setAlarmRules(alarmRules);
 		alarmRecord.setAlarmTemplate(alarmTemplate);

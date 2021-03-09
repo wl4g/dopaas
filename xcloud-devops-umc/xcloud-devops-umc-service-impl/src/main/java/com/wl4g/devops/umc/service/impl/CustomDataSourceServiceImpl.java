@@ -15,22 +15,8 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.umc.datasouces.BaseDataSource;
-import com.wl4g.component.core.bean.umc.datasouces.MysqlDataSource;
-import com.wl4g.component.core.bean.umc.model.DataSourceProvide;
-import com.wl4g.component.data.page.PageHolder;
-import com.wl4g.devops.common.bean.umc.CustomDataSource;
-import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
-import com.wl4g.devops.dao.umc.CustomDataSourcePropertiesDao;
-import com.wl4g.devops.dao.umc.CustomDatasourceDao;
-import com.wl4g.devops.umc.service.CustomDataSourceService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import static com.wl4g.devops.common.bean.umc.model.DataSourceProvide.MYSQL;
+import static java.util.Arrays.asList;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -41,8 +27,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.component.core.bean.umc.model.DataSourceProvide.MYSQL;
-import static java.util.Arrays.asList;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.devops.common.bean.umc.CustomDataSource;
+import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
+import com.wl4g.devops.common.bean.umc.datasource.BaseDataSource;
+import com.wl4g.devops.common.bean.umc.datasource.MysqlDataSource;
+import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
+import com.wl4g.devops.umc.dao.CustomDataSourcePropertiesDao;
+import com.wl4g.devops.umc.dao.CustomDatasourceDao;
+import com.wl4g.devops.umc.service.CustomDataSourceService;
 
 /**
  * @author vjay
@@ -59,7 +59,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 
 	@Override
 	public PageHolder<CustomDataSource> list(PageHolder<CustomDataSource> pm, String name) {
-		pm.setCurrentContextPage();
+		pm.startPage();
 		pm.setRecords(customDatasourceDao.list(name));
 		return pm;
 	}

@@ -17,9 +17,9 @@ package com.wl4g.devops.umc.service.impl;
 
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.data.page.PageHolder;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
-import com.wl4g.devops.dao.umc.CustomAlarmEventDao;
+import com.wl4g.devops.umc.dao.CustomAlarmEventDao;
 import com.wl4g.devops.umc.service.CustomAlarmEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class CustomAlarmEventServiceImpl implements CustomAlarmEventService {
 
 	@Override
 	public PageHolder<CustomAlarmEvent> list(PageHolder<CustomAlarmEvent> pm, String name) {
-		pm.setCurrentContextPage();
+		pm.startPage();
 		pm.setRecords(customAlarmEventDao.list(name));
 		return pm;
 	}

@@ -15,15 +15,12 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
-import com.wl4g.component.core.config.mapping.PrefixHandlerMapping;
-import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
-import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
-import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
-import com.wl4g.devops.umc.console.ReceiveConsole;
-import com.wl4g.devops.umc.receiver.HttpMetricReceiver;
-import com.wl4g.devops.umc.receiver.KafkaMetricReceiver;
-import com.wl4g.devops.umc.store.*;
+import static com.wl4g.devops.common.constant.UMCConstants.URI_HTTP_RECEIVER_BASE;
+import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
+import static com.wl4g.devops.umc.config.UmcAlarmAutoConfiguration.BEAN_DEFAULT_VALVE_ALERTER;
+
+import java.util.Map;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -34,15 +31,18 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.ContainerProperties.AckMode;
 import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.listener.ContainerProperties.AckMode;
 
-import java.util.Map;
-import java.util.Properties;
-
-import static com.wl4g.devops.umc.config.UmcAlarmAutoConfiguration.*;
-import static com.wl4g.component.core.constants.UMCDevOpsConstants.URI_HTTP_RECEIVER_BASE;
-import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
+import com.wl4g.component.core.web.mapping.PrefixHandlerMappingSupport;
+import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
+import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
+import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
+import com.wl4g.devops.umc.console.ReceiveConsole;
+import com.wl4g.devops.umc.receiver.HttpMetricReceiver;
+import com.wl4g.devops.umc.receiver.KafkaMetricReceiver;
+import com.wl4g.devops.umc.store.MetricStore;
+import com.wl4g.devops.umc.watch.config.UmcWatchAutoConfiguration;
 
 /**
  * UMC receiver auto configuration
@@ -53,7 +53,7 @@ import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
  */
 @Configuration
 @ImportAutoConfiguration(UmcWatchAutoConfiguration.class)
-public class UmcReceiveAutoConfiguration extends AbstractHandlerMappingSupport {
+public class UmcReceiveAutoConfiguration extends PrefixHandlerMappingSupport {
 
 	final public static String BEAN_HTTP_RECEIVER = "httpCollectReceiver";
 	final public static String BEAN_KAFKA_RECEIVER = "kafkaCollectReceiver";
@@ -78,7 +78,7 @@ public class UmcReceiveAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
 	@EnableHttpCollectReceiver
-	public PrefixHandlerMapping httpCollectReceiverPrefixHandlerMapping() {
+	public Object httpCollectReceiverPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URI_HTTP_RECEIVER_BASE, com.wl4g.devops.umc.annotation.HttpCollectReceiver.class);
 	}
 

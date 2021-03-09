@@ -15,15 +15,14 @@
  */
 package com.wl4g.devops.umc.handler;
 
-import com.wl4g.component.core.bean.umc.*;
+import java.util.List;
+
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.iam.bean.Contact;
-import com.wl4g.iam.bean.NotificationContact;
-
-import java.util.List;
+import com.wl4g.iam.common.bean.Contact;
+import com.wl4g.iam.common.bean.NotificationContact;
 
 /**
  * Rule configuration handler.

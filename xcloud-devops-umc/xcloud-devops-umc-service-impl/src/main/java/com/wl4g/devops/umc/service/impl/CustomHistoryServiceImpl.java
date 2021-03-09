@@ -17,9 +17,9 @@ package com.wl4g.devops.umc.service.impl;
 
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.data.page.PageHolder;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomHistory;
-import com.wl4g.devops.dao.umc.CustomHistoryDao;
+import com.wl4g.devops.umc.dao.CustomHistoryDao;
 import com.wl4g.devops.umc.service.CustomHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class CustomHistoryServiceImpl implements CustomHistoryService {
 
 	@Override
 	public PageHolder<CustomHistory> list(PageHolder<CustomHistory> pm, String name) {
-		pm.setCurrentContextPage();
+		pm.startPage();
 		List<CustomHistory> list = customHistoryDao.list(name);
 		/*
 		 * for(CustomHistory customHistory : list){

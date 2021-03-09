@@ -15,26 +15,27 @@
  */
 package com.wl4g.devops.umc.alarm.alerting;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.core.bean.umc.model.MetricValue;
-import com.wl4g.component.support.redis.locks.JedisLockManager;
-import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.component.support.task.ApplicationTaskRunner;
-import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
-import com.wl4g.devops.umc.config.AlarmProperties;
-import org.springframework.util.Assert;
+import static com.wl4g.component.common.collection.CollectionUtils2.ensureList;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.common.constant.UMCConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
+import static java.lang.Math.abs;
+import static java.util.Collections.emptyList;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.ensureList;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
-import static java.lang.Math.abs;
-import static java.util.Collections.emptyList;
+import org.springframework.util.Assert;
+
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.component.support.task.ApplicationTaskRunner;
+import com.wl4g.devops.common.bean.umc.model.MetricValue;
+import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
+import com.wl4g.devops.umc.config.AlarmProperties;
 
 /**
  * Abstract collection metric valve alerter.

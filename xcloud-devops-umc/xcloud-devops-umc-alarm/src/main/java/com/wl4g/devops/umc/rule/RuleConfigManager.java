@@ -15,10 +15,12 @@
  */
 package com.wl4g.devops.umc.rule;
 
-import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.component.support.redis.jedis.ScanCursor;
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.umc.handler.AlarmConfigurer;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.devops.common.constant.UMCConstants.KEY_CACHE_ALARM_TPLS;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +28,10 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
-import java.util.List;
-
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.redis.jedis.ScanCursor;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.umc.handler.AlarmConfigurer;
 
 /**
  * Rule configuration manager.

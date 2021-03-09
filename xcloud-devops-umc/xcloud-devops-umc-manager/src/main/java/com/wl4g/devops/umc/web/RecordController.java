@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.data.page.PageHolder;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.umc.service.RecordService;
 

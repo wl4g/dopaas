@@ -15,15 +15,15 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.data.page.PageHolder;
-import com.wl4g.devops.common.bean.umc.CustomEngine;
-import com.wl4g.devops.dao.umc.CustomEngineDao;
-import com.wl4g.devops.umc.service.CustomEngineService;
-import com.wl4g.devops.umc.timing.EngineTaskScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.devops.common.bean.umc.CustomEngine;
+import com.wl4g.devops.umc.dao.CustomEngineDao;
+import com.wl4g.devops.umc.service.CustomEngineService;
+import com.wl4g.devops.umc.timing.EngineTaskScheduler;
 
 /**
  * @author vjay
@@ -40,7 +40,7 @@ public class CustomEngineServiceImpl implements CustomEngineService {
 
 	@Override
 	public PageHolder<CustomEngine> list(PageHolder<CustomEngine> pm, String name) {
-		pm.setCurrentContextPage();
+		pm.startPage();
 		pm.setRecords(customEngineDao.list(name));
 		return pm;
 	}

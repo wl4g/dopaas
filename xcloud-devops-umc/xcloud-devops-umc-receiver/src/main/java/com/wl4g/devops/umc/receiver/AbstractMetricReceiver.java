@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.component.core.bean.umc.model.proto.MetricModel.Metric;
-import com.wl4g.component.core.bean.umc.model.proto.MetricModel.MetricAggregate;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.Metric;
+import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
 import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper.MetricWrapper;

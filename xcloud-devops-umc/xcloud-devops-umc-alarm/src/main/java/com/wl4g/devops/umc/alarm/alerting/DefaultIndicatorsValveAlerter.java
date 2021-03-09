@@ -15,20 +15,43 @@
  */
 package com.wl4g.devops.umc.alarm.alerting;
 
-import com.wl4g.component.core.bean.umc.model.MetricValue;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.constant.UMCConstants.ALARM_SATUS_SEND;
+import static java.lang.Math.abs;
+import static java.lang.System.currentTimeMillis;
+import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.component.support.notification.GenericNotifyMessage;
 import com.wl4g.component.support.notification.MessageNotifier;
 import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.component.support.notification.mail.MailMessageNotifier;
 import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.devops.umc.alarm.AlarmNote;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.umc.alarm.AlarmMessage;
+import com.wl4g.devops.umc.alarm.AlarmNote;
 import com.wl4g.devops.umc.alarm.TemplateContactWrapper;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper.MetricWrapper;
@@ -37,26 +60,9 @@ import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
-import com.wl4g.iam.bean.Contact;
-import com.wl4g.iam.bean.ContactChannel;
-import com.wl4g.iam.bean.NotificationContact;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-
-import java.util.*;
-import java.util.Map.Entry;
-
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.component.core.constants.UMCDevOpsConstants.ALARM_SATUS_SEND;
-import static java.lang.Math.abs;
-import static java.lang.System.currentTimeMillis;
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import com.wl4g.iam.common.bean.Contact;
+import com.wl4g.iam.common.bean.ContactChannel;
+import com.wl4g.iam.common.bean.NotificationContact;
 
 /**
  * Default collection metric valve alerter.
@@ -331,8 +337,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param timeOfFreq
 	 */
 	protected void handleRateLimit(String key, int timeOfFreq) {
-		jedisService.getJedisAdapter().incrBy(key, 1);
-		jedisService.getJedisAdapter().expire(key, timeOfFreq);
+		jedisService.getJedisClient().incrBy(key, 1);
+		jedisService.getJedisClient().expire(key, timeOfFreq);
 	}
 
 	/**

@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import java.util.List;
+
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.iam.bean.Contact;
-
-import java.util.List;
+import com.wl4g.iam.common.bean.Contact;
 
 /**
  * @author vjay
