@@ -77,7 +77,7 @@ function checkInstallBasicSoftware() {
   fi
   # Check git
   if [ ! -n "$(command -v git)" ]; then
-    log "No such command git, auto installing git ..."
+    log "No command git, auto installing git ..."
     if [ -n "$(command -v yum)" ]; then
       sudo yum install -y git
     elif [ -n "$(command -v apt)" ]; then
@@ -95,7 +95,7 @@ function checkInstallBasicSoftware() {
   if [ -n "$(command -v mvn)" ]; then # Default installed maven.
     export cmdMvn="mvn"
   elif [ ! -d "$mvnHome" ]; then # Need install tmp maven.
-    log "No such command mvn, auto installing maven ..."
+    log "No command mvn, auto installing maven ..."
     cd $workspaceDir
     local tmpTarFile="$workspaceDir/apache-maven-current.tar"
     curl -o "$tmpTarFile" "$apacheMvnDownloadTarUrl"
@@ -240,7 +240,7 @@ function checkInstallServiceScript() {
     local hasServiceFile=$(doRemoteCmd "$user" "$password" "$host" "echo $([ -f /etc/init.d/$appName.service ] && echo Y || echo N)" "true")
     [ "$hasServiceFile" == "Y" ] && return 0 # Skip installed
   fi
-  log "[$appName/$host] Not detected /etc/init.d/$appName.services script, installing ..."
+  log "[$appName/$host] Installing /etc/init.d/$appName.services script ..."
   local appVersion="master"
   local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: doc-manager => DocManager
   local appInstallDir="${deployAppBaseDir}/${appName}-package"

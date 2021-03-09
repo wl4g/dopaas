@@ -30,7 +30,7 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 # ----------------------- Maven environment variables. -----------------------------------------
 [ -z "$apacheMvnDownloadTarUrl" ] && export apacheMvnDownloadTarUrl="https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
 [ -z "$secondaryApacheMvnDownloadTarUrl" ] && export secondaryApacheMvnDownloadTarUrl="https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
-[ -z "$apacheMvnInstallDir" ] && export apacheMvnInstallDir="/opt/apps"
+[ -z "$apacheMvnInstallDir" ] && export apacheMvnInstallDir="$workspaceDir"
 # You can customize the overlay. (for example: mvn -Dmaven.repo.local=$HOME/.m2/repository/ -f $HOME/myproject_dir/pom.xml clean install)
 [ -z "$apacheMvnLocalRepoDir" ] && export apacheMvnLocalRepoDir="$HOME/.m2/repository/"
 
