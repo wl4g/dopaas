@@ -92,7 +92,7 @@ function checkInstallBasicSoftware() {
   fi
   # Check maven
   local mvnHome="$apacheMvnInstallDir/apache-maven-current"
-  export cmdMvn="$mvnHome/bin/mvn"
+  export cmdMvn="mvn" # Default command
   if [[ ! ("$(command -v mvn)" != "" || -d "$mvnHome") ]]; then
     log "No such command mvn, auto installing maven ..."
     cd $workspaceDir
@@ -106,6 +106,7 @@ function checkInstallBasicSoftware() {
     mkdir -p $mvnHome
     secDeleteLocal "$mvnHome/*" # Rmove old files(if necessary)
     tar -xf "$tmpTarFile" --strip-components=1 -C "$mvnHome"
+    export cmdMvn="$mvnHome/bin/mvn"
     secDeleteLocal "$tmpTarFile" # Cleanup
     # Use china fast maven mirror to settings.xml
     if [ "$isNetworkInGfwWall" == "Y" ]; then # see: deploy-boot.sh
