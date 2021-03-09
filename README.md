@@ -72,7 +72,16 @@ npm run build # Production building
 
 - Configure local DNS: add local virtual domain name resolution （C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
-127.0.0.1   wl4g.debug # Corresponding table field  sys_cluster_config.extranet_base_uri
+# Notes: The default virtual domain names of various environment databases are different. In rare cases, it may not correspond to the document due to the change of version module. Please check the retention table (sys_cluster_config.extranet_base_uri) The configuration of hosts is as follows:
+
+# dev:
+127.0.0.1 wl4g.debug
+# fat:
+127.0.0.1 wl4g.fat devops.wl4g.fat iam.wl4g.fat erm.wl4g.fat ci.wl4g.fat dts.wl4g.fat vcs.wl4g.fat umc.wl4g.fat
+# uat:
+127.0.0.1 wl4g.uat devops.wl4g.uat iam.wl4g.uat erm.wl4g.uat ci.wl4g.uat dts.wl4g.uat vcs.wl4g.uat umc.wl4g.uat
+# pro:
+127.0.0.1 wl4g.com devops.wl4g.com iam.wl4g.com erm.wl4g.com ci.wl4g.com dts.wl4g.com vcs.wl4g.com umc.wl4g.com
 ```
 
 - Quickly build a redis cluster/docker (optional)
