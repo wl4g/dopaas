@@ -15,19 +15,19 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.data.page.PageHolder;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.erm.AppInstanceDao;
-import com.wl4g.devops.dao.umc.AlarmConfigDao;
-import com.wl4g.devops.dao.umc.AlarmTemplateDao;
-import com.wl4g.devops.umc.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.erm.service.AppInstanceService;
+import com.wl4g.devops.umc.dao.AlarmConfigDao;
+import com.wl4g.devops.umc.dao.AlarmTemplateDao;
+import com.wl4g.devops.umc.service.ConfigService;
 
 /**
  * @author vjay
@@ -36,18 +36,13 @@ import org.springframework.util.Assert;
 @Service
 public class ConfigServiceImpl implements ConfigService {
 
-	@Autowired
-	private AlarmConfigDao alarmConfigDao;
-
-	@Autowired
-	private AlarmTemplateDao alarmTemplateDao;
-
-	@Autowired
-	private AppInstanceDao appInstanceDao;
+	private @Autowired AlarmConfigDao alarmConfigDao;
+	private @Autowired AlarmTemplateDao alarmTemplateDao;
+	private @Autowired AppInstanceService appInstanceService;
 
 	@Override
 	public PageHolder<AlarmConfig> list(PageHolder<AlarmConfig> pm, Long templateId, Long contactGroupId) {
-		pm.setCurrentContextPage();
+		pm.startPage();
 		pm.setRecords(alarmConfigDao.list(templateId, contactGroupId));
 		return pm;
 	}
@@ -80,7 +75,7 @@ public class ConfigServiceImpl implements ConfigService {
 		AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmConfig.getTemplateId());
 		Assert.notNull(alarmTemplate, "not found alarmTemplate");
 		alarmConfig.setClassify(alarmTemplate.getClassify());
-		AppInstance appInstance = appInstanceDao.selectByPrimaryKey(alarmConfig.getCollectId());
+		AppInstance appInstance = appInstanceService.detail(alarmConfig.getCollectId());
 		alarmConfig.setGroup(appInstance.getClusterId());
 		alarmConfig.setEnvType(appInstance.getEnvType());
 		return alarmConfig;

@@ -15,24 +15,24 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.component.core.bean.umc.*;
-import com.wl4g.component.support.redis.jedis.JedisService;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRecordRule;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.umc.*;
+import com.wl4g.devops.umc.dao.AlarmConfigDao;
+import com.wl4g.devops.umc.dao.AlarmRecordDao;
+import com.wl4g.devops.umc.dao.AlarmRecordRuleDao;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
-import com.wl4g.iam.bean.Contact;
-import com.wl4g.iam.bean.NotificationContact;
-import com.wl4g.iam.dao.ContactDao;
-import com.wl4g.iam.dao.NotificationContactDao;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
-import java.util.List;
+import com.wl4g.iam.common.bean.Contact;
+import com.wl4g.iam.common.bean.NotificationContact;
+import com.wl4g.iam.service.ContactService;
+import com.wl4g.iam.service.NotificationContactService;
 
 /**
  * Service metric indicators rule handler.
@@ -43,23 +43,11 @@ import java.util.List;
  */
 public class ServiceRuleConfigurer implements AlarmConfigurer {
 
-	@Autowired
-	protected JedisService jedisService;
-
-	@Autowired
-	private AlarmConfigDao alarmConfigDao;
-
-	@Autowired
-	private AlarmRecordDao alarmRecordDao;
-
-	@Autowired
-	private AlarmRecordRuleDao alarmRecordRuleDao;
-
-	@Autowired
-	private ContactDao contactDao;
-
-	@Autowired
-	private NotificationContactDao notificationContactDao;
+	private @Autowired AlarmConfigDao alarmConfigDao;
+	private @Autowired AlarmRecordDao alarmRecordDao;
+	private @Autowired AlarmRecordRuleDao alarmRecordRuleDao;
+	private @Autowired ContactService contactService;
+	private @Autowired NotificationContactService notificationContactService;
 
 	/**
 	 * Large search from db
@@ -100,13 +88,13 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 
 	@Override
 	public List<Contact> getContactByGroupIds(List<Long> groupIds) {
-		return contactDao.getContactByGroupIds(groupIds);
+		return contactService.findContactByGroupIds(groupIds);
 	}
 
 	@Override
 	public NotificationContact saveNotificationContact(NotificationContact notificationContact) {
 		notificationContact.preInsert();
-		notificationContactDao.insertSelective(notificationContact);
+		notificationContactService.save(notificationContact);
 		return notificationContact;
 	}
 

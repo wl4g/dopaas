@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 package com.wl4g.devops.umc.web;
-
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.constants.UMCDevOpsConstants;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.support.notification.GenericNotifyMessage;
-import com.wl4g.component.support.notification.MessageNotifier;
-import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.component.support.notification.mail.MailMessageNotifier;
-import com.wl4g.devops.umc.handler.DashboardHandler;
-import com.wl4g.devops.umc.model.StatusMessage;
-
+ 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.component.support.notification.GenericNotifyMessage;
+import com.wl4g.component.support.notification.MessageNotifier;
+import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.component.support.notification.mail.MailMessageNotifier;
+import com.wl4g.devops.common.constant.UMCConstants;
+import com.wl4g.devops.umc.handler.DashboardHandler;
+import com.wl4g.devops.umc.model.StatusMessage;
+
 @RestController
-@RequestMapping(UMCDevOpsConstants.URI_ADMIN_HOME)
+@RequestMapping(UMCConstants.URI_ADMIN_HOME)
 public class HomeController extends BaseController {
 
 	@Autowired

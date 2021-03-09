@@ -15,39 +15,46 @@
  */
 package com.wl4g.devops.umc.service.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import com.wl4g.component.data.page.PageHolder;
-import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.bean.umc.AlarmRule;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.erm.AppInstanceDao;
-import com.wl4g.devops.dao.umc.AlarmConfigDao;
-import com.wl4g.devops.dao.umc.AlarmRuleDao;
-import com.wl4g.devops.dao.umc.AlarmTemplateDao;
-import com.wl4g.devops.umc.service.TemplateService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.component.core.bean.BaseBean.ENABLED;
+import static com.wl4g.devops.common.constant.UMCConstants.KEY_CACHE_ALARM_TPLS;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.component.core.bean.BaseBean.*;
-import static com.wl4g.component.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.common.bean.umc.AlarmRule;
+import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.erm.data.AppInstanceDao;
+import com.wl4g.devops.umc.dao.AlarmConfigDao;
+import com.wl4g.devops.umc.dao.AlarmRuleDao;
+import com.wl4g.devops.umc.dao.AlarmTemplateDao;
+import com.wl4g.devops.umc.service.TemplateService;
 
 /**
+ * {@link TemplateServiceImpl}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-08-06 18:30:00
+ * @date 2019-08-06
+ * @sine v1.0
+ * @see
  */
 @Service
 public class TemplateServiceImpl implements TemplateService {
@@ -69,7 +76,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 	@Override
 	public PageHolder<AlarmTemplate> list(PageHolder<AlarmTemplate> pm, String name, Long metricId, String classify) {
-		pm.setCurrentContextPage();
+		pm.startPage();
 		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
 		for (AlarmTemplate alarmTpl : list) {
 			String tags = alarmTpl.getTags();
@@ -177,4 +184,5 @@ public class TemplateServiceImpl implements TemplateService {
 		alarmTemplate.preUpdate();
 		alarmTemplateDao.updateByPrimaryKeySelective(alarmTemplate);
 	}
+
 }

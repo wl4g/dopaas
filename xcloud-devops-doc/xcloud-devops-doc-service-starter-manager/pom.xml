@@ -52,14 +52,14 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 				<excludes>
 					<exclude>script/**</exclude>
 				</excludes>
 			</resource>
 			<resource>
 				<directory>src/test/java</directory>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 				<includes>
 					<include>**/*.json</include>
 				</includes>

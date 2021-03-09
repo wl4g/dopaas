@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import java.util.List;
+import java.util.Map;
+
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
-import com.wl4g.iam.bean.Contact;
-
-import java.util.List;
-import java.util.Map;
+import com.wl4g.iam.common.bean.Contact;
 
 /**
  * @author vjay

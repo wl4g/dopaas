@@ -15,19 +15,16 @@
  */
 package com.wl4g.devops;
 
-import org.mybatis.spring.annotation.MapperScan;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-import com.wl4g.component.data.annotation.AutoConfigureComponentsDataSource;
+import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient
-//@EnableDiscoveryClient
-@MapperScan("com.wl4g.devops.dao.*")
-@AutoConfigureComponentsDataSource
+// @EnableDiscoveryClient
+@EnableComponentDBConfiguration("com.wl4g.devops.dao.*")
 @SpringBootApplication
 public class UmcManager {
 

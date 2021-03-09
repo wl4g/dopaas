@@ -22,6 +22,16 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-umc-dao</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-umc-service-impl</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-client</artifactId>
 		</dependency>
 		<dependency>
@@ -35,7 +45,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 				<excludes>
 					<exclude>script/**</exclude>
 				</excludes>

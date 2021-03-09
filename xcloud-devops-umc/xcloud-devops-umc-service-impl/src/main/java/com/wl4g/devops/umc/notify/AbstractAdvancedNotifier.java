@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.notify;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.*;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,8 +28,8 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.constants.UMCDevOpsConstants;
 import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.devops.common.constant.UMCConstants;
 import com.wl4g.devops.umc.model.StatusMessage;
 
 import de.codecentric.boot.admin.server.domain.entities.Instance;
@@ -95,7 +95,7 @@ public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotif
 		String fStatus = getFromStatusText(event, instance);
 		String tStatus = getToStatusText(event, instance);
 		String msgId = UUID.randomUUID().toString().replaceAll("-", "").substring(16, 24);
-		String detailsUrl = getHrefUrl() + UMCDevOpsConstants.URI_ADMIN_HOME + msgId;
+		String detailsUrl = getHrefUrl() + UMCConstants.URI_ADMIN_HOME + msgId;
 
 		// Save StatusMessage to cache.
 		StatusMessage msg = StatusMessage.wrap(appInfo, healthUrl, fStatus, tStatus, event.getTimestamp().toEpochMilli(), mailTo,

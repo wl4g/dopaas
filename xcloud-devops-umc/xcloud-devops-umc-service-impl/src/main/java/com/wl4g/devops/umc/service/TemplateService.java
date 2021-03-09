@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.service;
 
 import java.util.List;
 
-import com.wl4g.component.data.page.PageHolder;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 
 /**

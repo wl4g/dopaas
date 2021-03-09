@@ -15,22 +15,23 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.umc.datasouces.MysqlDataSource;
-import com.wl4g.component.core.bean.umc.model.DataSourceProvide;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.data.page.PageHolder;
-import com.wl4g.devops.common.bean.umc.CustomDataSource;
-import com.wl4g.devops.umc.service.CustomDataSourceService;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.devops.common.bean.umc.model.DataSourceProvide.MYSQL;
+import static org.apache.shiro.authz.annotation.Logical.AND;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.core.bean.umc.model.DataSourceProvide.MYSQL;
-import static org.apache.shiro.authz.annotation.Logical.AND;
+import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.devops.common.bean.umc.CustomDataSource;
+import com.wl4g.devops.common.bean.umc.datasource.MysqlDataSource;
+import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
+import com.wl4g.devops.umc.service.CustomDataSourceService;
 
 /**
  * @author vjay

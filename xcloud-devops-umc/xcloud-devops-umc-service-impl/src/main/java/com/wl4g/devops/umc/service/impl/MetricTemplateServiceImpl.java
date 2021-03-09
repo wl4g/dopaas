@@ -17,9 +17,9 @@ package com.wl4g.devops.umc.service.impl;
 
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.data.page.PageHolder;
+import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
-import com.wl4g.devops.dao.umc.MetricTemplateDao;
+import com.wl4g.devops.umc.dao.MetricTemplateDao;
 import com.wl4g.devops.umc.service.MetricTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class MetricTemplateServiceImpl implements MetricTemplateService {
 
 	@Override
 	public PageHolder<MetricTemplate> list(PageHolder<MetricTemplate> pm, String metric, String classify) {
-		pm.setCurrentContextPage();
+		pm.startPage();
 		pm.setRecords(metricTemplateDao.list(metric, classify));
 		return pm;
 	}
