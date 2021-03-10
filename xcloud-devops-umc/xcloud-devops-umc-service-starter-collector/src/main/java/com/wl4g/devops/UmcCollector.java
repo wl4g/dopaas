@@ -50,7 +50,7 @@ public class UmcCollector {
 				// Modify from zipkin.server.ZipkinServer
 				// .logStartupInfo(false)
 				// .properties(EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY+"=false","spring.config.name=zipkin-server")
-				.logStartupInfo(true).properties("spring.config.name=umc-collector").run(args);
+				.logStartupInfo(true).properties("spring.config.name=zipkin-server").run(args);
 	}
 
 }

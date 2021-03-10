@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-ci</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSecOps CI(Continuous Integration And Deployment Services)</name>
+	<name>XCloud DevSecOps CI(Continuous Integration Services)</name>
 	<url>https://ci.xcloud.wl4g.com</url>
 	<description>A Open Source continuous integration deployment system based on Spring Cloud.</description>
 	<parent>
