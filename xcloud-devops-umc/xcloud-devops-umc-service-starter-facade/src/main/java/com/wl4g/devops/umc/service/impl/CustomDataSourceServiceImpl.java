@@ -40,8 +40,8 @@ import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
 import com.wl4g.devops.common.bean.umc.datasource.BaseDataSource;
 import com.wl4g.devops.common.bean.umc.datasource.MysqlDataSource;
 import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
-import com.wl4g.devops.umc.dao.CustomDataSourcePropertiesDao;
-import com.wl4g.devops.umc.dao.CustomDatasourceDao;
+import com.wl4g.devops.umc.data.CustomDataSourcePropertiesDao;
+import com.wl4g.devops.umc.data.CustomDatasourceDao;
 import com.wl4g.devops.umc.service.CustomDataSourceService;
 
 /**

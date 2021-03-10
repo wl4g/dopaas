@@ -90,6 +90,6 @@ public abstract class CiConstants extends DevOpsConstants {
 
 	// --- CI configuration constants. ---
 
-	public static final String KEY_CI_CONFIG_PREFIX = "spring.xcloud.devops.ci";
+	public static final String KEY_CI_CONFIG_PREFIX = KEY_DEVOPS_BASE_PREFIX + ".ci";
 
 }

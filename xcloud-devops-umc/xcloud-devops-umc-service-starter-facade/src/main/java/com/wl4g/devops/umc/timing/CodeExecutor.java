@@ -29,9 +29,9 @@ import com.wl4g.devops.common.bean.umc.CustomEngine;
 import com.wl4g.devops.common.bean.umc.CustomHistory;
 import com.wl4g.devops.common.bean.umc.datasource.BaseDataSource;
 import com.wl4g.devops.common.bean.umc.datasource.MysqlDataSource;
-import com.wl4g.devops.umc.dao.CustomAlarmEventDao;
-import com.wl4g.devops.umc.dao.CustomDatasourceDao;
-import com.wl4g.devops.umc.dao.CustomHistoryDao;
+import com.wl4g.devops.umc.data.CustomAlarmEventDao;
+import com.wl4g.devops.umc.data.CustomDatasourceDao;
+import com.wl4g.devops.umc.data.CustomHistoryDao;
 import com.wl4g.devops.umc.service.CustomDataSourceService;
 
 /**

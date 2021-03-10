@@ -38,7 +38,7 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
 		def configName = new StringBuffer("application")
-		configName.append(",default-devops")
+		configName.append(",default")
 		configName.append(",ci-web")
 		configName.append(",ci-facade")
 		configName.append(",ci-analyzer")

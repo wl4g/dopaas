@@ -15,29 +15,6 @@ spring:
     include: common,support,util,base
     active: dev
   xcloud:
-    iam: # IAM client configuration.
-      cors:
-        enabled: true # Default: true
-        rules:
-          '[/**]':
-            allows-methods: [GET,HEAD,OPTIONS,POST]
-            allows-headers: [X-Iam-*]
-            allow-credentials: true
-            #allows-origins:
-              #- '*'
-      xsrf:
-        enabled: true
-      replay:
-        enabled: true
-      xss:
-        enabled: true # Default: true
-      client: # IAM client configuration.
-        filter-chain:
-          '[/public/**]': anon # Public rule release
-        cipher:
-          enable-data-cipher: true # Default by true
-        session:
-          enable-access-token-validity: true # Default by true
     component:
       support:
         notification:
@@ -72,12 +49,29 @@ spring:
               templates:
                 tpl1: TTS_184825642 # Alarm notice template.
                 tpl2: TTS_184820765 # VerificationCode notice template.
-
-# Mybatis configuration.
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.devops.common.bean.*.*
+    iam: # IAM client configuration.
+      cors:
+        enabled: true # Default: true
+        rules:
+          '[/**]':
+            allows-methods: [GET,HEAD,OPTIONS,POST]
+            allows-headers: [X-Iam-*]
+            allow-credentials: true
+            #allows-origins:
+              #- '*'
+      xsrf:
+        enabled: true
+      replay:
+        enabled: true
+      xss:
+        enabled: true # Default: true
+      client: # IAM client configuration.
+        filter-chain:
+          '[/public/**]': anon # Public rule release
+        cipher:
+          enable-data-cipher: true # Default by true
+        session:
+          enable-access-token-validity: true # Default by true
 
 # Logging configuration.
 logging:
@@ -96,7 +90,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.devops.data: DEBUG
+      wl4g.devops.service: DEBUG
 
 # ### Server configuration. ###
 server:

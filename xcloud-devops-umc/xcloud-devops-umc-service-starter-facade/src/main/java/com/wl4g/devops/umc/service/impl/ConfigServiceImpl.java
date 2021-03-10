@@ -25,8 +25,8 @@ import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.erm.service.AppInstanceService;
-import com.wl4g.devops.umc.dao.AlarmConfigDao;
-import com.wl4g.devops.umc.dao.AlarmTemplateDao;
+import com.wl4g.devops.umc.data.AlarmConfigDao;
+import com.wl4g.devops.umc.data.AlarmTemplateDao;
 import com.wl4g.devops.umc.service.ConfigService;
 
 /**

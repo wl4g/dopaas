@@ -25,6 +25,9 @@ package com.wl4g.devops.common.constant;
  */
 public abstract class UMCConstants extends DevOpsConstants {
 
+	public static final String KEY_UMC_CONFIG_PREFIX = KEY_DEVOPS_BASE_PREFIX + ".umc";
+	public static final String INFO_PREFIX = "sba_event_";
+
 	//
 	// UMC admin definition.
 	//

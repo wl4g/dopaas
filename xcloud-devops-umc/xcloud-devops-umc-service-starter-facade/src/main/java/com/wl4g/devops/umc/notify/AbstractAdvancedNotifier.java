@@ -101,7 +101,7 @@ public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotif
 		StatusMessage msg = StatusMessage.wrap(appInfo, healthUrl, fStatus, tStatus, event.getTimestamp().toEpochMilli(), mailTo,
 				phoneTo, detailsUrl, msgId, info);
 		String msgStr = JacksonUtils.toJSONString(msg);
-		jedisService.set((INFO_PREFIX + msgId), msgStr, getExpireSec());
+		jedisService.set((UMCConstants.INFO_PREFIX + msgId), msgStr, getExpireSec());
 		log.info("Notifier status message. {}", msgStr);
 
 		// Notifier processing.
@@ -181,7 +181,6 @@ public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotif
 	final private static String DEFAULT_APPHEALTHURL = "#{application.healthUrl}";
 	final private static String DEFAULT_FROMSTATUS = "#{from.status}";
 	final private static String DEFAULT_TOSTATUS = "#{to.status}";
-	final public static String INFO_PREFIX = "sba_event_";
 	final private static SpelExpressionParser parser = new SpelExpressionParser();
 
 }

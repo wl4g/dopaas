@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.timing;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.log.SmartLoggerFactory;
 import com.wl4g.devops.common.bean.umc.CustomEngine;
-import com.wl4g.devops.umc.dao.CustomEngineDao;
+import com.wl4g.devops.umc.data.CustomEngineDao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

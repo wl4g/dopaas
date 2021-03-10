@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 package com.wl4g.devops.umc.web;
- 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;

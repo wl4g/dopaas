@@ -19,7 +19,7 @@ package com.wl4g.devops.umc.service.impl;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
-import com.wl4g.devops.umc.dao.CustomAlarmEventDao;
+import com.wl4g.devops.umc.data.CustomAlarmEventDao;
 import com.wl4g.devops.umc.service.CustomAlarmEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

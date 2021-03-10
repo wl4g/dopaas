@@ -15,19 +15,21 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import com.wl4g.devops.umc.annotation.EnableOpenTsdbStore;
-import com.wl4g.devops.umc.derby.DerbyMetricStore;
-import com.wl4g.devops.umc.opentsdb.TsdbMetricStore;
-import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
-import com.wl4g.devops.umc.store.MetricStore;
+import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+import com.alibaba.druid.pool.DruidDataSource;
+import com.wl4g.devops.common.constant.UMCConstants;
+import com.wl4g.devops.umc.annotation.EnableOpenTsdbStore;
+import com.wl4g.devops.umc.derby.DerbyMetricStore;
+import com.wl4g.devops.umc.opentsdb.TsdbMetricStore;
+import com.wl4g.devops.umc.opentsdb.client.OpenTSDBClient;
+import com.wl4g.devops.umc.store.MetricStore;
 
 /**
  * UMC store auto configuration
@@ -38,9 +40,6 @@ import static org.apache.commons.lang3.SystemUtils.USER_HOME;
  */
 @Configuration
 public class UmcStoreAutoConfiguration {
-
-	final public static String KEY_STORE_PREFIX = "spring.cloud.devops.umc.store";
-	final public static String KEY_STORE_OPENTSDB_PREFIX = KEY_STORE_PREFIX + ".opentsdb";
 
 	@Bean
 	@ConfigurationProperties(prefix = KEY_STORE_PREFIX)
@@ -135,5 +134,8 @@ public class UmcStoreAutoConfiguration {
 	public DerbyMetricStore derbyPhysicalMetricStore() {
 		return new DerbyMetricStore(derbyJdbcTemplate());
 	}
+
+	public final static String KEY_STORE_PREFIX = UMCConstants.KEY_UMC_CONFIG_PREFIX + ".store";
+	public final static String KEY_STORE_OPENTSDB_PREFIX = KEY_STORE_PREFIX + ".opentsdb";
 
 }

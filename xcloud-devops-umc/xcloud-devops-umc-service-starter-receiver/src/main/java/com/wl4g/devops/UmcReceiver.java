@@ -15,20 +15,45 @@
  */
 package com.wl4g.devops;
 
-//import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
+import zipkin2.server.internal.EnableZipkinServer;
+import zipkin2.server.internal.ZipkinActuatorImporter;
+import zipkin2.server.internal.ZipkinModuleImporter;
+import zipkin2.server.internal.banner.ZipkinBanner;
 
+/**
+ * References to {@link zipkin.server.ZipkinServer} or
+ * {@link de.codecentric.boot.admin.server.config.EnableAdminServer}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-03-10
+ * @sine v1.0
+ * @see
+ */
+@EnableZipkinServer
 @EnableAdminServer
 // @EnableDiscoveryClient
-// @MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
 public class UmcReceiver {
 
+	static {
+		SLF4JBridgeHandler.removeHandlersForRootLogger();
+		SLF4JBridgeHandler.install();
+	}
+
 	public static void main(String[] args) {
-		SpringApplication.run(UmcReceiver.class, args);
+		new SpringApplicationBuilder(UmcReceiver.class).banner(new ZipkinBanner())
+				.initializers(new ZipkinModuleImporter(), new ZipkinActuatorImporter())
+				// Avoids potentially expensive DNS lookup and inaccurate
+				// startup timing
+				.logStartupInfo(false)
+				.properties(EnableAutoConfiguration.ENABLED_OVERRIDE_PROPERTY + "=false", "spring.config.name=zipkin-server")
+				.run(args);
 	}
 
 }

@@ -12,6 +12,30 @@
 #
 spring:
   xcloud:
+    component:
+      support:
+        jedis:
+          passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
+          connect-timeout: 10000
+          max-attempts: 10
+          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+          nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+        notification:
+          mail:
+            host: smtp.163.com
+            port: 465
+            username: babaa1f4@163.com
+            password: XBurnerAir00
+            protocol: smtp
+          sms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+          vms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+              calledShowNumber: 055162153866
     iam:
       cors:
         rules:
@@ -35,58 +59,11 @@ spring:
         server-uri: http://wl4g.debug:14040/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: http://wl4g.debug:8080/#/umc/config
-    support:
-      notification:
-        mail:
-          host: smtp.163.com
-          port: 465
-          username: babaa1f4@163.com
-          password: XBurnerAir00
-          protocol: smtp
-        sms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-        vms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-            calledShowNumber: 055162153866
-
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
-    druid:
-      url: ${DEVOPS_DB_URL:jdbc:mysql://owner-node1:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-      username: ${DEVOPS_DB_USER:gzsm}
-      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true
 
 # Spring-security config.
 spring.security.user:
   name: sba_user
   password: hnGsFm6k0klJP9j
-
-# Redis configuration.
-redis:
-  passwd: ${REDIS_PASSWD:zzx!@#$%}
-  connect-timeout: 10000
-  max-attempts: 10
-  # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-  nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
 
 opentsdb:
   url: http://10.0.0.57
