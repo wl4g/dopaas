@@ -38,7 +38,7 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
 		def configName = new StringBuffer("application")
-		configName.append(",default")
+		configName.append(",common-devops")
 		configName.append(",ci-web")
 		configName.append(",ci-facade")
 		configName.append(",ci-analyzer")
@@ -65,13 +65,13 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
 			location.append(",classpath:/scf/")
 			archConfigSuffix = "scf"
-		} else if (isPresent("com.wl4g.component.rpc.springboot.feign.annotation.SpringBootFeignClient")) {
+		} else if (isPresent("com.wl4g.component.rpc.feign.core.annotation.FeignConsumer")) {
 			location.append(",classpath:/sbf/")
 			archConfigSuffix = "sbf"
 		}
-		configName.append(",default-devops-" + archConfigSuffix)
-		//configName.append(",default-devops-web-" + archConfigSuffix)
-		//configName.append(",default-devops-facade-" + archConfigSuffix)
+		configName.append(",common-devops-" + archConfigSuffix)
+		//configName.append(",common-devops-web-" + archConfigSuffix)
+		//configName.append(",common-devops-facade-" + archConfigSuffix)
 		configName.append(",ci-web-" + archConfigSuffix)
 		configName.append(",ci-facade-" + archConfigSuffix)
 		configName.append(",doc-web-" + archConfigSuffix)
