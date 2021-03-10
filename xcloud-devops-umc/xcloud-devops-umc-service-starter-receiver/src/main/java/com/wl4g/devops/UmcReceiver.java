@@ -20,7 +20,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import zipkin2.server.internal.EnableZipkinServer;
 import zipkin2.server.internal.ZipkinActuatorImporter;
 import zipkin2.server.internal.ZipkinModuleImporter;
@@ -36,7 +35,7 @@ import zipkin2.server.internal.banner.ZipkinBanner;
  * @see
  */
 @EnableZipkinServer
-@EnableAdminServer
+// @EnableAdminServer
 // @EnableDiscoveryClient
 @SpringBootApplication
 public class UmcReceiver {

@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +41,6 @@ import com.wl4g.devops.umc.console.ReceiverConsole;
 import com.wl4g.devops.umc.receiver.HttpMetricReceiver;
 import com.wl4g.devops.umc.receiver.KafkaMetricReceiver;
 import com.wl4g.devops.umc.store.MetricStore;
-import com.wl4g.devops.umc.watch.config.UmcWatchAutoConfiguration;
 
 /**
  * UMC receiver auto configuration
@@ -52,7 +50,7 @@ import com.wl4g.devops.umc.watch.config.UmcWatchAutoConfiguration;
  * @since
  */
 @Configuration
-@ImportAutoConfiguration(UmcWatchAutoConfiguration.class)
+//@ImportAutoConfiguration(UmcWatchAutoConfiguration.class)
 public class UmcReceiveAutoConfiguration extends PrefixHandlerMappingSupport {
 
 	final public static String BEAN_HTTP_RECEIVER = "httpCollectReceiver";

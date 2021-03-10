@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.common.constant.UMCConstants;
 import com.wl4g.devops.common.exception.umc.UmcException;
 
 import io.micrometer.core.instrument.Counter;
@@ -72,7 +73,7 @@ public class CounterMetricsAdvice extends AbstractMetricsAdvice {
 	@ConditionalOnProperty(name = CounterMetricsProperties.CONF_P + ".enable", matchIfMissing = true)
 	@ConfigurationProperties(prefix = CounterMetricsProperties.CONF_P)
 	public static class CounterMetricsProperties {
-		final public static String CONF_P = "spring.cloud.devops.metrics.counter";
+		final public static String CONF_P = UMCConstants.KEY_UMC_METRIC_PREFIX + ".counter";
 
 		/**
 		 * An expression of the statistical AOP point cut for the number of
