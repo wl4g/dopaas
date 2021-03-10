@@ -86,8 +86,6 @@ function pullAndCompile() {
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   else
     log "Git pull $projectName from ($branch)$cloneUrl ..."
-    cd $projectDir && git checkout $branch
-    [ $? -ne 0 ] && exit -1
     # Check and update remote url.
     local oldRemoteUrl=$(cd $projectDir && git remote -v|grep fetch|awk '{print $2}';cd ..)
     if [ "$oldRemoteUrl" != "$cloneUrl" ]; then
@@ -96,6 +94,8 @@ function pullAndCompile() {
     fi
     # Check already updated?
     local pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
+    cd $projectDir && git checkout $branch
+    [ $? -ne 0 ] && exit -1
     if [[ "$pullResult" != "Already up-to-date."* || "$rebuildOfGitPullAlreadyUpToDate" == "true" ]]; then
       log "Compiling $projectName ..."
       cd $projectDir
@@ -382,7 +382,7 @@ function main() {
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   echo -n "---------------------------------------------------------------"
-  echo -e "\nDeployed app services information:\n${globalDeployStatsMsg}"
+  echo -e "\nDeployed apps statistics details:\n${globalDeployStatsMsg}"
   log "-------------------------------------------------------------------"
   log "DEPLOY $deployStatus"
   log "-------------------------------------------------------------------"

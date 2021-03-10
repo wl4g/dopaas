@@ -337,21 +337,18 @@ if [ "\$USER" == "root" ]; then
   . "/root/.bashrc"
 fi
 
-# Ref external configuration, fallback use defaults.
+# Ref external configuration, default settings.
 [ -z "\$SPRING_PROFILES_ACTIVE" ] && export SPRING_PROFILES_ACTIVE="$springProfilesActive"
-if [ -n "$(echo $appName|grep 'iam-')" ]; then
-  [ -z "\$DEVOPS_DB_URL" ] && export DEVOPS_DB_URL="$runtimeMysqlUrl"
-  [ -z "\$DEVOPS_DB_USER" ] && export DEVOPS_DB_USER="$runtimeMysqlUser"
-  [ -z "\$DEVOPS_DB_PASSWD" ] && export DEVOPS_DB_PASSWD="$runtimeMysqlPassword"
-  [ -z "\$DEVOPS_REDIS_NODES" ] && export DEVOPS_REDIS_NODES="$runtimeRedisNodes"
-  [ -z "\$DEVOPS_REDIS_PASSWD" ] && export DEVOPS_REDIS_PASSWD="$runtimeRedisPassword"
-else
-  [ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$runtimeMysqlUrl"
-  [ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="$runtimeMysqlUser"
-  [ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="$runtimeMysqlPassword"
-  [ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="$runtimeRedisNodes"
-  [ -z "\$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="$runtimeRedisPassword"
-fi
+[ -z "\$DEVOPS_DB_URL" ] && export DEVOPS_DB_URL="$runtimeMysqlUrl"
+[ -z "\$DEVOPS_DB_USER" ] && export DEVOPS_DB_USER="$runtimeMysqlUser"
+[ -z "\$DEVOPS_DB_PASSWD" ] && export DEVOPS_DB_PASSWD="$runtimeMysqlPassword"
+[ -z "\$DEVOPS_REDIS_NODES" ] && export DEVOPS_REDIS_NODES="$runtimeRedisNodes"
+[ -z "\$DEVOPS_REDIS_PASSWD" ] && export DEVOPS_REDIS_PASSWD="$runtimeRedisPassword"
+[ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$runtimeMysqlUrl"
+[ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="$runtimeMysqlUser"
+[ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="$runtimeMysqlPassword"
+[ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="$runtimeRedisNodes"
+[ -z "\$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="$runtimeRedisPassword"
 
 function start() {
   local pids=\$(getPids)
