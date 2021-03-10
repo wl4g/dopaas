@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-umc-alarm</artifactId>
+	<artifactId>xcloud-devops-umc-service-starter-facade</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps UMC Alarm</name>
-	<url>http://maven.apache.org</url>
+	<name>XCloud DevSecOps UMC Service Impl</name>
+	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-devops-umc</artifactId>
@@ -21,6 +21,16 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-umc-service-data</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-umc-alarm</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -30,7 +40,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-springboot</artifactId>
+			<artifactId>xcloud-devops-erm-service-facade</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-service-facade</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
