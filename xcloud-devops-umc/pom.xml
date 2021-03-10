@@ -18,7 +18,7 @@
 		<module>xcloud-devops-umc-alarm</module>
 		<module>xcloud-devops-umc-store</module>
 		<module>xcloud-devops-umc-watch</module>
-		<module>xcloud-devops-umc-service-starter-receiver</module>
+		<module>xcloud-devops-umc-service-starter-collector</module>
 		<module>xcloud-devops-umc-client-springboot</module>
 		<module>xcloud-devops-umc-service-starter-manager</module>
 		<module>xcloud-devops-umc-example</module>
