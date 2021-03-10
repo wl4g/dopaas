@@ -19,7 +19,7 @@ package com.wl4g.devops.umc.service.impl;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.devops.common.bean.umc.CustomHistory;
-import com.wl4g.devops.umc.dao.CustomHistoryDao;
+import com.wl4g.devops.umc.data.CustomHistoryDao;
 import com.wl4g.devops.umc.service.CustomHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

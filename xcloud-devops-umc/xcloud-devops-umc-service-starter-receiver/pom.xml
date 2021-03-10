@@ -48,6 +48,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- Tracing -->
+		<dependency>
+			<groupId>io.zipkin</groupId>
+			<artifactId>zipkin-server</artifactId>
+			<version>2.23.2</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>

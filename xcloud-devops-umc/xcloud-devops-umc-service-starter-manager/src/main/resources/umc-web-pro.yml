@@ -12,6 +12,30 @@
 #
 spring:
   xcloud:
+    component:
+      support:
+        jedis:
+          passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
+          connect-timeout: 10000
+          max-attempts: 10
+          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+          nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
+        notification:
+          mail:
+            host: smtp.163.com
+            port: 465
+            username: babaa1f4@163.com
+            password: XBurnerAir00
+            protocol: smtp
+          sms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+          vms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+              calledShowNumber: 055162153866
     iam:
       cors:
         rules:
@@ -29,57 +53,11 @@ spring:
         server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/umc/config
-    support:
-      notification:
-        mail:
-          host: smtp.163.com
-          port: 465
-          username: babaa1f4@163.com
-          password: XBurnerAir00
-          protocol: smtp
-        sms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-        vms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-            calledShowNumber: 055162153866
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
-    druid:
-      url: ${DEVOPS_DB_URL:jdbc:mysql://safecloud-defaulti.mysql.rds.aliyuncs.com:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-      username: ${DEVOPS_DB_USER:devops}
-      password: ${DEVOPS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true
 
 # Spring-security config.
 security.user:
   name: sba_user
   password: hnGsFm6k0klJP9j
-
-# Redis configuration.
-redis:
-  passwd: zzx!@#$%
-  connect-timeout: 10000
-  max-attempts: 10
-  # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-  nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
 
 # OpenTSDB configuration.
 opentsdb:

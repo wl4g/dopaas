@@ -19,12 +19,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient
 // @EnableDiscoveryClient
-@EnableComponentDBConfiguration("com.wl4g.devops.dao.*")
 @SpringBootApplication
 public class UmcManager {
 

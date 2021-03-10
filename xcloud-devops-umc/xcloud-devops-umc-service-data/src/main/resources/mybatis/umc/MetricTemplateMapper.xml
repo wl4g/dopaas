@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.umc.dao.MetricTemplateDao" >
+<mapper namespace="com.wl4g.devops.umc.data.MetricTemplateDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.MetricTemplate" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="metric" property="metric" jdbcType="VARCHAR" />

@@ -11,15 +11,10 @@
 # #### Environment base configuration. ####
 #
 spring:
-  resources.static-locations: classpath:/static/
+  application.name: umc-receiver
   profiles:
     include: common,support,util,admin
-
-# Mybatis configuration.
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.devops.common.bean.*.*
+    active: dev
 
 # Logging configuration.
 logging:
@@ -40,3 +35,20 @@ logging:
       apache: INFO
     com:
       wl4g.devops.data: DEBUG
+
+# ### Server configuration. ###
+server:
+  servlet:
+    contextPath: /${spring.application.name}
+  #address: 0.0.0.0
+  port: 14047
+  sessionTimeout: 30
+  tomcat:
+    uri-encoding: UTF-8
+    protocolHeader: x-forwarded-proto
+    remoteIpHeader: x-forwarded-for
+    basedir: /tmp/${spring.application.name}
+    access-log-enabled: false
+    accesslog.directory: logs/
+    backgroundProcessorDelay: 30 #seconds
+    max-thread: 50 # Max worker threads(default:200).
