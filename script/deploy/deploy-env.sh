@@ -82,7 +82,7 @@ export deployClusterBuildModules=(
   #scm-server,"${currDir}/xcloud-devops/xcloud-devops-scm/xcloud-devops-scm-service-starter-server/target"
   #umc-facade,"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-facade/target"
   #umc-manager,"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-manager/target"
-  #umc-receiver,"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-receiver/target"
+  #umc-collector,"${currDir}/xcloud-devops/xcloud-devops-umc/xcloud-devops-umc-service-starter-collector/target"
   "vcs-facade,${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-facade/target"
   "vcs-manager,${currDir}/xcloud-devops/xcloud-devops-vcs/xcloud-devops-vcs-service-starter-manager/target"
 )
