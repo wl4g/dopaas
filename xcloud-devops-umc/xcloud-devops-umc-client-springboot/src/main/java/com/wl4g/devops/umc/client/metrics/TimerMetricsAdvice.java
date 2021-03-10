@@ -31,6 +31,7 @@ import org.springframework.util.Assert;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.wl4g.devops.common.constant.UMCConstants;
 import com.wl4g.devops.common.exception.umc.UmcException;
 import com.wl4g.devops.umc.client.indicator.TimeoutsHealthIndicator;
 
@@ -124,7 +125,7 @@ public class TimerMetricsAdvice extends AbstractMetricsAdvice {
 	@ConditionalOnProperty(name = TimerMetricsProperties.CONF_P + ".enable", matchIfMissing = true)
 	@ConfigurationProperties(prefix = TimerMetricsProperties.CONF_P)
 	public static class TimerMetricsProperties {
-		final public static String CONF_P = "spring.cloud.devops.metrics.timeouts";
+		final public static String CONF_P = UMCConstants.KEY_UMC_METRIC_PREFIX + ".timeouts";
 		final public static int DEFAULT_SAMPLES = 32;
 		final public static long DEFAULT_TIMEOUTS_THRESHOLD = 15_000L;
 
