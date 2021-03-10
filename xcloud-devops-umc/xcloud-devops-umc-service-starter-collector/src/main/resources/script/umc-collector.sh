@@ -16,4 +16,4 @@
 # * limitations under the License.
 # */
 
-/etc/init.d/umc-receiver.service "$@"
+/etc/init.d/umc-collector.service "$@"

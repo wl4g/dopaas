@@ -17,7 +17,7 @@ rem  * limitations under the License.
 rem  */
 
 setlocal enabledelayedexpansion
-title UMC Receiver APP Services
+title UMC Collector APP Services
 
 rem Using pushd popd to set BASE_DIR to the absolute path
 pushd %~dp0..\..
@@ -25,7 +25,7 @@ set BASE_DIR=%CD%
 popd
 
 rem Global define.
-set MAIN_CLASS=com.wl4g.UmcReceiver
+set MAIN_CLASS=com.wl4g.UmcCollector
 
 set DATA_DIR=%BASE_DIR%
 set CONF_DIR=%BASE_DIR%\conf
