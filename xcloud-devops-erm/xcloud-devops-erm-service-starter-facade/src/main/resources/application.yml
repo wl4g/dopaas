@@ -27,6 +27,8 @@ mybatis:
 # Logging configuration.
 logging:
   file:
+    # see:com.wl4g.component.core.logging.logback.EnhancedLogbackConfigurer#apply
+    # see:org.springframework.boot.logging.LogFile#toString
     name: ${server.tomcat.basedir}/../log/${spring.application.name}/${spring.application.name}.log
     clean-history-on-start: false
     total-size-cap: 200GB # default to 200GB
@@ -34,7 +36,7 @@ logging:
     max-history: 30 # default to 7
   pattern:
     #console: ${logging.pattern.file}
-    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.xcloud.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.cloud.devops.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
   root: INFO
   level:
     de.codecentric.boot.admin: INFO

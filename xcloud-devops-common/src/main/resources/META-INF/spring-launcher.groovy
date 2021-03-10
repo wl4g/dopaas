@@ -54,7 +54,7 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		configName.append(",scm-facade")
 		configName.append(",umc-web")
 		configName.append(",umc-facade")
-		configName.append(",umc-receiver")
+		configName.append(",umc-collector")
 		configName.append(",vcs-web")
 		configName.append(",vcs-facade")
 
