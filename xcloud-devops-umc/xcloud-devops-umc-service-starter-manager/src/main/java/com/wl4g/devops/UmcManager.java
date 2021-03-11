@@ -19,9 +19,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+import com.wl4g.component.rpc.feign.core.annotation.EnableFeignConsumers;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient
+@EnableFeignConsumers("com.wl4g.devops.umc.service")
 // @EnableDiscoveryClient
 @SpringBootApplication
 public class UmcManager {

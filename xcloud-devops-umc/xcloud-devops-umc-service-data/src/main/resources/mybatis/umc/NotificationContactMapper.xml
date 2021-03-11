@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.devops.data.iam.NotificationContactDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.components.core.bean.iam.NotificationContact" >
+  <resultMap id="BaseResultMap" type="com.wl4g.iam.common.bean.NotificationContact" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="record_id" property="recordId" jdbcType="INTEGER" />
     <result column="contact_id" property="contactId" jdbcType="INTEGER" />
@@ -31,13 +31,13 @@
     delete from sys_notification_contact
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.components.core.bean.iam.NotificationContact" >
+  <insert id="insert" parameterType="com.wl4g.iam.common.bean.NotificationContact" >
     insert into sys_notification_contact (id, record_id, contact_id,
       status, remark)
     values (#{id,jdbcType=BIGINT}, #{recordId,jdbcType=BIGINT}, #{contactId,jdbcType=BIGINT},
       #{status,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.components.core.bean.iam.NotificationContact" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertSelective" parameterType="com.wl4g.iam.common.bean.NotificationContact" useGeneratedKeys="true" keyProperty="id">
     insert into sys_notification_contact
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -74,7 +74,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.components.core.bean.iam.NotificationContact" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.iam.common.bean.NotificationContact" >
     update sys_notification_contact
     <set >
       <if test="recordId != null" >
@@ -92,7 +92,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.components.core.bean.iam.NotificationContact" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.iam.common.bean.NotificationContact" >
     update sys_notification_contact
     set record_id = #{recordId,jdbcType=BIGINT},
       contact_id = #{contactId,jdbcType=BIGINT},

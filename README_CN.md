@@ -92,13 +92,13 @@ npm run build # 生产打包
 
 
 ### 子模块文档
-- [CI](xcloud-devops-ci/README_CN.md)               持续集成部署模块（持续迭代）, CICD构建流等
-- [UMC](xcloud-devops-umc/README_CN.md)             统一监控运维中心, 提供应用健康实时监控、实时追踪、实时告警等
-- [VCS](xcloud-devops-vcs/README_CN.md)             版本控制服务, 软件源码、释放包版本管理
-- [SCM](xcloud-devops-scm/README_CN.md)             配置服务中心, 支持在线配置热更新如：DataSource、RedisClient等
-- [ERM](xcloud-devops-erm/README_CN.md)             基础资源环境管理, 如ELK日志分析、二进制产物库、网关、PrivateZone DNS解析等
-- [DOC](xcloud-devops-doc/README_CN.md)             API文档服务, 在线API文档查阅
-- [ESM](xcloud-devops-esm/README_CN.md)             弹性伸缩管理, 集成K8s、Docker，基于CPU、网络流量自动或手动容器伸缩的管理
+- [UCI](xcloud-devops-uci/README_CN.md)  (Unified Continuous Integration)统一持续集成交付服务, CI/CD等
+- [UMC](xcloud-devops-umc/README_CN.md)  (Unified Monitoring and Operation Center)统一监控运维中心, 应用健康实时监控、实时追踪、实时告警、ELK日志分析等
+- [URM](xcloud-devops-urm/README_CN.md)  (Unified Repository Management)统一仓库管理, 源码仓库、构建包仓库、镜像仓库等
+- [UCM](xcloud-devops-ucm/README_CN.md)  (Unified Config Management)统一配置管理服务, 在线配置热更新如：DataSource、RedisClient等
+- [CMDB](xcloud-devops-cmdb/README_CN.md)  (Configuration Management Database)统一资产管理, 主机、密钥、审计、DNS等基础设施资产管理等
+- [UDM](xcloud-devops-udm/README_CN.md)  (Unified Document Management)统一文档管理, API/Swagger在线文档/Office/Pdf等
+- [UDC](xcloud-devops-udc/README_CN.md)  (Unified Developer Center)统一开发中心, 各种开发者工具链、WebIDE、自动生成器等
 
 ### 其他相关应用/组件文档
 - [DJOB](xcloud-djob/README_CN.md)                  基于SpringCloud分布式调度平台, 默认是基于ElasticJob增强实现

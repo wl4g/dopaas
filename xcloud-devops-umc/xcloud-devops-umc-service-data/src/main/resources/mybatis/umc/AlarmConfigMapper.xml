@@ -61,11 +61,9 @@
         <result column="r.alarm_level" property="alarmLevel" jdbcType="INTEGER" />
         <result column="r.del_flag" property="delFlag" jdbcType="INTEGER" />
       </collection>
-
     </association>
-
     <!-- contacts -->
-    <collection property="contacts" ofType="com.wl4g.components.core.bean.iam.Contact" javaType="list">
+    <collection property="contacts" ofType="com.wl4g.iam.common.bean.Contact" javaType="list">
       <id column="ct.id" property="id" jdbcType="INTEGER" />
       <result column="ct.name" property="name" jdbcType="VARCHAR" />
       <result column="ct.email" property="email" jdbcType="VARCHAR" />
@@ -96,7 +94,6 @@
       <result column="ct.update_date" property="updateDate" jdbcType="TIMESTAMP" />
       <result column="ct.del_flag" property="delFlag" jdbcType="INTEGER" />
     </collection>
-
   </resultMap>
 
   <sql id="Base_Column_List" >

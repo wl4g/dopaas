@@ -32,7 +32,7 @@ import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
  * @sine v1.0
  * @see
  */
-@EnableComponentDBConfiguration("com.wl4g.devops.data.*")
+@EnableComponentDBConfiguration({ "com.wl4g.devops.umc.data", "com.wl4g.devops.erm.service", "com.wl4g.iam.service" })
 @SpringBootApplication
 public class UmcFacade {
 
