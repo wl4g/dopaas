@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer.hbase;
+package com.wl4g.devops.cmdb.initializer.installer.hbase;
 
-import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
+import com.wl4g.devops.cmdb.initializer.installer.InstallerConfiguration;
 
 /**
  * {@link ApacheHbaseV2xSoftInstaller}

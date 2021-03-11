@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer.maven;
+package com.wl4g.devops.cmdb.initializer.installer.maven;
 
-import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
+import com.wl4g.devops.cmdb.initializer.installer.RemovableSoftInstaller;
 
 /**
  * {@link MavenV3xSoftInstaller}

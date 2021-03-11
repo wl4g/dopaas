@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer.mysql;
+package com.wl4g.devops.cmdb.initializer.installer.mysql;
 
-import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
-import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
+import com.wl4g.devops.cmdb.initializer.installer.RemovableSoftInstaller;
+import com.wl4g.devops.cmdb.initializer.installer.InstallerConfiguration;
 
 /**
  * {@link MySQLClusterV5xV8xSoftInstaller}

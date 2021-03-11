@@ -9,7 +9,7 @@
 #
 
 spring:
-  application.name: ci-example
+  application.name: uci-example
   profiles:
     include: common,util
     active: dev

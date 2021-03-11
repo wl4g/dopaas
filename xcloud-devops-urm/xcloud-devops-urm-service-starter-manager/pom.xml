@@ -13,7 +13,7 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>vcs-manager</final.name>
+		<final.name>urm-manager</final.name>
 	</properties>
 	<dependencies>
 		<dependency>

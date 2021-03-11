@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer.kafka;
+package com.wl4g.devops.cmdb.initializer.installer.kafka;
 
-import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
-import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
-import com.wl4g.devops.erm.initializer.installer.kafka.ApacheKafkaClusterV0xSoftInstaller.KafkaClusterV0xConfiguration;
+import com.wl4g.devops.cmdb.initializer.installer.RemovableSoftInstaller;
+import com.wl4g.devops.cmdb.initializer.installer.InstallerConfiguration;
+import com.wl4g.devops.cmdb.initializer.installer.kafka.ApacheKafkaClusterV0xSoftInstaller.KafkaClusterV0xConfiguration;
 
 /**
  * {@link ApacheKafkaV0xSoftInstaller}

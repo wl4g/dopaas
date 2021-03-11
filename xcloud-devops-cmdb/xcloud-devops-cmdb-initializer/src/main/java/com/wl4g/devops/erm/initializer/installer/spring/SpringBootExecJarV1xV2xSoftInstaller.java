@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer.spring;
+package com.wl4g.devops.cmdb.initializer.installer.spring;
 
-import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
-import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
+import com.wl4g.devops.cmdb.initializer.installer.RemovableSoftInstaller;
+import com.wl4g.devops.cmdb.initializer.installer.InstallerConfiguration;
 
 /**
  * {@link SpringBootExecJarV1xV2xSoftInstaller}

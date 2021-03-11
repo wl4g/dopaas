@@ -9,7 +9,7 @@
 #
 
 spring:
-  application.name: ci-analyzer
+  application.name: uci-analyzer
   profiles:
     include: common,support,util,base
     active: dev

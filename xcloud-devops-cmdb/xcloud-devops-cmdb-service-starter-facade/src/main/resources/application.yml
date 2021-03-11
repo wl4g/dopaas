@@ -9,7 +9,7 @@
 #
 # #### Environment base configuration. ####
 spring:
-  application.name: erm-facade
+  application.name: cmdb-facade
   profiles:
     include: common,support,util,base
     active: dev

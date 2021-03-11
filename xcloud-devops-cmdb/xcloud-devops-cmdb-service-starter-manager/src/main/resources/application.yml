@@ -9,7 +9,7 @@
 #
 # #### Environment base configuration. ####
 spring:
-  application.name: erm-manager
+  application.name: cmdb-manager
   profiles:
     include: common,support,util,base
     active: dev

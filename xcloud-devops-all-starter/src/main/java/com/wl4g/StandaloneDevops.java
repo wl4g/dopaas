@@ -28,9 +28,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * </br>
  * 
  * for example: It should at least includes( "com.wl4g.iam.web",
- * "com.wl4g.devops.ci.web", "com.wl4g.devops.dts.web",
+ * "com.wl4g.devops.uci.web", "com.wl4g.devops.dts.web",
  * "com.wl4g.devops.dts.codegen.web", "com.wl4g.devops.doc.web",
- * "com.wl4g.devops.erm.web", "com.wl4g.devops.vcs.web",
+ * "com.wl4g.devops.cmdb.web", "com.wl4g.devops.urm.web",
  * "com.wl4g.devops.umc.web" )
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;

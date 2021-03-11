@@ -13,7 +13,7 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>vcs-facade</final.name>
+		<final.name>urm-facade</final.name>
 	</properties>
 	<dependencies>
 		<dependency>

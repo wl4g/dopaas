@@ -13,7 +13,7 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>doc-facade</final.name>
+		<final.name>udm-facade</final.name>
 		<swagger-parser-v3.version>2.0.24</swagger-parser-v3.version>
 	</properties>
 	<dependencies>

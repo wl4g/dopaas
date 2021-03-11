@@ -9,7 +9,7 @@
 #
 # #### Environment base configuration. ####
 spring:
-  application.name: vcs-manager
+  application.name: urm-manager
   profiles:
     include: common,support,util,base
     active: dev

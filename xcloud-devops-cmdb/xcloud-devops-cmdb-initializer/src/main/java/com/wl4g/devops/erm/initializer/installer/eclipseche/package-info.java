@@ -19,4 +19,4 @@ package-info}
  * @version v1.0 2020-08-04
  * @since
  */
-package com.wl4g.devops.erm.initializer.installer.eclipseche;
+package com.wl4g.devops.cmdb.initializer.installer.eclipseche;

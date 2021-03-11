@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.uci.data.PcmDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.uci.Pcm">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="provider_kind" jdbcType="VARCHAR" property="providerKind" />
+		<result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
+		<result column="base_url" jdbcType="VARCHAR" property="baseUrl" />
+		<result column="auth_type" jdbcType="INTEGER" property="authType" />
+		<result column="access_token" jdbcType="VARCHAR" property="accessToken" />
+		<result column="username" jdbcType="VARCHAR" property="username" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+		<result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+		<result column="create_by" jdbcType="VARCHAR" property="createBy" />
+		<result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+		<result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name, provider_kind, organization_code, base_url, auth_type, access_token, username, password, remark,
+		del_flag, create_date, create_by, update_date, update_by
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from ci_pcm
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from ci_pcm
+		where del_flag != 1
+		<if test="name != null and name != '' ">
+			AND name LIKE CONCAT('%','${name}','%')
+		</if>
+		<if test="providerKind != null and providerKind != '' ">
+			AND provider_kind = #{providerKind,jdbcType=VARCHAR}
+		</if>
+		<if test="authType != null">
+			AND auth_type = #{authType,jdbcType=INTEGER}
+		</if>
+		<if test="organizationCodes != null and organizationCodes.size() > 0">
+			and organization_code in
+			<foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+				#{organizationCode}
+			</foreach>
+		</if>
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from ci_pcm
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.Pcm">
+		insert into ci_pcm (id, name, provider_kind,organization_code,
+		base_url, auth_type, access_token,
+		username, password, remark,
+		del_flag, create_date, create_by,
+		update_date, update_by)
+		values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{providerKind,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR},
+		#{baseUrl,jdbcType=VARCHAR}, #{authType,jdbcType=INTEGER}, #{accessToken,jdbcType=VARCHAR},
+		#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+		#{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
+		#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.Pcm">
+		insert into ci_pcm
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="providerKind != null">
+				provider_kind,
+			</if>
+			<if test="organizationCode != null">
+				organization_code,
+			</if>
+			<if test="baseUrl != null">
+				base_url,
+			</if>
+			<if test="authType != null">
+				auth_type,
+			</if>
+			<if test="accessToken != null">
+				access_token,
+			</if>
+			<if test="username != null">
+				username,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="updateBy != null">
+				update_by,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="providerKind != null">
+				#{providerKind,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				#{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="baseUrl != null">
+				#{baseUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="authType != null">
+				#{authType,jdbcType=INTEGER},
+			</if>
+			<if test="accessToken != null">
+				#{accessToken,jdbcType=VARCHAR},
+			</if>
+			<if test="username != null">
+				#{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag,jdbcType=INTEGER},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.Pcm">
+		update ci_pcm
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="providerKind != null">
+				provider_kind = #{providerKind,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				organization_code = #{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="baseUrl != null">
+				base_url = #{baseUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="authType != null">
+				auth_type = #{authType,jdbcType=INTEGER},
+			</if>
+			<if test="accessToken != null">
+				access_token = #{accessToken,jdbcType=VARCHAR},
+			</if>
+			<if test="username != null">
+				username = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="delFlag != null">
+				del_flag = #{delFlag,jdbcType=INTEGER},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.Pcm">
+		update ci_pcm
+		set name = #{name,jdbcType=VARCHAR},
+		provider_kind = #{providerKind,jdbcType=VARCHAR},
+		organization_code = #{organizationCode,jdbcType=VARCHAR},
+		base_url = #{baseUrl,jdbcType=VARCHAR},
+		auth_type = #{authType,jdbcType=INTEGER},
+		access_token = #{accessToken,jdbcType=VARCHAR},
+		username = #{username,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		del_flag = #{delFlag,jdbcType=INTEGER},
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		create_by = #{createBy,jdbcType=VARCHAR},
+		update_date = #{updateDate,jdbcType=TIMESTAMP},
+		update_by = #{updateBy,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+</mapper>
