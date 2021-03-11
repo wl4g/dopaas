@@ -106,6 +106,8 @@ function removeAppFilesWithRemoteInstance() {
   doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appLogDir\" ] && rm -rf $appLogDir" "false"
   log "[$appName/$host] Removing file $appServiceFile"
   doRemoteCmd "$user" "$passwd" "$host" "[ -f \"$appServiceFile\" ] && rm -rf $appServiceFile" "false"
+  log "[$appName/$host] Removing app user to $appName"
+  doRemoteCmd "$user" "$passwd" "$host" "[ -n \"\$(cat /etc/passwd|grep '^$appName:')\" ] && userdel -rfRZ $appName" "false"
 }
 
 # ----- Main call. -----

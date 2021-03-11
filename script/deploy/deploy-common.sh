@@ -282,23 +282,19 @@ function checkInstallServiceScript() {
     local appShellRunCmd="$javaExec -client -Dloader.main=com.wl4g.ShellBootstrap -Dprompt=$appName -Dservname=$appName $shellPort -jar .:$appHome/${appName}-${appVersion}-bin.jar"
   fi
 
-  mkdir -p $appInstallDir
-  mkdir -p $appHome
-  mkdir -p $appLogDir
-  mkdir -p $appDataDir
   if [ "$appGroup" != "root" ]; then
-    if [ -z "$(grep "^$appGroup:" /etc/group)" ]; then
-      groupadd $appGroup
-    fi
+    doRemoteCmd "$user" "$passwd" "$host" "[ -z \"\$(grep \"^$appGroup:\" /etc/group)\" ] && groupadd $appGroup" "true"
   fi
   if [ "$appUser" != "root" ]; then
-    if [ -z "$(grep "^$appUser:" /etc/passwd)" ]; then
-      useradd -g $appGroup $appUser
-    fi
+    doRemoteCmd "$user" "$passwd" "$host" "[ -z \"\$(grep \"^$appUser:\" /etc/passwd)\" ] && useradd -g $appGroup $appUser" "true"
   fi
-  chown -R $appUser:$appGroup $appInstallDir
-  chown -R $appUser:$appGroup $appLogDir
-  chown -R $appUser:$appGroup $appDataDir
+  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appInstallDir" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appHome" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appLogDir" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appDataDir" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appInstallDir" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appLogDir" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appDataDir" "true"
 
   # Make app services script.
   local tmpServiceFile=$workspaceDir/${appName}.service
