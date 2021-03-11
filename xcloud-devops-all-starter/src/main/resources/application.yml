@@ -20,6 +20,11 @@ spring:
       support:
         cli.enable: true
       rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
+      web:
+        embedded-webapps:
+          enabled: true # Default false
+          base-uri: /view
+          webapp-location: classpath*:/default-webapps
     iam: # IAM client configuration.
       cors:
         enabled: true # Default: true
