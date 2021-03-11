@@ -11,7 +11,7 @@
 # #### Environment base configuration. ####
 #
 spring:
-  application.name: ci-server
+  application.name: uci-server
   profiles:
     include: common,support,util,base
     active: dev

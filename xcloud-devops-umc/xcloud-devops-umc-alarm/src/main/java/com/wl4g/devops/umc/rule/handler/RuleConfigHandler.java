@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.umc.rule.handler;
 
-import com.wl4g.devops.common.bean.erm.AppCluster;
-import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.cmdb.AppCluster;
+import com.wl4g.devops.common.bean.cmdb.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;

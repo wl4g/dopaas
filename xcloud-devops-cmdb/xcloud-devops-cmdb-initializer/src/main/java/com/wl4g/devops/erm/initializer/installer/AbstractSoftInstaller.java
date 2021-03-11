@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer;
+package com.wl4g.devops.cmdb.initializer.installer;
 
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.lang.Assert2.isTrue;
@@ -27,8 +27,8 @@ import static org.apache.commons.lang3.StringUtils.split;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.task.GenericTaskRunner;
 import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.devops.erm.initializer.exception.InvalidPkgVersionException;
-import com.wl4g.devops.erm.initializer.exception.UnsupportedInstallPkgVersionException;
+import com.wl4g.devops.cmdb.initializer.exception.InvalidPkgVersionException;
+import com.wl4g.devops.cmdb.initializer.exception.UnsupportedInstallPkgVersionException;
 
 import io.netty.util.internal.UnstableApi;
 

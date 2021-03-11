@@ -11,7 +11,7 @@
 # #### Environment base configuration. ####
 #
 spring:
-  application.name: ci-facade
+  application.name: uci-facade
   profiles:
     include: common,support,util,base
     active: dev

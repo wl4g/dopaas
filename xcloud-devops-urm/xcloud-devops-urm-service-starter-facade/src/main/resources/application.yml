@@ -9,7 +9,7 @@
 #
 # #### Environment base configuration. ####
 spring:
-  application.name: vcs-facade
+  application.name: urm-facade
   profiles:
     include: common,support,util,base
     active: dev

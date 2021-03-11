@@ -13,7 +13,7 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>ci-analyzer</final.name>
+		<final.name>uci-analyzer</final.name>
 	</properties>
 	<dependencies>
 		<dependency>

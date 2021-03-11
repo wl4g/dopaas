@@ -13,7 +13,7 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>ci-facade</final.name>
+		<final.name>uci-facade</final.name>
 	</properties>
 	<dependencies>
 		<dependency>

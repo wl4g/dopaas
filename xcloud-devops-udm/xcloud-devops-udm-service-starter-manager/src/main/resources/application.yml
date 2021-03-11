@@ -10,7 +10,7 @@
 # #### Environment base configuration. ####
 
 spring:
-  application.name: doc-manager
+  application.name: udm-manager
   profiles:
     include: common,support,util,base
     active: dev
