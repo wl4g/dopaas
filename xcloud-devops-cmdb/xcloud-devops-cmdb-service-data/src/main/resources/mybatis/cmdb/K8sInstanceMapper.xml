@@ -12,36 +12,36 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from erm_k8s_instance
+    from cmdb_k8s_instance
     where id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectHostIdByK8sId" parameterType="java.lang.Long" resultType="java.lang.Long">
     select
     host_id
-    from erm_k8s_instance
+    from cmdb_k8s_instance
     where k8s_id = #{k8sId,jdbcType=BIGINT}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from erm_k8s_instance
+    delete from cmdb_k8s_instance
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
   <delete id="deleteByK8sId" parameterType="java.lang.Long">
-    delete from erm_k8s_instance
+    delete from cmdb_k8s_instance
     where k8s_id = #{k8sId,jdbcType=BIGINT}
   </delete>
 
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.K8sInstance">
-    insert into erm_k8s_instance (id, k8s_id, host_id
+    insert into cmdb_k8s_instance (id, k8s_id, host_id
       )
     values (#{id,jdbcType=BIGINT}, #{k8sId,jdbcType=BIGINT}, #{hostId,jdbcType=BIGINT}
       )
   </insert>
 
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into erm_k8s_instance (id, k8s_id, host_id)
+    insert into cmdb_k8s_instance (id, k8s_id, host_id)
     VALUES
     <foreach collection="k8sInstances" item="k8sInstance" separator=",">
       (#{k8sInstance.id,jdbcType=BIGINT}, #{k8sInstance.k8sId,jdbcType=BIGINT}, #{k8sInstance.hostId,jdbcType=BIGINT})
@@ -49,7 +49,7 @@
   </insert>
 
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.K8sInstance">
-    insert into erm_k8s_instance
+    insert into cmdb_k8s_instance
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -74,7 +74,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.K8sInstance">
-    update erm_k8s_instance
+    update cmdb_k8s_instance
     <set>
       <if test="k8sId != null">
         k8s_id = #{k8sId,jdbcType=BIGINT},
@@ -86,7 +86,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.K8sInstance">
-    update erm_k8s_instance
+    update cmdb_k8s_instance
     set k8s_id = #{k8sId,jdbcType=BIGINT},
       host_id = #{hostId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}

@@ -15,21 +15,21 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_step_deploy
+		from uci_pipe_step_deploy
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 	<select id="selectByPipeId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_step_deploy
+		from uci_pipe_step_deploy
 		where pipe_id = #{pipeId,jdbcType=BIGINT} limit 1
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pipe_step_deploy
+		delete from uci_pipe_step_deploy
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.PipeStageDeploy">
-		insert into ci_pipe_step_deploy (id, pipe_id, deploy_type,
+		insert into uci_pipe_step_deploy (id, pipe_id, deploy_type,
 		deploy_dockerfile_content, deploy_config_type,
 		deploy_config_content)
 		values (#{id,jdbcType=BIGINT}, #{pipeId,jdbcType=BIGINT}, #{deployType,jdbcType=INTEGER},
@@ -37,7 +37,7 @@
 		#{deployConfigContent,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStageDeploy">
-		insert into ci_pipe_step_deploy
+		insert into uci_pipe_step_deploy
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -80,7 +80,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStageDeploy">
-		update ci_pipe_step_deploy
+		update uci_pipe_step_deploy
 		<set>
 			<if test="pipeId != null">
 				pipe_id = #{pipeId,jdbcType=BIGINT},
@@ -101,7 +101,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.PipeStageDeploy">
-		update ci_pipe_step_deploy
+		update uci_pipe_step_deploy
 		set pipe_id = #{pipeId,jdbcType=BIGINT},
 		deploy_type = #{deployType,jdbcType=INTEGER},
 		deploy_dockerfile_content = #{deployDockerfileContent,jdbcType=VARCHAR},

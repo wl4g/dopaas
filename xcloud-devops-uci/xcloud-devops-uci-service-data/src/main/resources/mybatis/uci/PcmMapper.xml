@@ -25,14 +25,14 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pcm
+		from uci_pcm
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pcm
+		from uci_pcm
 		where del_flag != 1
 		<if test="name != null and name != '' ">
 			AND name LIKE CONCAT('%','${name}','%')
@@ -52,11 +52,11 @@
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pcm
+		delete from uci_pcm
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.Pcm">
-		insert into ci_pcm (id, name, provider_kind,organization_code,
+		insert into uci_pcm (id, name, provider_kind,organization_code,
 		base_url, auth_type, access_token,
 		username, password, remark,
 		del_flag, create_date, create_by,
@@ -68,7 +68,7 @@
 		#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.Pcm">
-		insert into ci_pcm
+		insert into uci_pcm
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -165,7 +165,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.Pcm">
-		update ci_pcm
+		update uci_pcm
 		<set>
 			<if test="name != null">
 				name = #{name,jdbcType=VARCHAR},
@@ -213,7 +213,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.Pcm">
-		update ci_pcm
+		update uci_pcm
 		set name = #{name,jdbcType=VARCHAR},
 		provider_kind = #{providerKind,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},

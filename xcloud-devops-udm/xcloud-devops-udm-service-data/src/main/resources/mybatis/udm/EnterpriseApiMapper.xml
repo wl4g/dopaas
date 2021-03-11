@@ -30,7 +30,7 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_ee_api
+        FROM udm_ee_api
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
@@ -39,7 +39,7 @@
     <select id="selectByModuleIdAndUrl" parameterType="java.util.Map" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_ee_api
+        FROM udm_ee_api
         <where>
             del_flag != 1
 
@@ -55,21 +55,21 @@
     <select id="getByModuleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_ee_api
+        FROM udm_ee_api
         <where>
             module_id = #{moduleId, jdbcType=BIGINT}
         </where>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        DELETE FROM doc_ee_api
+        DELETE FROM udm_ee_api
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
     </delete>
 
     <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseApi">
-        INSERT INTO doc_ee_api
+        INSERT INTO udm_ee_api
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -173,7 +173,7 @@
     </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseApi">
-        UPDATE doc_ee_api
+        UPDATE udm_ee_api
         <set>
             <if test="id != null">
                 id = #{id, jdbcType=BIGINT},
@@ -230,7 +230,7 @@
     </update>
 
     <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseApi">
-        UPDATE doc_ee_api
+        UPDATE udm_ee_api
         <set>
             id = #{id, jdbcType=BIGINT},
             module_id = #{moduleId, jdbcType=BIGINT},
@@ -257,7 +257,7 @@
     <select id="list" resultMap="BaseResultMap" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseApi" >
         SELECT
             <include refid="Base_Column_List"/>
-        FROM doc_ee_api
+        FROM udm_ee_api
         <where>
                 AND del_flag != 1
             <if test="enterpriseApi.name != null and enterpriseApi.name != ''" >

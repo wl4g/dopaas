@@ -64,16 +64,16 @@
 		<include refid="Base_Column_List_p" />
 		,
 		<include refid="vcs_alias" />
-		from ci_project p
-		left join ci_vcs v on v.id = p.vcs_id
+		from uci_project p
+		left join uci_vcs v on v.id = p.vcs_id
 		where p.id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_project
+		delete from uci_project
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.Project">
-		insert into ci_project (id, project_name, organization_code, vcs_id,http_url,ssh_url, git_info
+		insert into uci_project (id, project_name, organization_code, vcs_id,http_url,ssh_url, git_info
 		app_cluster_id,
 		lock_status, is_boot, remark, del_flag,
 		create_date, create_by, update_date,
@@ -87,7 +87,7 @@
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.Project" useGeneratedKeys="true"
 		keyProperty="id">
-		insert into ci_project
+		insert into uci_project
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -190,7 +190,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.Project">
-		update ci_project
+		update uci_project
 		<set>
 			<if test="vcsId != null">
 				vcs_id = #{vcsId,jdbcType=BIGINT},
@@ -241,7 +241,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.Project">
-		update ci_project
+		update uci_project
 		set
 		vcs_id = #{vcsId,jdbcType=BIGINT},
 		project_name = #{projectName,jdbcType=VARCHAR},
@@ -268,9 +268,9 @@
 		,
 		<include refid="vcs_alias" />
 		,g.name as group_name
-		from ci_project p
-		left join erm_app_cluster g on p.app_cluster_id=g.id
-		left join ci_vcs v on v.id=p.vcs_id
+		from uci_project p
+		left join cmdb_app_cluster g on p.app_cluster_id=g.id
+		left join uci_vcs v on v.id=p.vcs_id
 		where p.del_flag!=1
 		<if test="groupName != null and groupName != ''">
 			AND g.name LIKE CONCAT('%','${groupName}','%')
@@ -294,8 +294,8 @@
 		<include refid="Base_Column_List_p" />
 		,
 		<include refid="vcs_alias" />
-		from ci_project p
-		left join ci_vcs v on v.id=p.vcs_id
+		from uci_project p
+		left join uci_vcs v on v.id=p.vcs_id
 		where p.del_flag!=1 and p.project_name = #{projectName,jdbcType=VARCHAR}
 	</select>
 
@@ -304,8 +304,8 @@
 		<include refid="Base_Column_List_p" />
 		,
 		<include refid="vcs_alias" />
-		from ci_project p
-		left join ci_vcs v on v.id=p.vcs_id
+		from uci_project p
+		left join uci_vcs v on v.id=p.vcs_id
 		where p.app_cluster_id = #{appClusterId,jdbcType=BIGINT} and p.del_flag!=1 limit 1
 	</select>
 </mapper>

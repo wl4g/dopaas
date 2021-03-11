@@ -51,7 +51,7 @@
 
 	<!--添加版本 -->
 	<insert id="insert" parameterType="versionOfDetail" useGeneratedKeys="true" keyProperty="id">
-		insert into scm_version
+		insert into ucm_version
 		<trim prefix="(" suffix=")" suffixOverrides="," >
 			<if test="id != null">
 				id,
@@ -100,7 +100,7 @@
 		</trim>
 	</insert>
 	<insert id ="insertDetail" parameterType="java.util.Map" >
-		insert into scm_version_detail
+		insert into ucm_version_detail
 		(id, version_id, `type`, content, remark, namespace_id)
 		values
 		<foreach collection ="configGurations" item="detail" index= "index" separator =",">
@@ -116,7 +116,7 @@
 	</insert>
 
 	<update id="updateNode" parameterType="java.util.Map">
-		UPDATE erm_app_instance a
+		UPDATE cmdb_app_instance a
 		<set>
 			<if test="vid != null and vid != ''">
 				version_id = #{vid},
@@ -133,7 +133,7 @@
 	</update>
 
 	<select id="nodeIsVersion" parameterType="java.util.Map" resultType="string">
-		SELECT version_id FROM  erm_app_instance
+		SELECT version_id FROM  cmdb_app_instance
 		WHERE
 		<if test="nodeid != null and nodeid != ''">
 			id = #{nodeid}
@@ -145,7 +145,7 @@
 	</select>
 
 	<update id="update" parameterType="versionOfDetail">
-		update scm_version
+		update ucm_version
 		<set>
 			<if test="status != null and status != ''">
 				status = #{status},
@@ -174,7 +174,7 @@
 		SELECT
 		<include refid="allVersionDetailColumn"/>
 		from
-			scm_version_detail vd
+			ucm_version_detail vd
 		where
 			vd.version_id = #{id}
 	</select>
@@ -188,10 +188,10 @@
 			c.`name`,
 			c.id as appClusterId,
 			b.env_type as envType
-		FROM scm_version a
-		JOIN erm_app_instance b ON a.id = b.version_id
-		left join erm_host h on h.id=b.host_id
-		JOIN erm_app_cluster c ON b.cluster_id = c.id
+		FROM ucm_version a
+		JOIN cmdb_app_instance b ON a.id = b.version_id
+		left join cmdb_host h on h.id=b.host_id
+		JOIN cmdb_app_cluster c ON b.cluster_id = c.id
 		<where>
 			a.del_flag = #{DEL_FLAG_NORMAL}
 			AND c.del_flag = #{DEL_FLAG_NORMAL}
@@ -208,12 +208,12 @@
 	</select>
 
 	<delete id="deleteConfigGuration" parameterType="java.util.Map">
-		delete from scm_version_detail
+		delete from ucm_version_detail
 		where id = #{id}
 	</delete>
 
 	<update id="updateGuration" parameterType="versionContentBean">
-		update scm_version_detail
+		update ucm_version_detail
 		<set>
 			<if test="versionId != null and versionId != ''">
 				version_id = #{versionId},
@@ -232,7 +232,7 @@
 	</update>
 
 	<!-- Client拉取版本配置信息，若releaseMeta.releaseId或releaseMeta.version为空，则使用默认最新
-		发布的配置(条件：同一实例同一版本号下的scm_release_history.create_date最大)，场景：client启动时拉取配置
+		发布的配置(条件：同一实例同一版本号下的ucm_release_history.create_date最大)，场景：client启动时拉取配置
 	-->
 	<select id="findSource" resultMap="configSourceMap">
 		SELECT
@@ -244,12 +244,12 @@
 			vd.content AS "content",
 			rh.create_date AS "createDate"
 		FROM
-			scm_release_detail rd
-		INNER JOIN scm_release_history rh ON rh.id = rd.release_id
-		INNER JOIN erm_app_instance i ON i.id = rd.instance_id
-		INNER JOIN erm_app_cluster g ON g.id = i.cluster_id
-		INNER JOIN scm_version_detail vd ON vd.version_id = i.version_id
-		left join erm_host h on h.id=i.host_id
+			ucm_release_detail rd
+		INNER JOIN ucm_release_history rh ON rh.id = rd.release_id
+		INNER JOIN cmdb_app_instance i ON i.id = rd.instance_id
+		INNER JOIN cmdb_app_cluster g ON g.id = i.cluster_id
+		INNER JOIN ucm_version_detail vd ON vd.version_id = i.version_id
+		left join cmdb_host h on h.id=i.host_id
 		<where>
 			AND g.`name` = #{cluster}
 
@@ -276,8 +276,8 @@
 
 	<!-- 更新发布client返回结果 -->
 	<update id="updateReleaseDetail">
-		UPDATE scm_release_detail rd
-		INNER JOIN erm_app_instance i ON i.id = rd.instance_id
+		UPDATE ucm_release_detail rd
+		INNER JOIN cmdb_app_instance i ON i.id = rd.instance_id
 		<set>
 			rd.result = #{detailsJSONString},
 			rd.status = #{status.value},

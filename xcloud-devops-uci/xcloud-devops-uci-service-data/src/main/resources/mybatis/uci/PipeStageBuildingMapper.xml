@@ -39,7 +39,7 @@
 		<include refid="Base_Column_List_b" />
 		,
 		<include refid="PipeStepBuildingProjectsColumn" />
-		from ci_pipe_step_building b left join ci_pipe_step_building_project p on b.id = p.building_id
+		from uci_pipe_step_building b left join uci_pipe_step_building_project p on b.id = p.building_id
 		where b.id = #{id,jdbcType=BIGINT}
 	</select>
 
@@ -48,28 +48,28 @@
 		<include refid="Base_Column_List_b" />
 		,
 		<include refid="PipeStepBuildingProjectsColumn" />
-		from ci_pipe_step_building b left join ci_pipe_step_building_project p on b.id = p.building_id
+		from uci_pipe_step_building b left join uci_pipe_step_building_project p on b.id = p.building_id
 		where b.pipe_id = #{pipeId,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pipe_step_building
+		delete from uci_pipe_step_building
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<delete id="deleteByPipeId" parameterType="java.lang.Long">
-		delete from ci_pipe_step_building
+		delete from uci_pipe_step_building
 		where pipe_id = #{pipeId,jdbcType=BIGINT}
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.PipeStageBuilding">
-		insert into ci_pipe_step_building (id, pipe_id, pre_command,
+		insert into uci_pipe_step_building (id, pipe_id, pre_command,
 		post_command, ref_type)
 		values (#{id,jdbcType=BIGINT}, #{pipeId,jdbcType=BIGINT}, #{preCommand,jdbcType=VARCHAR},
 		#{postCommand,jdbcType=VARCHAR}, #{refType,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStageBuilding">
-		insert into ci_pipe_step_building
+		insert into uci_pipe_step_building
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -106,7 +106,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStageBuilding">
-		update ci_pipe_step_building
+		update uci_pipe_step_building
 		<set>
 			<if test="pipeId != null">
 				pipe_id = #{pipeId,jdbcType=BIGINT},
@@ -124,7 +124,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.PipeStageBuilding">
-		update ci_pipe_step_building
+		update uci_pipe_step_building
 		set pipe_id = #{pipeId,jdbcType=BIGINT},
 		pre_command = #{preCommand,jdbcType=VARCHAR},
 		post_command = #{postCommand,jdbcType=VARCHAR},

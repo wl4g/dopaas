@@ -20,29 +20,29 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_step_pcm
+		from uci_pipe_step_pcm
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByPipeId" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_step_pcm
+		from uci_pipe_step_pcm
 		where pipe_id = #{pipeId,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pipe_step_pcm
+		delete from uci_pipe_step_pcm
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<delete id="deleteByPipeId" parameterType="java.lang.Long">
-		delete from ci_pipe_step_pcm
+		delete from uci_pipe_step_pcm
 		where pipe_id = #{pipeId,jdbcType=BIGINT}
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.PipeStagePcm">
-		insert into ci_pipe_step_pcm (id, enable, pipe_id,
+		insert into uci_pipe_step_pcm (id, enable, pipe_id,
 		pcm_id, x_project_id, x_tracker, x_assign_to,
 		x_status,
 		x_priority,
@@ -54,7 +54,7 @@
 		#{xCustomFields,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStagePcm">
-		insert into ci_pipe_step_pcm
+		insert into uci_pipe_step_pcm
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -121,7 +121,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStagePcm">
-		update ci_pipe_step_pcm
+		update uci_pipe_step_pcm
 		<set>
 			<if test="enable != null">
 				enable = #{enable,jdbcType=INTEGER},
@@ -154,7 +154,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.PipeStagePcm">
-		update ci_pipe_step_pcm
+		update uci_pipe_step_pcm
 		set enable = #{enable,jdbcType=INTEGER},
 		pipe_id = #{pipeId,jdbcType=BIGINT},
 		pcm_id = #{pcmId,jdbcType=BIGINT},

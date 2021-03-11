@@ -31,13 +31,13 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from erm_app_cluster_env
+    from cmdb_app_cluster_env
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List_e"/>
-    from erm_app_cluster_env e
+    from cmdb_app_cluster_env e
     left join sys_dict d on e.env_type = d.value and d.type='app_ns_type'
     where e.cluster_id = #{clusterId,jdbcType=BIGINT}
     order by d.sort
@@ -45,20 +45,20 @@
   <select id="selectByClusterIdAndEnv" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List"/>
-    from erm_app_cluster_env
+    from cmdb_app_cluster_env
     where cluster_id = #{clusterId,jdbcType=BIGINT}
     and env_type = #{envType,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from erm_app_cluster_env
+    delete from cmdb_app_cluster_env
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByClusterId" parameterType="java.lang.Long" >
-    delete from erm_app_cluster_env
+    delete from cmdb_app_cluster_env
     where cluster_id = #{clusterId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.AppEnvironment" >
-    insert into erm_app_cluster_env (id, cluster_id, repository_id, env_type,
+    insert into cmdb_app_cluster_env (id, cluster_id, repository_id, env_type,
       remark, repository_namespace, custom_repository_config, create_by, create_date,
       update_by, update_date, del_flag, enable,
       organization_code, run_command, config_content)
@@ -68,7 +68,7 @@
       #{organizationCode,jdbcType=VARCHAR}, #{runCommand,jdbcType=LONGVARCHAR}, #{configContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into erm_app_cluster_env (id, cluster_id, repository_id, env_type,
+    insert into cmdb_app_cluster_env (id, cluster_id, repository_id, env_type,
     remark, repository_namespace, custom_repository_config, create_by, create_date,
     update_by, update_date, del_flag, enable,
     organization_code, run_command, config_content)
@@ -81,7 +81,7 @@
     </foreach>
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.AppEnvironment" >
-    insert into erm_app_cluster_env
+    insert into cmdb_app_cluster_env
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -184,7 +184,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.AppEnvironment" >
-    update erm_app_cluster_env
+    update cmdb_app_cluster_env
     <set >
       <if test="clusterId != null" >
         cluster_id = #{clusterId,jdbcType=BIGINT},
@@ -235,7 +235,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.cmdb.AppEnvironment" >
-    update erm_app_cluster_env
+    update cmdb_app_cluster_env
     set cluster_id = #{clusterId,jdbcType=BIGINT},
       repository_id = #{repositoryId,jdbcType=BIGINT},
       env_type = #{envType,jdbcType=VARCHAR},
@@ -254,7 +254,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.AppEnvironment" >
-    update erm_app_cluster_env
+    update cmdb_app_cluster_env
     set cluster_id = #{clusterId,jdbcType=BIGINT},
       repository_id = #{repositoryId,jdbcType=BIGINT},
       env_type = #{envType,jdbcType=VARCHAR},

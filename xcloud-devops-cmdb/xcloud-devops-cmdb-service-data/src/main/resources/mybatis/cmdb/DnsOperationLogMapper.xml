@@ -16,14 +16,14 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from erm_dns_operation_log
+    from cmdb_dns_operation_log
     where id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_operation_log
+    from cmdb_dns_operation_log
     where 1=1
     <if test="domain != null and domain != ''" >
       AND `domain` LIKE CONCAT('%','${domain}','%')
@@ -37,11 +37,11 @@
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from erm_dns_operation_log
+    delete from cmdb_dns_operation_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.DnsOperationLog" >
-    insert into erm_dns_operation_log (id, zone_type, domain, 
+    insert into cmdb_dns_operation_log (id, zone_type, domain, 
       oper_date, oper_by, description, 
       result)
     values (#{id,jdbcType=BIGINT}, #{zoneType,jdbcType=INTEGER}, #{domain,jdbcType=VARCHAR}, 
@@ -49,7 +49,7 @@
       #{result,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsOperationLog" >
-    insert into erm_dns_operation_log
+    insert into cmdb_dns_operation_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -98,7 +98,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsOperationLog" >
-    update erm_dns_operation_log
+    update cmdb_dns_operation_log
     <set >
       <if test="zoneType != null" >
         zone_type = #{zoneType,jdbcType=INTEGER},
@@ -122,7 +122,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.DnsOperationLog" >
-    update erm_dns_operation_log
+    update cmdb_dns_operation_log
     set zone_type = #{zoneType,jdbcType=INTEGER},
       domain = #{domain,jdbcType=VARCHAR},
       oper_date = #{operDate,jdbcType=TIMESTAMP},

@@ -19,28 +19,28 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from doc_label
+    from udm_label
     where id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectByFileId" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from doc_label l inner join doc_file_label fl on fl.label_id = l.id
+    from udm_label l inner join udm_file_label fl on fl.label_id = l.id
     where l.del_flag != 1 and fl.file_id = #{fileId,jdbcType=BIGINT}
   </select>
 
   <select id="selectLabelIdsByFileId" parameterType="java.lang.Long" resultType="java.lang.Long">
     select
     label_id
-    from doc_file_label
+    from udm_file_label
     where  file_id = #{fileId,jdbcType=BIGINT}
   </select>
 
   <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from doc_label
+    from udm_label
     where del_flag != 1
     <if test="name != null and name != ''">
       AND name LIKE CONCAT('%','${name}','%')
@@ -50,16 +50,16 @@
   <select id="selectAll" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from doc_label
+    from udm_label
     where del_flag != 1
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from doc_label
+    delete from udm_label
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.udm.Label">
-    insert into doc_label (id, name, create_date, 
+    insert into udm_label (id, name, create_date, 
       create_by, update_date, update_by, 
       del_flag)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
@@ -67,7 +67,7 @@
       #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.udm.Label" useGeneratedKeys="true" keyProperty="id">
-    insert into doc_label
+    insert into udm_label
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -116,7 +116,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.udm.Label">
-    update doc_label
+    update udm_label
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -140,7 +140,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.udm.Label">
-    update doc_label
+    update udm_label
     set name = #{name,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},

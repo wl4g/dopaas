@@ -32,18 +32,18 @@
 
 
   <delete id="cleanCiTaskHistorySublist" parameterType="java.util.Map">
-    DELETE ci_task_history_instance,ci_task_history_build_command
-    FROM ci_task_history
-    LEFT JOIN ci_task_history_instance ON ci_task_history.id=ci_task_history_instance.task_id
-    LEFT JOIN ci_task_history_build_command ON ci_task_history.id=ci_task_history_build_command.task_id
+    DELETE uci_task_history_instance,uci_task_history_build_command
+    FROM uci_task_history
+    LEFT JOIN uci_task_history_instance ON uci_task_history.id=uci_task_history_instance.task_id
+    LEFT JOIN uci_task_history_build_command ON uci_task_history.id=uci_task_history_build_command.task_id
     WHERE
-    <![CDATA[ ci_task_history.create_date <= #{createDate} ]]>
+    <![CDATA[ uci_task_history.create_date <= #{createDate} ]]>
   </delete>
 
   <delete id="cleanCiTaskHistory" parameterType="java.util.Map">
-    DELETE FROM ci_task_history
+    DELETE FROM uci_task_history
     WHERE
-    <![CDATA[ ci_task_history.create_date <= #{createDate} ]]>
+    <![CDATA[ uci_task_history.create_date <= #{createDate} ]]>
   </delete>
 
 

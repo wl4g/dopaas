@@ -21,14 +21,14 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from erm_host_tunnel_openvpn
+    from cmdb_host_tunnel_openvpn
     where id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
     <include refid="Base_Column_List" />
-    from erm_host_tunnel_openvpn
+    from cmdb_host_tunnel_openvpn
     <if test="organizationCodes != null and organizationCodes.size() > 0">
       and organization_code in
       <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
@@ -38,11 +38,11 @@
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from erm_host_tunnel_openvpn
+    delete from cmdb_host_tunnel_openvpn
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.HostTunnelOpenvpn">
-    insert into erm_host_tunnel_openvpn (id, name, organization_code, addr,
+    insert into cmdb_host_tunnel_openvpn (id, name, organization_code, addr,
       username, password, create_date, 
       create_by, update_date, update_by, 
       del_flag)
@@ -52,7 +52,7 @@
       #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.HostTunnelOpenvpn">
-    insert into erm_host_tunnel_openvpn
+    insert into cmdb_host_tunnel_openvpn
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -125,7 +125,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.HostTunnelOpenvpn">
-    update erm_host_tunnel_openvpn
+    update cmdb_host_tunnel_openvpn
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -161,7 +161,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.HostTunnelOpenvpn">
-    update erm_host_tunnel_openvpn
+    update cmdb_host_tunnel_openvpn
     set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},
       addr = #{addr,jdbcType=VARCHAR},

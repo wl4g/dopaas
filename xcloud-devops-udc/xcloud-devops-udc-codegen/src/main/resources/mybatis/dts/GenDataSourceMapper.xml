@@ -27,17 +27,17 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from dts_gen_datasource
+		from udc_gen_datasource
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from dts_gen_datasource
+		delete from udc_gen_datasource
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource">
-		INSERT INTO dts_gen_datasource (id, name, `type`,
+		INSERT INTO udc_gen_datasource (id, name, `type`,
 			host, port, `database`,
 			username, password, db_version,
 			remark, del_flag, create_date,
@@ -52,7 +52,7 @@
 	</insert>
 
 	<insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource">
-		INSERT INTO dts_gen_datasource
+		INSERT INTO udc_gen_datasource
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -150,7 +150,7 @@
 	</insert>
 
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource">
-		UPDATE dts_gen_datasource
+		UPDATE udc_gen_datasource
 		<set>
 			<if test="name != null">
 				name = #{name,jdbcType=VARCHAR},
@@ -199,7 +199,7 @@
 	</update>
 
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource">
-		UPDATE dts_gen_datasource
+		UPDATE udc_gen_datasource
 		set name = #{name,jdbcType=VARCHAR},
 		`type` = #{type,jdbcType=VARCHAR},
 		host = #{host,jdbcType=VARCHAR},
@@ -220,7 +220,7 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from dts_gen_datasource
+		from udc_gen_datasource
 		where del_flag!=1
 		<if test="name != null and name != ''">
 			AND `name` LIKE CONCAT('%','${name}','%')

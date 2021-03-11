@@ -25,27 +25,27 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from erm_dns_private_resolution
+    from cmdb_dns_private_resolution
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectByDomainId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_private_resolution
+    from cmdb_dns_private_resolution
     where domain_id = #{domainId,jdbcType=BIGINT}
   </select>
   <select id="selectByDomainIdAndHost" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_private_resolution
+    from cmdb_dns_private_resolution
     where domain_id = #{domainId,jdbcType=BIGINT} and host = #{host,jdbcType=VARCHAR} limit 1
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from erm_dns_private_resolution
+    delete from cmdb_dns_private_resolution
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateResolution" >
-    insert into erm_dns_private_resolution (id, host, resolve_type, 
+    insert into cmdb_dns_private_resolution (id, host, resolve_type, 
       line_isp, value, ttl, domain_id,
       priority, status, remark, 
       del_flag, create_date, create_by, 
@@ -57,7 +57,7 @@
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateResolution" >
-    insert into erm_dns_private_resolution
+    insert into cmdb_dns_private_resolution
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -154,7 +154,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateResolution" >
-    update erm_dns_private_resolution
+    update cmdb_dns_private_resolution
     <set >
       <if test="host != null" >
         host = #{host,jdbcType=VARCHAR},
@@ -202,7 +202,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateResolution" >
-    update erm_dns_private_resolution
+    update cmdb_dns_private_resolution
     set host = #{host,jdbcType=VARCHAR},
       resolve_type = #{resolveType,jdbcType=VARCHAR},
       line_isp = #{lineIsp,jdbcType=VARCHAR},
@@ -223,7 +223,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_private_resolution
+    from cmdb_dns_private_resolution
     where del_flag!=1
     <if test="host != null and host != ''" >
       AND `host` LIKE CONCAT('%','${host}','%')

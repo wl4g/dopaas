@@ -295,7 +295,7 @@
     select * from umc_alarm_config c
     left join umc_alarm_template t on t.id=c.template_id
     left join umc_alarm_config_collect cc on cc.config_id=c.id
-    left join erm_app_instance i on i.id=cc.collect_id
+    left join cmdb_app_instance i on i.id=cc.collect_id
     where c.template_id=#{templateId,jdbcType=BIGINT} and i.endpoint=#{collectAddr,jdbcType=VARCHAR} and c.del_flag!=1 and t.del_flag!=1
 </select>
 
@@ -332,7 +332,7 @@
     left join umc_alarm_rule r on t.id = r.template_id
     left join sys_contact_group_ref gr on gr.contact_group_id = c.contact_group_id
     left join sys_contact ct on gr.contact_id = ct.id
-    left join erm_app_instance i on c.collect_id = i.id
+    left join cmdb_app_instance i on c.collect_id = i.id
     left join app_host h on i.host_id=h.id where i.endpoint = #{endpoint,jdbcType=VARCHAR} and h.hostname = #{host,jdbcType=VARCHAR} and t.del_flag!=1 and c.del_flag!=1 and r.del_flag!=1
   </select>
 

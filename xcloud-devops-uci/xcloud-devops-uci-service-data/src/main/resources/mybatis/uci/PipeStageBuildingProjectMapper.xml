@@ -21,44 +21,44 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_step_building_project
+		from uci_pipe_step_building_project
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByBuildingId" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_step_building_project
+		from uci_pipe_step_building_project
 		where building_id = #{buildingId,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByPipeId" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List_bp" />,p.project_name
-		from ci_pipe_step_building_project bp
-		inner join ci_pipe_step_building b on b.id=bp.building_id
-		inner join ci_project p on p.id=bp.project_id
+		from uci_pipe_step_building_project bp
+		inner join uci_pipe_step_building b on b.id=bp.building_id
+		inner join uci_project p on p.id=bp.project_id
 		where b.pipe_id = #{pipeId,jdbcType=BIGINT}
 		order by bp.sort asc
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pipe_step_building_project
+		delete from uci_pipe_step_building_project
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<delete id="deleteByBuildingId" parameterType="java.lang.Long">
-		delete from ci_pipe_step_building_project
+		delete from uci_pipe_step_building_project
 		where building_id = #{buildingId,jdbcType=BIGINT}
 	</delete>
 
 	<delete id="deleteByPipeId" parameterType="java.lang.Long">
-		delete t1 from ci_pipe_step_building_project t1,ci_pipe_step_building t2 where t1.building_id=t2.id and
+		delete t1 from uci_pipe_step_building_project t1,uci_pipe_step_building t2 where t1.building_id=t2.id and
 		t2.pipe_id=#{pipeId,jdbcType=BIGINT};
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.PipeStageBuildingProject">
-		insert into ci_pipe_step_building_project (id, building_id, project_id,
+		insert into uci_pipe_step_building_project (id, building_id, project_id,
 		build_command, ref, enable, sort
 		)
 		values (#{id,jdbcType=BIGINT}, #{buildingId,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT},
@@ -67,7 +67,7 @@
 	</insert>
 
 	<insert id="insertBatch" parameterType="java.util.Map">
-		insert into ci_pipe_step_building_project (id, building_id, project_id,
+		insert into uci_pipe_step_building_project (id, building_id, project_id,
 		build_command, ref, enable, sort
 		)
 		VALUES
@@ -80,7 +80,7 @@
 	</insert>
 
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStageBuildingProject">
-		insert into ci_pipe_step_building_project
+		insert into uci_pipe_step_building_project
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -129,7 +129,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStageBuildingProject">
-		update ci_pipe_step_building_project
+		update uci_pipe_step_building_project
 		<set>
 			<if test="buildingId != null">
 				building_id = #{buildingId,jdbcType=BIGINT},
@@ -153,7 +153,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.PipeStageBuildingProject">
-		update ci_pipe_step_building_project
+		update uci_pipe_step_building_project
 		set building_id = #{buildingId,jdbcType=BIGINT},
 		project_id = #{projectId,jdbcType=BIGINT},
 		build_command = #{buildCommand,jdbcType=VARCHAR},

@@ -23,21 +23,21 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_ee_document_repo_version
+        FROM udm_ee_document_repo_version
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        DELETE FROM doc_ee_document_repo_version
+        DELETE FROM udm_ee_document_repo_version
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
     </delete>
 
     <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.udm.EeDocumentRepoVersion">
-        INSERT INTO doc_ee_document_repo_version
+        INSERT INTO udm_ee_document_repo_version
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -99,7 +99,7 @@
     </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.udm.EeDocumentRepoVersion">
-        UPDATE doc_ee_document_repo_version
+        UPDATE udm_ee_document_repo_version
         <set>
             <if test="id != null">
                 id = #{id, jdbcType=BIGINT},
@@ -135,7 +135,7 @@
     </update>
 
     <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.udm.EeDocumentRepoVersion">
-        UPDATE doc_ee_document_repo_version
+        UPDATE udm_ee_document_repo_version
         <set>
             id = #{id, jdbcType=BIGINT},
             repository_id = #{repositoryId, jdbcType=BIGINT},
@@ -155,7 +155,7 @@
     <select id="list" resultMap="BaseResultMap" parameterType="com.wl4g.devops.common.bean.udm.EeDocumentRepoVersion" >
         SELECT
             <include refid="Base_Column_List"/>
-        FROM doc_ee_document_repo_version
+        FROM udm_ee_document_repo_version
         <where>
                 AND del_flag != 1
             <if test="eeDocumentRepoVersion.repositoryId != null" >

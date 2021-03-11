@@ -22,14 +22,14 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from ci_analysis_history
+		from uci_analysis_history
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from ci_analysis_history
+		from uci_analysis_history
 		where 1=1
 		<if test="organizationCodes != null and organizationCodes.size() > 0">
 			and organization_code in
@@ -40,11 +40,11 @@
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_analysis_history
+		delete from uci_analysis_history
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.AnalysisHistory">
-		insert into ci_analysis_history (id, project_id, analyzer_kind, organization_code,
+		insert into uci_analysis_history (id, project_id, analyzer_kind, organization_code,
 		language, asset_version, asset_bytes,
 		asset_analysis_size, state, bug_collection_file,
 		create_date, update_date)
@@ -54,7 +54,7 @@
 		#{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.AnalysisHistory">
-		insert into ci_analysis_history
+		insert into uci_analysis_history
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -133,7 +133,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.AnalysisHistory">
-		update ci_analysis_history
+		update uci_analysis_history
 		<set>
 			<if test="projectId != null">
 				project_id = #{projectId,jdbcType=BIGINT},
@@ -172,7 +172,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.AnalysisHistory">
-		update ci_analysis_history
+		update uci_analysis_history
 		set project_id = #{projectId,jdbcType=BIGINT},
 		analyzer_kind = #{analyzerKind,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},

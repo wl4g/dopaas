@@ -30,15 +30,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from erm_host_netcard
+    from cmdb_host_netcard
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from erm_host_netcard
+    delete from cmdb_host_netcard
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.HostNetcard">
-    insert into erm_host_netcard (id, host_id, name, organization_code,
+    insert into cmdb_host_netcard (id, host_id, name, organization_code,
       status, vpn_tunnel_type, openvpn_tunnel_id, 
       pptp_tunnel_id, ipv4, ipv6, 
       hwaddr, netmask, broadcast, 
@@ -54,7 +54,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.HostNetcard">
-    insert into erm_host_netcard
+    insert into cmdb_host_netcard
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -175,7 +175,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.HostNetcard">
-    update erm_host_netcard
+    update cmdb_host_netcard
     <set>
       <if test="hostId != null">
         host_id = #{hostId,jdbcType=BIGINT},
@@ -235,7 +235,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.HostNetcard">
-    update erm_host_netcard
+    update cmdb_host_netcard
     set host_id = #{hostId,jdbcType=BIGINT},
       name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},
@@ -260,7 +260,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List"/>
-    from erm_host_netcard
+    from cmdb_host_netcard
     where del_flag!=1
     <if test="name != null and name != ''" >
       AND `name` LIKE CONCAT('%','${name}','%')

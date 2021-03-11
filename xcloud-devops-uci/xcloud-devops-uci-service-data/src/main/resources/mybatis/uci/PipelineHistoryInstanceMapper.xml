@@ -20,23 +20,23 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_history_instance
+		from uci_pipe_history_instance
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 	<select id="selectByPipeHistoryId" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List_hi" />
 		,i.name instance_name
-		from ci_pipe_history_instance hi
-		left join erm_app_instance i on i.id=hi.instance_id
+		from uci_pipe_history_instance hi
+		left join cmdb_app_instance i on i.id=hi.instance_id
 		where pipe_history_id = #{pipeHistoryId,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pipe_history_instance
+		delete from uci_pipe_history_instance
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.PipelineHistoryInstance">
-		insert into ci_pipe_history_instance (id, pipe_history_id, instance_id,
+		insert into uci_pipe_history_instance (id, pipe_history_id, instance_id,
 		status, create_date, cost_time
 		)
 		values (#{id,jdbcType=BIGINT}, #{pipeHistoryId,jdbcType=BIGINT}, #{instanceId,jdbcType=BIGINT},
@@ -44,7 +44,7 @@
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.PipelineHistoryInstance">
-		insert into ci_pipe_history_instance
+		insert into uci_pipe_history_instance
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -87,7 +87,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.PipelineHistoryInstance">
-		update ci_pipe_history_instance
+		update uci_pipe_history_instance
 		<set>
 			<if test="pipeHistoryId != null">
 				pipe_history_id = #{pipeHistoryId,jdbcType=BIGINT},
@@ -108,7 +108,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.PipelineHistoryInstance">
-		update ci_pipe_history_instance
+		update uci_pipe_history_instance
 		set pipe_history_id = #{pipeHistoryId,jdbcType=BIGINT},
 		instance_id = #{instanceId,jdbcType=BIGINT},
 		status = #{status,jdbcType=INTEGER},

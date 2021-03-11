@@ -25,15 +25,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from erm_idc
+    from cmdb_idc
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from erm_idc
+    delete from cmdb_idc
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.IdcBean">
-    insert into erm_idc (id, name, organization_code, area_code,
+    insert into cmdb_idc (id, name, organization_code, area_code,
       provider, loc_x, loc_y, 
       enable, adress, time_zone, 
       create_date, create_by, update_date, 
@@ -45,7 +45,7 @@
       #{updateBy,jdbcType=BIGINT}, #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.IdcBean">
-    insert into erm_idc
+    insert into cmdb_idc
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -142,7 +142,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.IdcBean">
-    update erm_idc
+    update cmdb_idc
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -190,7 +190,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.IdcBean">
-    update erm_idc
+    update cmdb_idc
     set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},
       area_code = #{areaCode,jdbcType=VARCHAR},
@@ -211,7 +211,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List"/>
-    from erm_idc
+    from cmdb_idc
     where del_flag!=1
     <if test="name != null and name != ''" >
       AND `name` LIKE CONCAT('%','${name}','%')

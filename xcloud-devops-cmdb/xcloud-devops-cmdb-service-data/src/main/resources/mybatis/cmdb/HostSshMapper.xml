@@ -12,29 +12,29 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from erm_host_ssh
+    from cmdb_host_ssh
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectByHostId" parameterType="java.lang.Long" resultType="java.lang.Long">
     select ssh_id
-    from erm_host_ssh
+    from cmdb_host_ssh
     where host_id = #{hostId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from erm_host_ssh
+    delete from cmdb_host_ssh
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByHostId" parameterType="java.lang.Long">
-    delete from erm_host_ssh
+    delete from cmdb_host_ssh
     where host_id = #{hostId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.HostSsh">
-    insert into erm_host_ssh (id, host_id, ssh_id)
+    insert into cmdb_host_ssh (id, host_id, ssh_id)
     values (#{id,jdbcType=BIGINT}, #{hostId,jdbcType=BIGINT}, #{sshId,jdbcType=BIGINT})
   </insert>
 
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into erm_host_ssh (id, host_id, ssh_id)
+    insert into cmdb_host_ssh (id, host_id, ssh_id)
     VALUES
     <foreach collection="hostSshes" item="hostSsh" separator=",">
       (#{hostSsh.id,jdbcType=BIGINT}, #{hostSsh.hostId,jdbcType=BIGINT}, #{hostSsh.sshId,jdbcType=BIGINT})
@@ -42,7 +42,7 @@
   </insert>
 
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.HostSsh">
-    insert into erm_host_ssh
+    insert into cmdb_host_ssh
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -67,7 +67,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.HostSsh">
-    update erm_host_ssh
+    update cmdb_host_ssh
     <set>
       <if test="hostId != null">
         host_id = #{hostId,jdbcType=BIGINT},
@@ -79,7 +79,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.HostSsh">
-    update erm_host_ssh
+    update cmdb_host_ssh
     set host_id = #{hostId,jdbcType=BIGINT},
       ssh_id = #{sshId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
