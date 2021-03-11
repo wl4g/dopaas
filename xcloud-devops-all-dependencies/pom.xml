@@ -18,52 +18,52 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-ci-service-starter-server</artifactId>
+			<artifactId>xcloud-devops-uci-service-starter-server</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-ci-service-starter-facade</artifactId>
+			<artifactId>xcloud-devops-uci-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-doc-service-starter-manager</artifactId>
+			<artifactId>xcloud-devops-udm-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-doc-service-starter-facade</artifactId>
+			<artifactId>xcloud-devops-udm-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-erm-service-starter-manager</artifactId>
+			<artifactId>xcloud-devops-cmdb-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-erm-service-starter-facade</artifactId>
+			<artifactId>xcloud-devops-cmdb-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-vcs-service-starter-manager</artifactId>
+			<artifactId>xcloud-devops-urm-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-vcs-service-starter-facade</artifactId>
+			<artifactId>xcloud-devops-urm-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-dts-service-starter-facade</artifactId>
+			<artifactId>xcloud-devops-udc-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-dts-service-starter-manager</artifactId>
+			<artifactId>xcloud-devops-udc-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

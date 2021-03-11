@@ -40,7 +40,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-erm-service-facade</artifactId>
+			<artifactId>xcloud-devops-cmdb-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

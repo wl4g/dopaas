@@ -19,6 +19,8 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
+import com.wl4g.component.rpc.feign.core.annotation.EnableFeignConsumers;
+
 import zipkin2.server.internal.EnableZipkinServer;
 import zipkin2.server.internal.ZipkinActuatorImporter;
 import zipkin2.server.internal.ZipkinModuleImporter;
@@ -34,6 +36,7 @@ import zipkin2.server.internal.banner.ZipkinBanner;
  * @see
  */
 @EnableZipkinServer
+@EnableFeignConsumers("com.wl4g.devops.umc.service")
 // @EnableAdminServer
 // @EnableDiscoveryClient
 @SpringBootApplication

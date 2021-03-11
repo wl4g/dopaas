@@ -93,16 +93,16 @@ npm run build # Production building
 > Default account password: root/wl4g.com
 
 
-### Submodule documentation
-- [CI](xcloud-devops-ci/README.md)                  Continuous integration deployment(Continuous iteration), CICD build flow, etc.
-- [UMC](xcloud-devops-umc/README.md)                Unified monitoring and operation center, providing real-time application health monitoring, real-time tracking, real-time alarms, etc.
-- [VCS](xcloud-devops-vcs/README.md)                Version control service, software source code, release package version management.
-- [SCM](xcloud-devops-scm/README.md)                Configure the service center to support online configuration of hot updates such as DataSource, RedisClient, etc.
-- [ERM](xcloud-devops-erm/README_CN.md)             Basic resource and environment management, such as elk log analysis, binary product repository, gateway, PrivateZone DNS resolution, etc
-- [ESM](xcloud-devops-esm/README.md)                Flexible scalability management, integrated K8s, Docker, management based on CPU, network traffic automatic or manual container scaling.
-- [DOC](xcloud-devops-doc/README.md)                API documentation service, online API documentation
+### Submodule documents
+- [UCI](xcloud-devops-uci/README.md)  Unified Continuous Integration Service(CI/CD)
+- [UMC](xcloud-devops-umc/README.md)  Unified Monitoring and Operation Center(applications healthing, tracking, alarming, ELK log analysis, etc)
+- [URM](xcloud-devops-urm/README.md)  Unified Repository Management(source repo/build repo/image repo)
+- [UCM](xcloud-devops-ucm/README.md)  Unified Config Management(Online configuration of hot updates such as dataSource, redisClient, etc)
+- [CMDB](xcloud-devops-cmdb/README.md)  Configuration Management Database(hosts, applications, secretKeys, auditing, DNS zone resoluting, etc)
+- [UDM](xcloud-devops-udm/README.md)  Unified Document Management(Online APIs/swagger documents, etc)
+- [UDC](xcloud-devops-dts/README.md)  Unified Developer Center(Devel tools, WebIDE, AutoGenerator, etc)
 
-### Other related app/component documents
+### Other related apps and components documents
 - [DJOB](xcloud-djob/README_CN.md)           Based on spring cloud distributed scheduling platform, the default is based on elastic-job enhanced implementation
 - [COSS](xcloud-coss/README_CN.md)           Based on the spring cloud composite object storage service, it supports NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
 - [SHELL](xcloud-shell/README.md)            Shell Cli, adding a hbase-shell-like console to your app
