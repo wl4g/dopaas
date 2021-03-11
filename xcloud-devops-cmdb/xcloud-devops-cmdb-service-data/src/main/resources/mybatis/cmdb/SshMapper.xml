@@ -23,21 +23,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from erm_ssh
+    from cmdb_ssh
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from erm_ssh
+    from cmdb_ssh
     where name = #{name,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from erm_ssh
+    delete from cmdb_ssh
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.SshBean">
-    insert into erm_ssh (id, name, organization_code, username,
+    insert into cmdb_ssh (id, name, organization_code, username,
       password, ssh_key, ssh_key_pub, 
       auth_type, create_by, create_date, 
       update_by, update_date, del_flag
@@ -49,7 +49,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.SshBean">
-    insert into erm_ssh
+    insert into cmdb_ssh
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -134,7 +134,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.SshBean">
-    update erm_ssh
+    update cmdb_ssh
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -176,7 +176,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.SshBean">
-    update erm_ssh
+    update cmdb_ssh
     set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},
       username = #{username,jdbcType=VARCHAR},
@@ -195,7 +195,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List"/>
-    from erm_ssh
+    from cmdb_ssh
     where del_flag!=1
     <if test="name != null and name != ''" >
       AND `name` LIKE CONCAT('%','${name}','%')

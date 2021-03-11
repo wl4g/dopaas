@@ -12,36 +12,36 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from erm_docker_instance
+    from cmdb_docker_instance
     where id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectHostIdByDockerId" parameterType="java.lang.Long" resultType="java.lang.Long">
     select
     host_id
-    from erm_docker_instance
+    from cmdb_docker_instance
     where docker_id = #{dockerId,jdbcType=BIGINT}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from erm_docker_instance
+    delete from cmdb_docker_instance
     where docker_id = #{dockerId,jdbcType=BIGINT}
   </delete>
 
   <delete id="deleteByDockerId" parameterType="java.lang.Long">
-    delete from erm_docker_instance
+    delete from cmdb_docker_instance
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.DockerInstance">
-    insert into erm_docker_instance (id, docker_id, host_id
+    insert into cmdb_docker_instance (id, docker_id, host_id
       )
     values (#{id,jdbcType=BIGINT}, #{dockerId,jdbcType=BIGINT}, #{hostId,jdbcType=BIGINT}
       )
   </insert>
 
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into erm_docker_instance (id, docker_id, host_id)
+    insert into cmdb_docker_instance (id, docker_id, host_id)
     VALUES
     <foreach collection="dockerInstances" item="dockerInstance" separator=",">
       (#{dockerInstance.id,jdbcType=BIGINT}, #{dockerInstance.dockerId,jdbcType=BIGINT}, #{dockerInstance.hostId,jdbcType=BIGINT})
@@ -49,7 +49,7 @@
   </insert>
 
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.DockerInstance">
-    insert into erm_docker_instance
+    insert into cmdb_docker_instance
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -74,7 +74,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.DockerInstance">
-    update erm_docker_instance
+    update cmdb_docker_instance
     <set>
       <if test="dockerId != null">
         docker_id = #{dockerId,jdbcType=BIGINT},
@@ -86,7 +86,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.DockerInstance">
-    update erm_docker_instance
+    update cmdb_docker_instance
     set docker_id = #{dockerId,jdbcType=BIGINT},
       host_id = #{hostId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}

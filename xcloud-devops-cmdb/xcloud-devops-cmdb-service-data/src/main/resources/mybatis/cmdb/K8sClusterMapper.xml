@@ -20,15 +20,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from erm_k8s_cluster
+    from cmdb_k8s_cluster
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from erm_k8s_cluster
+    delete from cmdb_k8s_cluster
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.K8sCluster">
-    insert into erm_k8s_cluster (id, name, organization_code, master_addr,
+    insert into cmdb_k8s_cluster (id, name, organization_code, master_addr,
       secondary_master_addr, create_date, create_by, 
       update_date, update_by, del_flag
       )
@@ -38,7 +38,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.K8sCluster">
-    insert into erm_k8s_cluster
+    insert into cmdb_k8s_cluster
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -105,7 +105,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.K8sCluster">
-    update erm_k8s_cluster
+    update cmdb_k8s_cluster
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -138,7 +138,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.K8sCluster">
-    update erm_k8s_cluster
+    update cmdb_k8s_cluster
     set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},
       master_addr = #{masterAddr,jdbcType=VARCHAR},
@@ -154,7 +154,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List"/>
-    from erm_k8s_cluster
+    from cmdb_k8s_cluster
     where del_flag!=1
     <if test="name != null and name != ''" >
       AND `name` LIKE CONCAT('%','${name}','%')

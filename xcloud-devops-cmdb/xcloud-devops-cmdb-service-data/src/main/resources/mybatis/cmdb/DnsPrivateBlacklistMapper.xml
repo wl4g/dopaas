@@ -17,21 +17,21 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from erm_dns_private_blacklist
+    from cmdb_dns_private_blacklist
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectByExpression" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_private_blacklist
+    from cmdb_dns_private_blacklist
     where del_flag!=1 and expression = #{expression,jdbcType=VARCHAR} limit 1
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from erm_dns_private_blacklist
+    delete from cmdb_dns_private_blacklist
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateBlacklist" >
-    insert into erm_dns_private_blacklist (id, expression, type, 
+    insert into cmdb_dns_private_blacklist (id, expression, type, 
       enable, remark, create_date, 
       create_by, del_flag)
     values (#{id,jdbcType=BIGINT}, #{expression,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
@@ -39,7 +39,7 @@
       #{createBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateBlacklist" >
-    insert into erm_dns_private_blacklist
+    insert into cmdb_dns_private_blacklist
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -94,7 +94,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateBlacklist" >
-    update erm_dns_private_blacklist
+    update cmdb_dns_private_blacklist
     <set >
       <if test="expression != null" >
         expression = #{expression,jdbcType=VARCHAR},
@@ -121,7 +121,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateBlacklist" >
-    update erm_dns_private_blacklist
+    update cmdb_dns_private_blacklist
     set expression = #{expression,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
@@ -135,7 +135,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_private_blacklist
+    from cmdb_dns_private_blacklist
     where del_flag!=1
     <if test="expression != null and expression != ''" >
       AND `expression` LIKE CONCAT('%','${expression}','%')

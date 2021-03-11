@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.udm.Share">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="share_code" jdbcType="VARCHAR" property="shareCode" />
-    <result column="doc_code" jdbcType="VARCHAR" property="docCode" />
+    <result column="udm_code" jdbcType="VARCHAR" property="docCode" />
     <result column="share_type" jdbcType="INTEGER" property="shareType" />
     <result column="passwd" jdbcType="VARCHAR" property="passwd" />
     <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
@@ -16,37 +16,37 @@
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, share_code, doc_code, share_type, passwd, expire_time, expire_type, create_date, 
+    id, share_code, udm_code, share_type, passwd, expire_time, expire_type, create_date, 
     create_by, update_date, update_by, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from doc_share
+    from udm_share
     where id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectByShareCode" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from doc_share
+    from udm_share
     where share_code = #{shareCode,jdbcType=VARCHAR} and del_flag!=1 limit 1
   </select>
 
   <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from doc_share
+    from udm_share
     where del_flag != 1
     order by create_date desc
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from doc_share
+    delete from udm_share
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.udm.Share">
-    insert into doc_share (id, share_code, doc_code, 
+    insert into udm_share (id, share_code, udm_code, 
       share_type, passwd, expire_time, 
       expire_type, create_date, create_by, 
       update_date, update_by, del_flag
@@ -58,7 +58,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.udm.Share" useGeneratedKeys="true" keyProperty="id">
-    insert into doc_share
+    insert into udm_share
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -67,7 +67,7 @@
         share_code,
       </if>
       <if test="docCode != null">
-        doc_code,
+        udm_code,
       </if>
       <if test="shareType != null">
         share_type,
@@ -137,13 +137,13 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.udm.Share">
-    update doc_share
+    update udm_share
     <set>
       <if test="shareCode != null">
         share_code = #{shareCode,jdbcType=VARCHAR},
       </if>
       <if test="docCode != null">
-        doc_code = #{docCode,jdbcType=VARCHAR},
+        udm_code = #{docCode,jdbcType=VARCHAR},
       </if>
       <if test="shareType != null">
         share_type = #{shareType,jdbcType=INTEGER},
@@ -176,9 +176,9 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.udm.Share">
-    update doc_share
+    update udm_share
     set share_code = #{shareCode,jdbcType=VARCHAR},
-      doc_code = #{docCode,jdbcType=VARCHAR},
+      udm_code = #{docCode,jdbcType=VARCHAR},
       share_type = #{shareType,jdbcType=INTEGER},
       passwd = #{passwd,jdbcType=VARCHAR},
       expire_time = #{expireTime,jdbcType=TIMESTAMP},

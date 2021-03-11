@@ -56,25 +56,25 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List_i" />,h.hostname,c.endpoint, c.deploy_type,<include refid="Docker_Column_List" />
-    from erm_app_instance i
-    left join erm_host h on h.id = i.host_id
-    left join erm_app_cluster c on c.id=i.cluster_id
-    left join erm_docker_cluster d on d.id = i.docker_id
+    from cmdb_app_instance i
+    left join cmdb_host h on h.id = i.host_id
+    left join cmdb_app_cluster c on c.id=i.cluster_id
+    left join cmdb_docker_cluster d on d.id = i.docker_id
     where i.id = #{id,jdbcType=BIGINT}
   </select>
 
   <select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />
-    from erm_app_instance
+    from cmdb_app_instance
     where cluster_id = #{clusterId,jdbcType=BIGINT} and del_flag!=1
   </select>
 
   <select id="selectByClusterIdAndEnvType" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
     <include refid="Base_Column_List_i" />,h.hostname
-    from erm_app_instance i
-    left join erm_host h on h.id = i.host_id
+    from cmdb_app_instance i
+    left join cmdb_host h on h.id = i.host_id
     where i.cluster_id = #{clusterId,jdbcType=BIGINT}
     and i.env_type = #{envType,jdbcType=VARCHAR}
     and i.del_flag!=1
@@ -83,8 +83,8 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List_i" />,c.name cluster_name
-    from erm_app_instance i
-    left join erm_app_cluster c on i.cluster_id=c.id
+    from cmdb_app_instance i
+    left join cmdb_app_cluster c on i.cluster_id=c.id
     where i.del_flag != 1
     <if test="name != null and name != ''" >
       AND i.name LIKE CONCAT('%','${name}','%')
@@ -106,16 +106,16 @@
   <select id="countByClusterId" resultType="java.lang.Long" parameterType="java.lang.Long" >
     select
     count(1)
-    from erm_app_instance
+    from cmdb_app_instance
     where cluster_id = #{id,jdbcType=BIGINT} and del_flag!=1
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from erm_app_instance
+    delete from cmdb_app_instance
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.AppInstance" >
-    insert into erm_app_instance (id, name,organization_code, cluster_id, version_id,
+    insert into cmdb_app_instance (id, name,organization_code, cluster_id, version_id,
       host_id, k8s_id, docker_id, coss_ref_bucket, env_type, enable,
       remark,
       create_by, create_date, update_by,
@@ -127,7 +127,7 @@
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.AppInstance" >
-    insert into erm_app_instance
+    insert into cmdb_app_instance
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -236,7 +236,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.AppInstance" >
-    update erm_app_instance
+    update cmdb_app_instance
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -290,7 +290,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.AppInstance" >
-    update erm_app_instance
+    update cmdb_app_instance
     set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},
       cluster_id = #{clusterId,jdbcType=BIGINT},

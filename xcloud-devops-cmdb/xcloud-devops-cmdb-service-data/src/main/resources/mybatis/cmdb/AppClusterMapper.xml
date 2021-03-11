@@ -52,18 +52,18 @@
 		<include refid="Base_Column_List_c" />
 		,
 		<include refid="Ssh_Column_List" />
-		from erm_app_cluster c
-		left join erm_ssh s on s.id = c.ssh_id
+		from cmdb_app_cluster c
+		left join cmdb_ssh s on s.id = c.ssh_id
 		where c.id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from erm_app_cluster
+		delete from cmdb_app_cluster
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.AppCluster">
-		insert into erm_app_cluster (id, name, organization_code, endpoint,
+		insert into cmdb_app_cluster (id, name, organization_code, endpoint,
 		type, enable, ssh_id,
 		deploy_type, remark,
 		create_by, create_date, update_by,
@@ -80,7 +80,7 @@
 
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.AppCluster" useGeneratedKeys="true"
 		keyProperty="id">
-		insert into erm_app_cluster
+		insert into cmdb_app_cluster
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -171,7 +171,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.AppCluster">
-		update erm_app_cluster
+		update cmdb_app_cluster
 		<set>
 			<if test="name != null">
 				name = #{name,jdbcType=VARCHAR},
@@ -216,7 +216,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.AppCluster">
-		update erm_app_cluster
+		update cmdb_app_cluster
 		set name = #{name,jdbcType=VARCHAR},
 		organization_code
 		= #{organizationCode,jdbcType=VARCHAR},
@@ -241,7 +241,7 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from erm_app_cluster
+		from cmdb_app_cluster
 		where del_flag!=1
 		<if test="clusterName != null and clusterName != ''">
 			AND name LIKE CONCAT('%','${clusterName}','%')

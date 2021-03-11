@@ -28,14 +28,14 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from ci_vcs
+		from uci_vcs
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from ci_vcs
+		from uci_vcs
 		where del_flag != 1
 		<if test="name != null and name != '' ">
 			AND name LIKE CONCAT('%','${name}','%')
@@ -55,11 +55,11 @@
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_vcs
+		delete from uci_vcs
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.Vcs">
-		insert into ci_vcs (id,name,organization_code, provider_kind, auth_type,
+		insert into uci_vcs (id,name,organization_code, provider_kind, auth_type,
 		base_uri, ssh_key_pub, ssh_key,
 		access_token, username, password,
 		remark, enable, del_flag,
@@ -74,7 +74,7 @@
 		#{updateBy,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.Vcs" useGeneratedKeys="true" keyProperty="id">
-		insert into ci_vcs
+		insert into uci_vcs
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -189,7 +189,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.Vcs">
-		update ci_vcs
+		update uci_vcs
 		<set>
 			<if test="name != null">
 				name = #{name,jdbcType=VARCHAR},
@@ -246,7 +246,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.Vcs">
-		update ci_vcs
+		update uci_vcs
 		set name = #{name,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},
 		provider_kind = #{providerKind,jdbcType=VARCHAR},

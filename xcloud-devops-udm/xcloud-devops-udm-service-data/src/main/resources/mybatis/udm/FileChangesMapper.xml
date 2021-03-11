@@ -4,7 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.udm.FileChanges">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
-		<result column="doc_code" jdbcType="VARCHAR" property="docCode" />
+		<result column="udm_code" jdbcType="VARCHAR" property="docCode" />
 		<result column="type" jdbcType="VARCHAR" property="type" />
 		<result column="action" jdbcType="VARCHAR" property="action" />
 		<result column="lang" jdbcType="VARCHAR" property="lang" />
@@ -20,12 +20,12 @@
 		<result column="del_flag" jdbcType="INTEGER" property="delFlag" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, name, doc_code, type, action, lang, content, sha, description, is_latest, create_date,
+		id, name, udm_code, type, action, lang, content, sha, description, is_latest, create_date,
 		create_by, update_date,
 		update_by, del_flag
 	</sql>
 	<sql id="Base_Column_List_fc">
-		fc.id, fc.name, fc.doc_code, fc.type, fc.action, fc.lang, fc.content, fc.sha, fc.description, fc.is_latest,
+		fc.id, fc.name, fc.udm_code, fc.type, fc.action, fc.lang, fc.content, fc.sha, fc.description, fc.is_latest,
 		fc.create_date,
 		fc.create_by, fc.update_date, fc.update_by, fc.del_flag
 	</sql>
@@ -33,7 +33,7 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from doc_file_changes
+		from udm_file_changes
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
@@ -41,24 +41,24 @@
 		select
 		<include refid="Base_Column_List" />
 		,(select user_name from sys_user where id=fc.create_by) create_by_str
-		from doc_file_changes fc
+		from udm_file_changes fc
 		where fc.del_flag!=1 and
-		fc.doc_code = #{docCode,jdbcType=INTEGER}
+		fc.udm_code = #{docCode,jdbcType=INTEGER}
 		order by fc.update_date desc
 	</select>
 
 	<select id="selectLastByDocCode" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from doc_file_changes
-		where del_flag!=1 and is_latest=1 and doc_code = #{docCode,jdbcType=INTEGER}
+		from udm_file_changes
+		where del_flag!=1 and is_latest=1 and udm_code = #{docCode,jdbcType=INTEGER}
 		limit 1
 	</select>
 
 	<select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List_fc" />
-		from doc_file_changes fc
+		from udm_file_changes fc
 		where fc.del_flag!=1 and fc.is_latest=1
 		<if test="name != null and name != ''">
 			AND fc.name LIKE CONCAT('%','${name}','%')
@@ -67,17 +67,17 @@
 			AND fc.lang = #{lang,jdbcType=VARCHAR}
 		</if>
 		<if test="labelId != null and labelId != ''">
-			AND EXISTS (select 1 from doc_file_label fl where fc.id=fl.file_id and fl.label_id=#{labelId,jdbcType=BIGINT})
+			AND EXISTS (select 1 from udm_file_label fl where fc.id=fl.file_id and fl.label_id=#{labelId,jdbcType=BIGINT})
 		</if>
 		order by fc.update_date desc
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from doc_file_changes
+		delete from udm_file_changes
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.udm.FileChanges">
-		insert into doc_file_changes (id, name, doc_code,
+		insert into udm_file_changes (id, name, udm_code,
 		type, action, lang,
 		content, sha,
 		description,
@@ -96,7 +96,7 @@
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.udm.FileChanges" useGeneratedKeys="true"
 		keyProperty="id">
-		insert into doc_file_changes
+		insert into udm_file_changes
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -105,7 +105,7 @@
 				name,
 			</if>
 			<if test="docCode != null">
-				doc_code,
+				udm_code,
 			</if>
 			<if test="type != null">
 				type,
@@ -193,13 +193,13 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.udm.FileChanges">
-		update doc_file_changes
+		update udm_file_changes
 		<set>
 			<if test="name != null">
 				name = #{name,jdbcType=VARCHAR},
 			</if>
 			<if test="docCode != null">
-				doc_code = #{docCode,jdbcType=VARCHAR},
+				udm_code = #{docCode,jdbcType=VARCHAR},
 			</if>
 			<if test="type != null">
 				type = #{type,jdbcType=VARCHAR},
@@ -241,9 +241,9 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.udm.FileChanges">
-		update doc_file_changes
+		update udm_file_changes
 		set name = #{name,jdbcType=VARCHAR},
-		doc_code =
+		udm_code =
 		#{docCode,jdbcType=VARCHAR},
 		type = #{type,jdbcType=VARCHAR},
 		action = #{action,jdbcType=VARCHAR},
@@ -262,9 +262,9 @@
 	</update>
 
 	<update id="updateIsLatest" parameterType="java.lang.String">
-		update doc_file_changes
+		update udm_file_changes
 		set is_latest = 0
-		where doc_code =
+		where udm_code =
 		#{docCode,jdbcType=VARCHAR}
 	</update>
 

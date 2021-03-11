@@ -19,21 +19,21 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from ci_orchestration_history
+		from uci_orchestration_history
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 	<select id="selectByRunId" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List" />
-		from ci_orchestration_history
+		from uci_orchestration_history
 		where run_id = #{runId,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_orchestration_history
+		delete from uci_orchestration_history
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.OrchestrationHistory">
-		insert into ci_orchestration_history (id, run_id, status,
+		insert into uci_orchestration_history (id, run_id, status,
 		info, create_date, create_by,
 		update_date, update_by, organization_code, cost_time
 		)
@@ -43,7 +43,7 @@
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.OrchestrationHistory">
-		insert into ci_orchestration_history
+		insert into uci_orchestration_history
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -110,7 +110,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.OrchestrationHistory">
-		update ci_orchestration_history
+		update uci_orchestration_history
 		<set>
 			<if test="runId != null">
 				run_id = #{runId,jdbcType=VARCHAR},
@@ -143,7 +143,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.OrchestrationHistory">
-		update ci_orchestration_history
+		update uci_orchestration_history
 		set run_id = #{runId,jdbcType=VARCHAR},
 		status = #{status,jdbcType=INTEGER},
 		info = #{info,jdbcType=VARCHAR},
@@ -159,7 +159,7 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from ci_orchestration_history
+		from uci_orchestration_history
 		where 1=1
 		<if test="runId != null and runId != ''">
 			AND run_id LIKE CONCAT('%','${runId}','%')

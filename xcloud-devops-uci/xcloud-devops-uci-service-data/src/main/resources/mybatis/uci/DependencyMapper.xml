@@ -21,15 +21,15 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from ci_dependency
+		from uci_dependency
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_dependency
+		delete from uci_dependency
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.Dependency">
-		insert into ci_dependency (id, project_id, dependent_id,
+		insert into uci_dependency (id, project_id, dependent_id,
 		del_flag, create_date,
 		create_by, update_date, update_by
 		)
@@ -39,7 +39,7 @@
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.Dependency">
-		insert into ci_dependency
+		insert into uci_dependency
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -94,7 +94,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.Dependency">
-		update ci_dependency
+		update uci_dependency
 		<set>
 			<if test="projectId != null">
 				project_id = #{projectId,jdbcType=BIGINT},
@@ -121,7 +121,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.Dependency">
-		update ci_dependency
+		update uci_dependency
 		set project_id = #{projectId,jdbcType=BIGINT},
 		dependent_id = #{dependentId,jdbcType=BIGINT},
 		del_flag = #{delFlag,jdbcType=INTEGER},
@@ -135,16 +135,16 @@
 	<select id="getParentsByProjectId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from ci_dependency
+		from uci_dependency
 		where project_id = #{projectId,jdbcType=BIGINT}
 	</select>
 
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		d.*,p.project_name,pp.project_name parent_name
-		from ci_dependency d
-		left join ci_project p on d.project_id = p.id
-		left join ci_project pp on d.dependent_id = pp.id
+		from uci_dependency d
+		left join uci_project p on d.project_id = p.id
+		left join uci_project pp on d.dependent_id = pp.id
 		where d.del_flag!=1
 		<if test="projectName != null and projectName != ''">
 			AND p.project_name LIKE CONCAT('%','${projectName}','%')
@@ -152,7 +152,7 @@
 	</select>
 
 	<delete id="deleteByProjectId" parameterType="java.lang.Long">
-		delete from ci_dependency
+		delete from uci_dependency
 		where project_id = #{projectId,jdbcType=BIGINT}
 	</delete>
 </mapper>

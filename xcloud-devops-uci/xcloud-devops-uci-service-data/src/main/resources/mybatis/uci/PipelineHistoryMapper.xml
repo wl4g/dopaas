@@ -40,17 +40,17 @@
 		select
 		<include refid="Base_Column_List_h" />
 		,p.pipe_name,c.name cluster_name
-		from ci_pipe_history h
-		left join ci_pipeline p on p.id=h.pipe_id
-		left join erm_app_cluster c on p.cluster_id=c.id
+		from uci_pipe_history h
+		left join uci_pipeline p on p.id=h.pipe_id
+		left join cmdb_app_cluster c on p.cluster_id=c.id
 		where h.id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pipe_history
+		delete from uci_pipe_history
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.PipelineHistory">
-		insert into ci_pipe_history (id, pipe_id, provider_kind, organization_code,
+		insert into uci_pipe_history (id, pipe_id, provider_kind, organization_code,
 		status, sha_local, ref_id,
 		cost_time, track_type, track_id,
 		annex, remark, create_date,
@@ -64,7 +64,7 @@
 		#{delFlag,jdbcType=INTEGER}, #{orchestrationType,jdbcType=INTEGER}, #{orchestrationId,jdbcType=BIGINT})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.PipelineHistory">
-		insert into ci_pipe_history
+		insert into uci_pipe_history
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -185,7 +185,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.PipelineHistory">
-		update ci_pipe_history
+		update uci_pipe_history
 		<set>
 			<if test="pipeId != null">
 				pipe_id = #{pipeId,jdbcType=BIGINT},
@@ -245,7 +245,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.PipelineHistory">
-		update ci_pipe_history
+		update uci_pipe_history
 		set pipe_id = #{pipeId,jdbcType=BIGINT},
 		provider_kind = #{providerKind,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},
@@ -271,9 +271,9 @@
 		select
 		<include refid="Base_Column_List_h" />
 		,p.pipe_name,c.name cluster_name,u.user_name create_by_name, p.environment
-		from ci_pipe_history h
-		left join ci_pipeline p on p.id=h.pipe_id
-		left join erm_app_cluster c on p.cluster_id=c.id
+		from uci_pipe_history h
+		left join uci_pipeline p on p.id=h.pipe_id
+		left join cmdb_app_cluster c on p.cluster_id=c.id
 		left join sys_user u on u.id = h.create_by
 		where h.del_flag!=1
 		<if test="pipeName != null and pipeName != ''">
@@ -316,7 +316,7 @@
 	</select>
 
 	<update id="updateStatus" parameterType="java.lang.Long">
-    update ci_pipe_history set status=4
+    update uci_pipe_history set status=4
     where status in(0,1)
     and TIMESTAMPDIFF(second ,create_date,now())&gt;#{time,jdbcType=BIGINT};
 	</update>

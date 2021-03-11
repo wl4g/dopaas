@@ -21,15 +21,15 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from erm_docker_repository
+    from cmdb_docker_repository
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from erm_docker_repository
+    delete from cmdb_docker_repository
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.DockerRepository" >
-    insert into erm_docker_repository (id, name, registry_address, organization_code,
+    insert into cmdb_docker_repository (id, name, registry_address, organization_code,
       auth_config, remark, create_date, 
       create_by, update_date, update_by, 
       del_flag)
@@ -39,7 +39,7 @@
       #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.DockerRepository" >
-    insert into erm_docker_repository
+    insert into cmdb_docker_repository
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -112,7 +112,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.DockerRepository" >
-    update erm_docker_repository
+    update cmdb_docker_repository
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -148,7 +148,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.DockerRepository" >
-    update erm_docker_repository
+    update cmdb_docker_repository
     set name = #{name,jdbcType=VARCHAR},
       registry_address = #{registryAddress,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},
@@ -165,7 +165,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List"/>
-    from erm_docker_repository
+    from cmdb_docker_repository
     where del_flag!=1
     <if test="name != null and name != ''" >
       AND `name` LIKE CONCAT('%','${name}','%')

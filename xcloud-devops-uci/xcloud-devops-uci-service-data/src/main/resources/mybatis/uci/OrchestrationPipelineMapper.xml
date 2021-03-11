@@ -13,29 +13,29 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_orchestration_pipeline
+		from uci_orchestration_pipeline
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByOrchestrationId" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_orchestration_pipeline
+		from uci_orchestration_pipeline
 		where orchestration_id = #{orchestrationId,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_orchestration_pipeline
+		delete from uci_orchestration_pipeline
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.OrchestrationPipeline">
-		insert into ci_orchestration_pipeline (id, orchestration_id, pipeline_id,
+		insert into uci_orchestration_pipeline (id, orchestration_id, pipeline_id,
 		priority)
 		values (#{id,jdbcType=BIGINT}, #{orchestrationId,jdbcType=BIGINT}, #{pipelineId,jdbcType=BIGINT},
 		#{priority,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.OrchestrationPipeline">
-		insert into ci_orchestration_pipeline
+		insert into uci_orchestration_pipeline
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -66,7 +66,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.OrchestrationPipeline">
-		update ci_orchestration_pipeline
+		update uci_orchestration_pipeline
 		<set>
 			<if test="orchestrationId != null">
 				orchestration_id = #{orchestrationId,jdbcType=BIGINT},
@@ -81,7 +81,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.OrchestrationPipeline">
-		update ci_orchestration_pipeline
+		update uci_orchestration_pipeline
 		set orchestration_id = #{orchestrationId,jdbcType=BIGINT},
 		pipeline_id = #{pipelineId,jdbcType=BIGINT},
 		priority = #{priority,jdbcType=INTEGER}

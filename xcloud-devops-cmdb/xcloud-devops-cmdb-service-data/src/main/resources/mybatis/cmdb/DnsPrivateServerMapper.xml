@@ -14,21 +14,21 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from erm_dns_private_server
+    from cmdb_dns_private_server
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from erm_dns_private_server
+    delete from cmdb_dns_private_server
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateServer" >
-    insert into erm_dns_private_server (id, name, kind, 
+    insert into cmdb_dns_private_server (id, name, kind, 
       dns_server1, dns_server2)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{kind,jdbcType=VARCHAR}, 
       #{dnsServer1,jdbcType=VARCHAR}, #{dnsServer2,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateServer" >
-    insert into erm_dns_private_server
+    insert into cmdb_dns_private_server
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -65,7 +65,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateServer" >
-    update erm_dns_private_server
+    update cmdb_dns_private_server
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -83,7 +83,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateServer" >
-    update erm_dns_private_server
+    update cmdb_dns_private_server
     set name = #{name,jdbcType=VARCHAR},
       kind = #{kind,jdbcType=VARCHAR},
       dns_server1 = #{dnsServer1,jdbcType=VARCHAR},
@@ -94,7 +94,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_private_server
+    from cmdb_dns_private_server
     where 1=1
     <if test="name != null and name != ''" >
       AND `name` LIKE CONCAT('%','${name}','%')

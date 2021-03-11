@@ -41,8 +41,8 @@
 		<include refid="Base_Column_List_o" />
 		,
 		<include refid="Orchestration_Pipeline_Column_List" />
-		from ci_orchestration o
-		left join ci_orchestration_pipeline op on op.orchestration_id=o.id
+		from uci_orchestration o
+		left join uci_orchestration_pipeline op on op.orchestration_id=o.id
 		where o.id = #{id,jdbcType=BIGINT}
 		order by op.priority
 	</select>
@@ -51,7 +51,7 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from ci_orchestration
+		from uci_orchestration
 		where del_flag!=1
 		<if test="name != null and name != ''">
 			AND name LIKE CONCAT('%','${name}','%')
@@ -66,11 +66,11 @@
 
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_orchestration
+		delete from uci_orchestration
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.Orchestration">
-		insert into ci_orchestration (id, name, organization_code, status,
+		insert into uci_orchestration (id, name, organization_code, status,
 		type, remark, del_flag,
 		create_date, create_by, update_date,
 		update_by)
@@ -80,7 +80,7 @@
 		#{updateBy,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.Orchestration">
-		insert into ci_orchestration
+		insert into uci_orchestration
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -153,7 +153,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.Orchestration">
-		update ci_orchestration
+		update uci_orchestration
 		<set>
 			<if test="name != null">
 				name = #{name,jdbcType=VARCHAR},
@@ -189,7 +189,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.Orchestration">
-		update ci_orchestration
+		update uci_orchestration
 		set name = #{name,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},
 		status = #{status,jdbcType=INTEGER},

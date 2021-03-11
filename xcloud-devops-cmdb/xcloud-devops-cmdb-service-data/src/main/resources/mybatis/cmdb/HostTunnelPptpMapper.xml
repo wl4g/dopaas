@@ -21,13 +21,13 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from erm_host_tunnel_pptp
+    from cmdb_host_tunnel_pptp
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
     <include refid="Base_Column_List" />
-    from erm_host_tunnel_pptp
+    from cmdb_host_tunnel_pptp
     <if test="organizationCodes != null and organizationCodes.size() > 0">
       and organization_code in
       <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
@@ -36,11 +36,11 @@
     </if>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from erm_host_tunnel_pptp
+    delete from cmdb_host_tunnel_pptp
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.HostTunnelPptp">
-    insert into erm_host_tunnel_pptp (id, name, organization_code, addr,
+    insert into cmdb_host_tunnel_pptp (id, name, organization_code, addr,
       username, password, create_date, 
       create_by, update_date, update_by, 
       del_flag)
@@ -50,7 +50,7 @@
       #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.HostTunnelPptp">
-    insert into erm_host_tunnel_pptp
+    insert into cmdb_host_tunnel_pptp
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -123,7 +123,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.HostTunnelPptp">
-    update erm_host_tunnel_pptp
+    update cmdb_host_tunnel_pptp
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -159,7 +159,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.HostTunnelPptp">
-    update erm_host_tunnel_pptp
+    update cmdb_host_tunnel_pptp
     set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},
       addr = #{addr,jdbcType=VARCHAR},

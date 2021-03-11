@@ -25,15 +25,15 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_history_pcm
+		from uci_pipe_history_pcm
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pipe_history_pcm
+		delete from uci_pipe_history_pcm
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.PipeHistoryPcm">
-		insert into ci_pipe_history_pcm (id, enable, pipe_id,
+		insert into uci_pipe_history_pcm (id, enable, pipe_id,
 		pcm_id, x_project_id, x_tracker, x_parent_issue_id,
 		x_status, x_subject, x_description,
 		x_priority, x_assign_to, x_start_date,
@@ -45,7 +45,7 @@
 		#{xExpectedTime,jdbcType=BIGINT}, #{xCustomFields,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.PipeHistoryPcm">
-		insert into ci_pipe_history_pcm
+		insert into uci_pipe_history_pcm
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -142,7 +142,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.PipeHistoryPcm">
-		update ci_pipe_history_pcm
+		update uci_pipe_history_pcm
 		<set>
 			<if test="enable != null">
 				enable = #{enable,jdbcType=INTEGER},
@@ -190,7 +190,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.PipeHistoryPcm">
-		update ci_pipe_history_pcm
+		update uci_pipe_history_pcm
 		set enable = #{enable,jdbcType=INTEGER},
 		pipe_id = #{pipeId,jdbcType=BIGINT},
 		pcm_id = #{pcmId,jdbcType=BIGINT},

@@ -22,21 +22,21 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from erm_dns_private_zone
+    from cmdb_dns_private_zone
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectByZone" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_private_zone
+    from cmdb_dns_private_zone
     where zone = #{zone,jdbcType=VARCHAR} limit 1
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from erm_dns_private_zone
+    delete from cmdb_dns_private_zone
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateZone" >
-    insert into erm_dns_private_zone (id, zone, dns_server_id, 
+    insert into cmdb_dns_private_zone (id, zone, dns_server_id, 
       status, register_date, due_date, 
       remark, create_by, create_date, 
       update_by, update_date, del_flag
@@ -48,7 +48,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateZone" >
-    insert into erm_dns_private_zone
+    insert into cmdb_dns_private_zone
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -127,7 +127,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateZone" >
-    update erm_dns_private_zone
+    update cmdb_dns_private_zone
     <set >
       <if test="zone != null" >
         zone = #{zone,jdbcType=VARCHAR},
@@ -166,7 +166,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPrivateZone" >
-    update erm_dns_private_zone
+    update cmdb_dns_private_zone
     set zone = #{zone,jdbcType=VARCHAR},
       dns_server_id = #{dnsServerId,jdbcType=BIGINT},
       status = #{status,jdbcType=VARCHAR},
@@ -184,7 +184,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_private_zone
+    from cmdb_dns_private_zone
     where del_flag!=1
     <if test="zone != null and zone != ''" >
       AND `zone` LIKE CONCAT('%','${zone}','%')

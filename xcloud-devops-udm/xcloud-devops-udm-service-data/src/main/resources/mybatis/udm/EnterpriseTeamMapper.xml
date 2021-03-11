@@ -23,21 +23,21 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_enterprise_team
+        FROM udm_enterprise_team
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        DELETE FROM doc_enterprise_team
+        DELETE FROM udm_enterprise_team
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
     </delete>
 
     <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseTeam">
-        INSERT INTO doc_enterprise_team
+        INSERT INTO udm_enterprise_team
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -99,7 +99,7 @@
     </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseTeam">
-        UPDATE doc_enterprise_team
+        UPDATE udm_enterprise_team
         <set>
             <if test="id != null">
                 id = #{id, jdbcType=BIGINT},
@@ -135,7 +135,7 @@
     </update>
 
     <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseTeam">
-        UPDATE doc_enterprise_team
+        UPDATE udm_enterprise_team
         <set>
             id = #{id, jdbcType=BIGINT},
             name = #{name, jdbcType=VARCHAR},
@@ -155,7 +155,7 @@
     <select id="list" resultMap="BaseResultMap" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseTeam" >
         SELECT
             <include refid="Base_Column_List"/>
-        FROM doc_enterprise_team
+        FROM udm_enterprise_team
         <where>
                 AND del_flag != 1
             <if test="enterpriseTeam.name != null and enterpriseTeam.name != ''" >

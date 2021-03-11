@@ -12,29 +12,29 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from doc_file_label
+    from udm_file_label
     where id = #{id,jdbcType=BIGINT}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from doc_file_label
+    delete from udm_file_label
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
   <delete id="deleteByFileId" parameterType="java.lang.Long">
-    delete from doc_file_label
+    delete from udm_file_label
     where file_id = #{fileId,jdbcType=BIGINT}
   </delete>
 
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.udm.FileLabel">
-    insert into doc_file_label (id, label_id, file_id
+    insert into udm_file_label (id, label_id, file_id
       )
     values (#{id,jdbcType=BIGINT}, #{labelId,jdbcType=BIGINT}, #{fileId,jdbcType=BIGINT}
       )
   </insert>
 
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into doc_file_label (id, label_id, file_id)
+    insert into udm_file_label (id, label_id, file_id)
     VALUES
     <foreach collection="fileLabels" item="fileLabel" separator=",">
       (#{fileLabel.id,jdbcType=BIGINT}, #{fileLabel.labelId,jdbcType=BIGINT}, #{fileLabel.fileId,jdbcType=BIGINT})
@@ -42,7 +42,7 @@
   </insert>
 
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.udm.FileLabel" useGeneratedKeys="true" keyProperty="id">
-    insert into doc_file_label
+    insert into udm_file_label
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -67,7 +67,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.udm.FileLabel">
-    update doc_file_label
+    update udm_file_label
     <set>
       <if test="labelId != null">
         label_id = #{labelId,jdbcType=BIGINT},
@@ -79,7 +79,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.udm.FileLabel">
-    update doc_file_label
+    update udm_file_label
     set label_id = #{labelId,jdbcType=BIGINT},
       file_id = #{fileId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}

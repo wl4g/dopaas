@@ -12,21 +12,21 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from erm_dns_public_zone
+    from cmdb_dns_public_zone
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from erm_dns_public_zone
+    delete from cmdb_dns_public_zone
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPublicZone" >
-    insert into erm_dns_public_zone (id, `zone`, dns_kind
+    insert into cmdb_dns_public_zone (id, `zone`, dns_kind
       )
     values (#{id,jdbcType=BIGINT}, #{zone,jdbcType=VARCHAR}, #{dnsKind,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPublicZone" >
-    insert into erm_dns_public_zone
+    insert into cmdb_dns_public_zone
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -51,7 +51,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPublicZone" >
-    update erm_dns_public_zone
+    update cmdb_dns_public_zone
     <set >
       <if test="zone != null" >
         `zone` = #{zone,jdbcType=VARCHAR},
@@ -63,7 +63,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.cmdb.DnsPublicZone" >
-    update erm_dns_public_zone
+    update cmdb_dns_public_zone
     set `zone` = #{zone,jdbcType=VARCHAR},
       dns_kind = #{dnsKind,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
@@ -72,7 +72,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_public_zone
+    from cmdb_dns_public_zone
     where 1=1
     <if test="zone != null and zone != ''" >
       AND `zone` LIKE CONCAT('%','${zone}','%')

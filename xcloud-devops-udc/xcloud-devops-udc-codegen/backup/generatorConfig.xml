@@ -42,7 +42,7 @@ Maven dependency:
         </javaClientGenerator>
 
         <!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
-        <!--<table tableName="ci_pipe_step_deploy" domainObjectName="PipeStepDeploy"
+        <!--<table tableName="uci_pipe_step_deploy" domainObjectName="PipeStepDeploy"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
             <columnOverride column="deploy_dockerfile_content" javaType="java.lang.String" jdbcType="VARCHAR" />
             <columnOverride column="deploy_config_content" javaType="java.lang.String" jdbcType="VARCHAR" />
@@ -71,7 +71,7 @@ Maven dependency:
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>-->
 
-        <table tableName="dts_gen_project" domainObjectName="GenProject"
+        <table tableName="udc_gen_project" domainObjectName="GenProject"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
 

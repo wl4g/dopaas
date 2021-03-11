@@ -13,35 +13,35 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_step_notification
+		from uci_pipe_step_notification
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByPipeId" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipe_step_notification
+		from uci_pipe_step_notification
 		where pipe_id = #{pipeId,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pipe_step_notification
+		delete from uci_pipe_step_notification
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
 	<delete id="deleteByPipeId" parameterType="java.lang.Long">
-		delete from ci_pipe_step_notification
+		delete from uci_pipe_step_notification
 		where pipe_id = #{pipeId,jdbcType=BIGINT}
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.PipeStageNotification">
-		insert into ci_pipe_step_notification (id, pipe_id, enable,
+		insert into uci_pipe_step_notification (id, pipe_id, enable,
 		contact_group_ids)
 		values (#{id,jdbcType=BIGINT}, #{pipeId,jdbcType=BIGINT}, #{enable,jdbcType=INTEGER},
 		#{contactGroupIds,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStageNotification">
-		insert into ci_pipe_step_notification
+		insert into uci_pipe_step_notification
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -72,7 +72,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.PipeStageNotification">
-		update ci_pipe_step_notification
+		update uci_pipe_step_notification
 		<set>
 			<if test="pipeId != null">
 				pipe_id = #{pipeId,jdbcType=BIGINT},
@@ -87,7 +87,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.PipeStageNotification">
-		update ci_pipe_step_notification
+		update uci_pipe_step_notification
 		set pipe_id = #{pipeId,jdbcType=BIGINT},
 		enable = #{enable,jdbcType=INTEGER},
 		contact_group_ids = #{contactGroupIds,jdbcType=VARCHAR}

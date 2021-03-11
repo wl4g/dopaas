@@ -26,7 +26,7 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_ee_api_properties
+        FROM udm_ee_api_properties
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
@@ -35,28 +35,28 @@
     <select id="selectByApiId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT
                <include refid="Base_Column_List" />
-        FROM doc_ee_api_properties
+        FROM udm_ee_api_properties
         <where>
             api_id = #{apiId, jdbcType=BIGINT}
         </where>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-        DELETE FROM doc_ee_api_properties
+        DELETE FROM udm_ee_api_properties
         <where>
             id = #{id, jdbcType=BIGINT}
         </where>
     </delete>
 
     <delete id="deleteByApiId" parameterType="java.lang.Long">
-        DELETE FROM doc_ee_api_properties
+        DELETE FROM udm_ee_api_properties
         <where>
             api_id = #{apiId, jdbcType=BIGINT}
         </where>
     </delete>
 
     <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseApiProperties">
-        INSERT INTO doc_ee_api_properties
+        INSERT INTO udm_ee_api_properties
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -136,7 +136,7 @@
     </insert>
 
     <insert id="insertBatch" parameterType="java.util.Map">
-        insert into doc_ee_api_properties (id, api_id, `name`, scope, `type`, pos, rule, `value`, description, parent_id, priority, required) VALUES
+        insert into udm_ee_api_properties (id, api_id, `name`, scope, `type`, pos, rule, `value`, description, parent_id, priority, required) VALUES
         <foreach collection="properties" item="property" separator=",">
             (#{property.id,jdbcType=BIGINT},
             #{apiId,jdbcType=BIGINT},
@@ -154,7 +154,7 @@
     </insert>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseApiProperties">
-        UPDATE doc_ee_api_properties
+        UPDATE udm_ee_api_properties
         <set>
             <if test="id != null">
                 id = #{id, jdbcType=BIGINT},
@@ -199,7 +199,7 @@
     </update>
 
     <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseApiProperties">
-        UPDATE doc_ee_api_properties
+        UPDATE udm_ee_api_properties
         <set>
             id = #{id, jdbcType=BIGINT},
             api_id = #{apiId, jdbcType=BIGINT},
@@ -222,7 +222,7 @@
     <select id="list" resultMap="BaseResultMap" parameterType="com.wl4g.devops.common.bean.udm.EnterpriseApiProperties" >
         SELECT
             <include refid="Base_Column_List"/>
-        FROM doc_ee_api_properties
+        FROM udm_ee_api_properties
         <where>
                 AND del_flag != 1
             <if test="enterpriseApiProperties.apiId != null" >

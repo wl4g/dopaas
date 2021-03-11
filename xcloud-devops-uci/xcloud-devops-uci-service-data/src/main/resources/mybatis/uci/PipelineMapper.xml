@@ -81,9 +81,9 @@
 		parameterType="java.util.Map">
 		select
 		i.id,h.`hostname`,i.remark
-		from erm_app_instance i
-		inner join ci_pipe_step_deploy_instance pi on i.id=pi.instance_id
-		left join erm_host h on h.id=i.host_id
+		from cmdb_app_instance i
+		inner join uci_pipe_step_deploy_instance pi on i.id=pi.instance_id
+		left join cmdb_host h on h.id=i.host_id
 		where pi.deploy_id= #{deployId};
 	</select>
 
@@ -91,23 +91,23 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipeline
+		from uci_pipeline
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from ci_pipeline
+		from uci_pipeline
 		where cluster_id = #{clusterId,jdbcType=BIGINT}
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ci_pipeline
+		delete from uci_pipeline
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.Pipeline">
-		insert into ci_pipeline (id, pipe_name, organization_code, cluster_id,
+		insert into uci_pipeline (id, pipe_name, organization_code, cluster_id,
 		provider_kind, environment, parent_app_home,
 		assets_dir, remark, create_date,
 		create_by, update_date, update_by,
@@ -119,7 +119,7 @@
 		#{delFlag,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.Pipeline">
-		insert into ci_pipeline
+		insert into uci_pipeline
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -210,7 +210,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.Pipeline">
-		update ci_pipeline
+		update uci_pipeline
 		<set>
 			<if test="pipeName != null">
 				pipe_name = #{pipeName,jdbcType=VARCHAR},
@@ -255,7 +255,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.Pipeline">
-		update ci_pipeline
+		update uci_pipeline
 		set pipe_name = #{pipeName,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},
 		cluster_id = #{clusterId,jdbcType=BIGINT},
@@ -276,10 +276,10 @@
 		select
 		<include refid="Base_Column_List_p" />
 		,c.name cluster_name,sp.enable pcm_enable,sp.pcm_id,d.id deploy_id
-		from ci_pipeline p
-		left join erm_app_cluster c on p.cluster_id=c.id
-		left join ci_pipe_step_deploy d on d.pipe_id=p.id
-		left join ci_pipe_step_pcm sp on sp.pipe_id=p.id
+		from uci_pipeline p
+		left join cmdb_app_cluster c on p.cluster_id=c.id
+		left join uci_pipe_step_deploy d on d.pipe_id=p.id
+		left join uci_pipe_step_pcm sp on sp.pipe_id=p.id
 		where p.del_flag!=1
 		<if test="id != null and id != ''">
 			AND p.id = #{id,jdbcType=BIGINT}
