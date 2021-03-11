@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-cmdb</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSevOps CMDB(Configuration Management Database)</name>
+	<name>XCloud DevSevOps CMDB(Configuration Management DB)</name>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-devops</artifactId>
