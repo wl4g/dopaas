@@ -35,7 +35,7 @@ spring:
               regionId: cn-hangzhou
               accessKeyId: ${ALIYUN_KEY}
               accessKeySecret: ${ALIYUN_SECRET}
-              signName: Super Devops\u7edf\u4e00\u76d1\u63a7\u5e73\u53f0
+              signName: XCloud Devops \u7edf\u4e00\u76d1\u63a7\u5e73\u53f0
               templates: # https://dysms.console.aliyun.com/dysms.htm#/domestic/text/template
                 tpl1: SMS_140726862 # Alarm notice template.
                 tpl2: SMS_109490228 # VerificationCode notice template.

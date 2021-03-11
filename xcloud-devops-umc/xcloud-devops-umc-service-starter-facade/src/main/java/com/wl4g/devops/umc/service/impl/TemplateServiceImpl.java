@@ -37,11 +37,11 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.devops.cmdb.service.AppInstanceService;
 import com.wl4g.devops.common.bean.cmdb.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.cmdb.data.AppInstanceDao;
 import com.wl4g.devops.umc.data.AlarmConfigDao;
 import com.wl4g.devops.umc.data.AlarmRuleDao;
 import com.wl4g.devops.umc.data.AlarmTemplateDao;
@@ -72,7 +72,7 @@ public class TemplateServiceImpl implements TemplateService {
 	private JedisService jedisService;
 
 	@Autowired
-	private AppInstanceDao appInstanceDao;
+	private AppInstanceService appInstanceService;
 
 	@Override
 	public PageHolder<AlarmTemplate> list(PageHolder<AlarmTemplate> pm, String name, Long metricId, String classify) {
@@ -152,7 +152,7 @@ public class TemplateServiceImpl implements TemplateService {
 		// del redis
 		List<AlarmConfig> alarmConfigs = alarmConfigDao.selectByTemplateId(tpl.getId());
 		for (AlarmConfig alarmConfig : alarmConfigs) {
-			AppInstance appInstance = appInstanceDao.selectByPrimaryKey(alarmConfig.getCollectId());
+			AppInstance appInstance = appInstanceService.detail(alarmConfig.getCollectId());
 			if (Objects.nonNull(appInstance)) {
 				jedisService.del(KEY_CACHE_ALARM_TPLS + appInstance.getHostname() + appInstance.getEndpoint());
 			}
