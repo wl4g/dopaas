@@ -217,9 +217,9 @@ function doDeployToNodeOfCluster() {
   log "[$appName/cluster/$host] Checking app services script installation ..."
   checkInstallServiceScript "$appName" "$user" "$passwd" "$host" "$springProfilesActive" "false"
   [ $? -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
-  # Exec restart
+  # Restart app service.
   log "[$appName/cluster/$host] Restarting for $appName ..."
-  doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "su - $appName -c \"$cmdRestart\"" "true"
   log "[$appName/cluster/$host] Deployed $appName completed."
 }
 

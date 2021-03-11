@@ -57,6 +57,7 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$deployAppBaseDir" ] && export deployAppBaseDir="/opt/apps/acm"
 [ -z "$deployAppDataBaseDir" ] && export deployAppDataBaseDir="/mnt/disk1"
 [ -z "$deployAppLogBaseDir" ] && export deployAppLogBaseDir="${deployAppDataBaseDir}/log"
+[ -z "$forceInstallServiceScript" ] && export forceInstallServiceScript="true"
 
 # Delopy(standalone) modules definition.
 export deployStandaloneBuildModules=(

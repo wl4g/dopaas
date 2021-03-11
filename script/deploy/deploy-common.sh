@@ -236,11 +236,11 @@ function checkInstallServiceScript() {
     logErr "[$appName/$host] Cannot installization app services, args appName/user/host is required and args should be 4 !"; exit -1
   fi
   # Check installed service script?
-  if [ "$isCheckInstalled" == "true" ]; then
+  if [ "$forceInstallServiceScript" == "false" ]; then
     local hasServiceFile=$(doRemoteCmd "$user" "$password" "$host" "echo $([ -f /etc/init.d/$appName.service ] && echo Y || echo N)" "true")
     [ "$hasServiceFile" == "Y" ] && return 0 # Skip installed
   fi
-  log "[$appName/$host] Installing /etc/init.d/$appName.services script ..."
+  log "[$appName/$host] Installing /etc/init.d/${appName}.service script ..."
   local appVersion="master"
   local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: doc-manager => DocManager
   local appInstallDir="${deployAppBaseDir}/${appName}-package"
@@ -281,12 +281,12 @@ function checkInstallServiceScript() {
     # refer to: https://www.baeldung.com/spring-boot-main-class, https://www.jianshu.com/p/66a101c85485
     local appShellRunCmd="$javaExec -client -Dloader.main=com.wl4g.ShellBootstrap -Dprompt=$appName -Dservname=$appName $shellPort -jar .:$appHome/${appName}-${appVersion}-bin.jar"
   fi
-
+  # Check make directory.
   if [ "$appGroup" != "root" ]; then
-    doRemoteCmd "$user" "$passwd" "$host" "[ -z \"\$(grep \"^$appGroup:\" /etc/group)\" ] && groupadd $appGroup" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "[ -z \"\$(grep '^$appGroup:' /etc/group)\" ] && groupadd $appGroup || exit 0" "true"
   fi
   if [ "$appUser" != "root" ]; then
-    doRemoteCmd "$user" "$passwd" "$host" "[ -z \"\$(grep \"^$appUser:\" /etc/passwd)\" ] && useradd -g $appGroup $appUser" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "[ -z \"\$(grep '^$appUser:' /etc/passwd)\" ] && useradd -g $appGroup $appUser || exit 0" "true"
   fi
   doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appInstallDir" "true"
   doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appHome" "true"
@@ -295,9 +295,8 @@ function checkInstallServiceScript() {
   doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appInstallDir" "true"
   doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appLogDir" "true"
   doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appDataDir" "true"
-
   # Make app services script.
-  local tmpServiceFile=$workspaceDir/${appName}.service
+  local tmpServiceFile="$workspaceDir/${appName}.service"
 cat<<EOF>$tmpServiceFile
 #!/bin/bash
 # chkconfig: - 85 15
@@ -432,8 +431,10 @@ esac
 EOF
 
   # Transfer services script to remote.
+  log "[$appName/$host] Transfer /etc/init.d/$appName.services to remote ..."
   doScp "$user" "$password" "$host" "$tmpServiceFile" "/etc/init.d/${appName}.service" "true"
-  doRemoteCmd "$user" "$password" "$host" "chmod 750 /etc/init.d/${appName}.service" "true"
+  doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup /etc/init.d/${appName}.service" "true"
+  doRemoteCmd "$user" "$password" "$host" "chmod -R 750 /etc/init.d/${appName}.service" "true"
   secDeleteLocal $tmpServiceFile
 }
 
