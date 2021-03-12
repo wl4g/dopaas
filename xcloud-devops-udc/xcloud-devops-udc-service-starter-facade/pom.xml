@@ -13,7 +13,7 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>dts-facade</final.name>
+		<final.name>udc-facade</final.name>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -104,7 +104,7 @@
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
-							<mainClass>com.wl4g.DtsManager</mainClass>
+							<mainClass>com.wl4g.UdcManager</mainClass>
 							<finalName>${final.name}-${project.version}-bin</finalName>
 							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
                             <!-- @see:https://www.baeldung.com/spring-boot-main-class -->
