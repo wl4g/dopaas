@@ -36,7 +36,7 @@ public class ScmClientTests {
 		System.out.println("SCM client starting ...");
 
 		ScmClient client = ScmClientBuilder.newBuilder()
-			.withBaseUri("http://localhost:14043")
+			.withBaseUri("http://localhost:18053")
 			.withCluster("scmClientApp1")
 			.enableManagementConsole()
 			.withLongPollTimeout(6000L)

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-udm-service-starter-manager</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSevOps Doc Manager</name>
+	<name>XCloud DevSecOps UDM Manager</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

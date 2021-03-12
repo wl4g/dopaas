@@ -99,7 +99,7 @@ server:
   servlet:
     contextPath: /${spring.application.name}
   #address: 0.0.0.0
-  port: 14048
+  port: 18056
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8

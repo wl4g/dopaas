@@ -16,7 +16,7 @@ spring:
     component:
       rpc:
         feign:
-          #default-url: http://n1.devops.wl4gsafecloudcs.com:24040/doc-facade
+          #default-url: http://n1.devops.wl4gsafecloudcs.com:18081/doc-facade
           default-url: http://n1.devops.wl4gsafecloudcs.com:${provider.serverPort}${provider.contextPath}
           default-log-level: BASIC # NONE|BASIC|HEADERS|FULL
           client-provider: okhttp3 # http2Client|okhttp3, default to okhttp3

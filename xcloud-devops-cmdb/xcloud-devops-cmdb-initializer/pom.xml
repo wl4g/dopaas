@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-cmdb-initializer</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSevOps ERM Initializer</name>
+	<name>XCloud DevSecOps CMDB Initializer</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

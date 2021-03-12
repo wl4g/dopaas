@@ -31,9 +31,9 @@ spring:
               #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
               #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
               #- http://localhost:8080
-              #- http://localhost:14040
+              #- http://localhost:18080
               #- http://127.0.0.1:8080
-              #- http://127.0.0.1:14040
+              #- http://127.0.0.1:18080
               - '*'
       acl:
         secure: false # Turn off protection will trust any same intranet IP.
@@ -43,7 +43,7 @@ spring:
         # To facilitate debugging, it is recommended to configure local hosts, wl4g.debug/wl4g.local/wl4g.dev
         # resolve to 127.0.0.1 (consistent with the server deployment structure), and the relevant front-end
         # logic is in global_variable.js:55, related database table: sys_cluster_config
-        server-uri: http://wl4g.debug:14040/iam-web
+        server-uri: http://wl4g.debug:18080/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: http://wl4g.debug:8080/#/umc/config
 

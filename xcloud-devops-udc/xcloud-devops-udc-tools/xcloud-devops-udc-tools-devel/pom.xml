@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-udc-tools-devel</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSevOps DTS Tools for Devel</name>
+	<name>XCloud DevSecOps UDC Tools for Devel</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

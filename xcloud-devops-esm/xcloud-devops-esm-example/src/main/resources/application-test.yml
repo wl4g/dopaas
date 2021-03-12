@@ -20,5 +20,5 @@ spring:
   xcloud:
     iam:
       client:
-        base-uri: http://localhost:14043/scm
+        base-uri: http://localhost:18053/scm
   

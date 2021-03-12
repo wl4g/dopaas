@@ -58,14 +58,14 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.devops.erm.web: DEBUG
+      wl4g.devops.cmdb.web: DEBUG
 
 # ### Server configuration. ###
 server:
   servlet:
     contextPath: /${spring.application.name}
   #address: 0.0.0.0
-  port: 14051
+  port: 18051
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8

@@ -19,8 +19,8 @@ spring: # Base configuration.
     active: dev
   # Devops configuration.
   xcloud: 
-    scm.client: # SCM client configuration.
-      base-uri: http://127.0.0.1:14043/scm-server
+    ucm.client: # SCM client configuration.
+      base-uri: http://127.0.0.1:18053/scm-server
       #connect-timeout: 5000
       #max-response-size: 65535
       #fetch-read-timeout: 5000
