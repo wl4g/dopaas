@@ -66,14 +66,14 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.devops.ci.web: DEBUG
+      wl4g.devops.uci.web: DEBUG
 
 # ### Server configuration. ###
 server:
   servlet:
     contextPath: /${spring.application.name}
   #address: 0.0.0.0
-  port: 14046
+  port: 18052
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8

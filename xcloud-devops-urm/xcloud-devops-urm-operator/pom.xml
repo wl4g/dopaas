@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-urm-operator</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps VCS Operator</name>
+	<name>XCloud DevSecOps URM Operator</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

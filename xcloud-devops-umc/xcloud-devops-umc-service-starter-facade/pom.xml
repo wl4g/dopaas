@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-umc-service-starter-facade</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps UMC Service Impl</name>
+	<name>XCloud DevSecOps UMC Service Starter Facade</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

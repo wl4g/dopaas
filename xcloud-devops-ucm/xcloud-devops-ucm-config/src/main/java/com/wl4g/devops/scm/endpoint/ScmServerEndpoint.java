@@ -73,7 +73,7 @@ public class ScmServerEndpoint extends BaseController {
 	/**
 	 * Watching configuration source. </br>
 	 * <a href=
-	 * "#">http://localhost:14043/scm/scm-server/watch?instance.host=localhost&instance.port=14044&group=scm-example&namespace=application-test.yml&profile=test&meta.version=1&meta.releaseId=1</a>
+	 * "#">http://localhost:18053/scm/scm-server/watch?instance.host=localhost&instance.port=14044&group=scm-example&namespace=application-test.yml&profile=test&meta.version=1&meta.releaseId=1</a>
 	 * 
 	 * @param watch
 	 * @return

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-udc-codegen</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSevOps DTS Codegen</name>
+	<name>XCloud DevSecOps UDC Codegen</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

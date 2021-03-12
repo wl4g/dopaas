@@ -74,7 +74,7 @@ public class DockerJavaTest {
 
 		Map<String, String> args = new HashMap<>();
 		args.put("APP_BIN_NAME", "iam-server-master-bin");
-		args.put("APP_PORT", "14040");
+		args.put("APP_PORT", "18080");
 		args.put("MAIN_CLASS", "com.wl4g.devops.IamServer");
 		args.put("ACTIVE", "dev");
 
@@ -94,7 +94,7 @@ public class DockerJavaTest {
 
 		// create container
 		Map<Integer, Integer> ports = new HashMap<>();
-		ports.put(14040, 14040);
+		ports.put(18080, 18080);
 		CreateContainerResponse containerResponse = DockerJavaUtil.createContainers(dockerClient, "mytag", "mytag:v0.1", ports);
 		String containerId = containerResponse.getId();
 		System.out.println(containerId);

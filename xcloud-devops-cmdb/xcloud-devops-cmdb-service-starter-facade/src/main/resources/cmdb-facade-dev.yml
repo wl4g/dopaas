@@ -50,7 +50,7 @@ cipher-key: 03DE18C2FC4E605F
 
 fs:
   base-path: /Users/vjay/Downloads/myupload
-  base-url: http://wl4g.debug:14051/share-manager
+  base-url: http://wl4g.debug:18051/share-manager
 
 dns:
   prefix: "_dns:"
