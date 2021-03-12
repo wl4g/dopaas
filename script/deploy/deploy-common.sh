@@ -333,7 +333,11 @@ if [ "\$USER" == "root" ]; then
 fi
 
 # Ref external configuration, default settings.
-[ -z "\$SPRING_PROFILES_ACTIVE" ] && export SPRING_PROFILES_ACTIVE="$springProfilesActive"
+if [ -z "\$SPRING_PROFILES_ACTIVE" ]; then
+  export SPRING_PROFILES_ACTIVE="$springProfilesActive" # Use default configuration.
+elif [ -n "\$(echo \$SPRING_PROFILES_ACTIVE|grep -i '^None\$')" ]; then
+  export SPRING_PROFILES_ACTIVE="" # Use empty configuration.
+fi
 [ -z "\$DEVOPS_DB_URL" ] && export DEVOPS_DB_URL="$runtimeMysqlUrl"
 [ -z "\$DEVOPS_DB_USER" ] && export DEVOPS_DB_USER="$runtimeMysqlUser"
 [ -z "\$DEVOPS_DB_PASSWD" ] && export DEVOPS_DB_PASSWD="$runtimeMysqlPassword"
