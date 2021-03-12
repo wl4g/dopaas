@@ -65,7 +65,7 @@
 		,
 		<include refid="vcs_alias" />
 		from uci_project p
-		left join uci_vcs v on v.id = p.vcs_id
+		left join urm_source_repo v on v.id = p.vcs_id
 		where p.id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -270,7 +270,7 @@
 		,g.name as group_name
 		from uci_project p
 		left join cmdb_app_cluster g on p.app_cluster_id=g.id
-		left join uci_vcs v on v.id=p.vcs_id
+		left join urm_source_repo v on v.id=p.vcs_id
 		where p.del_flag!=1
 		<if test="groupName != null and groupName != ''">
 			AND g.name LIKE CONCAT('%','${groupName}','%')
@@ -295,7 +295,7 @@
 		,
 		<include refid="vcs_alias" />
 		from uci_project p
-		left join uci_vcs v on v.id=p.vcs_id
+		left join urm_source_repo v on v.id=p.vcs_id
 		where p.del_flag!=1 and p.project_name = #{projectName,jdbcType=VARCHAR}
 	</select>
 
@@ -305,7 +305,7 @@
 		,
 		<include refid="vcs_alias" />
 		from uci_project p
-		left join uci_vcs v on v.id=p.vcs_id
+		left join urm_source_repo v on v.id=p.vcs_id
 		where p.app_cluster_id = #{appClusterId,jdbcType=BIGINT} and p.del_flag!=1 limit 1
 	</select>
 </mapper>

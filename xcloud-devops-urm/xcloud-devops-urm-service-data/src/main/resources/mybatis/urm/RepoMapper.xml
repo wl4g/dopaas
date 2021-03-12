@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.devops.urm.data.RepoDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Vcs">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.uci.Vcs">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
@@ -29,14 +29,14 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from uci_vcs
+		from urm_source_repo
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from uci_vcs
+		from urm_source_repo
 		where del_flag != 1
 		<if test="name != null and name != '' ">
 			AND name LIKE CONCAT('%','${name}','%')
@@ -56,11 +56,11 @@
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from uci_vcs
+		delete from urm_source_repo
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Vcs">
-		insert into uci_vcs (id,name,organization_code, provider_kind, auth_type,
+	<insert id="insert" parameterType="com.wl4g.devops.common.bean.uci.Vcs">
+		insert into urm_source_repo (id,name,organization_code, provider_kind, auth_type,
 		base_uri, ssh_key_pub, ssh_key,
 		access_token, username, password,
 		remark, enable, del_flag,
@@ -74,8 +74,8 @@
 		#{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
 		#{updateBy,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Vcs" useGeneratedKeys="true" keyProperty="id">
-		insert into uci_vcs
+	<insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.uci.Vcs" useGeneratedKeys="true" keyProperty="id">
+		insert into urm_source_repo
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -189,8 +189,8 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Vcs">
-		update uci_vcs
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.uci.Vcs">
+		update urm_source_repo
 		<set>
 			<if test="name != null">
 				name = #{name,jdbcType=VARCHAR},
@@ -246,8 +246,8 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Vcs">
-		update uci_vcs
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.uci.Vcs">
+		update urm_source_repo
 		set name = #{name,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},
 		provider_kind = #{providerKind,jdbcType=VARCHAR},
