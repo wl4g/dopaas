@@ -40,8 +40,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.udm-facade:enterpriseApiModuleService}")
-@RequestMapping("/enterpriseApiModule")
+@FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
+@RequestMapping("/enterpriseApiModule-service")
 public interface EnterpriseApiModuleService {
 
 	@RequestMapping(value = "/PageHolder", method = POST)

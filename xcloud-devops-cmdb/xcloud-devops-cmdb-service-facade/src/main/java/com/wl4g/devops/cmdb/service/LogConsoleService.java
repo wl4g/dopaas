@@ -26,8 +26,8 @@ import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.cmdb.Log;
 import com.wl4g.devops.common.bean.cmdb.QueryLogModel;
 
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:logConsole-service}")
-@RequestMapping("/logConsole")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/logConsole-service")
 public interface LogConsoleService {
 
 	@RequestMapping(value = "/console", method = POST)

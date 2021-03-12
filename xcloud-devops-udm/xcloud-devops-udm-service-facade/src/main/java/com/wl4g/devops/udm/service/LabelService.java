@@ -15,12 +15,6 @@
  */
 package com.wl4g.devops.udm.service;
 
-import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
-import com.wl4g.devops.common.bean.udm.Label;
-
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -28,6 +22,12 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.devops.common.bean.udm.Label;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 /**
  * {@link LabelService}
@@ -38,8 +38,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @sine v1.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.udm-facade:label-service}")
-@RequestMapping("/LabelService")
+@FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
+@RequestMapping("/labelService-service")
 public interface LabelService {
 
 	@RequestMapping(value = "/list", method = POST)

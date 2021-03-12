@@ -45,10 +45,10 @@ import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.umc.data.AlarmConfigDao;
 import com.wl4g.devops.umc.data.AlarmRuleDao;
 import com.wl4g.devops.umc.data.AlarmTemplateDao;
-import com.wl4g.devops.umc.service.TemplateService;
+import com.wl4g.devops.umc.service.AlarmTemplateService;
 
 /**
- * {@link TemplateServiceImpl}
+ * {@link AlarmAlarmTemplateServiceImpl}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
@@ -57,7 +57,7 @@ import com.wl4g.devops.umc.service.TemplateService;
  * @see
  */
 @Service
-public class TemplateServiceImpl implements TemplateService {
+public class AlarmAlarmTemplateServiceImpl implements AlarmTemplateService {
 
 	@Autowired
 	private AlarmTemplateDao alarmTemplateDao;

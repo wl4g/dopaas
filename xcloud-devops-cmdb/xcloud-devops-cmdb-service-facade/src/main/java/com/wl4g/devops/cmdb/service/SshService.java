@@ -30,8 +30,8 @@ import com.wl4g.devops.common.bean.cmdb.SshBean;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:ssh-service}")
-@RequestMapping("/ssh")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/ssh-service")
 public interface SshService {
 
 	@RequestMapping(value = "/page", method = POST)

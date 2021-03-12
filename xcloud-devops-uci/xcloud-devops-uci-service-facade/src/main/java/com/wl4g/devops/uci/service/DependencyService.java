@@ -29,8 +29,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-05-22 11:33:00
  */
-@FeignConsumer(name = "${provider.serviceId.uci-facade:dependency-service}")
-@RequestMapping("/dependency")
+@FeignConsumer(name = "${provider.serviceId.uci-facade:uci-facade}")
+@RequestMapping("/dependency-service")
 public interface DependencyService {
 
 	@RequestMapping(value = "/getHierarchyDependencys", method = POST)

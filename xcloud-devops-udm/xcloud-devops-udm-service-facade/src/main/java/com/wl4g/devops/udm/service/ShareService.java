@@ -36,8 +36,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
  * @sine v1.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.udm-facade:share-service}")
-@RequestMapping("/ShareService")
+@FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
+@RequestMapping("/shareService-service")
 public interface ShareService {
 
 	@RequestMapping(value = "/list", method = POST)

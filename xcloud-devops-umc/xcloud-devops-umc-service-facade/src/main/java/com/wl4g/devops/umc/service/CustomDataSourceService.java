@@ -17,7 +17,10 @@ package com.wl4g.devops.umc.service;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.umc.CustomDataSource;
 import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
 import com.wl4g.devops.common.bean.umc.datasource.BaseDataSource;
@@ -27,6 +30,8 @@ import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
  * @author vjay
  * @date 2019-08-05 16:01:00
  */
+@FeignConsumer(name = "${provider.serviceId.umc-facade:umc-facade}")
+@RequestMapping("/customDataSource-service")
 public interface CustomDataSourceService {
 
 	PageHolder<CustomDataSource> list(PageHolder<CustomDataSource> pm, String name);

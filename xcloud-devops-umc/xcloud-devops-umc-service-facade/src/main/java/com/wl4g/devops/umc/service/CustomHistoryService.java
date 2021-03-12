@@ -15,13 +15,18 @@
  */
 package com.wl4g.devops.umc.service;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.umc.CustomHistory;
 
 /**
  * @author vjay
  * @date 2019-08-05 16:01:00
  */
+@FeignConsumer(name = "${provider.serviceId.umc-facade:umc-facade}")
+@RequestMapping("/customHistory-service")
 public interface CustomHistoryService {
 
 	PageHolder<CustomHistory> list(PageHolder<CustomHistory> pm, String name);

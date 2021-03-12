@@ -15,14 +15,19 @@
  */
 package com.wl4g.devops.umc.service;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 
 /**
  * @author vjay
  * @date 2019-08-05 16:01:00
  */
-public interface ConfigService {
+@FeignConsumer(name = "${provider.serviceId.umc-facade:umc-facade}")
+@RequestMapping("/alarmConfig-service")
+public interface AlarmConfigService {
 
 	PageHolder<AlarmConfig> list(PageHolder<AlarmConfig> pm, Long templateId, Long contactGroupId);
 

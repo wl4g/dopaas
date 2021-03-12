@@ -32,8 +32,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-11-12 11:05:00
  */
-@FeignConsumer(name = "${provider.serviceId.uci-facade:pcm-service}")
-@RequestMapping("/pcm")
+@FeignConsumer(name = "${provider.serviceId.uci-facade:uci-facade}")
+@RequestMapping("/pcm-service")
 public interface PcmService {
 
 	@RequestMapping(value = "/list", method = POST)

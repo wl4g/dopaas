@@ -28,8 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:fs-service}")
-@RequestMapping("/fs")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/fs-service")
 public interface FsService {
 
 	@RequestMapping(value = "/uploadFile", method = POST)

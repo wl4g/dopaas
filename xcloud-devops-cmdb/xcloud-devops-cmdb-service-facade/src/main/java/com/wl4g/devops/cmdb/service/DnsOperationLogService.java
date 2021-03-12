@@ -28,8 +28,8 @@ import com.wl4g.devops.common.bean.cmdb.DnsOperationLog;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:dnsOperationLog-service}")
-@RequestMapping("/dnsOperationLog")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/dnsOperationLog-service")
 public interface DnsOperationLogService {
 
 	@RequestMapping(value = "/page", method = POST)

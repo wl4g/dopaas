@@ -28,8 +28,8 @@ import com.wl4g.devops.common.bean.cmdb.DnsPrivateBlacklist;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:dnsPrivateBlacklist-service}")
-@RequestMapping("/dnsPrivateBlacklist")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/dnsPrivateBlacklist-service")
 public interface DnsPrivateBlacklistService {
 
 	@RequestMapping(value = "/page", method = POST)

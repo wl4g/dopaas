@@ -30,8 +30,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.uci-facade:logClean-service}")
-@RequestMapping("/logClean")
+@FeignConsumer(name = "${provider.serviceId.uci-facade:uci-facade}")
+@RequestMapping("/logClean-service")
 public interface LogCleanService {
 
 	@RequestMapping(value = "/cleanOrchestrationHistory", method = POST)

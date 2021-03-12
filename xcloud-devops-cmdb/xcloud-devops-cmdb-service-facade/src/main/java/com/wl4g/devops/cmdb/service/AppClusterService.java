@@ -38,8 +38,8 @@ import com.wl4g.devops.common.bean.cmdb.AppInstance;
  * @sine v1.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:appCluster-service}")
-@RequestMapping("/appCluster")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/appCluster-service")
 public interface AppClusterService {
 
 	@RequestMapping(value = "/save", method = POST)

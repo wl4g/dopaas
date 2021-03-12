@@ -28,8 +28,8 @@ import com.wl4g.devops.common.bean.cmdb.DnsPrivateZone;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:dnsPrivateZone-service}")
-@RequestMapping("/dnsPrivateZone")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/dnsPrivateZone-service")
 public interface DnsPrivateZoneService {
 
 	@RequestMapping(value = "/page", method = POST)

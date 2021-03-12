@@ -15,17 +15,30 @@
  */
 package com.wl4g.devops.umc.service;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.devops.common.bean.umc.AlarmRecord;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 
 /**
  * @author vjay
  * @date 2019-08-05 16:01:00
  */
-public interface RecordService {
+@FeignConsumer(name = "${provider.serviceId.umc-facade:umc-facade}")
+@RequestMapping("/alarmTemplate-service")
+public interface AlarmTemplateService {
 
-	PageHolder<AlarmRecord> list(PageHolder<AlarmRecord> pm, String name, String startDate, String endDate);
+	PageHolder<AlarmTemplate> list(PageHolder<AlarmTemplate> pm, String name, Long metricId, String classify);
 
-	AlarmRecord detail(Long id);
+	List<AlarmTemplate> getByClassify(String classify);
+
+	void save(AlarmTemplate alarmTemplate);
+
+	AlarmTemplate detail(Long id);
+
+	void del(Long id);
 
 }

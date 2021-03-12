@@ -28,7 +28,7 @@ import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.umc.data.AlarmRecordDao;
 import com.wl4g.devops.umc.data.AlarmRuleDao;
 import com.wl4g.devops.umc.data.AlarmTemplateDao;
-import com.wl4g.devops.umc.service.RecordService;
+import com.wl4g.devops.umc.service.AlarmRecordService;
 import com.wl4g.iam.common.bean.NotificationContact;
 import com.wl4g.iam.service.NotificationContactService;
 
@@ -37,7 +37,7 @@ import com.wl4g.iam.service.NotificationContactService;
  * @date 2019-08-06 16:24:00
  */
 @Service
-public class RecordServiceImpl implements RecordService {
+public class AlarmAlarmRecordServiceImpl implements AlarmRecordService {
 
 	private @Autowired AlarmRecordDao alarmRecordDao;
 	private @Autowired AlarmRuleDao alarmRuleDao;

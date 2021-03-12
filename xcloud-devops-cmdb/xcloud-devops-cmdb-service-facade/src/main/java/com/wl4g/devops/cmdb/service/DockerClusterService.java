@@ -30,8 +30,8 @@ import com.wl4g.devops.common.bean.cmdb.DockerCluster;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:dockerCluster-service}")
-@RequestMapping("/dockerCluster")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/dockerCluster-service")
 public interface DockerClusterService {
 
 	@RequestMapping(value = "/page", method = POST)

@@ -40,8 +40,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.udm-facade:enterpriseRepositoryVersionService}")
-@RequestMapping("/enterpriseRepositoryVersion")
+@FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
+@RequestMapping("/enterpriseRepositoryVersion-service")
 public interface EnterpriseRepositoryVersionService {
 
 	/**

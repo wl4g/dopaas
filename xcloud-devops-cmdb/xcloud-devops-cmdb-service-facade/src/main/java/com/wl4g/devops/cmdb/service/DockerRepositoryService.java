@@ -34,8 +34,8 @@ import com.wl4g.devops.common.bean.cmdb.model.RepositoryProject;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:dockerRepository-service}")
-@RequestMapping("/dockerRepository")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/dockerRepository-service")
 public interface DockerRepositoryService {
 
 	@RequestMapping(value = "/page", method = POST)
