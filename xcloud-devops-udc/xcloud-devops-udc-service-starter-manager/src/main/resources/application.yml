@@ -9,7 +9,7 @@
 #
 # #### Environment base configuration. ####
 spring:
-  application.name: dts-manager
+  application.name: udc-manager
   profiles:
     include: common,support,util,base
     active: dev

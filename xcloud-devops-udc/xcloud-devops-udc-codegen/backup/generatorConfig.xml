@@ -28,7 +28,7 @@ Maven dependency:
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!-- 生成模型的包名和位置-->
-        <javaModelGenerator targetPackage="com.wl4g.devops.dts.codegen.bean" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.wl4g.devops.udc.codegen.bean" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
@@ -37,7 +37,7 @@ Maven dependency:
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
         <!-- 生成DAO的包名和位置-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.wl4g.devops.dts.codegen.dao" targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.wl4g.devops.udc.codegen.dao" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 

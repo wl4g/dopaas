@@ -10,7 +10,7 @@
 # #### Environment base configuration. ####
 
 spring:
-  application.name: dts-facade
+  application.name: udc-facade
   profiles:
     include: common,support,util
     active: dev
