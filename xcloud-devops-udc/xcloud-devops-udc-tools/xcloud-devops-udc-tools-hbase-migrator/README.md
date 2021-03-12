@@ -3,8 +3,8 @@
 
 ##### HBase table data exporting to HDFS :
 ```
- yarn jar super-devops-tools-hbase-migrator-master.jar \
- com.wl4g.devops.tool.hbase.migrator.HfileBulkExporter \
+ yarn jar xcloud-devops-udc-tools-hbase-migrator-master \
+ com.wl4g.devops.udc.tools.hbase.HfileBulkExporter \
  -z emr-header-1:2181 \
  -t safeclound.tb_elec_power \
  -s 11111112,ELE_R_P,134,01,20180919110850989 \
@@ -13,8 +13,8 @@
 
 ##### HBase table data importing from HDFS :
 ```
- yarn jar super-devops-tools-hbase-migrator-master.jar \
- com.wl4g.devops.tool.hbase.migrator.HfileBulkImporter \
+ yarn jar xcloud-devops-udc-tools-hbase-migrator-master \
+ com.wl4g.devops.udc.tools.hbase.HfileBulkImporter \
  -z emr-header-1:2181 \
  -t safeclound.tb_elec_power \
  -p /tmp-devops/safeclound.tb_elec_power
@@ -22,8 +22,8 @@
 
 ##### HBase table data exporting to RMDB(MySQL/Oracle/Postgresql/...) :
 ```
- java -cp super-devops-tools-hbase-migrator-master.jar \
- com.wl4g.devops.tool.hbase.migrator.SimpleHfileToRmdbExporter \
+ java -cp xcloud-devops-udc-tools-hbase-migrator-master \
+ com.wl4g.devops.udc.tools.hbase.SimpleHfileToRmdbExporter \
  -z emr-header-1:2181 \
  -t safeclound.tb_elec_power \
  -j 'jdbc:mysql://localhost:3306/my_tsdb?useUnicode=true&characterEncoding=utf-8&useSSL=false' \

@@ -48,7 +48,7 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 		</dependency>
-		<!-- Chinese analysis, @see:com.wl4g.devops.dts.codegen.engine.specs.BaseSpecs.CommentExtractor#wordSeg -->
+		<!-- Chinese analysis, @see:com.wl4g.devops.udc.codegen.engine.specs.BaseSpecs.CommentExtractor#wordSeg -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.apdplat</groupId> -->
 		<!-- <artifactId>word</artifactId> -->

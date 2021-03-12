@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wl4g.devops.udc.codegen.dao.GenTableDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.devops.udc.codegen.bean.GenTable">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="project_id" property="projectId" jdbcType="BIGINT" />
+		<result column="table_name" property="tableName" jdbcType="VARCHAR" />
+		<result column="entity_name" property="entityName" jdbcType="VARCHAR" />
+		<result column="comments" property="comments" jdbcType="VARCHAR" />
+		<result column="module_name" property="moduleName" jdbcType="VARCHAR" />
+		<result column="sub_module_name" property="subModuleName" jdbcType="VARCHAR" />
+		<result column="function_name" property="functionName" jdbcType="VARCHAR" />
+		<result column="function_name_simple" property="functionNameSimple" jdbcType="VARCHAR" />
+		<result column="function_author" property="functionAuthor" jdbcType="VARCHAR" />
+		<result column="extra_options_json" property="extraOptionsJson" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="create_by" property="createBy" jdbcType="BIGINT" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="update_by" property="updateBy" jdbcType="BIGINT" />
+		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, project_id, table_name, entity_name, comments,
+		module_name, sub_module_name, function_name,
+		function_name_simple,
+		function_author, extra_options_json, status, remark, create_date,
+		create_by, update_date, update_by, del_flag
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from udc_gen_table
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectByProjectId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from udc_gen_table
+		where project_id = #{id,jdbcType=BIGINT} and del_flag!=1
+	</select>
+
+	<select id="countByProjectIdAndTableName" resultType="java.lang.Long" parameterType="java.util.Map">
+		SELECT
+		COUNT(1)
+		FROM udc_gen_table
+		<where>
+			project_id = #{projectId,jdbcType=BIGINT}
+			AND table_name = #{tableName,jdbcType=VARCHAR}
+			AND del_flag != 1
+		</where>
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		DELETE FROM udc_gen_table
+		<where>
+			id = #{id,jdbcType=BIGINT}
+		</where>
+	</delete>
+
+	<insert id="insert" parameterType="com.wl4g.devops.udc.codegen.bean.GenTable">
+		INSERT INTO udc_gen_table (
+		id, project_id, table_name,
+		entity_name, comments,
+		module_name, sub_module_name,
+		function_name, function_name_simple, function_author,
+		gen_base_dir, extra_options_json, status, remark,
+		del_flag, create_date, create_by, update_date, update_by)
+		VALUES (
+		#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{tableName,jdbcType=VARCHAR},
+		#{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR},
+		#{subModuleName,jdbcType=VARCHAR}, #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR},
+		#{functionAuthor,jdbcType=VARCHAR}, #{extraOptionsJson,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT},
+		#{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{delFlag,jdbcType=INTEGER}
+		)
+	</insert>
+
+	<insert id="insertSelective" parameterType="com.wl4g.devops.udc.codegen.bean.GenTable">
+		INSERT INTO udc_gen_table
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="projectId != null">
+				project_id,
+			</if>
+			<if test="tableName != null">
+				table_name,
+			</if>
+			<if test="entityName != null">
+				entity_name,
+			</if>
+			<if test="comments != null">
+				comments,
+			</if>
+			<if test="moduleName != null">
+				module_name,
+			</if>
+			<if test="subModuleName != null">
+				sub_module_name,
+			</if>
+			<if test="functionName != null">
+				function_name,
+			</if>
+			<if test="functionNameSimple != null">
+				function_name_simple,
+			</if>
+			<if test="functionAuthor != null">
+				function_author,
+			</if>
+			<if test="extraOptionsJson != null">
+				extra_options_json,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="updateBy != null">
+				update_by,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="projectId != null">
+				#{projectId,jdbcType=BIGINT},
+			</if>
+			<if test="tableName != null">
+				#{tableName,jdbcType=VARCHAR},
+			</if>
+			<if test="entityName != null">
+				#{entityName,jdbcType=VARCHAR},
+			</if>
+			<if test="comments != null">
+				#{comments,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleName != null">
+				#{moduleName,jdbcType=VARCHAR},
+			</if>
+			<if test="subModuleName != null">
+				#{subModuleName,jdbcType=VARCHAR},
+			</if>
+			<if test="functionName != null">
+				#{functionName,jdbcType=VARCHAR},
+			</if>
+			<if test="functionNameSimple != null">
+				#{functionNameSimple,jdbcType=VARCHAR},
+			</if>
+			<if test="functionAuthor != null">
+				#{functionAuthor,jdbcType=VARCHAR},
+			</if>
+			<if test="extraOptionsJson != null">
+				#{extraOptionsJson,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.udc.codegen.bean.GenTable">
+		UPDATE udc_gen_table
+		<set>
+			<if test="projectId != null">
+				project_id = #{projectId,jdbcType=BIGINT},
+			</if>
+			<if test="tableName != null">
+				table_name = #{tableName,jdbcType=VARCHAR},
+			</if>
+			<if test="entityName != null">
+				entity_name = #{entityName,jdbcType=VARCHAR},
+			</if>
+			<if test="comments != null">
+				comments = #{comments,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleName != null">
+				module_name = #{moduleName,jdbcType=VARCHAR},
+			</if>
+			<if test="subModuleName != null">
+				sub_module_name = #{subModuleName,jdbcType=VARCHAR},
+			</if>
+			<if test="functionName != null">
+				function_name = #{functionName,jdbcType=VARCHAR},
+			</if>
+			<if test="functionNameSimple != null">
+				function_name_simple = #{functionNameSimple,jdbcType=VARCHAR},
+			</if>
+			<if test="functionAuthor != null">
+				function_author = #{functionAuthor,jdbcType=VARCHAR},
+			</if>
+			<if test="extraOptionsJson != null">
+				extra_options_json = #{extraOptionsJson,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy,jdbcType=BIGINT},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy,jdbcType=BIGINT},
+			</if>
+			<if test="delFlag != null">
+				del_flag = #{delFlag,jdbcType=INTEGER},
+			</if>
+		</set>
+		<where>
+		  id = #{id,jdbcType=BIGINT}
+		</where>
+	</update>
+
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.devops.udc.codegen.bean.GenTable">
+		UPDATE udc_gen_table
+		<set>
+			project_id = #{projectId,jdbcType=BIGINT},
+			table_name = #{tableName,jdbcType=VARCHAR},
+			entity_name =
+			#{entityName,jdbcType=VARCHAR},
+			comments = #{comments,jdbcType=VARCHAR},
+			module_name = #{moduleName,jdbcType=VARCHAR},
+			sub_module_name = #{subModuleName,jdbcType=VARCHAR},
+			function_name = #{functionName,jdbcType=VARCHAR},
+			function_name_simple = #{functionNameSimple,jdbcType=VARCHAR},
+			function_author = #{functionAuthor,jdbcType=VARCHAR},
+			extra_options_json = #{extraOptionsJson,jdbcType=VARCHAR},
+			status = #{status,jdbcType=VARCHAR},
+			remark = #{remark,jdbcType=VARCHAR},
+			del_flag = #{delFlag,jdbcType=INTEGER},
+			create_date = #{createDate,jdbcType=TIMESTAMP},
+			create_by = #{createBy,jdbcType=BIGINT},
+			update_date = #{updateDate,jdbcType=TIMESTAMP},
+			update_by = #{updateBy,jdbcType=BIGINT}
+		</set>
+		<where>
+			id = #{id,jdbcType=BIGINT}
+		</where>
+	</update>
+
+	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM udc_gen_table
+		<where>
+			del_flag != 1
+			<if test="tableName != null and tableName != ''">
+				AND `table_name` LIKE CONCAT('%','${tableName}','%')
+			</if>
+			<if test="projectId != null">
+				AND project_id = #{projectId,jdbcType=BIGINT}
+			</if>
+			order by update_date desc
+		</where>
+	</select>
+
+</mapper>

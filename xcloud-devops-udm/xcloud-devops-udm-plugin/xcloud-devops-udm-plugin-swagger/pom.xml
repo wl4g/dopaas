@@ -1,11 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<!-- <groupId>com.wl4g</groupId> -->
 	<artifactId>xcloud-devops-udm-plugin-swagger</artifactId>
-	<!-- <version>master</version> -->
 	<packaging>maven-plugin</packaging>
-	<name>XCloud DevSecOps Doc for Plugin Swagger</name>
+	<name>XCloud DevSecOps UDM for Plugin Swagger</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
