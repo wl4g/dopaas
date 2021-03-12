@@ -15,11 +15,8 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.umc.service.TemplateService;
+import java.util.List;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -27,7 +24,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.umc.service.AlarmTemplateService;
 
 /**
  * @author vjay
@@ -35,10 +36,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/template")
-public class TemplateController extends BaseController {
+public class AlarmTemplateController extends BaseController {
 
 	@Autowired
-	private TemplateService templateService;
+	private AlarmTemplateService templateService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:templat" })

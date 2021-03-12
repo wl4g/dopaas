@@ -28,8 +28,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-05-17 11:04:00
  */
-@FeignConsumer(name = "${provider.serviceId.uci-facade:trigger-service}")
-@RequestMapping("/trigger")
+@FeignConsumer(name = "${provider.serviceId.uci-facade:uci-facade}")
+@RequestMapping("/trigger-service")
 public interface TriggerService {
 
 	@RequestMapping(value = "/list", method = POST)

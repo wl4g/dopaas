@@ -30,8 +30,8 @@ import com.wl4g.devops.common.bean.cmdb.IdcBean;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:idc-service}")
-@RequestMapping("/idc")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/idc-service")
 public interface IdcService {
 
 	@RequestMapping(value = "/page", method = POST)

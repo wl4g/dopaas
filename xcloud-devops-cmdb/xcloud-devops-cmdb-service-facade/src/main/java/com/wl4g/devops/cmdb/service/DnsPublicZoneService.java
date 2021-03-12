@@ -28,8 +28,8 @@ import com.wl4g.devops.common.bean.cmdb.DnsPublicZone;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:dnsPublicZone-service}")
-@RequestMapping("/dnsPublicZone")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/dnsPublicZone-service")
 public interface DnsPublicZoneService {
 
 	@RequestMapping(value = "/page", method = POST)

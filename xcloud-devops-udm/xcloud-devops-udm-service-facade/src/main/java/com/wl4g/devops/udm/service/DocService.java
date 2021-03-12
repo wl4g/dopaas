@@ -39,8 +39,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.udm-facade:docService}")
-@RequestMapping("/doc")
+@FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
+@RequestMapping("/doc-service")
 public interface DocService {
 
 	@RequestMapping(value = "/list", method = POST)

@@ -35,8 +35,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @sine v1.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.uci-facade:flowPipelineManager-service}")
-@RequestMapping("/flowPipelineManager")
+@FeignConsumer(name = "${provider.serviceId.uci-facade:uci-facade}")
+@RequestMapping("/flowPipelineManager-service")
 public interface OrchestrationManagerAdapter {
 
 	/**

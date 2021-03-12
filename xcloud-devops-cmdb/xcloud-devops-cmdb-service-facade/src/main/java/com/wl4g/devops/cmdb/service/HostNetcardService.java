@@ -31,8 +31,8 @@ import com.wl4g.devops.common.bean.cmdb.HostNetcard;
  * @author vjay
  * @date 2019-11-14 14:10:00
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:hostNetcard-service}")
-@RequestMapping("/hostNetcard")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/hostNetcard-service")
 public interface HostNetcardService {
 
 	@RequestMapping(value = "/page", method = POST)

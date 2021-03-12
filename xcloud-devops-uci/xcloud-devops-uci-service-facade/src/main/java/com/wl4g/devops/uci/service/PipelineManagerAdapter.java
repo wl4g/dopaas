@@ -36,8 +36,8 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author vjay
  * @date 2019-08-01 14:45:00
  */
-@FeignConsumer(name = "${provider.serviceId.uci-facade:pipelineManager-service}")
-@RequestMapping("/pipelineManager")
+@FeignConsumer(name = "${provider.serviceId.uci-facade:uci-facade}")
+@RequestMapping("/pipelineManager-service")
 public interface PipelineManagerAdapter {
 
 	/**

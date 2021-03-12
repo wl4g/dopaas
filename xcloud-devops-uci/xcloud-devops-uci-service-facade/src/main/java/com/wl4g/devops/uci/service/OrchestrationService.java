@@ -28,8 +28,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-11-12 11:05:00
  */
-@FeignConsumer(name = "${provider.serviceId.uci-facade:orchestration-service}")
-@RequestMapping("/orchestration")
+@FeignConsumer(name = "${provider.serviceId.uci-facade:uci-facade}")
+@RequestMapping("/orchestration-service")
 public interface OrchestrationService {
 
 	@RequestMapping(value = "/list", method = POST)

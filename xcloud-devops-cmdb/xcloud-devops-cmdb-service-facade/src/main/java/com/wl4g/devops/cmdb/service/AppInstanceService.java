@@ -33,8 +33,8 @@ import com.wl4g.devops.common.bean.cmdb.AppInstance;
  * @author sut
  * @date 2018年9月20日
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:appInstance-service}")
-@RequestMapping("/appInstance")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/appInstance-service")
 public interface AppInstanceService {
 
 	@RequestMapping(value = "/save", method = POST)

@@ -34,8 +34,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2020-01-14
  */
-@FeignConsumer(name = "${provider.serviceId.udm-facade:enterpriseMdService}")
-@RequestMapping("/enterpriseMd")
+@FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
+@RequestMapping("/enterpriseMd-service")
 public interface EnterpriseMdService {
 
 

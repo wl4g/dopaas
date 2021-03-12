@@ -15,15 +15,20 @@
  */
 package com.wl4g.devops.umc.service;
 
-import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.devops.common.bean.umc.MetricTemplate;
-
 import java.util.List;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.devops.common.bean.umc.MetricTemplate;
 
 /**
  * @author vjay
  * @date 2019-08-05 16:01:00
  */
+@FeignConsumer(name = "${provider.serviceId.umc-facade:umc-facade}")
+@RequestMapping("/metricTemplate-service")
 public interface MetricTemplateService {
 
 	PageHolder<MetricTemplate> list(PageHolder<MetricTemplate> pm, String metric, String classify);

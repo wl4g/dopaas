@@ -35,8 +35,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @Date 
  * @since v1.0
  */
-@FeignConsumer(name = "${provider.serviceId.udm-facade:eeDocumentRepoService}")
-@RequestMapping("/eeDocumentRepo")
+@FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
+@RequestMapping("/eeDocumentRepo-service")
 public interface EeDocumentRepoService {
 
     /**

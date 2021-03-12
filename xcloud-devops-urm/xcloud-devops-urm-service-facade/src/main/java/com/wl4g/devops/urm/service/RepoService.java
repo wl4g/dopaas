@@ -41,8 +41,8 @@ import com.wl4g.devops.urm.operator.model.VcsTagModel;
  * @sine v1.0.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.urm-facade:repoService}")
-@RequestMapping("/vcs")
+@FeignConsumer(name = "${provider.serviceId.urm-facade:urm-facade}")
+@RequestMapping("/repo-service")
 public interface RepoService {
 
 	@RequestMapping(value = "/list", method = POST)

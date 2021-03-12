@@ -36,8 +36,8 @@ import com.wl4g.devops.common.bean.cmdb.Host;
  * @author vjay
  * @date 2019-11-14 14:10:00
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:host-service}")
-@RequestMapping("/host")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/host-service")
 public interface HostService {
 
 	@RequestMapping(value = "/list", method = POST)

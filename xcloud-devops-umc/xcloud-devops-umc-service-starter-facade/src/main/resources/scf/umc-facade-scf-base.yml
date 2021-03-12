@@ -11,4 +11,4 @@
 # #### Environment(SpringCloud Feign) configuration. ####
 provider.serviceId:
   iam-facade: iam-facade
-  erm-facade: erm-facade
+  cmdb-facade: cmdb-facade

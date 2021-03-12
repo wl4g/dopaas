@@ -27,8 +27,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @author vjay
  * @date 2019-12-16 16:13:00
  */
-@FeignConsumer(name = "${provider.serviceId.uci-facade:analysisHistory-service}")
-@RequestMapping("/analysisHistory")
+@FeignConsumer(name = "${provider.serviceId.uci-facade:uci-facade}")
+@RequestMapping("/analysisHistory-service")
 public interface AnalysisHistoryService {
 
 	@RequestMapping(value = "/list", method = POST)

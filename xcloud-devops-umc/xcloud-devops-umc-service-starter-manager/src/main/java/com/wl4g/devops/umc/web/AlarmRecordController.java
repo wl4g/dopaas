@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
-import com.wl4g.devops.umc.service.RecordService;
+import com.wl4g.devops.umc.service.AlarmRecordService;
 
 /**
  * @author vjay
@@ -32,10 +32,10 @@ import com.wl4g.devops.umc.service.RecordService;
  */
 @RestController
 @RequestMapping("/record")
-public class RecordController extends BaseController {
+public class AlarmRecordController extends BaseController {
 
 	@Autowired
-	private RecordService recordService;
+	private AlarmRecordService recordService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:record" })

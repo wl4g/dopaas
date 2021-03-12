@@ -21,20 +21,20 @@ import org.springframework.util.Assert;
 
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.devops.cmdb.service.AppInstanceService;
 import com.wl4g.devops.common.bean.cmdb.AppInstance;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.cmdb.service.AppInstanceService;
 import com.wl4g.devops.umc.data.AlarmConfigDao;
 import com.wl4g.devops.umc.data.AlarmTemplateDao;
-import com.wl4g.devops.umc.service.ConfigService;
+import com.wl4g.devops.umc.service.AlarmConfigService;
 
 /**
  * @author vjay
  * @date 2019-08-09 14:06:00
  */
 @Service
-public class ConfigServiceImpl implements ConfigService {
+public class AlarmConfigServiceImpl implements AlarmConfigService {
 
 	private @Autowired AlarmConfigDao alarmConfigDao;
 	private @Autowired AlarmTemplateDao alarmTemplateDao;

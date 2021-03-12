@@ -30,8 +30,8 @@ import com.wl4g.devops.common.bean.cmdb.K8sCluster;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:k8sCluster-service}")
-@RequestMapping("/k8sCluster")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/k8sCluster-service")
 public interface K8sClusterService {
 
 	@RequestMapping(value = "/page", method = POST)

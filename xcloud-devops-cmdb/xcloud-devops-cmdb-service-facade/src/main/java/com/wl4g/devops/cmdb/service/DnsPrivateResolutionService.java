@@ -28,8 +28,8 @@ import com.wl4g.devops.common.bean.cmdb.DnsPrivateResolution;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.cmdb-facade:dnsPrivateResolution-service}")
-@RequestMapping("/dnsPrivateResolution")
+@FeignConsumer(name = "${provider.serviceId.cmdb-facade:cmdb-facade}")
+@RequestMapping("/dnsPrivateResolution-service")
 public interface DnsPrivateResolutionService {
 
 	@RequestMapping(value = "/page", method = POST)
