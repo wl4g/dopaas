@@ -24,7 +24,7 @@
 	</resultMap>
 
 
-	<resultMap id="InstanceBaseResultMap" type="com.wl4g.devops.common.bean.erm.AppInstance" >
+	<resultMap id="InstanceBaseResultMap" type="com.wl4g.devops.common.bean.cmdb.AppInstance" >
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
@@ -48,7 +48,7 @@
 		<result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
 		<result column="deploy_type" property="deployType" jdbcType="INTEGER" />
 
-		<association property="dockerCluster" javaType="com.wl4g.devops.common.bean.erm.DockerCluster">
+		<association property="dockerCluster" javaType="com.wl4g.devops.common.bean.cmdb.DockerCluster">
 			<id column="d.id" jdbcType="INTEGER" property="id" />
 			<result column="d.name" jdbcType="VARCHAR" property="name" />
 			<result column="d.organization_code" jdbcType="VARCHAR" property="organizationCode" />
@@ -63,7 +63,7 @@
 
 	<resultMap id="ListResultMap" type="com.wl4g.devops.common.bean.uci.Pipeline" extends="BaseResultMap">
 		<collection property="instances" select="selectInstancesByDeployId" column="{deployId = deploy_id}"
-			ofType="com.wl4g.devops.common.bean.erm.AppInstance" javaType="java.util.List">
+			ofType="com.wl4g.devops.common.bean.cmdb.AppInstance" javaType="java.util.List">
 		</collection>
 	</resultMap>
 

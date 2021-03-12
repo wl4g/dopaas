@@ -15,34 +15,8 @@ spring:
   application.name: umc-example
   resources.static-locations: classpath:/static/
   profiles:
-    include: common,util,admin
-    active: dev
-  xcloud:
-    devops:
-      umc:
-        metrics: # Metrics configuration.
-          counter:
-            enable: true
-            expression: execution(* com.wl4g.devops.umc.example.web.ExampleController.*(..))
-          timeouts:
-            enable: true
-            expression: execution(* com.wl4g.devops.umc.example.web.ExampleController.*(..))
-            timeoutsThreshold: 15000
-          cpu:
-            enable: true
-            partitions:
-              defaultCorePart:
-                retainTime: 300000
-          memory:
-            enable: true
-            partitions:
-              defaultMemoryPart:
-                retainTime: 300000
-          disk:
-            enable: true
-            partitions:
-              /:
-                retainTime: 300000
+    include: common,util
+    active: admin,zipkin
 
 # Logging configuration.
 logging:
