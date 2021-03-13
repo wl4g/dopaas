@@ -31,6 +31,14 @@ bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-devops/master/s
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy/deploy-boot.sh)"
 ```
 
+- Server specs requirements
+
+| Runtime Mode | Min specs requirements(Suggested) | Description |
+| ---- | ---- | ---- |
+| cluster | CentOS7+ / Ubuntu18+ (4Core+ 8GB+) | Only pseudo clusters can be deployed when there is only one host |
+| standalone | 2Core+ 2GB+ | Monomer application |
+
+
 ### Manual compilation and build:
 > It is suitable for build secondary development environment
 
