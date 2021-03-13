@@ -73,7 +73,7 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
+	@RequiresPermissions(value = { "udc:codegen" }, logical = AND)
 	public RespBase<PageHolder<GenTable>> page(PageHolder<GenTable> pm, String tableName, Long projectId) {
 		RespBase<PageHolder<GenTable>> resp = RespBase.create();
 		resp.setData(genService.page(pm, tableName, projectId));
@@ -87,7 +87,7 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("save")
-	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
+	@RequiresPermissions(value = { "udc:codegen" }, logical = AND)
 	public RespBase<?> save(@RequestBody GenTable table) {
 		RespBase<Object> resp = RespBase.create();
 		genService.saveGenConfig(table);
@@ -101,7 +101,7 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("detail")
-	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
+	@RequiresPermissions(value = { "udc:codegen" }, logical = AND)
 	public RespBase<?> detail(Long tableId) {
 		return genService.detail(tableId);
 	}
@@ -113,7 +113,7 @@ public class GenerateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("del")
-	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
+	@RequiresPermissions(value = { "udc:codegen" }, logical = AND)
 	public RespBase<?> delete(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		genService.deleteGenTable(id);
@@ -194,7 +194,7 @@ public class GenerateController extends BaseController {
 	// --- Execution generates. ---
 
 	@RequestMapping("generate")
-	@RequiresPermissions(value = { "dts:codegen" }, logical = AND)
+	@RequiresPermissions(value = { "udc:codegen" }, logical = AND)
 	public RespBase<?> generate(Long id, HttpServletResponse response) throws IOException {
 		RespBase<Object> resp = RespBase.create();
 

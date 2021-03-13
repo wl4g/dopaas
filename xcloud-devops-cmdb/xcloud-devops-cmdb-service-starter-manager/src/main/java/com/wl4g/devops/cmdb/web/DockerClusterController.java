@@ -43,7 +43,7 @@ public class DockerClusterController extends BaseController {
 	private DockerClusterService dockerClusterService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "erm:dockercluster" }, logical = AND)
+	@RequiresPermissions(value = { "cmdb:dockercluster" }, logical = AND)
 	public RespBase<?> list(PageHolder<DockerCluster> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerClusterService.page(pm, name));
@@ -51,7 +51,7 @@ public class DockerClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "erm:dockercluster" }, logical = AND)
+	@RequiresPermissions(value = { "cmdb:dockercluster" }, logical = AND)
 	public RespBase<?> save(@RequestBody DockerCluster dockerCluster) {
 		RespBase<Object> resp = RespBase.create();
 		dockerClusterService.save(dockerCluster);
@@ -59,7 +59,7 @@ public class DockerClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "erm:dockercluster" }, logical = AND)
+	@RequiresPermissions(value = { "cmdb:dockercluster" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(dockerClusterService.detail(id));
@@ -67,7 +67,7 @@ public class DockerClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "erm:dockercluster" }, logical = AND)
+	@RequiresPermissions(value = { "cmdb:dockercluster" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		dockerClusterService.del(id);

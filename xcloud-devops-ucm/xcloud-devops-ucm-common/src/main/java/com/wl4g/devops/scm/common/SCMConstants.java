@@ -53,11 +53,11 @@ public abstract class SCMConstants {
 	public static final String URI_S_REFRESHED_REPORT = "report";
 
 	/** SCM session cache. */
-	public static final String CACHE_SESSIONS = "scm:session:";
+	public static final String CACHE_SESSIONS = "ucm:session:";
 	/** SCM publisher group. */
-	public static final String CACHE_PUB_GROUPS = "scm:publish:groups:";
+	public static final String CACHE_PUB_GROUPS = "ucm:publish:groups:";
 	/** SCM publisher config prefix. */
-	public static final String KEY_PUB_PREFIX = "scm:publish:config:";
+	public static final String KEY_PUB_PREFIX = "ucm:publish:config:";
 
 	// --- Client. ---
 

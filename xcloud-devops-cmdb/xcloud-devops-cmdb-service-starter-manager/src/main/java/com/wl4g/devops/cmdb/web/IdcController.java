@@ -43,7 +43,7 @@ public class IdcController extends BaseController {
 	private IdcService idcService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "erm:idc" }, logical = AND)
+	@RequiresPermissions(value = { "cmdb:idc" }, logical = AND)
 	public RespBase<?> list(PageHolder<IdcBean> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(idcService.page(pm, name));
@@ -51,7 +51,7 @@ public class IdcController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "erm:idc" }, logical = AND)
+	@RequiresPermissions(value = { "cmdb:idc" }, logical = AND)
 	public RespBase<?> save(@RequestBody IdcBean idc) {
 		RespBase<Object> resp = RespBase.create();
 		idcService.save(idc);
@@ -59,7 +59,7 @@ public class IdcController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "erm:idc" }, logical = AND)
+	@RequiresPermissions(value = { "cmdb:idc" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(idcService.detail(id));
@@ -67,7 +67,7 @@ public class IdcController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "erm:idc" }, logical = AND)
+	@RequiresPermissions(value = { "cmdb:idc" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		idcService.del(id);

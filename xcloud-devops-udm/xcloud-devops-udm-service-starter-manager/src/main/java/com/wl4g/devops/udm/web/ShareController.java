@@ -40,7 +40,7 @@ public class ShareController extends BaseController {
 	private ShareService shareService;
 
 	@RequestMapping("/list")
-	@RequiresPermissions(value = { "doc:share" }, logical = AND)
+	@RequiresPermissions(value = { "udm:share" }, logical = AND)
 	public RespBase<?> list(PageHolder<Share> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(shareService.list(pm));
@@ -48,7 +48,7 @@ public class ShareController extends BaseController {
 	}
 
 	@RequestMapping("/cancelShare")
-	@RequiresPermissions(value = { "doc:share" }, logical = AND)
+	@RequiresPermissions(value = { "udm:share" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		shareService.cancelShare(id);

@@ -108,7 +108,7 @@ public class PcmController {
 	//
 
 	@RequestMapping("/list")
-	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:pcm" }, logical = AND)
 	public RespBase<?> list(PageHolder<Pcm> pm, String name, String providerKind, Integer authType) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(pcmService.list(pm, name, providerKind, authType));
@@ -116,7 +116,7 @@ public class PcmController {
 	}
 
 	@RequestMapping("/save")
-	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:pcm" }, logical = AND)
 	public RespBase<?> save(Pcm pcm) {
 		RespBase<Object> resp = RespBase.create();
 		pcmService.save(pcm);
@@ -124,7 +124,7 @@ public class PcmController {
 	}
 
 	@RequestMapping("/del")
-	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:pcm" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		pcmService.del(id);
@@ -132,7 +132,7 @@ public class PcmController {
 	}
 
 	@RequestMapping("/detail")
-	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:pcm" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Pcm pcm = pcmService.detail(id);

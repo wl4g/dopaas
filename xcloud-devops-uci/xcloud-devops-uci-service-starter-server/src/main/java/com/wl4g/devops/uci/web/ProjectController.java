@@ -56,7 +56,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
 	public RespBase<?> list(String groupName, String projectName, PageHolder<Project> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
@@ -74,7 +74,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
 	public RespBase<?> save(@RequestBody Project project) {
 		log.info("into ProjectController.save prarms::" + "project = {} ", project);
 		RespBase<Object> resp = RespBase.create();
@@ -89,7 +89,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		log.info("into ProjectController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -106,7 +106,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		log.info("into ProjectController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -129,7 +129,7 @@ public class ProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getByAppClusterId")
-	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
 	public RespBase<?> getByAppClusterId(Long clusterId) {
 		log.info("ProjectController.detail prarms::" + "id = {} ", clusterId);
 		RespBase<Object> resp = RespBase.create();
@@ -165,7 +165,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getBranchs")
-	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
 	public RespBase<?> getBranchs(Long clusterId, Integer tagOrBranch) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		List<String> branchs = projectService.getBranchs(clusterId, tagOrBranch);

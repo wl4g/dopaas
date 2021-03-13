@@ -40,7 +40,7 @@ public class LabelController extends BaseController {
 	private LabelService labelService;
 
 	@RequestMapping("/list")
-	@RequiresPermissions(value = { "doc:label" }, logical = AND)
+	@RequiresPermissions(value = { "udm:label" }, logical = AND)
 	public RespBase<?> list(PageHolder<Label> pm, String name) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(labelService.list(pm, name));
@@ -48,7 +48,7 @@ public class LabelController extends BaseController {
 	}
 
 	@RequestMapping("/save")
-	@RequiresPermissions(value = { "doc:label" }, logical = AND)
+	@RequiresPermissions(value = { "udm:label" }, logical = AND)
 	public RespBase<?> save(Label label) {
 		RespBase<Object> resp = RespBase.create();
 		labelService.save(label);
@@ -56,7 +56,7 @@ public class LabelController extends BaseController {
 	}
 
 	@RequestMapping("/del")
-	@RequiresPermissions(value = { "doc:label" }, logical = AND)
+	@RequiresPermissions(value = { "udm:label" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		labelService.del(id);
@@ -64,7 +64,7 @@ public class LabelController extends BaseController {
 	}
 
 	@RequestMapping("/detail")
-	@RequiresPermissions(value = { "doc:label" }, logical = AND)
+	@RequiresPermissions(value = { "udm:label" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Label label = labelService.detail(id);

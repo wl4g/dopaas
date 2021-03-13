@@ -3,7 +3,9 @@
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
-### 一站式 DevOps 解决方案SaaS平台，基于SpringCloud/Docker/Istio开发, 主要模块：持续交付CI/CD(分布式编译部署)、IAM认证中心、统一监控中心、统一配置中心、统一资源管理、任务调度中心、弹性伸缩、shell工具、各种工具链(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
+### 一站式DevSecOps解决方案SaaS平台
+> 基于SpringCloud/Docker/ServiceMesh(Istio)，主要集成模块：CMDB、统一持续交付CI/CD（分布式编译和部署）、IAM认证中心、统一监控中心、统一配置中心、统一分布式调度中心、统一文档、统一开发者中心（AutoGenerator），统一私有对象存储管理、统一源/包/映像库管理、Shell-Cli组件、各种工具链（如HBase/OSS运维）、即时通讯、轻量级风控等
+
 
 [![Build Status](https://travis-ci.org/wl4g/xcloud-devops.svg)](https://travis-ci.org/wl4g/xcloud-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
@@ -114,9 +116,23 @@ npm run build # 生产打包
 
 
 ### 运行环境
-- 基础环境依赖（必须）：JDK8+、Maven3.5+、MySQL5.6+
-- 其他环境依赖（若需要）：Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
+- 基础依赖环境(必须):
+<pre>
+Git
+Jdk:8+
+Maven:3.5+
+Mysql:5.6+
+</pre>
 
+- 其他依赖环境(推荐非必须):
+<pre>
+DockerCE:18.06 +
+Kafka:0.10.0 +
+Zookeeper:3.4.6 +
+CoreDNS:1.7.0 +
+MinIO:latest
+Shardingsphere-Elasticjob:3.0.0+
+</pre>
 
 ### 如何交流、反馈、参与贡献？
 - 点击入群 [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)

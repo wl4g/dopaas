@@ -3,7 +3,8 @@
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
-### One stop Devops solution SaaS platform is developed based on spring cloud / docker / istio, Main modules: continuous delivery of CI / CD (distributed compilation and deployment), Iam Certification Center, unified monitoring center, unified configuration center, unified resource management, task scheduling center, flexible scaling, shell tools, various tool chains (such as HBase / OSS operation and maintenance), document management, timely communication, lightweight risk control, private object storage, version control, etc
+### One stop Devops solution SaaS platform.
+> Based on SpringCloud/Docker/ServiceMesh(Istio), primary integrated modules: CMDB, Unified Continuous delivery of CI/CD (distributed compilation and deployment), IAM Certification Center, Unified monitoring center, Unified configuration center, Unified Distributed task scheduling center, Unified documents, Unified developer center(AutoGenerator), Private object storage, source/package/image repository management, Shell tools, various tool chains (such as HBase/OSS operation and maintenance), Timely communication, lightweight risk control, Flexible scaling, etc
 
 [![Build Status](https://travis-ci.org/wl4g/xcloud-devops.svg)](https://travis-ci.org/wl4g/xcloud-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
@@ -115,10 +116,24 @@ npm run build # Production building
 - [IM](xcloud-im/README.md)                  Instant messaging system, project personnel communicate in a timely manner, internal data distribution.
 
 
-### 运行环境
-- 基础环境依赖（必须）：JDK8+、Maven3.5+、MySQL5.6+
-- 其他环境依赖（若需要）：Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
+### Runtime
+- Basic dependency env (required):
+<pre>
+Git
+Jdk:8+
+Maven:3.5+
+Mysql:5.6+
+</pre>
 
+- Other dependency env (optional):
+<pre>
+DockerCE:18.06 +
+Kafka:0.10.0 +
+Zookeeper:3.4.6 +
+CoreDNS:1.7.0 +
+MinIO:latest
+Shardingsphere-Elasticjob:3.0.0+
+</pre>
 
 ### Communicate, feedback and contribute?
 - Click add to group [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)

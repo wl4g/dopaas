@@ -71,7 +71,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipeline" }, logical = AND)
 	public RespBase<?> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
 		RespBase<Object> resp = RespBase.create();
 		PageHolder<?> list = pipelineService.list(pm, pipeName, providerKind, environment);
@@ -87,7 +87,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "ci", "ci:pipeline" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:pipeline" }, logical = AND)
 	public RespBase<?> save(@RequestBody Pipeline pipeline) {
 		Assert.notNull(pipeline, "task can not be null");
 		checkPipeline(pipeline);
@@ -103,7 +103,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipeline" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		log.info("into TaskController.detail prarms::" + "id = {} ", id);
 		Assert.notNull(id, "id can not be null");
@@ -119,7 +119,7 @@ public class PipelineController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipeline" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		Assert.notNull(id, "id can not be null");
 		RespBase<Object> resp = RespBase.create();
@@ -157,7 +157,7 @@ public class PipelineController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
-	@RequiresPermissions(value = { "ci:pipeline" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipeline" }, logical = AND)
 	public RespBase<?> create(RunParameter runParam) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		runParam.setPipeModel(flowManagerService.buildPipeline(runParam.getPipeId()));
