@@ -47,7 +47,7 @@ public class AppClusterController extends BaseController {
 	private AppClusterService appClusterService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "erm:cluster" })
+	@RequiresPermissions(value = { "cmdb:cluster" })
 	public RespBase<?> list(PageHolder<?> pm, String clusterName, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = appClusterService.list(pm, clusterName, deployType);
@@ -56,7 +56,7 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "erm:cluster" })
+	@RequiresPermissions(value = { "cmdb:cluster" })
 	public RespBase<?> save(@RequestBody AppCluster appCluster) {
 		RespBase<Object> resp = RespBase.create();
 		appClusterService.save(appCluster);
@@ -64,7 +64,7 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "erm:cluster" })
+	@RequiresPermissions(value = { "cmdb:cluster" })
 	public RespBase<?> del(Long clusterId) {
 		RespBase<Object> resp = RespBase.create();
 		appClusterService.del(clusterId);
@@ -72,7 +72,7 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "erm:cluster" })
+	@RequiresPermissions(value = { "cmdb:cluster" })
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		AppCluster detail = appClusterService.detail(id);

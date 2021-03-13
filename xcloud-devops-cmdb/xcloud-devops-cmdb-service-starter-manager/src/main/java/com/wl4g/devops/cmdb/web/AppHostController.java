@@ -54,7 +54,7 @@ public class AppHostController extends BaseController {
 	}
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "erm:host" })
+	@RequiresPermissions(value = { "cmdb:host" })
 	public RespBase<?> list(PageHolder<Host> pm, String name, String hostname) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostService.page(pm, name, hostname, null));
@@ -62,7 +62,7 @@ public class AppHostController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "erm:host" })
+	@RequiresPermissions(value = { "cmdb:host" })
 	public RespBase<?> save(@RequestBody Host host) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.save(host);
@@ -70,7 +70,7 @@ public class AppHostController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "erm:host" })
+	@RequiresPermissions(value = { "cmdb:host" })
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostService.detail(id));
@@ -78,7 +78,7 @@ public class AppHostController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "erm:host" })
+	@RequiresPermissions(value = { "cmdb:host" })
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.del(id);

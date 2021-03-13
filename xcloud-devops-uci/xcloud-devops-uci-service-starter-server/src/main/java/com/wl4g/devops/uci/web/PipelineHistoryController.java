@@ -63,7 +63,7 @@ public class PipelineHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipehis" }, logical = AND)
 	public RespBase<?> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName, String environment,
 			String startDate, String endDate, String providerKind) {
 		RespBase<Object> resp = RespBase.create();
@@ -80,7 +80,7 @@ public class PipelineHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipehis" }, logical = AND)
 	public RespBase<?> detail(Long pipeHisId) {
 		RespBase<Object> resp = RespBase.create();
 		PipelineHistory detail = pipelineHistoryService.detail(pipeHisId);
@@ -95,7 +95,7 @@ public class PipelineHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/rollback")
-	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipehis" }, logical = AND)
 	public RespBase<?> rollback(Long pipeHisId) {
 		RespBase<Object> resp = RespBase.create();
 		PipelineModel pipeModel = flowManagerService.buildPipeline(pipeHisId);
@@ -104,7 +104,7 @@ public class PipelineHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/readLog")
-	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipehis" }, logical = AND)
 	public RespBase<?> readLog(Long pipeHisId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
 		FileIOUtils.ReadTailFrame readResult = pipelineManagerService.logfile(pipeHisId, startPos, size);
@@ -113,7 +113,7 @@ public class PipelineHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/readDetailLog")
-	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipehis" }, logical = AND)
 	public RespBase<?> readDetailLog(Long pipeHisId, Long instanceId, Long startPos, Integer size) {
 		RespBase<Object> resp = RespBase.create();
 		FileIOUtils.ReadTailFrame readResult = pipelineManagerService.logDetailFile(pipeHisId, instanceId, startPos, size);
@@ -122,7 +122,7 @@ public class PipelineHistoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/stopTask")
-	@RequiresPermissions(value = { "ci:pipehis" }, logical = AND)
+	@RequiresPermissions(value = { "uci:pipehis" }, logical = AND)
 	public RespBase<?> create(Long pipeHisId) {
 		RespBase<Object> resp = RespBase.create();
 		pipelineHistoryService.stopByPipeHisId(pipeHisId);

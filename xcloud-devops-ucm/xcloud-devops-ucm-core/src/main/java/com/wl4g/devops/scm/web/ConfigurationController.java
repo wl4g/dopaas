@@ -55,7 +55,7 @@ public class ConfigurationController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "config-set.json", method = { RequestMethod.POST })
-	@RequiresPermissions(value = {"scm:configuration"})
+	@RequiresPermissions(value = {"ucm:configuration"})
 	public RespBase<?> configure(@RequestBody VersionOfDetail vod) {
 		if (log.isInfoEnabled()) {
 			log.info("ConfigSet request ... {}", vod);
@@ -77,7 +77,7 @@ public class ConfigurationController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "config-list.json", method = RequestMethod.POST)
-	@RequiresPermissions(value = {"scm:configuration"})
+	@RequiresPermissions(value = {"ucm:configuration"})
 	public RespBase<?> list(ConfigVersionList agl, PageHolder<?> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("ConfigList request ... {}, {}", agl, pm);

@@ -40,7 +40,7 @@ public class AnalysisHistoryController extends BaseController {
 	private AnalysisHistoryService analysisHistoryService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "ci:analysis" }, logical = AND)
+	@RequiresPermissions(value = { "uci:analysis" }, logical = AND)
 	public RespBase<?> list(String groupName, String projectName, PageHolder<AnalysisHistory> pm) {
 		log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
 		RespBase<Object> resp = RespBase.create();

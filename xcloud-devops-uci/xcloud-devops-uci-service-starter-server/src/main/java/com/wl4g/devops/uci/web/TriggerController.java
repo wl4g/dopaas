@@ -60,7 +60,7 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "ci", "ci:trigger" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:trigger" }, logical = AND)
 	public RespBase<?> list(PageHolder<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,
 			String endDate) {
 		log.info(
@@ -80,7 +80,7 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "ci", "ci:trigger" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:trigger" }, logical = AND)
 	public RespBase<?> save(Trigger trigger) {
 		log.info("into TriggerController.save prarms::" + "trigger = {} ", trigger);
 		RespBase<Object> resp = RespBase.create();
@@ -95,7 +95,7 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "ci", "ci:trigger" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:trigger" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		log.info("into TriggerController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -112,7 +112,7 @@ public class TriggerController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "ci", "ci:trigger" }, logical = AND)
+	@RequiresPermissions(value = { "ci", "uci:trigger" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		log.info("into TriggerController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

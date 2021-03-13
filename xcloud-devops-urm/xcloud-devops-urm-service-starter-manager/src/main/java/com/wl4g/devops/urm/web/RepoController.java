@@ -30,10 +30,10 @@ import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.devops.common.bean.uci.Vcs;
 import com.wl4g.devops.common.bean.urm.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.urm.service.RepoService;
 import com.wl4g.devops.urm.operator.model.VcsBranchModel;
 import com.wl4g.devops.urm.operator.model.VcsProjectModel;
 import com.wl4g.devops.urm.operator.model.VcsTagModel;
+import com.wl4g.devops.urm.service.RepoService;
 
 /**
  * @author vjay
@@ -47,7 +47,7 @@ public class RepoController extends BaseController {
 	private RepoService repoService;
 
 	@RequestMapping("/list")
-	@RequiresPermissions(value = { "vcs" }, logical = AND)
+	@RequiresPermissions(value = { "urm" }, logical = AND)
 	public RespBase<PageHolder<Vcs>> list(PageHolder<Vcs> pm, String name, String providerKind, Integer authType) {
 		RespBase<PageHolder<Vcs>> resp = RespBase.create();
 		resp.setData(repoService.list(pm, name, providerKind, authType));
@@ -55,7 +55,7 @@ public class RepoController extends BaseController {
 	}
 
 	@RequestMapping("/save")
-	@RequiresPermissions(value = { "vcs" }, logical = AND)
+	@RequiresPermissions(value = { "urm" }, logical = AND)
 	public RespBase<?> save(@RequestBody Vcs vcs) {
 		RespBase<Object> resp = RespBase.create();
 		repoService.save(vcs);
@@ -63,7 +63,7 @@ public class RepoController extends BaseController {
 	}
 
 	@RequestMapping("/del")
-	@RequiresPermissions(value = { "vcs" }, logical = AND)
+	@RequiresPermissions(value = { "urm" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		repoService.del(id);
@@ -71,7 +71,7 @@ public class RepoController extends BaseController {
 	}
 
 	@RequestMapping("/detail")
-	@RequiresPermissions(value = { "vcs" }, logical = AND)
+	@RequiresPermissions(value = { "urm" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
 		Vcs vcs = repoService.detail(id);
@@ -136,7 +136,7 @@ public class RepoController extends BaseController {
 	}
 
 	@RequestMapping(value = "/createBranch")
-	@RequiresPermissions(value = { "vcs" }, logical = AND)
+	@RequiresPermissions(value = { "urm" }, logical = AND)
 	public RespBase<?> createBranch(Long vcsId, Long projectId, String branch, String ref) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		VcsBranchModel vcsBranchModel = repoService.createBranch(vcsId, projectId, branch, ref);
@@ -145,7 +145,7 @@ public class RepoController extends BaseController {
 	}
 
 	@RequestMapping(value = "/createTag")
-	@RequiresPermissions(value = { "vcs" }, logical = AND)
+	@RequiresPermissions(value = { "urm" }, logical = AND)
 	public RespBase<?> createTag(Long vcsId, Long projectId, String tag, String ref, String message, String releaseDescription)
 			throws Exception {
 		RespBase<Object> resp = RespBase.create();

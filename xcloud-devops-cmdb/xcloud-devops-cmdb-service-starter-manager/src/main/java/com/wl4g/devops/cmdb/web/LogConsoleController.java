@@ -41,7 +41,7 @@ public class LogConsoleController extends BaseController {
 
 	@RequestMapping("/consoleLog")
 	@ResponseBody
-	@RequiresPermissions(value = { "erm:log" }, logical = AND)
+	@RequiresPermissions(value = { "cmdb:log" }, logical = AND)
 	public RespBase<?> logfile(@Validated @RequestBody QueryLogModel model) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Reading logfile... {}", model);

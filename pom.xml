@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>XCloud DevSecOps</name>
 	<url>https://xcloud.wl4g.com</url>
-	<description>A DevSecOps solution that covers the entire software lifecycle and lightweight microservices.</description>
+	<description>One stop DevSecOps solution SaaS platform.</description>
 	<organization>
 		<name>Wanglsir</name>
 		<url>http://xcloud.wl4g.com</url>

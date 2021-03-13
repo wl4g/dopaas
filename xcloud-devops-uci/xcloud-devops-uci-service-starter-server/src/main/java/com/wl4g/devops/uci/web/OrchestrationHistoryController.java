@@ -52,7 +52,7 @@ public class OrchestrationHistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "ci:orchestrationhistory" }, logical = AND)
+	@RequiresPermissions(value = { "uci:orchestrationhistory" }, logical = AND)
 	public RespBase<?> list(PageHolder<OrchestrationHistory> pm, String runId) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(orchestrationHistoryService.list(pm, runId));
