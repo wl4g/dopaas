@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.export.springfox;
+package com.wl4g.devops.udm.plugin.swagger.export.springfox;
 
-import static com.wl4g.devops.doc.plugin.swagger.export.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerExcludeFilter;
-import static com.wl4g.devops.doc.plugin.swagger.export.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerIncludeFilter;
+import static com.wl4g.devops.udm.plugin.swagger.export.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerExcludeFilter;
+import static com.wl4g.devops.udm.plugin.swagger.export.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerIncludeFilter;
 import static org.apache.commons.lang3.StringUtils.startsWithAny;
 
 import java.io.IOException;

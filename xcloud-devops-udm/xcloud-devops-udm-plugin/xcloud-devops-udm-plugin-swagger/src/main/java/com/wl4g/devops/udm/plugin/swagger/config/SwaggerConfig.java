@@ -13,29 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.udm.plugin.swagger.export;
-
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
+package com.wl4g.devops.udm.plugin.swagger.config;
 
 /**
- * {@link AbstractDocumentionExporter}
+ * {@link SwaggerConfig}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-12-08
+ * @version v1.0 2020-12-14
  * @sine v1.0
  * @see
  */
-public abstract class AbstractDocumentionExporter<R> implements DocumentionExporter<R> {
+public interface SwaggerConfig {
 
-	protected final Log log;
-	protected final MavenProject mvnProject;
-
-	public AbstractDocumentionExporter(Log log, MavenProject mvnProject) {
-		this.log = notNullOf(log, "mvnLog");
-		this.mvnProject = notNullOf(mvnProject, "mvnProject");
-	}
+	String getSwaggerGroup();
 
 }

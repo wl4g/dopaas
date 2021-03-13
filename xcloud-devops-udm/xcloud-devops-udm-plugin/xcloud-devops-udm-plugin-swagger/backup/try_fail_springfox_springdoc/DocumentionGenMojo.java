@@ -13,7 +13,7 @@
 // * See the License for the specific language governing permissions and
 // * limitations under the License.
 // */
-//package com.wl4g.devops.doc.plugin.swagger;
+//package com.wl4g.devops.udm.plugin.swagger;
 //
 //import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 //import static java.lang.String.format;
@@ -25,7 +25,7 @@
 //import org.apache.maven.plugins.annotations.Parameter;
 //import org.apache.maven.project.MavenProject;
 //
-//import com.wl4g.devops.doc.plugin.swagger.export.springfox.SpringfoxSwagger2DocExporter;
+//import com.wl4g.devops.udm.plugin.swagger.export.springfox.SpringfoxSwagger2DocExporter;
 //
 //import io.swagger.models.Swagger;
 //

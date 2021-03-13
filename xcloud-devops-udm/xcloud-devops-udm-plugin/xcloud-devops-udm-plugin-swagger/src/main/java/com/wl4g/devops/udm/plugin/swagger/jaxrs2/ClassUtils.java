@@ -13,4 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.udm.plugin.swagger.export.springdoc;
+package com.wl4g.devops.udm.plugin.swagger.jaxrs2;
+
+final class ClassUtils {
+
+	private ClassUtils() {
+	}
+
+	public static Class<?> loadClass(String className, ClassLoader classLoader) {
+		try {
+			return Class.forName(className, true, classLoader);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+	}
+
+	public static <T> T createInstance(Class<T> clazz) {
+		try {
+			return clazz.getDeclaredConstructor().newInstance();
+		} catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+			return null;
+		}
+	}
+
+}

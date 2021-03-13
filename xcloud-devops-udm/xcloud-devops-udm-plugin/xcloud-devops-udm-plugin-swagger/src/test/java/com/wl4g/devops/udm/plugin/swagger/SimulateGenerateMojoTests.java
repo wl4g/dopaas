@@ -15,12 +15,10 @@
  */
 package com.wl4g.devops.udm.plugin.swagger;
 
-import com.wl4g.devops.doc.plugin.swagger.springfox.oas3.GenerateSpringfoxOas3Mojo;
-import com.wl4g.devops.doc.plugin.swagger.springfox.swagger2.GenerateSpringfoxSwagger2Mojo;
-import static com.wl4g.devops.doc.plugin.swagger.util.OutputFormater.*;
-
 import static com.wl4g.component.common.reflect.ReflectionUtils2.findField;
 import static com.wl4g.component.common.reflect.ReflectionUtils2.setField;
+import static com.wl4g.devops.udm.plugin.swagger.util.OutputFormater.JSON;
+import static com.wl4g.devops.udm.plugin.swagger.util.OutputFormater.YAML;
 import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
@@ -36,8 +34,10 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.junit.Test;
 
-import com.wl4g.devops.doc.plugin.swagger.jaxrs2.GenerateJaxrs2Oas3Mojo;
-import com.wl4g.devops.doc.plugin.swagger.springdoc.oas3.GenerateSpringdocOas3Mojo;
+import com.wl4g.devops.udm.plugin.swagger.jaxrs2.GenerateJaxrs2Oas3Mojo;
+import com.wl4g.devops.udm.plugin.swagger.springdoc.oas3.GenerateSpringdocOas3Mojo;
+import com.wl4g.devops.udm.plugin.swagger.springfox.oas3.GenerateSpringfoxOas3Mojo;
+import com.wl4g.devops.udm.plugin.swagger.springfox.swagger2.GenerateSpringfoxSwagger2Mojo;
 
 /**
  * Simulate mvn plugin execution tests.
@@ -52,24 +52,24 @@ public class SimulateGenerateMojoTests {
 	@Test
 	public void generateSpringfoxSwagger2MojoTest() throws Exception {
 		createMavenMojoInstance(GenerateSpringfoxSwagger2Mojo.class,
-				singleton("com.wl4g.devops.doc.plugin.swagger.example.swagger2"), "swagger-swagger2-by-springfox").execute();
+				singleton("com.wl4g.devops.udm.plugin.swagger.example.swagger2"), "swagger-swagger2-by-springfox").execute();
 	}
 
 	@Test
 	public void generateSpringfoxOas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateSpringfoxOas3Mojo.class, singleton("com.wl4g.devops.doc.plugin.swagger.example.oas3"),
+		createMavenMojoInstance(GenerateSpringfoxOas3Mojo.class, singleton("com.wl4g.devops.udm.plugin.swagger.example.oas3"),
 				"swagger-oas3-by-springfox").execute();
 	}
 
 	// @Test
 	public void generateSpringdocOas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateSpringdocOas3Mojo.class, singleton("com.wl4g.devops.doc.plugin.swagger.example.oas3"),
+		createMavenMojoInstance(GenerateSpringdocOas3Mojo.class, singleton("com.wl4g.devops.udm.plugin.swagger.example.oas3"),
 				"swagger-oas3-by-springdoc").execute();
 	}
 
 	// @Test
 	public void generateJaxrs2Oas3MojoTest() throws Exception {
-		createMavenMojoInstance(GenerateJaxrs2Oas3Mojo.class, singleton("com.wl4g.devops.doc.plugin.swagger.example.jaxrs2"),
+		createMavenMojoInstance(GenerateJaxrs2Oas3Mojo.class, singleton("com.wl4g.devops.udm.plugin.swagger.example.jaxrs2"),
 				"swagger-oas3-by-jaxrs").execute();
 	}
 
