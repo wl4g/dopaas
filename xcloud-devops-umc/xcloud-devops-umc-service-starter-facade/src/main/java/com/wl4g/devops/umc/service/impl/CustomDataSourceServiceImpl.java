@@ -65,7 +65,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 	}
 
 	@Override
-	public BaseDataSource detal(Long id) {
+	public BaseDataSource detail(Long id) {
 		CustomDataSource customDataSource = customDatasourceDao.selectByPrimaryKey(id);
 		BaseDataSource baseDataSource = properties2Model(customDataSource);
 		if (baseDataSource instanceof MysqlDataSource) {
@@ -153,7 +153,42 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 		return customDatasourceDao.list(null);
 	}
 
-	public CustomDataSource model2Properties(BaseDataSource baseDataSource) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends BaseDataSource> T properties2Model(CustomDataSource customDataSource) {
+		String[] ignores = new String[] { "id", "name", "provider", "status", "delFlag", "createBy", "createDate", "updateBy",
+				"updateDate", "remark", };
+		if (MYSQL.toString().equalsIgnoreCase(customDataSource.getProvider())) {
+			MysqlDataSource mysqlDataSource = new MysqlDataSource();
+			mysqlDataSource.setId(customDataSource.getId());
+			mysqlDataSource.setName(customDataSource.getName());
+			mysqlDataSource.setProvider(customDataSource.getProvider());
+			mysqlDataSource.setStatus(customDataSource.getStatus());
+
+			List<CustomDataSourceProperties> customDataSourceProperties = customDataSource.getCustomDataSourceProperties();
+			Map<String, String> map = new HashMap<>();
+			for (CustomDataSourceProperties properties : customDataSourceProperties) {
+				map.put(properties.getKey(), properties.getValue());
+			}
+			MysqlDataSource dataSourceProperties = JacksonUtils.parseJSON(JacksonUtils.toJSONString(map), MysqlDataSource.class);
+			BeanUtils.copyProperties(dataSourceProperties, mysqlDataSource, ignores);
+
+			/*
+			 * for(CustomDataSourceProperties properties :
+			 * customDataSourceProperties){
+			 * if(URL.equalsIgnoreCase(properties.getKey())){
+			 * mysqlDataSource.setUrl(properties.getValue()); }
+			 * if(USERNAME.equalsIgnoreCase(properties.getKey())){
+			 * mysqlDataSource.setUsername(properties.getValue()); }
+			 * if(PASSWORD.equalsIgnoreCase(properties.getKey())){
+			 * mysqlDataSource.setPassword(properties.getValue()); } }
+			 */
+			return (T) mysqlDataSource;
+		}
+		return null;
+	}
+
+	private CustomDataSource model2Properties(BaseDataSource baseDataSource) {
 		CustomDataSource customDataSource = new CustomDataSource();
 		customDataSource.setId(baseDataSource.getId());
 		customDataSource.setName(baseDataSource.getName());
@@ -196,7 +231,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 		return customDataSource;
 	}
 
-	public List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Long dataSourceId)
+	private List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Long dataSourceId)
 			throws IllegalAccessException {
 		String[] ignores = new String[] { "id", "name", "provider", "status", "delFlag", "createBy", "createDate", "updateBy",
 				"updateDate", "remark", };
@@ -217,40 +252,6 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 			customDataSourceProperties.add(customDataSourcePropertie);
 		}
 		return customDataSourceProperties;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends BaseDataSource> T properties2Model(CustomDataSource customDataSource) {
-		String[] ignores = new String[] { "id", "name", "provider", "status", "delFlag", "createBy", "createDate", "updateBy",
-				"updateDate", "remark", };
-		if (MYSQL.toString().equalsIgnoreCase(customDataSource.getProvider())) {
-			MysqlDataSource mysqlDataSource = new MysqlDataSource();
-			mysqlDataSource.setId(customDataSource.getId());
-			mysqlDataSource.setName(customDataSource.getName());
-			mysqlDataSource.setProvider(customDataSource.getProvider());
-			mysqlDataSource.setStatus(customDataSource.getStatus());
-
-			List<CustomDataSourceProperties> customDataSourceProperties = customDataSource.getCustomDataSourceProperties();
-			Map<String, String> map = new HashMap<>();
-			for (CustomDataSourceProperties properties : customDataSourceProperties) {
-				map.put(properties.getKey(), properties.getValue());
-			}
-			MysqlDataSource dataSourceProperties = JacksonUtils.parseJSON(JacksonUtils.toJSONString(map), MysqlDataSource.class);
-			BeanUtils.copyProperties(dataSourceProperties, mysqlDataSource, ignores);
-
-			/*
-			 * for(CustomDataSourceProperties properties :
-			 * customDataSourceProperties){
-			 * if(URL.equalsIgnoreCase(properties.getKey())){
-			 * mysqlDataSource.setUrl(properties.getValue()); }
-			 * if(USERNAME.equalsIgnoreCase(properties.getKey())){
-			 * mysqlDataSource.setUsername(properties.getValue()); }
-			 * if(PASSWORD.equalsIgnoreCase(properties.getKey())){
-			 * mysqlDataSource.setPassword(properties.getValue()); } }
-			 */
-			return (T) mysqlDataSource;
-		}
-		return null;
 	}
 
 }

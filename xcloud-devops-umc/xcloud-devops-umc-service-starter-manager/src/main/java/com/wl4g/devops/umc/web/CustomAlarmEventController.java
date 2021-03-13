@@ -15,19 +15,20 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageHolder;
-import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
-import com.wl4g.devops.umc.service.CustomAlarmEventService;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static org.apache.shiro.authz.annotation.Logical.AND;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static org.apache.shiro.authz.annotation.Logical.AND;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
+import com.wl4g.devops.umc.service.CustomAlarmEventService;
 
 /**
  * @author vjay
@@ -61,7 +62,7 @@ public class CustomAlarmEventController extends BaseController {
 	@RequiresPermissions(value = { "umc:alarm:event" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		CustomAlarmEvent customAlarmEvent = customAlarmEventService.detal(id);
+		CustomAlarmEvent customAlarmEvent = customAlarmEventService.detail(id);
 		resp.setData(customAlarmEvent);
 		return resp;
 	}

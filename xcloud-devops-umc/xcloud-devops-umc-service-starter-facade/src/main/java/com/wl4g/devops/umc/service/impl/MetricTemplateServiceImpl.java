@@ -44,7 +44,7 @@ public class MetricTemplateServiceImpl implements MetricTemplateService {
 	}
 
 	@Override
-	public MetricTemplate detal(Long id) {
+	public MetricTemplate detail(Long id) {
 		return metricTemplateDao.selectByPrimaryKey(id);
 	}
 

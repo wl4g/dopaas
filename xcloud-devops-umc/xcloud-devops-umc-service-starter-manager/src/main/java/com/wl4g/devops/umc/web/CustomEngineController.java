@@ -82,7 +82,7 @@ public class CustomEngineController extends BaseController {
 	@RequiresPermissions(value = { "umc:custom:engine" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		CustomEngine customEngine = customEngineService.detal(id);
+		CustomEngine customEngine = customEngineService.detail(id);
 
 		CustomEngineModel customEngineModel = new CustomEngineModel();
 		BeanUtils.copyProperties(customEngine, customEngineModel, "notifyGroupIds");

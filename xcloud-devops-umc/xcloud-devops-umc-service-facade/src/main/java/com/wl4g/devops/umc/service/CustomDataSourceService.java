@@ -15,14 +15,18 @@
  */
 package com.wl4g.devops.umc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.devops.common.bean.umc.CustomDataSource;
-import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
 import com.wl4g.devops.common.bean.umc.datasource.BaseDataSource;
 import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
 
@@ -34,23 +38,27 @@ import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
 @RequestMapping("/customDataSource-service")
 public interface CustomDataSourceService {
 
-	PageHolder<CustomDataSource> list(PageHolder<CustomDataSource> pm, String name);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<CustomDataSource> list(@RequestBody PageHolder<CustomDataSource> pm, @RequestParam("name") String name);
 
-	BaseDataSource detal(Long id);
+	@RequestMapping(value = "/detail", method = GET)
+	BaseDataSource detail(@RequestParam("id") Long id);
 
-	void save(BaseDataSource baseDataSource);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody BaseDataSource baseDataSource);
 
-	void del(Long id);
+	@RequestMapping(value = "/del", method = POST)
+	void del(@RequestParam("id") Long id);
 
-	void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password, Long id) throws Exception;
+	@RequestMapping(value = "/testConnect", method = POST)
+	void testConnect(DataSourceProvide dataSourceProvide, @RequestParam("url") String url,
+			@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("id") Long id)
+			throws Exception;
 
+	@RequestMapping(value = "/dataSources", method = GET)
 	List<CustomDataSource> dataSources();
 
-	CustomDataSource model2Properties(BaseDataSource baseDataSource);
-
-	List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Long dataSourceId)
-			throws IllegalAccessException;
-
-	<T extends BaseDataSource> T properties2Model(CustomDataSource customDataSource);
+	@RequestMapping(value = "/properties2Model", method = POST)
+	<T extends BaseDataSource> T properties2Model(@RequestBody CustomDataSource customDataSource);
 
 }

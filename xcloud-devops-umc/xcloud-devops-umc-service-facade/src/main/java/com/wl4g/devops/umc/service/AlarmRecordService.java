@@ -15,7 +15,12 @@
  */
 package com.wl4g.devops.umc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
@@ -29,8 +34,11 @@ import com.wl4g.devops.common.bean.umc.AlarmRecord;
 @RequestMapping("/alarmRecord-service")
 public interface AlarmRecordService {
 
-	PageHolder<AlarmRecord> list(PageHolder<AlarmRecord> pm, String name, String startDate, String endDate);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<AlarmRecord> list(@RequestBody PageHolder<AlarmRecord> pm, @RequestParam("name") String name,
+			@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate);
 
-	AlarmRecord detail(Long id);
+	@RequestMapping(value = "/detail", method = GET)
+	AlarmRecord detail(@RequestParam("id") Long id);
 
 }

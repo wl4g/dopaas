@@ -52,7 +52,7 @@ public class CustomHistoryServiceImpl implements CustomHistoryService {
 	}
 
 	@Override
-	public CustomHistory detal(Long id) {
+	public CustomHistory detail(Long id) {
 		CustomHistory customHistory = customHistoryDao.selectByPrimaryKey(id);
 		return customHistory;
 	}
