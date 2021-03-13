@@ -47,5 +47,5 @@ cipher-key: 03DE18C2FC4E605F
 
 doc:
   base-path: /mnt/disk1/doc-manager/data
-  share-base-url: http://share.anjiancloud.alpha/share-manager
+  share-base-url: http://share.anjiancloud.alpha/cmdb-manager
   doc-base-url: http://share.anjiancloud.alpha/doc-manager

@@ -33,7 +33,7 @@ import java.io.File;
 public class UploadUtilTests {
 
 	// final static private String uploadUrl =
-	// "http://localhost:18051/erm-manager/fs/uploadFile";
+	// "http://localhost:17010/cmdb-manager/fs/uploadFile";
 	final static private String uploadUrl = "http://localhost:14062/coss-manager/webservice/putObject";
 
 	@Test

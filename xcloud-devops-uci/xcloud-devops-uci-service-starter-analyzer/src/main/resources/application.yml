@@ -75,7 +75,7 @@ server:
   servlet:
     contextPath: /${spring.application.name}
   #address: 0.0.0.0
-  port: 14055
+  port: 17022
   tomcat:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto

@@ -53,7 +53,7 @@ server:
     #contextPath: /${spring.application.name}
     contextPath: /
   #address: 0.0.0.0
-  port: 14081
+  port: 17041
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8

@@ -47,5 +47,5 @@ cipher-key: 03DE18C2FC4E605F
 
 doc:
   base-path: /Users/vjay/doctestdir
-  share-base-url: http://wl4g.debug:18051/share-manager
-  doc-base-url: http://wl4g.debug:18055/doc-manager
+  share-base-url: http://wl4g.debug:17010/cmdb-manager
+  doc-base-url: http://wl4g.debug:17050/doc-manager
