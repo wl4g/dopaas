@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(UAT Test) configuration. ####
+# #### Environment(Dev) configuration. ####
 #
 spring:
   xcloud:
@@ -19,7 +19,7 @@ spring:
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${DEVOPS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
+          nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
     devops:
       umc:
         store:
@@ -35,7 +35,7 @@ spring:
             queue-depth: 2
             properties:
               group.id: defaultUmcReceiverClusterId
-              bootstrap.servers: ${KAFKA_NODES:owner-node5:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092}
+              bootstrap.servers: ${KAFKA_NODES:owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092}
               #bootstrap.servers: localhost:9092
         watch:
           zk-servers: owner-node2:2181,owner-node3:2181,owner-node4:2181
@@ -46,6 +46,27 @@ spring:
     admin:
       notify.composite:
         href-url: http://127.0.0.1:${server.port}/${spring.application.name}
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    druid:
+      url: ${DEVOPS_DB_URL:jdbc:mysql://owner-node1:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
+      username: ${DEVOPS_DB_USER:gzsm}
+      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall
+      log-slow-sql: true
   mail:
     host: smtp.sina.com
     port: 465
