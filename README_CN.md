@@ -32,6 +32,14 @@ bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-devops/master/s
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy/deploy-boot.sh)"
 ```
 
+- 服务器配置
+
+| 运行模式 | 最低配置要求建议 | 说明 |
+| ---- | ---- | ---- |
+| cluster | CentOS7+ / Ubuntu18+ (4Core+ 8GB+) | 只有1台主机时只能部署伪集群 |
+| standalone | 2Core+ 2GB+ | 单体应用 |
+
+
 ### 手动编译搭建：
 > 适用于二次开发环境搭建
 
