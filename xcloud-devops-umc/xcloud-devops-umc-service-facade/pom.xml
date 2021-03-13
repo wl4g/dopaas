@@ -14,6 +14,11 @@
 		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>
+	    <dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>xcloud-devops-umc-client-springboot</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-common</artifactId>

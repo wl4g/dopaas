@@ -70,7 +70,7 @@ public class CounterMetricsAdvice extends AbstractMetricsAdvice {
 	 * @since
 	 */
 	@Configuration
-	@ConditionalOnProperty(name = CounterMetricsProperties.CONF_P + ".enable", matchIfMissing = true)
+	@ConditionalOnProperty(name = CounterMetricsProperties.CONF_P + ".enable", matchIfMissing = false)
 	@ConfigurationProperties(prefix = CounterMetricsProperties.CONF_P)
 	public static class CounterMetricsProperties {
 		final public static String CONF_P = UMCConstants.KEY_UMC_METRIC_PREFIX + ".counter";

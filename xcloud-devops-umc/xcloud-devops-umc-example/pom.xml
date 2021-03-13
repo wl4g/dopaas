@@ -20,10 +20,6 @@
 			<artifactId>xcloud-devops-umc-client-springboot</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-zipkin</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>

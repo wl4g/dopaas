@@ -122,7 +122,7 @@ public class TimerMetricsAdvice extends AbstractMetricsAdvice {
 	 * @since
 	 */
 	@Configuration
-	@ConditionalOnProperty(name = TimerMetricsProperties.CONF_P + ".enable", matchIfMissing = true)
+	@ConditionalOnProperty(name = TimerMetricsProperties.CONF_P + ".enable", matchIfMissing = false)
 	@ConfigurationProperties(prefix = TimerMetricsProperties.CONF_P)
 	public static class TimerMetricsProperties {
 		final public static String CONF_P = UMCConstants.KEY_UMC_METRIC_PREFIX + ".timeouts";
