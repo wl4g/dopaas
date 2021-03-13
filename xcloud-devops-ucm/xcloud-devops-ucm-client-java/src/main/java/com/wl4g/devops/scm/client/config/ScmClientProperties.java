@@ -354,7 +354,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	public final static String DEF_SERVICEID = SystemUtils2.LOCAL_PROCESS_ID;
 
 	/** Default Connect to SCM server based URI. */
-	public final static String DEF_BASEURI = "http://localhost:18053/scm-server";
+	public final static String DEF_BASEURI = "http://localhost:17030/scm-server";
 
 	/**
 	 * Default SCM client register network interface configuration.

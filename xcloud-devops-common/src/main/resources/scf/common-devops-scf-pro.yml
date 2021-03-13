@@ -16,6 +16,25 @@ spring:
     # see: org.springframework.cloud.commons.util.InetUtilsProperties
     inetutils:
       preferredNetworks: ['192.168.', '10.0.0.']
+  sleuth:
+    sampler:
+      # Sets the sampling rate to 0.1 by default. Notes: that the previous version is
+      # percentage and the new version is probability.
+      probability: 1
+  # @see:org.springframework.cloud.sleuth.zipkin2.ZipkinAutoConfiguration
+  # @see:org.springframework.cloud.sleuth.zipkin2.ZipkinProperties
+  zipkin:
+    enabled: true # Default by true
+    base-url: http://devops.wl4gsafecloudcs.com:9411/
+    service:
+      name: ${spring.application.name}
+    sender:
+      type: web # web|rabbitmq|kafka|activemq
+  #rabbitmq:
+  #  host: localhost
+  #  port: 5672
+  #  username: guest
+  #  password: guest
 
 eureka:
   datacenter: 'cn-south-sz1' # Default by default

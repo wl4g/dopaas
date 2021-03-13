@@ -45,4 +45,4 @@ spring:
     devops.ci:
       testing-report:
         upload-path: /Users/vjay/Downloads/myupload
-        download-url: http://wl4g.debug:18052/ci-server/fs/download
+        download-url: http://wl4g.debug:17020/ci-server/fs/download
