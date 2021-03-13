@@ -21,6 +21,11 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>xcloud-devops-umc-client-springboot</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-common</artifactId>
 			<version>${project.parent.version}</version>

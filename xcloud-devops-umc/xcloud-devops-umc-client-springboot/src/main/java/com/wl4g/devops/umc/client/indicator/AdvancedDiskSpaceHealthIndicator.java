@@ -82,7 +82,7 @@ public class AdvancedDiskSpaceHealthIndicator extends AbstractAdvancedHealthIndi
 	 * @since
 	 */
 	@Configuration
-	@ConditionalOnProperty(name = DiskSpaceHealthProperties.CONF_P + ".enable", matchIfMissing = true)
+	@ConditionalOnProperty(name = DiskSpaceHealthProperties.CONF_P + ".enable", matchIfMissing = false)
 	@ConfigurationProperties(prefix = DiskSpaceHealthProperties.CONF_P)
 	public static class DiskSpaceHealthProperties extends AdvancedHealthProperties<DiskPartition> {
 		final public static String CONF_P = UMCConstants.KEY_UMC_METRIC_PREFIX + ".disk";

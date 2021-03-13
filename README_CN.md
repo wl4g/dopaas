@@ -86,9 +86,13 @@ npm run build # 生产打包
 > [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或者 [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)
 
 - 浏览器访问（建议使用Chrome）
-> http://wl4g.debug
+> http://wl4g.debug &nbsp;&nbsp; 默认账号密码：root/wl4g.com
 
-> 默认账号密码：root/wl4g.com
+- 部署成功示例部分截图
+> 提示：截图可能由于版本演变存在略微差异
+
+![registered-eureka-apps](shots/registered-eureka-apps.png)
+- [更多截图](shots/)
 
 
 ### 子模块文档

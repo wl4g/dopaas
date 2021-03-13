@@ -82,7 +82,7 @@ public class AdvancedCpuHealthIndicator extends AbstractAdvancedHealthIndicator 
 	 * @since
 	 */
 	@Configuration
-	@ConditionalOnProperty(name = CpuHealthProperties.CONF_P + ".enable", matchIfMissing = true)
+	@ConditionalOnProperty(name = CpuHealthProperties.CONF_P + ".enable", matchIfMissing = false)
 	@ConfigurationProperties(prefix = CpuHealthProperties.CONF_P)
 	public static class CpuHealthProperties extends AdvancedHealthProperties<CpuPartition> {
 		final public static String CONF_P = UMCConstants.KEY_UMC_METRIC_PREFIX + ".cpu";

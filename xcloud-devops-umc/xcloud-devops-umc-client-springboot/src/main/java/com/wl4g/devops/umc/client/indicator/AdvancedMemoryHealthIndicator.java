@@ -89,7 +89,7 @@ public class AdvancedMemoryHealthIndicator extends AbstractAdvancedHealthIndicat
 	 * @since
 	 */
 	@Configuration
-	@ConditionalOnProperty(name = MemoryHealthProperties.CONF_P + ".enable", matchIfMissing = true)
+	@ConditionalOnProperty(name = MemoryHealthProperties.CONF_P + ".enable", matchIfMissing = false)
 	@ConfigurationProperties(prefix = MemoryHealthProperties.CONF_P)
 	public static class MemoryHealthProperties extends AdvancedHealthProperties<MemoryPartition> {
 		final public static String CONF_P = UMCConstants.KEY_UMC_METRIC_PREFIX + ".memory";
