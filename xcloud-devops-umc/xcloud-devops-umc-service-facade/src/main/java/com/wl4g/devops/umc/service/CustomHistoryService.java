@@ -15,7 +15,12 @@
  */
 package com.wl4g.devops.umc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
@@ -29,12 +34,16 @@ import com.wl4g.devops.common.bean.umc.CustomHistory;
 @RequestMapping("/customHistory-service")
 public interface CustomHistoryService {
 
-	PageHolder<CustomHistory> list(PageHolder<CustomHistory> pm, String name);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<CustomHistory> list(@RequestBody PageHolder<CustomHistory> pm, @RequestParam("name") String name);
 
-	CustomHistory detal(Long id);
+	@RequestMapping(value = "/detail", method = GET)
+	CustomHistory detail(@RequestParam("id") Long id);
 
-	void save(CustomHistory customDatasource);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody CustomHistory customDatasource);
 
-	void del(Long id);
+	@RequestMapping(value = "/del", method = POST)
+	void del(@RequestParam("id") Long id);
 
 }

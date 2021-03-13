@@ -42,7 +42,7 @@ public class CustomAlarmEventServiceImpl implements CustomAlarmEventService {
 	}
 
 	@Override
-	public CustomAlarmEvent detal(Long id) {
+	public CustomAlarmEvent detail(Long id) {
 		CustomAlarmEvent customAlarmEvent = customAlarmEventDao.selectByPrimaryKey(id);
 		return customAlarmEvent;
 	}

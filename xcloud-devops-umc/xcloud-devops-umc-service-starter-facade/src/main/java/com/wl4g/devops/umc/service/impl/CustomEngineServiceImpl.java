@@ -46,7 +46,7 @@ public class CustomEngineServiceImpl implements CustomEngineService {
 	}
 
 	@Override
-	public CustomEngine detal(Long id) {
+	public CustomEngine detail(Long id) {
 		CustomEngine customEngine = customEngineDao.selectByPrimaryKey(id);
 		return customEngine;
 	}

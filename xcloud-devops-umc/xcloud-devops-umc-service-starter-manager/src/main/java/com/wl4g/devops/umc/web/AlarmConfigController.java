@@ -33,11 +33,11 @@ import com.wl4g.devops.umc.service.AlarmConfigService;
  * @date 2019-08-05 11:44:00
  */
 @RestController
-@RequestMapping("/config")
+@RequestMapping("/alarmConfig")
 public class AlarmConfigController extends BaseController {
 
 	@Autowired
-	private AlarmConfigService configService;
+	private AlarmConfigService alarmConfigService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:config" })
@@ -45,7 +45,7 @@ public class AlarmConfigController extends BaseController {
 		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , pm = {} ", templateId,
 				contactGroupId, pm);
 		RespBase<PageHolder<AlarmConfig>> resp = RespBase.create();
-		return resp.withData(configService.list(pm, templateId, contactGroupId));
+		return resp.withData(alarmConfigService.list(pm, templateId, contactGroupId));
 	}
 
 	@RequestMapping(value = "/save")
@@ -56,7 +56,7 @@ public class AlarmConfigController extends BaseController {
 		Assert.notNull(alarmConfig.getContactGroupId(), "contact is null");
 		Assert.notNull(alarmConfig.getTemplateId(), "template is null");
 		RespBase<Object> resp = RespBase.create();
-		configService.save(alarmConfig);
+		alarmConfigService.save(alarmConfig);
 		return resp;
 	}
 
@@ -64,7 +64,7 @@ public class AlarmConfigController extends BaseController {
 	@RequiresPermissions(value = { "umc:config" })
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		AlarmConfig alarmConfig = configService.detail(id);
+		AlarmConfig alarmConfig = alarmConfigService.detail(id);
 		resp.forMap().put("alarmConfig", alarmConfig);
 		return resp;
 	}
@@ -73,7 +73,7 @@ public class AlarmConfigController extends BaseController {
 	@RequiresPermissions(value = { "umc:config" })
 	public RespBase<?> del(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		configService.del(id);
+		alarmConfigService.del(id);
 		return resp;
 	}
 

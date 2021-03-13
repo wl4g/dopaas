@@ -63,7 +63,7 @@ public class MetricTemplateController extends BaseController {
 	@RequiresPermissions(value = { "umc:metrictemplate" })
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		MetricTemplate metricTemplate = metricTemplateService.detal(id);
+		MetricTemplate metricTemplate = metricTemplateService.detail(id);
 		resp.setData(metricTemplate);
 		return resp;
 	}

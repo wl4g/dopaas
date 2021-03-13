@@ -15,7 +15,12 @@
  */
 package com.wl4g.devops.umc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
@@ -29,12 +34,17 @@ import com.wl4g.devops.common.bean.umc.AlarmConfig;
 @RequestMapping("/alarmConfig-service")
 public interface AlarmConfigService {
 
-	PageHolder<AlarmConfig> list(PageHolder<AlarmConfig> pm, Long templateId, Long contactGroupId);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<AlarmConfig> list(@RequestBody PageHolder<AlarmConfig> pm, @RequestParam("templateId") Long templateId,
+			@RequestParam("contactGroupId") Long contactGroupId);
 
-	void save(AlarmConfig alarmConfig);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody AlarmConfig alarmConfig);
 
-	void del(Long id);
+	@RequestMapping(value = "/del", method = POST)
+	void del(@RequestParam("id") Long id);
 
-	AlarmConfig detail(Long id);
+	@RequestMapping(value = "/detail", method = GET)
+	AlarmConfig detail(@RequestParam("id") Long id);
 
 }

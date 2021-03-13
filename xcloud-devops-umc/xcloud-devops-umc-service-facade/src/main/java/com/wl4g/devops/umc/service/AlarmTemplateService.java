@@ -15,9 +15,14 @@
  */
 package com.wl4g.devops.umc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
@@ -31,14 +36,20 @@ import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 @RequestMapping("/alarmTemplate-service")
 public interface AlarmTemplateService {
 
-	PageHolder<AlarmTemplate> list(PageHolder<AlarmTemplate> pm, String name, Long metricId, String classify);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<AlarmTemplate> list(@RequestBody PageHolder<AlarmTemplate> pm, @RequestParam("name") String name,
+			@RequestParam("metricId") Long metricId, @RequestParam("classify") String classify);
 
-	List<AlarmTemplate> getByClassify(String classify);
+	@RequestMapping(value = "/getByClassify", method = GET)
+	List<AlarmTemplate> getByClassify(@RequestParam("classify") String classify);
 
-	void save(AlarmTemplate alarmTemplate);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody AlarmTemplate alarmTemplate);
 
-	AlarmTemplate detail(Long id);
+	@RequestMapping(value = "/detail", method = GET)
+	AlarmTemplate detail(@RequestParam("id") Long id);
 
-	void del(Long id);
+	@RequestMapping(value = "/del", method = POST)
+	void del(@RequestParam("id") Long id);
 
 }

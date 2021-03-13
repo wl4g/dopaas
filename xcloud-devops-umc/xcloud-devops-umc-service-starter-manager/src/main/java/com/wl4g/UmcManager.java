@@ -24,7 +24,6 @@ import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient
 @EnableFeignConsumers("com.wl4g.devops.umc.service")
-// @EnableDiscoveryClient
 @SpringBootApplication
 public class UmcManager {
 

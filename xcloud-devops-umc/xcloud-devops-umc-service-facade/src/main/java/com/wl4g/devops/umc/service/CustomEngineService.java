@@ -15,7 +15,12 @@
  */
 package com.wl4g.devops.umc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
@@ -29,12 +34,16 @@ import com.wl4g.devops.common.bean.umc.CustomEngine;
 @RequestMapping("/customEngine-service")
 public interface CustomEngineService {
 
-	PageHolder<CustomEngine> list(PageHolder<CustomEngine> pm, String name);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<CustomEngine> list(@RequestBody PageHolder<CustomEngine> pm, @RequestParam("name") String name);
 
-	CustomEngine detal(Long id);
+	@RequestMapping(value = "/detail", method = GET)
+	CustomEngine detail(@RequestParam("id") Long id);
 
-	void save(CustomEngine customEngine);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody CustomEngine customEngine);
 
-	void del(Long id);
+	@RequestMapping(value = "/del", method = POST)
+	void del(@RequestParam("id") Long id);
 
 }

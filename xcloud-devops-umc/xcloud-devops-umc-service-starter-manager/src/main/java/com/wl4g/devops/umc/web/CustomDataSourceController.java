@@ -68,7 +68,7 @@ public class CustomDataSourceController extends BaseController {
 	@RequiresPermissions(value = { "umc:datasource" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(customDataSourceService.detal(id));
+		resp.setData(customDataSourceService.detail(id));
 		return resp;
 	}
 

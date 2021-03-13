@@ -61,7 +61,7 @@ public class CustomHistoryController extends BaseController {
 	@RequiresPermissions(value = { "umc:custom:history" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		CustomHistory customHistory = customHistoryService.detal(id);
+		CustomHistory customHistory = customHistoryService.detail(id);
 		resp.setData(customHistory);
 		return resp;
 	}

@@ -15,9 +15,14 @@
  */
 package com.wl4g.devops.umc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
@@ -31,14 +36,20 @@ import com.wl4g.devops.common.bean.umc.MetricTemplate;
 @RequestMapping("/metricTemplate-service")
 public interface MetricTemplateService {
 
-	PageHolder<MetricTemplate> list(PageHolder<MetricTemplate> pm, String metric, String classify);
+	@RequestMapping(value = "/list", method = POST)
+	PageHolder<MetricTemplate> list(@RequestBody PageHolder<MetricTemplate> pm, @RequestParam("metric") String metric,
+			@RequestParam("classify") String classify);
 
-	MetricTemplate detal(Long id);
+	@RequestMapping(value = "/detail", method = GET)
+	MetricTemplate detail(@RequestParam("id") Long id);
 
-	void save(MetricTemplate metricTemplate);
+	@RequestMapping(value = "/save", method = POST)
+	void save(@RequestBody MetricTemplate metricTemplate);
 
-	void del(Long id);
+	@RequestMapping(value = "/del", method = POST)
+	void del(@RequestParam("id") Long id);
 
-	List<MetricTemplate> getByClassify(String classify);
+	@RequestMapping(value = "/getByClassify", method = GET)
+	List<MetricTemplate> getByClassify(@RequestParam("classify") String classify);
 
 }
