@@ -31,7 +31,7 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.junit.Test;
 
-import com.wl4g.devops.doc.plugin.swagger.jaxrs2.OpenAPISorter;
+import com.wl4g.devops.udm.plugin.swagger.jaxrs2.OpenAPISorter;
 
 import static org.junit.Assert.assertEquals;
 

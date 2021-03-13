@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.plugin.swagger.springfox;
+package com.wl4g.devops.udm.plugin.swagger.springfox;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.split;
@@ -22,9 +22,9 @@ import static org.apache.commons.lang3.StringUtils.trim;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeArrayToList;
-import static com.wl4g.devops.doc.plugin.swagger.util.SpringUtils.SCAN_BASE_PACKAGES;
-//import static com.wl4g.devops.doc.plugin.swagger.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerExcludeFilter;
-//import static com.wl4g.devops.doc.plugin.swagger.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerIncludeFilter;
+import static com.wl4g.devops.udm.plugin.swagger.util.SpringUtils.SCAN_BASE_PACKAGES;
+//import static com.wl4g.devops.udm.plugin.swagger.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerExcludeFilter;
+//import static com.wl4g.devops.udm.plugin.swagger.springfox.SpringfoxSwagger2Bootstrap.SpringfoxConfigurerIncludeFilter;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +44,7 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.TypeFilter;
 
-import com.wl4g.devops.doc.plugin.swagger.util.SpringUtils;
+import com.wl4g.devops.udm.plugin.swagger.util.SpringUtils;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;

@@ -13,29 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.udm.plugin.swagger.export;
+package com.wl4g.devops.udm.plugin.swagger;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
+import org.springframework.context.annotation.Import;
 
 /**
- * {@link AbstractDocumentionExporter}
+ * {@link EnableDocumentionAutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2020-12-08
+ * @version v1.0 2020-12-14
  * @sine v1.0
  * @see
  */
-public abstract class AbstractDocumentionExporter<R> implements DocumentionExporter<R> {
-
-	protected final Log log;
-	protected final MavenProject mvnProject;
-
-	public AbstractDocumentionExporter(Log log, MavenProject mvnProject) {
-		this.log = notNullOf(log, "mvnLog");
-		this.mvnProject = notNullOf(mvnProject, "mvnProject");
-	}
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Import(DocumentionAutoConfigurationRegistrar.class)
+public @interface EnableDocumentionAutoConfiguration {
 }
