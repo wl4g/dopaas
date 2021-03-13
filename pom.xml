@@ -71,7 +71,6 @@
 		<!-- Spring's. -->
 		<spring-boot.version>2.2.3.RELEASE</spring-boot.version>
 		<spring-boot-admin.version>2.2.2</spring-boot-admin.version>
-		<spring-boot-admin-server-ui-login.version>1.5.7</spring-boot-admin-server-ui-login.version>
 		<!-- JDBC's -->
 		<derby.version>10.14.2.0</derby.version>
 		<hikariCP.version>3.4.5</hikariCP.version>
@@ -246,8 +245,8 @@
 			</dependency>
 			<dependency>
 				<groupId>de.codecentric</groupId>
-				<artifactId>spring-boot-admin-server-ui-login</artifactId>
-				<version>${spring-boot-admin-server-ui-login.version}</version>
+				<artifactId>spring-boot-admin-server-ui</artifactId>
+				<version>${spring-boot-admin.version}</version>
 			</dependency>
 			<!-- JDBC's -->
 			<dependency>

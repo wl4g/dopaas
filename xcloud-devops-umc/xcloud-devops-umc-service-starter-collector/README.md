@@ -1,5 +1,4 @@
-## UMC data receive service, such as metric/tracing/indicators etc
+## UMC Collector
+> Unified monitoring metrics collector server.
 
-- [https://github.com/openzipkin/zipkin/tree/master/zipkin-server](https://github.com/openzipkin/zipkin/tree/master/zipkin-server)
-
-- [https://zipkin.io/](https://zipkin.io/)
+- [https://github.com/codecentric/spring-boot-admin](https://github.com/codecentric/spring-boot-admin)

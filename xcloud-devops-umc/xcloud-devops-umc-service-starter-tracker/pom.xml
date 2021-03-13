@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-umc-service-starter-collector</artifactId>
+	<artifactId>xcloud-devops-umc-service-starter-tracker</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps UMC Collector</name>
+	<name>XCloud DevSecOps UMC Tracker</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -12,29 +12,34 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>umc-collector</final.name>
+		<final.name>umc-tracker</final.name>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-umc-store</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-devops-umc-store</artifactId> -->
+		<!-- <version>${project.parent.version}</version> -->
+		<!-- </dependency> -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
 		<!-- <artifactId>xcloud-devops-umc-watch</artifactId> -->
 		<!-- <version>${project.parent.version}</version> -->
 		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-devops-umc-alarm</artifactId> -->
+		<!-- <version>${project.parent.version}</version> -->
+		<!-- <exclusions> -->
+		<!-- <exclusion> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-devops-umc-client-springboot</artifactId> -->
+		<!-- </exclusion> -->
+		<!-- </exclusions> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-umc-alarm</artifactId>
+			<artifactId>xcloud-devops-umc-service-facade</artifactId>
 			<version>${project.parent.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-devops-umc-client-springboot</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
@@ -44,14 +49,17 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
-		<!-- Admin metrics -->
+		<!-- Tracing -->
 		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-server-ui</artifactId>
+			<groupId>io.zipkin</groupId>
+			<artifactId>zipkin-server</artifactId>
+			<version>2.23.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>io.netty</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<build>
@@ -127,7 +135,7 @@
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
-							<mainClass>com.wl4g.UmcCollector</mainClass>
+							<mainClass>com.wl4g.UmcTracker</mainClass>
 							<finalName>${final.name}-${project.version}-bin</finalName>
 							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
 							<!-- @see:https://www.baeldung.com/spring-boot-main-class -->
