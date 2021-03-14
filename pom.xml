@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>XCloud PaaS</name>
 	<url>https://xcloud.wl4g.com</url>
-	<description>One stop DevSecOps solution SaaS platform.</description>
+	<description>One stop PaaS solution SaaS platform.</description>
 	<organization>
 		<name>Wanglsir</name>
 		<url>http://xcloud.wl4g.com</url>
