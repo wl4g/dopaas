@@ -1,1 +1,0 @@
-Please visit the project's exclusive address: [xcloud-paas-umc-agent-go](../../../../../super-paas-umc-agent-go)

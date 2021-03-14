@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
-	<artifactId>xcloud-paas</artifactId>
+	<artifactId>xcloud-dopaas</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>XCloud PaaS</name>
+	<name>XCloud DoPaaS</name>
 	<url>https://xcloud.wl4g.com</url>
-	<description>One stop PaaS solution SaaS platform.</description>
+	<description>One stop Devops solution PaaS  platform.</description>
 	<organization>
 		<name>Wanglsir</name>
 		<url>http://xcloud.wl4g.com</url>
@@ -20,9 +20,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git@github.com:wl4g/xcloud-paas.git</connection>
-		<developerConnection>scm:git:git@github.com:wl4g/xcloud-paas.git</developerConnection>
-		<url>https://github.com/wl4g/xcloud-paas</url>
+		<connection>scm:git:git@github.com:wl4g/xcloud-dopaas.git</connection>
+		<developerConnection>scm:git:git@github.com:wl4g/xcloud-dopaas.git</developerConnection>
+		<url>https://github.com/wl4g/xcloud-dopaas</url>
 		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
@@ -53,16 +53,16 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>xcloud-paas-common</module>
-		<module>xcloud-paas-uci</module>
-		<module>xcloud-paas-udm</module>
-		<module>xcloud-paas-cmdb</module>
-		<!-- <module>xcloud-paas-ucm</module> -->
-		<module>xcloud-paas-umc</module>
-		<module>xcloud-paas-urm</module>
-		<module>xcloud-paas-udc</module>
-		<module>xcloud-paas-all-dependencies</module>
-		<module>xcloud-paas-all-starter</module>
+		<module>xcloud-dopaas-common</module>
+		<module>xcloud-dopaas-uci</module>
+		<module>xcloud-dopaas-udm</module>
+		<module>xcloud-dopaas-cmdb</module>
+		<!-- <module>xcloud-dopaas-ucm</module> -->
+		<module>xcloud-dopaas-umc</module>
+		<module>xcloud-dopaas-urm</module>
+		<module>xcloud-dopaas-udc</module>
+		<module>xcloud-dopaas-all-dependencies</module>
+		<module>xcloud-dopaas-all-starter</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

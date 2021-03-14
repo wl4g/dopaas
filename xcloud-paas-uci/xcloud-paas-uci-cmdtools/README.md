@@ -1,1 +1,0 @@
-Please visit the project's exclusive address: [xcloud-paas-ci-cmdtools](../../../../../xcloud-paas-ci-cmdtools)
