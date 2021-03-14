@@ -12,7 +12,7 @@
 spring:
   application.name: umc-facade
   profiles:
-    include: common,support,util,base
+    include: common,support,util
     active: dev
   xcloud:
     component:

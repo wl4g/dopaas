@@ -11,7 +11,7 @@
 spring:
   application.name: cmdb-facade
   profiles:
-    include: common,support,util,base
+    include: common,support,util
     active: dev
   xcloud:
     component:
