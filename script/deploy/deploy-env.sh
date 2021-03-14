@@ -40,12 +40,12 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$gitBaseUri" ] && export gitBaseUri="https://gitee.com/wl4g" # for example options: https://github.com/wl4g or https://gitee.com/wl4g
 [ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
 [ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
-[ -z "$gitXCloudPaaSUrl" ] && export gitXCloudPaaSUrl="${gitBaseUri}/xcloud-paas"
+[ -z "$gitXCloudDoPaaSUrl" ] && export gitXCloudDoPaaSUrl="${gitBaseUri}/xcloud-dopaas"
 # Git pull branchs.
 [ -z "$defaultGitBranch" ] && export defaultGitBranch="master"
 [ -z "$xcloudComponentGitBranch" ] && export xcloudComponentGitBranch="${defaultGitBranch}"
 [ -z "$xcloudIamGitBranch" ] && export xcloudIamGitBranch="${defaultGitBranch}"
-[ -z "$xcloudPaaSGitBranch" ] && export xcloudPaaSGitBranch="${defaultGitBranch}"
+[ -z "$xcloudDoPaaSGitBranch" ] && export xcloudDoPaaSGitBranch="${defaultGitBranch}"
 
 # Build definition.
 [ -z "$buildPkgType" ] && export buildPkgType="mvnAssTar" # Options: mvnAssTar|springExecJar
@@ -62,7 +62,7 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 # Delopy(standalone) modules definition.
 export deployStandaloneBuildModules=(
   "standalone-iam,${currDir}/xcloud-iam/xcloud-iam-service-starter-all/target"
-  "standalone-paas,${currDir}/xcloud-paas/xcloud-paas-all-starter/target"
+  "standalone-dopaas,${currDir}/xcloud-dopaas/xcloud-dopaas-all-starter/target"
 )
 
 # Deploy(cluster) modules definition.
@@ -71,28 +71,28 @@ export deployClusterBuildModules=(
   "iam-data,${currDir}/xcloud-iam/xcloud-iam-service-starter-data/target"
   "iam-facade,${currDir}/xcloud-iam/xcloud-iam-service-starter-facade/target"
   "iam-web,${currDir}/xcloud-iam/xcloud-iam-service-starter-web/target"
-  "cmdb-facade,${currDir}/xcloud-paas/xcloud-paas-cmdb/xcloud-paas-cmdb-service-starter-facade/target"
-  "cmdb-manager,${currDir}/xcloud-paas/xcloud-paas-cmdb/xcloud-paas-cmdb-service-starter-manager/target"
-  "uci-facade,${currDir}/xcloud-paas/xcloud-paas-uci/xcloud-paas-uci-service-starter-facade/target"
-  "uci-server,${currDir}/xcloud-paas/xcloud-paas-uci/xcloud-paas-uci-service-starter-server/target"
-  "udm-facade,${currDir}/xcloud-paas/xcloud-paas-udm/xcloud-paas-udm-service-starter-facade/target"
-  "udm-manager,${currDir}/xcloud-paas/xcloud-paas-udm/xcloud-paas-udm-service-starter-manager/target"
-  "udc-facade,${currDir}/xcloud-paas/xcloud-paas-udc/xcloud-paas-udc-service-starter-facade/target"
-  "udc-manager,${currDir}/xcloud-paas/xcloud-paas-udc/xcloud-paas-udc-service-starter-manager/target"
-  #"ucm-facade,${currDir}/xcloud-paas/xcloud-paas-ucm/xcloud-paas-ucm-service-starter-facade/target"
-  #"ucm-server,${currDir}/xcloud-paas/xcloud-paas-ucm/xcloud-paas-ucm-service-starter-server/target"
-  "umc-collector,${currDir}/xcloud-paas/xcloud-paas-umc/xcloud-paas-umc-service-starter-collector/target"
-  "umc-tracker,${currDir}/xcloud-paas/xcloud-paas-umc/xcloud-paas-umc-service-starter-tracker/target"
-  "umc-facade,${currDir}/xcloud-paas/xcloud-paas-umc/xcloud-paas-umc-service-starter-facade/target"
-  "umc-manager,${currDir}/xcloud-paas/xcloud-paas-umc/xcloud-paas-umc-service-starter-manager/target"
-  "urm-facade,${currDir}/xcloud-paas/xcloud-paas-urm/xcloud-paas-urm-service-starter-facade/target"
-  "urm-manager,${currDir}/xcloud-paas/xcloud-paas-urm/xcloud-paas-urm-service-starter-manager/target"
+  "cmdb-facade,${currDir}/xcloud-dopaas/xcloud-dopaas-cmdb/xcloud-dopaas-cmdb-service-starter-facade/target"
+  "cmdb-manager,${currDir}/xcloud-dopaas/xcloud-dopaas-cmdb/xcloud-dopaas-cmdb-service-starter-manager/target"
+  "uci-facade,${currDir}/xcloud-dopaas/xcloud-dopaas-uci/xcloud-dopaas-uci-service-starter-facade/target"
+  "uci-server,${currDir}/xcloud-dopaas/xcloud-dopaas-uci/xcloud-dopaas-uci-service-starter-server/target"
+  "udm-facade,${currDir}/xcloud-dopaas/xcloud-dopaas-udm/xcloud-dopaas-udm-service-starter-facade/target"
+  "udm-manager,${currDir}/xcloud-dopaas/xcloud-dopaas-udm/xcloud-dopaas-udm-service-starter-manager/target"
+  "udc-facade,${currDir}/xcloud-dopaas/xcloud-dopaas-udc/xcloud-dopaas-udc-service-starter-facade/target"
+  "udc-manager,${currDir}/xcloud-dopaas/xcloud-dopaas-udc/xcloud-dopaas-udc-service-starter-manager/target"
+  #"ucm-facade,${currDir}/xcloud-dopaas/xcloud-dopaas-ucm/xcloud-dopaas-ucm-service-starter-facade/target"
+  #"ucm-server,${currDir}/xcloud-dopaas/xcloud-dopaas-ucm/xcloud-dopaas-ucm-service-starter-server/target"
+  "umc-collector,${currDir}/xcloud-dopaas/xcloud-dopaas-umc/xcloud-dopaas-umc-service-starter-collector/target"
+  "umc-tracker,${currDir}/xcloud-dopaas/xcloud-dopaas-umc/xcloud-dopaas-umc-service-starter-tracker/target"
+  "umc-facade,${currDir}/xcloud-dopaas/xcloud-dopaas-umc/xcloud-dopaas-umc-service-starter-facade/target"
+  "umc-manager,${currDir}/xcloud-dopaas/xcloud-dopaas-umc/xcloud-dopaas-umc-service-starter-manager/target"
+  "urm-facade,${currDir}/xcloud-dopaas/xcloud-dopaas-urm/xcloud-dopaas-urm-service-starter-facade/target"
+  "urm-manager,${currDir}/xcloud-dopaas/xcloud-dopaas-urm/xcloud-dopaas-urm-service-starter-manager/target"
 )
 # Eureka build module info.
 export deployEurekaBuildModule="eureka-server,${currDir}/xcloud-component/xcloud-component-rpc/xcloud-component-rpc-springcloud-eureka-server/target"
 
 # Runtime dependency external services configuration.
-[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/paas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false"
+[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false"
 [ -z "$runtimeMysqlUser" ] && export runtimeMysqlUser="root"
 [ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"
 [ -z "$runtimeRedisNodes" ] && export runtimeRedisNodes="localhost:6379"

@@ -277,7 +277,7 @@ function checkInstallServiceScript() {
   elif [ "$buildPkgType" == "springExecJar" ]; then
     local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -jar ${appHome}/${appName}-${appVersion}-bin.jar $appOpts"
     # for example using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher
-    # for example: xcloud-paas/xcloud-paas-ci/xcloud-paas-ci-service-starter-facade/pom.xml#profile.id=springExecJar
+    # for example: xcloud-dopaas/xcloud-dopaas-ci/xcloud-dopaas-ci-service-starter-facade/pom.xml#profile.id=springExecJar
     # refer to: https://www.baeldung.com/spring-boot-main-class, https://www.jianshu.com/p/66a101c85485
     local appShellRunCmd="$javaExec -client -Dloader.main=com.wl4g.ShellBootstrap -Dprompt=$appName -Dservname=$appName $shellPort -jar .:$appHome/${appName}-${appVersion}-bin.jar"
   fi

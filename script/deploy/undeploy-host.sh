@@ -22,10 +22,10 @@
 [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
 
 log ""
-log "「 Welcome to XCloud PaaS Uninstaller(Host) 」"
+log "「 Welcome to XCloud DoPaaS Uninstaller(Host) 」"
 log ""
-log " Wiki: https://github.com/wl4g/xcloud-paas/blob/master/README.md"
-log " Wiki(CN): https://gitee.com/wl4g/xcloud-paas/blob/master/README_CN.md"
+log " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
+log " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
 log " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
 log " Version: 2.0.0"
 log " Time: $(date '+%Y-%m-%d %H:%M:%S')"
