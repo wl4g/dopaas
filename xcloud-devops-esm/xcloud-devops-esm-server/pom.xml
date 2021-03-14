@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-esm-server</artifactId>
+	<artifactId>xcloud-paas-esm-server</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSevOps ESM Server</name>
+	<name>XCloud PaaS ESM Server</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-esm</artifactId>
+		<artifactId>xcloud-paas-esm</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -20,11 +20,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-esm-core</artifactId>
+			<artifactId>xcloud-paas-esm-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-esm-estimator</artifactId>
+			<artifactId>xcloud-paas-esm-estimator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

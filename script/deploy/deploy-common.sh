@@ -277,7 +277,7 @@ function checkInstallServiceScript() {
   elif [ "$buildPkgType" == "springExecJar" ]; then
     local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -jar ${appHome}/${appName}-${appVersion}-bin.jar $appOpts"
     # for example using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher
-    # see: xcloud-devops/xcloud-devops-ci/xcloud-devops-ci-service-starter-facade/pom.xml#profile.id=springExecJar
+    # for example: xcloud-paas/xcloud-paas-ci/xcloud-paas-ci-service-starter-facade/pom.xml#profile.id=springExecJar
     # refer to: https://www.baeldung.com/spring-boot-main-class, https://www.jianshu.com/p/66a101c85485
     local appShellRunCmd="$javaExec -client -Dloader.main=com.wl4g.ShellBootstrap -Dprompt=$appName -Dservname=$appName $shellPort -jar .:$appHome/${appName}-${appVersion}-bin.jar"
   fi
@@ -338,11 +338,11 @@ if [ -z "\$SPRING_PROFILES_ACTIVE" ]; then
 elif [ -n "\$(echo \$SPRING_PROFILES_ACTIVE|grep -i '^None\$')" ]; then
   export SPRING_PROFILES_ACTIVE="" # Use empty configuration.
 fi
-[ -z "\$DEVOPS_DB_URL" ] && export DEVOPS_DB_URL="$runtimeMysqlUrl"
-[ -z "\$DEVOPS_DB_USER" ] && export DEVOPS_DB_USER="$runtimeMysqlUser"
-[ -z "\$DEVOPS_DB_PASSWD" ] && export DEVOPS_DB_PASSWD="$runtimeMysqlPassword"
-[ -z "\$DEVOPS_REDIS_NODES" ] && export DEVOPS_REDIS_NODES="$runtimeRedisNodes"
-[ -z "\$DEVOPS_REDIS_PASSWD" ] && export DEVOPS_REDIS_PASSWD="$runtimeRedisPassword"
+[ -z "\$PAAS_DB_URL" ] && export PAAS_DB_URL="$runtimeMysqlUrl"
+[ -z "\$PAAS_DB_USER" ] && export PAAS_DB_USER="$runtimeMysqlUser"
+[ -z "\$PAAS_DB_PASSWD" ] && export PAAS_DB_PASSWD="$runtimeMysqlPassword"
+[ -z "\$PAAS_REDIS_NODES" ] && export PAAS_REDIS_NODES="$runtimeRedisNodes"
+[ -z "\$PAAS_REDIS_PASSWD" ] && export PAAS_REDIS_PASSWD="$runtimeRedisPassword"
 [ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$runtimeMysqlUrl"
 [ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="$runtimeMysqlUser"
 [ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="$runtimeMysqlPassword"

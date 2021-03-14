@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-udm-service-starter-manager</artifactId>
+	<artifactId>xcloud-paas-udm-service-starter-manager</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps UDM Manager</name>
+	<name>XCloud PaaS UDM Manager</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-udm</artifactId>
+		<artifactId>xcloud-paas-udm</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -18,10 +18,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-udm-service-facade</artifactId>
+			<artifactId>xcloud-paas-udm-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!--<dependency> <groupId>com.wl4g</groupId> <artifactId>xcloud-devops-udm-template</artifactId> <version>${project.parent.version}</version> 
+		<!--<dependency> <groupId>com.wl4g</groupId> <artifactId>xcloud-paas-udm-template</artifactId> <version>${project.parent.version}</version> 
 			</dependency> -->
 		<dependency>
 			<groupId>io.swagger.parser.v3</groupId>

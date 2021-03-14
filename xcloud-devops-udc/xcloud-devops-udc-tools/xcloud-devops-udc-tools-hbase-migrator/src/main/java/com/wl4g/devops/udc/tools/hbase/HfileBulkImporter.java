@@ -46,7 +46,7 @@ public class HfileBulkImporter {
 	 * e.g.</br>
 	 * 
 	 * <pre>
-	 *  yarn jar xcloud-devops-udc-tools-hbase-migrator-master.jar \
+	 *  yarn jar xcloud-paas-udc-tools-hbase-migrator-master.jar \
 	 *  com.wl4g.devops.udc.tools.hbase.HfileBulkImporter \
 	 *  -z emr-header-1:2181 \
 	 *  -t safeclound.tb_elec_power \

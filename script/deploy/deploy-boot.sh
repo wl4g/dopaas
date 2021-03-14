@@ -27,12 +27,12 @@ export currDir=$(cd "`dirname $0`"/ ; pwd)
 # Basic deploy environment variables.
 [ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir
 [ -z "$deployDebug" ] && export deployDebug="false"
-[ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-devops/master/script/deploy"
-[ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-devops/raw/master/script/deploy"
+[ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-paas/master/script/deploy"
+[ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-paas/raw/master/script/deploy"
 [ -z "$gitBaseUrl" ] && export gitBaseUrl="https://github.com/wl4g"
 [ -z "$gitBaseUrlBackup1" ] && export gitBaseUrlBackup1="https://gitee.com/wl4g"
 # Deploy services runtime depend environment variables.
-[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/devops?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false"
+[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/paas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false"
 [ -z "$runtimeMysqlUser" ] && export runtimeMysqlUser="root"
 [ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"
 [ -z "$runtimeRedisNodes" ] && export runtimeRedisNodes="localhost:6379"

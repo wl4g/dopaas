@@ -1,23 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-udm</artifactId>
+	<artifactId>xcloud-paas-udm</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSevOps UDM(Unified Document Management()</name>
+	<name>XCloud PaaS UDM(Unified Document Management()</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops</artifactId>
+		<artifactId>xcloud-paas</artifactId>
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-udm-service-data</module>
-		<module>xcloud-devops-udm-service-facade</module>
-		<module>xcloud-devops-udm-service-starter-facade</module>
-		<module>xcloud-devops-udm-service-starter-manager</module>
-		<!--<module>xcloud-devops-udm-template</module>-->
+		<module>xcloud-paas-udm-service-data</module>
+		<module>xcloud-paas-udm-service-facade</module>
+		<module>xcloud-paas-udm-service-starter-facade</module>
+		<module>xcloud-paas-udm-service-starter-manager</module>
+		<!--<module>xcloud-paas-udm-template</module>-->
 		<!-- [Optional], if not used -->
-		<module>xcloud-devops-udm-plugin</module>
+		<module>xcloud-paas-udm-plugin</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

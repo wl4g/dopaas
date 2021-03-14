@@ -30,7 +30,7 @@
 //		System.out.println("words1=" + words1);
 //
 //		// 保留停用词
-//		List<Word> words2 = WordSegmenter.segWithStopWords("XCloud DevOps这个一站式开发运维平台的作者是Wanglsir");
+//		List<Word> words2 = WordSegmenter.segWithStopWords("XCloud PaaS这个一站式开发运维平台的作者是Wanglsir");
 //		System.out.println("words2=" + words2);
 //
 //		// 对文本进行分词时，可显式指定特定的分词算法，如：
@@ -42,7 +42,7 @@
 //		 * 双向最大最小匹配算法：BidirectionalMaximumMinimumMatching 全切分算法：FullSegmentation
 //		 * 最少分词算法：MinimalWordCount 最大Ngram分值算法：MaxNgramScore
 //		 */
-//		List<Word> words3 = WordSegmenter.seg("XCloud DevOps是一个SaaS级的一站式开发运维平台",
+//		List<Word> words3 = WordSegmenter.seg("XCloud PaaS是一个SaaS级的一站式开发运维平台",
 //				SegmentationAlgorithm.BidirectionalMaximumMatching);
 //		System.out.println("words3=" + words3);
 //

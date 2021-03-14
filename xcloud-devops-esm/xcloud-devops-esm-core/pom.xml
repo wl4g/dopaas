@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xclou-devops-esm-core</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSevOps ESM Core</name>
+	<name>XCloud PaaS ESM Core</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-esm</artifactId>
+		<artifactId>xcloud-paas-esm</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>

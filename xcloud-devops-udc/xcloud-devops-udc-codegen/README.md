@@ -30,9 +30,9 @@ cd xcloud-iam
 mvn clean install -DskipTests -T 2C
 
 # Building
-git clone https://github.com/wl4g/xcloud-devops.git # Upstream repo latest
-#git clone https://gitee.com/wl4g/xcloud-devops.git # Friends in China suggest faster
-cd xcloud-devops
+git clone https://github.com/wl4g/xcloud-paas.git # Upstream repo latest
+#git clone https://gitee.com/wl4g/xcloud-paas.git # Friends in China suggest faster
+cd xcloud-paas
 mvn clean install -DskipTests -T 2C
 ```
 > If the ```error xx/xxx: Filename too long``` error, this is due to the too long template path of the Devops DTS CodeGen sub project. It is recommended to set ```git config --global core.longpaths true``` , Then pull it again.
@@ -82,7 +82,7 @@ step3: New rendering template tools (Recommend)，[refer(E) JavaSpecs](src/main/
 
 step4: Configure to create a new generator[refer(A) CodegenAutoConfiguration#iamSpringMvcGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/config/CodegenAutoConfiguration.java#iamSpringMvcGeneratorProvider)
 
-step5: Startup the service on your IDE, the entry class: xcloud-devops-dts-starter/src/main/java/com/wl4g/DtsManager.java
+step5: Startup the service on your IDE, the entry class: xcloud-paas-dts-starter/src/main/java/com/wl4g/DtsManager.java
 
 > Tip: when the default debugger mode is started, the template directory and mybatis mapper file do not need to be restarted, and the system will automatically hot load.
 

@@ -2,10 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
-	<artifactId>xcloud-devops</artifactId>
+	<artifactId>xcloud-paas</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>XCloud DevSecOps</name>
+	<name>XCloud PaaS</name>
 	<url>https://xcloud.wl4g.com</url>
 	<description>One stop DevSecOps solution SaaS platform.</description>
 	<organization>
@@ -20,9 +20,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git@github.com:wl4g/xcloud-devops.git</connection>
-		<developerConnection>scm:git:git@github.com:wl4g/xcloud-devops.git</developerConnection>
-		<url>https://github.com/wl4g/xcloud-devops</url>
+		<connection>scm:git:git@github.com:wl4g/xcloud-paas.git</connection>
+		<developerConnection>scm:git:git@github.com:wl4g/xcloud-paas.git</developerConnection>
+		<url>https://github.com/wl4g/xcloud-paas</url>
 		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
@@ -53,16 +53,16 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>xcloud-devops-common</module>
-		<module>xcloud-devops-uci</module>
-		<module>xcloud-devops-udm</module>
-		<module>xcloud-devops-cmdb</module>
-		<!-- <module>xcloud-devops-ucm</module> -->
-		<module>xcloud-devops-umc</module>
-		<module>xcloud-devops-urm</module>
-		<module>xcloud-devops-udc</module>
-		<module>xcloud-devops-all-dependencies</module>
-		<module>xcloud-devops-all-starter</module>
+		<module>xcloud-paas-common</module>
+		<module>xcloud-paas-uci</module>
+		<module>xcloud-paas-udm</module>
+		<module>xcloud-paas-cmdb</module>
+		<!-- <module>xcloud-paas-ucm</module> -->
+		<module>xcloud-paas-umc</module>
+		<module>xcloud-paas-urm</module>
+		<module>xcloud-paas-udc</module>
+		<module>xcloud-paas-all-dependencies</module>
+		<module>xcloud-paas-all-starter</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

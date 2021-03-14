@@ -1,21 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-udc</artifactId>
+	<artifactId>xcloud-paas-udc</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSevOps UDC(Unified Developer Center)</name>
+	<name>XCloud PaaS UDC(Unified Developer Center)</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops</artifactId>
+		<artifactId>xcloud-paas</artifactId>
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-udc-tools</module>
-		<module>xcloud-devops-udc-codegen</module>
-		<module>xcloud-devops-udc-service-facade</module>
-		<module>xcloud-devops-udc-service-starter-facade</module>
-		<module>xcloud-devops-udc-service-starter-manager</module>
+		<module>xcloud-paas-udc-tools</module>
+		<module>xcloud-paas-udc-codegen</module>
+		<module>xcloud-paas-udc-service-facade</module>
+		<module>xcloud-paas-udc-service-starter-facade</module>
+		<module>xcloud-paas-udc-service-starter-manager</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

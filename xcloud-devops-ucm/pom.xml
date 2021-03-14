@@ -1,24 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-ucm</artifactId>
+	<artifactId>xcloud-paas-ucm</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSecOps UCM(Unified Config Management)</name>
+	<name>XCloud PaaS UCM(Unified Config Management)</name>
 	<url>http://xcloud.wl4g.com</url>
 	<description>A Open Source Distributed Independent Configuration Center based on Spring Cloud.</description>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops</artifactId>
+		<artifactId>xcloud-paas</artifactId>
 		<version>master</version>
 	</parent>
 	<modules>
-		<!-- <module>xcloud-devops-ucm-common</module> -->
-		<!-- <module>xcloud-devops-ucm-config</module> -->
-		<!-- <module>xcloud-devops-ucm-core</module> -->
-		<!-- <module>xcloud-devops-ucm-client-java</module> -->
-		<!-- <module>xcloud-devops-ucm-client-springboot</module> -->
-		<!-- <module>xcloud-devops-ucm-example</module> -->
-		<!-- <module>xcloud-devops-ucm-server</module> -->
+		<!-- <module>xcloud-paas-ucm-common</module> -->
+		<!-- <module>xcloud-paas-ucm-config</module> -->
+		<!-- <module>xcloud-paas-ucm-core</module> -->
+		<!-- <module>xcloud-paas-ucm-client-java</module> -->
+		<!-- <module>xcloud-paas-ucm-client-springboot</module> -->
+		<!-- <module>xcloud-paas-ucm-example</module> -->
+		<!-- <module>xcloud-paas-ucm-server</module> -->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

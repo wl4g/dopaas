@@ -2,22 +2,22 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
-	<artifactId>xcloud-devops-esm</artifactId>
+	<artifactId>xcloud-paas-esm</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>XCloud DevSevOps ESM</name>
+	<name>XCloud PaaS ESM</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops</artifactId>
+		<artifactId>xcloud-paas</artifactId>
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-esm-core</module>
-		<module>xcloud-devops-esm-example</module>
-		<module>xcloud-devops-esm-estimator</module>
-		<module>xcloud-devops-esm-scaler</module>
-		<module>xcloud-devops-esm-server</module>
+		<module>xcloud-paas-esm-core</module>
+		<module>xcloud-paas-esm-example</module>
+		<module>xcloud-paas-esm-estimator</module>
+		<module>xcloud-paas-esm-scaler</module>
+		<module>xcloud-paas-esm-server</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

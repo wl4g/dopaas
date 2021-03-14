@@ -3,7 +3,7 @@
 
 ##### HBase table data exporting to HDFS :
 ```
- yarn jar xcloud-devops-udc-tools-hbase-migrator-master \
+ yarn jar xcloud-paas-udc-tools-hbase-migrator-master \
  com.wl4g.devops.udc.tools.hbase.HfileBulkExporter \
  -z emr-header-1:2181 \
  -t safeclound.tb_elec_power \
@@ -13,7 +13,7 @@
 
 ##### HBase table data importing from HDFS :
 ```
- yarn jar xcloud-devops-udc-tools-hbase-migrator-master \
+ yarn jar xcloud-paas-udc-tools-hbase-migrator-master \
  com.wl4g.devops.udc.tools.hbase.HfileBulkImporter \
  -z emr-header-1:2181 \
  -t safeclound.tb_elec_power \
@@ -22,7 +22,7 @@
 
 ##### HBase table data exporting to RMDB(MySQL/Oracle/Postgresql/...) :
 ```
- java -cp xcloud-devops-udc-tools-hbase-migrator-master \
+ java -cp xcloud-paas-udc-tools-hbase-migrator-master \
  com.wl4g.devops.udc.tools.hbase.SimpleHfileToRmdbExporter \
  -z emr-header-1:2181 \
  -t safeclound.tb_elec_power \

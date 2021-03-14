@@ -1,4 +1,4 @@
-## XCloud DevOps Doc Plugin for Swagger
+## XCloud PaaS Doc Plugin for Swagger
 
 A swagger plug-in based on Maven can automatically generate JSON / XML documents in the compilation phase. This mode is suitable for continuous development and cooperation of medium and large-scale projects. The running package of production environment does not need to rely on swagger/springfox/springdoc library, etc
 
@@ -17,7 +17,7 @@ A swagger plug-in based on Maven can automatically generate JSON / XML documents
         </plugin>
         <plugin>
             <groupId>com.wl4g</groupId>
-            <artifactId>xcloud-devops-doc-plugin-swagger</artifactId>
+            <artifactId>xcloud-paas-doc-plugin-swagger</artifactId>
             <version>master</version>
             <executions>
                 <execution>
@@ -70,5 +70,5 @@ A swagger plug-in based on Maven can automatically generate JSON / XML documents
 </build>
 ```
 
-> Example codes reference to: [xcloud-devops-doc-plugin-sample/pom.xml](xcloud-devops-doc-plugin-sample/pom.xml)
+> Example codes reference to: [xcloud-paas-doc-plugin-sample/pom.xml](xcloud-paas-doc-plugin-sample/pom.xml)
 

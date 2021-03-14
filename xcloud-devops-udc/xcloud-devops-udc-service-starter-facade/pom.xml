@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-udc-service-starter-facade</artifactId>
+	<artifactId>xcloud-paas-udc-service-starter-facade</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps UDC Starter Facade</name>
+	<name>XCloud PaaS UDC Starter Facade</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-udc</artifactId>
+		<artifactId>xcloud-paas-udc</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -18,12 +18,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-udc-service-facade</artifactId>
+			<artifactId>xcloud-paas-udc-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-udc-codegen</artifactId>
+			<artifactId>xcloud-paas-udc-codegen</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
