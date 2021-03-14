@@ -1,0 +1,64 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# #### Environment(UAT Test) configuration. ####
+#
+spring:
+  xcloud:
+    component:
+      support:
+        jedis:
+          passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
+          connect-timeout: 10000
+          max-attempts: 10
+          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+          nodes: ${DEVOPS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
+        notification:
+          mail:
+            host: smtp.sina.com
+            port: 465
+            username: safec7782@sina.com
+            password: safec7782
+            protocol: smtp
+          sms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+          vms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+              calledShowNumber: 055162153866
+    iam:
+      cors:
+        rules:
+          '[/**]':
+            allows-origins:
+              - https://${DEVOPS_SERVICE_ZONE:wl4g.uat}
+              - http://${DEVOPS_SERVICE_ZONE:wl4g.uat}
+              - https://*.${DEVOPS_SERVICE_ZONE:wl4g.uat}
+              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.uat}
+      acl:
+        secure: false # Turn off protection will trust any same intranet IP.
+        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+      client:
+        server-uri: http://iam.${DEVOPS_SERVICE_ZONE:wl4g.uat}/iam-web
+        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
+        success-uri: http://paas.${DEVOPS_SERVICE_ZONE:wl4g.uat}/#/umc/config
+
+# Spring-security config.
+security.user:
+  name: sba_user
+  password: hnGsFm6k0klJP9j
+
+opentsdb:
+  url: http://10.0.0.57
+  port: 4242

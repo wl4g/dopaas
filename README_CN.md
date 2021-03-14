@@ -3,7 +3,7 @@
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
-### 一站式DevSecOps解决方案SaaS平台
+### 一站式PaaS解决方案SaaS平台
 > 基于SpringCloud/Docker/ServiceMesh(Istio)，主要集成模块：CMDB、统一持续交付CI/CD（分布式编译和部署）、IAM认证中心、统一监控中心、统一配置中心、统一分布式调度中心、统一文档、统一开发者中心（AutoGenerator），统一私有对象存储管理、统一源/包/映像库管理、Shell-Cli组件、各种工具链（如HBase/OSS运维）、即时通讯、轻量级风控等
 
 
@@ -77,7 +77,7 @@ npm run dev # 开发调试
 npm run build # 生产打包
 ```
 
-- 初始数据库：首先准备一台MySQL5.6+实例，创建名为devops(utf8/utf8_bin)的库，再 [初始数据库](../../../xcloud-paas-db)。（注：sql脚本需与源码版本对应，我们会定期更新，建议都使用最新）
+- 初始数据库：首先准备一台MySQL5.6+实例，创建名为paas(utf8/utf8_bin)的库，再 [初始数据库](../../../xcloud-paas-db)。（注：sql脚本需与源码版本对应，我们会定期更新，建议都使用最新）
 
 - 配置本地DNS：添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
@@ -85,11 +85,11 @@ npm run build # 生产打包
 # dev:
 127.0.0.1 wl4g.debug
 # fat:
-127.0.0.1 wl4g.fat devops.wl4g.fat iam.wl4g.fat erm.wl4g.fat ci.wl4g.fat dts.wl4g.fat vcs.wl4g.fat umc.wl4g.fat
+127.0.0.1 wl4g.fat paas.wl4g.fat iam.wl4g.fat erm.wl4g.fat ci.wl4g.fat dts.wl4g.fat vcs.wl4g.fat umc.wl4g.fat
 # uat:
-127.0.0.1 wl4g.uat devops.wl4g.uat iam.wl4g.uat erm.wl4g.uat ci.wl4g.uat dts.wl4g.uat vcs.wl4g.uat umc.wl4g.uat
+127.0.0.1 wl4g.uat paas.wl4g.uat iam.wl4g.uat erm.wl4g.uat ci.wl4g.uat dts.wl4g.uat vcs.wl4g.uat umc.wl4g.uat
 # pro:
-127.0.0.1 wl4g.com devops.wl4g.com iam.wl4g.com erm.wl4g.com ci.wl4g.com dts.wl4g.com vcs.wl4g.com umc.wl4g.com
+127.0.0.1 wl4g.com paas.wl4g.com iam.wl4g.com erm.wl4g.com ci.wl4g.com dts.wl4g.com vcs.wl4g.com umc.wl4g.com
 ```
 
 - 快速搭建redis/docker集群(可选)

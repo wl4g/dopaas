@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.paas.uci.data.PipelineInstanceDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.paas.common.bean.uci.PipelineInstance">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="deploy_id" jdbcType="INTEGER" property="deployId" />
+		<result column="instance_id" jdbcType="INTEGER" property="instanceId" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, deploy_id, instance_id
+	</sql>
+	<sql id="Base_Column_List_i">
+		i.id, i.deploy_id, i.instance_id
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from uci_pipe_step_deploy_instance
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectByPipeId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List_i" />
+		from uci_pipe_step_deploy_instance i
+		left join uci_pipe_step_deploy d on d.id=i.deploy_id
+		where d.pipe_id = #{pipeId,jdbcType=BIGINT}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from uci_pipe_step_deploy_instance
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+
+	<delete id="deleteByPipeId" parameterType="java.lang.Long">
+		DELETE i from uci_pipe_step_deploy_instance i
+		LEFT JOIN uci_pipe_step_deploy d ON d.id=i.deploy_id
+		WHERE d.pipe_id = #{pipeId,jdbcType=BIGINT}
+	</delete>
+
+	<insert id="insert" parameterType="com.wl4g.paas.common.bean.uci.PipelineInstance">
+		insert into uci_pipe_step_deploy_instance (id, deploy_id, instance_id
+		)
+		values (#{id,jdbcType=BIGINT}, #{deployId,jdbcType=BIGINT}, #{instanceId,jdbcType=BIGINT}
+		)
+	</insert>
+
+	<insert id="insertBatch" parameterType="java.util.Map">
+		insert into uci_pipe_step_deploy_instance (id, deploy_id, instance_id)
+		VALUES
+		<foreach collection="pipelineInstances" item="pipelineInstance" separator=",">
+			(#{pipelineInstance.id,jdbcType=BIGINT}, #{pipelineInstance.deployId,jdbcType=BIGINT}, #{pipelineInstance.instanceId,jdbcType=BIGINT})
+		</foreach>
+	</insert>
+
+
+	<insert id="insertSelective" parameterType="com.wl4g.paas.common.bean.uci.PipelineInstance">
+		insert into uci_pipe_step_deploy_instance
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="deployId != null">
+				deploy_id,
+			</if>
+			<if test="instanceId != null">
+				instance_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="pipeId != null">
+				#{pipeId,jdbcType=BIGINT},
+			</if>
+			<if test="instanceId != null">
+				#{instanceId,jdbcType=BIGINT},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.paas.common.bean.uci.PipelineInstance">
+		update uci_pipe_step_deploy_instance
+		<set>
+			<if test="deployId != null">
+				deploy_id = #{deployId,jdbcType=BIGINT},
+			</if>
+			<if test="instanceId != null">
+				instance_id = #{instanceId,jdbcType=BIGINT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.paas.common.bean.uci.PipelineInstance">
+		update uci_pipe_step_deploy_instance
+		set deploy_id = #{deployId,jdbcType=BIGINT},
+		instance_id = #{instanceId,jdbcType=BIGINT}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+</mapper>

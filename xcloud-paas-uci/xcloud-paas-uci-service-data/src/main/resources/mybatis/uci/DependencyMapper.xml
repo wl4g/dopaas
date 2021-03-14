@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.paas.uci.data.DependencyDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.paas.common.bean.uci.Dependency">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="project_id" property="projectId" jdbcType="INTEGER" />
+		<result column="dependent_id" property="dependentId" jdbcType="INTEGER" />
+		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="create_by" property="createBy" jdbcType="VARCHAR" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+		<!-- other -->
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+		<result column="parent_name" property="parentName" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, project_id, dependent_id, del_flag, create_date, create_by, update_date,
+		update_by
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from uci_dependency
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from uci_dependency
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.wl4g.paas.common.bean.uci.Dependency">
+		insert into uci_dependency (id, project_id, dependent_id,
+		del_flag, create_date,
+		create_by, update_date, update_by
+		)
+		values (#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{dependentId,jdbcType=BIGINT},
+		#{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
+		#{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.wl4g.paas.common.bean.uci.Dependency">
+		insert into uci_dependency
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="projectId != null">
+				project_id,
+			</if>
+			<if test="dependentId != null">
+				dependent_id,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="updateBy != null">
+				update_by,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="projectId != null">
+				#{projectId,jdbcType=BIGINT},
+			</if>
+			<if test="dependentId != null">
+				#{dependentId,jdbcType=BIGINT},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag,jdbcType=INTEGER},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.paas.common.bean.uci.Dependency">
+		update uci_dependency
+		<set>
+			<if test="projectId != null">
+				project_id = #{projectId,jdbcType=BIGINT},
+			</if>
+			<if test="dependentId != null">
+				dependent_id = #{dependentId,jdbcType=BIGINT},
+			</if>
+			<if test="delFlag != null">
+				del_flag = #{delFlag,jdbcType=INTEGER},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.paas.common.bean.uci.Dependency">
+		update uci_dependency
+		set project_id = #{projectId,jdbcType=BIGINT},
+		dependent_id = #{dependentId,jdbcType=BIGINT},
+		del_flag = #{delFlag,jdbcType=INTEGER},
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		create_by = #{createBy,jdbcType=VARCHAR},
+		update_date = #{updateDate,jdbcType=TIMESTAMP},
+		update_by = #{updateBy,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<select id="getParentsByProjectId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from uci_dependency
+		where project_id = #{projectId,jdbcType=BIGINT}
+	</select>
+
+	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		d.*,p.project_name,pp.project_name parent_name
+		from uci_dependency d
+		left join uci_project p on d.project_id = p.id
+		left join uci_project pp on d.dependent_id = pp.id
+		where d.del_flag!=1
+		<if test="projectName != null and projectName != ''">
+			AND p.project_name LIKE CONCAT('%','${projectName}','%')
+		</if>
+	</select>
+
+	<delete id="deleteByProjectId" parameterType="java.lang.Long">
+		delete from uci_dependency
+		where project_id = #{projectId,jdbcType=BIGINT}
+	</delete>
+</mapper>

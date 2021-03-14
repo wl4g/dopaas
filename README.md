@@ -77,7 +77,7 @@ npm run dev # Development debugging
 npm run build # Production building
 ```
 
-- Initial DB: first, prepare a MySQL5.6+ instance and create a database named `devops`(utf8/utf8)_bin), and then [Initial DB sql](../../../xcloud-paas-db). (Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
+- Initial DB: first, prepare a MySQL5.6+ instance and create a database named `paas`(utf8/utf8)_bin), and then [Initial DB sql](../../../xcloud-paas-db). (Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
 
 - Configure local DNS: add local virtual domain name resolution （C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
@@ -86,11 +86,11 @@ npm run build # Production building
 # dev:
 127.0.0.1 wl4g.debug
 # fat:
-127.0.0.1 wl4g.fat devops.wl4g.fat iam.wl4g.fat erm.wl4g.fat ci.wl4g.fat dts.wl4g.fat vcs.wl4g.fat umc.wl4g.fat
+127.0.0.1 wl4g.fat paas.wl4g.fat iam.wl4g.fat erm.wl4g.fat ci.wl4g.fat dts.wl4g.fat vcs.wl4g.fat umc.wl4g.fat
 # uat:
-127.0.0.1 wl4g.uat devops.wl4g.uat iam.wl4g.uat erm.wl4g.uat ci.wl4g.uat dts.wl4g.uat vcs.wl4g.uat umc.wl4g.uat
+127.0.0.1 wl4g.uat paas.wl4g.uat iam.wl4g.uat erm.wl4g.uat ci.wl4g.uat dts.wl4g.uat vcs.wl4g.uat umc.wl4g.uat
 # pro:
-127.0.0.1 wl4g.com devops.wl4g.com iam.wl4g.com erm.wl4g.com ci.wl4g.com dts.wl4g.com vcs.wl4g.com umc.wl4g.com
+127.0.0.1 wl4g.com paas.wl4g.com iam.wl4g.com erm.wl4g.com ci.wl4g.com dts.wl4g.com vcs.wl4g.com umc.wl4g.com
 ```
 
 - Quickly build a redis cluster/docker (optional)
