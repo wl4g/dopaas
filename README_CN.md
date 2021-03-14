@@ -123,20 +123,23 @@ npm run build # 生产打包
 - [IM](xcloud-im/README_CN.md)						即时通讯系统, 项目人员及时沟通，内部资料分发
 
 
-### 运行环境
-- 基础依赖环境(必须):
+### 开发及运行时依赖技术栈(主要)
+- 必须依赖:
 <pre>
-Git
-Jdk:8+
-Maven:3.5+
-Mysql:5.6+
+Spring Boot:2.2 +
+Spring Cloud:2.2 +
+Eureka:1.10 +
+Zipkin:2.15 +
+Jdk:8 +
+Maven:3.5 +
+Mysql:5.6 +
 </pre>
 
-- 其他依赖环境(推荐非必须):
+- 可选依赖:
 <pre>
-DockerCE:18.06 +
 Kafka:0.10.0 +
 Zookeeper:3.4.6 +
+DockerCE:18.06 +
 CoreDNS:1.7.0 +
 MinIO:latest
 Shardingsphere-Elasticjob:3.0.0+

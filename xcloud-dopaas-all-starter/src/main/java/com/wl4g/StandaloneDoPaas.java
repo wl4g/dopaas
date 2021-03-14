@@ -24,7 +24,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * {@link StandaloneDevops} </br>
+ * {@link StandaloneDoPaas} </br>
  * </br>
  * 
  * for example: It should at least includes( "com.wl4g.iam.web",
@@ -44,10 +44,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @EnableShellServer
 @EnableComponentDBConfiguration({ "com.wl4g.dopaas.*.data", "com.wl4g.iam.data" })
 @SpringBootApplication
-public class StandaloneDevops {
+public class StandaloneDoPaas {
 
 	public static void main(String[] args) {
-		SpringApplication.run(StandaloneDevops.class, args);
+		SpringApplication.run(StandaloneDoPaas.class, args);
 	}
 
 }
