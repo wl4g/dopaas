@@ -124,20 +124,23 @@ npm run build # Production building
 - [IM](xcloud-im/README.md)                  Instant messaging system, project personnel communicate in a timely manner, internal data distribution.
 
 
-### Runtime
-- Basic dependency env (required):
+### Development and runtime depend on technology stack(primary)
+- Required dependencies:
 <pre>
-Git
-Jdk:8+
-Maven:3.5+
-Mysql:5.6+
+Spring Boot:2.2 +
+Spring Cloud:2.2 +
+Eureka:1.10 +
+Zipkin:2.15 +
+Jdk:8 +
+Maven:3.5 +
+Mysql:5.6 +
 </pre>
 
-- Other dependency env (optional):
+- Optional dependencies:
 <pre>
-DockerCE:18.06 +
 Kafka:0.10.0 +
 Zookeeper:3.4.6 +
+DockerCE:18.06 +
 CoreDNS:1.7.0 +
 MinIO:latest
 Shardingsphere-Elasticjob:3.0.0+

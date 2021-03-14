@@ -14,7 +14,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<final.name>standalone-devops</final.name>
+		<final.name>standalone-dopaas</final.name>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -126,7 +126,7 @@
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
-							<mainClass>com.wl4g.StandaloneDevOpsServer</mainClass>
+							<mainClass>com.wl4g.StandaloneDoPaas</mainClass>
 							<finalName>${final.name}-${project.version}-bin</finalName>
 						</configuration>
 						<executions>
