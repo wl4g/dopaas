@@ -13,7 +13,7 @@
 spring:
   application.name: dopaas-server
   profiles:
-    include: common,support,util,base
+    include: common,support,util
     active: dev
   xcloud:
     component:

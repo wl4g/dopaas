@@ -11,7 +11,7 @@
 spring:
   application.name: urm-facade
   profiles:
-    include: common,support,util,base
+    include: common,support,util
     active: dev
 
 # Mybatis configuration.
