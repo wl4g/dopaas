@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>xcloud-dopaas-umc</artifactId>
+	<packaging>pom</packaging>
+	<name>XCloud DoPaaS UMC(Unified Monitoring Center)</name>
+	<description>A Open Source unified monitoring center based on SpringBoot Cloud that supports real-time link tracking, real-time resource monitoring, and alarms.</description>
+	<url>http://xcloud.wl4g.com</url>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>xcloud-dopaas</artifactId>
+		<version>master</version>
+	</parent>
+	<modules>
+        <module>xcloud-dopaas-umc-example</module>
+        <module>xcloud-dopaas-umc-client-springboot</module>
+		<module>xcloud-dopaas-umc-alarm</module>
+		<module>xcloud-dopaas-umc-store</module>
+		<module>xcloud-dopaas-umc-watch</module>
+        <module>xcloud-dopaas-umc-service-data</module>
+        <module>xcloud-dopaas-umc-service-facade</module>
+		<module>xcloud-dopaas-umc-service-starter-collector</module>
+        <module>xcloud-dopaas-umc-service-starter-tracker</module>
+        <module>xcloud-dopaas-umc-service-starter-facade</module>
+        <module>xcloud-dopaas-umc-service-starter-manager</module>
+	</modules>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+	</properties>
+	<repositories>
+		<repository>
+			<id>aliyun-public</id>
+			<name>Aliyun public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
+		</repository>
+		<repository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/libs-snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

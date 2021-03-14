@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.dopaas.cmdb.data.DockerInstanceDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.dopaas.common.bean.cmdb.DockerInstance">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="docker_id" jdbcType="INTEGER" property="dockerId" />
+    <result column="host_id" jdbcType="INTEGER" property="hostId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, docker_id, host_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_docker_instance
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectHostIdByDockerId" parameterType="java.lang.Long" resultType="java.lang.Long">
+    select
+    host_id
+    from cmdb_docker_instance
+    where docker_id = #{dockerId,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cmdb_docker_instance
+    where docker_id = #{dockerId,jdbcType=BIGINT}
+  </delete>
+
+  <delete id="deleteByDockerId" parameterType="java.lang.Long">
+    delete from cmdb_docker_instance
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.wl4g.dopaas.common.bean.cmdb.DockerInstance">
+    insert into cmdb_docker_instance (id, docker_id, host_id
+      )
+    values (#{id,jdbcType=BIGINT}, #{dockerId,jdbcType=BIGINT}, #{hostId,jdbcType=BIGINT}
+      )
+  </insert>
+
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into cmdb_docker_instance (id, docker_id, host_id)
+    VALUES
+    <foreach collection="dockerInstances" item="dockerInstance" separator=",">
+      (#{dockerInstance.id,jdbcType=BIGINT}, #{dockerInstance.dockerId,jdbcType=BIGINT}, #{dockerInstance.hostId,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.cmdb.DockerInstance">
+    insert into cmdb_docker_instance
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="dockerId != null">
+        docker_id,
+      </if>
+      <if test="hostId != null">
+        host_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="dockerId != null">
+        #{dockerId,jdbcType=BIGINT},
+      </if>
+      <if test="hostId != null">
+        #{hostId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.cmdb.DockerInstance">
+    update cmdb_docker_instance
+    <set>
+      <if test="dockerId != null">
+        docker_id = #{dockerId,jdbcType=BIGINT},
+      </if>
+      <if test="hostId != null">
+        host_id = #{hostId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.cmdb.DockerInstance">
+    update cmdb_docker_instance
+    set docker_id = #{dockerId,jdbcType=BIGINT},
+      host_id = #{hostId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+</mapper>

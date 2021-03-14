@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.dopaas.urm.data.RepoDao">
+	<resultMap id="BaseResultMap" type="com.wl4g.dopaas.common.bean.uci.Vcs">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
+		<result column="provider_kind" property="providerKind" jdbcType="VARCHAR" />
+		<result column="auth_type" property="authType" jdbcType="INTEGER" />
+		<result column="base_uri" property="baseUri" jdbcType="VARCHAR" />
+		<result column="ssh_key_pub" property="sshKeyPub" jdbcType="VARCHAR" />
+		<result column="ssh_key" property="sshKey" jdbcType="VARCHAR" />
+		<result column="access_token" property="accessToken" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="enable" property="enable" jdbcType="INTEGER" />
+		<result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+		<result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="create_by" property="createBy" jdbcType="VARCHAR" />
+		<result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+		<result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, name, organization_code, provider_kind, auth_type, base_uri, ssh_key_pub, ssh_key, access_token, username, password,
+		remark, enable, del_flag, create_date, create_by, update_date, update_by
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from urm_source_repo
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from urm_source_repo
+		where del_flag != 1
+		<if test="name != null and name != '' ">
+			AND name LIKE CONCAT('%','${name}','%')
+		</if>
+		<if test="providerKind != null and name != '' ">
+			AND provider_kind = #{providerKind,jdbcType=VARCHAR}
+		</if>
+		<if test="authType != null">
+			AND auth_type = #{authType,jdbcType=INTEGER}
+		</if>
+		<if test="organizationCodes != null and organizationCodes.size() > 0">
+			and organization_code in
+			<foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+				#{organizationCode}
+			</foreach>
+		</if>
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from urm_source_repo
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.wl4g.dopaas.common.bean.uci.Vcs">
+		insert into urm_source_repo (id,name,organization_code, provider_kind, auth_type,
+		base_uri, ssh_key_pub, ssh_key,
+		access_token, username, password,
+		remark, enable, del_flag,
+		create_date, create_by, update_date,
+		update_by)
+		values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},#{organizationCode,jdbcType=VARCHAR},#{providerKind,jdbcType=VARCHAR},
+		#{authType,jdbcType=INTEGER},
+		#{baseUri,jdbcType=VARCHAR}, #{sshKeyPub,jdbcType=VARCHAR}, #{sshKey,jdbcType=VARCHAR},
+		#{accessToken,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER},
+		#{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
+		#{updateBy,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.uci.Vcs" useGeneratedKeys="true" keyProperty="id">
+		insert into urm_source_repo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="organizationCode != null">
+				organization_code,
+			</if>
+			<if test="providerKind != null">
+				provider_kind,
+			</if>
+			<if test="authType != null">
+				auth_type,
+			</if>
+			<if test="baseUri != null">
+				base_uri,
+			</if>
+			<if test="sshKeyPub != null">
+				ssh_key_pub,
+			</if>
+			<if test="sshKey != null">
+				ssh_key,
+			</if>
+			<if test="accessToken != null">
+				access_token,
+			</if>
+			<if test="username != null">
+				username,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="enable != null">
+				enable,
+			</if>
+			<if test="delFlag != null">
+				del_flag,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="createBy != null">
+				create_by,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+			<if test="updateBy != null">
+				update_by,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				#{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="providerKind != null">
+				#{providerKind,jdbcType=VARCHAR},
+			</if>
+			<if test="authType != null">
+				#{authType,jdbcType=INTEGER},
+			</if>
+			<if test="baseUri != null">
+				#{baseUri,jdbcType=VARCHAR},
+			</if>
+			<if test="sshKeyPub != null">
+				#{sshKeyPub,jdbcType=VARCHAR},
+			</if>
+			<if test="sshKey != null">
+				#{sshKey,jdbcType=VARCHAR},
+			</if>
+			<if test="accessToken != null">
+				#{accessToken,jdbcType=VARCHAR},
+			</if>
+			<if test="username != null">
+				#{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="enable != null">
+				#{enable,jdbcType=INTEGER},
+			</if>
+			<if test="delFlag != null">
+				#{delFlag,jdbcType=INTEGER},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createBy != null">
+				#{createBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				#{updateBy,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.uci.Vcs">
+		update urm_source_repo
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="organizationCode != null">
+				organization_code = #{organizationCode,jdbcType=VARCHAR},
+			</if>
+			<if test="providerKind != null">
+				provider_kind = #{providerKind,jdbcType=VARCHAR},
+			</if>
+			<if test="authType != null">
+				auth_type = #{authType,jdbcType=INTEGER},
+			</if>
+			<if test="baseUri != null">
+				base_uri = #{baseUri,jdbcType=VARCHAR},
+			</if>
+			<if test="sshKeyPub != null">
+				ssh_key_pub = #{sshKeyPub,jdbcType=VARCHAR},
+			</if>
+			<if test="sshKey != null">
+				ssh_key = #{sshKey,jdbcType=VARCHAR},
+			</if>
+			<if test="accessToken != null">
+				access_token = #{accessToken,jdbcType=VARCHAR},
+			</if>
+			<if test="username != null">
+				username = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="enable != null">
+				enable = #{enable,jdbcType=INTEGER},
+			</if>
+			<if test="delFlag != null">
+				del_flag = #{delFlag,jdbcType=INTEGER},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createBy != null">
+				create_by = #{createBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateBy != null">
+				update_by = #{updateBy,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.uci.Vcs">
+		update urm_source_repo
+		set name = #{name,jdbcType=VARCHAR},
+		organization_code = #{organizationCode,jdbcType=VARCHAR},
+		provider_kind = #{providerKind,jdbcType=VARCHAR},
+		auth_type = #{authType,jdbcType=INTEGER},
+		base_uri = #{baseUri,jdbcType=VARCHAR},
+		ssh_key_pub = #{sshKeyPub,jdbcType=VARCHAR},
+		ssh_key = #{sshKey,jdbcType=VARCHAR},
+		access_token = #{accessToken,jdbcType=VARCHAR},
+		username = #{username,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		enable = #{enable,jdbcType=INTEGER},
+		del_flag = #{delFlag,jdbcType=INTEGER},
+		create_date = #{createDate,jdbcType=TIMESTAMP},
+		create_by = #{createBy,jdbcType=VARCHAR},
+		update_date = #{updateDate,jdbcType=TIMESTAMP},
+		update_by = #{updateBy,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+</mapper>
