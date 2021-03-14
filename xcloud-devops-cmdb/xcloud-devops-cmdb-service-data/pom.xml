@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-cmdb-service-data</artifactId>
+	<artifactId>xcloud-paas-cmdb-service-data</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps CMDB DAO</name>
+	<name>XCloud PaaS CMDB DAO</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-cmdb</artifactId>
+		<artifactId>xcloud-paas-cmdb</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -17,7 +17,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-common</artifactId>
+			<artifactId>xcloud-paas-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

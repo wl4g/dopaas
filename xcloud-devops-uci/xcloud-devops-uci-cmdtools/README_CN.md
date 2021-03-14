@@ -1,1 +1,1 @@
-请访问项目的专属地址： [xcloud-devops-ci-cmdtools](../../../../../xcloud-devops-ci-cmdtools)
+请访问项目的专属地址： [xcloud-paas-ci-cmdtools](../../../../../xcloud-paas-ci-cmdtools)

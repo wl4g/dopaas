@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-all-dependencies</artifactId>
+	<artifactId>xcloud-paas-all-dependencies</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps All Dependencies(bridge)</name>
+	<name>XCloud PaaS All Dependencies(bridge)</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops</artifactId>
+		<artifactId>xcloud-paas</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -18,52 +18,52 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-uci-service-starter-server</artifactId>
+			<artifactId>xcloud-paas-uci-service-starter-server</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-uci-service-starter-facade</artifactId>
+			<artifactId>xcloud-paas-uci-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-udm-service-starter-manager</artifactId>
+			<artifactId>xcloud-paas-udm-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-udm-service-starter-facade</artifactId>
+			<artifactId>xcloud-paas-udm-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-cmdb-service-starter-manager</artifactId>
+			<artifactId>xcloud-paas-cmdb-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-cmdb-service-starter-facade</artifactId>
+			<artifactId>xcloud-paas-cmdb-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-urm-service-starter-manager</artifactId>
+			<artifactId>xcloud-paas-urm-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-urm-service-starter-facade</artifactId>
+			<artifactId>xcloud-paas-urm-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-udc-service-starter-facade</artifactId>
+			<artifactId>xcloud-paas-udc-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-udc-service-starter-manager</artifactId>
+			<artifactId>xcloud-paas-udc-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

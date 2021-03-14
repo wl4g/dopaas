@@ -30,9 +30,9 @@ cd xcloud-iam
 mvn clean install -DskipTests -T 2C
 
 # 构建
-git clone https://github.com/wl4g/xcloud-devops.git # 上游最新
-#git clone https://gitee.com/wl4g/xcloud-devops.git # 大陆较快
-cd xcloud-devops
+git clone https://github.com/wl4g/xcloud-paas.git # 上游最新
+#git clone https://gitee.com/wl4g/xcloud-paas.git # 大陆较快
+cd xcloud-paas
 mvn clean install -DskipTests -T 2C
 ```
 > 若出现  ```error xx/xxx: Filename too long```  错误，这是由于devops dts codegen子项目的模板路径过长导致，建议设置 ```git config --global core.longpaths true``` 后重新拉。
@@ -82,7 +82,7 @@ step3: 新建模版渲染工具类 (建议)，[参考(E) JavaSpecs](src/main/jav
 
 step4: 使新建处理器生效，[参考(A) CodegenAutoConfiguration#iamSpringMvcGeneratorProvider](src/main/java/com/wl4g/devops/dts/codegen/config/CodegenAutoConfiguration.java#iamSpringMvcGeneratorProvider)
 
-step5: 准备在您的IDE上启动服务，入口类：  xcloud-devops-dts-starter/src/main/java/com/wl4g/DtsManager.java
+step5: 准备在您的IDE上启动服务，入口类：  xcloud-paas-dts-starter/src/main/java/com/wl4g/DtsManager.java
 
 > 提示：默认debugger模式启动时，模板目录和mybatis mapper文件更新不需重启，系统会自动热加载。
 

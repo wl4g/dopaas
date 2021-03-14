@@ -1,28 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-umc</artifactId>
+	<artifactId>xcloud-paas-umc</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSecOps UMC(Unified Monitoring Center)</name>
+	<name>XCloud PaaS UMC(Unified Monitoring Center)</name>
 	<description>A Open Source unified monitoring center based on SpringBoot Cloud that supports real-time link tracking, real-time resource monitoring, and alarms.</description>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops</artifactId>
+		<artifactId>xcloud-paas</artifactId>
 		<version>master</version>
 	</parent>
 	<modules>
-        <module>xcloud-devops-umc-example</module>
-        <module>xcloud-devops-umc-client-springboot</module>
-		<module>xcloud-devops-umc-alarm</module>
-		<module>xcloud-devops-umc-store</module>
-		<module>xcloud-devops-umc-watch</module>
-        <module>xcloud-devops-umc-service-data</module>
-        <module>xcloud-devops-umc-service-facade</module>
-		<module>xcloud-devops-umc-service-starter-collector</module>
-        <module>xcloud-devops-umc-service-starter-tracker</module>
-        <module>xcloud-devops-umc-service-starter-facade</module>
-        <module>xcloud-devops-umc-service-starter-manager</module>
+        <module>xcloud-paas-umc-example</module>
+        <module>xcloud-paas-umc-client-springboot</module>
+		<module>xcloud-paas-umc-alarm</module>
+		<module>xcloud-paas-umc-store</module>
+		<module>xcloud-paas-umc-watch</module>
+        <module>xcloud-paas-umc-service-data</module>
+        <module>xcloud-paas-umc-service-facade</module>
+		<module>xcloud-paas-umc-service-starter-collector</module>
+        <module>xcloud-paas-umc-service-starter-tracker</module>
+        <module>xcloud-paas-umc-service-starter-facade</module>
+        <module>xcloud-paas-umc-service-starter-manager</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

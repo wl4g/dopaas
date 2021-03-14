@@ -1,20 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-cmdb</artifactId>
+	<artifactId>xcloud-paas-cmdb</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSevOps CMDB(Configuration Management DB)</name>
+	<name>XCloud PaaS CMDB(Configuration Management DB)</name>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops</artifactId>
+		<artifactId>xcloud-paas</artifactId>
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-cmdb-service-data</module>
-		<module>xcloud-devops-cmdb-service-facade</module>
-		<module>xcloud-devops-cmdb-service-starter-facade</module>
-		<module>xcloud-devops-cmdb-service-starter-manager</module>
-		<!-- <module>xcloud-devops-cmdb-initializer</module> -->
+		<module>xcloud-paas-cmdb-service-data</module>
+		<module>xcloud-paas-cmdb-service-facade</module>
+		<module>xcloud-paas-cmdb-service-starter-facade</module>
+		<module>xcloud-paas-cmdb-service-starter-manager</module>
+		<!-- <module>xcloud-paas-cmdb-initializer</module> -->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

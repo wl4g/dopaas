@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-esm-estimator</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSevOps ESM Estimator</name>
+	<name>XCloud PaaS ESM Estimator</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-esm</artifactId>
+		<artifactId>xcloud-paas-esm</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -19,11 +19,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-esm-core</artifactId>
+			<artifactId>xcloud-paas-esm-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-esm-scaler</artifactId>
+			<artifactId>xcloud-paas-esm-scaler</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

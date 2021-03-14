@@ -76,7 +76,7 @@ public class SimpleHfileToRmdbExporter {
 	 * e.g. </br>
 	 * 
 	 * <pre>
-	 * java -cp xcloud-devops-udc-tools-hbase-migrator-master.jar \
+	 * java -cp xcloud-paas-udc-tools-hbase-migrator-master.jar \
 	 * com.wl4g.devops.udc.tools.hbase.SimpleHfileToRmdbExporter \
 	 * -z emr-header-1:2181 \
 	 * -t safeclound.tb_elec_power \

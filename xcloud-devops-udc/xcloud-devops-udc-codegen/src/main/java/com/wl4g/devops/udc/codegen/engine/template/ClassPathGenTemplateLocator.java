@@ -213,7 +213,7 @@ public class ClassPathGenTemplateLocator implements GenTemplateLocator {
 		 * 
 		 * <pre>
 		 * jar:file:/opt/apps/acm/dts-manager-package/dts-manager-master-bin/
-		 * libs/xcloud-devops-dts-codegen-master.jar!/generate-config/project-
+		 * libs/xcloud-paas-dts-codegen-master.jar!/generate-config/project-
 		 * templates/springCloudMvnProvider/%23%7bT(JavaSpecs).lCase(organName)%
 		 * 7d-%23%7bT(JavaSpecs).lCase(projectName)%7d/%23%7bT(JavaSpecs).lCase(
 		 * organName)%7d-%23%7bT(JavaSpecs).lCase(projectName)%7d-dao/pom.xml.ftl

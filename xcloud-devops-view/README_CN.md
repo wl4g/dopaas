@@ -1,1 +1,0 @@
-已迁移至 [xcloud-devops-view](../../../../xcloud-devops-view)

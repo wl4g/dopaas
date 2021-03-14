@@ -1,10 +1,10 @@
-# 本项目由 XCloud DevOps for Codegen生成
+# 本项目由 XCloud PaaS for Codegen生成
 
 > 跨平台代码生成引擎（与开发语言、框架和技术架构无关）
 
 引擎开源地址: 
-- [https://github.com/wl4g/xcloud-devops/tree/master/xcloud-devops-dts](https://github.com/wl4g/xcloud-devops/tree/master/xcloud-devops-dts)
-- [https://gitee.com/wl4g/xcloud-devops/tree/master/xcloud-devops-dts](https://github.com/wl4g/xcloud-devops/tree/master/xcloud-devops-dts)
+- [https://github.com/wl4g/xcloud-paas/tree/master/xcloud-paas-dts](https://github.com/wl4g/xcloud-paas/tree/master/xcloud-paas-dts)
+- [https://gitee.com/wl4g/xcloud-paas/tree/master/xcloud-paas-dts](https://github.com/wl4g/xcloud-paas/tree/master/xcloud-paas-dts)
 - or [http://dts.devops.wl4g.com](http://dts.devops.wl4g.com)
 
 

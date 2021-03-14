@@ -72,7 +72,7 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
 
 # Pull and compile.
 function pullAndCompile() {
-  local projectName=$1 # e.g xcloud-devops
+  local projectName=$1 # e.g xcloud-paas
   local cloneUrl=$2
   local branch=$3
   local projectDir="$currDir/$projectName"
@@ -130,7 +130,7 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
   fi
   local appInstallDir=${deployAppBaseDir}/${appName}-package && mkdir -p $appInstallDir
 
-  # Add deployed xcloud-devops primary service host.
+  # Add deployed xcloud-paas primary service host.
   globalDeployStatsMsg="${globalDeployStatsMsg}"$(echo -n " localhost")
 
   log "[$appName/standalone] Cleanup older install files: $appInstallDir/* ..."
@@ -248,7 +248,7 @@ function doDeployApp() {
   #local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
   local cmdRestart="/etc/init.d/${appName}.service restart"
 
-  # Add deployed xcloud-devops primary services names.
+  # Add deployed xcloud-paas primary services names.
   globalDeployStatsMsg="${globalDeployStatsMsg}"$(echo -n -e """
 [${appName}]:
           Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/
@@ -277,15 +277,15 @@ function doDeployApp() {
     fi
     log "[$appName/cluster] Deployed to cluster nodes completed !"
 
-    # Add deployed xcloud-devops primary service host.
+    # Add deployed xcloud-paas primary service host.
     globalDeployStatsMsg="${globalDeployStatsMsg} ${globalAllHostsString}"
     [ $? -ne 0 ] && exit -1
     log "[$appName/cluster] Deployed to remote all nodes !"
   fi
 }
 
-# Deploy and startup devops all apps.
-function deployDevopsAppsAll() {
+# Deploy and startup paas all apps.
+function deployPaaSAppsAll() {
   local deployBuildModulesSize=0
   if [ "$runtimeMode" == "standalone" ]; then
     local deployBuildModules=("${deployStandaloneBuildModules[@]}") # Copy build targets array
@@ -357,10 +357,10 @@ function deployEurekaServers() {
 function main() {
   [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
   log ""
-  log "「 Welcome to XCloud DevOps Deployer(Host) 」"
+  log "「 Welcome to XCloud PaaS Deployer(Host) 」"
   log ""
-  log " Wiki: https://github.com/wl4g/xcloud-devops/blob/master/README.md"
-  log " Wiki(CN): https://gitee.com/wl4g/xcloud-devops/blob/master/README_CN.md"
+  log " Wiki: https://github.com/wl4g/xcloud-paas/blob/master/README.md"
+  log " Wiki(CN): https://gitee.com/wl4g/xcloud-paas/blob/master/README_CN.md"
   log " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
   log " Version: 2.0.0"
   log " Time: $(date '+%Y-%m-%d %H:%M:%S')"
@@ -376,9 +376,9 @@ function main() {
   checkInstallBasicSoftware
   pullAndCompile "xcloud-component" "$gitXCloudComponentUrl" "$xcloudComponentGitBranch"
   pullAndCompile "xcloud-iam" "$gitXCloudIamUrl" "$xcloudIamGitBranch"
-  pullAndCompile "xcloud-devops" "$gitXCloudDevOpsUrl" "$xcloudDevOpsGitBranch"
+  pullAndCompile "xcloud-paas" "$gitXCloudPaaSUrl" "$xcloudPaaSGitBranch"
   deployPreDependsServices
-  deployDevopsAppsAll
+  deployPaaSAppsAll
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   echo -n "---------------------------------------------------------------"

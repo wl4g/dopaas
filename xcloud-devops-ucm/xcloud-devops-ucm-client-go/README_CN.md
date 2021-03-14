@@ -1,1 +1,1 @@
-请访问项目的专属地址：[xcloud-devops-ucm-client-go](../../../../../xcloud-devops-ucm-client-go)
+请访问项目的专属地址：[xcloud-paas-ucm-client-go](../../../../../xcloud-paas-ucm-client-go)

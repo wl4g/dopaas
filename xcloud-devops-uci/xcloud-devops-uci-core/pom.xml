@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-uci-core</artifactId>
+	<artifactId>xcloud-paas-uci-core</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps CI Core</name>
+	<name>XCloud PaaS CI Core</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-uci</artifactId>
+		<artifactId>xcloud-paas-uci</artifactId>
 		<version>master</version>	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -15,22 +15,22 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-uci-service-facade</artifactId>
+			<artifactId>xcloud-paas-uci-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-cmdb-service-facade</artifactId>
+			<artifactId>xcloud-paas-cmdb-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-common</artifactId>
+			<artifactId>xcloud-paas-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-urm-operator</artifactId>
+			<artifactId>xcloud-paas-urm-operator</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

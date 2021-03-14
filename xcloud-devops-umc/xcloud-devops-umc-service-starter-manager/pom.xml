@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-umc-service-starter-manager</artifactId>
+	<artifactId>xcloud-paas-umc-service-starter-manager</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps UMC Manager</name>
+	<name>XCloud PaaS UMC Manager</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-umc</artifactId>
+		<artifactId>xcloud-paas-umc</artifactId>
 		<version>master</version>
 	</parent>
 	<properties>
@@ -17,12 +17,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-umc-store</artifactId>
+			<artifactId>xcloud-paas-umc-store</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-umc-service-facade</artifactId>
+			<artifactId>xcloud-paas-umc-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

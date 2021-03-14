@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-urm-service-facade</artifactId>
+	<artifactId>xcloud-paas-urm-service-facade</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps URM Service Facade (interface)</name>
+	<name>XCloud PaaS URM Service Facade (interface)</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-urm</artifactId>
+		<artifactId>xcloud-paas-urm</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -17,17 +17,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-urm-operator</artifactId>
+			<artifactId>xcloud-paas-urm-operator</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
             <groupId>com.wl4g</groupId>
-            <artifactId>xcloud-devops-umc-client-springboot</artifactId>
+            <artifactId>xcloud-paas-umc-client-springboot</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-common</artifactId>
+			<artifactId>xcloud-paas-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 

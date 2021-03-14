@@ -1,18 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-udc-tools</artifactId>
+	<artifactId>xcloud-paas-udc-tools</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSecOps UDC Tools</name>
+	<name>XCloud PaaS UDC Tools</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops-udc</artifactId>
+		<artifactId>xcloud-paas-udc</artifactId>
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-udc-tools-devel</module>
-		<module>xcloud-devops-udc-tools-hbase-migrator</module>
+		<module>xcloud-paas-udc-tools-devel</module>
+		<module>xcloud-paas-udc-tools-hbase-migrator</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

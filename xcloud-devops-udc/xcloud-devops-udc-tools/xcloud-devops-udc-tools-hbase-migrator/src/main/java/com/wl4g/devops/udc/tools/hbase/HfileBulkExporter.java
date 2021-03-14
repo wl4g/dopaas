@@ -75,7 +75,7 @@ public class HfileBulkExporter {
 	 * e.g. </br>
 	 * 
 	 * <pre>
-	 *  yarn jar xcloud-devops-udc-tools-hbase-migrator-master.jar \
+	 *  yarn jar xcloud-paas-udc-tools-hbase-migrator-master.jar \
 	 *  com.wl4g.devops.udc.tools.hbase.HfileBulkExporter \
 	 *  -s 11111112,ELE_R_P,134,01,20180919110850989 \
 	 *  -e 11111112,ELE_R_P,134,01,20180921124050540 \

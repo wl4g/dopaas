@@ -1,24 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-uci</artifactId>
+	<artifactId>xcloud-paas-uci</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSecOps UCI(Unified Continuous Integration)</name>
+	<name>XCloud PaaS UCI(Unified Continuous Integration)</name>
 	<url>https://ci.xcloud.wl4g.com</url>
 	<description>A Open Source continuous integration deployment system based on Spring Cloud.</description>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-devops</artifactId>
+		<artifactId>xcloud-paas</artifactId>
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>xcloud-devops-uci-service-starter-analyzer</module>
-		<module>xcloud-devops-uci-core</module>
-		<module>xcloud-devops-uci-service-data</module>
-		<module>xcloud-devops-uci-service-facade</module>
-		<module>xcloud-devops-uci-service-starter-facade</module>
-		<module>xcloud-devops-uci-service-starter-server</module>
-		<module>xcloud-devops-uci-example</module>
+		<module>xcloud-paas-uci-service-starter-analyzer</module>
+		<module>xcloud-paas-uci-core</module>
+		<module>xcloud-paas-uci-service-data</module>
+		<module>xcloud-paas-uci-service-facade</module>
+		<module>xcloud-paas-uci-service-starter-facade</module>
+		<module>xcloud-paas-uci-service-starter-server</module>
+		<module>xcloud-paas-uci-example</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

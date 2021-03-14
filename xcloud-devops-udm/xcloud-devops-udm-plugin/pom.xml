@@ -1,18 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>xcloud-devops-udm-plugin</artifactId>
+    <artifactId>xcloud-paas-udm-plugin</artifactId>
     <packaging>pom</packaging>
-    <name>XCloud DevSecOps UDM Plugin</name>
+    <name>XCloud PaaS UDM Plugin</name>
     <url>http://xcloud.wl4g.com</url>
     <parent>
         <groupId>com.wl4g</groupId>
-        <artifactId>xcloud-devops-udm</artifactId>
+        <artifactId>xcloud-paas-udm</artifactId>
         <version>master</version>
     </parent>
     <modules>
-        <module>xcloud-devops-udm-plugin-swagger</module>
-        <module>xcloud-devops-udm-plugin-sample</module>
+        <module>xcloud-paas-udm-plugin-swagger</module>
+        <module>xcloud-paas-udm-plugin-sample</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
