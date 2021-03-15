@@ -25,6 +25,14 @@
 			<artifactId>xcloud-dopaas-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>xcloud-shell-cli</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>xcloud-shell-springboot</artifactId>
+        </dependency>
 
 		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
 

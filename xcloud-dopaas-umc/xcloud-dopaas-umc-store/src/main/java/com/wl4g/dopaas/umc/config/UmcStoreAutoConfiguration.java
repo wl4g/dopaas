@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.wl4g.dopaas.common.constant.UMCConstants;
+import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.umc.annotation.EnableOpenTsdbStore;
 import com.wl4g.dopaas.umc.derby.DerbyMetricStore;
 import com.wl4g.dopaas.umc.opentsdb.TsdbMetricStore;
@@ -135,7 +135,7 @@ public class UmcStoreAutoConfiguration {
 		return new DerbyMetricStore(derbyJdbcTemplate());
 	}
 
-	public final static String KEY_STORE_PREFIX = UMCConstants.KEY_UMC_CONFIG_PREFIX + ".store";
+	public final static String KEY_STORE_PREFIX = UmcConstants.KEY_UMC_CONFIG_PREFIX + ".store";
 	public final static String KEY_STORE_OPENTSDB_PREFIX = KEY_STORE_PREFIX + ".opentsdb";
 
 }

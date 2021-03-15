@@ -16,8 +16,6 @@
 package com.wl4g.dopaas.udc.codegen.engine.resolver;
 
 import javax.annotation.Nullable;
-import com.wl4g.dopaas.udc.codegen.engine.resolver.TableMetadata.ColumnMetadata;
-import com.wl4g.dopaas.udc.codegen.engine.resolver.TableMetadata.ForeignMetadata;
 
 import static com.wl4g.component.common.reflect.ReflectionUtils2.getFieldValues;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -26,6 +24,10 @@ import java.io.Closeable;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+
+import com.wl4g.dopaas.common.bean.udc.model.TableMetadata;
+import com.wl4g.dopaas.common.bean.udc.model.TableMetadata.ColumnMetadata;
+import com.wl4g.dopaas.common.bean.udc.model.TableMetadata.ForeignMetadata;
 
 /**
  * {@link MetadataResolver}

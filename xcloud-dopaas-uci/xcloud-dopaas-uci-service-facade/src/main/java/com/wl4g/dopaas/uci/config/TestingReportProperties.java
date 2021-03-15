@@ -18,7 +18,7 @@ package com.wl4g.dopaas.uci.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import com.wl4g.dopaas.common.constant.CiConstants;
+import com.wl4g.dopaas.common.constant.UciConstants;
 
 /**
  * Testing report configuration.
@@ -29,7 +29,7 @@ import com.wl4g.dopaas.common.constant.CiConstants;
  * @see
  */
 @Component
-@ConfigurationProperties(CiConstants.KEY_CI_CONFIG_PREFIX + ".testing-report")
+@ConfigurationProperties(UciConstants.KEY_CI_CONFIG_PREFIX + ".testing-report")
 public class TestingReportProperties {
 
 	private String uploadPath;

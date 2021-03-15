@@ -16,8 +16,9 @@
 package com.wl4g.dopaas.udc.codegen.engine;
 
 import javax.annotation.Nullable;
-import com.wl4g.dopaas.udc.codegen.bean.extra.ExtraOptionDefinition;
-import com.wl4g.dopaas.udc.codegen.bean.extra.ExtraOptionDefinition.GenExtraOption;
+
+import com.wl4g.dopaas.common.bean.udc.extra.ExtraOptionDefinition;
+import com.wl4g.dopaas.common.bean.udc.extra.ExtraOptionDefinition.GenExtraOption;
 import com.wl4g.dopaas.udc.codegen.engine.converter.DbTypeConverter;
 
 import javax.validation.constraints.NotBlank;
@@ -28,7 +29,7 @@ import java.util.List;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.*;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.GeneratorProvider.GenProviderAlias.*;
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;

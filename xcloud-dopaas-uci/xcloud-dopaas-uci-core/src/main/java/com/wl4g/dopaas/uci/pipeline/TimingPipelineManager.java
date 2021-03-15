@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
-import static com.wl4g.dopaas.common.constant.CiConstants.TASK_TYPE_TIMMING;
+import static com.wl4g.dopaas.common.constant.UciConstants.TASK_TYPE_TIMMING;
 import static java.util.Objects.nonNull;
 
 /**

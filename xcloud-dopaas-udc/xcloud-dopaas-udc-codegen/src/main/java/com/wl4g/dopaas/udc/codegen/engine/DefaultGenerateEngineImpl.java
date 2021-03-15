@@ -15,35 +15,6 @@
  */
 package com.wl4g.dopaas.udc.codegen.engine;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.common.lang.StringUtils2;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
-import com.wl4g.dopaas.udc.codegen.bean.GenDataSource;
-import com.wl4g.dopaas.udc.codegen.bean.GenProject;
-import com.wl4g.dopaas.udc.codegen.bean.GenTable;
-import com.wl4g.dopaas.udc.codegen.bean.GenTableColumn;
-import com.wl4g.dopaas.udc.codegen.bean.extra.TableExtraOptionDefinition.GenTableExtraOption;
-import com.wl4g.dopaas.udc.codegen.config.CodegenProperties;
-import com.wl4g.dopaas.udc.codegen.dao.GenDataSourceDao;
-import com.wl4g.dopaas.udc.codegen.dao.GenProjectDao;
-import com.wl4g.dopaas.udc.codegen.dao.GenTableColumnDao;
-import com.wl4g.dopaas.udc.codegen.dao.GenTableDao;
-import com.wl4g.dopaas.udc.codegen.engine.context.DefaultGenerateContext;
-import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
-import com.wl4g.dopaas.udc.codegen.engine.context.GeneratedResult;
-import com.wl4g.dopaas.udc.codegen.engine.context.GenericParameter;
-import com.wl4g.dopaas.udc.codegen.engine.generator.GeneratorProvider;
-import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
-import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateLocator;
-import com.wl4g.dopaas.udc.codegen.service.GenProjectService;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import static java.lang.String.valueOf;
-
-import java.io.IOException;
-import java.util.List;
-
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
@@ -52,7 +23,34 @@ import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.component.core.bean.BaseBean.DISABLED;
 import static com.wl4g.dopaas.udc.codegen.engine.GenProviderSetDefinition.getProviders;
+import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.wl4g.component.common.lang.StringUtils2;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.dopaas.common.bean.udc.GenDataSource;
+import com.wl4g.dopaas.common.bean.udc.GenProject;
+import com.wl4g.dopaas.common.bean.udc.GenTable;
+import com.wl4g.dopaas.common.bean.udc.GenTableColumn;
+import com.wl4g.dopaas.common.bean.udc.extra.TableExtraOptionDefinition.GenTableExtraOption;
+import com.wl4g.dopaas.common.bean.udc.model.GeneratedResult;
+import com.wl4g.dopaas.udc.codegen.config.CodegenProperties;
+import com.wl4g.dopaas.udc.codegen.engine.context.DefaultGenerateContext;
+import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
+import com.wl4g.dopaas.udc.codegen.engine.context.GenericParameter;
+import com.wl4g.dopaas.udc.codegen.engine.generator.GeneratorProvider;
+import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
+import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateLocator;
+import com.wl4g.dopaas.udc.service.GenDataSourceService;
+import com.wl4g.dopaas.udc.service.GenProjectService;
+import com.wl4g.dopaas.udc.service.GenTableService;
 
 /**
  * {@link DefaultGenerateEngineImpl}
@@ -62,72 +60,46 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
  * @since
  */
 public class DefaultGenerateEngineImpl implements GenerateEngine {
-
 	protected final SmartLogger log = getLogger(getClass());
 
-	/**
-	 * {@link CodegenProperties}
-	 */
-	@Autowired
-	protected CodegenProperties config;
+	protected @Autowired NamingPrototypeBeanFactory beanFactory;
+	protected @Autowired CodegenProperties config;
+	protected @Autowired GenTemplateLocator locator;
 
-	/**
-	 * {@link GenTemplateLocator}
-	 */
-	@Autowired
-	protected GenTemplateLocator locator;
-
-	/**
-	 * {@link NamingPrototypeBeanFactory}
-	 */
-	@Autowired
-	protected NamingPrototypeBeanFactory beanFactory;
-
-	@Autowired
-	protected GenTableDao genTableDao;
-
-	@Autowired
-	protected GenDataSourceDao genDataSourceDao;
-
-	@Autowired
-	protected GenProjectDao genProjectDao;
-
-	@Autowired
-	protected GenTableColumnDao genColumnDao;
-
-	@Autowired
-	protected GenProjectService genProjectService;
+	protected @Autowired GenTableService genTableService;
+	protected @Autowired GenDataSourceService genDataSourceService;
+	protected @Autowired GenProjectService genProjectService;
 
 	@Override
 	public GeneratedResult execute(GenericParameter param) {
-		// Gets gen project.
+		// Gen project.
 		GenProject project = genProjectService.detail(param.getProjectId());
 		notNullOf(project.getExtraOptions(), "projectExtraOptions");
 
-		// Gets genDatasource.
-		GenDataSource datasource = genDataSourceDao.selectByPrimaryKey(project.getDatasourceId());
+		// Gen datasource.
+		GenDataSource genDataSource = genDataSourceService.detail(project.getDatasourceId());
 
-		// Gets genTable.
-		List<GenTable> tables = genTableDao.selectByProjectId(param.getProjectId());
-		for (GenTable tab : tables) {
+		// Gen tables.
+		List<GenTable> tables = genTableService.findGenTables(param.getProjectId());
+		for (GenTable t : tables) {
 			// Skip disable genTable(entity) rendering.
-			if (equalsIgnoreCase(tab.getStatus(), valueOf(DISABLED))) {
+			if (equalsIgnoreCase(t.getStatus(), valueOf(DISABLED))) {
 				continue;
 			}
 			// Gets genTable columns.
-			tab.setGenTableColumns(genColumnDao.selectByTableId(tab.getId()));
+			t.setGenTableColumns(genTableService.findGenTableColumns(t.getId()));
 			// Gets primary column.
-			tab.setPk(notNull(getGenColumnsPrimaryKey(tab.getGenTableColumns()), "'%s' has no primary key?", tab.getTableName()));
+			t.setPk(notNull(getGenColumnsPrimaryKey(t.getGenTableColumns()), "'%s' has no primary key?", t.getTableName()));
 			// Table extra options.
-			tab.setExtraOptions(parseJSON(tab.getExtraOptionsJson(), new TypeReference<List<GenTableExtraOption>>() {
+			t.setExtraOptions(parseJSON(t.getExtraOptionsJson(), new TypeReference<List<GenTableExtraOption>>() {
 			}));
 		}
 		project.setGenTables(tables);
 
 		// Gets DB metadata resolver.
-		MetadataResolver resolver = beanFactory.getPrototypeBean(datasource.getType(), datasource);
+		MetadataResolver resolver = beanFactory.getPrototypeBean(genDataSource.getType(), genDataSource);
 		// Create generate context.
-		GenerateContext context = new DefaultGenerateContext(config, locator, resolver, project, datasource);
+		GenerateContext context = new DefaultGenerateContext(config, locator, resolver, project, genDataSource);
 
 		// Invoking generate with providers.
 		List<String> providers = getProviders(project.getProviderSet());
@@ -140,7 +112,7 @@ public class DefaultGenerateEngineImpl implements GenerateEngine {
 		});
 
 		log.info("Generated projec codes successfully. project: {}", toJSONString(project));
-		return new GeneratedResult(project, datasource, context.getJobId());
+		return new GeneratedResult(project, genDataSource, context.getJobId());
 	}
 
 	/**

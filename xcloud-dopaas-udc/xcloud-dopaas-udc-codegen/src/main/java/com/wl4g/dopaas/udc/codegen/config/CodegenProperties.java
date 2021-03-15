@@ -15,18 +15,19 @@
  */
 package com.wl4g.dopaas.udc.codegen.config;
 
-import com.wl4g.component.common.log.SmartLogger;
-import org.springframework.beans.factory.InitializingBean;
-
-import java.io.File;
-
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.iam.core.utils.IamSecurityHolder.getPrincipal;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static org.apache.commons.lang3.SystemUtils.USER_NAME;
+
+import java.io.File;
+
+import org.springframework.beans.factory.InitializingBean;
+
+import com.wl4g.component.common.bridge.RpcContextIamSecurityBridges;
+import com.wl4g.component.common.log.SmartLogger;
 
 /**
  * {@link CodegenProperties}
@@ -108,7 +109,7 @@ public class CodegenProperties implements InitializingBean {
 		hasTextOf(genProjectId, "genProjectId");
 		String principalName = USER_NAME;
 		try {
-			principalName = getPrincipal();
+			principalName = RpcContextIamSecurityBridges.currentIamPrincipalName();
 		} catch (Exception e) {
 		}
 		return "job.".concat(principalName).concat("-").concat(genProjectId).concat("-").concat(valueOf(currentTimeMillis()));

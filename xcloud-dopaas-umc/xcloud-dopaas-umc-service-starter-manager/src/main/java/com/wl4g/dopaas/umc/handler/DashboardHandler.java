@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.dopaas.common.constant.UMCConstants;
+import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.umc.model.StatusMessage;
 
 /**
@@ -41,7 +41,7 @@ public class DashboardHandler {
 	private JedisService jedisService;
 
 	public StatusMessage findStatusInfo(String msgId) {
-		String msg = this.jedisService.get(UMCConstants.INFO_PREFIX + msgId);
+		String msg = this.jedisService.get(UmcConstants.INFO_PREFIX + msgId);
 		StatusMessage info = JacksonUtils.parseJSON(msg, StatusMessage.class);
 		if (info == null) {
 			throw new IllegalArgumentException("Getting the `" + msgId + "` corresponding state message is null.");

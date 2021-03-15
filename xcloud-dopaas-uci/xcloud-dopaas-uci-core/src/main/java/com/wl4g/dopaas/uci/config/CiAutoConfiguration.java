@@ -40,7 +40,7 @@ import com.wl4g.dopaas.common.bean.uci.Pipeline;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;
 import com.wl4g.dopaas.common.bean.uci.Trigger;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
-import com.wl4g.dopaas.common.constant.CiConstants;
+import com.wl4g.dopaas.common.constant.UciConstants;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -65,7 +65,7 @@ public class CiAutoConfiguration {
 	// --- Basic's ---
 
 	@Bean
-	@ConfigurationProperties(prefix = CiConstants.KEY_CI_CONFIG_PREFIX)
+	@ConfigurationProperties(prefix = UciConstants.KEY_CI_CONFIG_PREFIX)
 	public CiProperties ciCdProperties() {
 		return new CiProperties();
 	}

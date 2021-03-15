@@ -29,7 +29,7 @@ import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.FileChanges;
 import com.wl4g.dopaas.common.bean.udm.Share;
-import com.wl4g.dopaas.common.constant.DocConstants;
+import com.wl4g.dopaas.common.constant.UdmConstants;
 import com.wl4g.dopaas.udm.config.DocProperties;
 import com.wl4g.dopaas.udm.data.ShareDao;
 import com.wl4g.dopaas.udm.service.DocService;
@@ -110,10 +110,10 @@ public class ShareServiceImpl implements ShareService {
 	 * @return
 	 */
 	private String parse(String content) {
-		content = content.replaceAll(DocConstants.SHARE_LINK_BASEURI, docProperties.getShareBaseUrl());
-		content = content.replaceAll(DocConstants.SHARE_LINK_BASEURI_TRAN, docProperties.getShareBaseUrl());
-		content = content.replaceAll(DocConstants.DOC_LINK_BASEURI, docProperties.getDocBaseUrl());
-		content = content.replaceAll(DocConstants.DOC_LINK_BASEURI_TRAN, docProperties.getDocBaseUrl());
+		content = content.replaceAll(UdmConstants.SHARE_LINK_BASEURI, docProperties.getShareBaseUrl());
+		content = content.replaceAll(UdmConstants.SHARE_LINK_BASEURI_TRAN, docProperties.getShareBaseUrl());
+		content = content.replaceAll(UdmConstants.DOC_LINK_BASEURI, docProperties.getDocBaseUrl());
+		content = content.replaceAll(UdmConstants.DOC_LINK_BASEURI_TRAN, docProperties.getDocBaseUrl());
 		return content;
 	}
 

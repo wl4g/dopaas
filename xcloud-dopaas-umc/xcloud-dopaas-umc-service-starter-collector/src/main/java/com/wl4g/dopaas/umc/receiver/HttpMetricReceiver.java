@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.receiver;
 
-import static com.wl4g.dopaas.common.constant.UMCConstants.URI_HTTP_RECEIVER_ENDPOINT;
+import static com.wl4g.dopaas.common.constant.UmcConstants.URI_HTTP_RECEIVER_ENDPOINT;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.udc.codegen.i18n;
 
-import com.wl4g.iam.core.i18n.SessionResourceMessageBundler;
+import com.wl4g.iam.common.i18n.SessionResourceMessageBundler;
 
 /**
  * {@link CodegenResourceMessageBundler}

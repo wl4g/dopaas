@@ -20,8 +20,8 @@ import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.dopaas.common.bean.uci.model.RunModel;
 
-import static com.wl4g.dopaas.common.constant.CiConstants.REDIS_CI_RUN_PRE;
-import static com.wl4g.dopaas.common.constant.CiConstants.REDIS_CI_RUN_SCAN_BATCH;
+import static com.wl4g.dopaas.common.constant.UciConstants.REDIS_CI_RUN_PRE;
+import static com.wl4g.dopaas.common.constant.UciConstants.REDIS_CI_RUN_SCAN_BATCH;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

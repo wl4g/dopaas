@@ -45,7 +45,7 @@ import static com.wl4g.component.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.component.common.lang.DateUtils2.getDate;
 import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.dopaas.common.constant.CiConstants.*;
+import static com.wl4g.dopaas.common.constant.UciConstants.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;
 

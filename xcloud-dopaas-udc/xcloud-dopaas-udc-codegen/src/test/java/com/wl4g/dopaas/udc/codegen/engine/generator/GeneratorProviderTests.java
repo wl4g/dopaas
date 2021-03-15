@@ -15,28 +15,30 @@
  */
 package com.wl4g.dopaas.udc.codegen.engine.generator;
 
-import com.google.common.collect.Lists;
-import com.wl4g.dopaas.udc.codegen.bean.GenDataSource;
-import com.wl4g.dopaas.udc.codegen.bean.GenProject;
-import com.wl4g.dopaas.udc.codegen.bean.GenTable;
-import com.wl4g.dopaas.udc.codegen.bean.extra.ExtraOptionDefinition;
-import com.wl4g.dopaas.udc.codegen.bean.extra.ExtraOptionDefinition.GenExtraOption;
-import com.wl4g.dopaas.udc.codegen.config.CodegenProperties;
-import com.wl4g.dopaas.udc.codegen.engine.context.DefaultGenerateContext;
-import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
-import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateLocator;
-import com.wl4g.dopaas.udc.codegen.engine.template.TemplateResource;
-import org.junit.Test;
+import static com.google.common.base.Charsets.UTF_8;
+import static java.lang.System.out;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static java.lang.System.out;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import org.junit.Test;
+
+import com.google.common.collect.Lists;
+import com.wl4g.dopaas.common.bean.udc.GenDataSource;
+import com.wl4g.dopaas.common.bean.udc.GenProject;
+import com.wl4g.dopaas.common.bean.udc.GenTable;
+import com.wl4g.dopaas.common.bean.udc.extra.ExtraOptionDefinition;
+import com.wl4g.dopaas.common.bean.udc.extra.ExtraOptionDefinition.GenExtraOption;
+import com.wl4g.dopaas.udc.codegen.config.CodegenProperties;
+import com.wl4g.dopaas.udc.codegen.engine.context.DefaultGenerateContext;
+import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
+import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateLocator;
+import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateResource;
 
 /**
  * {@link GeneratorProviderTests}
@@ -73,27 +75,27 @@ public class GeneratorProviderTests {
 		// For case1
 		//
 
-		List<TemplateResource> tpls1 = Lists.newArrayList();
-		tpls1.add(new TemplateResource(
+		List<GenTemplateResource> tpls1 = Lists.newArrayList();
+		tpls1.add(new GenTemplateResource(
 				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-common/src/main/java/#{organType}/#{organName}/#{projectName}/common/#{moduleName}/#{javaSpecs.pkgToPath(beanSubModulePackageName)}/#{javaSpecs.capf(entityName)}.java.ftl",
-				TEST_TPL_CONTENT));
-		tpls1.add(new TemplateResource(
+				testTplContent));
+		tpls1.add(new GenTemplateResource(
 				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/@if-entityName!#{javaSpecs.capf(entityName)}Service.java.ftl",
-				TEST_TPL_CONTENT));
-		tpls1.add(new TemplateResource(
+				testTplContent));
+		tpls1.add(new GenTemplateResource(
 				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(serviceSubModulePackageName)}/impl/@if-aaa!#{javaSpecs.capf(entityName)}ServiceImpl.java.ftl",
-				TEST_TPL_CONTENT));
-		tpls1.add(new TemplateResource(
+				testTplContent));
+		tpls1.add(new GenTemplateResource(
 				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(controllerSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.asset-type','MvnAssTar')}!#{javaSpecs.capf(entityName)}Controller.java.ftl",
-				TEST_TPL_CONTENT));
-		tpls1.add(new TemplateResource(
+				testTplContent));
+		tpls1.add(new GenTemplateResource(
 				"/#{javaSpecs.lCase(organName)}-#{javaSpecs.lCase(projectName)}-service/src/main/java/#{organType}/#{organName}/#{projectName}/#{javaSpecs.pkgToPath(daoSubModulePackageName)}/@if-#{javaSpecs.isConf(extraOptions,'gen.build.asset-type','SpringExecJar')}!#{javaSpecs.capf(entityName)}Dao.java.ftl",
-				TEST_TPL_CONTENT));
+				testTplContent));
 
 		GeneratorProvider iamProvider = new IamSpringCloudMvnGeneratorProvider(
 				new DefaultGenerateContext(config, newGenTemplateLocator(tpls1), resolver, project, datasource)) {
 			@Override
-			protected void afterRenderingComplete(@NotNull TemplateResource resource, @NotNull byte[] renderedBytes,
+			protected void afterRenderingComplete(@NotNull GenTemplateResource resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
 				generatedFiles.add(writePath);
 			}
@@ -105,15 +107,15 @@ public class GeneratorProviderTests {
 		// For case2
 		//
 
-		List<TemplateResource> tpls2 = Lists.newArrayList();
-		tpls2.add(new TemplateResource(
+		List<GenTemplateResource> tpls2 = Lists.newArrayList();
+		tpls2.add(new GenTemplateResource(
 				"#{vueSpecs.lCase(organName)}-#{vueSpecs.lCase(projectName)}-view/src/views/#{moduleName}/#{vueSpecs.lCase(entityName)}/#{vueSpecs.capf(entityName)}.vue.ftl",
-				TEST_TPL_CONTENT));
+				testTplContent));
 
 		GeneratorProvider vueProvider = new IamVueGeneratorProvider(
 				new DefaultGenerateContext(config, newGenTemplateLocator(tpls2), resolver, project, datasource)) {
 			@Override
-			protected void afterRenderingComplete(@NotNull TemplateResource resource, @NotNull byte[] renderedBytes,
+			protected void afterRenderingComplete(@NotNull GenTemplateResource resource, @NotNull byte[] renderedBytes,
 					@NotBlank String writePath) {
 				generatedFiles.add(writePath);
 			}
@@ -126,10 +128,10 @@ public class GeneratorProviderTests {
 
 	}
 
-	static GenTemplateLocator newGenTemplateLocator(List<TemplateResource> templates) {
+	static GenTemplateLocator newGenTemplateLocator(List<GenTemplateResource> templates) {
 		return new GenTemplateLocator() {
 			@Override
-			public List<TemplateResource> locate(String provider) throws Exception {
+			public List<GenTemplateResource> locate(String provider) throws Exception {
 				return templates;
 			}
 
@@ -160,6 +162,6 @@ public class GeneratorProviderTests {
 
 	static GenDataSource datasource = new GenDataSource();
 
-	static byte[] TEST_TPL_CONTENT = "test template content".getBytes(UTF_8);
+	static byte[] testTplContent = "test template content".getBytes(UTF_8);
 
 }

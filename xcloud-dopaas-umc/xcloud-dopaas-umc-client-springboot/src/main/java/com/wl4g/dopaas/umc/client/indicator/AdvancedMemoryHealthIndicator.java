@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.common.io.FileSizeUtils;
-import com.wl4g.dopaas.common.constant.UMCConstants;
+import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.umc.client.utils.PlatformOSUtil;
 import com.wl4g.dopaas.umc.client.utils.PlatformOSUtil.MemInfo;
 
@@ -92,7 +92,7 @@ public class AdvancedMemoryHealthIndicator extends AbstractAdvancedHealthIndicat
 	@ConditionalOnProperty(name = MemoryHealthProperties.CONF_P + ".enable", matchIfMissing = false)
 	@ConfigurationProperties(prefix = MemoryHealthProperties.CONF_P)
 	public static class MemoryHealthProperties extends AdvancedHealthProperties<MemoryPartition> {
-		final public static String CONF_P = UMCConstants.KEY_UMC_METRIC_PREFIX + ".memory";
+		final public static String CONF_P = UmcConstants.KEY_UMC_METRIC_PREFIX + ".memory";
 		private Map<String, MemoryPartition> partitions = new HashMap<>();
 
 		@Override

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.receiver;
 
-import static com.wl4g.dopaas.common.constant.UMCConstants.TOPIC_KAFKA_RECEIVE_PATTERN;
+import static com.wl4g.dopaas.common.constant.UmcConstants.TOPIC_KAFKA_RECEIVE_PATTERN;
 import static com.wl4g.dopaas.umc.config.UmcReceiveAutoConfiguration.BEAN_KAFKA_BATCH_FACTORY;
 
 import java.util.List;

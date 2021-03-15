@@ -15,9 +15,10 @@
  */
 package com.wl4g.dopaas.udc.codegen.engine.generator;
 
-import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
-
 import javax.validation.constraints.NotNull;
+
+import com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias;
+import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
 
 /**
  * Spring cloud architecture generator based on IAM system, </br>

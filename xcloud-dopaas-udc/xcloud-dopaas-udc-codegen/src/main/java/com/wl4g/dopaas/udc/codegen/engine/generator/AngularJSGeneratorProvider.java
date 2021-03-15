@@ -15,14 +15,15 @@
  */
 package com.wl4g.dopaas.udc.codegen.engine.generator;
 
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.*;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COMMON_NGSPECS;
 
 import javax.validation.constraints.NotNull;
 
+import com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias;
 import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
 import com.wl4g.dopaas.udc.codegen.engine.generator.render.RenderModel;
 import com.wl4g.dopaas.udc.codegen.engine.specs.AngularJSSpecs;
-import com.wl4g.dopaas.udc.codegen.engine.template.TemplateResource;
+import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateResource;
 
 /**
  * {@link AngularJSGeneratorProvider}
@@ -43,7 +44,7 @@ public class AngularJSGeneratorProvider extends BasedWebGeneratorProvider {
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull RenderModel model) {
+	protected void customizeRenderingModel(@NotNull GenTemplateResource resource, @NotNull RenderModel model) {
 		super.customizeRenderingModel(resource, model);
 
 		// Add variable of naming utils.

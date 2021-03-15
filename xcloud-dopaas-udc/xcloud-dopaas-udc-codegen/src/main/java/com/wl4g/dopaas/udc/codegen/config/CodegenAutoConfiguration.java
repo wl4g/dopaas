@@ -15,19 +15,35 @@
  */
 package com.wl4g.dopaas.udc.codegen.config;
 
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.CSHARP_STANDARD;
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.GO_GONICWEB;
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_VUEJS;
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.NGJS;
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.PYTHON_STANDARD;
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.SPINGDUBBO_MVN;
+import static com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver.ResolverAlias.MYSQLV5;
+import static com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver.ResolverAlias.ORACLEV11G;
+import static com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver.ResolverAlias.POSTGRESQLV10;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import com.wl4g.component.core.framework.beans.NamingPrototype;
-import com.wl4g.dopaas.common.constant.DTSConstants;
-import com.wl4g.dopaas.udc.codegen.bean.GenDataSource;
+import com.wl4g.dopaas.common.bean.udc.GenDataSource;
+import com.wl4g.dopaas.common.constant.UdcConstants;
 import com.wl4g.dopaas.udc.codegen.console.CodegenConsole;
 import com.wl4g.dopaas.udc.codegen.engine.DefaultGenerateEngineImpl;
 import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
 import com.wl4g.dopaas.udc.codegen.engine.generator.AngularJSGeneratorProvider;
 import com.wl4g.dopaas.udc.codegen.engine.generator.CsharpStandardGeneratorProvider;
 import com.wl4g.dopaas.udc.codegen.engine.generator.GoGonicWebGeneratorProvider;
-import com.wl4g.dopaas.udc.codegen.engine.generator.PythonStandardGeneratorProvider;
-import com.wl4g.dopaas.udc.codegen.engine.generator.SpringDubboMvnGeneratorProvider;
 import com.wl4g.dopaas.udc.codegen.engine.generator.IamSpringCloudMvnGeneratorProvider;
 import com.wl4g.dopaas.udc.codegen.engine.generator.IamVueGeneratorProvider;
+import com.wl4g.dopaas.udc.codegen.engine.generator.PythonStandardGeneratorProvider;
+import com.wl4g.dopaas.udc.codegen.engine.generator.SpringDubboMvnGeneratorProvider;
 import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.dopaas.udc.codegen.engine.resolver.db.MySQLV5MetadataResolver;
 import com.wl4g.dopaas.udc.codegen.engine.resolver.db.OracleV11gMetadataResolver;
@@ -35,14 +51,6 @@ import com.wl4g.dopaas.udc.codegen.engine.resolver.db.PostgreSQLV10MetadataResol
 import com.wl4g.dopaas.udc.codegen.engine.template.ClassPathGenTemplateLocator;
 import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.dopaas.udc.codegen.i18n.CodegenResourceMessageBundler;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import static com.wl4g.dopaas.udc.codegen.engine.generator.GeneratorProvider.GenProviderAlias.*;
-import static com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver.ResolverAlias.*;
 
 /**
  * {@link CodegenAutoConfiguration}
@@ -61,7 +69,7 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@ConfigurationProperties(prefix = DTSConstants.KEY_CODEGEN_PREFIX)
+	@ConfigurationProperties(prefix = UdcConstants.KEY_CODEGEN_PREFIX)
 	public CodegenProperties codegenProperties() {
 		return new CodegenProperties();
 	}

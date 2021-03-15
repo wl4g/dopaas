@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.config;
 
-import static com.wl4g.dopaas.common.constant.UMCConstants.URI_HTTP_RECEIVER_BASE;
+import static com.wl4g.dopaas.common.constant.UmcConstants.URI_HTTP_RECEIVER_BASE;
 import static com.wl4g.dopaas.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
 import static com.wl4g.dopaas.umc.config.UmcAlarmAutoConfiguration.BEAN_DEFAULT_VALVE_ALERTER;
 

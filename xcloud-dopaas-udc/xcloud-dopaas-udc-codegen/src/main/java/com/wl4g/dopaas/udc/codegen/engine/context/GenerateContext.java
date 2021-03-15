@@ -17,9 +17,9 @@ package com.wl4g.dopaas.udc.codegen.engine.context;
 
 import javax.annotation.Nullable;
 import com.wl4g.component.common.annotation.Reserved;
-import com.wl4g.dopaas.udc.codegen.bean.GenDataSource;
-import com.wl4g.dopaas.udc.codegen.bean.GenProject;
-import com.wl4g.dopaas.udc.codegen.bean.GenTable;
+import com.wl4g.dopaas.common.bean.udc.GenDataSource;
+import com.wl4g.dopaas.common.bean.udc.GenProject;
+import com.wl4g.dopaas.common.bean.udc.GenTable;
 import com.wl4g.dopaas.udc.codegen.config.CodegenProperties;
 import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateLocator;

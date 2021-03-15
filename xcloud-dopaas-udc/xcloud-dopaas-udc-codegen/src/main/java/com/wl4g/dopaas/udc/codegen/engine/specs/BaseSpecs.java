@@ -55,9 +55,9 @@ import com.wl4g.component.common.bean.ConfigOption;
 import com.wl4g.component.common.collection.CollectionUtils2;
 import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.lang.StringUtils2;
-import com.wl4g.dopaas.udc.codegen.bean.GenTableColumn;
-import com.wl4g.dopaas.udc.codegen.bean.extra.ExtraOptionDefinition.GenExtraOption;
-import com.wl4g.dopaas.udc.codegen.bean.extra.TableExtraOptionDefinition.GenTableExtraOption;
+import com.wl4g.dopaas.common.bean.udc.GenTableColumn;
+import com.wl4g.dopaas.common.bean.udc.extra.ExtraOptionDefinition.GenExtraOption;
+import com.wl4g.dopaas.common.bean.udc.extra.TableExtraOptionDefinition.GenTableExtraOption;
 import com.wl4g.dopaas.udc.codegen.utils.BuiltinColumnDefinition;
 
 /**

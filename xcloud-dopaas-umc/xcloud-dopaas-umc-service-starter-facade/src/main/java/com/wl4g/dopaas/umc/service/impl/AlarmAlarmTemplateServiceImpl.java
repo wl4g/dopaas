@@ -20,7 +20,7 @@ import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.component.core.bean.BaseBean.ENABLED;
-import static com.wl4g.dopaas.common.constant.UMCConstants.KEY_CACHE_ALARM_TPLS;
+import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_ALARM_TPLS;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.ArrayList;

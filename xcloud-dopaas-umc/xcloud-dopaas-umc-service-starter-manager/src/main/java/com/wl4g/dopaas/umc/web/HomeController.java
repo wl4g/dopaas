@@ -28,12 +28,12 @@ import com.wl4g.component.support.notification.GenericNotifyMessage;
 import com.wl4g.component.support.notification.MessageNotifier;
 import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.component.support.notification.mail.MailMessageNotifier;
-import com.wl4g.dopaas.common.constant.UMCConstants;
+import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.umc.handler.DashboardHandler;
 import com.wl4g.dopaas.umc.model.StatusMessage;
 
 @RestController
-@RequestMapping(UMCConstants.URI_ADMIN_HOME)
+@RequestMapping(UmcConstants.URI_ADMIN_HOME)
 public class HomeController extends BaseController {
 
 	@Autowired

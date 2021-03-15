@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.cmdb.config;
 
-import com.wl4g.dopaas.common.constant.DocConstants;
+import com.wl4g.dopaas.common.constant.UdmConstants;
 
 public class FsProperties {
 
@@ -37,7 +37,7 @@ public class FsProperties {
 
     public String getBaseImgUrl(){
         //return getBaseUrl()+"/fs/downloadImg";
-        return DocConstants.SHARE_LINK_BASEURI +"/fs/downloadImg";
+        return UdmConstants.SHARE_LINK_BASEURI +"/fs/downloadImg";
     }
 
     public String getBasePath() {
