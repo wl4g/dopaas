@@ -15,13 +15,17 @@
  */
 package com.wl4g.dopaas.udc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.udc.GenTable;
 import com.wl4g.dopaas.common.bean.udc.GenTableColumn;
@@ -43,29 +47,30 @@ public interface GenerateService {
 	// Generate tables/columns configuration.
 	// ------------------------------------------
 
-	PageHolder<GenTable> searchGenTablePage(PageHolder<GenTable> pm, String tableName, Long projectId);
-
 	/**
 	 * Gets {@link GenTable}
 	 * 
 	 * @param tableId
 	 * @return
 	 */
-	RespBase<GenTable> findGenTableDetail(Long tableId);
+	@RequestMapping(path = "findGenTableDetail", method = GET)
+	RespBase<GenTable> findGenTableDetail(@RequestParam("tableId") Long tableId);
 
 	/**
 	 * Save {@link GenTable} and {@link GenTableColumn} configuration.
 	 * 
 	 * @param genTable
 	 */
-	void saveGenConfig(GenTable genTable);
+	@RequestMapping(path = "saveGenConfig", method = POST)
+	void saveGenConfig(@RequestBody GenTable genTable);
 
 	/**
 	 * Deletion {@link GenTable}
 	 * 
 	 * @param tableId
 	 */
-	void deleteGenTable(Long tableId);
+	@RequestMapping(path = "deleteGenTable", method = POST)
+	void deleteGenTable(@RequestParam("tableId") Long tableId);
 
 	/**
 	 * Sets {@link GenTable} status.
@@ -73,7 +78,8 @@ public interface GenerateService {
 	 * @param id
 	 * @param status
 	 */
-	void setGenTableStatus(Long id, String status);
+	@RequestMapping(path = "setGenTableStatus", method = GET)
+	void setGenTableStatus(@RequestParam("id") Long id, @RequestParam("status") String status);
 
 	// ------------------------------------------
 	// Generate configuration.
@@ -86,7 +92,8 @@ public interface GenerateService {
 	 * @return
 	 * @throws Exception
 	 */
-	List<TableMetadata> loadTableMetadata(Long projectId) throws Exception;
+	@RequestMapping(path = "loadTableMetadata", method = GET)
+	List<TableMetadata> loadTableMetadata(@RequestParam("projectId") Long projectId) throws Exception;
 
 	/**
 	 * Load latest table metadata and columns information.
@@ -95,7 +102,9 @@ public interface GenerateService {
 	 * @param tableName
 	 * @throws Exception
 	 */
-	RespBase<GenTable> loadGenColumns(Long projectId, String tableName) throws Exception;
+	@RequestMapping(path = "loadGenColumns", method = GET)
+	RespBase<GenTable> loadGenColumns(@RequestParam("projectId") Long projectId, @RequestParam("tableName") String tableName)
+			throws Exception;
 
 	/**
 	 * Gets {@link GenTableColumn} generated attribute types.
@@ -103,7 +112,8 @@ public interface GenerateService {
 	 * @param projectId
 	 * @return
 	 */
-	Set<String> getAttrTypes(Long projectId);
+	@RequestMapping(path = "getAttrTypes", method = GET)
+	Set<String> getAttrTypes(@RequestParam("projectId") Long projectId);
 
 	/**
 	 * Synchronizing {@link GenTable} columns.
@@ -112,12 +122,14 @@ public interface GenerateService {
 	 * @param force
 	 * @throws Exception
 	 */
-	void syncTableColumns(Long id, boolean force) throws Exception;
+	@RequestMapping(path = "syncTableColumns", method = GET)
+	void syncTableColumns(@RequestParam("projectId") Long id, @RequestParam("force") boolean force) throws Exception;
 
 	// ------------------------------------------
 	// Execution.
 	// ------------------------------------------
 
-	GeneratedResult generate(Long tableId);
+	@RequestMapping(path = "generate", method = POST)
+	GeneratedResult generate(@RequestParam("projectId") Long projectId);
 
 }

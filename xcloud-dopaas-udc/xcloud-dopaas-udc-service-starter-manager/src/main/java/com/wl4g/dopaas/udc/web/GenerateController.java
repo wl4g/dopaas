@@ -80,7 +80,7 @@ public class GenerateController extends BaseController {
 	@RequiresPermissions(value = { "udc:codegen" }, logical = AND)
 	public RespBase<PageHolder<GenTable>> page(PageHolder<GenTable> pm, String tableName, Long projectId) {
 		RespBase<PageHolder<GenTable>> resp = RespBase.create();
-		resp.setData(genTableService.searchPage(pm, tableName, projectId));
+		resp.setData(genTableService.page(pm, tableName, projectId));
 		return resp;
 	}
 

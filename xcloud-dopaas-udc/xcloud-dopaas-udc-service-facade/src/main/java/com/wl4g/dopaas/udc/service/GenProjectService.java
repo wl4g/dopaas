@@ -15,23 +15,39 @@
  */
 package com.wl4g.dopaas.udc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.udc.GenProject;
 
 /**
- * GenProjectService
- *
- * @author heweijie
- * @Date 2020-09-11
+ * {@link GenProjectService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2020-09-15
+ * @sine v1.0
+ * @see
  */
+@FeignConsumer(name = "${provider.serviceId.udc-udc-facade}")
+@RequestMapping("/genProject-service")
 public interface GenProjectService {
 
-	PageHolder<GenProject> page(PageHolder<GenProject> pm, String name);
+	@RequestMapping(path = "page", method = POST)
+	PageHolder<GenProject> page(@RequestBody PageHolder<GenProject> pm, @RequestParam("projectName") String name);
 
-	void save(GenProject project);
+	@RequestMapping(path = "save", method = POST)
+	void save(@RequestBody GenProject project);
 
-	GenProject detail(Long id);
+	@RequestMapping(path = "detail", method = GET)
+	GenProject detail(@RequestParam("id") Long id);
 
-	void del(Long id);
+	@RequestMapping(path = "del", method = POST)
+	void del(@RequestParam("id") Long id);
 
 }

@@ -15,26 +15,43 @@
  */
 package com.wl4g.dopaas.udc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.List;
 
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.udc.GenDataSource;
 
 /**
  * @author vjay
  */
+@FeignConsumer(name = "${provider.serviceId.udc-udc-facade}")
+@RequestMapping("/genDataSource-service")
 public interface GenDataSourceService {
 
-	PageHolder<GenDataSource> page(PageHolder<GenDataSource> pm, String name);
+	@RequestMapping(path = "page", method = POST)
+	PageHolder<GenDataSource> page(@RequestBody PageHolder<GenDataSource> pm,
+			@RequestParam("dataSourceName") String dataSourceName);
 
+	@RequestMapping(path = "loadDatasources", method = GET)
 	List<GenDataSource> loadDatasources();
 
-	void save(GenDataSource genDatabase);
+	@RequestMapping(path = "save", method = POST)
+	void save(@RequestBody GenDataSource genDatabase);
 
-	GenDataSource detail(Long id);
+	@RequestMapping(path = "loadDatasources", method = GET)
+	GenDataSource detail(@RequestParam("id") Long id);
 
-	void del(Long id);
+	@RequestMapping(path = "del", method = POST)
+	void del(@RequestParam("id") Long id);
 
-	void testConnectDb(GenDataSource datasource) throws Exception;
+	@RequestMapping(path = "testConnectDb", method = POST)
+	void testConnectDb(@RequestBody GenDataSource datasource) throws Exception;
 
 }
