@@ -16,24 +16,25 @@
 package com.wl4g.dopaas.udc.codegen.engine.generator;
 
 import javax.annotation.Nullable;
-import com.wl4g.dopaas.udc.codegen.bean.GenProject;
-import com.wl4g.dopaas.udc.codegen.bean.GenTable;
+
+import com.wl4g.dopaas.common.bean.udc.GenProject;
+import com.wl4g.dopaas.common.bean.udc.GenTable;
 import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
 import com.wl4g.dopaas.udc.codegen.engine.generator.render.RenderModel;
 import com.wl4g.dopaas.udc.codegen.engine.specs.JavaSpecs;
-import com.wl4g.dopaas.udc.codegen.engine.template.TemplateResource;
+import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateResource;
 
 import javax.validation.constraints.NotNull;
 
 import java.util.Map;
 
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.GEN_COMMON_JAVASPECS;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_PACKAGENAME;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_DAO_SUBMODULE_PACKAGENAME;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.GEN_SHORTCUT_CHECK_MVNASSTAR;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COMMON_JAVASPECS;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_DAO_SUBMODULE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_SHORTCUT_CHECK_MVNASSTAR;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -53,7 +54,7 @@ public abstract class BasedJvmGeneratorProvider extends BasedWebGeneratorProvide
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull RenderModel model) {
+	protected void customizeRenderingModel(@NotNull GenTemplateResource resource, @NotNull RenderModel model) {
 		super.customizeRenderingModel(resource, model);
 
 		// Add JavaSpecs

@@ -16,10 +16,11 @@
 package com.wl4g.dopaas.udc.codegen.engine.resolver.db;
 
 import javax.annotation.Nullable;
-import com.wl4g.dopaas.udc.codegen.bean.GenDataSource;
-import com.wl4g.dopaas.udc.codegen.engine.resolver.TableMetadata;
-import com.wl4g.dopaas.udc.codegen.engine.resolver.TableMetadata.ColumnMetadata;
-import com.wl4g.dopaas.udc.codegen.engine.resolver.TableMetadata.ForeignMetadata;
+
+import com.wl4g.dopaas.common.bean.udc.GenDataSource;
+import com.wl4g.dopaas.common.bean.udc.model.TableMetadata;
+import com.wl4g.dopaas.common.bean.udc.model.TableMetadata.ColumnMetadata;
+import com.wl4g.dopaas.common.bean.udc.model.TableMetadata.ForeignMetadata;
 
 import java.util.List;
 import java.util.Map;

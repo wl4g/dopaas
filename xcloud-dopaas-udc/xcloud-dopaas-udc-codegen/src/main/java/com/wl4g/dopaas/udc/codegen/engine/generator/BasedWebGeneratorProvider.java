@@ -16,16 +16,17 @@
 package com.wl4g.dopaas.udc.codegen.engine.generator;
 
 import javax.annotation.Nullable;
-import com.wl4g.dopaas.udc.codegen.bean.GenProject;
+
+import com.wl4g.dopaas.common.bean.udc.GenProject;
 import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
 import com.wl4g.dopaas.udc.codegen.engine.generator.render.RenderModel;
 import com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs;
-import com.wl4g.dopaas.udc.codegen.engine.template.TemplateResource;
+import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateResource;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.*;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.*;
 import static java.util.Locale.US;
 
 /**
@@ -44,7 +45,7 @@ public abstract class BasedWebGeneratorProvider extends AbstractGeneratorProvide
 	}
 
 	@Override
-	protected void customizeRenderingModel(@NotNull TemplateResource resource, @NotNull RenderModel model) {
+	protected void customizeRenderingModel(@NotNull GenTemplateResource resource, @NotNull RenderModel model) {
 		super.customizeRenderingModel(resource, model);
 
 		// Add environment defaults attributes.

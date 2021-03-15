@@ -17,7 +17,7 @@ package com.wl4g.dopaas.umc.alarm.alerting;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.dopaas.common.constant.UMCConstants.ALARM_SATUS_SEND;
+import static com.wl4g.dopaas.common.constant.UmcConstants.ALARM_SATUS_SEND;
 import static java.lang.Math.abs;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyMap;

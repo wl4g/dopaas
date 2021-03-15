@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.umc.rule;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.dopaas.common.constant.UMCConstants.KEY_CACHE_ALARM_TPLS;
+import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_ALARM_TPLS;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.List;

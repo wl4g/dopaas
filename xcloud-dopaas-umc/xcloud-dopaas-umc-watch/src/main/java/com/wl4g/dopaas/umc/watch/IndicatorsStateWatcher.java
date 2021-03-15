@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.umc.watch;
 
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.dopaas.common.constant.UMCConstants.KEY_CACHE_FETCH_META;
+import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_FETCH_META;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.ArrayList;

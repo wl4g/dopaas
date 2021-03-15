@@ -15,12 +15,20 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import com.wl4g.component.common.lang.DateUtils2;
-import com.wl4g.dopaas.common.bean.cmdb.Log;
-import com.wl4g.dopaas.common.bean.cmdb.QueryLogModel;
-import com.wl4g.dopaas.common.bean.cmdb.Querycriteria;
-import com.wl4g.dopaas.cmdb.es.handler.LogHandler;
-import com.wl4g.dopaas.cmdb.service.LogConsoleService;
+import static com.wl4g.component.common.lang.Assert2.hasText;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.dopaas.common.constant.CmdbConstants.KEY_DEFAULT_MSG;
+import static com.wl4g.dopaas.common.constant.CmdbConstants.LOG_LEVEL;
+import static java.util.Objects.isNull;
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
+import javax.annotation.Resource;
 
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -33,17 +41,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
-import static com.wl4g.component.common.lang.Assert2.hasText;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.dopaas.common.constant.ERMConstants.KEY_DEFAULT_MSG;
-import static com.wl4g.dopaas.common.constant.ERMConstants.LOG_LEVEL;
-import static java.util.Objects.isNull;
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import com.wl4g.component.common.lang.DateUtils2;
+import com.wl4g.dopaas.cmdb.es.handler.LogHandler;
+import com.wl4g.dopaas.cmdb.service.LogConsoleService;
+import com.wl4g.dopaas.common.bean.cmdb.Log;
+import com.wl4g.dopaas.common.bean.cmdb.QueryLogModel;
+import com.wl4g.dopaas.common.bean.cmdb.Querycriteria;
 
 @Service
 public class LogConsoleServiceImpl implements LogConsoleService {

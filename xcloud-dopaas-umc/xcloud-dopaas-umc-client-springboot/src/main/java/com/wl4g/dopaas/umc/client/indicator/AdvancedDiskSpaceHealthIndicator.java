@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.common.io.FileSizeUtils;
-import com.wl4g.dopaas.common.constant.UMCConstants;
+import com.wl4g.dopaas.common.constant.UmcConstants;
 
 /**
  * Custom operation system disk space performance indicator.<br/>
@@ -85,7 +85,7 @@ public class AdvancedDiskSpaceHealthIndicator extends AbstractAdvancedHealthIndi
 	@ConditionalOnProperty(name = DiskSpaceHealthProperties.CONF_P + ".enable", matchIfMissing = false)
 	@ConfigurationProperties(prefix = DiskSpaceHealthProperties.CONF_P)
 	public static class DiskSpaceHealthProperties extends AdvancedHealthProperties<DiskPartition> {
-		final public static String CONF_P = UMCConstants.KEY_UMC_METRIC_PREFIX + ".disk";
+		final public static String CONF_P = UmcConstants.KEY_UMC_METRIC_PREFIX + ".disk";
 		private Map<String, DiskPartition> partitions = new HashMap<>();
 
 		public Map<String, DiskPartition> getPartitions() {

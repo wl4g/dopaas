@@ -40,7 +40,7 @@ import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.RUNNING_BUILD;
 import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.RUNNING_DEPLOY;
 import static com.wl4g.dopaas.common.bean.uci.model.RunModel.Pipeline.ModulesPorject;
-import static com.wl4g.dopaas.common.constant.CiConstants.LOCK_DEPENDENCY_BUILD;
+import static com.wl4g.dopaas.common.constant.UciConstants.LOCK_DEPENDENCY_BUILD;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.lang3.StringUtils.isBlank;

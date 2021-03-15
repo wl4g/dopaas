@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.alarm.alerting;
 
-import static com.wl4g.dopaas.common.constant.UMCConstants.KEY_CACHE_ALARM_METRIC_QUEUE_SIMULATE;
+import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_ALARM_METRIC_QUEUE_SIMULATE;
 
 import org.springframework.util.Assert;
 

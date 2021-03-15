@@ -33,7 +33,7 @@ import java.util.concurrent.locks.Lock;
 import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.support.redis.jedis.JedisClient.RedisProtoUtil.keyFormat;
-import static com.wl4g.dopaas.common.constant.CiConstants.KEY_FINALIZER_INTERVALMS;
+import static com.wl4g.dopaas.common.constant.UciConstants.KEY_FINALIZER_INTERVALMS;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;

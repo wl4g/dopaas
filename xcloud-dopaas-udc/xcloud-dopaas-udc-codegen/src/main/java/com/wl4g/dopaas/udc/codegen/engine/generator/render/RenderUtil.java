@@ -26,11 +26,6 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -39,9 +34,10 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.component.common.reflect.TypeUtils2;
 import com.wl4g.component.common.reflect.ReflectionUtils2.FieldFilter;
 import com.wl4g.component.common.reflect.ReflectionUtils2.MethodCallback;
+import com.wl4g.component.common.reflect.TypeUtils2;
+import com.wl4g.dopaas.common.bean.udc.RenderProperty;
 
 /**
  * {@link RenderUtil}
@@ -111,39 +107,6 @@ public final class RenderUtil {
 		});
 
 		return model;
-	}
-
-	/**
-	 * Whether the property fields of the annotation system bean will be
-	 * serialized to the rendering model.
-	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version 2020-09-20
-	 * @sine v1.0.0
-	 * @see
-	 */
-	@Inherited
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ ElementType.FIELD, ElementType.METHOD })
-	public static @interface RenderProperty {
-
-		/**
-		 * Serialized property name. When it is empty, the JavaBean field name
-		 * is used by default.
-		 * 
-		 * @return
-		 */
-		String propertyName() default "";
-
-		/**
-		 * It is used to control whether to continue to reflect the structure of
-		 * the field recursively if the field traversed by reflection is of
-		 * object type.
-		 * 
-		 * @return
-		 */
-		String describeForObjField() default "Yes";
-
 	}
 
 }

@@ -34,7 +34,7 @@ public interface GenTemplateLocator {
 	 * @return
 	 * @throws Exception
 	 */
-	List<TemplateResource> locate(String provider) throws Exception;
+	List<GenTemplateResource> locate(String provider) throws Exception;
 
 	/**
 	 * Cleanup located templates cache all.

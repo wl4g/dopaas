@@ -34,7 +34,7 @@ import com.wl4g.dopaas.common.bean.uci.model.PipelineModel;
 import com.wl4g.dopaas.common.bean.uci.model.RunModel;
 import com.wl4g.dopaas.common.bean.uci.model.RunModel.Pipeline;
 import com.wl4g.dopaas.common.bean.uci.param.RunParameter;
-import com.wl4g.dopaas.common.constant.CiConstants;
+import com.wl4g.dopaas.common.constant.UciConstants;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ import java.util.*;
 
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.*;
-import static com.wl4g.dopaas.common.constant.CiConstants.*;
+import static com.wl4g.dopaas.common.constant.UciConstants.*;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 
@@ -217,7 +217,7 @@ public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
 				// Submit jobs & listen job timeout.
 				runner.getWorker().submitForComplete(jobs, (ex, completed, uncompleted) -> {
 					log.error("error", ex);
-				}, CiConstants.FLOW_TIME_OUT_MS);
+				}, UciConstants.FLOW_TIME_OUT_MS);
 			}
 		} catch (Exception e) {
 			log.error("flow run fail", e);

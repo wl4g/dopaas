@@ -17,7 +17,7 @@ package com.wl4g.dopaas.umc.alarm.alerting;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.ensureList;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.dopaas.common.constant.UMCConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
+import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
 import static java.lang.Math.abs;
 import static java.util.Collections.emptyList;
 

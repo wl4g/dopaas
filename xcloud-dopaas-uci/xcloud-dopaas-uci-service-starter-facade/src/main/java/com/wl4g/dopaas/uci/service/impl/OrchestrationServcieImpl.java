@@ -27,7 +27,7 @@ import com.wl4g.dopaas.uci.service.OrchestrationService;
 import com.wl4g.dopaas.common.bean.uci.Orchestration;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationPipeline;
 import com.wl4g.dopaas.common.bean.uci.model.RunModel;
-import com.wl4g.dopaas.common.constant.CiConstants;
+import com.wl4g.dopaas.common.constant.UciConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -163,13 +163,13 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 	}
 
 	private boolean isMaxRuner() {
-		ScanCursor<RunModel> scan = jedisService.scan(CiConstants.REDIS_CI_RUN_PRE, CiConstants.REDIS_CI_RUN_SCAN_BATCH + 1,
+		ScanCursor<RunModel> scan = jedisService.scan(UciConstants.REDIS_CI_RUN_PRE, UciConstants.REDIS_CI_RUN_SCAN_BATCH + 1,
 				RunModel.class);
 		int count = 0;
 		while (scan.hasNext()) {
 			scan.next();
 			count++;
-			if (count >= CiConstants.REDIS_CI_RUN_SCAN_BATCH) {
+			if (count >= UciConstants.REDIS_CI_RUN_SCAN_BATCH) {
 				return true;
 			}
 		}

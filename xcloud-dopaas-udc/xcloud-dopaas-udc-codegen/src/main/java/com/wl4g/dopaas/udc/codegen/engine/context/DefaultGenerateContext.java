@@ -15,20 +15,19 @@
  */
 package com.wl4g.dopaas.udc.codegen.engine.context;
 
-import com.wl4g.dopaas.udc.codegen.bean.GenDataSource;
-import com.wl4g.dopaas.udc.codegen.bean.GenProject;
-import com.wl4g.dopaas.udc.codegen.bean.GenTable;
-import com.wl4g.dopaas.udc.codegen.config.CodegenProperties;
-import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
-import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateLocator;
-
-import javax.validation.constraints.NotNull;
-
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static java.lang.String.valueOf;
 
 import java.io.File;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import javax.validation.constraints.NotNull;
+
+import com.wl4g.dopaas.common.bean.udc.GenDataSource;
+import com.wl4g.dopaas.common.bean.udc.GenProject;
+import com.wl4g.dopaas.common.bean.udc.GenTable;
+import com.wl4g.dopaas.udc.codegen.config.CodegenProperties;
+import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
+import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateLocator;
 
 /**
  * {@link DefaultGenerateContext}

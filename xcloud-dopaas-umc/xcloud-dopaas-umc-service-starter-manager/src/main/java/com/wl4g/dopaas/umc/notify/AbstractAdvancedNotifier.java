@@ -29,7 +29,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.dopaas.common.constant.UMCConstants;
+import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.umc.model.StatusMessage;
 
 import de.codecentric.boot.admin.server.domain.entities.Instance;
@@ -95,13 +95,13 @@ public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotif
 		String fStatus = getFromStatusText(event, instance);
 		String tStatus = getToStatusText(event, instance);
 		String msgId = UUID.randomUUID().toString().replaceAll("-", "").substring(16, 24);
-		String detailsUrl = getHrefUrl() + UMCConstants.URI_ADMIN_HOME + msgId;
+		String detailsUrl = getHrefUrl() + UmcConstants.URI_ADMIN_HOME + msgId;
 
 		// Save StatusMessage to cache.
 		StatusMessage msg = StatusMessage.wrap(appInfo, healthUrl, fStatus, tStatus, event.getTimestamp().toEpochMilli(), mailTo,
 				phoneTo, detailsUrl, msgId, info);
 		String msgStr = JacksonUtils.toJSONString(msg);
-		jedisService.set((UMCConstants.INFO_PREFIX + msgId), msgStr, getExpireSec());
+		jedisService.set((UmcConstants.INFO_PREFIX + msgId), msgStr, getExpireSec());
 		log.info("Notifier status message. {}", msgStr);
 
 		// Notifier processing.

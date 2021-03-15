@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.udc.codegen.engine;
 
-import com.wl4g.dopaas.udc.codegen.engine.context.GeneratedResult;
+import com.wl4g.dopaas.common.bean.udc.model.GeneratedResult;
 import com.wl4g.dopaas.udc.codegen.engine.context.GenericParameter;
 
 /**

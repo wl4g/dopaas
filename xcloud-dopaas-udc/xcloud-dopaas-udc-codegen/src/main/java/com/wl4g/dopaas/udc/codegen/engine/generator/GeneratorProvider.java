@@ -17,8 +17,6 @@ package com.wl4g.dopaas.udc.codegen.engine.generator;
 
 import java.io.Closeable;
 
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getFieldValues;
-
 /**
  * {@link GeneratorProvider}
  *
@@ -43,50 +41,5 @@ public interface GeneratorProvider extends Runnable, Closeable {
 	 * @throws Exception
 	 */
 	void doGenerate() throws Exception;
-
-	/**
-	 * {@link GenProviderAlias}
-	 */
-	public static interface GenProviderAlias {
-
-		/**
-		 * IAM + SpringCloud + Maven projecs gen provider.
-		 */
-		public static final String IAM_SPINGCLOUD_MVN = "iamSpringCloudMvnProvider";
-
-		/**
-		 * Dubbo + SpringCloud + Maven projecs gen provider.
-		 */
-		public static final String SPINGDUBBO_MVN = "springDubboMvnProvider";
-
-		/**
-		 * Standard golang(mod) projecs gen provider.
-		 */
-		public static final String GO_GONICWEB = "gonicWebProvider";
-
-		/**
-		 * Standard csharp projecs gen provider.
-		 */
-		public static final String CSHARP_STANDARD = "standardCsharpProvider";
-
-		/**
-		 * Standard python projecs gen provider.
-		 */
-		public static final String PYTHON_STANDARD = "standardPythonProvider";
-
-		/**
-		 * VueJS projecs gen provider.
-		 */
-		public static final String IAM_VUEJS = "iamVuejsProvider";
-
-		/**
-		 * AngularJS projecs gen provider.
-		 */
-		public static final String NGJS = "ngjsProvider";
-
-		/** List of field values of class {@link GenProviderAlias}. */
-		public static final String[] VALUES = getFieldValues(GenProviderAlias.class, null, "VALUES").toArray(new String[] {});
-
-	}
 
 }

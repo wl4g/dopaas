@@ -15,25 +15,33 @@
  */
 package com.wl4g.dopaas.udc.codegen.engine.generator;
 
-import javax.annotation.Nullable;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.utils.expression.SpelExpressions;
-import com.wl4g.dopaas.udc.codegen.bean.GenProject;
-import com.wl4g.dopaas.udc.codegen.bean.GenTable;
-import com.wl4g.dopaas.udc.codegen.config.CodegenProperties;
-import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
-import com.wl4g.dopaas.udc.codegen.engine.generator.render.RenderModel;
-import com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs;
-import com.wl4g.dopaas.udc.codegen.engine.template.TemplateResource;
-import com.wl4g.dopaas.udc.codegen.exception.RenderingGenerateException;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.component.common.collection.CollectionUtils2.ensureMap;
+import static com.wl4g.component.common.io.FileIOUtils.writeFile;
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.view.Freemarkers.createDefault;
+import static com.wl4g.component.common.view.Freemarkers.renderingTemplateToString;
+import static com.wl4g.component.core.bean.BaseBean.DISABLED;
+import static com.wl4g.component.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COMMON_BASESPECS;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COMMON_WATERMARK;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB_VERSION;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_MODULE_MAP;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_MODULE_NAME;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_FULLNAME;
+import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_FULLPATH;
+import static com.wl4g.dopaas.udc.codegen.engine.generator.render.RenderUtil.convertToRenderingModel;
+import static java.io.File.separator;
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
+import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import freemarker.cache.StringTemplateLoader;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,26 +50,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static com.google.common.base.Charsets.UTF_8;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.GEN_PROJECT_FULLNAME;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.GEN_PROJECT_FULLPATH;
-import static com.wl4g.component.common.collection.CollectionUtils2.ensureMap;
-import static com.wl4g.component.common.io.FileIOUtils.writeFile;
-import static com.wl4g.component.common.lang.Assert2.*;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.view.Freemarkers.createDefault;
-import static com.wl4g.component.common.view.Freemarkers.renderingTemplateToString;
-import static com.wl4g.component.core.bean.BaseBean.DISABLED;
-import static com.wl4g.component.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.RenderUtil.convertToRenderingModel;
-import static com.wl4g.dopaas.udc.codegen.engine.generator.render.ModelAttributeConstants.*;
-import static java.io.File.separator;
-import static java.lang.String.format;
-import static java.lang.String.valueOf;
-import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.core.utils.expression.SpelExpressions;
+import com.wl4g.dopaas.common.bean.udc.GenProject;
+import com.wl4g.dopaas.common.bean.udc.GenTable;
+import com.wl4g.dopaas.udc.codegen.config.CodegenProperties;
+import com.wl4g.dopaas.udc.codegen.engine.context.GenerateContext;
+import com.wl4g.dopaas.udc.codegen.engine.generator.render.RenderModel;
+import com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs;
+import com.wl4g.dopaas.udc.codegen.engine.template.GenTemplateResource;
+import com.wl4g.dopaas.udc.codegen.exception.RenderingGenerateException;
+
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 /**
  * {@link AbstractGeneratorProvider}
@@ -106,10 +113,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		GenProject project = context.getGenProject();
 
 		// Locate load templates.
-		List<TemplateResource> ress = context.getLocator().locate(provider);
+		List<GenTemplateResource> ress = context.getLocator().locate(provider);
 
 		// Rendering templates
-		for (TemplateResource res : ress) {
+		for (GenTemplateResource res : ress) {
 			try {
 				// Core generate processing.
 				coreRenderingGenerate(res, project);
@@ -127,7 +134,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param project
 	 * @throws Exception
 	 */
-	private void coreRenderingGenerate(TemplateResource res, GenProject project) throws Exception {
+	private void coreRenderingGenerate(GenTemplateResource res, GenProject project) throws Exception {
 		log.debug("Rendering generate for - {}", res.getRawFilename());
 
 		if (res.isRender()) {
@@ -210,7 +217,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param model
 	 * @return
 	 */
-	protected void customizeRenderingModel(@NotNull TemplateResource res, @NotNull RenderModel model) {
+	protected void customizeRenderingModel(@NotNull GenTemplateResource res, @NotNull RenderModel model) {
 		GenProject project = context.getGenProject();
 
 		String fullProjectName = project.getOrganName().concat("-").concat(project.getProjectName());
@@ -230,7 +237,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param model
 	 * @return
 	 */
-	protected String preRendering(@NotNull TemplateResource res, @NotEmpty Map<String, Object> model) {
+	protected String preRendering(@NotNull GenTemplateResource res, @NotEmpty Map<String, Object> model) {
 		notNullOf(res, "res");
 		notEmptyOf(model, "model");
 
@@ -248,7 +255,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param renderedBytes
 	 * @param writePath
 	 */
-	protected void afterRenderingComplete(@NotNull TemplateResource res, @NotNull byte[] renderedBytes,
+	protected void afterRenderingComplete(@NotNull GenTemplateResource res, @NotNull byte[] renderedBytes,
 			@NotBlank String writePath) {
 		notNullOf(res, "res");
 		notNullOf(renderedBytes, "renderedBytes");
@@ -266,7 +273,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return Return resolved template resource canonical path.
 	 * @throws Exception
 	 */
-	private final String resolveTemplatePath(TemplateResource res, RenderModel model) throws Exception {
+	private final String resolveTemplatePath(GenTemplateResource res, RenderModel model) throws Exception {
 		notNullOf(res, "res");
 		notEmptyOf(model, "model");
 		res.validate();
@@ -285,7 +292,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @return Return rendered source codes file path.
 	 * @throws Exception
 	 */
-	private final String processRenderingTemplateToString(TemplateResource res, RenderModel model) throws Exception {
+	private final String processRenderingTemplateToString(GenTemplateResource res, RenderModel model) throws Exception {
 		notNullOf(res, "res");
 		notEmptyOf(model, "model");
 		res.validate();
@@ -325,7 +332,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	 * @param model
 	 * @return
 	 */
-	private final boolean processIfDirectives(TemplateResource res, RenderModel model) {
+	private final boolean processIfDirectives(GenTemplateResource res, RenderModel model) {
 		if (res.isIfDirectives()) {
 			// 1. Match checks against the key of the data model.
 			if (model.containsKey(res.getIfDirectivesExpr())) {

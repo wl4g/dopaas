@@ -40,8 +40,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.dopaas.common.constant.CiConstants.TASK_STATUS_CREATE;
-import static com.wl4g.dopaas.common.constant.CiConstants.TASK_STATUS_STOPING;
+import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_CREATE;
+import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_STOPING;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
