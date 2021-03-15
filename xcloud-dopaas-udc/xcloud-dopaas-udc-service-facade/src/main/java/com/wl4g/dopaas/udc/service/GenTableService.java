@@ -15,6 +15,9 @@
  */
 package com.wl4g.dopaas.udc.service;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +40,8 @@ import com.wl4g.dopaas.common.bean.udc.GenTableColumn;
 @RequestMapping("/genTable-service")
 public interface GenTableService {
 
-	PageHolder<GenTable> searchPage(@RequestBody PageHolder<GenTable> pm, @RequestParam("tableName") String tableName,
+	@RequestMapping(path = "page", method = POST)
+	PageHolder<GenTable> page(@RequestBody PageHolder<GenTable> pm, @RequestParam("tableName") String tableName,
 			@RequestParam("projectId") Long projectId);
 
 	/**
@@ -46,6 +50,7 @@ public interface GenTableService {
 	 * @param tableId
 	 * @return
 	 */
+	@RequestMapping(path = "getGenTable", method = GET)
 	GenTable getGenTable(@RequestParam("tableId") Long tableId);
 
 	/**
@@ -54,6 +59,7 @@ public interface GenTableService {
 	 * @param projectId
 	 * @return
 	 */
+	@RequestMapping(path = "findGenTables", method = GET)
 	List<GenTable> findGenTables(@RequestParam("projectId") Long projectId);
 
 	/**
@@ -63,6 +69,7 @@ public interface GenTableService {
 	 * @param tableName
 	 * @return
 	 */
+	@RequestMapping(path = "getGenTableCount", method = GET)
 	Long getGenTableCount(@RequestParam("projectId") Long projectId, @RequestParam("tableName") String tableName);
 
 	/**
@@ -71,6 +78,7 @@ public interface GenTableService {
 	 * @param tableId
 	 * @return
 	 */
+	@RequestMapping(path = "findGenTableColumns", method = GET)
 	List<GenTableColumn> findGenTableColumns(@RequestParam("tableId") Long tableId);
 
 	/**
@@ -78,6 +86,7 @@ public interface GenTableService {
 	 * 
 	 * @param genTable
 	 */
+	@RequestMapping(path = "save", method = POST)
 	void save(@RequestBody GenTable genTable);
 
 	/**
@@ -85,6 +94,7 @@ public interface GenTableService {
 	 * 
 	 * @param tableId
 	 */
+	@RequestMapping(path = "deleteGenTable", method = POST)
 	void deleteGenTable(@RequestParam("tableId") Long tableId);
 
 }

@@ -48,7 +48,7 @@ public class GenTableServiceImpl implements GenTableService {
 	private @Autowired GenTableColumnDao genTableColumnDao;
 
 	@Override
-	public PageHolder<GenTable> searchPage(PageHolder<GenTable> pm, String tableName, Long projectId) {
+	public PageHolder<GenTable> page(PageHolder<GenTable> pm, String tableName, Long projectId) {
 		pm.count().startPage();
 		pm.setRecords(genTableDao.list(tableName, projectId));
 		return pm;

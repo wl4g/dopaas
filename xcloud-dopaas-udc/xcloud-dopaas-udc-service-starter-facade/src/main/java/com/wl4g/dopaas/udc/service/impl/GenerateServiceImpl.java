@@ -23,9 +23,9 @@ import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
 import static com.wl4g.dopaas.udc.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
 import static com.wl4g.dopaas.udc.codegen.engine.GenProviderSetDefinition.getProviders;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
 import static com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs.capf;
 import static com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs.cleanComment;
 import static com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs.extractComment;
@@ -55,7 +55,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.component.common.bean.BeanUtils2;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.dopaas.common.bean.udc.GenDataSource;
 import com.wl4g.dopaas.common.bean.udc.GenProject;
@@ -104,11 +103,6 @@ public class GenerateServiceImpl implements GenerateService {
 	// ------------------------------------------
 	// Generate tables/columns configuration.
 	// ------------------------------------------
-
-	@Override
-	public PageHolder<GenTable> searchGenTablePage(PageHolder<GenTable> pm, String tableName, Long projectId) {
-		return genTableService.searchPage(pm, tableName, projectId);
-	}
 
 	@Override
 	public RespBase<GenTable> findGenTableDetail(Long tableId) {
@@ -349,8 +343,8 @@ public class GenerateServiceImpl implements GenerateService {
 	// ------------------------------------------
 
 	@Override
-	public GeneratedResult generate(Long tableId) {
-		return generateEngine.execute(new GenericParameter(tableId));
+	public GeneratedResult generate(Long projectId) {
+		return generateEngine.execute(new GenericParameter(projectId));
 	}
 
 	/**
