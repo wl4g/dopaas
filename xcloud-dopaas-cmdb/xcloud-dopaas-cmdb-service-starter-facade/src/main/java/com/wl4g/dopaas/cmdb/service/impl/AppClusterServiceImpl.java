@@ -15,6 +15,7 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.model.PageHolder;
@@ -103,6 +104,7 @@ public class AppClusterServiceImpl implements AppClusterService {
 		if (!CollectionUtils.isEmpty(environments)) {
 			for (AppEnvironment environment : environments) {
 				environment.preInsert();
+				environment.setId(SnowflakeIdGenerator.getDefault().nextId());
 				environment.setOrganizationCode(appCluster.getOrganizationCode());
 				environment.setClusterId(appCluster.getId());
 				if (Objects.nonNull(environment.getDockerRepository())) {
@@ -116,6 +118,7 @@ public class AppClusterServiceImpl implements AppClusterService {
 			for (Dict envType : appEnvTypes) {
 				AppEnvironment environment = new AppEnvironment();
 				environment.preInsert();
+				environment.setId(SnowflakeIdGenerator.getDefault().nextId());
 				environment.setOrganizationCode(appCluster.getOrganizationCode());
 				environment.setClusterId(appCluster.getId());
 				environment.setEnvType(envType.getValue());

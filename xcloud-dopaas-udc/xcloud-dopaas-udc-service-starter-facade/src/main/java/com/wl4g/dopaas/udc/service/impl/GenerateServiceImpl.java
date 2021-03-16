@@ -15,44 +15,9 @@
  */
 package com.wl4g.dopaas.udc.service.impl;
 
-import static com.google.common.collect.Sets.difference;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
-import static com.wl4g.dopaas.udc.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
-import static com.wl4g.dopaas.udc.codegen.engine.GenProviderSetDefinition.getProviders;
-import static com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs.capf;
-import static com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs.cleanComment;
-import static com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs.extractComment;
-import static com.wl4g.dopaas.udc.codegen.engine.specs.JavaSpecs.underlineToHump;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.component.common.bean.BeanUtils2;
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
@@ -72,7 +37,7 @@ import com.wl4g.dopaas.udc.codegen.engine.converter.DbTypeConverter.DbType;
 import com.wl4g.dopaas.udc.codegen.engine.converter.DbTypeConverter.TypeMappingWrapper;
 import com.wl4g.dopaas.udc.codegen.engine.converter.DbTypeConverter.TypeMappingWrapper.MappedMatcher;
 import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
-import com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs.CommentExtractor;
+import com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs.*;
 import com.wl4g.dopaas.udc.codegen.engine.specs.JavaSpecs;
 import com.wl4g.dopaas.udc.codegen.i18n.CodegenResourceMessageBundler;
 import com.wl4g.dopaas.udc.codegen.utils.BuiltinColumnDefinition;
@@ -81,6 +46,35 @@ import com.wl4g.dopaas.udc.service.GenDataSourceService;
 import com.wl4g.dopaas.udc.service.GenProjectService;
 import com.wl4g.dopaas.udc.service.GenTableService;
 import com.wl4g.dopaas.udc.service.GenerateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static com.google.common.collect.Sets.difference;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
+import static com.wl4g.dopaas.udc.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
+import static com.wl4g.dopaas.udc.codegen.engine.GenProviderSetDefinition.getProviders;
+import static com.wl4g.dopaas.udc.codegen.engine.specs.BaseSpecs.*;
+import static com.wl4g.dopaas.udc.codegen.engine.specs.JavaSpecs.underlineToHump;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang3.StringUtils.*;
+
 
 /**
  * {@link GenerateServiceImpl}
@@ -396,6 +390,7 @@ public class GenerateServiceImpl implements GenerateService {
 		for (int i = 0; i < cols.size(); i++) {
 			GenTableColumn col = cols.get(i);
 			col.preInsert();
+			col.setId(SnowflakeIdGenerator.getDefault().nextId());
 			col.setTableId(genTable.getId());
 			col.setColumnSort(i);
 		}
@@ -411,6 +406,7 @@ public class GenerateServiceImpl implements GenerateService {
 		int i = 0;
 		for (GenTableColumn col : columns) {
 			col.preInsert();
+			col.setId(SnowflakeIdGenerator.getDefault().nextId());
 			col.setTableId(genTable.getId());
 			col.setColumnSort(i++);
 		}
