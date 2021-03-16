@@ -15,6 +15,7 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.K8sCluster;
@@ -78,6 +79,7 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 			for (Long hostId : hostIds) {
 				K8sInstance k8sInstance = new K8sInstance();
 				k8sInstance.preInsert();
+				k8sInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
 				k8sInstance.setHostId(hostId);
 				k8sInstance.setK8sId(k8sCluster.getId());
 				k8sInstances.add(k8sInstance);
@@ -96,6 +98,7 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 			for (Long hostId : hostIds) {
 				K8sInstance k8sInstance = new K8sInstance();
 				k8sInstance.preInsert();
+				k8sInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
 				k8sInstance.setHostId(hostId);
 				k8sInstance.setK8sId(k8sCluster.getId());
 				k8sInstances.add(k8sInstance);

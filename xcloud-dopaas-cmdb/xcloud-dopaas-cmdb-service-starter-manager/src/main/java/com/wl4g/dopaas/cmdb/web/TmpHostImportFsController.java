@@ -27,7 +27,7 @@ import java.io.IOException;
 
 // TODO using by coss-sdk
 @RestController
-@RequestMapping("/fs")
+@RequestMapping("/tmpHostImportFs")//TODO
 public class TmpHostImportFsController {
 
 	@Autowired

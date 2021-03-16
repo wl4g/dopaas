@@ -18,6 +18,7 @@ package com.wl4g.dopaas.cmdb.service.impl;
 import com.google.common.base.Charsets;
 import com.wl4g.component.common.cli.ssh2.JschHolder;
 import com.wl4g.component.common.cli.ssh2.SSH2Holders;
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.log.SmartLogger;
@@ -25,15 +26,14 @@ import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
-import com.wl4g.dopaas.common.bean.cmdb.Host;
-import com.wl4g.dopaas.common.bean.cmdb.HostSsh;
-import com.wl4g.dopaas.common.bean.cmdb.SshBean;
 import com.wl4g.dopaas.cmdb.config.FsProperties;
 import com.wl4g.dopaas.cmdb.data.HostDao;
 import com.wl4g.dopaas.cmdb.data.HostSshDao;
 import com.wl4g.dopaas.cmdb.data.SshDao;
 import com.wl4g.dopaas.cmdb.service.HostService;
-
+import com.wl4g.dopaas.common.bean.cmdb.Host;
+import com.wl4g.dopaas.common.bean.cmdb.HostSsh;
+import com.wl4g.dopaas.common.bean.cmdb.SshBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -120,6 +120,7 @@ public class HostServiceImpl implements HostService {
 			for (Long sshId : sshIds) {
 				HostSsh hostSsh = new HostSsh();
 				hostSsh.preInsert();
+				hostSsh.setId(SnowflakeIdGenerator.getDefault().nextId());
 				hostSsh.setHostId(host.getId());
 				hostSsh.setSshId(sshId);
 				hostSshs.add(hostSsh);
@@ -138,6 +139,7 @@ public class HostServiceImpl implements HostService {
 			for (Long sshId : sshIds) {
 				HostSsh hostSsh = new HostSsh();
 				hostSsh.preInsert();
+				hostSsh.setId(SnowflakeIdGenerator.getDefault().nextId());
 				hostSsh.setHostId(host.getId());
 				hostSsh.setSshId(sshId);
 				hostSshs.add(hostSsh);
