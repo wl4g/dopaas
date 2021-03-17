@@ -16,4 +16,4 @@
 # * limitations under the License.
 # */
 
-/etc/init.d/standalone-devops.service "$@"
+/etc/init.d/standalone-dopaas.service "$@"

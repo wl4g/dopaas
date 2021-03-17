@@ -36,4 +36,4 @@ spring:
       client:
         server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/share
+        success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://dopaas.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/share
