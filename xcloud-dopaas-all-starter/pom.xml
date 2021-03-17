@@ -34,6 +34,14 @@
 					<groupId>com.wl4g</groupId>
 					<artifactId>xcloud-component-rpc-springcloud-dubbo</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-zipkin</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-sleuth</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<!-- If there is a compiler dependent annotation such as @HystrixCommand, our only purpose is to enable it to be compiled and packaged -->
