@@ -17,25 +17,25 @@ spring:
         rules:
           '[/**]':
             allows-origins:
-              - https://${DEVOPS_SERVICE_ZONE:wl4g.com}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.com}
-              - https://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
-              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
+              - https://${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - http://${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - https://*.${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - http://*.${DOPAAS_SERVICE_ZONE:wl4g.com}
       acl:
         secure: false # Turn off protection will trust any same intranet IP.
-        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+        allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
-        server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-web
+        server-uri: ${DOPAAS_SERVICE_SCHEMA:https}://iam.${DOPAAS_SERVICE_ZONE:wl4g.com}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://dopaas.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/scm
+        success-uri: ${DOPAAS_SERVICE_SCHEMA:https}://dopaas.${DOPAAS_SERVICE_ZONE:wl4g.com}/#/scm
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${DEVOPS_DB_URL:jdbc:mysql://safecloud-defaulti.mysql.rds.aliyuncs.com:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-      username: ${DEVOPS_DB_USER:dopaas}
-      password: ${DEVOPS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
+      url: ${DOPAAS_DB_URL:jdbc:mysql://safecloud-defaulti.mysql.rds.aliyuncs.com:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
+      username: ${DOPAAS_DB_USER:dopaas}
+      password: ${DOPAAS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       initial-size: 10
       max-active: 100
       min-idle: 10
@@ -57,6 +57,6 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-  nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
+  nodes: ${DOPAAS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
 
 cipher-key: 03DE18C2FC4E605F

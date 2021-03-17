@@ -15,20 +15,20 @@ spring:
     component:
       support:
         jedis:
-          passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
+          passwd: ${DOPAAS_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${DEVOPS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+          nodes: ${DOPAAS_REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
     iam:
       cors:
         rules:
           '[/**]':
             allows-origins:
-              #- http://${DEVOPS_SERVICE_ZONE:wl4g.debug}
-              #- http://${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
-              #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
-              #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              #- http://${DOPAAS_SERVICE_ZONE:wl4g.debug}
+              #- http://${DOPAAS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              #- http://*.${DOPAAS_SERVICE_ZONE:wl4g.debug}
+              #- http://*.${DOPAAS_SERVICE_ZONE:wl4g.debug:${server.port}}
               #- http://localhost:8080
               #- http://localhost:18080
               #- http://127.0.0.1:8080
@@ -36,8 +36,8 @@ spring:
               - '*'
       acl:
         secure: false # Turn off protection will trust any same intranet IP.
-        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+        allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
         server-uri: http://wl4g.debug:18080/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
