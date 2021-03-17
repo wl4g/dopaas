@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.dopaas.udc.codegen.dao.GenTableColumnDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.dopaas.udc.codegen.bean.GenTableColumn">
+	<resultMap id="BaseResultMap" type="com.wl4g.dopaas.common.bean.udc.GenTableColumn">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="table_id" property="tableId" jdbcType="BIGINT" />
 		<result column="column_name" property="columnName" jdbcType="VARCHAR" />
@@ -52,7 +52,7 @@
 		delete from udc_gen_table_column
 		where table_id = #{tableId,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenTableColumn">
+	<insert id="insert" parameterType="com.wl4g.dopaas.common.bean.udc.GenTableColumn">
 		INSERT into udc_gen_table_column (
 			id, table_id, column_name,
 			column_comment, column_type, simple_column_type, sql_type, column_sort,
@@ -96,7 +96,7 @@
 		</foreach>
 	</insert>
 
-	<insert id="insertSelective" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenTableColumn">
+	<insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.udc.GenTableColumn">
 		insert into udc_gen_table_column
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -229,7 +229,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenTableColumn">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.udc.GenTableColumn">
 		update udc_gen_table_column
 		<set>
 			<if test="tableId != null">
@@ -295,7 +295,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenTableColumn">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.udc.GenTableColumn">
 		UPDATE udc_gen_table_column
 		set table_id = #{tableId,jdbcType=BIGINT},
 			column_name = #{columnName,jdbcType=VARCHAR},

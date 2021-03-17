@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.dopaas.udc.codegen.dao.GenDataSourceDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.dopaas.udc.codegen.bean.GenDataSource">
+	<resultMap id="BaseResultMap" type="com.wl4g.dopaas.common.bean.udc.GenDataSource">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="type" property="type" jdbcType="VARCHAR" />
@@ -36,7 +36,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 
-	<insert id="insert" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenDataSource">
+	<insert id="insert" parameterType="com.wl4g.dopaas.common.bean.udc.GenDataSource">
 		INSERT INTO udc_gen_datasource (id, name, `type`,
 			host, port, `database`,
 			username, password, db_version,
@@ -51,7 +51,7 @@
 		)
 	</insert>
 
-	<insert id="insertSelective" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenDataSource">
+	<insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.udc.GenDataSource">
 		INSERT INTO udc_gen_datasource
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -149,7 +149,7 @@
 		</trim>
 	</insert>
 
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenDataSource">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.udc.GenDataSource">
 		UPDATE udc_gen_datasource
 		<set>
 			<if test="name != null">
@@ -198,7 +198,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenDataSource">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.udc.GenDataSource">
 		UPDATE udc_gen_datasource
 		set name = #{name,jdbcType=VARCHAR},
 		`type` = #{type,jdbcType=VARCHAR},

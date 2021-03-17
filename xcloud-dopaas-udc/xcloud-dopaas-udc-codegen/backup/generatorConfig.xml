@@ -28,7 +28,7 @@ Maven dependency:
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!-- 生成模型的包名和位置-->
-        <javaModelGenerator targetPackage="com.wl4g.dopaas.udc.codegen.bean" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.wl4g.dopaas.common.bean.udc" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
