@@ -17,7 +17,7 @@ package com.wl4g.dopaas.uci.service.impl;
 
 import com.wl4g.component.common.lang.DateUtils2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.uci.data.TriggerDao;
 import com.wl4g.dopaas.uci.pipeline.TimingPipelineManager;
 import com.wl4g.dopaas.uci.service.TriggerService;
@@ -55,7 +55,7 @@ public class TriggerServiceImpl implements TriggerService {
 		if (isNotBlank(endDate)) {
 			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
 		}
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(triggerDao.list(getRequestOrganizationCodes(), id, name, taskId, enable, startDate, endDateStr));
 		return pm;
 	}

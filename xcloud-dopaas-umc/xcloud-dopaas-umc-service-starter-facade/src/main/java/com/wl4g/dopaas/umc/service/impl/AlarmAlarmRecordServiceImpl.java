@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.AlarmRecord;
 import com.wl4g.dopaas.common.bean.umc.AlarmRule;
 import com.wl4g.dopaas.common.bean.umc.AlarmTemplate;
@@ -46,7 +46,7 @@ public class AlarmAlarmRecordServiceImpl implements AlarmRecordService {
 
 	@Override
 	public PageHolder<AlarmRecord> list(PageHolder<AlarmRecord> pm, String name, String startDate, String endDate) {
-		pm.startPage();
+		pm.bindPage();
 		pm.setRecords(alarmRecordDao.list(name, startDate, endDate));
 		return pm;
 	}

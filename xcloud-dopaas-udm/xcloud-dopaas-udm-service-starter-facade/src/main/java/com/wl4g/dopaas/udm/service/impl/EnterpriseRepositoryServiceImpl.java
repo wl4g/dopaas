@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseRepository;
 import com.wl4g.dopaas.udm.data.EnterpriseRepositoryDao;
 import com.wl4g.dopaas.udm.service.EnterpriseRepositoryService;
@@ -49,7 +49,7 @@ public class EnterpriseRepositoryServiceImpl implements EnterpriseRepositoryServ
 	@Override
 	public PageHolder<EnterpriseRepository> page(EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest) {
 		PageHolder<EnterpriseRepository> pm = enterpriseRepositoryPageRequest.getPm();
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		EnterpriseRepository enterpriseRepository = new EnterpriseRepository();
 		BeanUtils.copyProperties(enterpriseRepositoryPageRequest, enterpriseRepository);
 		pm.setRecords(enterpriseRepositoryDao.list(enterpriseRepository));

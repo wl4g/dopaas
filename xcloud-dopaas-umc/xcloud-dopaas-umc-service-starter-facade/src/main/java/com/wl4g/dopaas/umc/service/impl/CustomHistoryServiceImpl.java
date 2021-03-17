@@ -17,7 +17,7 @@ package com.wl4g.dopaas.umc.service.impl;
 
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.CustomHistory;
 import com.wl4g.dopaas.umc.data.CustomHistoryDao;
 import com.wl4g.dopaas.umc.service.CustomHistoryService;
@@ -38,7 +38,7 @@ public class CustomHistoryServiceImpl implements CustomHistoryService {
 
 	@Override
 	public PageHolder<CustomHistory> list(PageHolder<CustomHistory> pm, String name) {
-		pm.startPage();
+		pm.bindPage();
 		List<CustomHistory> list = customHistoryDao.list(name);
 		/*
 		 * for(CustomHistory customHistory : list){

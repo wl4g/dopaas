@@ -18,7 +18,7 @@ package com.wl4g.dopaas.umc.service.impl;
 import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.CustomDataSource;
 import com.wl4g.dopaas.common.bean.umc.CustomDataSourceProperties;
 import com.wl4g.dopaas.common.bean.umc.datasource.BaseDataSource;
@@ -59,7 +59,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 
 	@Override
 	public PageHolder<CustomDataSource> list(PageHolder<CustomDataSource> pm, String name) {
-		pm.startPage();
+		pm.bindPage();
 		pm.setRecords(customDatasourceDao.list(name));
 		return pm;
 	}

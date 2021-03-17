@@ -18,7 +18,7 @@ package com.wl4g.dopaas.cmdb.service.impl;
 import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
 import com.wl4g.dopaas.common.bean.cmdb.AppEnvironment;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
@@ -63,7 +63,7 @@ public class AppClusterServiceImpl implements AppClusterService {
 	@Override
 	public Map<String, Object> list(PageHolder<?> pm, String clusterName, Integer deployType) {
 		Map<String, Object> data = new HashMap<>();
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		// Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(),
 		// pm.getPageSize(), true);
 		List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(), clusterName, deployType);

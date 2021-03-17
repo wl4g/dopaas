@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.uci.service.impl;
 
 import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.destroy.DestroySignal;
 import com.wl4g.dopaas.uci.data.PipelineDao;
@@ -208,7 +208,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Override
 	public PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName,
 			String environment, String startDate, String endDate, String providerKind) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterName, environment, startDate,
 				endDate, providerKind, null, null));
 		return pm;

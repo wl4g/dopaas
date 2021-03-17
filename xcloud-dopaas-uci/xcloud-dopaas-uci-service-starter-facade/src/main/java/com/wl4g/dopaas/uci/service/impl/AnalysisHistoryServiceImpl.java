@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.uci.data.AnalysisHistoryDao;
 import com.wl4g.dopaas.uci.service.AnalysisHistoryService;
 import com.wl4g.dopaas.common.bean.uci.AnalysisHistory;
@@ -37,7 +37,7 @@ public class AnalysisHistoryServiceImpl implements AnalysisHistoryService {
 
 	@Override
 	public PageHolder<AnalysisHistory> list(PageHolder<AnalysisHistory> pm) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(analysisHistoryDao.list(getRequestOrganizationCodes()));
 		return pm;
 	}

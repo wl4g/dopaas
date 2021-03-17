@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.CustomEngine;
 import com.wl4g.dopaas.umc.data.CustomEngineDao;
 import com.wl4g.dopaas.umc.service.CustomEngineService;
@@ -40,7 +40,7 @@ public class CustomEngineServiceImpl implements CustomEngineService {
 
 	@Override
 	public PageHolder<CustomEngine> list(PageHolder<CustomEngine> pm, String name) {
-		pm.startPage();
+		pm.bindPage();
 		pm.setRecords(customEngineDao.list(name));
 		return pm;
 	}

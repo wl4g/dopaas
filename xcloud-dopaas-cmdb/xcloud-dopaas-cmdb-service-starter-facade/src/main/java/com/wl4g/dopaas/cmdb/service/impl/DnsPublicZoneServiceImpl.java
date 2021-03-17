@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.DnsPublicZone;
 import com.wl4g.dopaas.cmdb.data.DnsPublicZoneDao;
 import com.wl4g.dopaas.cmdb.service.DnsPublicZoneService;
@@ -40,7 +40,7 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 
 	@Override
 	public PageHolder<DnsPublicZone> page(PageHolder<DnsPublicZone> pm, String zone) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(publicZoneDao.list(getRequestOrganizationCodes(), zone));
 		return pm;
 	}

@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.cmdb.service.AppInstanceService;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import com.wl4g.dopaas.common.bean.umc.AlarmConfig;
@@ -42,7 +42,7 @@ public class AlarmConfigServiceImpl implements AlarmConfigService {
 
 	@Override
 	public PageHolder<AlarmConfig> list(PageHolder<AlarmConfig> pm, Long templateId, Long contactGroupId) {
-		pm.startPage();
+		pm.bindPage();
 		pm.setRecords(alarmConfigDao.list(templateId, contactGroupId));
 		return pm;
 	}

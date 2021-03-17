@@ -17,7 +17,7 @@ package com.wl4g.dopaas.umc.service.impl;
 
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.CustomAlarmEvent;
 import com.wl4g.dopaas.umc.data.CustomAlarmEventDao;
 import com.wl4g.dopaas.umc.service.CustomAlarmEventService;
@@ -36,7 +36,7 @@ public class CustomAlarmEventServiceImpl implements CustomAlarmEventService {
 
 	@Override
 	public PageHolder<CustomAlarmEvent> list(PageHolder<CustomAlarmEvent> pm, String name) {
-		pm.startPage();
+		pm.bindPage();
 		pm.setRecords(customAlarmEventDao.list(name));
 		return pm;
 	}

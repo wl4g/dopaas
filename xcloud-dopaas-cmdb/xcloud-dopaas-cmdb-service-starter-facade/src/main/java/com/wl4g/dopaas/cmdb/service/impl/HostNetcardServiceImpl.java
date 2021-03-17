@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.cmdb.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.HostNetcard;
 import com.wl4g.dopaas.common.bean.cmdb.HostTunnelOpenvpn;
 import com.wl4g.dopaas.common.bean.cmdb.HostTunnelPptp;
@@ -55,7 +55,7 @@ public class HostNetcardServiceImpl implements HostNetcardService {
 
 	@Override
 	public PageHolder<HostNetcard> page(PageHolder<HostNetcard> pm, Long hostId, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(appHostNetCardDao.list(getRequestOrganizationCodes(), hostId, name));
 		return pm;
 	}

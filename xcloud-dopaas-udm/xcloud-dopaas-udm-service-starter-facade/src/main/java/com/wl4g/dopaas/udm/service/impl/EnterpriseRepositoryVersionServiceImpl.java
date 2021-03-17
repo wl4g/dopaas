@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseRepositoryVersion;
 import com.wl4g.dopaas.udm.data.EnterpriseRepositoryVersionDao;
 import com.wl4g.dopaas.udm.service.EnterpriseRepositoryVersionService;
@@ -52,7 +52,7 @@ public class EnterpriseRepositoryVersionServiceImpl implements EnterpriseReposit
 	public PageHolder<EnterpriseRepositoryVersion> page(
 			EnterpriseRepositoryVersionPageRequest enterpriseRepositoryVersionPageRequest) {
 		PageHolder<EnterpriseRepositoryVersion> pm = enterpriseRepositoryVersionPageRequest.getPm();
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		EnterpriseRepositoryVersion enterpriseRepositoryVersion = new EnterpriseRepositoryVersion();
 		BeanUtils.copyProperties(enterpriseRepositoryVersionPageRequest, enterpriseRepositoryVersion);
 		pm.setRecords(enterpriseRepositoryVersionDao.list(enterpriseRepositoryVersion));

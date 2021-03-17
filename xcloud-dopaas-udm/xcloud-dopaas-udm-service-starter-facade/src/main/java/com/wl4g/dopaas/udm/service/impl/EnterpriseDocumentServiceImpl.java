@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseDocument;
 import com.wl4g.dopaas.udm.data.EnterpriseDocumentDao;
 import com.wl4g.dopaas.udm.service.EnterpriseDocumentService;
@@ -49,7 +49,7 @@ public class EnterpriseDocumentServiceImpl implements EnterpriseDocumentService 
 	@Override
 	public PageHolder<EnterpriseDocument> page(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest) {
 		PageHolder<EnterpriseDocument> pm = enterpriseDocumentPageRequest.getPm();
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		EnterpriseDocument enterpriseDocument = new EnterpriseDocument();
 		BeanUtils.copyProperties(enterpriseDocumentPageRequest, enterpriseDocument);
 		pm.setRecords(enterpriseDocumentDao.list(enterpriseDocument));

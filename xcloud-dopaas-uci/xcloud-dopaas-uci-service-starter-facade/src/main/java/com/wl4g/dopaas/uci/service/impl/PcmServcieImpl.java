@@ -18,7 +18,7 @@ package com.wl4g.dopaas.uci.service.impl;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.bean.model.SelectionModel;
 import com.wl4g.dopaas.uci.data.PcmDao;
 import com.wl4g.dopaas.uci.pcm.PcmOperator;
@@ -52,7 +52,7 @@ public class PcmServcieImpl implements PcmService {
 
 	@Override
 	public PageHolder<Pcm> list(PageHolder<Pcm> pm, String name, String providerKind, Integer authType) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(pcmDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;
 	}

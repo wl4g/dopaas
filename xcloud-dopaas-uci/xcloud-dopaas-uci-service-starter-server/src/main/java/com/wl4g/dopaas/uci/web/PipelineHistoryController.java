@@ -18,7 +18,7 @@ package com.wl4g.dopaas.uci.web;
 import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.uci.service.OrchestrationManagerAdapter;
 import com.wl4g.dopaas.uci.service.PipelineManagerAdapter;
 import com.wl4g.dopaas.uci.service.PipelineHistoryService;

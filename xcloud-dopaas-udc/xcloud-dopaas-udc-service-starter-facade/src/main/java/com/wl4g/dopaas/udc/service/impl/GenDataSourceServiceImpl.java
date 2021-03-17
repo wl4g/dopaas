@@ -32,7 +32,7 @@ import org.springframework.util.Assert;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.log.SmartLoggerFactory;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.dopaas.common.bean.udc.GenDataSource;
 import com.wl4g.dopaas.udc.codegen.engine.resolver.MetadataResolver;
@@ -61,7 +61,7 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 
 	@Override
 	public PageHolder<GenDataSource> page(PageHolder<GenDataSource> pm, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		// desensitization
 		pm.setRecords(safeList(genDSDao.list(name)).stream().map(ds -> ds.withPassword("******")).collect(toList()));
 		return pm;

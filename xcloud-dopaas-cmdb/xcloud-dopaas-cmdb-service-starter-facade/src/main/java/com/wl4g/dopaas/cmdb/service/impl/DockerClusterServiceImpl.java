@@ -17,7 +17,7 @@ package com.wl4g.dopaas.cmdb.service.impl;
 
 import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.DockerCluster;
 import com.wl4g.dopaas.common.bean.cmdb.DockerInstance;
 import com.wl4g.dopaas.cmdb.data.DockerClusterDao;
@@ -51,7 +51,7 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 
 	@Override
 	public PageHolder<DockerCluster> page(PageHolder<DockerCluster> pm, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(dockerClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

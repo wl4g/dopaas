@@ -17,7 +17,7 @@ package com.wl4g.dopaas.cmdb.service.impl;
 
 import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.K8sCluster;
 import com.wl4g.dopaas.common.bean.cmdb.K8sInstance;
 import com.wl4g.dopaas.cmdb.data.K8sClusterDao;
@@ -51,7 +51,7 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 
 	@Override
 	public PageHolder<K8sCluster> page(PageHolder<K8sCluster> pm, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(k8sClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

@@ -17,7 +17,7 @@ package com.wl4g.dopaas.cmdb.service.impl;
 
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.cmdb.data.DnsPrivateResolutionDao;
 import com.wl4g.dopaas.cmdb.data.DnsPrivateZoneDao;
 import com.wl4g.dopaas.cmdb.handler.DnsZoneHandler;
@@ -54,7 +54,7 @@ public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
 
 	@Override
 	public PageHolder<DnsPrivateZone> page(PageHolder<DnsPrivateZone> pm, String zone) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		List<DnsPrivateZone> list = dnsPrivateDomainDao.list(getRequestOrganizationCodes(), zone);
 		pm.setRecords(list);
 		return pm;

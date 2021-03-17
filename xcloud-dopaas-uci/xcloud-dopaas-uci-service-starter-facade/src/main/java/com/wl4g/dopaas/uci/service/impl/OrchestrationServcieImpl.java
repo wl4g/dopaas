@@ -17,7 +17,7 @@ package com.wl4g.dopaas.uci.service.impl;
 
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.dopaas.uci.data.OrchestrationDao;
@@ -60,7 +60,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 
 	@Override
 	public PageHolder<Orchestration> list(PageHolder<Orchestration> pm, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

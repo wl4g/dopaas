@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
@@ -56,7 +56,7 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 	@Override
 	public PageHolder<AppInstance> list(PageHolder<AppInstance> pm, String name, Long instanceId, String envType,
 			Integer deployType) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(appInstanceDao.list(getRequestOrganizationCodes(), name, instanceId, envType, deployType));
 		return pm;
 	}

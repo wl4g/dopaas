@@ -21,7 +21,7 @@ import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.lang.DateUtils2;
 import com.wl4g.component.common.lang.TypeConverts;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.DestroableCommand;
 import com.wl4g.component.support.cli.command.LocalDestroableCommand;
@@ -80,7 +80,7 @@ public class DocServiceImpl implements DocService {
 
 	@Override
 	public PageHolder<FileChanges> list(PageHolder<FileChanges> pm, String name, String lang, Long labelId) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		List<FileChanges> list = fileChangesDao.list(name, lang, labelId);
 		pm.setRecords(list);
 		return pm;
