@@ -15,23 +15,7 @@
  */
 package com.wl4g.dopaas.umc.service.impl;
 
-import static com.wl4g.dopaas.common.bean.umc.model.DataSourceProvide.MYSQL;
-import static java.util.Arrays.asList;
-
-import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
@@ -43,6 +27,22 @@ import com.wl4g.dopaas.common.bean.umc.model.DataSourceProvide;
 import com.wl4g.dopaas.umc.data.CustomDataSourcePropertiesDao;
 import com.wl4g.dopaas.umc.data.CustomDatasourceDao;
 import com.wl4g.dopaas.umc.service.CustomDataSourceService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.wl4g.dopaas.common.bean.umc.model.DataSourceProvide.MYSQL;
+import static java.util.Arrays.asList;
 
 /**
  * @author vjay
@@ -93,6 +93,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 			customDatasourceDao.updateByPrimaryKeySelective(customDataSource);
 		} else {
 			customDataSource.preInsert();
+			customDataSource.setId(SnowflakeIdGenerator.getDefault().nextId());
 			customDataSource.setStatus(1);
 			List<CustomDataSourceProperties> customDataSourceProperties = customDataSource.getCustomDataSourceProperties();
 			for (CustomDataSourceProperties properties : customDataSourceProperties) {
@@ -249,6 +250,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 			customDataSourcePropertie.setKey(fieldName);
 			customDataSourcePropertie.setValue(value);
 			customDataSourcePropertie.preInsert();
+			customDataSourcePropertie.setId(SnowflakeIdGenerator.getDefault().nextId());
 			customDataSourceProperties.add(customDataSourcePropertie);
 		}
 		return customDataSourceProperties;
