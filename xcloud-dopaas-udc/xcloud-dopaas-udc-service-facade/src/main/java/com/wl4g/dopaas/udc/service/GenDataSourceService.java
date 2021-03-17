@@ -45,7 +45,7 @@ public interface GenDataSourceService {
 	@RequestMapping(path = "save", method = POST)
 	void save(@RequestBody GenDataSource genDatabase);
 
-	@RequestMapping(path = "loadDatasources", method = GET)
+	@RequestMapping(path = "detail", method = GET)
 	GenDataSource detail(@RequestParam("id") Long id);
 
 	@RequestMapping(path = "del", method = POST)
