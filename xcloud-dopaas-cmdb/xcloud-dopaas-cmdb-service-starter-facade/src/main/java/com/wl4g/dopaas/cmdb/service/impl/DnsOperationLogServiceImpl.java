@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.cmdb.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.DnsOperationLog;
 import com.wl4g.dopaas.cmdb.data.DnsOperationLogDao;
 import com.wl4g.dopaas.cmdb.service.DnsOperationLogService;
@@ -41,7 +41,7 @@ public class DnsOperationLogServiceImpl implements DnsOperationLogService {
 
 	@Override
 	public PageHolder<DnsOperationLog> page(PageHolder<DnsOperationLog> pm, String domain) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(dnsOperationLogDao.list(getRequestOrganizationCodes(), domain));
 		return pm;
 	}

@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.FileChanges;
 import com.wl4g.dopaas.common.bean.udm.Share;
 import com.wl4g.dopaas.common.constant.UdmConstants;
@@ -53,7 +53,7 @@ public class ShareServiceImpl implements ShareService {
 
 	@Override
 	public PageHolder<Share> list(PageHolder<Share> pm) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		List<Share> list = shareDao.list();
 		for (Share share : list) {
 			FileChanges fileChanges = docService.getLastByDocCode(share.getDocCode());

@@ -18,7 +18,7 @@ package com.wl4g.dopaas.cmdb.service.impl;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.DockerRepository;
 import com.wl4g.dopaas.common.bean.cmdb.model.RepositoryProject;
 import com.wl4g.dopaas.cmdb.data.DockerRepositoryDao;
@@ -66,7 +66,7 @@ public class DockerRepositoryServiceImpl implements DockerRepositoryService {
 
 	@Override
 	public PageHolder<DockerRepository> page(PageHolder<DockerRepository> pm, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(dockerRepositoryDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

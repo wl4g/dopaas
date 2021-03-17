@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udc.GenProject;
 import com.wl4g.dopaas.common.bean.udc.extra.ExtraOptionDefinition.GenExtraOption;
 import com.wl4g.dopaas.udc.codegen.engine.GenProviderSetDefinition;
@@ -51,7 +51,7 @@ public class GenProjectServiceImpl implements GenProjectService {
 
 	@Override
 	public PageHolder<GenProject> page(PageHolder<GenProject> pm, String projectName) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(genProjectDao.list(projectName));
 		return pm;
 	}

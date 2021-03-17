@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.uci.data.OrchestrationHistoryDao;
 import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
 import com.wl4g.dopaas.uci.service.OrchestrationHistoryService;
@@ -44,7 +44,7 @@ public class OrchestrationHistoryServcieImpl implements OrchestrationHistoryServ
 
 	@Override
 	public PageHolder<OrchestrationHistory> list(PageHolder<OrchestrationHistory> pm, String runId) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		List<OrchestrationHistory> list = orchestrationHistoryDao.list(getRequestOrganizationCodes(), runId);
 		for (OrchestrationHistory orch : list) {
 			List<PipelineHistory> pipeHis = pipelineHistoryDao.list(getRequestOrganizationCodes(), null, null, null, null, null,

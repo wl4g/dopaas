@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.cmdb.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.DnsPrivateServer;
 import com.wl4g.dopaas.cmdb.data.DnsPrivateServerDao;
 import com.wl4g.dopaas.cmdb.service.DnsPrivateServerService;
@@ -41,7 +41,7 @@ public class DnsPrivateServerServiceImpl implements DnsPrivateServerService {
 
 	@Override
 	public PageHolder<DnsPrivateServer> page(PageHolder<DnsPrivateServer> pm, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(dnsPrivateServerDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

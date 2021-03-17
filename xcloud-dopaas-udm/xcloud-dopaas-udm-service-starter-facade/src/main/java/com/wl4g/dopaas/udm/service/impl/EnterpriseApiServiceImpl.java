@@ -35,7 +35,7 @@ import org.springframework.util.CollectionUtils;
 import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
 import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
@@ -71,7 +71,7 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
 	@Override
 	public PageHolder<EnterpriseApi> page(EnterpriseApiPageRequest enterpriseApiPageRequest) {
 		PageHolder<EnterpriseApi> pm = enterpriseApiPageRequest.getPm();
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		EnterpriseApi enterpriseApi = new EnterpriseApi();
 		BeanUtils.copyProperties(enterpriseApiPageRequest, enterpriseApi);
 		pm.setRecords(enterpriseApiDao.list(enterpriseApi));

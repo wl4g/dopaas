@@ -17,7 +17,7 @@ package com.wl4g.dopaas.cmdb.service.impl;
 
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.DnsPrivateBlacklist;
 import com.wl4g.dopaas.cmdb.data.DnsPrivateBlacklistDao;
 import com.wl4g.dopaas.cmdb.handler.DnsZoneHandler;
@@ -53,7 +53,7 @@ public class DnsPrivateBlacklistServiceImpl implements DnsPrivateBlacklistServic
 
 	@Override
 	public PageHolder<DnsPrivateBlacklist> page(PageHolder<DnsPrivateBlacklist> pm, String expression) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(dnsPrivateBlacklistDao.list(expression));
 		return pm;
 	}

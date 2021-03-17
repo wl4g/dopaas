@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.dopaas.cmdb.service.AppInstanceService;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
@@ -76,7 +76,7 @@ public class AlarmAlarmTemplateServiceImpl implements AlarmTemplateService {
 
 	@Override
 	public PageHolder<AlarmTemplate> list(PageHolder<AlarmTemplate> pm, String name, Long metricId, String classify) {
-		pm.startPage();
+		pm.bindPage();
 		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
 		for (AlarmTemplate alarmTpl : list) {
 			String tags = alarmTpl.getTags();

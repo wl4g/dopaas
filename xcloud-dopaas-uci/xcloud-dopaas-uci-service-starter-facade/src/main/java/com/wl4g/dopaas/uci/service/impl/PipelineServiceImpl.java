@@ -18,7 +18,7 @@ package com.wl4g.dopaas.uci.service.impl;
 import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.uci.data.ClusterExtensionDao;
 import com.wl4g.dopaas.uci.data.PipeStageBuildingDao;
 import com.wl4g.dopaas.uci.data.PipeStageBuildingProjectDao;
@@ -111,7 +111,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public PageHolder<Pipeline> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		List<Pipeline> pipes = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
 		for (Pipeline p : safeList(pipes)) {
 			p.setPipeStepBuildingProjects(pipeStepBuildingProjectDao.selectByPipeId(p.getId()));
@@ -415,7 +415,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public PageHolder<ClusterExtension> clusterExtensionList(PageHolder<ClusterExtension> pm, String clusterName) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(clusterExtensionDao.list(clusterName));
 		return pm;
 	}

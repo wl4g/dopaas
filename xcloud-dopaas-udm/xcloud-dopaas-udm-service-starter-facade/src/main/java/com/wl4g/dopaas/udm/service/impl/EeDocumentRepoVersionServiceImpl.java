@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.rpc.feign.core.context.RpcContextHolder;
 import com.wl4g.dopaas.common.bean.udm.EeDocumentRepoVersion;
 import com.wl4g.dopaas.udm.data.EeDocumentRepoVersionDao;
@@ -48,7 +48,7 @@ public class EeDocumentRepoVersionServiceImpl implements EeDocumentRepoVersionSe
 	@Override
 	public PageHolder<EeDocumentRepoVersion> page(EeDocumentRepoVersion eeDocumentRepoVersion) {
 		PageHolder pm = RpcContextHolder.get().get("pm", PageHolder.class);
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(eeDocumentRepoVersionDao.list(eeDocumentRepoVersion));
 		return pm;
 	}

@@ -23,7 +23,7 @@ import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.dopaas.cmdb.config.FsProperties;
@@ -94,7 +94,7 @@ public class HostServiceImpl implements HostService {
 
 	@Override
 	public PageHolder<Host> page(PageHolder<Host> pm, String name, String hostname, Long idcId) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(appHostDao.list(getRequestOrganizationCodes(), name, hostname, idcId));
 		return pm;
 	}

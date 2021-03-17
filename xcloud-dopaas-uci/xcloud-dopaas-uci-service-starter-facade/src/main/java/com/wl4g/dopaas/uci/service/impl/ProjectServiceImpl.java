@@ -18,7 +18,7 @@ package com.wl4g.dopaas.uci.service.impl;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.uci.data.DependencyDao;
 import com.wl4g.dopaas.uci.data.ProjectDao;
 import com.wl4g.dopaas.uci.service.ProjectService;
@@ -132,7 +132,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public PageHolder<Project> list(PageHolder<Project> pm, String groupName, String projectName) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		List<Project> list = projectDao.list(getRequestOrganizationCodes(), groupName, projectName, null);
 		for (Project project : list) {
 			project.setVcs(null);

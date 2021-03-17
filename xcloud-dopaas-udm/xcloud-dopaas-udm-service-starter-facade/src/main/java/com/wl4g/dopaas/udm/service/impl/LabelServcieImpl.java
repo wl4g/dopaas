@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.Label;
 import com.wl4g.dopaas.udm.data.LabelDao;
 import com.wl4g.dopaas.udm.service.LabelService;
@@ -38,7 +38,7 @@ public class LabelServcieImpl implements LabelService {
 
 	@Override
 	public PageHolder<Label> list(PageHolder<Label> pm, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(labelDao.list(name));
 		return pm;
 	}

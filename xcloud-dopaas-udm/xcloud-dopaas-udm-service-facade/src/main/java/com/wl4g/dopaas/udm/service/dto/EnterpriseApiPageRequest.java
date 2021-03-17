@@ -1,6 +1,6 @@
 package com.wl4g.dopaas.udm.service.dto;
 
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import lombok.Getter;
 import lombok.Setter;

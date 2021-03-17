@@ -26,7 +26,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udc.GenTable;
 import com.wl4g.dopaas.common.bean.udc.GenTableColumn;
 import com.wl4g.dopaas.udc.data.GenTableColumnDao;
@@ -49,7 +49,7 @@ public class GenTableServiceImpl implements GenTableService {
 
 	@Override
 	public PageHolder<GenTable> page(PageHolder<GenTable> pm, String tableName, Long projectId) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(genTableDao.list(tableName, projectId));
 		return pm;
 	}

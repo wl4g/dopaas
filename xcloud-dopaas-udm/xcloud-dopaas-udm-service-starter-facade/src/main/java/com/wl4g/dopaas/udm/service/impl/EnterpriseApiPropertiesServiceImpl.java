@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
 import com.wl4g.dopaas.udm.data.EnterpriseApiPropertiesDao;
 import com.wl4g.dopaas.udm.service.EnterpriseApiPropertiesService;
@@ -49,7 +49,7 @@ public class EnterpriseApiPropertiesServiceImpl implements EnterpriseApiProperti
 	@Override
 	public PageHolder<EnterpriseApiProperties> page(EnterpriseApiPropertiesPageRequest enterpriseApiPropertiesPageRequest) {
 		PageHolder<EnterpriseApiProperties> pm = enterpriseApiPropertiesPageRequest.getPm();
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		EnterpriseApiProperties enterpriseApiProperties = new EnterpriseApiProperties();
 		BeanUtils.copyProperties(enterpriseApiPropertiesPageRequest, enterpriseApiProperties);
 		pm.setRecords(enterpriseApiPropertiesDao.list(enterpriseApiProperties));

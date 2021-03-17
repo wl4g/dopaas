@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.cmdb.service.impl;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.IdcBean;
 import com.wl4g.dopaas.cmdb.data.IdcDao;
 import com.wl4g.dopaas.cmdb.service.IdcService;
@@ -43,7 +43,7 @@ public class IdcServiceImpl implements IdcService {
 
 	@Override
 	public PageHolder<IdcBean> page(PageHolder<IdcBean> pm, String name) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(idcDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

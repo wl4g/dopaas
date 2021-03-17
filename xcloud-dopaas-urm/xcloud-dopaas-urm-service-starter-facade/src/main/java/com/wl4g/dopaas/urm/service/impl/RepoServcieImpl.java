@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.bean.model.PageHolder;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.dopaas.common.bean.uci.Vcs;
 import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
@@ -63,7 +63,7 @@ public class RepoServcieImpl implements RepoService {
 
 	@Override
 	public PageHolder<Vcs> list(PageHolder<Vcs> pm, String name, String providerKind, Integer authType) {
-		pm.count().startPage();
+		pm.useCount().bindPage();
 		pm.setRecords(repoDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;
 	}
