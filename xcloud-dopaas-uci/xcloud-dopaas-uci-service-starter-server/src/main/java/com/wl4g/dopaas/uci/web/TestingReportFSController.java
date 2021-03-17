@@ -38,7 +38,7 @@ import java.util.UUID;
  * @date 2020-01-06 17:16:00
  */
 @RestController
-@RequestMapping("/fs")
+@RequestMapping("/testingReportFS")//TODO
 public class TestingReportFSController {
 
 	@Autowired

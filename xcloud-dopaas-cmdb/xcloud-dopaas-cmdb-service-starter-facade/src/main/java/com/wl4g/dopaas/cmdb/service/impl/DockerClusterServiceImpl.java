@@ -15,6 +15,7 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.DockerCluster;
@@ -78,6 +79,7 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 			for (Long hostId : hostIds) {
 				DockerInstance dockerInstance = new DockerInstance();
 				dockerInstance.preInsert();
+				dockerInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
 				dockerInstance.setHostId(hostId);
 				dockerInstance.setDockerId(dockerCluster.getId());
 				dockerInstances.add(dockerInstance);
@@ -95,6 +97,7 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 			for (Long hostId : hostIds) {
 				DockerInstance dockerInstance = new DockerInstance();
 				dockerInstance.preInsert();
+				dockerInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
 				dockerInstance.setHostId(hostId);
 				dockerInstance.setDockerId(dockerCluster.getId());
 				dockerInstances.add(dockerInstance);

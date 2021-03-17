@@ -15,6 +15,7 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.bean.model.PageHolder;
@@ -208,6 +209,7 @@ public class PipelineServiceImpl implements PipelineService {
 			for (Long i : instanceIds) {
 				PipelineInstance pipelineInstance = new PipelineInstance();
 				pipelineInstance.preInsert();
+				pipelineInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
 				pipelineInstance.setDeployId(pipeStepDeploy.getId());
 				pipelineInstance.setInstanceId(i);
 				pipelineInstances.add(pipelineInstance);
@@ -229,6 +231,7 @@ public class PipelineServiceImpl implements PipelineService {
 			if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
 				for (int i = 0; i < pipeStepBuildingProjects.size(); i++) {
 					pipeStepBuildingProjects.get(i).preInsert();
+					pipeStepBuildingProjects.get(i).setId(SnowflakeIdGenerator.getDefault().nextId());
 					pipeStepBuildingProjects.get(i).setSort(i + 1);
 					pipeStepBuildingProjects.get(i).setBuildingId(pipeStepBuilding.getId());
 				}
@@ -289,6 +292,7 @@ public class PipelineServiceImpl implements PipelineService {
 			for (Long i : instanceIds) {
 				PipelineInstance pipelineInstance = new PipelineInstance();
 				pipelineInstance.preInsert();
+				pipelineInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
 				pipelineInstance.setDeployId(pipeStepDeploy.getId());
 				pipelineInstance.setInstanceId(i);
 				pipelineInstances.add(pipelineInstance);
@@ -311,6 +315,7 @@ public class PipelineServiceImpl implements PipelineService {
 			if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
 				for (int i = 0; i < pipeStepBuildingProjects.size(); i++) {
 					pipeStepBuildingProjects.get(i).preInsert();
+					pipeStepBuildingProjects.get(i).setId(SnowflakeIdGenerator.getDefault().nextId());
 					pipeStepBuildingProjects.get(i).setSort(i + 1);
 					pipeStepBuildingProjects.get(i).setBuildingId(pipeStepBuilding.getId());
 				}

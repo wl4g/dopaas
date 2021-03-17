@@ -15,28 +15,7 @@
  */
 package com.wl4g.dopaas.udm.service.impl;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-
-import java.io.File;
-import java.io.IOException;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.multipart.MultipartFile;
-
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.lang.DateUtils2;
@@ -56,6 +35,20 @@ import com.wl4g.dopaas.udm.data.LabelDao;
 import com.wl4g.dopaas.udm.data.ShareDao;
 import com.wl4g.dopaas.udm.service.DocService;
 import com.wl4g.iam.common.utils.RpcContextIamSecurityUtils;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.InvalidParameterException;
+import java.util.*;
+
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * @author vjay
@@ -125,6 +118,7 @@ public class DocServiceImpl implements DocService {
 			for (Long labelId : labelIds) {
 				FileLabel fileLabel = new FileLabel();
 				fileLabel.preInsert();
+				fileLabel.setId(SnowflakeIdGenerator.getDefault().nextId());
 				fileLabel.setFileId(fileChanges.getId());
 				fileLabel.setLabelId(labelId);
 				fileLabels.add(fileLabel);
@@ -161,6 +155,7 @@ public class DocServiceImpl implements DocService {
 			for (Long labelId : labelIds) {
 				FileLabel fileLabel = new FileLabel();
 				fileLabel.preInsert();
+				fileLabel.setId(SnowflakeIdGenerator.getDefault().nextId());
 				fileLabel.setFileId(fileChanges.getId());
 				fileLabel.setLabelId(labelId);
 				fileLabels.add(fileLabel);
@@ -185,6 +180,7 @@ public class DocServiceImpl implements DocService {
 			for (Long labelId : labelIds) {
 				FileLabel fileLabel = new FileLabel();
 				fileLabel.preInsert();
+				fileLabel.setId(SnowflakeIdGenerator.getDefault().nextId());
 				fileLabel.setFileId(fileChanges.getId());
 				fileLabel.setLabelId(labelId);
 				fileLabels.add(fileLabel);
