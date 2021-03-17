@@ -111,11 +111,11 @@ public final class GenTemplateResource implements Serializable {
 
 		// Analysis of special syntax identification.
 		/**
-		 * {@link com.wl4g.dopaas.udc.codegen.bean.GenTable#moduleName}
+		 * {@link com.wl4g.dopaas.common.bean.udc.GenTable#moduleName}
 		 */
 		this.isForeachModules = contains(rawFilename, GEN_MODULE_NAME); // Modules
 		/**
-		 * {@link com.wl4g.dopaas.udc.codegen.bean.GenTable#entityName}
+		 * {@link com.wl4g.dopaas.common.bean.udc.GenTable#entityName}
 		 */
 		this.isForeachEntitys = contains(rawFilename, GEN_TABLE_ENTITY_NAME); // Entitys
 

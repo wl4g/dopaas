@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.dopaas.udc.codegen.dao.GenProjectDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.dopaas.udc.codegen.bean.GenProject">
+	<resultMap id="BaseResultMap" type="com.wl4g.dopaas.common.bean.udc.GenProject">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="datasource_id" property="datasourceId" jdbcType="BIGINT" />
 		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
@@ -35,7 +35,7 @@
 		delete from udc_gen_project
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenProject">
+	<insert id="insert" parameterType="com.wl4g.dopaas.common.bean.udc.GenProject">
 		insert into udc_gen_project (id, project_name, datasource_id, organ_type, organ_name,
 		provider_set, version,
 		author, since, copyright,
@@ -51,7 +51,7 @@
 		#{createBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}
 		)
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenProject">
+	<insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.udc.GenProject">
 		insert into udc_gen_project
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -160,7 +160,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenProject">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.udc.GenProject">
 		update udc_gen_project
 		<set>
 			<if test="projectName != null">
@@ -214,7 +214,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.udc.codegen.bean.GenProject">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.udc.GenProject">
 		UPDATE udc_gen_project
 		<set>
 			project_name = #{projectName,jdbcType=VARCHAR},
