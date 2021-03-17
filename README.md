@@ -1,4 +1,4 @@
-## XCloud DOPaaS
+## XCloud DoPaaS
 ![XCloud DoPaaS](shots/logo.jpg)
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
@@ -23,7 +23,7 @@
 
 
 ### One click automatic deployment:
-> It is suitable for rapid deployment in server environment
+> It is suitable for rapid deployment in server environment, Note: only backend spring services (including Eureka) deployment are temporarily supported, For other dependent service deployment, please refer to [frontend deploy](#Frontend compiling), It is not recommended to use in high concurrency production environment. If necessary, please replace nginx with ELB/SLB/LVS.
 
 ```
 bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy/deploy-boot.sh)"
@@ -107,21 +107,22 @@ npm run build # Production building
 
 
 ### Submodule documents
-- [UCI](xcloud-dopaas-uci/README.md)  Unified Continuous Integration Service(CI/CD)
-- [UMC](xcloud-dopaas-umc/README.md)  Unified Monitoring and Operation Center(applications healthing, tracking, alarming, ELK log analysis, etc)
-- [URM](xcloud-dopaas-urm/README.md)  Unified Repository Management(source repo/build repo/image repo)
-- [UCM](xcloud-dopaas-ucm/README.md)  Unified Config Management(Online configuration of hot updates such as dataSource, redisClient, etc)
-- [CMDB](xcloud-dopaas-cmdb/README.md)  Configuration Management Database(hosts, applications, secretKeys, auditing, DNS zone resoluting, etc)
-- [UDM](xcloud-dopaas-udm/README.md)  Unified Document Management(Online APIs/swagger documents, etc)
-- [UDC](xcloud-dopaas-dts/README.md)  Unified Developer Center(Devel tools, WebIDE, AutoGenerator, etc)
+- [UCI](../../blob/master/xcloud-dopaas-uci/README.md)  Unified Continuous Integration Service(CI/CD)
+- [UMC](../../blob/master/xcloud-dopaas-umc/README.md)  Unified Monitoring and Operation Center(applications healthing, tracking, alarming, ELK log analysis, etc)
+- [URM](../../blob/master/xcloud-dopaas-urm/README.md)  Unified Repository Management(source repo/build repo/image repo)
+- [UCM](../../blob/master/xcloud-dopaas-ucm/README.md)  Unified Config Management(Online configuration of hot updates such as dataSource, redisClient, etc)
+- [CMDB](../../blob/master/xcloud-dopaas-cmdb/README.md)  Configuration Management Database(hosts, applications, secretKeys, auditing, DNS zone resoluting, etc)
+- [UDM](../../blob/master/xcloud-dopaas-udm/README.md)  Unified Document Management(Online APIs/swagger documents, etc)
+- [UDC](../../blob/master/xcloud-dopaas-dts/README.md)  Unified Developer Center(Devel tools, WebIDE, AutoGenerator, etc)
+- [UJOB](../../blob/master/xcloud-ujob/README_CN.md) Unified distributed task scheduling service is developed based on springcloud + shardingsphere-elasticjob.
+- [UOS](../../blob/master/xcloud-uos/README_CN.md)  Unified object storage services, based on springcloud development support NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
+- [UIM](xcloud-uim/README.md)  Unified instant messaging service, convenient for project personnel to communicate in time, safe distribution of internal data.
+
 
 ### Other related apps and components documents
-- [DJOB](xcloud-djob/README_CN.md)           Based on spring cloud distributed scheduling platform, the default is based on elastic-job enhanced implementation
-- [COSS](xcloud-coss/README_CN.md)           Based on the spring cloud composite object storage service, it supports NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
 - [SHELL](xcloud-shell/README.md)            Shell Cli, adding a hbase-shell-like console to your app
 - [IAM](xcloud-iam/README.md)                Unified identity and access management services, support SSO/CAS/oauth2/opensaml etc, It also supports multiple deployment modes(local/cluster/gateway)
 - [Gateway](xcloud-gateway/README.md)        Enterprise microservice gateway based on spring cloud gateway, Can integrate with CI to realize Canary deployment.
-- [IM](xcloud-im/README.md)                  Instant messaging system, project personnel communicate in a timely manner, internal data distribution.
 
 
 ### Development and runtime depend on technology stack(primary)

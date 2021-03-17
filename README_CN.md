@@ -24,7 +24,7 @@
 
 
 ### 一键自动部署：
-> 适用于服务器环境快速部署
+> 适用于服务器环境快速部署, 注：暂只支持后端spring服务(包括eureka等)部署, 其他依赖服务部署请参考：如[前端部署](#前端部署), 不推荐在高并发的生产环境使用, 如有需要请替换nginx为ELB/SLB/LVS等.
 
 ```
 bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy/deploy-boot.sh)"
@@ -106,21 +106,22 @@ npm run build # 生产打包
 
 
 ### 子模块文档
-- [UCI](xcloud-dopaas-uci/README_CN.md)  (Unified Continuous Integration)统一持续集成交付服务, CI/CD等
-- [UMC](xcloud-dopaas-umc/README_CN.md)  (Unified Monitoring and Operation Center)统一监控运维中心, 应用健康实时监控、实时追踪、实时告警、ELK日志分析等
-- [URM](xcloud-dopaas-urm/README_CN.md)  (Unified Repository Management)统一仓库管理, 源码仓库、构建包仓库、镜像仓库等
-- [UCM](xcloud-dopaas-ucm/README_CN.md)  (Unified Config Management)统一配置管理服务, 在线配置热更新如：DataSource、RedisClient等
-- [CMDB](xcloud-dopaas-cmdb/README_CN.md)  (Configuration Management Database)统一资产管理, 主机、密钥、审计、DNS等基础设施资产管理等
-- [UDM](xcloud-dopaas-udm/README_CN.md)  (Unified Document Management)统一文档管理, API/Swagger在线文档/Office/Pdf等
-- [UDC](xcloud-dopaas-udc/README_CN.md)  (Unified Developer Center)统一开发中心, 各种开发者工具链、WebIDE、自动生成器等
+- [UCI](../../blob/master/xcloud-dopaas-uci/README_CN.md)  (Unified Continuous Integration)统一持续集成交付服务, CI/CD等
+- [UMC](../../blob/master/xcloud-dopaas-umc/README_CN.md)  (Unified Monitoring and Operation Center)统一监控运维中心, 应用健康实时监控、实时追踪、实时告警、ELK日志分析等
+- [URM](../../blob/master/xcloud-dopaas-urm/README_CN.md)  (Unified Repository Management)统一仓库管理, 源码仓库、构建包仓库、镜像仓库等
+- [UCM](../../blob/master/xcloud-dopaas-ucm/README_CN.md)  (Unified Config Management)统一配置管理服务, 在线配置热更新如：DataSource、RedisClient等
+- [CMDB](../../blob/master/xcloud-dopaas-cmdb/README_CN.md)  (Configuration Management Database)统一资产管理, 主机、密钥、审计、DNS等基础设施资产管理等
+- [UDM](../../blob/master/xcloud-dopaas-udm/README_CN.md)  (Unified Document Management)统一文档管理, API/Swagger在线文档/Office/Pdf等
+- [UDC](../../blob/master/xcloud-dopaas-udc/README_CN.md)  (Unified Developer Center)统一开发中心, 各种开发者工具链、WebIDE、自动生成器等
+- [UJOB](../../blob/master/xcloud-ujob/README_CN.md)  基于SpringCloud分布式调度平台, 默认基于Shardingsphere-elasticJob增强实现
+- [UOS](../../blob/master/xcloud-uos/README_CN.md)  统一对象存储服务，基于springcloud开发支持NativeFS、HDFS、Aliyun OSS、AWS S3、GlusterFS等, Aliyun OSS, AWS S3, GlusterFS 等
+- [IM](../../blob/master/xcloud-im/README_CN.md)  统一的即时通讯服务，方便项目人员及时沟通，安全分发内部资料.
+
 
 ### 其他相关应用/组件文档
-- [DJOB](xcloud-djob/README_CN.md)                  基于SpringCloud分布式调度平台, 默认是基于ElasticJob增强实现
-- [COSS](xcloud-coss/README_CN.md)					基于SpringCloud复合对象存储服, 支持 NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS 等
 - [SHELL](xcloud-dopaas-shell/README_CN.md)         Shell Cli, 给应用添加类似hbase-shell的控制台功能
 - [IAM](xcloud-iam/README_CN.md)					统一身份识别与访问管理服务，支持SSO/CAS、oauth2、opensaml等，同时支持多种部署模式（local/cluster/gateway）
 - [Gateway](xcloud-gateway/README_CN.md)			基于spring-cloud-gateway的企业级微服务网关, 可与CI整合实现金丝雀部署等等高级特性.
-- [IM](xcloud-im/README_CN.md)						即时通讯系统, 项目人员及时沟通，内部资料分发
 
 
 ### 开发及运行时依赖技术栈(主要)
