@@ -17,10 +17,10 @@ spring:
         rules:
           '[/**]':
             allows-origins:
-              #- http://${DEVOPS_SERVICE_ZONE:wl4g.debug}
-              #- http://${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
-              #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
-              #- http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              #- http://${DOPAAS_SERVICE_ZONE:wl4g.debug}
+              #- http://${DOPAAS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              #- http://*.${DOPAAS_SERVICE_ZONE:wl4g.debug}
+              #- http://*.${DOPAAS_SERVICE_ZONE:wl4g.debug:${server.port}}
               #- http://localhost:8080
               #- http://localhost:18080
               #- http://127.0.0.1:8080
@@ -28,12 +28,12 @@ spring:
               - '*'
       acl:
         secure: false # Turn off protection will trust any same intranet IP.
-        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+        allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
-        server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-web
+        server-uri: ${DOPAAS_SERVICE_SCHEMA:https}://iam.${DOPAAS_SERVICE_ZONE:wl4g.com}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://dopaas.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/ci/taskhis
+        success-uri: ${DOPAAS_SERVICE_SCHEMA:https}://dopaas.${DOPAAS_SERVICE_ZONE:wl4g.com}/#/ci/taskhis
     tool:
       devel:
         mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
@@ -70,9 +70,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${DEVOPS_DB_URL:jdbc:mysql://owner-node1:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-      username: ${DEVOPS_DB_USER:gzsm}
-      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
+      url: ${DOPAAS_DB_URL:jdbc:mysql://owner-node1:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
+      username: ${DOPAAS_DB_USER:gzsm}
+      password: ${DOPAAS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10

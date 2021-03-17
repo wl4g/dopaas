@@ -338,16 +338,16 @@ if [ -z "\$SPRING_PROFILES_ACTIVE" ]; then
 elif [ -n "\$(echo \$SPRING_PROFILES_ACTIVE|grep -i '^None\$')" ]; then
   export SPRING_PROFILES_ACTIVE="" # Use empty configuration.
 fi
-[ -z "\$PAAS_DB_URL" ] && export PAAS_DB_URL="$runtimeMysqlUrl"
-[ -z "\$PAAS_DB_USER" ] && export PAAS_DB_USER="$runtimeMysqlUser"
-[ -z "\$PAAS_DB_PASSWD" ] && export PAAS_DB_PASSWD="$runtimeMysqlPassword"
-[ -z "\$PAAS_REDIS_NODES" ] && export PAAS_REDIS_NODES="$runtimeRedisNodes"
-[ -z "\$PAAS_REDIS_PASSWD" ] && export PAAS_REDIS_PASSWD="$runtimeRedisPassword"
-[ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$runtimeMysqlUrl"
-[ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="$runtimeMysqlUser"
-[ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="$runtimeMysqlPassword"
-[ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="$runtimeRedisNodes"
-[ -z "\$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="$runtimeRedisPassword"
+[ -z "\$DOPAAS_DB_URL" ] && export PAAS_DB_URL="$runtimeMysqlUrl"
+[ -z "\$DOPAAS_DB_USER" ] && export PAAS_DB_USER="$runtimeMysqlUser"
+[ -z "\$DOPAAS_DB_PASSWD" ] && export PAAS_DB_PASSWD="$runtimeMysqlPassword"
+[ -z "\$DOPAAS_REDIS_NODES" ] && export PAAS_REDIS_NODES="$runtimeRedisNodes"
+[ -z "\$DOPAAS_REDIS_PASSWD" ] && export PAAS_REDIS_PASSWD="$runtimeRedisPassword"
+[ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="\$DOPAAS_DB_URL"
+[ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="\$DOPAAS_DB_USER"
+[ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="\$DOPAAS_DB_PASSWD"
+[ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="\$DOPAAS_REDIS_NODES"
+[ -z "\$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="\$DOPAAS_REDIS_PASSWD"
 
 function start() {
   local pids=\$(getPids)

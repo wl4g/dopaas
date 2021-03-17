@@ -313,6 +313,7 @@ function deployPreDependsServices() {
 # Check and deploy eureka servers.
 function deployEurekaServers() {
   if [ "$runtimeMode" == "cluster" ]; then
+    # Deploying eureka servers.
     if [ ${#globalAllNodes[@]} -lt 3 ]; then # Building pseudo cluster.
       local appName=$(echo "$deployEurekaBuildModule"|awk -F ',' '{print $1}')
       local cmdRestart="/etc/init.d/${appName}.service restart"
@@ -331,6 +332,8 @@ function deployEurekaServers() {
       doRemoteCmd "$user1" "$passwd1" "$host1" "export SPRING_PROFILES_ACTIVE='ha,peer2' && $cmdRestart" "true" &
       log "[eureka/$host1] Deploy eureka by peer3 (Pseudo) ..."
       doRemoteCmd "$user1" "$passwd1" "$host1" "export SPRING_PROFILES_ACTIVE='ha,peer3' && $cmdRestart" "true" &
+      # Check add dns resloving.
+      resolvingDnsPeers "$host1" "$host1" "$host1"
     else # Building a real cluster.
       # Node1:
       local node1=${globalAllNodes[0]}
@@ -347,9 +350,34 @@ function deployEurekaServers() {
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
       log "[eureka/$host3] Deploy eureka by peer3 ..."
       doDeployApp "$deployEurekaBuildModule" "ha,peer3" "$node3"
+      # Check add dns resloving.
+      resolvingDnsPeers "$host1" "$host2" "$host3"
     fi
   else # In standalone mode, Eureka does not need to be deployed.
     log "Skip eureka servers deploy, because runtime mode is standalone."
+  fi
+}
+
+# Check add resolving dns for peers.
+function resolvingDnsPeers() {
+  local host1=$1
+  local host2=$2
+  local host3=$3
+  # Transform to ip(if host is not ip).
+  [ -z "$(echo $host1|egrep '(^[0-9]+)\.')" ] && host1=$(ping $host1 -c 1 -w 3 2>/dev/null|sed '1{s/[^(]*(//;s/).*//;q}')
+  [ -z "$(echo $host2|egrep '(^[0-9]+)\.')" ] && host2=$(ping $host2 -c 1 -w 3 2>/dev/null|sed '1{s/[^(]*(//;s/).*//;q}')
+  [ -z "$(echo $host3|egrep '(^[0-9]+)\.')" ] && host3=$(ping $host3 -c 1 -w 3 2>/dev/null|sed '1{s/[^(]*(//;s/).*//;q}')
+  # Check mapping dns?
+  local resolvingPeer1=$(ping -c 1 -w 3 peer1 >/dev/null 2>&1; echo "$?")
+  local resolvingPeer2=$(ping -c 1 -w 3 peer2 >/dev/null 2>&1; echo "$?")
+  local resolvingPeer3=$(ping -c 1 -w 3 peer3 >/dev/null 2>&1; echo "$?")
+  if [[ $resolvingPeer1 != 0 || $resolvingPeer2 != 0 || $resolvingPeer3 != 0 ]]; then
+    echo "$host1 peer1" >> /etc/hosts
+    log "Added dns resoling peer1 to $host1"
+    echo "$host2 peer2" >> /etc/hosts
+    log "Added dns resoling peer2 to $host2"
+    echo "$host3 peer3" >> /etc/hosts
+    log "Added dns resoling peer3 to $host3"
   fi
 }
 

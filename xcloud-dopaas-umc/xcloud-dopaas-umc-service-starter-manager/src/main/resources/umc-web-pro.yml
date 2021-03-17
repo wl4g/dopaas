@@ -15,11 +15,11 @@ spring:
     component:
       support:
         jedis:
-          passwd: ${DEVOPS_REDIS_PASSWD:zzx!@#$%}
+          passwd: ${DOPAAS_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
+          nodes: ${DOPAAS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
         notification:
           mail:
             host: smtp.163.com
@@ -41,18 +41,18 @@ spring:
         rules:
           '[/**]':
             allows-origins:
-              - https://${DEVOPS_SERVICE_ZONE:wl4g.com}
-              - http://${DEVOPS_SERVICE_ZONE:wl4g.com}
-              - https://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
-              - http://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
+              - https://${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - http://${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - https://*.${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - http://*.${DOPAAS_SERVICE_ZONE:wl4g.com}
       acl:
         secure: false # Turn off protection will trust any same intranet IP.
-        allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-        denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+        allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
-        server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-web
+        server-uri: ${DOPAAS_SERVICE_SCHEMA:https}://iam.${DOPAAS_SERVICE_ZONE:wl4g.com}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://dopaas.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/umc/config
+        success-uri: ${DOPAAS_SERVICE_SCHEMA:https}://dopaas.${DOPAAS_SERVICE_ZONE:wl4g.com}/#/umc/config
 
 # Spring-security config.
 security.user:
