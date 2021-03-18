@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.dopaas.uci.data.PipeStepApiDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.dopaas.common.bean.uci.PipeStepApi" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="pipe_id" property="pipeId" jdbcType="BIGINT" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="repository_id" property="repositoryId" jdbcType="BIGINT" />
+    <result column="version_id" property="versionId" jdbcType="BIGINT" />
+    <result column="module_id" property="moduleId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, pipe_id, enable, repository_id, version_id, module_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from uci_pipe_step_api
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByPipeId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from uci_pipe_step_api
+    where pipe_id = #{id,jdbcType=BIGINT}
+    limit 1
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from uci_pipe_step_api
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.dopaas.common.bean.uci.PipeStepApi" >
+    insert into uci_pipe_step_api (id, pipe_id, enable, 
+      repository_id, version_id, module_id
+      )
+    values (#{id,jdbcType=BIGINT}, #{pipeId,jdbcType=BIGINT}, #{enable,jdbcType=INTEGER}, 
+      #{repositoryId,jdbcType=BIGINT}, #{versionId,jdbcType=BIGINT}, #{moduleId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.uci.PipeStepApi" >
+    insert into uci_pipe_step_api
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="pipeId != null" >
+        pipe_id,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="repositoryId != null" >
+        repository_id,
+      </if>
+      <if test="versionId != null" >
+        version_id,
+      </if>
+      <if test="moduleId != null" >
+        module_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="pipeId != null" >
+        #{pipeId,jdbcType=BIGINT},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="repositoryId != null" >
+        #{repositoryId,jdbcType=BIGINT},
+      </if>
+      <if test="versionId != null" >
+        #{versionId,jdbcType=BIGINT},
+      </if>
+      <if test="moduleId != null" >
+        #{moduleId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.uci.PipeStepApi" >
+    update uci_pipe_step_api
+    <set >
+      <if test="pipeId != null" >
+        pipe_id = #{pipeId,jdbcType=BIGINT},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="repositoryId != null" >
+        repository_id = #{repositoryId,jdbcType=BIGINT},
+      </if>
+      <if test="versionId != null" >
+        version_id = #{versionId,jdbcType=BIGINT},
+      </if>
+      <if test="moduleId != null" >
+        module_id = #{moduleId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.uci.PipeStepApi" >
+    update uci_pipe_step_api
+    set pipe_id = #{pipeId,jdbcType=BIGINT},
+      enable = #{enable,jdbcType=INTEGER},
+      repository_id = #{repositoryId,jdbcType=BIGINT},
+      version_id = #{versionId,jdbcType=BIGINT},
+      module_id = #{moduleId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
