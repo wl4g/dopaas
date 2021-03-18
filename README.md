@@ -114,9 +114,9 @@ npm run build # Production building
 - [CMDB](../../blob/master/xcloud-dopaas-cmdb/README.md)  Configuration Management Database(hosts, applications, secretKeys, auditing, DNS zone resoluting, etc)
 - [UDM](../../blob/master/xcloud-dopaas-udm/README.md)  Unified Document Management(Online APIs/swagger documents, etc)
 - [UDC](../../blob/master/xcloud-dopaas-dts/README.md)  Unified Developer Center(Devel tools, WebIDE, AutoGenerator, etc)
-- [UDS](../../blob/master/xcloud-uds/README.md)  Unified distributed scheduling control center, such as elasticjob/spark/flink task, etc.
-- [UOS](../../blob/master/xcloud-uos/README.md)  Unified object storage services, based on springcloud development support NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
-- [UIM](../../blob/master/xcloud-uim/README.md)  Unified instant messaging service, convenient for project personnel to communicate in time, safe distribution of internal data.
+- [UDS](../../blob/master/xcloud-dopaas-uds/README.md)  Unified distributed scheduling control center, such as elasticjob/spark/flink task, etc.
+- [UOS](../../blob/master/xcloud-dopaas-uos/README.md)  Unified object storage services, based on springcloud development support NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
+- [UIM](../../blob/master/xcloud-dopaas-uim/README.md)  Unified instant messaging service, convenient for project personnel to communicate in time, safe distribution of internal data.
 
 
 ### Other related apps and components documents
