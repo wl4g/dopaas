@@ -16,4 +16,4 @@
 # * limitations under the License.
 # */
 
-/etc/init.d/urm-facade.service "$@"
+/etc/init.d/uds-facade.service "$@"

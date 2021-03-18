@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.urm.config;
+package com.wl4g;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.wl4g.component.rpc.feign.core.annotation.EnableFeignConsumers;
+import com.wl4g.iam.client.annotation.EnableIamClient;
 
 /**
- * @author vjay
- * @date 2020-04-21 10:32:00
+ * {@link UdsManager}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-01-25
+ * @sine v1.0
+ * @see
  */
-public class RepoProperties {
+@EnableIamClient
+@EnableFeignConsumers("com.wl4g.dopaas.uds.service")
+@SpringBootApplication
+public class UdsManager {
 
-	private String branchFormat;
-
-	private String tagFormat;
-
-	public String getBranchFormat() {
-		return branchFormat;
+	public static void main(String[] args) {
+		SpringApplication.run(UdsManager.class, args);
 	}
 
-	public void setBranchFormat(String branchFormat) {
-		this.branchFormat = branchFormat;
-	}
-
-	public String getTagFormat() {
-		return tagFormat;
-	}
-
-	public void setTagFormat(String tagFormat) {
-		this.tagFormat = tagFormat;
-	}
 }

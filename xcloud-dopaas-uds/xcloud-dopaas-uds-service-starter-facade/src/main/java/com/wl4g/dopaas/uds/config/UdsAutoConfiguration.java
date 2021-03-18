@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.urm.config;
+package com.wl4g.dopaas.uds.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,12 +26,12 @@ import org.springframework.context.annotation.Configuration;
  * @since
  */
 @Configuration
-public class RepoAutoConfiguration {
+public class UdsAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = "vcs")
-	public RepoProperties vcsProperties() {
-		return new RepoProperties();
+	public UdsProperties vcsProperties() {
+		return new UdsProperties();
 	}
 
 }

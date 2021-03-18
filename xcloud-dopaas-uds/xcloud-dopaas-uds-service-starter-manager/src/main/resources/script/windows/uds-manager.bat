@@ -17,7 +17,7 @@ rem  * limitations under the License.
 rem  */
 
 setlocal enabledelayedexpansion
-title URM Manager APP Services
+title UDS Manager APP Services
 
 rem Using pushd popd to set BASE_DIR to the absolute path
 pushd %~dp0..\..
@@ -25,7 +25,7 @@ set BASE_DIR=%CD%
 popd
 
 rem Global define.
-set MAIN_CLASS=com.wl4g.UrmManager
+set MAIN_CLASS=com.wl4g.UdsManager
 
 set DATA_DIR=%BASE_DIR%
 set CONF_DIR=%BASE_DIR%\conf

@@ -18,11 +18,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-dopaas-uds-operator</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-dopaas-uds-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -103,9 +98,9 @@
 							<mainClass>com.wl4g.UdsFacade</mainClass>
 							<finalName>${final.name}-${project.version}-bin</finalName>
 							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
-                            <!-- @see:https://www.baeldung.com/spring-boot-main-class -->
-                            <!-- @see:https://www.jianshu.com/p/66a101c85485 -->
-                            <layout>ZIP</layout>
+							<!-- @see:https://www.baeldung.com/spring-boot-main-class -->
+							<!-- @see:https://www.jianshu.com/p/66a101c85485 -->
+							<layout>ZIP</layout>
 						</configuration>
 						<executions>
 							<execution>

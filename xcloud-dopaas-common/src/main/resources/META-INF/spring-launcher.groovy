@@ -46,6 +46,8 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		configName.append(",udm-facade")
 		configName.append(",udc-web")
 		configName.append(",udc-facade")
+		configName.append(",uds-web")
+		configName.append(",uds-facade")
 		configName.append(",cmdb-web")
 		configName.append(",cmdb-facade")
 		//configName.append(",esm-web")
@@ -58,6 +60,8 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		configName.append(",umc-facade")
 		configName.append(",urm-web")
 		configName.append(",urm-facade")
+		configName.append(",uos-web")
+		configName.append(",uos-facade")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-web-dev.yml'
@@ -79,6 +83,8 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		configName.append(",udm-facade-" + archConfigSuffix)
 		configName.append(",udc-web-" + archConfigSuffix)
 		configName.append(",udc-facade-" + archConfigSuffix)
+		configName.append(",uds-web-" + archConfigSuffix)
+		configName.append(",uds-facade-" + archConfigSuffix)
 		configName.append(",cmdb-web-" + archConfigSuffix)
 		configName.append(",cmdb-facade-" + archConfigSuffix)
 		//configName.append(",esm-web-" + archConfigSuffix)
@@ -91,6 +97,8 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		configName.append(",umc-facade-" + archConfigSuffix)
 		configName.append(",urm-web-" + archConfigSuffix)
 		configName.append(",urm-facade-" + archConfigSuffix)
+		configName.append(",uos-web-" + archConfigSuffix)
+		configName.append(",uos-facade-" + archConfigSuffix)
 
 		defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
 		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())

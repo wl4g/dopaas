@@ -13,29 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.urm.data;
+package com.wl4g.dopaas.uds.data;
 
-import com.github.pagehelper.Page;
-import com.wl4g.dopaas.common.bean.uci.Vcs;
-
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
-
-public interface RepoDao {
-	int deleteByPrimaryKey(Long id);
-
-	int insert(Vcs record);
-
-	int insertSelective(Vcs record);
-
-	Vcs selectByPrimaryKey(Long id);
-
-	int updateByPrimaryKeySelective(Vcs record);
-
-	int updateByPrimaryKey(Vcs record);
-
-	Page<Vcs> list(@Param("organizationCodes") List<String> organizationCodes, @Param("name") String name,
-			@Param("providerKind") String providerKind, @Param("authType") Integer authType);
+public interface UdsConfigurationDao {
 
 }
