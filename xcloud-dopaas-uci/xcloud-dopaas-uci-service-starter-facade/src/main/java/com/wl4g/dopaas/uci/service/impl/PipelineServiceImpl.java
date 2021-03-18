@@ -29,20 +29,11 @@ import com.wl4g.dopaas.uci.data.PipeStagePcmDao;
 import com.wl4g.dopaas.uci.data.PipelineDao;
 import com.wl4g.dopaas.uci.data.PipelineInstanceDao;
 import com.wl4g.dopaas.uci.data.ProjectDao;
+import com.wl4g.dopaas.common.bean.uci.*;
+import com.wl4g.dopaas.uci.data.*;
 import com.wl4g.dopaas.uci.service.DependencyService;
 import com.wl4g.dopaas.uci.service.PipelineService;
 import com.wl4g.dopaas.uci.service.ProjectService;
-import com.wl4g.dopaas.common.bean.uci.ClusterExtension;
-import com.wl4g.dopaas.common.bean.uci.Dependency;
-import com.wl4g.dopaas.common.bean.uci.PipeStageBuilding;
-import com.wl4g.dopaas.common.bean.uci.PipeStageBuildingProject;
-import com.wl4g.dopaas.common.bean.uci.PipeStageDeploy;
-import com.wl4g.dopaas.common.bean.uci.PipeStageInstanceCommand;
-import com.wl4g.dopaas.common.bean.uci.PipeStageNotification;
-import com.wl4g.dopaas.common.bean.uci.PipeStagePcm;
-import com.wl4g.dopaas.common.bean.uci.Pipeline;
-import com.wl4g.dopaas.common.bean.uci.PipelineInstance;
-import com.wl4g.dopaas.common.bean.uci.Project;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +78,9 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Autowired
 	private PipeStagePcmDao pipeStepPcmDao;
+
+	@Autowired
+	private PipeStepApiDao pipeStepApiDao;
 
 	@Autowired
 	private PipeStageNotificationDao pipeStepNotificationDao;
@@ -172,6 +166,10 @@ public class PipelineServiceImpl implements PipelineService {
 
 		// TODO ...... testing,analysis,docker,k8s
 
+		// Pipeline Api
+		PipeStepApi pipeStepApi = pipeStepApiDao.selectByPipeId(id);
+		pipeline.setPipeStepApi(pipeStepApi);
+
 		return pipeline;
 	}
 
@@ -248,6 +246,15 @@ public class PipelineServiceImpl implements PipelineService {
 		}
 
 		// TODO ...... testing,analysis,docker,k8s
+
+		//Insert Api Config
+		PipeStepApi pipeStepApi = pipeline.getPipeStepApi();
+		if (nonNull(pipeStepApi)) {
+			pipeStepApi.preInsert();
+			pipeStepApi.setPipeId(pipeline.getId());
+			pipeStepApiDao.insertSelective(pipeStepApi);
+		}
+
 
 		// Insert Pcm
 		PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
@@ -333,6 +340,19 @@ public class PipelineServiceImpl implements PipelineService {
 		}
 
 		// TODO ...... testing,analysis,docker,k8s
+
+		PipeStepApi pipeStepApi = pipeline.getPipeStepApi();
+		if (nonNull(pipeStepApi)) {
+			if(nonNull(pipeStepApi.getId())){
+				pipeStepApi.preUpdate();
+				pipeStepApi.setPipeId(pipeline.getId());
+				pipeStepApiDao.updateByPrimaryKeySelective(pipeStepApi);
+			}else{
+				pipeStepApi.preInsert();
+				pipeStepApi.setPipeId(pipeline.getId());
+				pipeStepApiDao.insertSelective(pipeStepApi);
+			}
+		}
 
 		// Update Pcm
 		pipeStepPcmDao.deleteByPipeId(pipeline.getId());

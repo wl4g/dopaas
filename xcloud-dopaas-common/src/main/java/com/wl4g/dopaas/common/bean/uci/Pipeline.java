@@ -53,6 +53,8 @@ public class Pipeline extends BaseBean {
 
 	private PipeStageDeploy pipeStepDeploy;
 
+	private PipeStepApi pipeStepApi;
+
 	private Integer pcmEnable;
 
 	private Long pcmId;
@@ -203,5 +205,13 @@ public class Pipeline extends BaseBean {
 
 	public void setPipeStepBuildingProjects(List<PipeStageBuildingProject> pipeStepBuildingProjects) {
 		this.pipeStepBuildingProjects = pipeStepBuildingProjects;
+	}
+
+	public PipeStepApi getPipeStepApi() {
+		return pipeStepApi;
+	}
+
+	public void setPipeStepApi(PipeStepApi pipeStepApi) {
+		this.pipeStepApi = pipeStepApi;
 	}
 }
