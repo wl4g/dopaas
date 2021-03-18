@@ -13,7 +13,7 @@
 spring:
   application.name: umc-collector
   profiles:
-    include: common,support,util,admin
+    include: common,support,util,admin,base
     active: dev
 
 # Logging configuration.

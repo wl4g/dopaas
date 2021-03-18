@@ -12,7 +12,7 @@
 spring:
   application.name: umc-manager
   profiles:
-    include: common,support,util
+    include: common,support,util,base
     active: dev
   xcloud:
     component:

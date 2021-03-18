@@ -32,7 +32,7 @@ import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
  * @sine v1.0
  * @see
  */
-@EnableComponentDBConfiguration({ "com.wl4g.dopaas.udc.dao", "com.wl4g.dopaas.udc.codegen.dao" })
+@EnableComponentDBConfiguration({ "com.wl4g.dopaas.udc.data" })
 @SpringBootApplication
 public class UdcFacade {
 

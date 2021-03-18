@@ -31,7 +31,7 @@ import com.wl4g.dopaas.common.bean.udc.GenDataSource;
 /**
  * @author vjay
  */
-@FeignConsumer(name = "${provider.serviceId.udc-udc-facade}")
+@FeignConsumer(name = "${provider.serviceId.udc-facade:udc-facade}")
 @RequestMapping("/genDataSource-service")
 public interface GenDataSourceService {
 
