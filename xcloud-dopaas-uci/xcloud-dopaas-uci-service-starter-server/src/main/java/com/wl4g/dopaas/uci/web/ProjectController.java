@@ -15,11 +15,10 @@
  */
 package com.wl4g.dopaas.uci.web;
 
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_LOCK_STATUS_UNLOCK;
-import static org.apache.shiro.authz.annotation.Logical.AND;
-
-import java.util.List;
-
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.dopaas.common.bean.uci.Project;
+import com.wl4g.dopaas.uci.service.ProjectService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -32,6 +31,10 @@ import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.dopaas.common.bean.uci.Project;
 import com.wl4g.dopaas.uci.service.ProjectService;
+import java.util.List;
+
+import static com.wl4g.dopaas.common.constant.UciConstants.TASK_LOCK_STATUS_UNLOCK;
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * CICD projects controller
@@ -56,7 +59,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
+	@RequiresPermissions(value = { "uci", "uci:project" }, logical = AND)
 	public RespBase<?> list(String groupName, String projectName, PageHolder<Project> pm) {
 		if (log.isInfoEnabled()) {
 			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
@@ -74,7 +77,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
+	@RequiresPermissions(value = { "uci", "uci:project" }, logical = AND)
 	public RespBase<?> save(@RequestBody Project project) {
 		log.info("into ProjectController.save prarms::" + "project = {} ", project);
 		RespBase<Object> resp = RespBase.create();
@@ -89,7 +92,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
+	@RequiresPermissions(value = { "uci", "uci:project" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		log.info("into ProjectController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -106,7 +109,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
+	@RequiresPermissions(value = { "uci", "uci:project" }, logical = AND)
 	public RespBase<?> del(Long id) {
 		log.info("into ProjectController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -129,7 +132,7 @@ public class ProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getByAppClusterId")
-	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
+	@RequiresPermissions(value = { "uci", "uci:project" }, logical = AND)
 	public RespBase<?> getByAppClusterId(Long clusterId) {
 		log.info("ProjectController.detail prarms::" + "id = {} ", clusterId);
 		RespBase<Object> resp = RespBase.create();
@@ -165,7 +168,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getBranchs")
-	@RequiresPermissions(value = { "ci", "uci:project" }, logical = AND)
+	@RequiresPermissions(value = { "uci", "uci:project" }, logical = AND)
 	public RespBase<?> getBranchs(Long clusterId, Integer tagOrBranch) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		List<String> branchs = projectService.getBranchs(clusterId, tagOrBranch);
