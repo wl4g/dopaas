@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>xcloud-dopaas-uds-service-facade</artifactId>
+	<packaging>jar</packaging>
+	<name>XCloud DoPaaS UDS Service Facade (interface)</name>
+	<url>http://xcloud.wl4g.com</url>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>xcloud-dopaas-uds</artifactId>
+		<version>master</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>xcloud-dopaas-umc-client-springboot</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-dopaas-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
+
+		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically configured. -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-component-rpc-feign-core</artifactId> -->
+		<!-- </dependency> -->
+
+		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. -->
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-component-rpc-feign-springcloud</artifactId>
+		</dependency>
+
+		<!-- ③[SpringCloud + (Feign)Dubbo] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. Notes: 
+			Only relying on feign's interface annotation. -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>xcloud-component-rpc-feign-springcloud-dubbo</artifactId> -->
+		<!-- </dependency> -->
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

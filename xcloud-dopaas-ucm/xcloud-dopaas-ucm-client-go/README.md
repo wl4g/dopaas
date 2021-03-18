@@ -1,1 +1,1 @@
-Please visit the project's exclusive address: [xcloud-dopaas-ucm-client-go](../../../../../super-dopaas-ucm-client-go)
+Please visit the project's exclusive address: [xcloud-dopaas-ucm-client-go](../../../../../xcloud-dopaas-ucm-client-go)

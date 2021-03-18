@@ -7,7 +7,7 @@ English version goes [here](README.md).
 
 ## 源码编译
 ```
-cd super-dopaas-ci
+cd xcloud-dopaas-ci
 mvn clean install -DskipTests 
 ```
 
