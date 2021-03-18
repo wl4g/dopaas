@@ -7,7 +7,7 @@
 
 ### Source code compilation
 ```
-cd super-dopaas-ci
+cd xcloud-dopaas-ci
 mvn clean install -DskipTests 
 ```
 

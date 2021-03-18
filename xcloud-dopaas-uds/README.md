@@ -1,0 +1,1 @@
+Djob (distributed job) is a distributed scheduling platform based on spring cloud. It integrates the advantages of elastic-job/xxl-job and so on.
