@@ -39,7 +39,7 @@ import com.wl4g.dopaas.common.bean.udc.model.TableMetadata;
  * @version v1.0 2020-09-07
  * @since
  */
-@FeignConsumer(name = "${provider.serviceId.udc-udc-facade}")
+@FeignConsumer(name = "${provider.serviceId.udc-facade:udc-facade}")
 @RequestMapping("/generate-service")
 public interface GenerateService {
 

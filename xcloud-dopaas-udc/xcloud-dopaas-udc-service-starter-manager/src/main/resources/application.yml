@@ -11,7 +11,7 @@
 spring:
   application.name: udc-manager
   profiles:
-    include: common,support,util
+    include: common,support,util,base
     active: dev
   xcloud:
     iam: # IAM client configuration.
@@ -37,8 +37,7 @@ spring:
           enable-data-cipher: true # Default by true
         session:
           enable-access-token-validity: true # Default by true
-    # DTS configuration.
-    dopaas.dts:
+    dopaas.udc:
         codegen:
           #workspace: ${HOME}/.codegen-workspace
 
@@ -62,7 +61,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.dts: DEBUG
+      wl4g.dopaas.udc: DEBUG
 
 # ### Server configuration. ###
 server:

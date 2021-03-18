@@ -34,7 +34,7 @@ import com.wl4g.dopaas.common.bean.udc.GenProject;
  * @sine v1.0
  * @see
  */
-@FeignConsumer(name = "${provider.serviceId.udc-udc-facade}")
+@FeignConsumer(name = "${provider.serviceId.udc-facade:udc-facade}")
 @RequestMapping("/genProject-service")
 public interface GenProjectService {
 
