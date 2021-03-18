@@ -9,7 +9,7 @@
 #
 # #### Environment base configuration. ####
 spring:
-  application.name: urm-facade
+  application.name: uds-facade
   profiles:
     include: common,support,util
     active: dev
@@ -38,7 +38,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.cmdb.data: DEBUG
+      wl4g.dopaas.uds.data: DEBUG
 
 # ### Server configuration. ###
 server:
@@ -46,7 +46,7 @@ server:
     #contextPath: /${spring.application.name}
     contextPath: /
   #address: 0.0.0.0
-  port: 17071
+  port: 17081
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8

@@ -38,7 +38,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.cmdb.data: DEBUG
+      wl4g.dopaas.urm.data: DEBUG
 
 # ### Server configuration. ###
 server:

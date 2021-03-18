@@ -16,4 +16,4 @@
 # * limitations under the License.
 # */
 
-/etc/init.d/urm-manager.service "$@"
+/etc/init.d/uds-manager.service "$@"

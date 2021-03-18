@@ -9,4 +9,4 @@
 #
 
 # #### Environment(SpringCloud Feign) configuration. ####
-provider.serviceId.urm-facade: urm-facade
+provider.serviceId.uds-facade: uds-facade

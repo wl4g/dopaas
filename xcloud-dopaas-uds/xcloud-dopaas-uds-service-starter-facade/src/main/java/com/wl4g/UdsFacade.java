@@ -25,19 +25,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 
 /**
- * {@link UrmFacade}
+ * {@link UdsFacade}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2021-01-25
  * @sine v1.0
  * @see
  */
-@EnableComponentDBConfiguration("com.wl4g.dopaas.urm.data")
+@EnableComponentDBConfiguration("com.wl4g.dopaas.uds.data")
 @SpringBootApplication
-public class UrmFacade {
+public class UdsFacade {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UrmFacade.class, args);
+		SpringApplication.run(UdsFacade.class, args);
 	}
 
 }

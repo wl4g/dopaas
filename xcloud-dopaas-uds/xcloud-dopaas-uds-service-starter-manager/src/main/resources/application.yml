@@ -9,7 +9,7 @@
 #
 # #### Environment base configuration. ####
 spring:
-  application.name: urm-manager
+  application.name: uds-manager
   profiles:
     include: common,support,util
     active: dev
@@ -62,14 +62,14 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.urm.data: DEBUG
+      wl4g.dopaas.uds.data: DEBUG
 
 # ### Server configuration. ###
 server:
   servlet:
     contextPath: /${spring.application.name}
   #address: 0.0.0.0
-  port: 17070
+  port: 17080
   sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8
@@ -80,7 +80,3 @@ server:
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds
     max-thread: 50 # Max worker threads(default:200)
-
-vcs:
-  branch-format: branch.*
-  tag-format: tag.*
