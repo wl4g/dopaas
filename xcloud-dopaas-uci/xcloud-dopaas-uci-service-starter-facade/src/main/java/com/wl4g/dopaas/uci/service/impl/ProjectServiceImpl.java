@@ -24,7 +24,7 @@ import com.wl4g.dopaas.uci.data.ProjectDao;
 import com.wl4g.dopaas.uci.service.ProjectService;
 import com.wl4g.dopaas.common.bean.uci.Dependency;
 import com.wl4g.dopaas.common.bean.uci.Project;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.VcsOperator;
 import com.wl4g.dopaas.urm.operator.VcsOperator.VcsProviderKind;
 import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;

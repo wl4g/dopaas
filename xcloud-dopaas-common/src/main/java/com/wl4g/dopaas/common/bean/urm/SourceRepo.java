@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.common.bean.uci;
+package com.wl4g.dopaas.common.bean.urm;
+
+import com.wl4g.component.core.bean.BaseBean;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import com.wl4g.component.core.bean.BaseBean;
 
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;
@@ -30,7 +30,7 @@ import static org.springframework.util.Assert.notNull;
  * @version v1.0 2019年11月12日
  * @since
  */
-public class Vcs extends BaseBean {
+public class SourceRepo extends BaseBean {
 	private static final long serialVersionUID = 381411777614066880L;
 
 	@NotBlank
