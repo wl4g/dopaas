@@ -100,7 +100,7 @@ npm run build # Production building
 > http://wl4g.debug &nbsp;&nbsp; Default account password: root/wl4g.com
 
 - Deployed successful screenshot:
-> Tips: the screenshot may be slightly different due to the version evolution.
+> Tips: the screenshot may be slightly different due to the version evolution, if you have any questions, please join the communication group (see the end section)
 
 ![registered-eureka-apps](shots/registered-eureka-apps.png)
 - [More shots](shots/)

@@ -99,7 +99,7 @@ npm run build # 生产打包
 > http://wl4g.debug &nbsp;&nbsp; 默认账号密码：root/wl4g.com
 
 - 部署成功示例部分截图
-> 提示：截图可能由于版本演变存在略微差异
+> 提示：截图可能由于版本演变存在略微差异，如有问题请加交流群(联系在后面部分)
 
 ![registered-eureka-apps](shots/registered-eureka-apps.png)
 - [更多截图](shots/)
