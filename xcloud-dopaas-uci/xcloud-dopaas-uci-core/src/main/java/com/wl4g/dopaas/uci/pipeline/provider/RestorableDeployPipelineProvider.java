@@ -16,11 +16,12 @@
 package com.wl4g.dopaas.uci.pipeline.provider;
 
 import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.dopaas.common.bean.uci.PipeStepApi;
-import com.wl4g.dopaas.common.bean.uci.model.ActionControl;
-import com.wl4g.dopaas.common.exception.ci.NotFoundBackupAssetsFileException;
 import com.wl4g.component.support.cli.command.DestroableCommand;
 import com.wl4g.component.support.cli.command.LocalDestroableCommand;
+import com.wl4g.dopaas.common.bean.uci.PipeStepApi;
+import com.wl4g.dopaas.common.bean.uci.Project;
+import com.wl4g.dopaas.common.bean.uci.model.ActionControl;
+import com.wl4g.dopaas.common.exception.ci.NotFoundBackupAssetsFileException;
 import com.wl4g.dopaas.uci.core.context.PipelineContext;
 import com.wl4g.dopaas.uci.pipeline.provider.container.DockerNativePipelineProvider;
 
@@ -61,14 +62,14 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 			setAssetsFingerprint(getMd5Fingerprint(assetsFile));
 		}
 
+		//build api document
+		buildApi();
+
 		// Handling backup
 		handleDiskBackupAssets();
 
 		// Handing Build Image
 		buildImage();
-
-		//build api document
-		buildApi();
 
 		// skip deploy
 		ActionControl actionControl = getContext().getActionControl();
@@ -89,10 +90,12 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 
 	private void buildApi() throws IOException {
 		//TODO read json
-		String jsonFilePath = getContext().getPipeline().getAssetsDir() + "/generated-docs/swagger-swagger2-by-springfox.json";
+		Project project = getContext().getProject();
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+		String jsonFilePath = projectDir + getContext().getPipeline().getAssetsDir() + "/generated-docs/swagger-swagger2-by-springfox.json";
 		String json = FileIOUtils.readFileToString(new File(jsonFilePath), "UTF-8");
 		PipeStepApi pipeStepApi = getContext().getPipeStepApi();
-		enterpriseApiService.importApiAndUpdateVersion("OAS3", json, pipeStepApi.getRepositoryId());
+		enterpriseApiService.importApiAndUpdateVersion("SWAGGER2", json, pipeStepApi.getRepositoryId());
 	}
 
 	/**
