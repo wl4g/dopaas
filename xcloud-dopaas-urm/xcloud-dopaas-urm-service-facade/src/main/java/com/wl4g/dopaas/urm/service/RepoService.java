@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
-import com.wl4g.dopaas.common.bean.uci.Vcs;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
 import com.wl4g.dopaas.urm.operator.model.VcsGroupModel;
 import com.wl4g.dopaas.urm.operator.model.VcsProjectModel;
@@ -46,21 +46,21 @@ import com.wl4g.dopaas.urm.operator.model.VcsTagModel;
 public interface RepoService {
 
 	@RequestMapping(value = "/list", method = POST)
-	PageHolder<Vcs> list(@RequestBody PageHolder<Vcs> pm, @RequestParam(name = "name", required = false) String name,
-			@RequestParam(name = "provider", required = false) String provider,
-			@RequestParam(name = "authType", required = false) Integer authType);
+	PageHolder<SourceRepo> list(@RequestBody PageHolder<SourceRepo> pm, @RequestParam(name = "name", required = false) String name,
+								@RequestParam(name = "provider", required = false) String provider,
+								@RequestParam(name = "authType", required = false) Integer authType);
 
 	@RequestMapping(value = "/save", method = POST)
-	void save(@RequestBody Vcs vcs);
+	void save(@RequestBody SourceRepo vcs);
 
 	@RequestMapping(value = "/del", method = POST)
 	void del(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/detail", method = POST)
-	Vcs detail(@RequestParam(name = "id", required = false) Long id);
+	SourceRepo detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/all", method = POST)
-	List<Vcs> all();
+	List<SourceRepo> all();
 
 	@RequestMapping(value = "/getProjectsToCompositeBasic", method = POST)
 	List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(@RequestParam(name = "vcsId", required = false) Long vcsId,

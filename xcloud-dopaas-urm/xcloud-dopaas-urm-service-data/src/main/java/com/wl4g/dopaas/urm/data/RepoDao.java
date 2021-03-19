@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.urm.data;
 
 import com.github.pagehelper.Page;
-import com.wl4g.dopaas.common.bean.uci.Vcs;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -25,17 +25,17 @@ import java.util.List;
 public interface RepoDao {
 	int deleteByPrimaryKey(Long id);
 
-	int insert(Vcs record);
+	int insert(SourceRepo record);
 
-	int insertSelective(Vcs record);
+	int insertSelective(SourceRepo record);
 
-	Vcs selectByPrimaryKey(Long id);
+	SourceRepo selectByPrimaryKey(Long id);
 
-	int updateByPrimaryKeySelective(Vcs record);
+	int updateByPrimaryKeySelective(SourceRepo record);
 
-	int updateByPrimaryKey(Vcs record);
+	int updateByPrimaryKey(SourceRepo record);
 
-	Page<Vcs> list(@Param("organizationCodes") List<String> organizationCodes, @Param("name") String name,
-			@Param("providerKind") String providerKind, @Param("authType") Integer authType);
+	Page<SourceRepo> list(@Param("organizationCodes") List<String> organizationCodes, @Param("name") String name,
+						  @Param("providerKind") String providerKind, @Param("authType") Integer authType);
 
 }

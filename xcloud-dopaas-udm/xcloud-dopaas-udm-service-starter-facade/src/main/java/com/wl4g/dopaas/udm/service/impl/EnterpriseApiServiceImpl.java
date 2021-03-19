@@ -18,33 +18,30 @@
 
 package com.wl4g.dopaas.udm.service.impl;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static java.util.Objects.isNull;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
+import com.wl4g.component.common.lang.Assert2;
+import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.dopaas.common.bean.udm.*;
+import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
+import com.wl4g.dopaas.udm.data.*;
+import com.wl4g.dopaas.udm.service.EnterpriseApiService;
+import com.wl4g.dopaas.udm.service.conversion.DocumentConverter;
+import com.wl4g.dopaas.udm.service.conversion.DocumentConverterAdapter;
+import com.wl4g.dopaas.udm.service.dto.EnterpriseApiPageRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
-import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
-import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
-import com.wl4g.dopaas.udm.data.EnterpriseApiDao;
-import com.wl4g.dopaas.udm.data.EnterpriseApiPropertiesDao;
-import com.wl4g.dopaas.udm.service.EnterpriseApiService;
-import com.wl4g.dopaas.udm.service.conversion.DocumentConverter;
-import com.wl4g.dopaas.udm.service.conversion.DocumentConverterAdapter;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseApiPageRequest;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static java.util.Objects.isNull;
 
 /**
  * service implements of {@link EnterpriseApi}
@@ -62,6 +59,12 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
 
 	@Autowired
 	private EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
+
+	@Autowired
+	private EnterpriseApiModuleDao enterpriseApiModuleDao;
+
+	@Autowired
+	private EnterpriseRepositoryVersionDao enterpriseRepositoryVersionDao;
 
 	@Autowired
 	private DocumentConverterAdapter documentConverterAdapter;
@@ -204,4 +207,63 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
 		XCloudDocumentModel xCloudDocumentModel = new XCloudDocumentModel(enterpriseApiList);
 		return documentConverterAdapter.forOperator(kind).convertToJson(xCloudDocumentModel);
 	}
+
+	@Override
+	public void importApiAndUpdateVersion(String kind, String json, Long repositoryId) {
+		List<EnterpriseRepositoryVersion> versionsByRepositoryId = enterpriseRepositoryVersionDao.getVersionsByRepositoryId(repositoryId);
+
+		String newVersion = getNewVersion(versionsByRepositoryId);
+
+		EnterpriseRepositoryVersion enterpriseRepositoryVersion = new EnterpriseRepositoryVersion();
+		enterpriseRepositoryVersion.setVersion(newVersion);
+		enterpriseRepositoryVersion.setRepositoryId(repositoryId);
+		enterpriseRepositoryVersion.preInsert();
+		enterpriseRepositoryVersionDao.insertSelective(enterpriseRepositoryVersion);
+
+		EnterpriseApiModule enterpriseApiModule = new EnterpriseApiModule();
+		enterpriseApiModule.setName("default");
+		enterpriseApiModule.setParentId(0L);
+		enterpriseApiModule.setVersionId(enterpriseRepositoryVersion.getId());
+		enterpriseApiModule.preInsert();
+		enterpriseApiModuleDao.insertSelective(enterpriseApiModule);
+
+		importApi(kind, json,enterpriseApiModule.getId());
+	}
+
+	//TODO 暂时版本定死3级，两个点,例如(1.0.1)
+	private String getNewVersion(List<EnterpriseRepositoryVersion> enterpriseRepositoryVersions){
+		List<EnterpriseRepositoryVersion> biggestVersion = new ArrayList<>();
+		int biggestA = 0;
+		int biggestB = 0;
+		int biggestC = 0;
+		for(EnterpriseRepositoryVersion  enterpriseRepositoryVersion : enterpriseRepositoryVersions){
+			String version = enterpriseRepositoryVersion.getVersion();
+			if(StringUtils.isBlank(version)){
+				continue;
+			}
+			String[] split = version.split("\\.");
+			if(split.length<3){
+				continue;
+			}
+			int a = Integer.parseInt(split[0]);
+			int b = Integer.parseInt(split[1]);
+			int c = Integer.parseInt(split[2]);
+			if(a>biggestA){
+				biggestA = a;
+				biggestB = b;
+				biggestC = c;
+			}else if(a==biggestA && b>biggestB){
+				biggestB = b;
+				biggestC = c;
+			}else if(a==biggestA && b==biggestB && c>biggestC){
+				biggestC = c;
+			}
+		}
+		return String.format("%d.%d.%d", biggestA, biggestB, biggestC + 1);
+	}
+
+
+
+
+
 }

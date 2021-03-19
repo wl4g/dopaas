@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.urm.operator.gitee;
 
-import com.wl4g.dopaas.common.bean.uci.Vcs;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.GenericBasedGitVcsOperator;
 import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
 import com.wl4g.dopaas.urm.operator.model.VcsTagModel;
@@ -47,7 +47,7 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	protected HttpEntity<String> createRequestEntity(Vcs credentials) {
+	protected HttpEntity<String> createRequestEntity(SourceRepo credentials) {
 		HttpHeaders headers = new HttpHeaders();
 		// headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
 		headers.add("user-agent",
@@ -57,7 +57,7 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<VcsBranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
 
 		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/branches?access_token=%s"),
@@ -72,7 +72,7 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsTagModel> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<VcsTagModel> getRemoteTags(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteTags(credentials, vcsProject);
 
 		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/tags?access_token=%s"),
@@ -83,15 +83,15 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
+	public Long getRemoteProjectId(SourceRepo credentials, String projectName) throws Exception {
 		super.getRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public List<GiteeV5SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
-			SearchMeta meta) throws Exception {
+	public List<GiteeV5SimpleProjectModel> searchRemoteProjects(SourceRepo credentials, Long groupId, String projectName,
+																SearchMeta meta) throws Exception {
 		super.searchRemoteProjects(credentials, groupId, projectName, meta);
 
 		// Parameters correcting.

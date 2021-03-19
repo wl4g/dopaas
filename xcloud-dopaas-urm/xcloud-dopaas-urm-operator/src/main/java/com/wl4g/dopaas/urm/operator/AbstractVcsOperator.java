@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.urm.operator;
 
 import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.dopaas.common.bean.uci.Vcs;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
 
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -97,8 +97,8 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	 * @param ref
 	 * @return
 	 */
-	protected final <T> ResponseEntity<T> doRemoteRequest(HttpMethod method, Vcs credentials, String url, HttpHeaders headers,
-			ParameterizedTypeReference<T> ref) {
+	protected final <T> ResponseEntity<T> doRemoteRequest(HttpMethod method, SourceRepo credentials, String url, HttpHeaders headers,
+														  ParameterizedTypeReference<T> ref) {
 		notNullOf(method, "method");
 		notNullOf(credentials, "credentials");
 		notNullOf(ref, "typeReference");
@@ -126,7 +126,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	 * @param credentials
 	 * @return
 	 */
-	protected abstract HttpEntity<String> createRequestEntity(Vcs credentials);
+	protected abstract HttpEntity<String> createRequestEntity(SourceRepo credentials);
 
 	/**
 	 * Create SSL {@link ClientHttpRequestFactory}
