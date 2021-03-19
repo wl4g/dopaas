@@ -51,6 +51,11 @@
 			<artifactId>xcloud-shell-springboot</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-dopaas-udm-service-facade</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
 		</dependency>

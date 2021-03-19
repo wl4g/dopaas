@@ -18,30 +18,27 @@ package com.wl4g.dopaas.urm.operator;
 import com.google.common.annotations.Beta;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.framework.operator.Operator;
-import com.wl4g.dopaas.common.bean.uci.Vcs;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
 import com.wl4g.dopaas.urm.operator.model.VcsGroupModel;
 import com.wl4g.dopaas.urm.operator.model.VcsProjectModel;
 import com.wl4g.dopaas.urm.operator.model.VcsTagModel;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.dopaas.urm.operator.VcsOperator.VcsProviderKind;
-
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.dopaas.urm.operator.VcsOperator.VcsProviderKind;
 import static java.util.Objects.isNull;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.*;
 
 /**
  * VCS APIs operator.
@@ -72,7 +69,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	default <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
+	default <T extends VcsBranchModel> List<T> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject)
 			throws Exception {
 		notNull(credentials, "Get remote branchs credentials can't is null.");
 		notNull(vcsProject, "Get remote branchs vcsProject can't is null");
@@ -89,7 +86,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param <T>
 	 * @return
 	 */
-	default <T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, Long projectId, String branch, String ref) {
+	default <T extends VcsBranchModel> T createRemoteBranch(SourceRepo credentials, Long projectId, String branch, String ref) {
 		return null;
 	}
 
@@ -101,7 +98,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	default <T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
+	default <T extends VcsTagModel> List<T> getRemoteTags(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject)
 			throws Exception {
 		notNull(credentials, "Get remote tags credentials can't is null.");
 		notNull(credentials, "Get remote tags vcsProject can't is null.");
@@ -118,8 +115,8 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param <T>
 	 * @return
 	 */
-	default <T extends VcsTagModel> T createRemoteTag(Vcs credentials, Long projectId, String tag, String ref, String message,
-			String releaseDescription) {
+	default <T extends VcsTagModel> T createRemoteTag(SourceRepo credentials, Long projectId, String tag, String ref, String message,
+													  String releaseDescription) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -131,7 +128,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	default Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
+	default Long getRemoteProjectId(SourceRepo credentials, String projectName) throws Exception {
 		notNull(credentials, "Get remote projectId credentials can't is null.");
 		hasText(projectName, "Get remote projectId can't is empty");
 		getLog().info("Search remote projectIds by projectName: {}", projectName);
@@ -145,7 +142,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName)
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(SourceRepo credentials, Long groupId, String projectName)
 			throws Exception {
 		return searchRemoteProjects(credentials, groupId, projectName, SearchMeta.MAX_LIMIT);
 	}
@@ -160,9 +157,10 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param meta
 	 * @return
 	 */
-	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
-			SearchMeta meta) throws Exception {
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(@NotNull SourceRepo credentials, @Nullable Long groupId, @Nullable String projectName,
+																	 @NotNull SearchMeta meta) throws Exception {
 		notNull(credentials, "Search remote projects credentials can't is null.");
+		notNull(meta, "Search remote projects meta can't is null.");
 		/*
 		 * The item name to be searched can be empty. If it is empty, it means
 		 * unconditional.
@@ -180,7 +178,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param vcsProjectId
 	 * @return
 	 */
-	default <T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Long vcsProjectId) {
+	default <T extends VcsProjectModel> T searchRemoteProjectsById(SourceRepo credentials, Long vcsProjectId) {
 		notNullOf(vcsProjectId, "vcsProjectId");
 		return null;
 	}
@@ -192,7 +190,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	default <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName) {
+	default <T extends VcsGroupModel> List<T> searchRemoteGroups(SourceRepo credentials, String groupName) {
 		return searchRemoteGroups(credentials, groupName, SearchMeta.MAX_LIMIT);
 	}
 
@@ -206,7 +204,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param meta
 	 * @return
 	 */
-	default <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, SearchMeta meta) {
+	default <T extends VcsGroupModel> List<T> searchRemoteGroups(SourceRepo credentials, String groupName, SearchMeta meta) {
 		return null;
 	}
 
@@ -227,7 +225,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @return
 	 * @throws IOException
 	 */
-	default <T> T clone(Vcs credentials, String remoteUrl, String projecDir) throws IOException {
+	default <T> T clone(SourceRepo credentials, String remoteUrl, String projecDir) throws IOException {
 		return clone(credentials, remoteUrl, projecDir, null);
 	}
 
@@ -245,7 +243,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @return
 	 * @throws IOException
 	 */
-	default <T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+	default <T> T clone(SourceRepo credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
 		notNull(credentials, "Clone credentials is requires.");
 		hasText(remoteUrl, "Clone remoteUrl is requires");
 		hasText(projecDir, "Clone projecDir is requires");
@@ -264,7 +262,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param refName
 	 *            VCS source name (branch/tag)
 	 */
-	default <T> T checkoutAndPull(Vcs credentials, String projecDir, String refName, RefType action) {
+	default <T> T checkoutAndPull(SourceRepo credentials, String projecDir, String refName, RefType action) {
 		notNull(credentials, "Checkout & pull credentials is requires.");
 		hasText(projecDir, "Checkout & pull projecDir is requires.");
 		hasText(refName, "Checkout & pull branchName is requires.");
@@ -327,7 +325,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 *            committed ID.
 	 * @return
 	 */
-	default <T> T rollback(Vcs credentials, String projecDir, String sign) {
+	default <T> T rollback(SourceRepo credentials, String projecDir, String sign) {
 		notNull(credentials, "Rollback credentials is requires.");
 		hasText(projecDir, "Rollback projecDir can't is empty");
 		hasText(sign, "Rollback sign can't is empty");

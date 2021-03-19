@@ -21,7 +21,7 @@
 		<!-- other -->
 		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
 
-		<association property="vcs" javaType="com.wl4g.dopaas.common.bean.uci.Vcs">
+		<association property="vcs" javaType="com.wl4g.dopaas.common.bean.urm.SourceRepo">
 			<id column="v.id" property="id" jdbcType="INTEGER" />
 			<result column="v.name" property="name" jdbcType="VARCHAR" />
 			<result column="v.provider_kind" property="providerKind" jdbcType="INTEGER" />

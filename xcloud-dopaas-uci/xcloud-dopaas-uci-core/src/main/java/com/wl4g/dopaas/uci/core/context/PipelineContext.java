@@ -15,13 +15,7 @@
  */
 package com.wl4g.dopaas.uci.core.context;
 
-import com.wl4g.dopaas.common.bean.uci.PipeStageBuilding;
-import com.wl4g.dopaas.common.bean.uci.PipeStageInstanceCommand;
-import com.wl4g.dopaas.common.bean.uci.PipeStageNotification;
-import com.wl4g.dopaas.common.bean.uci.Pipeline;
-import com.wl4g.dopaas.common.bean.uci.PipelineHistory;
-import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;
-import com.wl4g.dopaas.common.bean.uci.Project;
+import com.wl4g.dopaas.common.bean.uci.*;
 import com.wl4g.dopaas.common.bean.uci.model.ActionControl;
 import com.wl4g.dopaas.common.bean.uci.model.PipelineModel;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
@@ -81,6 +75,11 @@ public abstract interface PipelineContext {
 
 		@Override
 		public ActionControl getActionControl() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public PipeStepApi getPipeStepApi() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -166,5 +165,7 @@ public abstract interface PipelineContext {
 	AppEnvironment getEnvironment();
 
 	ActionControl getActionControl();
+
+	PipeStepApi getPipeStepApi();
 
 }

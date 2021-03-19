@@ -15,18 +15,12 @@
  */
 package com.wl4g.dopaas.uci.core.context;
 
-import com.wl4g.dopaas.common.bean.uci.PipeStageBuilding;
-import com.wl4g.dopaas.common.bean.uci.PipeStageInstanceCommand;
-import com.wl4g.dopaas.common.bean.uci.PipeStageNotification;
-import com.wl4g.dopaas.common.bean.uci.Pipeline;
-import com.wl4g.dopaas.common.bean.uci.PipelineHistory;
-import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;
-import com.wl4g.dopaas.common.bean.uci.Project;
-import com.wl4g.dopaas.common.bean.uci.model.ActionControl;
-import com.wl4g.dopaas.common.bean.uci.model.PipelineModel;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
 import com.wl4g.dopaas.common.bean.cmdb.AppEnvironment;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
+import com.wl4g.dopaas.common.bean.uci.*;
+import com.wl4g.dopaas.common.bean.uci.model.ActionControl;
+import com.wl4g.dopaas.common.bean.uci.model.PipelineModel;
 
 import java.util.List;
 
@@ -57,11 +51,12 @@ public class DefaultPipelineContext implements PipelineContext {
 	final private PipeStageBuilding pipeStepBuilding;
 	final private AppEnvironment environment;
 	final private ActionControl actionControl;
+	final private PipeStepApi pipeStepApi;
 
 	public DefaultPipelineContext(Project project, String projectSourceDir, AppCluster appCluster, List<AppInstance> instances,
-			PipelineHistory pipelineHistory, List<PipelineHistoryInstance> pipelineHistoryInstances, PipelineModel pipelineModel,
-			PipeStageInstanceCommand pipeStepInstanceCommand, Pipeline pipeline, PipeStageNotification pipeStepNotification,
-			PipeStageBuilding pipeStepBuilding, AppEnvironment environment, ActionControl actionControl) {
+								  PipelineHistory pipelineHistory, List<PipelineHistoryInstance> pipelineHistoryInstances, PipelineModel pipelineModel,
+								  PipeStageInstanceCommand pipeStepInstanceCommand, Pipeline pipeline, PipeStageNotification pipeStepNotification,
+								  PipeStageBuilding pipeStepBuilding, AppEnvironment environment, ActionControl actionControl, PipeStepApi pipeStepApi) {
 		notNull(project, "project must not be null");
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
@@ -80,6 +75,7 @@ public class DefaultPipelineContext implements PipelineContext {
 		this.pipeStepBuilding = pipeStepBuilding;
 		this.environment = environment;
 		this.actionControl = actionControl;
+		this.pipeStepApi = pipeStepApi;
 	}
 
 	@Override
@@ -142,5 +138,9 @@ public class DefaultPipelineContext implements PipelineContext {
 
 	public ActionControl getActionControl() {
 		return actionControl;
+	}
+
+	public PipeStepApi getPipeStepApi() {
+		return pipeStepApi;
 	}
 }

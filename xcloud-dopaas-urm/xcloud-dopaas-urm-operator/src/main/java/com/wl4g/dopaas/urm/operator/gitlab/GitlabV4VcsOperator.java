@@ -15,26 +15,26 @@
  */
 package com.wl4g.dopaas.urm.operator.gitlab;
 
-import com.wl4g.dopaas.common.bean.uci.Vcs;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.GenericBasedGitVcsOperator;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-import static org.springframework.http.HttpMethod.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.component.common.lang.TypeConverts.parseIntOrDefault;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.lang.TypeConverts.parseIntOrDefault;
+import static com.wl4g.dopaas.urm.operator.VcsOperator.SearchMeta.MAX_LIMIT;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 /**
  * VCS operator for GITLAB V4.
@@ -51,7 +51,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	protected HttpEntity<String> createRequestEntity(Vcs credentials) {
+	protected HttpEntity<String> createRequestEntity(SourceRepo credentials) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
 		return new HttpEntity<>(null, headers);
@@ -59,7 +59,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4BranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject)
+	public List<GitlabV4BranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject)
 			throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
 
@@ -75,7 +75,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4TagModel> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<GitlabV4TagModel> getRemoteTags(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteTags(credentials, vcsProject);
 
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + vcsProject.getId() + "/repository/tags";
@@ -90,7 +90,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public GitlabV4BranchModel createRemoteBranch(Vcs credentials, Long projectId, String branch, String ref) {
+	public GitlabV4BranchModel createRemoteBranch(SourceRepo credentials, Long projectId, String branch, String ref) {
 		super.createRemoteBranch(credentials, projectId, branch, ref);
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches?branch=%s&ref=%s";
 
@@ -101,8 +101,8 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public GitlabV4TagModel createRemoteTag(Vcs credentials, Long projectId, String tag, String ref, String message,
-			String releaseDescription) {
+	public GitlabV4TagModel createRemoteTag(SourceRepo credentials, Long projectId, String tag, String ref, String message,
+											String releaseDescription) {
 		super.createRemoteTag(credentials, projectId, tag, ref, message, releaseDescription);
 
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId
@@ -114,11 +114,11 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
+	public Long getRemoteProjectId(SourceRepo credentials, String projectName) throws Exception {
 		super.getRemoteProjectId(credentials, projectName);
 
 		// Search projects for GITLAB.
-		List<GitlabV4SimpleProjectModel> projects = searchRemoteProjects(credentials, null, projectName, null);
+		List<GitlabV4SimpleProjectModel> projects = searchRemoteProjects(credentials, null, projectName, MAX_LIMIT);
 		Long id = null;
 		for (GitlabV4SimpleProjectModel p : projects) {
 			if (trimToEmpty(projectName).equals(p.getName())) {
@@ -135,7 +135,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4SimpleTeamModel> searchRemoteGroups(Vcs credentials, String groupName) {
+	public List<GitlabV4SimpleTeamModel> searchRemoteGroups(SourceRepo credentials, String groupName) {
 		String url = format((credentials.getBaseUri() + "/api/v4/groups?search=%s&per_page=%s"), groupName);
 
 		ResponseEntity<List<GitlabV4SimpleTeamModel>> gitTeams = doRemoteRequest(GET, credentials, url, null,
@@ -147,8 +147,8 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName,
-			SearchMeta meta) throws Exception {
+	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(SourceRepo credentials, Long groupId, String projectName,
+																 SearchMeta meta) throws Exception {
 		super.searchRemoteProjects(credentials, groupId, projectName, meta);
 
 		// Parameters correcting.
@@ -176,7 +176,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public GitlabV4ProjectModel searchRemoteProjectsById(Vcs credentials, Long vcsProjectId) {
+	public GitlabV4ProjectModel searchRemoteProjectsById(SourceRepo credentials, Long vcsProjectId) {
 		String url = format((credentials.getBaseUri() + "/api/v4/projects/%d"), vcsProjectId);
 		return doRemoteRequest(GET, credentials, url, null, new ParameterizedTypeReference<GitlabV4ProjectModel>() {
 		}).getBody();

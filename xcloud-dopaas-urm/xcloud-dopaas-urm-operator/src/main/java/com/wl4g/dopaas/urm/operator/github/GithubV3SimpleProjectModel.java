@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.urm.operator.github;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.model.VcsProjectModel;
 
 import java.io.Serializable;

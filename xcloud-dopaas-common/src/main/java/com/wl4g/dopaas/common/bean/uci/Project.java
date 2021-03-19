@@ -16,7 +16,8 @@
 package com.wl4g.dopaas.common.bean.uci;
 
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
 
 import java.io.Serializable;
 import java.util.List;
@@ -65,7 +66,7 @@ public class Project extends BaseBean implements Serializable {
 	 * Project mapping to Vcs credentials.</br>
 	 * Many(Project)-to-One(Vcs)
 	 */
-	private Vcs vcs = new Vcs();
+	private SourceRepo vcs = new SourceRepo();
 
 	public String getProjectName() {
 		return projectName;
@@ -115,7 +116,7 @@ public class Project extends BaseBean implements Serializable {
 		this.dependencies = dependencies;
 	}
 
-	public Vcs getVcs() {
+	public SourceRepo getVcs() {
 		return vcs;
 	}
 
@@ -135,7 +136,7 @@ public class Project extends BaseBean implements Serializable {
 		this.sshUrl = sshUrl;
 	}
 
-	public void setVcs(Vcs vcs) {
+	public void setVcs(SourceRepo vcs) {
 		if (nonNull(vcs)) {
 			this.vcs = vcs;
 		}

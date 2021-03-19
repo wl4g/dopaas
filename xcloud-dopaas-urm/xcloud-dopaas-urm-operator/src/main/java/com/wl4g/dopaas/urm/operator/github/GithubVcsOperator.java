@@ -18,8 +18,8 @@ package com.wl4g.dopaas.urm.operator.github;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.locks.JedisLockManager;
-import com.wl4g.dopaas.common.bean.uci.Vcs;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.GenericBasedGitVcsOperator;
 import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
 import com.wl4g.dopaas.urm.operator.model.VcsProjectModel;
@@ -68,7 +68,7 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<VcsBranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
 
 		// Search projects.
@@ -78,7 +78,7 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsTagModel> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<VcsTagModel> getRemoteTags(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteTags(credentials, vcsProject);
 
 		// Search projects.
@@ -88,13 +88,13 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
+	public Long getRemoteProjectId(SourceRepo credentials, String projectName) throws Exception {
 		super.getRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<VcsProjectModel> searchRemoteProjects(Vcs credentials, Long groupId, String projectName, SearchMeta meta)
+	public List<VcsProjectModel> searchRemoteProjects(SourceRepo credentials, Long groupId, String projectName, SearchMeta meta)
 			throws Exception {
 		super.searchRemoteProjects(credentials, groupId, projectName, meta);
 
@@ -132,7 +132,7 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	protected HttpEntity<String> createRequestEntity(Vcs credentials) {
+	protected HttpEntity<String> createRequestEntity(SourceRepo credentials) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Accept", "application/vnd.github.v3+json");
 		headers.add("Authorization", "token " + credentials.getAccessToken());
@@ -147,7 +147,7 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 	 * @return
 	 * @throws Exception
 	 */
-	private List<GithubV3SimpleProjectModel> getCachedProjects(Vcs credentials) throws Exception {
+	private List<GithubV3SimpleProjectModel> getCachedProjects(SourceRepo credentials) throws Exception {
 		String cacheKey = DEFAULT_CACHE_KEY.concat(valueOf(credentials.getId()));
 		String projects = jedisService.get(cacheKey);
 		if (isNotBlank(projects)) {
@@ -167,7 +167,7 @@ public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	private List<GithubV3SimpleProjectModel> doQueryRemoteProjects(Vcs credentials) throws Exception {
+	private List<GithubV3SimpleProjectModel> doQueryRemoteProjects(SourceRepo credentials) throws Exception {
 		int limit = 100;
 		int pageNum = 1;
 		List<GithubV3SimpleProjectModel> result = new ArrayList<>();
