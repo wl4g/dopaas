@@ -103,7 +103,7 @@
 		<docker-java.version>3.1.5</docker-java.version>
 		<!-- Discover's -->
 		<zookeeper.version>3.4.14</zookeeper.version>
-		<elastic-job.version>2.1.5</elastic-job.version>
+		<elastic-job.version>3.0.0-RC1</elastic-job.version>
 		<curator.version>2.10.0</curator.version>
 		<!-- Maven plugins -->
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -517,26 +517,15 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.dangdang</groupId>
-				<artifactId>elastic-job-lite-core</artifactId>
+				<groupId>org.apache.shardingsphere.elasticjob</groupId>
+				<artifactId>elasticjob-lite-lifecycle</artifactId>
 				<version>${elastic-job.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.dangdang</groupId>
-				<artifactId>elastic-job-lite-spring</artifactId>
-				<version>${elastic-job.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.curator</groupId>
-				<artifactId>curator-recipes</artifactId>
-				<version>${curator.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.curator</groupId>
-				<artifactId>curator-framework</artifactId>
-				<version>${curator.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.zaxxer</groupId>
+						<artifactId>HikariCP-java7</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
