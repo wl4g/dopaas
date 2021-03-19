@@ -18,8 +18,8 @@ package com.wl4g.dopaas.urm.operator;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.wl4g.dopaas.common.bean.uci.Vcs;
-import com.wl4g.dopaas.common.bean.uci.Vcs.VcsAuthType;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo.VcsAuthType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.*;
@@ -54,7 +54,7 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Git clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+	public Git clone(SourceRepo credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
 		super.clone(credentials, remoteUrl, projecDir, branchName);
 
 		File path = new File(projecDir);
@@ -79,7 +79,7 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public PullResult checkoutAndPull(Vcs credentials, String projecDir, String refName, RefType action) {
+	public PullResult checkoutAndPull(SourceRepo credentials, String projecDir, String refName, RefType action) {
 		super.checkoutAndPull(credentials, projecDir, refName, action);
 		String projectURL = projecDir + "/.git";
 		try (Git git = Git.open(new File(projectURL))) {
@@ -172,7 +172,7 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Ref rollback(Vcs credentials, String projecDir, String sign) {
+	public Ref rollback(SourceRepo credentials, String projecDir, String sign) {
 		super.rollback(credentials, projecDir, sign);
 
 		String metaDir = projecDir + "/.git";
@@ -221,7 +221,7 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private <T extends TransportCommand> T setupCredentials(Vcs credentials, T command) {
+	private <T extends TransportCommand> T setupCredentials(SourceRepo credentials, T command) {
 		try {
 			switch (VcsAuthType.of(credentials.getAuthType())) {
 			case AUTH_PASSWD:
@@ -271,7 +271,7 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	protected HttpEntity<String> createRequestEntity(Vcs credentials) {
+	protected HttpEntity<String> createRequestEntity(SourceRepo credentials) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(null, headers);

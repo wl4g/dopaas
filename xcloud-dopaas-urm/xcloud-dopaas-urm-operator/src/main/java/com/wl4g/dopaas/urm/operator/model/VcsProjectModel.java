@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.urm.operator.model;
 
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 
 /**
  * VCS remote project information model.

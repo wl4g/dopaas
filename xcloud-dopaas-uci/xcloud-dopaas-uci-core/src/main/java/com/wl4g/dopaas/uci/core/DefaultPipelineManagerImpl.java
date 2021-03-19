@@ -15,60 +15,33 @@
  */
 package com.wl4g.dopaas.uci.core;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.io.FileIOUtils.seekReadLines;
-import static com.wl4g.component.common.io.FileIOUtils.writeALineFile;
-import static com.wl4g.component.common.io.FileIOUtils.writeBLineFile;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.FAILED;
-import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.RUNNING;
-import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.SUCCESS;
-import static com.wl4g.dopaas.common.constant.UciConstants.LOG_FILE_END;
-import static com.wl4g.dopaas.common.constant.UciConstants.LOG_FILE_START;
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_CREATE;
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_FAIL;
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_PART_SUCCESS;
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_RUNNING;
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_STOP;
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_STOPING;
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_SUCCESS;
-import static java.lang.String.format;
-import static java.lang.System.currentTimeMillis;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.springframework.util.Assert.notNull;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.io.FileIOUtils.ReadTailFrame;
+import com.wl4g.component.common.io.FileIOUtils.*;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.support.notification.MessageNotifier;
 import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.dopaas.cmdb.service.AppClusterService;
+import com.wl4g.dopaas.cmdb.service.AppInstanceService;
+import com.wl4g.dopaas.cmdb.service.DockerRepositoryService;
+import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
+import com.wl4g.dopaas.common.bean.cmdb.AppEnvironment;
+import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
+import com.wl4g.dopaas.common.bean.cmdb.DockerRepository;
+import com.wl4g.dopaas.common.bean.uci.*;
+import com.wl4g.dopaas.common.bean.uci.model.ActionControl;
+import com.wl4g.dopaas.common.bean.uci.model.PipelineModel;
+import com.wl4g.dopaas.common.bean.uci.param.HookParameter;
+import com.wl4g.dopaas.common.bean.uci.param.RollbackParameter;
+import com.wl4g.dopaas.common.bean.uci.param.RunParameter;
 import com.wl4g.dopaas.uci.config.CiProperties;
 import com.wl4g.dopaas.uci.core.context.DefaultPipelineContext;
 import com.wl4g.dopaas.uci.core.context.PipelineContext;
 import com.wl4g.dopaas.uci.core.orchestration.OrchestrationManager;
 import com.wl4g.dopaas.uci.data.PipeStageNotificationDao;
+import com.wl4g.dopaas.uci.data.PipeStepApiDao;
 import com.wl4g.dopaas.uci.pipeline.provider.PipelineProvider;
 import com.wl4g.dopaas.uci.service.PipelineHistoryService;
 import com.wl4g.dopaas.uci.service.PipelineService;
@@ -76,28 +49,29 @@ import com.wl4g.dopaas.uci.service.ProjectService;
 import com.wl4g.dopaas.uci.utils.HookCommandHolder.BuildCommand;
 import com.wl4g.dopaas.uci.utils.HookCommandHolder.DeployCommand;
 import com.wl4g.dopaas.uci.utils.HookCommandHolder.HookCommand;
-import com.wl4g.dopaas.common.bean.uci.ClusterExtension;
-import com.wl4g.dopaas.common.bean.uci.PipeStageBuilding;
-import com.wl4g.dopaas.common.bean.uci.PipeStageBuildingProject;
-import com.wl4g.dopaas.common.bean.uci.PipeStageInstanceCommand;
-import com.wl4g.dopaas.common.bean.uci.PipeStageNotification;
-import com.wl4g.dopaas.common.bean.uci.Pipeline;
-import com.wl4g.dopaas.common.bean.uci.PipelineHistory;
-import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;
-import com.wl4g.dopaas.common.bean.uci.Project;
-import com.wl4g.dopaas.common.bean.uci.model.ActionControl;
-import com.wl4g.dopaas.common.bean.uci.model.PipelineModel;
-import com.wl4g.dopaas.common.bean.uci.param.HookParameter;
-import com.wl4g.dopaas.common.bean.uci.param.RollbackParameter;
-import com.wl4g.dopaas.common.bean.uci.param.RunParameter;
-import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
-import com.wl4g.dopaas.common.bean.cmdb.AppEnvironment;
-import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
-import com.wl4g.dopaas.common.bean.cmdb.DockerRepository;
-import com.wl4g.dopaas.cmdb.service.AppClusterService;
-import com.wl4g.dopaas.cmdb.service.AppInstanceService;
-import com.wl4g.dopaas.cmdb.service.DockerRepositoryService;
 import com.wl4g.iam.service.ContactService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.File;
+import java.util.*;
+
+import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.io.FileIOUtils.*;
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.dopaas.common.constant.UciConstants.*;
+import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.*;
+import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Default CI/CD pipeline management implements.
@@ -140,6 +114,8 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 	protected PipelineHistoryService pipeHistoryService;
 	@Autowired
 	protected PipeStageNotificationDao pipeStepNotificationDao;
+	@Autowired
+	protected PipeStepApiDao pipeStepApiDao;
 
 	@Override
 	public void runPipeline(RunParameter runParam) throws Exception {
@@ -472,10 +448,13 @@ public class DefaultPipelineManagerImpl implements PipelineManager {
 			}
 		}
 
-		// TODO add pipeline status track
+		//TODO API Document
+		PipeStepApi pipeStepApi = pipeStepApiDao.selectByPipeId(pipe.getId());
+
+		// add pipeline status track
 		PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, pipeHistory,
 				pipeHisInstances, pipelineModel, pipeStepInstanceCommand, pipe, pipeStepNotification, pipeStepBuilding, env,
-				actionControl);
+				actionControl, pipeStepApi);
 
 		// Get prototype provider.
 		return beanFactory.getPrototypeBean(pipe.getProviderKind(), context);

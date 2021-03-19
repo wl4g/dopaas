@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.dopaas.common.bean.uci.Vcs;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
 import com.wl4g.dopaas.urm.operator.model.VcsProjectModel;
 import com.wl4g.dopaas.urm.operator.model.VcsTagModel;
@@ -48,15 +48,15 @@ public class RepoController extends BaseController {
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "urm" }, logical = AND)
-	public RespBase<PageHolder<Vcs>> list(PageHolder<Vcs> pm, String name, String providerKind, Integer authType) {
-		RespBase<PageHolder<Vcs>> resp = RespBase.create();
+	public RespBase<PageHolder<SourceRepo>> list(PageHolder<SourceRepo> pm, String name, String providerKind, Integer authType) {
+		RespBase<PageHolder<SourceRepo>> resp = RespBase.create();
 		resp.setData(repoService.list(pm, name, providerKind, authType));
 		return resp;
 	}
 
 	@RequestMapping("/save")
 	@RequiresPermissions(value = { "urm" }, logical = AND)
-	public RespBase<?> save(@RequestBody Vcs vcs) {
+	public RespBase<?> save(@RequestBody SourceRepo vcs) {
 		RespBase<Object> resp = RespBase.create();
 		repoService.save(vcs);
 		return resp;
@@ -74,7 +74,7 @@ public class RepoController extends BaseController {
 	@RequiresPermissions(value = { "urm" }, logical = AND)
 	public RespBase<?> detail(Long id) {
 		RespBase<Object> resp = RespBase.create();
-		Vcs vcs = repoService.detail(id);
+		SourceRepo vcs = repoService.detail(id);
 		resp.setData(vcs);
 		return resp;
 	}

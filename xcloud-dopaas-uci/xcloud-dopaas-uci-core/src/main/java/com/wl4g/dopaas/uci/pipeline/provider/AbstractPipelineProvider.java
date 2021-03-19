@@ -23,6 +23,11 @@ import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
+import com.wl4g.dopaas.common.bean.cmdb.SshBean;
+import com.wl4g.dopaas.common.bean.uci.Project;
+import com.wl4g.dopaas.common.exception.ci.BadCommandScriptException;
+import com.wl4g.dopaas.common.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.dopaas.uci.config.CiProperties;
 import com.wl4g.dopaas.uci.core.PipelineJobExecutor;
 import com.wl4g.dopaas.uci.core.context.PipelineContext;
@@ -32,11 +37,7 @@ import com.wl4g.dopaas.uci.data.ProjectDao;
 import com.wl4g.dopaas.uci.pipeline.deploy.CossPipeDeployer;
 import com.wl4g.dopaas.uci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.dopaas.uci.service.DependencyService;
-import com.wl4g.dopaas.common.bean.uci.Project;
-import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
-import com.wl4g.dopaas.common.bean.cmdb.SshBean;
-import com.wl4g.dopaas.common.exception.ci.BadCommandScriptException;
-import com.wl4g.dopaas.common.exception.ci.PipelineIntegrationBuildingException;
+import com.wl4g.dopaas.udm.service.EnterpriseApiService;
 import com.wl4g.dopaas.urm.operator.VcsOperator;
 import com.wl4g.dopaas.urm.operator.VcsOperator.VcsProviderKind;
 import org.springframework.beans.factory.BeanFactory;
@@ -99,6 +100,10 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected ProjectDao projectDao;
 	@Autowired
 	protected PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
+
+	@Autowired
+	protected EnterpriseApiService enterpriseApiService;
+
 
 	/**
 	 * Pull project source from VCS files fingerprint.

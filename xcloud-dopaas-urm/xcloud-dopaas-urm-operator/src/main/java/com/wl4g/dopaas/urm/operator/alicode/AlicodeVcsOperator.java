@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.urm.operator.alicode;
 
 import com.wl4g.component.common.annotation.Reserved;
-import com.wl4g.dopaas.common.bean.uci.Vcs;
-import com.wl4g.dopaas.common.bean.urm.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.GenericBasedGitVcsOperator;
 import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
 import com.wl4g.dopaas.urm.operator.model.VcsTagModel;
@@ -41,25 +41,25 @@ public class AlicodeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<VcsBranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<VcsTagModel> getRemoteTags(Vcs credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<VcsTagModel> getRemoteTags(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
 		super.getRemoteTags(credentials, vcsProject);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Long getRemoteProjectId(Vcs credentials, String projectName) throws Exception {
+	public Long getRemoteProjectId(SourceRepo credentials, String projectName) throws Exception {
 		super.getRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected HttpEntity<String> createRequestEntity(Vcs credentials) {
+	protected HttpEntity<String> createRequestEntity(SourceRepo credentials) {
 		throw new UnsupportedOperationException();
 	}
 

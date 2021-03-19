@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.dopaas.urm.data.RepoDao">
-	<resultMap id="BaseResultMap" type="com.wl4g.dopaas.common.bean.uci.Vcs">
+	<resultMap id="BaseResultMap" type="com.wl4g.dopaas.common.bean.urm.SourceRepo">
 		<id column="id" property="id" jdbcType="BIGINT" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
@@ -59,7 +59,7 @@
 		delete from urm_source_repo
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" parameterType="com.wl4g.dopaas.common.bean.uci.Vcs">
+	<insert id="insert" parameterType="com.wl4g.dopaas.common.bean.urm.SourceRepo">
 		insert into urm_source_repo (id,name,organization_code, provider_kind, auth_type,
 		base_uri, ssh_key_pub, ssh_key,
 		access_token, username, password,
@@ -74,7 +74,7 @@
 		#{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
 		#{updateBy,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.uci.Vcs" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.urm.SourceRepo" useGeneratedKeys="true" keyProperty="id">
 		insert into urm_source_repo
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
@@ -189,7 +189,7 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.uci.Vcs">
+	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.urm.SourceRepo">
 		update urm_source_repo
 		<set>
 			<if test="name != null">
@@ -246,7 +246,7 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.uci.Vcs">
+	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.urm.SourceRepo">
 		update urm_source_repo
 		set name = #{name,jdbcType=VARCHAR},
 		organization_code = #{organizationCode,jdbcType=VARCHAR},

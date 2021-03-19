@@ -101,4 +101,17 @@ public interface EnterpriseApiService {
 	String exportApi(@RequestParam(name = "kind", required = false)String kind,
 				   @RequestParam(name = "moduleId", required = false) Long moduleId) throws IOException;
 
+
+
+	/**
+	 * importApi.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/importApiAndUpdateVersion", method = POST)
+	void importApiAndUpdateVersion(@RequestParam(name = "kind", required = false)String kind,@RequestBody String json,
+				   @RequestParam(name = "repositoryId", required = false) Long repositoryId);
+
+
 }
