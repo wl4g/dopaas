@@ -13,10 +13,6 @@ public class PipeStepApi extends BaseBean {
 
     private Long repositoryId;
 
-    private Long versionId;
-
-    private Long moduleId;
-
     public Long getId() {
         return id;
     }
@@ -49,19 +45,4 @@ public class PipeStepApi extends BaseBean {
         this.repositoryId = repositoryId;
     }
 
-    public Long getVersionId() {
-        return versionId;
-    }
-
-    public void setVersionId(Long versionId) {
-        this.versionId = versionId;
-    }
-
-    public Long getModuleId() {
-        return moduleId;
-    }
-
-    public void setModuleId(Long moduleId) {
-        this.moduleId = moduleId;
-    }
 }
