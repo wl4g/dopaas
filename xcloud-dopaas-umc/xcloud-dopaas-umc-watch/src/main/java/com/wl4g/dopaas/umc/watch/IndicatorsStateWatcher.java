@@ -15,6 +15,7 @@
  */
 package com.wl4g.dopaas.umc.watch;
 
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_FETCH_META;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -22,12 +23,11 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.shardingsphere.elasticjob.api.ShardingContext;
+import org.apache.shardingsphere.elasticjob.dataflow.job.DataflowJob;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.dangdang.ddframe.job.api.ShardingContext;
-import com.dangdang.ddframe.job.api.dataflow.DataflowJob;
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.dopaas.umc.watch.config.WatchProperties;
 import com.wl4g.dopaas.umc.watch.fetch.IndicatorsMetaFetcher;
@@ -41,8 +41,7 @@ import com.wl4g.dopaas.umc.watch.fetch.IndicatorsMetaInfo;
  * @since
  */
 public abstract class IndicatorsStateWatcher implements DataflowJob<IndicatorsMetaInfo> {
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	protected final SmartLogger log = getLogger(getClass());
 
 	@Autowired
 	protected JedisService jedisService;
@@ -55,9 +54,7 @@ public abstract class IndicatorsStateWatcher implements DataflowJob<IndicatorsMe
 
 	@Override
 	public List<IndicatorsMetaInfo> fetchData(ShardingContext sctx) {
-		if (log.isInfoEnabled()) {
-			log.info("Fetch indicators meta sharding for - {}", toJSONString(sctx));
-		}
+		log.info("Fetch indicators meta sharding for - {}", toJSONString(sctx));
 
 		List<IndicatorsMetaInfo> dataset = null;
 		try {
@@ -76,13 +73,8 @@ public abstract class IndicatorsStateWatcher implements DataflowJob<IndicatorsMe
 		} catch (Exception e) {
 			log.error("Failed to fetch sharding indicators meta", e);
 		}
-
-		if (log.isInfoEnabled()) {
-			log.info("Fetch indicators meta for - size({})", (dataset != null ? dataset.size() : 0));
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("Fetch indicators meta for - {}", dataset);
-		}
+		log.info("Fetch indicators meta for - size({})", (dataset != null ? dataset.size() : 0));
+		log.debug("Fetch indicators meta for - {}", dataset);
 
 		// Terminate the current schedule if the return data set is empty.
 		return dataset;

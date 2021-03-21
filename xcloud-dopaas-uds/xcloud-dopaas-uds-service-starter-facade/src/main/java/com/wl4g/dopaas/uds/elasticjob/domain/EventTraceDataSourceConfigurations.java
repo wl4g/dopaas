@@ -32,6 +32,6 @@ import java.util.Set;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class EventTraceDataSourceConfigurations {
-
-	private Set<EventTraceDataSourceConfiguration> eventTraceDataSourceConfiguration = new LinkedHashSet<>();
+    
+    private Set<EventTraceDataSourceConfiguration> eventTraceDataSourceConfiguration = new LinkedHashSet<>();
 }

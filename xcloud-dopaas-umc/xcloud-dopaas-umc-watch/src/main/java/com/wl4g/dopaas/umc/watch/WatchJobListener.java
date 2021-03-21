@@ -17,11 +17,10 @@ package com.wl4g.dopaas.umc.watch;
 
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 
+import org.apache.shardingsphere.elasticjob.infra.listener.ElasticJobListener;
+import org.apache.shardingsphere.elasticjob.infra.listener.ShardingContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.dangdang.ddframe.job.executor.ShardingContexts;
-import com.dangdang.ddframe.job.lite.api.listener.ElasticJobListener;
 
 /**
  * Indicators watch jobs listener.
@@ -45,6 +44,12 @@ public class WatchJobListener implements ElasticJobListener {
 		if (log.isInfoEnabled()) {
 			log.info("After executed for - {}", toJSONString(ctxs));
 		}
+	}
+
+	@Override
+	public String getType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

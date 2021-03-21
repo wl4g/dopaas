@@ -26,8 +26,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public final class UserAccount {
-
-	private String username;
-
-	private String password;
+    
+    private String username;
+    
+    private String password;
 }

@@ -15,24 +15,19 @@
  */
 package com.wl4g.dopaas.umc.watch.config;
 
-import javax.sql.DataSource; 
+import static com.dangdang.ddframe.job.config.JobCoreConfiguration.*;
+import static com.dangdang.ddframe.job.lite.config.LiteJobConfiguration.*;
 
+import javax.sql.DataSource;
+
+import org.apache.shardingsphere.elasticjob.dataflow.job.DataflowJob;
+import org.apache.shardingsphere.elasticjob.lite.internal.schedule.JobScheduler;
+import org.apache.shardingsphere.elasticjob.reg.zookeeper.ZookeeperConfiguration;
+import org.apache.shardingsphere.elasticjob.reg.zookeeper.ZookeeperRegistryCenter;
+import org.apache.shardingsphere.elasticjob.simple.job.SimpleJob;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-
-import com.dangdang.ddframe.job.api.dataflow.DataflowJob;
-import com.dangdang.ddframe.job.api.simple.SimpleJob;
-import com.dangdang.ddframe.job.config.dataflow.DataflowJobConfiguration;
-import com.dangdang.ddframe.job.config.simple.SimpleJobConfiguration;
-import com.dangdang.ddframe.job.event.JobEventConfiguration;
-import com.dangdang.ddframe.job.event.rdb.JobEventRdbConfiguration;
-import com.dangdang.ddframe.job.lite.api.JobScheduler;
-import com.dangdang.ddframe.job.lite.config.LiteJobConfiguration;
-import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperConfiguration;
-import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
-import static com.dangdang.ddframe.job.lite.config.LiteJobConfiguration.*;
-import static com.dangdang.ddframe.job.config.JobCoreConfiguration.*;
 
 import com.wl4g.component.common.annotation.Reserved;
 import com.wl4g.dopaas.umc.watch.ServiceIndicatorsStateWatcher;
@@ -50,8 +45,7 @@ import com.wl4g.dopaas.umc.watch.fetch.ServiceIndicatorsMetaFetcher;
  * @since
  */
 public class UmcWatchAutoConfiguration {
-
-	final public static String KEY_WATCH_PREFIX = "spring.cloud.devops.umc.watch";
+	public static final String KEY_WATCH_PREFIX = "spring.cloud.devops.umc.watch";
 
 	@Bean
 	@ConfigurationProperties(prefix = KEY_WATCH_PREFIX)

@@ -36,32 +36,31 @@ import java.io.Serializable;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class EventTraceDataSourceConfiguration implements Serializable {
-
-	private static final long serialVersionUID = -5996257770767863699L;
-
-	@XmlAttribute(required = true)
-	private String name;
-
-	@XmlAttribute(required = true)
-	private String driver;
-
-	@XmlAttribute
-	private String url;
-
-	@XmlAttribute
-	private String username;
-
-	@XmlAttribute
-	private String password;
-
-	@XmlAttribute
-	private boolean activated;
-
-	public EventTraceDataSourceConfiguration(final String driver, final String url, final String username,
-			final String password) {
-		this.driver = driver;
-		this.url = url;
-		this.username = username;
-		this.password = password;
-	}
+    
+    private static final long serialVersionUID = -5996257770767863699L;
+    
+    @XmlAttribute(required = true)
+    private String name;
+    
+    @XmlAttribute(required = true)
+    private String driver;
+    
+    @XmlAttribute
+    private String url;
+    
+    @XmlAttribute
+    private String username;
+    
+    @XmlAttribute
+    private String password;
+    
+    @XmlAttribute
+    private boolean activated;
+    
+    public EventTraceDataSourceConfiguration(final String driver, final String url, final String username, final String password) {
+        this.driver = driver;
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
 }

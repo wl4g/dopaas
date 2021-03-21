@@ -15,13 +15,11 @@
  */
 package com.wl4g.dopaas.umc.watch;
 
-import com.dangdang.ddframe.job.api.ElasticJob;
-import com.dangdang.ddframe.job.event.JobEventConfiguration;
-import com.dangdang.ddframe.job.lite.api.JobScheduler;
-import com.dangdang.ddframe.job.lite.api.listener.ElasticJobListener;
-import com.dangdang.ddframe.job.lite.config.LiteJobConfiguration;
-import com.dangdang.ddframe.job.lite.spring.job.util.AopTargetUtils;
-import com.dangdang.ddframe.job.reg.base.CoordinatorRegistryCenter;
+import org.apache.shardingsphere.elasticjob.api.ElasticJob;
+import org.apache.shardingsphere.elasticjob.infra.listener.ElasticJobListener;
+import org.apache.shardingsphere.elasticjob.lite.internal.schedule.JobScheduler;
+import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
+
 import com.google.common.base.Optional;
 
 /**

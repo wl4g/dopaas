@@ -16,8 +16,8 @@ spring:
     component:
       rpc:
         feign:
-          #default-url: http://n1.dopaas.wl4gsafecloudcs.com:18081/doc-facade
-          default-url: http://n1.dopaas.wl4gsafecloudcs.com:${provider.serverPort}${provider.contextPath}
+          #default-url: http://n1.dopaas.wl4gsafeclolcdps.com:18081/doc-facade
+          default-url: http://n1.dopaas.wl4gsafeclolcdps.com:${provider.serverPort}${provider.contextPath}
           default-log-level: BASIC # NONE|BASIC|HEADERS|FULL
           client-provider: okhttp3 # http2Client|okhttp3, default to okhttp3
           max-idle-connections: 520

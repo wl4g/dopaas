@@ -37,20 +37,20 @@ import java.io.Serializable;
 @NoArgsConstructor
 public final class RegistryCenterConfiguration implements Serializable {
 
-	private static final long serialVersionUID = 8667013870431703376L;
+    private static final long serialVersionUID = 8667013870431703376L;
 
-	@XmlAttribute(required = true)
-	private String name;
-
-	@XmlAttribute(required = true)
-	private String zkAddressList;
-
-	@XmlAttribute
-	private String namespace;
-
-	@XmlAttribute
-	private String digest;
-
-	@XmlAttribute
-	private boolean activated;
+    @XmlAttribute(required = true)
+    private String name;
+    
+    @XmlAttribute(required = true)
+    private String zkAddressList;
+    
+    @XmlAttribute
+    private String namespace;
+    
+    @XmlAttribute
+    private String digest;
+    
+    @XmlAttribute
+    private boolean activated;
 }

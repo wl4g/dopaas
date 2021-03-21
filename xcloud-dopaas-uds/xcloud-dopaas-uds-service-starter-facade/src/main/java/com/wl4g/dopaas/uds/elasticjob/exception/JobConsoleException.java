@@ -24,22 +24,22 @@ import lombok.Getter;
  */
 @Getter
 public final class JobConsoleException extends RuntimeException {
-
-	private static final long serialVersionUID = 1393957353478034407L;
-
-	public static final int INVALID_PARAM = 400;
-
-	public static final int NO_RIGHT = 403;
-
-	public static final int SERVER_ERROR = 500;
-
-	private final int errorCode;
-
-	private final String errorMessage;
-
-	public JobConsoleException(final int errorCode, final String errorMessage) {
-		super(errorMessage);
-		this.errorCode = errorCode;
-		this.errorMessage = errorMessage;
-	}
+    
+    private static final long serialVersionUID = 1393957353478034407L;
+    
+    public static final int INVALID_PARAM = 400;
+    
+    public static final int NO_RIGHT = 403;
+    
+    public static final int SERVER_ERROR = 500;
+    
+    private final int errorCode;
+    
+    private final String errorMessage;
+    
+    public JobConsoleException(final int errorCode, final String errorMessage) {
+        super(errorMessage);
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+    }
 }

@@ -12,17 +12,17 @@
 		<version>master</version>
 	</parent>
 	<modules>
-        <module>xcloud-dopaas-umc-example</module>
-        <module>xcloud-dopaas-umc-client-springboot</module>
+		<module>xcloud-dopaas-umc-example</module>
+		<module>xcloud-dopaas-umc-client-springboot</module>
 		<module>xcloud-dopaas-umc-alarm</module>
 		<module>xcloud-dopaas-umc-store</module>
-		<module>xcloud-dopaas-umc-watch</module>
-        <module>xcloud-dopaas-umc-service-data</module>
-        <module>xcloud-dopaas-umc-service-facade</module>
+		<!-- <module>xcloud-dopaas-umc-watch</module> -->
+		<module>xcloud-dopaas-umc-service-data</module>
+		<module>xcloud-dopaas-umc-service-facade</module>
 		<module>xcloud-dopaas-umc-service-starter-collector</module>
-        <module>xcloud-dopaas-umc-service-starter-tracker</module>
-        <module>xcloud-dopaas-umc-service-starter-facade</module>
-        <module>xcloud-dopaas-umc-service-starter-manager</module>
+		<module>xcloud-dopaas-umc-service-starter-tracker</module>
+		<module>xcloud-dopaas-umc-service-starter-facade</module>
+		<module>xcloud-dopaas-umc-service-starter-manager</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

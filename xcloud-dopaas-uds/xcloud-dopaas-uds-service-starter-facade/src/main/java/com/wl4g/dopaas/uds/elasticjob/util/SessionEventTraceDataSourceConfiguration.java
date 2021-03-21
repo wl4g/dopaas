@@ -27,17 +27,16 @@ import com.wl4g.dopaas.uds.elasticjob.domain.EventTraceDataSourceConfiguration;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SessionEventTraceDataSourceConfiguration {
-
-	private static EventTraceDataSourceConfiguration eventTraceDataSourceConfiguration;
-
-	/**
-	 * Set event trace data source configuration.
-	 *
-	 * @param eventTraceDataSourceConfiguration
-	 *            event trace data source configuration
-	 */
-	public static void setDataSourceConfiguration(final EventTraceDataSourceConfiguration eventTraceDataSourceConfiguration) {
-		DynamicDataSourceConfig.DynamicDataSourceContextHolder.setDataSourceName(eventTraceDataSourceConfiguration.getName());
-		SessionEventTraceDataSourceConfiguration.eventTraceDataSourceConfiguration = eventTraceDataSourceConfiguration;
-	}
+    
+    private static EventTraceDataSourceConfiguration eventTraceDataSourceConfiguration;
+    
+    /**
+     * Set event trace data source configuration.
+     *
+     * @param eventTraceDataSourceConfiguration event trace data source configuration
+     */
+    public static void setDataSourceConfiguration(final EventTraceDataSourceConfiguration eventTraceDataSourceConfiguration) {
+        DynamicDataSourceConfig.DynamicDataSourceContextHolder.setDataSourceName(eventTraceDataSourceConfiguration.getName());
+        SessionEventTraceDataSourceConfiguration.eventTraceDataSourceConfiguration = eventTraceDataSourceConfiguration;
+    }
 }

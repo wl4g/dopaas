@@ -26,13 +26,13 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public final class AuthenticationResult {
+    
+    private final String username;
 
-	private final String username;
-
-	private final String password;
-
-	private final boolean success;
-
-	private final boolean isGuest;
-
+    private final String password;
+    
+    private final boolean success;
+    
+    private final boolean isGuest;
+    
 }

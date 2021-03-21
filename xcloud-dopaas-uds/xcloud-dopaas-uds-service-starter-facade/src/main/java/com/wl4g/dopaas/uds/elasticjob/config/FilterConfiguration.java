@@ -33,41 +33,41 @@ import java.util.List;
  */
 @Configuration
 public class FilterConfiguration {
-
-	@Autowired
-	private UserAuthenticationService userAuthenticationService;
-
-	/**
-	 * Register the CORS filter.
-	 *
-	 * @return filter registration bean
-	 */
-	@Bean
-	public FilterRegistrationBean corsFilter() {
-		CORSFilter corsFilter = new CORSFilter();
-		FilterRegistrationBean filterRegBean = new FilterRegistrationBean();
-		filterRegBean.setFilter(corsFilter);
-		List<String> urlPatterns = new ArrayList<>();
-		urlPatterns.add("/api/*");
-		filterRegBean.setUrlPatterns(urlPatterns);
-		return filterRegBean;
-	}
-
-	/**
-	 * Register the authentication filter.
-	 *
-	 * @return filter registration bean
-	 */
-	@Bean
-	public FilterRegistrationBean authenticationFilter() {
-		AuthenticationFilter authenticationFilter = new AuthenticationFilter();
-		authenticationFilter.setUserAuthenticationService(userAuthenticationService);
-		FilterRegistrationBean filterRegBean = new FilterRegistrationBean();
-		filterRegBean.setFilter(authenticationFilter);
-		List<String> urlPatterns = new ArrayList<>();
-		urlPatterns.add("/api/*");
-		filterRegBean.setUrlPatterns(urlPatterns);
-		return filterRegBean;
-	}
-
+    
+    @Autowired
+    private UserAuthenticationService userAuthenticationService;
+    
+    /**
+     * Register the CORS filter.
+     *
+     * @return filter registration bean
+     */
+    @Bean
+    public FilterRegistrationBean corsFilter() {
+        CORSFilter corsFilter = new CORSFilter();
+        FilterRegistrationBean filterRegBean = new FilterRegistrationBean();
+        filterRegBean.setFilter(corsFilter);
+        List<String> urlPatterns = new ArrayList<>();
+        urlPatterns.add("/api/*");
+        filterRegBean.setUrlPatterns(urlPatterns);
+        return filterRegBean;
+    }
+    
+    /**
+     * Register the authentication filter.
+     *
+     * @return filter registration bean
+     */
+    @Bean
+    public FilterRegistrationBean authenticationFilter() {
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter();
+        authenticationFilter.setUserAuthenticationService(userAuthenticationService);
+        FilterRegistrationBean filterRegBean = new FilterRegistrationBean();
+        filterRegBean.setFilter(authenticationFilter);
+        List<String> urlPatterns = new ArrayList<>();
+        urlPatterns.add("/api/*");
+        filterRegBean.setUrlPatterns(urlPatterns);
+        return filterRegBean;
+    }
+    
 }
