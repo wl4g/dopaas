@@ -38,22 +38,22 @@ import java.util.Date;
 @Entity
 @Table(name = "JOB_REGISTER_STATISTICS")
 public class JobRegisterStatistics {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column(name = "registered_count", length = 11)
-	private Integer registeredCount;
-
-	@Column(name = "statistics_time", nullable = false)
-	private Date statisticsTime;
-
-	@Column(name = "creation_time", nullable = false)
-	private Date creationTime = new Date();
-
-	public JobRegisterStatistics(final Integer registeredCount, final Date statisticsTime) {
-		this.registeredCount = registeredCount;
-		this.statisticsTime = statisticsTime;
-	}
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = "registered_count", length = 11)
+    private Integer registeredCount;
+    
+    @Column(name = "statistics_time", nullable = false)
+    private Date statisticsTime;
+    
+    @Column(name = "creation_time", nullable = false)
+    private Date creationTime = new Date();
+    
+    public JobRegisterStatistics(final Integer registeredCount, final Date statisticsTime) {
+        this.registeredCount = registeredCount;
+        this.statisticsTime = statisticsTime;
+    }
 }

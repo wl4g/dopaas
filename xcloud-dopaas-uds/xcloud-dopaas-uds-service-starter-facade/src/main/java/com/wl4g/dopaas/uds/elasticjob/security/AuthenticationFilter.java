@@ -19,9 +19,8 @@ package com.wl4g.dopaas.uds.elasticjob.security;
 
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
-import com.wl4g.dopaas.uds.elasticjob.model.ResponseResultUtil;
-
 import lombok.Setter;
+import com.wl4g.dopaas.uds.elasticjob.web.response.ResponseResultUtil;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -39,63 +38,62 @@ import java.util.Map;
  * Authentication filter.
  */
 public final class AuthenticationFilter implements Filter {
-
-	private static final String LOGIN_URI = "/api/login";
-
-	private final Gson gson = new Gson();
-
-	@Setter
-	private UserAuthenticationService userAuthenticationService;
-
-	@Override
-	public void init(final FilterConfig filterConfig) {
-	}
-
-	@Override
-	public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
-			final FilterChain filterChain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-		HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-		if (LOGIN_URI.equals(httpRequest.getRequestURI())) {
-			handleLogin(httpRequest, httpResponse);
-		} else {
-			String accessToken = httpRequest.getHeader("Access-Token");
-			if (!Strings.isNullOrEmpty(accessToken) && accessToken.equals(userAuthenticationService.getToken())) {
-				filterChain.doFilter(httpRequest, httpResponse);
-			} else {
-				respondWithUnauthorized(httpResponse);
-			}
-		}
-	}
-
-	@Override
-	public void destroy() {
-	}
-
-	private void handleLogin(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
-		try {
-			UserAccount user = gson.fromJson(httpRequest.getReader(), UserAccount.class);
-			AuthenticationResult authenticationResult = userAuthenticationService.checkUser(user);
-			if (null != authenticationResult && authenticationResult.isSuccess()) {
-				httpResponse.setContentType("application/json");
-				httpResponse.setCharacterEncoding("UTF-8");
-				Map<String, Object> result = new HashMap<>();
-				result.put("username", authenticationResult.getUsername());
-				result.put("accessToken", userAuthenticationService.getToken());
-				result.put("isGuest", authenticationResult.isGuest());
-				httpResponse.getWriter().write(gson.toJson(ResponseResultUtil.build(result)));
-			} else {
-				respondWithUnauthorized(httpResponse);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	private void respondWithUnauthorized(final HttpServletResponse httpResponse) throws IOException {
-		httpResponse.setContentType("application/json");
-		httpResponse.setCharacterEncoding("UTF-8");
-		httpResponse.getWriter().write(gson.toJson(ResponseResultUtil.handleUnauthorizedException("Unauthorized.")));
-	}
+    
+    private static final String LOGIN_URI = "/api/login";
+    
+    private final Gson gson = new Gson();
+    
+    @Setter
+    private UserAuthenticationService userAuthenticationService;
+    
+    @Override
+    public void init(final FilterConfig filterConfig) {
+    }
+    
+    @Override
+    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+        HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+        if (LOGIN_URI.equals(httpRequest.getRequestURI())) {
+            handleLogin(httpRequest, httpResponse);
+        } else {
+            String accessToken = httpRequest.getHeader("Access-Token");
+            if (!Strings.isNullOrEmpty(accessToken) && accessToken.equals(userAuthenticationService.getToken())) {
+                filterChain.doFilter(httpRequest, httpResponse);
+            } else {
+                respondWithUnauthorized(httpResponse);
+            }
+        }
+    }
+    
+    @Override
+    public void destroy() {
+    }
+    
+    private void handleLogin(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
+        try {
+            UserAccount user = gson.fromJson(httpRequest.getReader(), UserAccount.class);
+            AuthenticationResult authenticationResult = userAuthenticationService.checkUser(user);
+            if (null != authenticationResult && authenticationResult.isSuccess()) {
+                httpResponse.setContentType("application/json");
+                httpResponse.setCharacterEncoding("UTF-8");
+                Map<String, Object> result = new HashMap<>();
+                result.put("username", authenticationResult.getUsername());
+                result.put("accessToken", userAuthenticationService.getToken());
+                result.put("isGuest", authenticationResult.isGuest());
+                httpResponse.getWriter().write(gson.toJson(ResponseResultUtil.build(result)));
+            } else {
+                respondWithUnauthorized(httpResponse);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
+    private void respondWithUnauthorized(final HttpServletResponse httpResponse) throws IOException {
+        httpResponse.setContentType("application/json");
+        httpResponse.setCharacterEncoding("UTF-8");
+        httpResponse.getWriter().write(gson.toJson(ResponseResultUtil.handleUnauthorizedException("Unauthorized.")));
+    }
 }

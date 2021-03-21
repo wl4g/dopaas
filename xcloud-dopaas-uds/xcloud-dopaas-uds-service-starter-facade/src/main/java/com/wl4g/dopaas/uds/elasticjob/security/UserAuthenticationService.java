@@ -31,46 +31,44 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "auth")
 @Setter
 public final class UserAuthenticationService {
-
-	private String rootUsername;
-
-	private String rootPassword;
-
-	private String guestUsername;
-
-	private String guestPassword;
-
-	private final Base64 base64 = new Base64();
-
-	private Gson gson = new Gson();
-
-	/**
-	 * Check user.
-	 *
-	 * @param userAccount
-	 *            user account
-	 * @return check success or failure
-	 */
-	public AuthenticationResult checkUser(final UserAccount userAccount) {
-		if (null == userAccount || Strings.isNullOrEmpty(userAccount.getUsername())
-				|| Strings.isNullOrEmpty(userAccount.getPassword())) {
-			return new AuthenticationResult(null, null, false, false);
-		}
-		if (rootUsername.equals(userAccount.getUsername()) && rootPassword.equals(userAccount.getPassword())) {
-			return new AuthenticationResult(rootUsername, rootPassword, true, false);
-		}
-		if (guestUsername.equals(userAccount.getUsername()) && guestPassword.equals(userAccount.getPassword())) {
-			return new AuthenticationResult(guestUsername, guestPassword, true, true);
-		}
-		return new AuthenticationResult(null, null, false, false);
-	}
-
-	/**
-	 * Get user authentication token.
-	 *
-	 * @return authentication token
-	 */
-	public String getToken() {
-		return base64.encodeToString(gson.toJson(this).getBytes());
-	}
+    
+    private String rootUsername;
+    
+    private String rootPassword;
+    
+    private String guestUsername;
+    
+    private String guestPassword;
+    
+    private final Base64 base64 = new Base64();
+    
+    private Gson gson = new Gson();
+    
+    /**
+     * Check user.
+     *
+     * @param userAccount user account
+     * @return check success or failure
+     */
+    public AuthenticationResult checkUser(final UserAccount userAccount) {
+        if (null == userAccount || Strings.isNullOrEmpty(userAccount.getUsername()) || Strings.isNullOrEmpty(userAccount.getPassword())) {
+            return new AuthenticationResult(null, null, false, false);
+        }
+        if (rootUsername.equals(userAccount.getUsername()) && rootPassword.equals(userAccount.getPassword())) {
+            return new AuthenticationResult(rootUsername, rootPassword, true, false);
+        }
+        if (guestUsername.equals(userAccount.getUsername()) && guestPassword.equals(userAccount.getPassword())) {
+            return new AuthenticationResult(guestUsername, guestPassword, true, true);
+        }
+        return new AuthenticationResult(null ,null, false, false);
+    }
+    
+    /**
+     * Get user authentication token.
+     *
+     * @return authentication token
+     */
+    public String getToken() {
+        return base64.encodeToString(gson.toJson(this).getBytes());
+    }
 }

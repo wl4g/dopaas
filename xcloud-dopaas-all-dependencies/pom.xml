@@ -58,12 +58,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-dopaas-udc-service-starter-facade</artifactId>
+			<artifactId>xcloud-dopaas-lcdp-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-dopaas-udc-service-starter-manager</artifactId>
+			<artifactId>xcloud-dopaas-lcdp-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

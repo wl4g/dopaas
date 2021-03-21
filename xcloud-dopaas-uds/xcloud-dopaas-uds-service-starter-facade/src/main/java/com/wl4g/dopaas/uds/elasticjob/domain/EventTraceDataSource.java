@@ -33,22 +33,21 @@ import java.sql.SQLException;
 @Getter(AccessLevel.PROTECTED)
 @Slf4j
 public final class EventTraceDataSource {
-
-	private final EventTraceDataSourceConfiguration eventTraceDataSourceConfiguration;
-
-	/**
-	 * Initialize data source.
-	 */
-	public void init() {
-		log.debug("ElasticJob: data source init, connection url is: {}.", eventTraceDataSourceConfiguration.getUrl());
-		try {
-			Class.forName(eventTraceDataSourceConfiguration.getDriver());
-			DriverManager.getConnection(eventTraceDataSourceConfiguration.getUrl(),
-					eventTraceDataSourceConfiguration.getUsername(), eventTraceDataSourceConfiguration.getPassword());
-		} catch (final SQLException ex) {
-			throw new RuntimeException(ex);
-		} catch (final ClassNotFoundException ex) {
-			throw new JdbcDriverNotFoundException(ex.getLocalizedMessage());
-		}
-	}
+    
+    private final EventTraceDataSourceConfiguration eventTraceDataSourceConfiguration;
+    
+    /**
+     * Initialize data source.
+     */
+    public void init() {
+        log.debug("ElasticJob: data source init, connection url is: {}.", eventTraceDataSourceConfiguration.getUrl());
+        try {
+            Class.forName(eventTraceDataSourceConfiguration.getDriver());
+            DriverManager.getConnection(eventTraceDataSourceConfiguration.getUrl(), eventTraceDataSourceConfiguration.getUsername(), eventTraceDataSourceConfiguration.getPassword());
+        } catch (final SQLException ex) {
+            throw new RuntimeException(ex);
+        } catch (final ClassNotFoundException ex) {
+            throw new JdbcDriverNotFoundException(ex.getLocalizedMessage());
+        }
+    }
 }

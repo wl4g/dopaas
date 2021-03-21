@@ -17,7 +17,7 @@ package com.wl4g.dopaas.umc.watch.fetch;
 
 import java.util.List;
 
-import com.dangdang.ddframe.job.api.ShardingContext;
+import org.apache.shardingsphere.elasticjob.api.ShardingContext;
 
 /**
  * Watch indicators target fetcher.

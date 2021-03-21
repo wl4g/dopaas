@@ -18,7 +18,7 @@ package com.wl4g.dopaas.common.constant;
 import static com.wl4g.component.common.reflect.ReflectionUtils2.getFieldValues;
 
 /**
- * UDC constants
+ * LCDP constants
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2021-01-29
@@ -27,7 +27,7 @@ import static com.wl4g.component.common.reflect.ReflectionUtils2.getFieldValues;
  */
 public abstract class UdcConstants extends DevOpsPaaSConstants {
 
-	public final static String KEY_CODEGEN_PREFIX = KEY_DEVOPS_BASE_PREFIX + ".udc.codegen";
+	public final static String KEY_CODEGEN_PREFIX = KEY_DEVOPS_BASE_PREFIX + ".lcdp.codegen";
 
 	/**
 	 * {@link ModelAttributeConstants}

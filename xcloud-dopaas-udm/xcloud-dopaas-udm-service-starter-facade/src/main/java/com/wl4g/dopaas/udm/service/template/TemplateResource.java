@@ -105,7 +105,7 @@ public final class TemplateResource implements Serializable {
 
 		// Analysis of special syntax identification.
 		/**
-		 * {@link com.wl4g.dopaas.common.bean.udc.GenTable#moduleName}
+		 * {@link com.wl4g.dopaas.common.bean.lcdp.GenTable#moduleName}
 		 */
 		this.isForeachMds = contains(rawFilename, GEN_MD_NAME); // Modules
 

@@ -26,25 +26,24 @@ import com.wl4g.dopaas.uds.elasticjob.domain.RegistryCenterConfiguration;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SessionRegistryCenterConfiguration {
-
-	private static RegistryCenterConfiguration regCenterConfig;
-
-	/**
-	 * Get registry center configuration.
-	 *
-	 * @return registry center configuration
-	 */
-	public static RegistryCenterConfiguration getRegistryCenterConfiguration() {
-		return regCenterConfig;
-	}
-
-	/**
-	 * Set registry center configuration.
-	 * 
-	 * @param regCenterConfig
-	 *            registry center configuration
-	 */
-	public static void setRegistryCenterConfiguration(final RegistryCenterConfiguration regCenterConfig) {
-		SessionRegistryCenterConfiguration.regCenterConfig = regCenterConfig;
-	}
+    
+    private static RegistryCenterConfiguration regCenterConfig;
+    
+    /**
+     * Get registry center configuration.
+     *
+     * @return registry center configuration
+     */
+    public static RegistryCenterConfiguration getRegistryCenterConfiguration() {
+        return regCenterConfig;
+    }
+    
+    /**
+     * Set registry center configuration.
+     * 
+     * @param regCenterConfig registry center configuration
+     */
+    public static void setRegistryCenterConfiguration(final RegistryCenterConfiguration regCenterConfig) {
+        SessionRegistryCenterConfiguration.regCenterConfig = regCenterConfig;
+    }
 }

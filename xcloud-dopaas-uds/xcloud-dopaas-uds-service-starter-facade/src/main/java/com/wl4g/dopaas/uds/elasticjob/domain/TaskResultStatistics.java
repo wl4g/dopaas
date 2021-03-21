@@ -38,36 +38,35 @@ import java.util.Date;
 @Entity
 @Table(name = "TASK_RESULT_STATISTICS")
 public class TaskResultStatistics {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column(name = "success_count", length = 11)
-	private Long successCount;
-
-	@Column(name = "failed_count", length = 11)
-	private Long failedCount;
-
-	@Column(name = "statistic_interval", length = 10)
-	private String statisticInterval;
-
-	@Column(name = "statistics_time", nullable = false)
-	private Date statisticsTime;
-
-	@Column(name = "creation_time", nullable = false)
-	private Date creationTime = new Date();
-
-	public TaskResultStatistics(final Long successCount, final Long failedCount) {
-		this.successCount = successCount;
-		this.failedCount = failedCount;
-	}
-
-	public TaskResultStatistics(final Long successCount, final Long failedCount, final String statisticInterval,
-			final Date statisticsTime) {
-		this.successCount = successCount;
-		this.failedCount = failedCount;
-		this.statisticInterval = statisticInterval;
-		this.statisticsTime = statisticsTime;
-	}
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = "success_count", length = 11)
+    private Long successCount;
+    
+    @Column(name = "failed_count", length = 11)
+    private Long failedCount;
+    
+    @Column(name = "statistic_interval", length = 10)
+    private String statisticInterval;
+    
+    @Column(name = "statistics_time", nullable = false)
+    private Date statisticsTime;
+    
+    @Column(name = "creation_time", nullable = false)
+    private Date creationTime = new Date();
+    
+    public TaskResultStatistics(final Long successCount, final Long failedCount) {
+        this.successCount = successCount;
+        this.failedCount = failedCount;
+    }
+    
+    public TaskResultStatistics(final Long successCount, final Long failedCount, final String statisticInterval, final Date statisticsTime) {
+        this.successCount = successCount;
+        this.failedCount = failedCount;
+        this.statisticInterval = statisticInterval;
+        this.statisticsTime = statisticsTime;
+    }
 }

@@ -28,8 +28,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * </br>
  * 
  * for example: It should at least includes( "com.wl4g.iam.web",
- * "com.wl4g.dopaas.uci.web", "com.wl4g.dopaas.udc.web",
- * "com.wl4g.dopaas.udc.codegen.web", "com.wl4g.dopaas.udm.web",
+ * "com.wl4g.dopaas.uci.web", "com.wl4g.dopaas.lcdp.web",
+ * "com.wl4g.dopaas.lcdp.codegen.web", "com.wl4g.dopaas.udm.web",
  * "com.wl4g.dopaas.cmdb.web", "com.wl4g.dopaas.urm.web",
  * "com.wl4g.dopaas.umc.web" )
  * 

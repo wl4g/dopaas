@@ -32,6 +32,6 @@ import java.util.Set;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class RegistryCenterConfigurations {
-
-	private Set<RegistryCenterConfiguration> registryCenterConfiguration = new LinkedHashSet<>();
+    
+    private Set<RegistryCenterConfiguration> registryCenterConfiguration = new LinkedHashSet<>();
 }
