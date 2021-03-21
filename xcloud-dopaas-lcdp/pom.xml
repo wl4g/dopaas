@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-dopaas-lcdp</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DoPaaS LCDP(Unified Developer Center)</name>
+	<name>XCloud DoPaaS LCDP(Low Code Development Platform)</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
