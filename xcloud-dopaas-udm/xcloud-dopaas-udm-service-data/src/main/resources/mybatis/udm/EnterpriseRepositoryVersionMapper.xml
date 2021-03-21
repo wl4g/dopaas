@@ -36,6 +36,7 @@
         <where>
             repository_id = #{repositoryId, jdbcType=BIGINT}
         </where>
+        order by id desc
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

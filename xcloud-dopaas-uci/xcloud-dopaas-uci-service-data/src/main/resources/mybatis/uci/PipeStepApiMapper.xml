@@ -6,11 +6,9 @@
     <result column="pipe_id" property="pipeId" jdbcType="BIGINT" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
     <result column="repository_id" property="repositoryId" jdbcType="BIGINT" />
-    <result column="version_id" property="versionId" jdbcType="BIGINT" />
-    <result column="module_id" property="moduleId" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, pipe_id, enable, repository_id, version_id, module_id
+    id, pipe_id, enable, repository_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -33,10 +31,10 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.dopaas.common.bean.uci.PipeStepApi" >
     insert into uci_pipe_step_api (id, pipe_id, enable, 
-      repository_id, version_id, module_id
+      repository_id
       )
     values (#{id,jdbcType=BIGINT}, #{pipeId,jdbcType=BIGINT}, #{enable,jdbcType=INTEGER}, 
-      #{repositoryId,jdbcType=BIGINT}, #{versionId,jdbcType=BIGINT}, #{moduleId,jdbcType=BIGINT}
+      #{repositoryId,jdbcType=BIGINT}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.uci.PipeStepApi" >
@@ -54,12 +52,6 @@
       <if test="repositoryId != null" >
         repository_id,
       </if>
-      <if test="versionId != null" >
-        version_id,
-      </if>
-      <if test="moduleId != null" >
-        module_id,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -73,12 +65,6 @@
       </if>
       <if test="repositoryId != null" >
         #{repositoryId,jdbcType=BIGINT},
-      </if>
-      <if test="versionId != null" >
-        #{versionId,jdbcType=BIGINT},
-      </if>
-      <if test="moduleId != null" >
-        #{moduleId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -94,12 +80,6 @@
       <if test="repositoryId != null" >
         repository_id = #{repositoryId,jdbcType=BIGINT},
       </if>
-      <if test="versionId != null" >
-        version_id = #{versionId,jdbcType=BIGINT},
-      </if>
-      <if test="moduleId != null" >
-        module_id = #{moduleId,jdbcType=BIGINT},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -107,9 +87,7 @@
     update uci_pipe_step_api
     set pipe_id = #{pipeId,jdbcType=BIGINT},
       enable = #{enable,jdbcType=INTEGER},
-      repository_id = #{repositoryId,jdbcType=BIGINT},
-      version_id = #{versionId,jdbcType=BIGINT},
-      module_id = #{moduleId,jdbcType=BIGINT}
+      repository_id = #{repositoryId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

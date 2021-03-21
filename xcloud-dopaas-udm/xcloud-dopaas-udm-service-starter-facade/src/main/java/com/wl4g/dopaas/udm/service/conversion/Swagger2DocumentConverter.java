@@ -19,27 +19,11 @@
  */
 package com.wl4g.dopaas.udm.service.conversion;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import org.springframework.util.CollectionUtils;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
 import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
-
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.RefModel;
-import io.swagger.models.Response;
-import io.swagger.models.Swagger;
+import io.swagger.models.*;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
@@ -49,6 +33,10 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.v3.core.util.Json;
+import org.springframework.util.CollectionUtils;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * {@link Swagger2DocumentConverter}
@@ -137,8 +125,10 @@ public class Swagger2DocumentConverter extends AbstractDocumentConverter<Swagger
 				Model responseSchema = response.getResponseSchema();
 				if (responseSchema != null) {
 					String reference = responseSchema.getReference();
-					String ref = reference.substring(14);
-					convertBodyProperties(swagger, ref, properties, RESPONSE);
+					if(reference != null){
+						String ref = reference.substring(14);
+						convertBodyProperties(swagger, ref, properties, RESPONSE);
+					}
 				}
 			}
 			enterpriseApi.setProperties(properties);
