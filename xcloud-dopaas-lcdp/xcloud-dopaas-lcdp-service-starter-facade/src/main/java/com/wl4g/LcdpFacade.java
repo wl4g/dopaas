@@ -25,7 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 
 /**
- * {@link UdcFacade}
+ * {@link LcdpFacade}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2021-01-29
@@ -34,10 +34,10 @@ import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
  */
 @EnableComponentDBConfiguration({ "com.wl4g.dopaas.lcdp.data" })
 @SpringBootApplication
-public class UdcFacade {
+public class LcdpFacade {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UdcFacade.class, args);
+		SpringApplication.run(LcdpFacade.class, args);
 	}
 
 }

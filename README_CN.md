@@ -112,7 +112,7 @@ npm run build # 生产打包
 - [UCM](../../blob/master/xcloud-dopaas-ucm/README_CN.md)  (Unified Config Management)统一配置管理服务, 在线配置热更新如：DataSource、RedisClient等
 - [CMDB](../../blob/master/xcloud-dopaas-cmdb/README_CN.md)  (Configuration Management Database)统一资产管理, 主机、密钥、审计、DNS等基础设施资产管理等
 - [UDM](../../blob/master/xcloud-dopaas-udm/README_CN.md)  (Unified Document Management)统一文档管理, API/Swagger在线文档/Office/Pdf等
-- [UDC](../../blob/master/xcloud-dopaas-udc/README_CN.md)  (Unified Developer Center)统一开发中心, 各种开发者工具链、WebIDE、自动生成器等
+- [LCDP](../../blob/master/xcloud-dopaas-lcdp/README_CN.md)  (Low Code Development Platform)低代码开发中心, 各种开发者工具链、WebIDE、自动生成器等
 - [UDS](../../blob/master/xcloud-dopaas-uds/README_CN.md)  (Unified Distributed Scheduler)统一分布式调度管控中心, 如 支持ElasticJob任务、spark/flink任务等
 - [UOS](../../blob/master/xcloud-dopaas-uos/README_CN.md)  (Unified Object Storage)统一对象存储服务，基于springcloud开发支持NativeFS、HDFS、Aliyun OSS、AWS S3、GlusterFS等, Aliyun OSS, AWS S3, GlusterFS 等
 - [UIM](../../blob/master/xcloud-dopaas-uim/README_CN.md)  (Unified Instant Messaging)统一的即时通讯服务，方便项目人员及时沟通，安全分发内部资料.
