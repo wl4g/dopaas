@@ -15,13 +15,13 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.config;
 
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.CSHARP_STANDARD;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.GO_GONICWEB;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_VUEJS;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.NGJS;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.PYTHON_STANDARD;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.SPINGDUBBO_MVN;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.CSHARP_STANDARD;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.GO_GONICWEB;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.IAM_VUEJS;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.NGJS;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.PYTHON_STANDARD;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.SPINGDUBBO_MVN;
 import static com.wl4g.dopaas.lcdp.codegen.engine.resolver.MetadataResolver.ResolverAlias.MYSQLV5;
 import static com.wl4g.dopaas.lcdp.codegen.engine.resolver.MetadataResolver.ResolverAlias.ORACLEV11G;
 import static com.wl4g.dopaas.lcdp.codegen.engine.resolver.MetadataResolver.ResolverAlias.POSTGRESQLV10;
@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.core.framework.beans.NamingPrototype;
 import com.wl4g.dopaas.common.bean.lcdp.GenDataSource;
-import com.wl4g.dopaas.common.constant.UdcConstants;
+import com.wl4g.dopaas.common.constant.LcdpConstants;
 import com.wl4g.dopaas.lcdp.codegen.console.CodegenConsole;
 import com.wl4g.dopaas.lcdp.codegen.engine.DefaultGenerateEngineImpl;
 import com.wl4g.dopaas.lcdp.codegen.engine.context.GenerateContext;
@@ -69,7 +69,7 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@ConfigurationProperties(prefix = UdcConstants.KEY_CODEGEN_PREFIX)
+	@ConfigurationProperties(prefix = LcdpConstants.KEY_CODEGEN_PREFIX)
 	public CodegenProperties codegenProperties() {
 		return new CodegenProperties();
 	}

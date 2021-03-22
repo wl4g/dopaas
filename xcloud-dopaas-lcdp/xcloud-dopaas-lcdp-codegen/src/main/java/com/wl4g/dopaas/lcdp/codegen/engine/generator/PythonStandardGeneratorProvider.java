@@ -15,11 +15,11 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.engine.generator;
 
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COMMON_PYTHONSPECS;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COMMON_PYTHONSPECS;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias;
+import com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias;
 import com.wl4g.dopaas.lcdp.codegen.engine.context.GenerateContext;
 import com.wl4g.dopaas.lcdp.codegen.engine.generator.render.RenderModel;
 import com.wl4g.dopaas.lcdp.codegen.engine.specs.PythonSpecs;

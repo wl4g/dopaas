@@ -112,7 +112,7 @@ npm run build # 生产打包
 - [UCM](../../blob/master/xcloud-dopaas-ucm/README_CN.md)  (Unified Config Management)统一配置管理服务, 在线配置热更新如：DataSource、RedisClient等
 - [CMDB](../../blob/master/xcloud-dopaas-cmdb/README_CN.md)  (Configuration Management Database)统一资产管理, 主机、密钥、审计、DNS等基础设施资产管理等
 - [UDM](../../blob/master/xcloud-dopaas-udm/README_CN.md)  (Unified Document Management)统一文档管理, API/Swagger在线文档/Office/Pdf等
-- [LCDP](../../blob/master/xcloud-dopaas-lcdp/README_CN.md)  (Low Code Development Platform)低代码开发中心, 各种开发者工具链、WebIDE、自动生成器等
+- [LCDP](../../blob/master/xcloud-dopaas-lcdp/README_CN.md)  (Low Code Development Platform)低代码开发中心, 多种语言/架构完整项目自动生成(如springcloud/dubbo/golang/python/vue/angularjs等)、WebIDE、及各种开发者工具链等
 - [UDS](../../blob/master/xcloud-dopaas-uds/README_CN.md)  (Unified Distributed Scheduler)统一分布式调度管控中心, 如 支持ElasticJob任务、spark/flink任务等
 - [UOS](../../blob/master/xcloud-dopaas-uos/README_CN.md)  (Unified Object Storage)统一对象存储服务，基于springcloud开发支持NativeFS、HDFS、Aliyun OSS、AWS S3、GlusterFS等, Aliyun OSS, AWS S3, GlusterFS 等
 - [UIM](../../blob/master/xcloud-dopaas-uim/README_CN.md)  (Unified Instant Messaging)统一的即时通讯服务，方便项目人员及时沟通，安全分发内部资料.
@@ -143,7 +143,9 @@ Zookeeper:3.4.6 +
 DockerCE:18.06 +
 CoreDNS:1.7.0 +
 MinIO:latest
-Shardingsphere-Elasticjob:3.0.0+
+Elasticsearch(EFK):6.2.3 +
+Shardingsphere-Elasticjob:3.0.0 +
+Mesos:1.1.0 +
 </pre>
 
 - [二次开发说明](README_DEVEL_CN.md)

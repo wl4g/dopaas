@@ -31,9 +31,9 @@ import javax.annotation.Nullable;
 import com.wl4g.component.common.bean.ConfigOption;
 import com.wl4g.dopaas.common.bean.lcdp.GenProject;
 
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_VUEJS;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.NGJS;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.IAM_VUEJS;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.NGJS;
 import static com.wl4g.component.common.collection.CollectionUtils2.isEmpty;
 import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
 import static com.wl4g.component.common.lang.Assert2.*;

@@ -18,16 +18,17 @@ package com.wl4g.dopaas.common.constant;
 import static com.wl4g.component.common.reflect.ReflectionUtils2.getFieldValues;
 
 /**
- * LCDP constants
+ * LCDP(Low Code Development Platform Center) constants
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0 2021-01-29
  * @sine v1.0
  * @see
  */
-public abstract class UdcConstants extends DevOpsPaaSConstants {
+public abstract class LcdpConstants extends DoPaaSConstants {
 
-	public final static String KEY_CODEGEN_PREFIX = KEY_DEVOPS_BASE_PREFIX + ".lcdp.codegen";
+	public static final String KEY_LCDP_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".lcdp";
+	public static final String KEY_CODEGEN_PREFIX = KEY_LCDP_PREFIX + ".codegen";
 
 	/**
 	 * {@link ModelAttributeConstants}

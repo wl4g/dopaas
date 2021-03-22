@@ -20,19 +20,21 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Based share constants
+ * CMDB(IT assets Configuration Management Database) constants
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-20 09:21:00
  */
-public abstract class CmdbConstants extends DevOpsPaaSConstants {
+public abstract class CmdbConstants extends DoPaaSConstants {
+
+	public static final String KEY_CMDB_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".cmdb";
 
 	/** Logging level names define. */
-	final public static List<String> LOG_LEVEL = Collections
+	public static final List<String> LOG_LEVEL = Collections
 			.unmodifiableList(Arrays.asList("TRACE", "DEBUG", "INFO", "WARN", "ERROR"));
 
 	/** Elastic search default message name define. */
-	final public static String KEY_DEFAULT_MSG = "message";
+	public static final String KEY_DEFAULT_MSG = "message";
 
 }

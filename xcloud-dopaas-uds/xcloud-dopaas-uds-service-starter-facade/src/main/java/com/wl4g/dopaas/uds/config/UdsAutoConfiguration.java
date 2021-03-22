@@ -29,8 +29,8 @@ import org.springframework.context.annotation.Configuration;
 public class UdsAutoConfiguration {
 
 	@Bean
-	@ConfigurationProperties(prefix = "vcs")
-	public UdsProperties vcsProperties() {
+	@ConfigurationProperties(prefix = "uds")
+	public UdsProperties udsProperties() {
 		return new UdsProperties();
 	}
 

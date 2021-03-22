@@ -16,13 +16,13 @@
 package com.wl4g.dopaas.common.constant;
 
 /**
- * DevOps documention constants
+ * UDM(Unified Documention Manangement) constants
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-20 09:21:00
  */
-public abstract class UdmConstants extends DevOpsPaaSConstants {
+public abstract class UdmConstants extends DoPaaSConstants {
 
 	public static final String DOC_LINK_BASEURI = "₤DOC_LINK_BASEURI₤";
 	public static final String DOC_LINK_BASEURI_TRAN = "%E2%82%A4DOC_LINK_BASEURI%E2%82%A4";

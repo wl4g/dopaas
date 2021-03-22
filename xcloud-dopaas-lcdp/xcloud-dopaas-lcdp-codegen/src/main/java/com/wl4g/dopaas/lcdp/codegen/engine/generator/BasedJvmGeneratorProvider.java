@@ -28,13 +28,13 @@ import javax.validation.constraints.NotNull;
 
 import java.util.Map;
 
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COMMON_JAVASPECS;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_PACKAGENAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_DAO_SUBMODULE_PACKAGENAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_SHORTCUT_CHECK_MVNASSTAR;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COMMON_JAVASPECS;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_BEAN_SUBMODULE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_DAO_SUBMODULE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_SERVICE_SUBMODULE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_CONTROLLER_SUBMODULE_PACKAGENAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_SHORTCUT_CHECK_MVNASSTAR;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

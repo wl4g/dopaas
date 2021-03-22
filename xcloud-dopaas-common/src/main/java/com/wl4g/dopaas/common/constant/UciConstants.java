@@ -22,7 +22,7 @@ package com.wl4g.dopaas.common.constant;
  * @author vjay
  * @date 2019-05-20 09:21:00
  */
-public abstract class UciConstants extends DevOpsPaaSConstants {
+public abstract class UciConstants extends DoPaaSConstants {
 
 	// --- Flow pipeline constants. ---
 	public static final String REDIS_CI_RUN_PRE = "CI_RUN_";// redis key
@@ -90,6 +90,6 @@ public abstract class UciConstants extends DevOpsPaaSConstants {
 
 	// --- CI configuration constants. ---
 
-	public static final String KEY_CI_CONFIG_PREFIX = KEY_DEVOPS_BASE_PREFIX + ".ci";
+	public static final String KEY_CI_CONFIG_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".ci";
 
 }

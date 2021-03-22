@@ -1,2 +1,2 @@
 ### LCDP (Low Code Development Platform)
-> Integrated development tools of AutoGenerator, WebIDE, DevelTools(code-counter/add-commenter/online-tools), etc
+> Integrated automatic generate of multi language/architecture complete projects (e.g springcloud/dubbo/golang/python/vue/angularjs, etc), WebIDE, and various developer tools chains, etc
