@@ -527,6 +527,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.shardingsphere.elasticjob</groupId>
+				<artifactId>elasticjob-cloud-common</artifactId>
+				<version>${elastic-job.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

@@ -15,17 +15,17 @@
  */
 package com.wl4g.dopaas.common.bean.lcdp;
 
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_MODULE_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_MODULE_SUB_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_COLUMNS;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_COMMENT;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_ENTITY_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_EXTRA_OPTIONS;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_FUNC_AUTHOR;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_FUNC_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_FUNC_SIMPLE_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_TABLE_PRIMARY;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_MODULE_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_MODULE_SUB_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_COLUMNS;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_COMMENT;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_ENTITY_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_EXTRA_OPTIONS;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_FUNC_AUTHOR;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_FUNC_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_FUNC_SIMPLE_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_PRIMARY;
 
 import java.util.List;
 

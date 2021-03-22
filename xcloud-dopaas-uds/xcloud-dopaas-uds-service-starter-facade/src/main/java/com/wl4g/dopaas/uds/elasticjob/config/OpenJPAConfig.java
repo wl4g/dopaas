@@ -57,4 +57,5 @@ public class OpenJPAConfig extends JpaBaseConfiguration {
         result.put("openjpa.Log", "slf4j");
         return result;
     }
+    
 }

@@ -26,7 +26,7 @@ import com.wl4g.dopaas.lcdp.codegen.engine.template.GenTemplateResource;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.*;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.*;
 import static java.util.Locale.US;
 
 /**

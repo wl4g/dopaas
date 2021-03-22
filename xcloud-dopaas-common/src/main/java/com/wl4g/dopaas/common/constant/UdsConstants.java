@@ -15,17 +15,16 @@
  */
 package com.wl4g.dopaas.common.constant;
 
-import com.wl4g.component.core.constant.BaseConstant;
-
 /**
- * DevOps PaaS constants.
+ * UDS(Unified Distributed Scheduler) constants
  * 
- * @author wangl.sir
- * @version v1.0 2019年7月5日
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-01-29
+ * @sine v1.0
+ * @see
  */
-public abstract class DevOpsPaaSConstants extends BaseConstant {
+public abstract class UdsConstants extends DoPaaSConstants {
 
-	public final static String KEY_DEVOPS_BASE_PREFIX = "spring.xcloud.devops";
+	public static final String KEY_UDS_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".uds";
 
 }

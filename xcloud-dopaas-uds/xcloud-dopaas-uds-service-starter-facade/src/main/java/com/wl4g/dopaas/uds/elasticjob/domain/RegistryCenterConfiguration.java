@@ -36,9 +36,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
 public final class RegistryCenterConfiguration implements Serializable {
-
-    private static final long serialVersionUID = 8667013870431703376L;
-
+    
+    private static final long serialVersionUID = -5996257770767863699L;
+    
     @XmlAttribute(required = true)
     private String name;
     

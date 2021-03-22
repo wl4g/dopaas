@@ -113,7 +113,7 @@ npm run build # Production building
 - [UCM](../../blob/master/xcloud-dopaas-ucm/README.md)  Unified Config Management(Online configuration of hot updates such as dataSource, redisClient, etc)
 - [CMDB](../../blob/master/xcloud-dopaas-cmdb/README.md)  Configuration Management Database(hosts, applications, secretKeys, auditing, DNS zone resoluting, etc)
 - [UDM](../../blob/master/xcloud-dopaas-udm/README.md)  Unified Document Management(Online APIs/swagger documents, etc)
-- [LCDP](../../blob/master/xcloud-dopaas-lcdp/README_CN.md) Low Code Development Platform(Devel tools, WebIDE, AutoGenerator, etc)
+- [LCDP](../../blob/master/xcloud-dopaas-lcdp/README_CN.md) Low Code Development Platform(Automatic generate of multi language/architecture complete projects (e.g springcloud/dubbo/golang/python/vue/angularjs, etc), WebIDE, and various developer tool chains, etc)
 - [UDS](../../blob/master/xcloud-dopaas-uds/README.md)  Unified distributed scheduling control center, such as elasticjob/spark/flink task, etc.
 - [UOS](../../blob/master/xcloud-dopaas-uos/README.md)  Unified object storage services, based on springcloud development support NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
 - [UIM](../../blob/master/xcloud-dopaas-uim/README.md)  Unified instant messaging service, convenient for project personnel to communicate in time, safe distribution of internal data.
@@ -144,7 +144,9 @@ Zookeeper:3.4.6 +
 DockerCE:18.06 +
 CoreDNS:1.7.0 +
 MinIO:latest
-Shardingsphere-Elasticjob:3.0.0+
+Elasticsearch(EFK):6.2.3 +
+Shardingsphere-Elasticjob:3.0.0 +
+Mesos:1.1.0 +
 </pre>
 
 - [Developments](README_DEVEL_CN.md)

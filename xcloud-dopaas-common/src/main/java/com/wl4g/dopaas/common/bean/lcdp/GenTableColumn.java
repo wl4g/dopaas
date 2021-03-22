@@ -15,25 +15,25 @@
  */
 package com.wl4g.dopaas.common.bean.lcdp;
 
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_ATTRNAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_ATTRTYPE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_COMMENT;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_DICTTYPE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_ISEDIT;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_ISINSERT;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_ISLIST;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_ISPK;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_ISQUERY;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_ISUPDATE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_NONULL;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_QUERYTYPE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_SHOWTYPE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_SIMPLE_TYPE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_SORT;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_SQLTYPE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_TYPE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_COLUMN_VALIDRULE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_ATTRNAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_ATTRTYPE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_COMMENT;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_DICTTYPE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_ISEDIT;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_ISINSERT;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_ISLIST;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_ISPK;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_ISQUERY;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_ISUPDATE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_NONULL;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_QUERYTYPE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_SHOWTYPE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_SIMPLE_TYPE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_SORT;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_SQLTYPE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_TYPE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_VALIDRULE;
 
 import com.wl4g.component.core.bean.BaseBean;
 

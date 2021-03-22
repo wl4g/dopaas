@@ -15,14 +15,14 @@
  */
 package com.wl4g.dopaas.common.bean.lcdp;
 
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB_DATABAES;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB_HOST;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB_PASSWORD;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB_PORT;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB_TYPE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB_USERNAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_DB_VERSION;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_DB_DATABAES;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_DB_HOST;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_DB_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_DB_PASSWORD;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_DB_PORT;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_DB_TYPE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_DB_USERNAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_DB_VERSION;
 
 import com.wl4g.component.core.bean.BaseBean;
 

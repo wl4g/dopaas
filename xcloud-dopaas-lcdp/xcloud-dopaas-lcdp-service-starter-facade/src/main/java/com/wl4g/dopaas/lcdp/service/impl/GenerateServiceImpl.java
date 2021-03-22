@@ -62,7 +62,7 @@ import static com.wl4g.component.common.lang.Assert2.isTrue;
 import static com.wl4g.component.common.lang.Assert2.*;
 import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.dopaas.common.constant.UdcConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
 import static com.wl4g.dopaas.lcdp.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
 import static com.wl4g.dopaas.lcdp.codegen.engine.GenProviderSetDefinition.getProviders;
 import static com.wl4g.dopaas.lcdp.codegen.engine.specs.BaseSpecs.*;

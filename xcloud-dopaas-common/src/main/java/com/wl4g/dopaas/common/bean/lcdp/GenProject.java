@@ -15,17 +15,17 @@
  */
 package com.wl4g.dopaas.common.bean.lcdp;
 
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_AUTHOR;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_COPYRIGHT;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_DESCRIPTION;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_EXTRA_OPTIONS;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_GEN_TABLES;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_ORGAN_NAME;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_ORGAN_TYPE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_PROVIDER_SET;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_SINCE;
-import static com.wl4g.dopaas.common.constant.UdcConstants.ModelAttributeConstants.GEN_PROJECT_VERSION;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_AUTHOR;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_COPYRIGHT;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_DESCRIPTION;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_EXTRA_OPTIONS;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_GEN_TABLES;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_ORGAN_NAME;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_ORGAN_TYPE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_PROVIDER_SET;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_SINCE;
+import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_PROJECT_VERSION;
 
 import java.util.List;
 
