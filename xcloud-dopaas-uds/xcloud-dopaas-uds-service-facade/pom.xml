@@ -16,14 +16,18 @@
 	</properties>
 	<dependencies>
 		<dependency>
-            <groupId>com.wl4g</groupId>
-            <artifactId>xcloud-dopaas-umc-client-springboot</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-dopaas-umc-client-springboot</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-dopaas-common</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shardingsphere.elasticjob</groupId>
+			<artifactId>elasticjob-cloud-common</artifactId>
 		</dependency>
 
 		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
