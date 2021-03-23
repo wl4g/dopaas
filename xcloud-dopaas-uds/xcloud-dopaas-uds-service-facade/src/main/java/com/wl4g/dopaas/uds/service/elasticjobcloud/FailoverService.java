@@ -22,6 +22,10 @@ package com.wl4g.dopaas.uds.service.elasticjobcloud;
 import java.util.Collection;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+
 /**
  * {@link FailoverService}
  * 
@@ -30,6 +34,8 @@ import java.util.Map;
  * @sine v1.0
  * @see
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/failover-service")
 public interface FailoverService {
 
 	Map<String, Collection<FailoverTaskInfo>> getAllFailoverTasks();

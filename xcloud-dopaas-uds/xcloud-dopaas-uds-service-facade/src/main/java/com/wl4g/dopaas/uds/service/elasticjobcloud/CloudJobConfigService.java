@@ -21,10 +21,15 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.apache.shardingsphere.elasticjob.cloud.config.pojo.CloudJobConfigurationPOJO;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
 /**
  * Cloud job configuration service.
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/cloudJobConfig-service")
 public interface CloudJobConfigService {
 
 	/**

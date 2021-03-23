@@ -21,12 +21,16 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.model.CloudAppConfigurationPOJO;
 
 /**
  * Cloud app configuration service.
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/cloudAppConfig-service")
 public interface CloudAppConfigService {
 
 	@Autowired

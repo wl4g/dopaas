@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.shardingsphere.elasticjob.infra.context.TaskContext;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
 /**
  * {@link RunningService}
@@ -32,6 +35,8 @@ import org.apache.shardingsphere.elasticjob.infra.context.TaskContext;
  * @sine v1.0
  * @see
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/running-service")
 public interface RunningService {
 
 	/**
