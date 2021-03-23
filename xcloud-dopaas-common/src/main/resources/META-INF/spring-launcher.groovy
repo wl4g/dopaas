@@ -39,6 +39,8 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
 		def configName = new StringBuffer("application")
 		configName.append(",common-dopaas")
+		configName.append(",home-web")
+		configName.append(",home-facade")
 		configName.append(",uci-web")
 		configName.append(",uci-facade")
 		configName.append(",uci-analyzer")
@@ -77,6 +79,8 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		configName.append(",common-dopaas-" + archConfigSuffix)
 		//configName.append(",common-dopaas-web-" + archConfigSuffix)
 		//configName.append(",common-dopaas-facade-" + archConfigSuffix)
+		configName.append(",home-web-" + archConfigSuffix)
+		configName.append(",home-facade-" + archConfigSuffix)
 		configName.append(",uci-web-" + archConfigSuffix)
 		configName.append(",uci-facade-" + archConfigSuffix)
 		configName.append(",udm-web-" + archConfigSuffix)

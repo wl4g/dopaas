@@ -17,7 +17,7 @@ rem  * limitations under the License.
 rem  */
 
 setlocal enabledelayedexpansion
-title Erm Manager APP Services
+title HOME Facade APP Services
 
 rem Using pushd popd to set BASE_DIR to the absolute path
 pushd %~dp0..\..
@@ -25,7 +25,7 @@ set BASE_DIR=%CD%
 popd
 
 rem Global define.
-set MAIN_CLASS=com.wl4g.ErmManager
+set MAIN_CLASS=com.wl4g.HomeFacade
 
 set DATA_DIR=%BASE_DIR%
 set CONF_DIR=%BASE_DIR%\conf

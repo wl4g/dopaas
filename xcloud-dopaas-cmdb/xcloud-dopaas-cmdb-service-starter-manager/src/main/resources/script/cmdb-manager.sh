@@ -16,4 +16,4 @@
 # * limitations under the License.
 # */
 
-/etc/init.d/erm-manager.service "$@"
+/etc/init.d/cmdb-manager.service "$@"
