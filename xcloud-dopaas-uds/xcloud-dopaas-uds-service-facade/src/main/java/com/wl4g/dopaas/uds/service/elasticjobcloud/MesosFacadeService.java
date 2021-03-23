@@ -24,10 +24,15 @@ import java.util.Set;
 
 import org.apache.shardingsphere.elasticjob.cloud.config.pojo.CloudJobConfigurationPOJO;
 import org.apache.shardingsphere.elasticjob.infra.context.TaskContext;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
 /**
  * Mesos facade service.
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/mesosFacade-service")
 public interface MesosFacadeService {
 
 	/**

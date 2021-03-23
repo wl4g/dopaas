@@ -20,6 +20,9 @@
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
 import org.apache.shardingsphere.elasticjob.cloud.config.pojo.CloudJobConfigurationPOJO;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
 /**
  * {@link ProducerService}
@@ -29,6 +32,8 @@ import org.apache.shardingsphere.elasticjob.cloud.config.pojo.CloudJobConfigurat
  * @sine v1.0
  * @see
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/producer-service")
 public interface ProducerService {
 
 	/**

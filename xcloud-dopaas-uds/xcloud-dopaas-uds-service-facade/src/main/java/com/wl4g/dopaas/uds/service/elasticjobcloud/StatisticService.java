@@ -27,6 +27,9 @@ import org.apache.shardingsphere.elasticjob.cloud.statistics.type.job.JobRegiste
 import org.apache.shardingsphere.elasticjob.cloud.statistics.type.job.JobRunningStatistics;
 import org.apache.shardingsphere.elasticjob.cloud.statistics.type.task.TaskResultStatistics;
 import org.apache.shardingsphere.elasticjob.cloud.statistics.type.task.TaskRunningStatistics;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
 /**
  * {@link StatisticService}
@@ -36,6 +39,8 @@ import org.apache.shardingsphere.elasticjob.cloud.statistics.type.task.TaskRunni
  * @sine v1.0
  * @see
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/statistic-service")
 public interface StatisticService {
 
 	TaskResultStatistics getTaskResultStatisticsWeekly();

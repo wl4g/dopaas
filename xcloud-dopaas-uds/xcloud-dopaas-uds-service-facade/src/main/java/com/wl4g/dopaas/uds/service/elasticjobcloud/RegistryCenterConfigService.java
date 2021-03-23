@@ -19,12 +19,17 @@ package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfiguration;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfigurations;
 
 /**
  * Registry center configuration service.
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/registryCenterConfig-service")
 public interface RegistryCenterConfigService {
 
 	/**
