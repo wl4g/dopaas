@@ -18,14 +18,15 @@
 package com.wl4g.dopaas.uds.service.elasticjobcloud.repository;
 
 import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.GlobalConfiguration;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.repository.ConfigurationsXmlRepository;
 
 /**
  * Configurations XML repository implementation.
  */
-public final class ConfigurationsXmlRepositoryImpl extends AbstractXmlRepositoryImpl<GlobalConfiguration> implements ConfigurationsXmlRepository {
-    
-    public ConfigurationsXmlRepositoryImpl() {
-        super("Configurations.xml", GlobalConfiguration.class);
-    }
+public final class ConfigurationsXmlRepositoryImpl extends AbstractXmlRepositoryImpl<GlobalConfiguration>
+		implements ConfigurationsXmlRepository {
+
+	public ConfigurationsXmlRepositoryImpl() {
+		super("Configurations.xml", GlobalConfiguration.class);
+	}
+
 }

@@ -39,8 +39,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/idc")
 public class IdcController extends BaseController {
 
-	@Autowired
-	private IdcService idcService;
+	private @Autowired IdcService idcService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "cmdb:idc" }, logical = AND)

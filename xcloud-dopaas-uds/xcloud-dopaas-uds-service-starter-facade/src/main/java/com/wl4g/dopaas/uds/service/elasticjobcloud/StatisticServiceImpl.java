@@ -45,11 +45,9 @@ import com.wl4g.dopaas.uds.service.elasticjobcloud.repository.StatisticRdbReposi
 @Service
 public final class StatisticServiceImpl implements StatisticService {
 
-	@Autowired
-	private CloudJobConfigServiceImpl configurationService;
+	private @Autowired CloudJobConfigServiceImpl configurationService;
 
-	@Autowired
-	private StatisticRdbRepository rdbRepository;
+	private @Autowired StatisticRdbRepository rdbRepository;
 
 	/**
 	 * Get statistic of the recent week.

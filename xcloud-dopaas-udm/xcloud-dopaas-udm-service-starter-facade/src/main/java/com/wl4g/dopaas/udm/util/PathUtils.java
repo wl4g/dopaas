@@ -6,34 +6,34 @@ package com.wl4g.dopaas.udm.util;
  */
 public class PathUtils {
 
-    public static  String splicePath(String... paths) {
+	public static String splicePath(String... paths) {
 
-        if (null == paths || paths.length <= 0) {
-            return null;
-        }
+		if (null == paths || paths.length <= 0) {
+			return null;
+		}
 
-        if (paths.length == 1) {
-            return paths[0];
-        }
+		if (paths.length == 1) {
+			return paths[0];
+		}
 
-        if(paths[0] == null){
-            paths[0] = "";
-        }
+		if (paths[0] == null) {
+			paths[0] = "";
+		}
 
-        if(!paths[0].startsWith("/")){
-            paths[0] = "/" + paths[0];
-        }
+		if (!paths[0].startsWith("/")) {
+			paths[0] = "/" + paths[0];
+		}
 
-        StringBuilder path = new StringBuilder(paths[0]);
-        for (int i = 1; i < paths.length; i++) {
+		StringBuilder path = new StringBuilder(paths[0]);
+		for (int i = 1; i < paths.length; i++) {
 
-            if (!paths[i].startsWith("/")) {
-                path.append("/").append(paths[i]);
-            } else {
-                path.append(paths[i]);
-            }
-        }
-        return path.toString();
-    }
+			if (!paths[i].startsWith("/")) {
+				path.append("/").append(paths[i]);
+			} else {
+				path.append(paths[i]);
+			}
+		}
+		return path.toString();
+	}
 
 }

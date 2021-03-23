@@ -44,14 +44,11 @@ import static java.util.Objects.isNull;
 @Service
 public class HostNetcardServiceImpl implements HostNetcardService {
 
-	@Autowired
-	private HostNetcardDao appHostNetCardDao;
+	private @Autowired HostNetcardDao appHostNetCardDao;
 
-	@Autowired
-	private HostTunnelOpenvpnDao hostTunnelOpenvpnDao;
+	private @Autowired HostTunnelOpenvpnDao hostTunnelOpenvpnDao;
 
-	@Autowired
-	private HostTunnelPptpDao hostTunnelPptpDao;
+	private @Autowired HostTunnelPptpDao hostTunnelPptpDao;
 
 	@Override
 	public PageHolder<HostNetcard> page(PageHolder<HostNetcard> pm, Long hostId, String name) {

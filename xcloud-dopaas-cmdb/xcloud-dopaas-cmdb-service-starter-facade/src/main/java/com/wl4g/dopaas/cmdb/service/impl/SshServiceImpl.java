@@ -50,17 +50,14 @@ import static java.util.Objects.isNull;
 @Service
 public class SshServiceImpl implements SshService {
 
-	@Autowired
-	private SshDao sshDao;
+	private @Autowired SshDao sshDao;
 
 	@Value("${cipher-key}")
 	protected String cipherKey;
 
-	@Autowired
-	private HostDao appHostDao;
+	private @Autowired HostDao appHostDao;
 
-	@Autowired
-	private DestroableProcessManager pm;
+	private @Autowired DestroableProcessManager pm;
 
 	@Override
 	public PageHolder<SshBean> page(PageHolder<SshBean> pm, String name) {

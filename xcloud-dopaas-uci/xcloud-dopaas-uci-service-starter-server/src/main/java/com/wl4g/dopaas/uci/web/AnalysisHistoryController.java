@@ -36,8 +36,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/analysis")
 public class AnalysisHistoryController extends BaseController {
 
-	@Autowired
-	private AnalysisHistoryService analysisHistoryService;
+	private @Autowired AnalysisHistoryService analysisHistoryService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "uci:analysis" }, logical = AND)

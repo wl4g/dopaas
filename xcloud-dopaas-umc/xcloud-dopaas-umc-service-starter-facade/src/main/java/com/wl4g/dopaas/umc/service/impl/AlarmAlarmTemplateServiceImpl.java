@@ -59,20 +59,15 @@ import com.wl4g.dopaas.umc.service.AlarmTemplateService;
 @Service
 public class AlarmAlarmTemplateServiceImpl implements AlarmTemplateService {
 
-	@Autowired
-	private AlarmTemplateDao alarmTemplateDao;
+private @Autowired  AlarmTemplateDao alarmTemplateDao;
 
-	@Autowired
-	private AlarmRuleDao alarmRuleDao;
+private @Autowired  AlarmRuleDao alarmRuleDao;
 
-	@Autowired
-	private AlarmConfigDao alarmConfigDao;
+private @Autowired  AlarmConfigDao alarmConfigDao;
 
-	@Autowired
-	private JedisService jedisService;
+private @Autowired  JedisService jedisService;
 
-	@Autowired
-	private AppInstanceService appInstanceService;
+private @Autowired  AppInstanceService appInstanceService;
 
 	@Override
 	public PageHolder<AlarmTemplate> list(PageHolder<AlarmTemplate> pm, String name, Long metricId, String classify) {

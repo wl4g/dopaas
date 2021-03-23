@@ -44,14 +44,11 @@ import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizat
 @Transactional
 public class AppInstanceServiceImpl implements AppInstanceService {
 
-	@Autowired
-	private AppInstanceDao appInstanceDao;
+	private @Autowired AppInstanceDao appInstanceDao;
 
-	@Autowired
-	private HostDao appHostDao;
+	private @Autowired HostDao appHostDao;
 
-	@Autowired
-	private DestroableProcessManager pm;
+	private @Autowired DestroableProcessManager pm;
 
 	@Override
 	public PageHolder<AppInstance> list(PageHolder<AppInstance> pm, String name, Long instanceId, String envType,

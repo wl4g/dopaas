@@ -55,14 +55,11 @@ public class ProjectServiceImpl implements ProjectService {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsOperator;
+	private @Autowired GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsOperator;
 
-	@Autowired
-	private ProjectDao projectDao;
+	private @Autowired ProjectDao projectDao;
 
-	@Autowired
-	private DependencyDao dependencyDao;
+	private @Autowired DependencyDao dependencyDao;
 
 	@Override
 	public void save(Project project) {

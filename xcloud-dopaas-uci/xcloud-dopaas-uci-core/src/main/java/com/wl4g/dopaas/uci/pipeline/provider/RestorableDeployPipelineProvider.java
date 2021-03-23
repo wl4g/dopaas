@@ -62,7 +62,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 			setAssetsFingerprint(getMd5Fingerprint(assetsFile));
 		}
 
-		//build api document
+		// build api document
 		buildApi();
 
 		// Handling backup
@@ -89,10 +89,11 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	}
 
 	private void buildApi() throws IOException {
-		//TODO read json
+		// TODO read json
 		Project project = getContext().getProject();
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		String jsonFilePath = projectDir + getContext().getPipeline().getAssetsDir() + "/generated-docs/swagger-swagger2-by-springfox.json";
+		String jsonFilePath = projectDir + getContext().getPipeline().getAssetsDir()
+				+ "/generated-docs/swagger-swagger2-by-springfox.json";
 		String json = FileIOUtils.readFileToString(new File(jsonFilePath), "UTF-8");
 		PipeStepApi pipeStepApi = getContext().getPipeStepApi();
 		enterpriseApiService.importApiAndUpdateVersion("SWAGGER2", json, pipeStepApi.getRepositoryId());

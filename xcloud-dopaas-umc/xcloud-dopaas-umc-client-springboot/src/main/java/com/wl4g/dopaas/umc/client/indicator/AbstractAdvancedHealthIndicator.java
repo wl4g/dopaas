@@ -51,8 +51,7 @@ public abstract class AbstractAdvancedHealthIndicator extends AbstractHealthIndi
 	final protected ObjectMapper mapper = new ObjectMapper();
 	final protected Map<String, EventStore<Partition>> eventStores = new ConcurrentHashMap<>();
 
-	@Autowired
-	private CompositeHealthTaskProcessor processor;
+private @Autowired  CompositeHealthTaskProcessor processor;
 	private AdvancedHealthProperties<? extends Partition> conf;
 
 	public AbstractAdvancedHealthIndicator(AdvancedHealthProperties<? extends Partition> conf) {

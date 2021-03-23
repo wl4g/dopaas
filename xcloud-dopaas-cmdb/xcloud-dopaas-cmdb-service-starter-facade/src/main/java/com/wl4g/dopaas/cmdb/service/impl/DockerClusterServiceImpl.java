@@ -43,11 +43,9 @@ import static java.util.Objects.isNull;
 @Service
 public class DockerClusterServiceImpl implements DockerClusterService {
 
-	@Autowired
-	private DockerClusterDao dockerClusterDao;
+	private @Autowired DockerClusterDao dockerClusterDao;
 
-	@Autowired
-	private DockerInstanceDao dockerInstanceDao;
+	private @Autowired DockerInstanceDao dockerInstanceDao;
 
 	@Override
 	public PageHolder<DockerCluster> page(PageHolder<DockerCluster> pm, String name) {

@@ -45,8 +45,7 @@ public class FileLocalGenTemplateLocator implements GenTemplateLocator {
 
 	final private static String TEMPLATE_PATH = "/template";
 
-	@Autowired
-	private DocProperties docProperties;
+	private @Autowired  DocProperties docProperties;
 
 	@Override
 	public List<TemplateResource> locate(String provider) throws Exception {

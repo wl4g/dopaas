@@ -36,8 +36,7 @@ import static java.util.Objects.isNull;
 @Service
 public class DnsPrivateServerServiceImpl implements DnsPrivateServerService {
 
-	@Autowired
-	private DnsPrivateServerDao dnsPrivateServerDao;
+	private @Autowired DnsPrivateServerDao dnsPrivateServerDao;
 
 	@Override
 	public PageHolder<DnsPrivateServer> page(PageHolder<DnsPrivateServer> pm, String name) {

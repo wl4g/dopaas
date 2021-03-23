@@ -41,8 +41,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/ssh")
 public class SshController extends BaseController {
 
-	@Autowired
-	private SshService sshService;
+	private @Autowired SshService sshService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "cmdb:ssh" }, logical = AND)

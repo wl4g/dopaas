@@ -24,7 +24,6 @@ import org.apache.shardingsphere.elasticjob.infra.exception.JobConfigurationExce
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.dopaas.uds.service.elasticjobcloud.ProducerService;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.exception.AppConfigurationException;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.model.CloudAppConfigurationPOJO;
 
@@ -34,14 +33,11 @@ import com.wl4g.dopaas.uds.service.elasticjobcloud.model.CloudAppConfigurationPO
 @Service
 public final class ProducerServiceImpl implements ProducerService {
 
-	@Autowired
-	private CloudAppConfigServiceImpl appConfigService;
+	private @Autowired CloudAppConfigService appConfigService;
 
-	@Autowired
-	private CloudJobConfigServiceImpl configService;
+	private @Autowired CloudJobConfigService configService;
 
-	@Autowired
-	private DisableJobServiceImpl disableJobService;
+	private @Autowired DisableJobService disableJobService;
 
 	/**
 	 * Register the job.

@@ -38,8 +38,7 @@ import java.util.UUID;
 @Service
 public class ErmFsServiceImpl implements FsService {
 
-	@Autowired
-	private FsProperties fsProperties;
+	private @Autowired FsProperties fsProperties;
 
 	@Override
 	public String uploadFile(MultipartFile file) {

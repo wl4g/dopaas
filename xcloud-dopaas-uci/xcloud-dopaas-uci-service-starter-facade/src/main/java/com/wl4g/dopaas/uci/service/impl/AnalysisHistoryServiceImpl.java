@@ -32,8 +32,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AnalysisHistoryServiceImpl implements AnalysisHistoryService {
 
-	@Autowired
-	private AnalysisHistoryDao analysisHistoryDao;
+	private @Autowired AnalysisHistoryDao analysisHistoryDao;
 
 	@Override
 	public PageHolder<AnalysisHistory> list(PageHolder<AnalysisHistory> pm) {

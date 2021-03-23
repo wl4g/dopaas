@@ -35,8 +35,7 @@ import com.wl4g.devops.djob.core.configure.DefaultElasticJobConfigurer;
 @EnableConfigurationProperties(SchedulerProperties.class)
 public class DistributedJobAutoConfiguration {
 
-	@Autowired
-	private SchedulerProperties zookeeperProperties;
+	private @Autowired  SchedulerProperties zookeeperProperties;
 
 	/**
 	 * 初始化Zookeeper注册中心

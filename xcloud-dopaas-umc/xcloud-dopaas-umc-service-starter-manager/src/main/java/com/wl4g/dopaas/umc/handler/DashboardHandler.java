@@ -37,8 +37,7 @@ import com.wl4g.dopaas.umc.model.StatusMessage;
 public class DashboardHandler {
 	final protected Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private JedisService jedisService;
+private @Autowired  JedisService jedisService;
 
 	public StatusMessage findStatusInfo(String msgId) {
 		String msg = this.jedisService.get(UmcConstants.INFO_PREFIX + msgId);

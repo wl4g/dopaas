@@ -40,8 +40,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/pcm")
 public class PcmController {
 
-	@Autowired
-	private PcmService pcmService;
+	private @Autowired PcmService pcmService;
 
 	//
 	// PCM provider operation.

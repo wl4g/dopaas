@@ -40,8 +40,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @FixMethodOrder(MethodSorters.JVM)
 public class JedisScanTests {
 
-	@Autowired
-	private JedisService jedisService;
+private @Autowired  JedisService jedisService;
 
 	@Test
 	public void setObjectTTest() {

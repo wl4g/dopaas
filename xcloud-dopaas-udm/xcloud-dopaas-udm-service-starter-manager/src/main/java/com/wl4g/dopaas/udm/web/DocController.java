@@ -42,8 +42,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/doc")
 public class DocController extends BaseController {
 
-	@Autowired
-	private DocService docService;
+	private @Autowired DocService docService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "udm" }, logical = AND)

@@ -42,14 +42,11 @@ import com.wl4g.dopaas.udm.service.ShareService;
 @Service
 public class ShareServiceImpl implements ShareService {
 
-	@Autowired
-	private ShareDao shareDao;
+private @Autowired  ShareDao shareDao;
 
-	@Autowired
-	private DocService docService;
+private @Autowired  DocService docService;
 
-	@Autowired
-	private DocProperties docProperties;
+private @Autowired  DocProperties docProperties;
 
 	@Override
 	public PageHolder<Share> list(PageHolder<Share> pm) {

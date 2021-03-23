@@ -35,48 +35,46 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
-* {@link EnterpriseDocument}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EnterpriseDocument}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/md")
 public class EnterpriseMdController extends BaseController {
 
-    @Autowired
-    private EnterpriseMdService enterpriseMdService;
+	@Autowired
+	private EnterpriseMdService enterpriseMdService;
 
-    @Autowired
-    private FsViewerProperties fsViewerProperties;
+	@Autowired
+	private FsViewerProperties fsViewerProperties;
 
-    @RequestMapping(value = "/mdToHtml", method = { POST, GET })
-    public RespBase<?> mdToHtml(String md) throws IOException, TemplateException {
-        RespBase<Object> resp = RespBase.create();
-        resp.setData(enterpriseMdService.mdToHtml(md));
-        return resp;
-    }
+	@RequestMapping(value = "/mdToHtml", method = { POST, GET })
+	public RespBase<?> mdToHtml(String md) throws IOException, TemplateException {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(enterpriseMdService.mdToHtml(md));
+		return resp;
+	}
 
-    @RequestMapping(value = "/getTemplate", method = { POST, GET })
-    public RespBase<?> getTemplate() {
-        RespBase<Object> resp = RespBase.create();
-        String templatePath = fsViewerProperties.getBasePath() + "/template";
-        File templateDir = new File(templatePath);
-        resp.setData(templateDir.list());
-        return resp;
-    }
+	@RequestMapping(value = "/getTemplate", method = { POST, GET })
+	public RespBase<?> getTemplate() {
+		RespBase<Object> resp = RespBase.create();
+		String templatePath = fsViewerProperties.getBasePath() + "/template";
+		File templateDir = new File(templatePath);
+		resp.setData(templateDir.list());
+		return resp;
+	}
 
-    @RequestMapping(value = "/formatTemplate", method = { POST, GET })
-    public void formatTemplate(HttpServletResponse response, String md, String template) throws Exception {
-        //RespBase<Object> resp = RespBase.create();
-        String genPath = enterpriseMdService.formatTemplate(md, template);
-        //resp.setData();
-        writeZip(response, genPath, "codegen-".concat(md).concat("-").concat(template));
-        //return resp;
-    }
-
-
+	@RequestMapping(value = "/formatTemplate", method = { POST, GET })
+	public void formatTemplate(HttpServletResponse response, String md, String template) throws Exception {
+		// RespBase<Object> resp = RespBase.create();
+		String genPath = enterpriseMdService.formatTemplate(md, template);
+		// resp.setData();
+		writeZip(response, genPath, "codegen-".concat(md).concat("-").concat(template));
+		// return resp;
+	}
 
 }

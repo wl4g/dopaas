@@ -44,8 +44,7 @@ import java.util.List;
 @RequestMapping("/hook")
 public class VcsHookController extends BaseController {
 
-	@Autowired
-	private PipelineManagerAdapter pipelineManagerService;
+	private @Autowired PipelineManagerAdapter pipelineManagerService;
 
 	/**
 	 * Receive GITLAB hook.

@@ -32,47 +32,48 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseDocument}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EnterpriseDocument}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/enterprisedocument")
 public class EnterpriseDocumentController extends BaseController {
 
-    @Autowired
-    private EnterpriseDocumentService enterpriseDocumentService;
+	@Autowired
+	private EnterpriseDocumentService enterpriseDocumentService;
 
-    @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseDocument>> list(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest,PageHolder<EnterpriseDocument> pm) {
-        RespBase<PageHolder<EnterpriseDocument>> resp = RespBase.create();
-        enterpriseDocumentPageRequest.setPm(pm);
-        resp.setData(enterpriseDocumentService.page(enterpriseDocumentPageRequest));
-        return resp;
-    }
+	@RequestMapping(value = "/list", method = { GET })
+	public RespBase<PageHolder<EnterpriseDocument>> list(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest,
+			PageHolder<EnterpriseDocument> pm) {
+		RespBase<PageHolder<EnterpriseDocument>> resp = RespBase.create();
+		enterpriseDocumentPageRequest.setPm(pm);
+		resp.setData(enterpriseDocumentService.page(enterpriseDocumentPageRequest));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseDocument enterpriseDocument) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseDocumentService.save(enterpriseDocument);
-        return resp;
-    }
+	@RequestMapping(value = "/save", method = { POST, PUT })
+	public RespBase<?> save(@RequestBody EnterpriseDocument enterpriseDocument) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseDocumentService.save(enterpriseDocument);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseDocument> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseDocument> resp = RespBase.create();
-        resp.setData(enterpriseDocumentService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail", method = { GET })
+	public RespBase<EnterpriseDocument> detail(@RequestParam(required = true) Long id) {
+		RespBase<EnterpriseDocument> resp = RespBase.create();
+		resp.setData(enterpriseDocumentService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase<?> del(@RequestParam(required = true) Long id) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseDocumentService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del", method = { POST, DELETE })
+	public RespBase<?> del(@RequestParam(required = true) Long id) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseDocumentService.del(id);
+		return resp;
+	}
 
 }

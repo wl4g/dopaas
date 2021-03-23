@@ -17,7 +17,6 @@
  */
 package com.wl4g.dopaas.udm.web;
 
-
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.web.BaseController;
@@ -35,54 +34,55 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseApiModule}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EnterpriseApiModule}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/enterpriseapimodule")
 public class EnterpriseApiModuleController extends BaseController {
 
-    @Autowired
-    private EnterpriseApiModuleService enterpriseApiModuleService;
+	@Autowired
+	private EnterpriseApiModuleService enterpriseApiModuleService;
 
-    @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseApiModule>> list(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest,PageHolder<EnterpriseApiModule> pm) {
-        RespBase<PageHolder<EnterpriseApiModule>> resp = RespBase.create();
-        enterpriseApiModulePageRequest.setPm(pm);
-        resp.setData(enterpriseApiModuleService.page(enterpriseApiModulePageRequest));
-        return resp;
-    }
+	@RequestMapping(value = "/list", method = { GET })
+	public RespBase<PageHolder<EnterpriseApiModule>> list(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest,
+			PageHolder<EnterpriseApiModule> pm) {
+		RespBase<PageHolder<EnterpriseApiModule>> resp = RespBase.create();
+		enterpriseApiModulePageRequest.setPm(pm);
+		resp.setData(enterpriseApiModuleService.page(enterpriseApiModulePageRequest));
+		return resp;
+	}
 
-    @RequestMapping(value = "/getByVersionIdAndParentId", method = { GET })
-    public RespBase<List<EnterpriseApiModule>> getByVersionIdAndParentId(Long versionId, Long parentId) {
-        RespBase<List<EnterpriseApiModule>> resp = RespBase.create();
-        resp.setData(enterpriseApiModuleService.getByVersionIdAndParentId(versionId, parentId));
-        return resp;
-    }
+	@RequestMapping(value = "/getByVersionIdAndParentId", method = { GET })
+	public RespBase<List<EnterpriseApiModule>> getByVersionIdAndParentId(Long versionId, Long parentId) {
+		RespBase<List<EnterpriseApiModule>> resp = RespBase.create();
+		resp.setData(enterpriseApiModuleService.getByVersionIdAndParentId(versionId, parentId));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseApiModule enterpriseApiModule) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseApiModuleService.save(enterpriseApiModule);
-        return resp;
-    }
+	@RequestMapping(value = "/save", method = { POST, PUT })
+	public RespBase<?> save(@RequestBody EnterpriseApiModule enterpriseApiModule) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseApiModuleService.save(enterpriseApiModule);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseApiModule> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseApiModule> resp = RespBase.create();
-        resp.setData(enterpriseApiModuleService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail", method = { GET })
+	public RespBase<EnterpriseApiModule> detail(@RequestParam(required = true) Long id) {
+		RespBase<EnterpriseApiModule> resp = RespBase.create();
+		resp.setData(enterpriseApiModuleService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase<?> del(@RequestParam(required = true) Long id) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseApiModuleService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del", method = { POST, DELETE })
+	public RespBase<?> del(@RequestParam(required = true) Long id) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseApiModuleService.del(id);
+		return resp;
+	}
 
 }

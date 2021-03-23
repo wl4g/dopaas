@@ -37,8 +37,7 @@ import java.util.List;
 @RequestMapping("/metric")
 public class MetricTemplateController extends BaseController {
 
-	@Autowired
-	private MetricTemplateService metricTemplateService;
+private @Autowired  MetricTemplateService metricTemplateService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:metrictemplate" })

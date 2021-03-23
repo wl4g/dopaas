@@ -30,10 +30,10 @@ import com.google.common.base.Strings;
 
 import lombok.Setter;
 
+@Setter
 @Component
 @ConfigurationProperties(prefix = "event.trace")
-@Setter
-public final class EventTraceConfiguration {
+public final class EventTraceProperties {
 
 	private String rdbDriver;
 

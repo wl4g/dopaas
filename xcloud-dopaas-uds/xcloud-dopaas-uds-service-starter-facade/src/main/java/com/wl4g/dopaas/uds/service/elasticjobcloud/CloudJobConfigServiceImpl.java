@@ -41,8 +41,7 @@ import lombok.NoArgsConstructor;
 @Service
 public final class CloudJobConfigServiceImpl implements CloudJobConfigService {
 
-	@Autowired
-	private CoordinatorRegistryCenter regCenter;
+	private @Autowired CoordinatorRegistryCenter regCenter;
 
 	/**
 	 * Add cloud job configuration.

@@ -39,83 +39,81 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseApi}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EnterpriseApi}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/enterpriseapi")
 public class EnterpriseApiController extends BaseController {
 
-    @Autowired
-    private EnterpriseApiService enterpriseApiService;
+	@Autowired
+	private EnterpriseApiService enterpriseApiService;
 
-    @Autowired
-    private FsViewerProperties fsViewerProperties;
+	@Autowired
+	private FsViewerProperties fsViewerProperties;
 
-    @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseApi>> list(EnterpriseApiPageRequest enterpriseApiPageRequest,PageHolder<EnterpriseApi> pm) {
-        RespBase<PageHolder<EnterpriseApi>> resp = RespBase.create();
-        enterpriseApiPageRequest.setPm(pm);
-        resp.setData(enterpriseApiService.page(enterpriseApiPageRequest));
-        return resp;
-    }
+	@RequestMapping(value = "/list", method = { GET })
+	public RespBase<PageHolder<EnterpriseApi>> list(EnterpriseApiPageRequest enterpriseApiPageRequest,
+			PageHolder<EnterpriseApi> pm) {
+		RespBase<PageHolder<EnterpriseApi>> resp = RespBase.create();
+		enterpriseApiPageRequest.setPm(pm);
+		resp.setData(enterpriseApiService.page(enterpriseApiPageRequest));
+		return resp;
+	}
 
-    @RequestMapping(value = "/getByModuleId", method = { GET })
-    public RespBase<List<EnterpriseApi>> getByModuleId(Long moduleId) {
-        RespBase<List<EnterpriseApi>> resp = RespBase.create();
-        resp.setData(enterpriseApiService.getByModuleId(moduleId));
-        return resp;
-    }
+	@RequestMapping(value = "/getByModuleId", method = { GET })
+	public RespBase<List<EnterpriseApi>> getByModuleId(Long moduleId) {
+		RespBase<List<EnterpriseApi>> resp = RespBase.create();
+		resp.setData(enterpriseApiService.getByModuleId(moduleId));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseApi enterpriseApi) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseApiService.save(enterpriseApi);
-        return resp;
-    }
+	@RequestMapping(value = "/save", method = { POST, PUT })
+	public RespBase<?> save(@RequestBody EnterpriseApi enterpriseApi) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseApiService.save(enterpriseApi);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseApi> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseApi> resp = RespBase.create();
-        resp.setData(enterpriseApiService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail", method = { GET })
+	public RespBase<EnterpriseApi> detail(@RequestParam(required = true) Long id) {
+		RespBase<EnterpriseApi> resp = RespBase.create();
+		resp.setData(enterpriseApiService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase<?> del(@RequestParam(required = true) Long id) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseApiService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del", method = { POST, DELETE })
+	public RespBase<?> del(@RequestParam(required = true) Long id) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseApiService.del(id);
+		return resp;
+	}
 
-    @RequestMapping(value = "/getConverterProviderKind", method = { POST,GET })
-    public RespBase<?> getDataType() {
-        RespBase<Object> resp = RespBase.create();
-        List<String> dataTypes = enterpriseApiService.getConverterProviderKind();
-        resp.setData(dataTypes);
-        return resp;
-    }
+	@RequestMapping(value = "/getConverterProviderKind", method = { POST, GET })
+	public RespBase<?> getDataType() {
+		RespBase<Object> resp = RespBase.create();
+		List<String> dataTypes = enterpriseApiService.getConverterProviderKind();
+		resp.setData(dataTypes);
+		return resp;
+	}
 
-    @RequestMapping(value = "/importApi", method = { POST })
-    public RespBase<?> importApi(String kind, String json, Long moduleId) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseApiService.importApi(kind,json,moduleId);
-        return resp;
-    }
+	@RequestMapping(value = "/importApi", method = { POST })
+	public RespBase<?> importApi(String kind, String json, Long moduleId) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseApiService.importApi(kind, json, moduleId);
+		return resp;
+	}
 
-    @RequestMapping(value = "/exportApi", method = { POST,GET })
-    public void exportApi(HttpServletResponse response, String kind, Long moduleId) throws IOException {
-        String s = enterpriseApiService.exportApi(kind, moduleId);
-        File file = new File(fsViewerProperties.getBasePath()+ "/tmp/exportApi.json");
-        FileIOUtils.writeFile(file, s, false);
-        writeFile(response, file,"exportApi.json");
-    }
-
-
-
+	@RequestMapping(value = "/exportApi", method = { POST, GET })
+	public void exportApi(HttpServletResponse response, String kind, Long moduleId) throws IOException {
+		String s = enterpriseApiService.exportApi(kind, moduleId);
+		File file = new File(fsViewerProperties.getBasePath() + "/tmp/exportApi.json");
+		FileIOUtils.writeFile(file, s, false);
+		writeFile(response, file, "exportApi.json");
+	}
 
 }

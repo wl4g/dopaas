@@ -38,8 +38,7 @@ import com.wl4g.dopaas.umc.service.CustomAlarmEventService;
 @RequestMapping("/event")
 public class CustomAlarmEventController extends BaseController {
 
-	@Autowired
-	private CustomAlarmEventService customAlarmEventService;
+private @Autowired  CustomAlarmEventService customAlarmEventService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:alarm:event" }, logical = AND)

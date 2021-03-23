@@ -48,17 +48,13 @@ public class AppClusterServiceImpl implements AppClusterService {
 
 	protected SmartLogger log = getLogger(getClass());
 
-	@Autowired
-	private AppClusterDao appClusterDao;
+	private @Autowired AppClusterDao appClusterDao;
 
-	@Autowired
-	private AppInstanceDao appInstanceDao;
+	private @Autowired AppInstanceDao appInstanceDao;
 
-	@Autowired
-	private AppEnvironmentDao appEnvironmentDao;
+	private @Autowired AppEnvironmentDao appEnvironmentDao;
 
-	@Autowired
-	private DictService dictService;
+	private @Autowired DictService dictService;
 
 	@Override
 	public Map<String, Object> list(PageHolder<?> pm, String clusterName, Integer deployType) {

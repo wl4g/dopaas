@@ -28,8 +28,7 @@ public class ExampleService {
 	@Value("#{'${example.firstName:unname}'.toUpperCase()}-auto-${random.int(1000)}")
 	private String firstName;
 
-	@Autowired
-	private LastNameBean lastName;
+	private @Autowired  LastNameBean lastName;
 
 	public String getFirstName() {
 		return firstName;

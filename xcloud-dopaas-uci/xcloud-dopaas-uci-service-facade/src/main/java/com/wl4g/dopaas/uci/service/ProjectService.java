@@ -38,37 +38,35 @@ public interface ProjectService {
 	void save(@RequestBody Project project);
 
 	@RequestMapping(value = "/deleteById", method = POST)
-	int deleteById(@RequestParam(name="id",required=false) Long id);
+	int deleteById(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/removeById", method = POST)
-	int removeById(@RequestParam(name="id",required=false) Long id);
+	int removeById(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/list", method = POST)
 	PageHolder<Project> list(@RequestBody PageHolder<Project> pm,
-							 @RequestParam(name="groupName",required=false) String groupName,
-							 @RequestParam(name="projectName",required=false) String projectName);
+			@RequestParam(name = "groupName", required = false) String groupName,
+			@RequestParam(name = "projectName", required = false) String projectName);
 
 	@RequestMapping(value = "/getBySelect", method = POST)
-	List<Project> getBySelect(@RequestParam(name="isBoot",required=false) Integer isBoot);
+	List<Project> getBySelect(@RequestParam(name = "isBoot", required = false) Integer isBoot);
 
 	@RequestMapping(value = "/selectByPrimaryKey", method = POST)
-	Project selectByPrimaryKey(@RequestParam(name="id",required=false) Long id);
+	Project selectByPrimaryKey(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/getByAppClusterId", method = POST)
-	Project getByAppClusterId(@RequestParam(name="appClusteId",required=false) Long appClusteId);
+	Project getByAppClusterId(@RequestParam(name = "appClusteId", required = false) Long appClusteId);
 
 	@RequestMapping(value = "/updateLockStatus", method = POST)
-	int updateLockStatus(@RequestParam(name="id",required=false) Long id,
-						 @RequestParam(name="lockStatus",required=false) Integer lockStatus);
+	int updateLockStatus(@RequestParam(name = "id", required = false) Long id,
+			@RequestParam(name = "lockStatus", required = false) Integer lockStatus);
 
 	@RequestMapping(value = "/getBranchs", method = POST)
-	List<String> getBranchs(@RequestParam(name="appClusterId",required=false) Long appClusterId,
-							@RequestParam(name="tagOrBranch",required=false) Integer tagOrBranch)
-			throws Exception;
+	List<String> getBranchs(@RequestParam(name = "appClusterId", required = false) Long appClusterId,
+			@RequestParam(name = "tagOrBranch", required = false) Integer tagOrBranch) throws Exception;
 
 	@RequestMapping(value = "/getBranchsByProjectId", method = POST)
-	List<String> getBranchsByProjectId(@RequestParam(name="projectId",required=false) Long projectId,
-									   @RequestParam(name="tagOrBranch",required=false) Integer tagOrBranch)
-			throws Exception;
+	List<String> getBranchsByProjectId(@RequestParam(name = "projectId", required = false) Long projectId,
+			@RequestParam(name = "tagOrBranch", required = false) Integer tagOrBranch) throws Exception;
 
 }

@@ -35,8 +35,7 @@ import static com.wl4g.dopaas.udm.fsview.util.PathUtils.splicePath;
 @RequestMapping("/fs")
 public class FsController {
 
-	@Autowired
-	private FsService fsService;
+	private @Autowired  FsService fsService;
 
 	@RequestMapping("getTreeFiles")
 	RespBase<?> getTreeFiles(String subPath){

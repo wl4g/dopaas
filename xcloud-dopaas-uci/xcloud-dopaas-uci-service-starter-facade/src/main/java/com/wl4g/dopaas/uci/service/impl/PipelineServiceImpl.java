@@ -64,44 +64,31 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Service
 public class PipelineServiceImpl implements PipelineService {
 
-	@Autowired
-	private PipelineDao pipelineDao;
+	private @Autowired PipelineDao pipelineDao;
 
-	@Autowired
-	private PipelineInstanceDao pipelineInstanceDao;
+	private @Autowired PipelineInstanceDao pipelineInstanceDao;
 
-	@Autowired
-	private PipeStageBuildingDao pipeStageBuildingDao;
+	private @Autowired PipeStageBuildingDao pipeStageBuildingDao;
 
-	@Autowired
-	private PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
+	private @Autowired PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
 
-	@Autowired
-	private PipeStagePcmDao pipeStepPcmDao;
+	private @Autowired PipeStagePcmDao pipeStepPcmDao;
 
-	@Autowired
-	private PipeStepApiDao pipeStepApiDao;
+	private @Autowired PipeStepApiDao pipeStepApiDao;
 
-	@Autowired
-	private PipeStageNotificationDao pipeStepNotificationDao;
+	private @Autowired PipeStageNotificationDao pipeStepNotificationDao;
 
-	@Autowired
-	private ProjectDao projectDao;
+	private @Autowired ProjectDao projectDao;
 
-	@Autowired
-	private DependencyService dependencyService;
+	private @Autowired DependencyService dependencyService;
 
-	@Autowired
-	private ProjectService projectService;
+	private @Autowired ProjectService projectService;
 
-	@Autowired
-	private PipeStageInstanceCommandDao pipeStepInstanceCommandDao;
+	private @Autowired PipeStageInstanceCommandDao pipeStepInstanceCommandDao;
 
-	@Autowired
-	private PipeStageDeployDao pipeStepDeployDao;
+	private @Autowired PipeStageDeployDao pipeStepDeployDao;
 
-	@Autowired
-	private ClusterExtensionDao clusterExtensionDao;
+	private @Autowired ClusterExtensionDao clusterExtensionDao;
 
 	@Override
 	public PageHolder<Pipeline> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
@@ -247,14 +234,13 @@ public class PipelineServiceImpl implements PipelineService {
 
 		// TODO ...... testing,analysis,docker,k8s
 
-		//Insert Api Config
+		// Insert Api Config
 		PipeStepApi pipeStepApi = pipeline.getPipeStepApi();
 		if (nonNull(pipeStepApi)) {
 			pipeStepApi.preInsert();
 			pipeStepApi.setPipeId(pipeline.getId());
 			pipeStepApiDao.insertSelective(pipeStepApi);
 		}
-
 
 		// Insert Pcm
 		PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
@@ -343,11 +329,11 @@ public class PipelineServiceImpl implements PipelineService {
 
 		PipeStepApi pipeStepApi = pipeline.getPipeStepApi();
 		if (nonNull(pipeStepApi)) {
-			if(nonNull(pipeStepApi.getId())){
+			if (nonNull(pipeStepApi.getId())) {
 				pipeStepApi.preUpdate();
 				pipeStepApi.setPipeId(pipeline.getId());
 				pipeStepApiDao.updateByPrimaryKeySelective(pipeStepApi);
-			}else{
+			} else {
 				pipeStepApi.preInsert();
 				pipeStepApi.setPipeId(pipeline.getId());
 				pipeStepApiDao.insertSelective(pipeStepApi);

@@ -44,14 +44,11 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/pipeHis")
 public class PipelineHistoryController extends BaseController {
 
-	@Autowired
-	private PipelineHistoryService pipelineHistoryService;
+	private @Autowired PipelineHistoryService pipelineHistoryService;
 
-	@Autowired
-	private PipelineManagerAdapter pipelineManagerService;
+	private @Autowired PipelineManagerAdapter pipelineManagerService;
 
-	@Autowired
-	private OrchestrationManagerAdapter flowManagerService;
+	private @Autowired OrchestrationManagerAdapter flowManagerService;
 
 	/**
 	 * Query search of page

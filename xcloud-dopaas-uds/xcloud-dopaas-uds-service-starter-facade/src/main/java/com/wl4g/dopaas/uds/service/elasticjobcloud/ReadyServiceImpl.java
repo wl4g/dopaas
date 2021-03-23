@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Strings;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.ReadyService;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.StateNode;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.config.JobStateConfiguration;
+import com.wl4g.dopaas.uds.service.elasticjobcloud.config.JobStateProperties;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -45,14 +45,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public final class ReadyServiceImpl implements ReadyService {
 
-	@Autowired
-	private CoordinatorRegistryCenter regCenter;
+	private @Autowired CoordinatorRegistryCenter regCenter;
 
-	@Autowired
-	private CloudJobConfigServiceImpl configService;
+	private @Autowired CloudJobConfigServiceImpl configService;
 
-	@Autowired
-	private JobStateConfiguration jobStateConfiguration;
+	private @Autowired JobStateProperties jobStateConfiguration;
 
 	/**
 	 * Add transient job to ready queue.

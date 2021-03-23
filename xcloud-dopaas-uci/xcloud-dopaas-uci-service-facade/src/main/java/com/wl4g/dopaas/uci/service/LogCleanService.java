@@ -35,9 +35,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public interface LogCleanService {
 
 	@RequestMapping(value = "/cleanOrchestrationHistory", method = POST)
-	int cleanOrchestrationHistory(@RequestParam(value = "cleanStopTime",required = false) Long cleanStopTime);
+	int cleanOrchestrationHistory(@RequestParam(value = "cleanStopTime", required = false) Long cleanStopTime);
 
 	@RequestMapping(value = "/cleanPipelineHistory", method = POST)
-	int cleanPipelineHistory(@RequestParam(value = "cleanStopTime",required = false) Long cleanStopTime);
+	int cleanPipelineHistory(@RequestParam(value = "cleanStopTime", required = false) Long cleanStopTime);
 
 }

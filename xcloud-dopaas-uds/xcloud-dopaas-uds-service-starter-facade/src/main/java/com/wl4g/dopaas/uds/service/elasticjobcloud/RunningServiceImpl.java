@@ -42,11 +42,9 @@ import lombok.NoArgsConstructor;
 @Service
 public final class RunningServiceImpl implements RunningService {
 
-	@Autowired
-	private CoordinatorRegistryCenter regCenter;
+	private @Autowired CoordinatorRegistryCenter regCenter;
 
-	@Autowired
-	private CloudJobConfigServiceImpl configurationService;
+	private @Autowired CloudJobConfigServiceImpl configurationService;
 
 	/**
 	 * Get all running tasks.

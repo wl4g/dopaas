@@ -32,47 +32,48 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseRepositoryGroup}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EnterpriseRepositoryGroup}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/enterpriserepositorygroup")
 public class EnterpriseRepositoryGroupController extends BaseController {
 
-    @Autowired
-    private EnterpriseRepositoryGroupService enterpriseRepositoryGroupService;
+	@Autowired
+	private EnterpriseRepositoryGroupService enterpriseRepositoryGroupService;
 
-    @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseRepositoryGroup>> list(EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest,PageHolder<EnterpriseRepositoryGroup> pm) {
-        RespBase<PageHolder<EnterpriseRepositoryGroup>> resp = RespBase.create();
-        enterpriseRepositoryGroupPageRequest.setPm(pm);
-        resp.setData(enterpriseRepositoryGroupService.page(enterpriseRepositoryGroupPageRequest));
-        return resp;
-    }
+	@RequestMapping(value = "/list", method = { GET })
+	public RespBase<PageHolder<EnterpriseRepositoryGroup>> list(
+			EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest, PageHolder<EnterpriseRepositoryGroup> pm) {
+		RespBase<PageHolder<EnterpriseRepositoryGroup>> resp = RespBase.create();
+		enterpriseRepositoryGroupPageRequest.setPm(pm);
+		resp.setData(enterpriseRepositoryGroupService.page(enterpriseRepositoryGroupPageRequest));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseRepositoryGroupService.save(enterpriseRepositoryGroup);
-        return resp;
-    }
+	@RequestMapping(value = "/save", method = { POST, PUT })
+	public RespBase<?> save(@RequestBody EnterpriseRepositoryGroup enterpriseRepositoryGroup) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseRepositoryGroupService.save(enterpriseRepositoryGroup);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseRepositoryGroup> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseRepositoryGroup> resp = RespBase.create();
-        resp.setData(enterpriseRepositoryGroupService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail", method = { GET })
+	public RespBase<EnterpriseRepositoryGroup> detail(@RequestParam(required = true) Long id) {
+		RespBase<EnterpriseRepositoryGroup> resp = RespBase.create();
+		resp.setData(enterpriseRepositoryGroupService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase<?> del(@RequestParam(required = true) Long id) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseRepositoryGroupService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del", method = { POST, DELETE })
+	public RespBase<?> del(@RequestParam(required = true) Long id) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseRepositoryGroupService.del(id);
+		return resp;
+	}
 
 }

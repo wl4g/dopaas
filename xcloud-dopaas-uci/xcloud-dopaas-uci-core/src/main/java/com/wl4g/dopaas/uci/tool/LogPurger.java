@@ -40,11 +40,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 public class LogPurger extends ApplicationTaskRunner<RunnerProperties> {
 
-	@Autowired
-	private CiProperties config;
+	private @Autowired CiProperties config;
 
-	@Autowired
-	private LogCleanService cleanService;
+	private @Autowired LogCleanService cleanService;
 
 	public LogPurger() {
 		super(new RunnerProperties(1));

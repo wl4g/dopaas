@@ -43,8 +43,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/instance")
 public class AppInstanceController extends BaseController {
 
-	@Autowired
-	private AppInstanceService appInstanceService;
+	private @Autowired AppInstanceService appInstanceService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "cmdb:instance" }, logical = AND)

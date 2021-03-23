@@ -36,23 +36,17 @@ import com.wl4g.dopaas.uds.service.elasticjobcloud.MesosFacadeService;
 @Service
 public final class MesosFacadeServiceImpl implements MesosFacadeService {
 
-	@Autowired
-	private CloudJobConfigServiceImpl jobConfigService;
+	private @Autowired CloudJobConfigServiceImpl jobConfigService;
 
-	@Autowired
-	private ReadyServiceImpl readyService;
+	private @Autowired ReadyServiceImpl readyService;
 
-	@Autowired
-	private RunningServiceImpl runningService;
+	private @Autowired RunningServiceImpl runningService;
 
-	@Autowired
-	private FailoverServiceImpl failoverService;
+	private @Autowired FailoverServiceImpl failoverService;
 
-	@Autowired
-	private DisableAppServiceImpl disableAppService;
+	private @Autowired DisableAppServiceImpl disableAppService;
 
-	@Autowired
-	private DisableJobServiceImpl disableJobService;
+	private @Autowired DisableJobServiceImpl disableJobService;
 
 	/**
 	 * Add transient job to ready queue.

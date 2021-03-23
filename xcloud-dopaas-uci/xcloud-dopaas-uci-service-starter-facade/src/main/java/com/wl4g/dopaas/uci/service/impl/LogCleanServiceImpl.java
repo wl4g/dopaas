@@ -34,8 +34,7 @@ import com.wl4g.dopaas.uci.service.LogCleanService;
 @Service
 public class LogCleanServiceImpl implements LogCleanService {
 
-	@Autowired
-	private LogCleanDao cleanDao;
+	private @Autowired LogCleanDao cleanDao;
 
 	@Override
 	public int cleanOrchestrationHistory(Long cleanStopTime) {

@@ -33,8 +33,7 @@ import java.util.List;
 @Service
 public class MetricTemplateServiceImpl implements MetricTemplateService {
 
-	@Autowired
-	private MetricTemplateDao metricTemplateDao;
+private @Autowired  MetricTemplateDao metricTemplateDao;
 
 	@Override
 	public PageHolder<MetricTemplate> list(PageHolder<MetricTemplate> pm, String metric, String classify) {

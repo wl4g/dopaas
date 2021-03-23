@@ -32,47 +32,48 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseRepository}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EnterpriseRepository}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/enterpriserepository")
 public class EnterpriseRepositoryController extends BaseController {
 
-    @Autowired
-    private EnterpriseRepositoryService enterpriseRepositoryService;
+	@Autowired
+	private EnterpriseRepositoryService enterpriseRepositoryService;
 
-    @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseRepository>> list(EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest,PageHolder<EnterpriseRepository> pm) {
-        RespBase<PageHolder<EnterpriseRepository>> resp = RespBase.create();
-        enterpriseRepositoryPageRequest.setPm(pm);
-        resp.setData(enterpriseRepositoryService.page(enterpriseRepositoryPageRequest));
-        return resp;
-    }
+	@RequestMapping(value = "/list", method = { GET })
+	public RespBase<PageHolder<EnterpriseRepository>> list(EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest,
+			PageHolder<EnterpriseRepository> pm) {
+		RespBase<PageHolder<EnterpriseRepository>> resp = RespBase.create();
+		enterpriseRepositoryPageRequest.setPm(pm);
+		resp.setData(enterpriseRepositoryService.page(enterpriseRepositoryPageRequest));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseRepository enterpriseRepository) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseRepositoryService.save(enterpriseRepository);
-        return resp;
-    }
+	@RequestMapping(value = "/save", method = { POST, PUT })
+	public RespBase<?> save(@RequestBody EnterpriseRepository enterpriseRepository) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseRepositoryService.save(enterpriseRepository);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseRepository> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseRepository> resp = RespBase.create();
-        resp.setData(enterpriseRepositoryService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail", method = { GET })
+	public RespBase<EnterpriseRepository> detail(@RequestParam(required = true) Long id) {
+		RespBase<EnterpriseRepository> resp = RespBase.create();
+		resp.setData(enterpriseRepositoryService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase<?> del(@RequestParam(required = true) Long id) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseRepositoryService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del", method = { POST, DELETE })
+	public RespBase<?> del(@RequestParam(required = true) Long id) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseRepositoryService.del(id);
+		return resp;
+	}
 
 }

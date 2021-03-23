@@ -33,22 +33,22 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public interface OrchestrationService {
 
 	@RequestMapping(value = "/list", method = POST)
-	PageHolder<Orchestration> list(@RequestBody PageHolder<Orchestration> pm,@RequestParam(name="name",required=false) String name);
+	PageHolder<Orchestration> list(@RequestBody PageHolder<Orchestration> pm,
+			@RequestParam(name = "name", required = false) String name);
 
 	@RequestMapping(value = "/save", method = POST)
 	void save(@RequestBody Orchestration orchestration);
 
 	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name="id",required=false)Long id);
+	void del(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/detail", method = POST)
-	Orchestration detail(@RequestParam(name="id",required=false)Long id);
+	Orchestration detail(@RequestParam(name = "id", required = false) Long id);
 
 	@RequestMapping(value = "/run", method = POST)
-	void run(@RequestParam(name="id",required=false)Long id,
-			 @RequestParam(name="remark",required=false)String remark,
-			 @RequestParam(name="taskTraceId",required=false)String taskTraceId,
-			 @RequestParam(name="taskTraceType",required=false)String taskTraceType,
-			 @RequestParam(name="annex",required=false)String annex);
+	void run(@RequestParam(name = "id", required = false) Long id, @RequestParam(name = "remark", required = false) String remark,
+			@RequestParam(name = "taskTraceId", required = false) String taskTraceId,
+			@RequestParam(name = "taskTraceType", required = false) String taskTraceType,
+			@RequestParam(name = "annex", required = false) String annex);
 
 }

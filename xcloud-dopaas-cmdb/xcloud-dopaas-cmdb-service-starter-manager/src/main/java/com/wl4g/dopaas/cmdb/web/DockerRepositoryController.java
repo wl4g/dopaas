@@ -43,8 +43,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/dockerRepository")
 public class DockerRepositoryController extends BaseController {
 
-	@Autowired
-	private DockerRepositoryService dockerRepositoryService;
+	private @Autowired DockerRepositoryService dockerRepositoryService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "cmdb:dockerrepository" }, logical = AND)

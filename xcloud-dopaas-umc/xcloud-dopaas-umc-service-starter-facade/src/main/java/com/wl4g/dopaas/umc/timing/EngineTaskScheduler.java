@@ -54,11 +54,9 @@ public class EngineTaskScheduler implements ApplicationRunner {
 	@Autowired
 	protected BeanFactory beanFactory;
 
-	@Autowired
-	private ThreadPoolTaskScheduler taskScheduler;
+	private @Autowired  ThreadPoolTaskScheduler taskScheduler;
 
-	@Autowired
-	private CustomEngineDao customEngineDao;
+	private @Autowired  CustomEngineDao customEngineDao;
 
 	@Override
 	public void run(ApplicationArguments args) {

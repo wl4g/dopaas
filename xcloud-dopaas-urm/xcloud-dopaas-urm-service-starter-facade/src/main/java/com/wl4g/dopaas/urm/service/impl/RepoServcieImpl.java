@@ -51,14 +51,11 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class RepoServcieImpl implements RepoService {
 
-	@Autowired
-	private RepoDao repoDao;
+private @Autowired  RepoDao repoDao;
 
-	@Autowired
-	private GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsManager;
+private @Autowired  GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsManager;
 
-	@Autowired
-	private RepoProperties vcsProperties;
+private @Autowired  RepoProperties vcsProperties;
 
 	@Override
 	public PageHolder<SourceRepo> list(PageHolder<SourceRepo> pm, String name, String providerKind, Integer authType) {

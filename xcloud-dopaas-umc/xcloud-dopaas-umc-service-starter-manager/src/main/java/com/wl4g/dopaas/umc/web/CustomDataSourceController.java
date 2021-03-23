@@ -41,8 +41,7 @@ import com.wl4g.dopaas.umc.service.CustomDataSourceService;
 @RequestMapping("/datasource")
 public class CustomDataSourceController extends BaseController {
 
-	@Autowired
-	private CustomDataSourceService customDataSourceService;
+private @Autowired  CustomDataSourceService customDataSourceService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:datasource" }, logical = AND)

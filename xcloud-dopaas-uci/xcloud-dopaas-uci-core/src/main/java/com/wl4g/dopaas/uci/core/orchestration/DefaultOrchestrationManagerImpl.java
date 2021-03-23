@@ -61,18 +61,12 @@ import static java.util.Objects.isNull;
 public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
 	protected final Logger log = getLogger(getClass());
 
-	@Autowired
-	private JedisService jedisService;
-	@Autowired
-	private PipelineManager pipelineManager;
-	@Autowired
-	private PipelineJobExecutor jobExecutor;
-	@Autowired
-	private OrchestrationDao orchestrationDao;
-	@Autowired
-	private OrchestrationHistoryDao orchestrationHistoryDao;
-	@Autowired
-	private PipelineHistoryDao pipelineHistoryDao;
+private @Autowired  JedisService jedisService;
+private @Autowired  PipelineManager pipelineManager;
+private @Autowired  PipelineJobExecutor jobExecutor;
+private @Autowired  OrchestrationDao orchestrationDao;
+private @Autowired  OrchestrationHistoryDao orchestrationHistoryDao;
+private @Autowired  PipelineHistoryDao pipelineHistoryDao;
 
 	/**
 	 * Start to run orchestration

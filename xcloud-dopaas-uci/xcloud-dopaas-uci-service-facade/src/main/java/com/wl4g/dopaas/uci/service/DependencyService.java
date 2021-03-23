@@ -34,6 +34,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public interface DependencyService {
 
 	@RequestMapping(value = "/getHierarchyDependencys", method = POST)
-	LinkedHashSet<Dependency> getHierarchyDependencys(@RequestParam("projectId") Long projectId, @RequestBody LinkedHashSet<Dependency> set);
+	LinkedHashSet<Dependency> getHierarchyDependencys(@RequestParam("projectId") Long projectId,
+			@RequestBody LinkedHashSet<Dependency> set);
 
 }

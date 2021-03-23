@@ -46,11 +46,9 @@ import com.wl4g.dopaas.udm.service.dto.EnterpriseRepositoryGroupPageRequest;
 @Service
 public class EnterpriseRepositoryGroupServiceImpl implements EnterpriseRepositoryGroupService {
 
-	@Autowired
-	private EnterpriseRepositoryGroupDao enterpriseRepositoryGroupDao;
+	private @Autowired  EnterpriseRepositoryGroupDao enterpriseRepositoryGroupDao;
 
-	@Autowired
-	private EnterpriseRepositoryDao enterpriseRepositoryDao;
+	private @Autowired  EnterpriseRepositoryDao enterpriseRepositoryDao;
 
 	@Override
 	public PageHolder<EnterpriseRepositoryGroup> page(EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest) {

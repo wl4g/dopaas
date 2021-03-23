@@ -49,8 +49,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class DefaultElasticJobConfigurer extends AbstractDjobConfigurer {
 
-	@Autowired
-	private ZookeeperRegistryCenter zkRegistryCenter;
+	private @Autowired  ZookeeperRegistryCenter zkRegistryCenter;
 
 	@Autowired(required = false)
 	private ElasticJobManager elasticJobManager;

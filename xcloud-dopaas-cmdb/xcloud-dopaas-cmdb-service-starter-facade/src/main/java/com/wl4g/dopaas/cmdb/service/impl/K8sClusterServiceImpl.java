@@ -43,11 +43,9 @@ import static java.util.Objects.isNull;
 @Service
 public class K8sClusterServiceImpl implements K8sClusterService {
 
-	@Autowired
-	private K8sClusterDao k8sClusterDao;
+	private @Autowired K8sClusterDao k8sClusterDao;
 
-	@Autowired
-	private K8sInstanceDao k8sInstanceDao;
+	private @Autowired K8sInstanceDao k8sInstanceDao;
 
 	@Override
 	public PageHolder<K8sCluster> page(PageHolder<K8sCluster> pm, String name) {

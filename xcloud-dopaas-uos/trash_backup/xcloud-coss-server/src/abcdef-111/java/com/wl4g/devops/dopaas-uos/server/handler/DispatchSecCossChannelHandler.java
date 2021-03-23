@@ -33,8 +33,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
  */
 public class DispatchSecCossChannelHandler extends GenericCossChannelHandler {
 
-	@Autowired
-	private CossActionProvider actionProvider;
+private @Autowired  CossActionProvider actionProvider;
 
 	@Override
 	protected void doChannelRead(ChannelHandlerContext ctx, FullHttpRequest req) {

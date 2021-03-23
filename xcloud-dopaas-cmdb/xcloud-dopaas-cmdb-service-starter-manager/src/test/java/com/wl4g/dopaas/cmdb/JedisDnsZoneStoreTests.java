@@ -44,8 +44,7 @@ import com.wl4g.component.support.redis.jedis.JedisService;
 @FixMethodOrder(MethodSorters.JVM)
 public class JedisDnsZoneStoreTests {
 
-	@Autowired
-	private JedisService jedisService;
+	private @Autowired  JedisService jedisService;
 
 	@Test
 	public void mapPutTest() {

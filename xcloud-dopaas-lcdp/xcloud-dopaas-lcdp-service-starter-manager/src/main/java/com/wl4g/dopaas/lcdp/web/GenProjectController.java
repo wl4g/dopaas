@@ -44,8 +44,7 @@ import com.wl4g.dopaas.lcdp.service.GenProjectService;
 @RequestMapping("/gen/project")
 public class GenProjectController extends BaseController {
 
-	@Autowired
-	private GenProjectService genProjectService;
+	private @Autowired GenProjectService genProjectService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "lcdp:codegen:project" }, logical = AND)

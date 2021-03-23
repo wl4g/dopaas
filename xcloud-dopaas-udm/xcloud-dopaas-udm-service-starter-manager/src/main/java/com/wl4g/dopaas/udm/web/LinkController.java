@@ -40,8 +40,7 @@ public class LinkController {
 
 	final protected Logger log = getLogger(getClass());
 
-	@Autowired
-	private ShareService shareService;
+	private @Autowired ShareService shareService;
 
 	/**
 	 * Rendering markdown doc

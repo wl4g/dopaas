@@ -53,8 +53,8 @@ public abstract class ResourceBundleUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public static String readResource(@NotNull Class<?> withLoadClass, @NotBlank String subPath,
-			@NotBlank String filename, boolean useCache, @Nullable String... args) {
+	public static String readResource(@NotNull Class<?> withLoadClass, @NotBlank String subPath, @NotBlank String filename,
+			boolean useCache, @Nullable String... args) {
 		notNullOf(withLoadClass, "withLoadClass");
 		hasTextOf(subPath, "subPath");
 		hasTextOf(filename, "filename");

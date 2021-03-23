@@ -85,8 +85,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 	/**
 	 * Storage objects metadata of {@link MetadataIndexManager}
 	 */
-	@Autowired
-	private MetadataIndexManager metadataManager;
+private @Autowired  MetadataIndexManager metadataManager;
 
 	public StandardFSCossEndpoint(C config, FileSystem standardFS) {
 		super(config);

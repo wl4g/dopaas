@@ -38,8 +38,7 @@ import com.wl4g.dopaas.umc.service.AlarmTemplateService;
 @RequestMapping("/template")
 public class AlarmTemplateController extends BaseController {
 
-	@Autowired
-	private AlarmTemplateService templateService;
+private @Autowired  AlarmTemplateService templateService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:templat" })

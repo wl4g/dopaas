@@ -43,8 +43,7 @@ import com.wl4g.dopaas.udm.service.dto.EnterpriseDocumentPageRequest;
 @Service
 public class EnterpriseDocumentServiceImpl implements EnterpriseDocumentService {
 
-	@Autowired
-	private EnterpriseDocumentDao enterpriseDocumentDao;
+	private @Autowired  EnterpriseDocumentDao enterpriseDocumentDao;
 
 	@Override
 	public PageHolder<EnterpriseDocument> page(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest) {

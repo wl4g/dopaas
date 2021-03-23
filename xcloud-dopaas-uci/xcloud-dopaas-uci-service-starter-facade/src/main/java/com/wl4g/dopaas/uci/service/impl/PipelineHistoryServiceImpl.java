@@ -52,16 +52,12 @@ import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizat
 @Service
 public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 
-	@Autowired
-	private PipelineDao pipelineDao;
-	@Autowired
-	private PipelineHistoryDao pipelineHistoryDao;
-	@Autowired
-	private PipelineHistoryInstanceDao pipeHistoryInstanceDao;
+	private @Autowired PipelineDao pipelineDao;
+	private @Autowired PipelineHistoryDao pipelineHistoryDao;
+	private @Autowired PipelineHistoryInstanceDao pipeHistoryInstanceDao;
 	@Autowired
 	protected DestroableProcessManager pm;
-	@Autowired
-	private PipelineInstanceDao pipelineInstanceDao;
+	private @Autowired PipelineInstanceDao pipelineInstanceDao;
 
 	// --- Create Pipe Runner. ---
 

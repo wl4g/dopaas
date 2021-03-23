@@ -37,8 +37,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/history")
 public class CustomHistoryController extends BaseController {
 
-	@Autowired
-	private CustomHistoryService customHistoryService;
+private @Autowired  CustomHistoryService customHistoryService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:custom:history" }, logical = AND)

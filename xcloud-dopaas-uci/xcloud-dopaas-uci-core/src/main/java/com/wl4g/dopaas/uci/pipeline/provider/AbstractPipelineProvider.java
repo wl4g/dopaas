@@ -15,6 +15,30 @@
  */
 package com.wl4g.dopaas.uci.pipeline.provider;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.io.FileIOUtils.writeALineFile;
+import static com.wl4g.component.common.io.FileIOUtils.writeBLineFile;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.lang.DateUtils2.getDate;
+import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.dopaas.common.constant.UciConstants.LOG_FILE_END;
+import static com.wl4g.dopaas.common.constant.UciConstants.LOG_FILE_START;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.contains;
+import static org.apache.commons.lang3.StringUtils.containsAny;
+import static org.apache.commons.lang3.StringUtils.replace;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.io.File;
+import java.util.List;
+
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.wl4g.component.common.codec.CodecSource;
 import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.component.common.log.SmartLogger;
@@ -40,27 +64,6 @@ import com.wl4g.dopaas.uci.service.DependencyService;
 import com.wl4g.dopaas.udm.service.EnterpriseApiService;
 import com.wl4g.dopaas.urm.operator.VcsOperator;
 import com.wl4g.dopaas.urm.operator.VcsOperator.VcsProviderKind;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.File;
-import java.util.List;
-
-import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.io.FileIOUtils.writeALineFile;
-import static com.wl4g.component.common.io.FileIOUtils.writeBLineFile;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.DateUtils2.getDate;
-import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.dopaas.common.constant.UciConstants.LOG_FILE_END;
-import static com.wl4g.dopaas.common.constant.UciConstants.LOG_FILE_START;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Abstract basic developments pipeline provider.
@@ -70,40 +73,26 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2019-08-05 17:17:00
  */
 public abstract class AbstractPipelineProvider implements PipelineProvider {
-
-	final protected SmartLogger log = getLogger(getClass());
+	protected final SmartLogger log = getLogger(getClass());
 
 	/** Pipeline context. */
-	final protected PipelineContext context;
+	protected final PipelineContext context;
 
-	@Autowired
-	protected BeanFactory beanFactory;
-	@Autowired
-	protected NamingPrototypeBeanFactory namingBeanFactory;
+	protected @Autowired BeanFactory beanFactory;
+	protected @Autowired NamingPrototypeBeanFactory namingBeanFactory;
 
-	@Autowired
-	protected CiProperties config;
-	@Autowired
-	protected GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsManager;
-	@Autowired
-	protected JedisLockManager lockManager;
-	@Autowired
-	protected DestroableProcessManager pm;
-	@Autowired
-	protected PipelineJobExecutor jobExecutor;
-	@Autowired
-	protected DefaultOrchestrationManagerImpl flowManager;
+	protected @Autowired CiProperties config;
+	protected @Autowired GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsManager;
+	protected @Autowired JedisLockManager lockManager;
+	protected @Autowired DestroableProcessManager pm;
+	protected @Autowired PipelineJobExecutor jobExecutor;
+	protected @Autowired DefaultOrchestrationManagerImpl flowManager;
 
-	@Autowired
-	protected DependencyService dependencyService;
-	@Autowired
-	protected ProjectDao projectDao;
-	@Autowired
-	protected PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
+	protected @Autowired DependencyService dependencyService;
+	protected @Autowired ProjectDao projectDao;
+	protected @Autowired PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
 
-	@Autowired
-	protected EnterpriseApiService enterpriseApiService;
-
+	protected @Autowired EnterpriseApiService enterpriseApiService;
 
 	/**
 	 * Pull project source from VCS files fingerprint.

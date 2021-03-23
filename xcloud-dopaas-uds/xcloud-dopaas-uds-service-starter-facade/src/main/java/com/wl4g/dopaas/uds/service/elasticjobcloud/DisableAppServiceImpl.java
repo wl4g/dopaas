@@ -21,9 +21,7 @@ import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.dopaas.uds.service.elasticjobcloud.DisableAppService;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.StateNode;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.config.JobStateConfiguration;
+import com.wl4g.dopaas.uds.service.elasticjobcloud.config.JobStateProperties;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -36,11 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class DisableAppServiceImpl implements DisableAppService {
 
-	@Autowired
-	private CoordinatorRegistryCenter regCenter;
-
-	@Autowired
-	private JobStateConfiguration jobStateConfiguration;
+	private @Autowired CoordinatorRegistryCenter regCenter;
+	private @Autowired JobStateProperties jobStateConfiguration;
 
 	/**
 	 * Add application name to disable queue.

@@ -39,8 +39,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/orchestrationHistory")
 public class OrchestrationHistoryController extends BaseController {
 
-	@Autowired
-	private OrchestrationHistoryService orchestrationHistoryService;
+	private @Autowired OrchestrationHistoryService orchestrationHistoryService;
 
 	/**
 	 * List

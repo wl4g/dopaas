@@ -52,11 +52,9 @@ public class ElasticJobManager {
 
 	private Logger logger = LoggerFactory.getLogger(DefaultElasticJobConfigurer.class);
 
-	@Autowired
-	private ZookeeperRegistryCenter zookeeperRegistryCenter;
+	private @Autowired  ZookeeperRegistryCenter zookeeperRegistryCenter;
 
-	@Autowired
-	private ApplicationContext ctx;
+	private @Autowired  ApplicationContext ctx;
 
 	public void addJob(ElasticJob job) {
 		// 核心配置

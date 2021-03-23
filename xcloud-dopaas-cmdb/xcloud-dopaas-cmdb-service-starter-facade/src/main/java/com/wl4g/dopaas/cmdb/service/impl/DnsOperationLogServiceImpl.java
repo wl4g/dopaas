@@ -36,8 +36,7 @@ import static java.util.Objects.isNull;
 @Service
 public class DnsOperationLogServiceImpl implements DnsOperationLogService {
 
-	@Autowired
-	private DnsOperationLogDao dnsOperationLogDao;
+	private @Autowired DnsOperationLogDao dnsOperationLogDao;
 
 	@Override
 	public PageHolder<DnsOperationLog> page(PageHolder<DnsOperationLog> pm, String domain) {

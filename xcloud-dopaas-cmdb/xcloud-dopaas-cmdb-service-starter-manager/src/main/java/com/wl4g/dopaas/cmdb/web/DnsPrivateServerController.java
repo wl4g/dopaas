@@ -36,8 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/dnsPrivateServer")
 public class DnsPrivateServerController extends BaseController {
 
-	@Autowired
-	private DnsPrivateServerService dnsPrivateServerService;
+	private @Autowired DnsPrivateServerService dnsPrivateServerService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageHolder<DnsPrivateServer> pm, String name) {
