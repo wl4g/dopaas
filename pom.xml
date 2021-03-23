@@ -54,6 +54,7 @@
 	</developers>
 	<modules>
 		<module>xcloud-dopaas-common</module>
+		<module>xcloud-dopaas-home</module>
 		<module>xcloud-dopaas-uci</module>
 		<module>xcloud-dopaas-udm</module>
 		<module>xcloud-dopaas-cmdb</module>
