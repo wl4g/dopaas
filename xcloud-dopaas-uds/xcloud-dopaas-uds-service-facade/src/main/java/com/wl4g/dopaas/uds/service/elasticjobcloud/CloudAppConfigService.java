@@ -17,11 +17,15 @@
 
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.Collection;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.model.CloudAppConfigurationPOJO;
@@ -33,15 +37,14 @@ import com.wl4g.dopaas.uds.service.elasticjobcloud.model.CloudAppConfigurationPO
 @RequestMapping("/cloudAppConfig-service")
 public interface CloudAppConfigService {
 
-	@Autowired
-
 	/**
 	 * Add cloud app configuration.
 	 *
 	 * @param appConfig
 	 *            cloud app configuration
 	 */
-	void add(final CloudAppConfigurationPOJO appConfig);
+	@RequestMapping(path = "add", method = POST)
+	void add(@RequestBody CloudAppConfigurationPOJO appConfig);
 
 	/**
 	 * Update cloud app configuration.
@@ -49,7 +52,8 @@ public interface CloudAppConfigService {
 	 * @param appConfig
 	 *            cloud app configuration
 	 */
-	void update(final CloudAppConfigurationPOJO appConfig);
+	@RequestMapping(path = "update", method = POST)
+	void update(@RequestBody CloudAppConfigurationPOJO appConfig);
 
 	/**
 	 * Load app configuration by app name.
@@ -58,13 +62,15 @@ public interface CloudAppConfigService {
 	 *            application name
 	 * @return cloud app configuration
 	 */
-	Optional<CloudAppConfigurationPOJO> load(final String appName);
+	@RequestMapping(path = "load", method = GET)
+	Optional<CloudAppConfigurationPOJO> load(@RequestParam("appName") String appName);
 
 	/**
 	 * Load all registered cloud app configurations.
 	 *
 	 * @return collection of the registered cloud app configuration
 	 */
+	@RequestMapping(path = "loadAll", method = GET)
 	Collection<CloudAppConfigurationPOJO> loadAll();
 
 	/**
@@ -73,7 +79,7 @@ public interface CloudAppConfigService {
 	 * @param appName
 	 *            to be removed application name
 	 */
-
-	void remove(final String appName);
+	@RequestMapping(path = "remove", method = POST)
+	void remove(@RequestParam("appName") String appName);
 
 }

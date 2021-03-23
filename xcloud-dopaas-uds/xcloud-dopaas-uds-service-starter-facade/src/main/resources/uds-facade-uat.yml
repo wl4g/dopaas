@@ -20,6 +20,21 @@ spring:
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
           nodes: ${DOPAAS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
+    dopaas:
+      uds:
+        elasticjobcloud:
+          zookeeper:
+            servers: owner-node2,owner-node3,owner-node4:2181
+            namespace: elasticjob-cloud
+            digest: 
+          trace:
+            #rdbDriver: com.mysql.jdbc.Driver
+            #rdbUrl: jdbc:mysql://localhost:3306/elastic_job_cloud_log
+            #rdbUsername: root
+            #rdbPassword:
+          jobstate:
+            queue_size: 10000 # Max size of job accumulated
+
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

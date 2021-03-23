@@ -18,20 +18,25 @@
 package com.wl4g.dopaas.uds.service.elasticjobcloud.config;
 
 import org.apache.shardingsphere.elasticjob.reg.zookeeper.ZookeeperConfiguration;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 
+import lombok.Getter;
 import lombok.Setter;
 
+/***
+ * {@link RegistryProperties}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-03-23
+ * @sine v1.0
+ * @see
+ */
 @Setter
-@Component
-@ConfigurationProperties(prefix = "zk")
+@Getter
 public final class RegistryProperties {
-
-	private String servers;
-	private String namespace;
+	private String servers = "127.0.0.1:2181";
+	private String namespace = "elasticjob-cloud";
 	private String digest;
 
 	public ZookeeperConfiguration getZookeeperConfiguration() {

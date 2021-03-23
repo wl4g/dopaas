@@ -17,9 +17,14 @@
 
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfiguration;
@@ -37,6 +42,7 @@ public interface RegistryCenterConfigService {
 	 *
 	 * @return all registry center configurations
 	 */
+	@RequestMapping(path = "loadAll", method = GET)
 	RegistryCenterConfigurations loadAll();
 
 	/**
@@ -46,7 +52,8 @@ public interface RegistryCenterConfigService {
 	 *            name of registry center configuration
 	 * @return registry center configuration
 	 */
-	RegistryCenterConfiguration load(String name);
+	@RequestMapping(path = "load", method = GET)
+	RegistryCenterConfiguration load(@RequestParam("name") String name);
 
 	/**
 	 * Find registry center configuration.
@@ -57,13 +64,16 @@ public interface RegistryCenterConfigService {
 	 *            registry center configurations
 	 * @return registry center configuration
 	 */
-	RegistryCenterConfiguration find(String name, RegistryCenterConfigurations configs);
+
+	@RequestMapping(path = "find", method = GET)
+	RegistryCenterConfiguration find(@RequestParam("name") String name, @RequestBody RegistryCenterConfigurations configs);
 
 	/**
 	 * Load activated registry center configuration.
 	 *
 	 * @return activated registry center configuration
 	 */
+	@RequestMapping(path = "loadActivated", method = GET)
 	Optional<RegistryCenterConfiguration> loadActivated();
 
 	/**
@@ -73,7 +83,8 @@ public interface RegistryCenterConfigService {
 	 *            registry center configuration
 	 * @return success to add or not
 	 */
-	boolean add(RegistryCenterConfiguration config);
+	@RequestMapping(path = "add", method = POST)
+	boolean add(@RequestBody RegistryCenterConfiguration config);
 
 	/**
 	 * Delete registry center configuration.
@@ -81,5 +92,6 @@ public interface RegistryCenterConfigService {
 	 * @param name
 	 *            name of registry center configuration
 	 */
-	void delete(String name);
+	@RequestMapping(path = "delete", method = POST)
+	void delete(@RequestParam("name") String name);
 }

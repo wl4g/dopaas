@@ -19,6 +19,8 @@
  */
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -44,6 +46,7 @@ public interface RunningService {
 	 *
 	 * @return collection of all the running tasks
 	 */
+	@RequestMapping(path = "getAllRunningTasks", method = GET)
 	Map<String, Set<TaskContext>> getAllRunningTasks();
 
 }

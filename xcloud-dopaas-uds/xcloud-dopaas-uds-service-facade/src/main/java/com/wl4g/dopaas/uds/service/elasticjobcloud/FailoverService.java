@@ -19,6 +19,8 @@
  */
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -38,5 +40,7 @@ import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 @RequestMapping("/failover-service")
 public interface FailoverService {
 
+	@RequestMapping(path = "getAllFailoverTasks", method = GET)
 	Map<String, Collection<FailoverTaskInfo>> getAllFailoverTasks();
+
 }

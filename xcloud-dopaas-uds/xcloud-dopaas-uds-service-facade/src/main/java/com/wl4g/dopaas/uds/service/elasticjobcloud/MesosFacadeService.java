@@ -17,6 +17,9 @@
 
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +28,7 @@ import java.util.Set;
 import org.apache.shardingsphere.elasticjob.cloud.config.pojo.CloudJobConfigurationPOJO;
 import org.apache.shardingsphere.elasticjob.infra.context.TaskContext;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
@@ -41,7 +45,8 @@ public interface MesosFacadeService {
 	 * @param jobName
 	 *            job name
 	 */
-	void addTransient(final String jobName);
+	@RequestMapping(path = "addTransient", method = POST)
+	void addTransient(@RequestParam("jobName") String jobName);
 
 	/**
 	 * Load cloud job config.
@@ -50,13 +55,15 @@ public interface MesosFacadeService {
 	 *            job name
 	 * @return cloud job config
 	 */
-	Optional<CloudJobConfigurationPOJO> load(final String jobName);
+	@RequestMapping(path = "load", method = GET)
+	Optional<CloudJobConfigurationPOJO> load(@RequestParam("jobName") String jobName);
 
 	/**
 	 * Get all ready tasks.
 	 *
 	 * @return ready tasks
 	 */
+	@RequestMapping(path = "getAllReadyTasks", method = GET)
 	Map<String, Integer> getAllReadyTasks();
 
 	/**
@@ -64,6 +71,7 @@ public interface MesosFacadeService {
 	 *
 	 * @return running tasks
 	 */
+	@RequestMapping(path = "getAllRunningTasks", method = GET)
 	Map<String, Set<TaskContext>> getAllRunningTasks();
 
 	/**
@@ -71,6 +79,7 @@ public interface MesosFacadeService {
 	 *
 	 * @return failover tasks
 	 */
+	@RequestMapping(path = "getAllFailoverTasks", method = GET)
 	Map<String, Collection<FailoverTaskInfo>> getAllFailoverTasks();
 
 	/**
@@ -80,7 +89,8 @@ public interface MesosFacadeService {
 	 *            job name
 	 * @return true is disabled, otherwise not
 	 */
-	boolean isJobDisabled(final String jobName);
+	@RequestMapping(path = "isJobDisabled", method = GET)
+	boolean isJobDisabled(@RequestParam("jobName") String jobName);
 
 	/**
 	 * Enable job.
@@ -88,7 +98,8 @@ public interface MesosFacadeService {
 	 * @param jobName
 	 *            job name
 	 */
-	void enableJob(final String jobName);
+	@RequestMapping(path = "enableJob", method = POST)
+	void enableJob(@RequestParam("jobName") String jobName);
 
 	/**
 	 * Disable job.
@@ -96,6 +107,7 @@ public interface MesosFacadeService {
 	 * @param jobName
 	 *            job name
 	 */
-	void disableJob(final String jobName);
+	@RequestMapping(path = "disableJob", method = POST)
+	void disableJob(@RequestParam("jobName") String jobName);
 
 }

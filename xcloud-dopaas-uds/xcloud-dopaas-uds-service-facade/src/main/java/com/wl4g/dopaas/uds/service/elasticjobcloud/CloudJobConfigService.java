@@ -17,11 +17,16 @@
 
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.Collection;
 import java.util.Optional;
 
 import org.apache.shardingsphere.elasticjob.cloud.config.pojo.CloudJobConfigurationPOJO;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
@@ -38,7 +43,8 @@ public interface CloudJobConfigService {
 	 * @param cloudJobConfig
 	 *            cloud job configuration
 	 */
-	void add(final CloudJobConfigurationPOJO cloudJobConfig);
+	@RequestMapping(path = "add", method = POST)
+	void add(@RequestBody CloudJobConfigurationPOJO cloudJobConfig);
 
 	/**
 	 * Update cloud job configuration.
@@ -46,13 +52,15 @@ public interface CloudJobConfigService {
 	 * @param cloudJobConfig
 	 *            cloud job configuration
 	 */
-	void update(final CloudJobConfigurationPOJO cloudJobConfig);
+	@RequestMapping(path = "update", method = POST)
+	void update(@RequestBody CloudJobConfigurationPOJO cloudJobConfig);
 
 	/**
 	 * Load all registered cloud job configurations.
 	 *
 	 * @return collection of the registered cloud job configuration
 	 */
+	@RequestMapping(path = "loadAll", method = GET)
 	Collection<CloudJobConfigurationPOJO> loadAll();
 
 	/**
@@ -62,7 +70,8 @@ public interface CloudJobConfigService {
 	 *            job name
 	 * @return cloud job configuration
 	 */
-	Optional<CloudJobConfigurationPOJO> load(final String jobName);
+	@RequestMapping(path = "load", method = GET)
+	Optional<CloudJobConfigurationPOJO> load(@RequestParam("jobName") String jobName);
 
 	/**
 	 * Remove cloud job configuration.
@@ -70,5 +79,7 @@ public interface CloudJobConfigService {
 	 * @param jobName
 	 *            job name
 	 */
-	void remove(final String jobName);
+	@RequestMapping(path = "remove", method = POST)
+	void remove(@RequestParam("jobName") String jobName);
+
 }

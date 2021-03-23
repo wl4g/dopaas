@@ -27,4 +27,10 @@ public abstract class UdsConstants extends DoPaaSConstants {
 
 	public static final String KEY_UDS_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".uds";
 
+	public static final String KEY_UDS_ELASTICJOBCLOUD_TRACE_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".elasticjobcloud.trace";
+
+	public static final String KEY_UDS_ELASTICJOBCLOUD_ZK_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".elasticjobcloud.zookeeper";
+
+	public static final String KEY_UDS_ELASTICJOBCLOUD_JOBSTATE_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".elasticjobcloud.jobstate";
+
 }
