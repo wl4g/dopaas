@@ -51,11 +51,9 @@ import static java.util.Arrays.asList;
 @Service
 public class CustomDataSourceServiceImpl implements CustomDataSourceService {
 
-	@Autowired
-	private CustomDatasourceDao customDatasourceDao;
+private @Autowired  CustomDatasourceDao customDatasourceDao;
 
-	@Autowired
-	private CustomDataSourcePropertiesDao customDataSourcePropertiesDao;
+private @Autowired  CustomDataSourcePropertiesDao customDataSourcePropertiesDao;
 
 	@Override
 	public PageHolder<CustomDataSource> list(PageHolder<CustomDataSource> pm, String name) {

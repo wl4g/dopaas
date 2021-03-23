@@ -44,11 +44,9 @@ import java.util.*;
  */
 public class JedisCorednsZoneHandler implements DnsZoneHandler {
 
-	@Autowired
-	private DnsProperties config;
+	private @Autowired DnsProperties config;
 
-	@Autowired
-	private JedisService jedisService;
+	private @Autowired JedisService jedisService;
 
 	// TODO Coredns resolving record using bean!!!
 	@SuppressWarnings({ "rawtypes" })

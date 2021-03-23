@@ -47,11 +47,9 @@ public class StandardConfigServerHandler implements CentralConfigServerHandler {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private ConfigSourcePublisher publisher;
+	private @Autowired  ConfigSourcePublisher publisher;
 
-	@Autowired
-	private ConfigurationService configService;
+	private @Autowired  ConfigurationService configService;
 
 	@Override
 	public WatchDeferredResult<ResponseEntity<?>> watch(FetchReleaseConfigRequest watch) {

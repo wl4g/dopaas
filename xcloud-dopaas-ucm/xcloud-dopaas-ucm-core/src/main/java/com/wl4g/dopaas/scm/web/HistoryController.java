@@ -45,8 +45,7 @@ import java.util.List;
 @RequestMapping("/history")
 public class HistoryController extends BaseController {
 
-	@Autowired
-	private HistoryService historyService;
+	private @Autowired  HistoryService historyService;
 
 	/**
 	 * 查询流水集合

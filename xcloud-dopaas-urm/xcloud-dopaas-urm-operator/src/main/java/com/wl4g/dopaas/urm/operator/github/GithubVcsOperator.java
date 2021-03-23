@@ -56,11 +56,9 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 
-	@Autowired
-	private JedisService jedisService;
+private @Autowired  JedisService jedisService;
 
-	@Autowired
-	private JedisLockManager jedisLockManager;
+private @Autowired  JedisLockManager jedisLockManager;
 
 	@Override
 	public VcsProviderKind kind() {

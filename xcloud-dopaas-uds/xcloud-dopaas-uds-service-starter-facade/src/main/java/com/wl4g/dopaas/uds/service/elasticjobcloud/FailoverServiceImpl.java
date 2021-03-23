@@ -43,8 +43,7 @@ import lombok.NoArgsConstructor;
 @Service
 public final class FailoverServiceImpl implements FailoverService {
 
-	@Autowired
-	private CoordinatorRegistryCenter regCenter;
+	private @Autowired CoordinatorRegistryCenter regCenter;
 
 	/**
 	 * Get all failover tasks.

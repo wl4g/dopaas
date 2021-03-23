@@ -45,8 +45,7 @@ import com.wl4g.dopaas.udm.service.dto.EnterpriseApiModulePageRequest;
 @Service
 public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleService {
 
-	@Autowired
-	private EnterpriseApiModuleDao enterpriseApiModuleDao;
+	private @Autowired  EnterpriseApiModuleDao enterpriseApiModuleDao;
 
 	@Override
 	public PageHolder<EnterpriseApiModule> page(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest) {

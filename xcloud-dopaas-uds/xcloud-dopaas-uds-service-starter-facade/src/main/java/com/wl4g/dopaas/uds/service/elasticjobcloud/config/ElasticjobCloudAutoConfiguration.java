@@ -24,7 +24,6 @@ import javax.sql.DataSource;
 import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
 import org.apache.shardingsphere.elasticjob.reg.zookeeper.ZookeeperRegistryCenter;
 import org.apache.shardingsphere.elasticjob.tracing.api.TracingConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,23 +31,28 @@ import com.wl4g.dopaas.uds.service.elasticjobcloud.JobEventRdbSearchFactory;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.repository.StatisticRdbRepository;
 
 @Configuration
-public class BeanConfiguration {
-
-	@Autowired
-	private EventTraceConfiguration traceConfiguration;
-
-	@Autowired
-	private RegistryConfiguration registryConfiguration;
+public class ElasticjobCloudAutoConfiguration {
 
 	@Bean
-	public CoordinatorRegistryCenter zkCoordinatorRegistryCenter() {
-		CoordinatorRegistryCenter registryCenter = new ZookeeperRegistryCenter(registryConfiguration.getZookeeperConfiguration());
+	public EventTraceProperties traceConfiguration() {
+		return new EventTraceProperties();
+	}
+
+	@Bean
+	public RegistryProperties registryProperties() {
+		return new RegistryProperties();
+	}
+
+	@Bean
+	public CoordinatorRegistryCenter zkCoordinatorRegistryCenter(EventTraceProperties traceProperties,
+			RegistryProperties registryProperties) {
+		CoordinatorRegistryCenter registryCenter = new ZookeeperRegistryCenter(registryProperties.getZookeeperConfiguration());
 		registryCenter.init();
 		return registryCenter;
 	}
 
 	@Bean
-	public StatisticRdbRepository statisticRdbRepository() {
+	public StatisticRdbRepository statisticRdbRepository(EventTraceProperties traceConfiguration) {
 		Optional<TracingConfiguration<DataSource>> tracingConfiguration = traceConfiguration.getTracingConfiguration();
 		return tracingConfiguration
 				.map(each -> new StatisticRdbRepository(each.getTracingStorageConfiguration().getStorage(), true))
@@ -56,7 +60,7 @@ public class BeanConfiguration {
 	}
 
 	@Bean
-	public JobEventRdbSearchFactory jobEventRdbSearchFactory() {
+	public JobEventRdbSearchFactory jobEventRdbSearchFactory(EventTraceProperties traceConfiguration) {
 		Optional<TracingConfiguration<DataSource>> tracingConfiguration = traceConfiguration.getTracingConfiguration();
 		return tracingConfiguration
 				.map(each -> new JobEventRdbSearchFactory(each.getTracingStorageConfiguration().getStorage(), true))

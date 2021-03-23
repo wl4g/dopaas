@@ -19,40 +19,40 @@ import com.wl4g.dopaas.common.constant.UdmConstants;
 
 public class FsProperties {
 
-    private String basePath;
+	private String basePath;
 
-    private String baseUrl;
+	private String baseUrl;
 
-    public String getBaseFilePath(){
-        return getBasePath()+"/file";
-    }
+	public String getBaseFilePath() {
+		return getBasePath() + "/file";
+	}
 
-    public String getBaseImgPath(){
-        return getBasePath()+"/img";
-    }
+	public String getBaseImgPath() {
+		return getBasePath() + "/img";
+	}
 
-    public String getBaseFileUrl(){
-        return getBaseUrl()+"/fs/downloadFile";
-    }
+	public String getBaseFileUrl() {
+		return getBaseUrl() + "/fs/downloadFile";
+	}
 
-    public String getBaseImgUrl(){
-        //return getBaseUrl()+"/fs/downloadImg";
-        return UdmConstants.SHARE_LINK_BASEURI +"/fs/downloadImg";
-    }
+	public String getBaseImgUrl() {
+		// return getBaseUrl()+"/fs/downloadImg";
+		return UdmConstants.SHARE_LINK_BASEURI + "/fs/downloadImg";
+	}
 
-    public String getBasePath() {
-        return basePath;
-    }
+	public String getBasePath() {
+		return basePath;
+	}
 
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
+	}
 
-    public String getBaseUrl() {
-        return baseUrl;
-    }
+	public String getBaseUrl() {
+		return baseUrl;
+	}
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
+	public void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
 }

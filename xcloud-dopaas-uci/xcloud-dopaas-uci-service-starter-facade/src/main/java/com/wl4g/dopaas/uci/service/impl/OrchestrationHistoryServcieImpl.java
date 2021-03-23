@@ -36,11 +36,9 @@ import java.util.List;
 @Service
 public class OrchestrationHistoryServcieImpl implements OrchestrationHistoryService {
 
-	@Autowired
-	private OrchestrationHistoryDao orchestrationHistoryDao;
+	private @Autowired OrchestrationHistoryDao orchestrationHistoryDao;
 
-	@Autowired
-	private PipelineHistoryDao pipelineHistoryDao;
+	private @Autowired PipelineHistoryDao pipelineHistoryDao;
 
 	@Override
 	public PageHolder<OrchestrationHistory> list(PageHolder<OrchestrationHistory> pm, String runId) {

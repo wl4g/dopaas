@@ -42,11 +42,9 @@ import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizat
 @Service
 public class TriggerServiceImpl implements TriggerService {
 
-	@Autowired
-	private TriggerDao triggerDao;
+	private @Autowired TriggerDao triggerDao;
 
-	@Autowired
-	private TimingPipelineManager timingManager;
+	private @Autowired TimingPipelineManager timingManager;
 
 	@Override
 	public PageHolder<Trigger> list(PageHolder<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,

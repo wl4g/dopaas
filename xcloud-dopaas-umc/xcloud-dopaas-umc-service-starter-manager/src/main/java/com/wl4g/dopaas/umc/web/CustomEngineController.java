@@ -43,8 +43,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/engine")
 public class CustomEngineController extends BaseController {
 
-	@Autowired
-	private CustomEngineService customEngineService;
+private @Autowired  CustomEngineService customEngineService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:custom:engine" }, logical = AND)

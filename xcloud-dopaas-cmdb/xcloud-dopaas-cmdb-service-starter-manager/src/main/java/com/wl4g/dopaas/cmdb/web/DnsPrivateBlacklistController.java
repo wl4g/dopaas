@@ -36,8 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/dnsPrivateBlacklist")
 public class DnsPrivateBlacklistController extends BaseController {
 
-	@Autowired
-	private DnsPrivateBlacklistService dnsPrivateBlacklistService;
+	private @Autowired DnsPrivateBlacklistService dnsPrivateBlacklistService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageHolder<DnsPrivateBlacklist> pm, String name) {

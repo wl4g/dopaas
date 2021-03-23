@@ -39,8 +39,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/k8sCluster")
 public class K8sClusterController extends BaseController {
 
-	@Autowired
-	private K8sClusterService k8sClusterService;
+	private @Autowired K8sClusterService k8sClusterService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "cmdb:k8scluster" }, logical = AND)

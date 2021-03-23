@@ -39,8 +39,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/netcard")
 public class HostNetcardController extends BaseController {
 
-	@Autowired
-	private HostNetcardService hostNetcardService;
+	private @Autowired HostNetcardService hostNetcardService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "cmdb:netcard" }, logical = AND)

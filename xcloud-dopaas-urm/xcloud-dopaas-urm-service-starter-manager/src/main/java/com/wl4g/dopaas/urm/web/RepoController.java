@@ -43,8 +43,7 @@ import com.wl4g.dopaas.urm.service.RepoService;
 @RequestMapping("/vcs")
 public class RepoController extends BaseController {
 
-	@Autowired
-	private RepoService repoService;
+private @Autowired  RepoService repoService;
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "urm" }, logical = AND)

@@ -42,8 +42,7 @@ import com.wl4g.dopaas.udm.service.EeDocumentRepoService;
 @Service
 public class EeDocumentRepoServiceImpl implements EeDocumentRepoService {
 
-	@Autowired
-	private EeDocumentRepoDao eeDocumentRepoDao;
+	private @Autowired  EeDocumentRepoDao eeDocumentRepoDao;
 
 	@Override
 	public PageHolder<EeDocumentRepo> page(EeDocumentRepo eeDocumentRepo) {

@@ -36,8 +36,7 @@ import com.wl4g.dopaas.umc.service.AlarmConfigService;
 @RequestMapping("/alarmConfig")
 public class AlarmConfigController extends BaseController {
 
-	@Autowired
-	private AlarmConfigService alarmConfigService;
+	private @Autowired AlarmConfigService alarmConfigService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:config" })

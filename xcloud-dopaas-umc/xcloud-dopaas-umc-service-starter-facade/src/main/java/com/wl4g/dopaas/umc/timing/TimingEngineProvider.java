@@ -38,11 +38,9 @@ public class TimingEngineProvider implements Runnable {
 
 	private CustomEngine customEngine;
 
-	@Autowired
-	private CustomEngineDao customEngineDao;
+	private @Autowired  CustomEngineDao customEngineDao;
 
-	@Autowired
-	private CodeExecutor codeExecutor;
+	private @Autowired  CodeExecutor codeExecutor;
 
 	public TimingEngineProvider(CustomEngine customEngine) {
 		this.customEngine = customEngine;

@@ -36,11 +36,9 @@ import com.wl4g.dopaas.umc.model.StatusMessage;
 @RequestMapping(UmcConstants.URI_ADMIN_HOME)
 public class HomeController extends BaseController {
 
-	@Autowired
-	private DashboardHandler dashboardService;
+private @Autowired  DashboardHandler dashboardService;
 
-	@Autowired
-	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
+private @Autowired  GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
 	@RequestMapping("{msgId}")
 	public Object details(@PathVariable("msgId") String msgId, Model model) {

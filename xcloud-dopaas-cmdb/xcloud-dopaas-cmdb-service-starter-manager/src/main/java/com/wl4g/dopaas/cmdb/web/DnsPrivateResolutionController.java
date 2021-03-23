@@ -36,8 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/dnsPrivateResolution")
 public class DnsPrivateResolutionController extends BaseController {
 
-	@Autowired
-	private DnsPrivateResolutionService dnsPrivateResolutionService;
+	private @Autowired DnsPrivateResolutionService dnsPrivateResolutionService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageHolder<DnsPrivateResolution> pm, String host, Long domainId) {

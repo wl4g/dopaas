@@ -45,11 +45,9 @@ public class RuleConfigManager implements ApplicationRunner {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private JedisService jedisService;
+private @Autowired  JedisService jedisService;
 
-	@Autowired
-	private AlarmConfigurer ruleConfigurer;
+private @Autowired  AlarmConfigurer ruleConfigurer;
 
 	@Override
 	public void run(ApplicationArguments args) {

@@ -59,20 +59,15 @@ public class DocServiceImpl implements DocService {
 
 	final protected Logger log = getLogger(getClass());
 
-	@Autowired
-	private DocProperties docProperties;
+private @Autowired  DocProperties docProperties;
 
-	@Autowired
-	private FileChangesDao fileChangesDao;
+private @Autowired  FileChangesDao fileChangesDao;
 
-	@Autowired
-	private LabelDao labelDao;
+private @Autowired  LabelDao labelDao;
 
-	@Autowired
-	private FileLabelDao fileLabelDao;
+private @Autowired  FileLabelDao fileLabelDao;
 
-	@Autowired
-	private ShareDao shareDao;
+private @Autowired  ShareDao shareDao;
 
 	@Autowired
 	@Lazy

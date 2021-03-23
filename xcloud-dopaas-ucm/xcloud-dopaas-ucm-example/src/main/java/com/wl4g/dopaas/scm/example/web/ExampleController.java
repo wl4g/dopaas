@@ -39,11 +39,9 @@ public class ExampleController implements ApplicationRunner {
 
 	private Thread thread;
 
-	@Autowired
-	private ExampleService exampleService;
+	private @Autowired  ExampleService exampleService;
 
-	@Autowired
-	private UserDao userDao;
+	private @Autowired  UserDao userDao;
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {

@@ -42,8 +42,7 @@ import com.wl4g.dopaas.lcdp.service.GenDataSourceService;
 @RequestMapping("/gen/datasource")
 public class GenDataSourceController extends BaseController {
 
-	@Autowired
-	private GenDataSourceService genDSService;
+	private @Autowired GenDataSourceService genDSService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "lcdp:codegen:database" }, logical = AND)

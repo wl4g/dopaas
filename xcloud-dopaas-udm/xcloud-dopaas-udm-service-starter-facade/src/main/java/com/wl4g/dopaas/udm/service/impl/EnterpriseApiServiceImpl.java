@@ -54,20 +54,15 @@ import static java.util.Objects.isNull;
 @Service
 public class EnterpriseApiServiceImpl implements EnterpriseApiService {
 
-	@Autowired
-	private EnterpriseApiDao enterpriseApiDao;
+	private @Autowired  EnterpriseApiDao enterpriseApiDao;
 
-	@Autowired
-	private EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
+	private @Autowired  EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
 
-	@Autowired
-	private EnterpriseApiModuleDao enterpriseApiModuleDao;
+	private @Autowired  EnterpriseApiModuleDao enterpriseApiModuleDao;
 
-	@Autowired
-	private EnterpriseRepositoryVersionDao enterpriseRepositoryVersionDao;
+	private @Autowired  EnterpriseRepositoryVersionDao enterpriseRepositoryVersionDao;
 
-	@Autowired
-	private DocumentConverterAdapter documentConverterAdapter;
+	private @Autowired  DocumentConverterAdapter documentConverterAdapter;
 	// private GenericOperatorAdapter<DocumentConverter.ConverterProviderKind,
 	// Rap2DocumentConverter> documentConverterAdapter;
 

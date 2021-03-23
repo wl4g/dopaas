@@ -34,11 +34,9 @@ import com.wl4g.dopaas.cmdb.service.DnsPrivateZoneService;
 @Service
 public class DnsZoneApplicationListener implements ApplicationRunner {
 
-	@Autowired
-	private DnsPrivateZoneService privateZoneService;
+	private @Autowired DnsPrivateZoneService privateZoneService;
 
-	@Autowired
-	private DnsPrivateBlacklistService privateBWlistService;
+	private @Autowired DnsPrivateBlacklistService privateBWlistService;
 
 	@Override
 	public void run(ApplicationArguments var) throws Exception {

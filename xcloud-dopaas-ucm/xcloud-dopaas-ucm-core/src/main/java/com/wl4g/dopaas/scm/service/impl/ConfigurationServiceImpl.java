@@ -50,18 +50,12 @@ import java.util.*;
 @Transactional
 public class ConfigurationServiceImpl implements ConfigurationService {
 
-	@Autowired
-	private ConfigurationDao configurationDao;
-	@Autowired
-	private HistoryDao historyDao;
-	@Autowired
-	private AppClusterDao appClusterDao;
-	@Autowired
-	private AppInstanceDao appInstanceDao;
-	@Autowired
-	private CentralConfigServerHandler contextHandler;
-	@Autowired
-	private StandardScmProperties scmServerProperties;
+private @Autowired  ConfigurationDao configurationDao;
+private @Autowired  HistoryDao historyDao;
+private @Autowired  AppClusterDao appClusterDao;
+private @Autowired  AppInstanceDao appInstanceDao;
+private @Autowired  CentralConfigServerHandler contextHandler;
+private @Autowired  StandardScmProperties scmServerProperties;
 
 	private static final Map<String,Long> refreshProtectIntervalMap = new HashMap<>();
 

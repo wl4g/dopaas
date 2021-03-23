@@ -69,14 +69,11 @@ public class HttpCossAccessor extends BaseController {
 	 */
 	final protected GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter;
 
-	@Autowired
-	private MetadataIndexManager metadataIndexManager;
+	private @Autowired  MetadataIndexManager metadataIndexManager;
 
-	@Autowired
-	private StandardFSCossProperties standardFSConfig;
+	private @Autowired  StandardFSCossProperties standardFSConfig;
 
-	@Autowired
-	private CossAccessProperties accessConfig;
+	private @Autowired  CossAccessProperties accessConfig;
 
 	public HttpCossAccessor(GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter) {
 		notNullOf(endpointAdapter, "endpointAdapter");

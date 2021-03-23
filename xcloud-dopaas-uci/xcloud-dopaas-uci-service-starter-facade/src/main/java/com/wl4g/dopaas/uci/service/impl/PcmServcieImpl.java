@@ -44,11 +44,9 @@ import java.util.Objects;
 @Service
 public class PcmServcieImpl implements PcmService {
 
-	@Autowired
-	private PcmDao pcmDao;
+	private @Autowired PcmDao pcmDao;
 
-	@Autowired
-	private GenericOperatorAdapter<PcmKind, PcmOperator> pcmOperator;
+	private @Autowired GenericOperatorAdapter<PcmKind, PcmOperator> pcmOperator;
 
 	@Override
 	public PageHolder<Pcm> list(PageHolder<Pcm> pm, String name, String providerKind, Integer authType) {

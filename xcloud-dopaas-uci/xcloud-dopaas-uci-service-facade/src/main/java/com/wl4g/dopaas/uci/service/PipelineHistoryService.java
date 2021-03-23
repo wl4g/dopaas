@@ -53,41 +53,41 @@ public interface PipelineHistoryService {
 	PipelineHistory createRollbackPipeline(@RequestBody RollbackParameter rollback);
 
 	@RequestMapping(value = "/updatePipeHisInstanceStatus", method = POST)
-	void updatePipeHisInstanceStatus(@RequestParam(name="pipeInstanceId",required=false) Long pipeInstanceId,
-									 @RequestParam(name="status",required=false)  int status);
+	void updatePipeHisInstanceStatus(@RequestParam(name = "pipeInstanceId", required = false) Long pipeInstanceId,
+			@RequestParam(name = "status", required = false) int status);
 
 	@RequestMapping(value = "/updateStatus", method = POST)
-	void updateStatus(@RequestParam(name="pipeId",required=false) Long pipeId,
-					  @RequestParam(name="status",required=false) int status);
+	void updateStatus(@RequestParam(name = "pipeId", required = false) Long pipeId,
+			@RequestParam(name = "status", required = false) int status);
 
 	@RequestMapping(value = "/updateStatusAndResultAndSha", method = POST)
-	void updateStatusAndResultAndSha(@RequestParam(name="pipeId",required=false) Long pipeId,
-									 @RequestParam(name="status",required=false) int status,
-									 @RequestParam(name="sha",required=false) String sha);
+	void updateStatusAndResultAndSha(@RequestParam(name = "pipeId", required = false) Long pipeId,
+			@RequestParam(name = "status", required = false) int status,
+			@RequestParam(name = "sha", required = false) String sha);
 
 	@RequestMapping(value = "/stopByPipeHisId", method = POST)
-	void stopByPipeHisId(@RequestParam(name="taskHisId",required=false) Long taskHisId);
+	void stopByPipeHisId(@RequestParam(name = "taskHisId", required = false) Long taskHisId);
 
 	@RequestMapping(value = "/updateCostTime", method = POST)
-	void updateCostTime(@RequestParam(name="taskId",required=false) Long taskId,
-						@RequestParam(name="costTime",required=false) long costTime);
+	void updateCostTime(@RequestParam(name = "taskId", required = false) Long taskId,
+			@RequestParam(name = "costTime", required = false) long costTime);
 
 	@RequestMapping(value = "/list", method = POST)
 	PageHolder<PipelineHistory> list(@RequestBody PageHolder<PipelineHistory> pm,
-									 @RequestParam(name="pipeName",required=false) String pipeName,
-									 @RequestParam(name="clusterName",required=false) String clusterName,
-									 @RequestParam(name="environment",required=false) String environment,
-									 @RequestParam(name="startDate",required=false) String startDate,
-									 @RequestParam(name="endDate",required=false) String endDate,
-									 @RequestParam(name="providerKind",required=false) String providerKind);
+			@RequestParam(name = "pipeName", required = false) String pipeName,
+			@RequestParam(name = "clusterName", required = false) String clusterName,
+			@RequestParam(name = "environment", required = false) String environment,
+			@RequestParam(name = "startDate", required = false) String startDate,
+			@RequestParam(name = "endDate", required = false) String endDate,
+			@RequestParam(name = "providerKind", required = false) String providerKind);
 
 	@RequestMapping(value = "/getPipeHisInstanceByPipeId", method = POST)
-	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(@RequestParam(name="pipeHisId",required=false) Long pipeHisId);
+	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(@RequestParam(name = "pipeHisId", required = false) Long pipeHisId);
 
 	@RequestMapping(value = "/detail", method = POST)
-	PipelineHistory detail(@RequestParam(name="pipeHisId",required=false) Long pipeHisId);
+	PipelineHistory detail(@RequestParam(name = "pipeHisId", required = false) Long pipeHisId);
 
 	@RequestMapping(value = "/getById", method = POST)
-	PipelineHistory getById(@RequestParam(name="pipeHisId",required=false) Long pipeHisId);
+	PipelineHistory getById(@RequestParam(name = "pipeHisId", required = false) Long pipeHisId);
 
 }

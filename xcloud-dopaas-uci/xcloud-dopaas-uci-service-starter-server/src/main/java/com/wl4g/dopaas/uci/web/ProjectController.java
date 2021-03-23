@@ -43,8 +43,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/project")
 public class ProjectController extends BaseController {
 
-	@Autowired
-	private ProjectService projectService;
+	private @Autowired ProjectService projectService;
 
 	/**
 	 * list

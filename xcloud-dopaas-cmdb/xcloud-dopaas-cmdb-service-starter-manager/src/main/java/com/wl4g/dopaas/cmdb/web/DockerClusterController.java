@@ -39,8 +39,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/dockerCluster")
 public class DockerClusterController extends BaseController {
 
-	@Autowired
-	private DockerClusterService dockerClusterService;
+	private @Autowired DockerClusterService dockerClusterService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "cmdb:dockercluster" }, logical = AND)

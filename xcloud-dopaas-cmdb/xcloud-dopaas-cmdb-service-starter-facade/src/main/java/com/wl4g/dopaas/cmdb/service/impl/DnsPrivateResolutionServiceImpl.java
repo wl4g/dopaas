@@ -42,14 +42,11 @@ import static java.util.Objects.isNull;
 @Service
 public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionService {
 
-	@Autowired
-	private DnsPrivateResolutionDao privateResolutionDao;
+	private @Autowired DnsPrivateResolutionDao privateResolutionDao;
 
-	@Autowired
-	private DnsZoneHandler dnsZoneHandler;
+	private @Autowired DnsZoneHandler dnsZoneHandler;
 
-	@Autowired
-	private DnsPrivateZoneDao dnsPrivateZoneDao;
+	private @Autowired DnsPrivateZoneDao dnsPrivateZoneDao;
 
 	@Override
 	public PageHolder<DnsPrivateResolution> page(PageHolder<DnsPrivateResolution> pm, String host, Long domainId) {

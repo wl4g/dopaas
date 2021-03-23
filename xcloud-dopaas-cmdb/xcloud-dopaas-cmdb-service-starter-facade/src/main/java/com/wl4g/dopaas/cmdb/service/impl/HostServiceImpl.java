@@ -66,17 +66,13 @@ public class HostServiceImpl implements HostService {
 
 	final protected SmartLogger log = getLogger(getClass());
 
-	@Autowired
-	private HostDao appHostDao;
+	private @Autowired HostDao appHostDao;
 
-	@Autowired
-	private HostSshDao hostSshDao;
+	private @Autowired HostSshDao hostSshDao;
 
-	@Autowired
-	private FsProperties fsProperties;
+	private @Autowired FsProperties fsProperties;
 
-	@Autowired
-	private SshDao sshDao;
+	private @Autowired SshDao sshDao;
 
 	@Autowired
 	protected DestroableProcessManager pm;

@@ -43,8 +43,7 @@ import java.util.Map;
 @RequestMapping("/cluster")
 public class AppClusterController extends BaseController {
 
-	@Autowired
-	private AppClusterService appClusterService;
+	private @Autowired AppClusterService appClusterService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "cmdb:cluster" })

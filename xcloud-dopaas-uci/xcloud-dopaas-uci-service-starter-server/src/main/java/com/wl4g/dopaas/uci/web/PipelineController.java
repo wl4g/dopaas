@@ -48,14 +48,11 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/pipe")
 public class PipelineController extends BaseController {
 
-	@Autowired
-	private PipelineManagerAdapter pipelineManagerService;
+	private @Autowired PipelineManagerAdapter pipelineManagerService;
 
-	@Autowired
-	private OrchestrationManagerAdapter flowManagerService;
+	private @Autowired OrchestrationManagerAdapter flowManagerService;
 
-	@Autowired
-	private PipelineService pipelineService;
+	private @Autowired PipelineService pipelineService;
 
 	/**
 	 * Page List

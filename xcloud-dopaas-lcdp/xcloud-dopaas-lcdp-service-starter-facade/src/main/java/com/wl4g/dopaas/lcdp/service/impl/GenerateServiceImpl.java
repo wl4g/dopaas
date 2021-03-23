@@ -75,7 +75,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.*;
 
-
 /**
  * {@link GenerateServiceImpl}
  *

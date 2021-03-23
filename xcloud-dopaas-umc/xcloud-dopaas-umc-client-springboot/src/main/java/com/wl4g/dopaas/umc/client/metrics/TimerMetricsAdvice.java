@@ -55,8 +55,7 @@ public class TimerMetricsAdvice extends AbstractMetricsAdvice {
 	 * Optional implementations are: DefaultGaugeService / Dropwizard Metric
 	 * Services / BufferGaugeService / ServoMetric Services
 	 */
-	@Autowired
-	private MetricRegistry registry;
+private @Autowired  MetricRegistry registry;
 
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {

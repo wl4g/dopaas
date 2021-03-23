@@ -44,8 +44,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/trigger")
 public class TriggerController extends BaseController {
 
-	@Autowired
-	private TriggerService triggerService;
+	private @Autowired TriggerService triggerService;
 
 	/**
 	 * Page List

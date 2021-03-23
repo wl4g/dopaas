@@ -40,8 +40,7 @@ public class DependencyServiceImpl implements DependencyService {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private DependencyDao dependencyDao;
+	private @Autowired DependencyDao dependencyDao;
 
 	/**
 	 * Get hierarchy project dependency.

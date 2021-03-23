@@ -32,47 +32,47 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EeDocumentRepo}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EeDocumentRepo}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/eedocumentrepo")
 public class EeDocumentRepoController extends BaseController {
 
-    @Autowired
-    private EeDocumentRepoService eeDocumentRepoService;
+	@Autowired
+	private EeDocumentRepoService eeDocumentRepoService;
 
-    @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EeDocumentRepo>> list(PageHolder<EeDocumentRepo> pm, EeDocumentRepo eeDocumentRepo) {
-        RespBase<PageHolder<EeDocumentRepo>> resp = RespBase.create();
-        RpcContextHolder.get().set("pm",pm);
-        resp.setData(eeDocumentRepoService.page(eeDocumentRepo));
-        return resp;
-    }
+	@RequestMapping(value = "/list", method = { GET })
+	public RespBase<PageHolder<EeDocumentRepo>> list(PageHolder<EeDocumentRepo> pm, EeDocumentRepo eeDocumentRepo) {
+		RespBase<PageHolder<EeDocumentRepo>> resp = RespBase.create();
+		RpcContextHolder.get().set("pm", pm);
+		resp.setData(eeDocumentRepoService.page(eeDocumentRepo));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EeDocumentRepo eeDocumentRepo) {
-        RespBase<Object> resp = RespBase.create();
-        eeDocumentRepoService.save(eeDocumentRepo);
-        return resp;
-    }
+	@RequestMapping(value = "/save", method = { POST, PUT })
+	public RespBase<?> save(@RequestBody EeDocumentRepo eeDocumentRepo) {
+		RespBase<Object> resp = RespBase.create();
+		eeDocumentRepoService.save(eeDocumentRepo);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EeDocumentRepo> detail(@RequestParam(required = true) Long id) {
-        RespBase<EeDocumentRepo> resp = RespBase.create();
-        resp.setData(eeDocumentRepoService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail", method = { GET })
+	public RespBase<EeDocumentRepo> detail(@RequestParam(required = true) Long id) {
+		RespBase<EeDocumentRepo> resp = RespBase.create();
+		resp.setData(eeDocumentRepoService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase<?> del(@RequestParam(required = true) Long id) {
-        RespBase<Object> resp = RespBase.create();
-        eeDocumentRepoService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del", method = { POST, DELETE })
+	public RespBase<?> del(@RequestParam(required = true) Long id) {
+		RespBase<Object> resp = RespBase.create();
+		eeDocumentRepoService.del(id);
+		return resp;
+	}
 
 }

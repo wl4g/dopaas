@@ -36,8 +36,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/label")
 public class LabelController extends BaseController {
 
-	@Autowired
-	private LabelService labelService;
+	private @Autowired LabelService labelService;
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "udm:label" }, logical = AND)

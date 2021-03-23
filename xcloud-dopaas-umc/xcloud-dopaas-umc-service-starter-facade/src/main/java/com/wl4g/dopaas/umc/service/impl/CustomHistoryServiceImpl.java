@@ -33,8 +33,7 @@ import java.util.List;
 @Service
 public class CustomHistoryServiceImpl implements CustomHistoryService {
 
-	@Autowired
-	private CustomHistoryDao customHistoryDao;
+private @Autowired  CustomHistoryDao customHistoryDao;
 
 	@Override
 	public PageHolder<CustomHistory> list(PageHolder<CustomHistory> pm, String name) {

@@ -40,8 +40,7 @@ import com.wl4g.dopaas.common.bean.uci.param.RunParameter;
 @Service
 public class PipelineManagerAdapterImpl implements PipelineManagerAdapter {
 
-	@Autowired
-	private PipelineManager pipelineManager;
+	private @Autowired PipelineManager pipelineManager;
 
 	@Override
 	public void runPipeline(RunParameter runParam) throws Exception {

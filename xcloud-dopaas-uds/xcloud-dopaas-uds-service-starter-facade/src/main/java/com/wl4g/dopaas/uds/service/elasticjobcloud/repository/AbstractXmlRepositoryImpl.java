@@ -29,52 +29,53 @@ import java.io.File;
 /**
  * Abstract XML repository implementation.
  *
- * @param <E> type of data
+ * @param <E>
+ *            type of data
  */
 public abstract class AbstractXmlRepositoryImpl<E> implements XmlRepository<E> {
-    
-    private final File file;
-    
-    private final Class<E> clazz;
-    
-    private final JAXBContext jaxbContext;
-    
-    protected AbstractXmlRepositoryImpl(final String fileName, final Class<E> clazz) {
-        file = new File(HomeFolderUtils.getFilePathInHomeFolder(fileName));
-        this.clazz = clazz;
-        HomeFolderUtils.createHomeFolderIfNotExisted();
-        try {
-            jaxbContext = JAXBContext.newInstance(clazz);
-        } catch (final JAXBException ex) {
-            throw new JobConsoleException(JobConsoleException.SERVER_ERROR, ex.getMessage());
-        }
-    }
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    public synchronized E load() {
-        if (!file.exists()) {
-            try {
-                return clazz.newInstance();
-            } catch (final InstantiationException | IllegalAccessException ex) {
-                throw new JobConsoleException(JobConsoleException.SERVER_ERROR, ex.getMessage());
-            }
-        }
-        try {
-            return (E) jaxbContext.createUnmarshaller().unmarshal(file);
-        } catch (final JAXBException ex) {
-            throw new JobConsoleException(JobConsoleException.SERVER_ERROR, ex.getMessage());
-        }
-    }
-    
-    @Override
-    public synchronized void save(final E entity) {
-        try {
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(entity, file);
-        } catch (final JAXBException ex) {
-            throw new JobConsoleException(JobConsoleException.SERVER_ERROR, ex.getMessage());
-        }
-    }
+
+	private final File file;
+
+	private final Class<E> clazz;
+
+	private final JAXBContext jaxbContext;
+
+	protected AbstractXmlRepositoryImpl(final String fileName, final Class<E> clazz) {
+		file = new File(HomeFolderUtils.getFilePathInHomeFolder(fileName));
+		this.clazz = clazz;
+		HomeFolderUtils.createHomeFolderIfNotExisted();
+		try {
+			jaxbContext = JAXBContext.newInstance(clazz);
+		} catch (final JAXBException ex) {
+			throw new JobConsoleException(JobConsoleException.SERVER_ERROR, ex.getMessage());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public synchronized E load() {
+		if (!file.exists()) {
+			try {
+				return clazz.newInstance();
+			} catch (final InstantiationException | IllegalAccessException ex) {
+				throw new JobConsoleException(JobConsoleException.SERVER_ERROR, ex.getMessage());
+			}
+		}
+		try {
+			return (E) jaxbContext.createUnmarshaller().unmarshal(file);
+		} catch (final JAXBException ex) {
+			throw new JobConsoleException(JobConsoleException.SERVER_ERROR, ex.getMessage());
+		}
+	}
+
+	@Override
+	public synchronized void save(final E entity) {
+		try {
+			Marshaller marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshaller.marshal(entity, file);
+		} catch (final JAXBException ex) {
+			throw new JobConsoleException(JobConsoleException.SERVER_ERROR, ex.getMessage());
+		}
+	}
 }

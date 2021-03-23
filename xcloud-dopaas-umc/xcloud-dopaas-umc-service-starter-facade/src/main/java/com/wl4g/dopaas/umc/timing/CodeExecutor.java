@@ -42,20 +42,15 @@ public class CodeExecutor {
 
 	SmartLogger log = SmartLoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private CustomHistoryDao customHistoryDao;
+private @Autowired  CustomHistoryDao customHistoryDao;
 
-	@Autowired
-	private CustomDatasourceDao customDatasourceDao;
+private @Autowired  CustomDatasourceDao customDatasourceDao;
 
-	@Autowired
-	private CustomAlarmEventDao customAlarmEventDao;
+private @Autowired  CustomAlarmEventDao customAlarmEventDao;
 
-	@Autowired
-	private CustomDataSourceService customDataSourceService;
+private @Autowired  CustomDataSourceService customDataSourceService;
 
-	@Autowired
-	private DemoEngine demoEngine;
+private @Autowired  DemoEngine demoEngine;
 
 	public void executeCode(CustomEngine customEngine) {
 		CustomHistory customHistory = beforeStart(customEngine.getId());

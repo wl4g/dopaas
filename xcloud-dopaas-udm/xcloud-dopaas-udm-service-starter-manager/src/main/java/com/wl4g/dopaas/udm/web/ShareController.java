@@ -36,8 +36,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/share")
 public class ShareController extends BaseController {
 
-	@Autowired
-	private ShareService shareService;
+	private @Autowired ShareService shareService;
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "udm:share" }, logical = AND)

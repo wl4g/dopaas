@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.wl4g.dopaas.uds.service.elasticjobcloud.DisableJobService;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.StateNode;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.config.JobStateConfiguration;
+import com.wl4g.dopaas.uds.service.elasticjobcloud.config.JobStateProperties;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -36,11 +36,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class DisableJobServiceImpl implements DisableJobService {
 
-	@Autowired
-	private CoordinatorRegistryCenter regCenter;
+	private @Autowired CoordinatorRegistryCenter regCenter;
 
-	@Autowired
-	private JobStateConfiguration jobStateConfiguration;
+	private @Autowired JobStateProperties jobStateConfiguration;
 
 	/**
 	 * Add job to the disable queue.

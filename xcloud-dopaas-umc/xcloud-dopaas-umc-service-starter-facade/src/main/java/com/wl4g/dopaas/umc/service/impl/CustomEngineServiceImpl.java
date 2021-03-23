@@ -32,11 +32,9 @@ import com.wl4g.dopaas.umc.timing.EngineTaskScheduler;
 @Service
 public class CustomEngineServiceImpl implements CustomEngineService {
 
-	@Autowired
-	private CustomEngineDao customEngineDao;
+private @Autowired  CustomEngineDao customEngineDao;
 
-	@Autowired
-	private EngineTaskScheduler engineTaskScheduler;
+private @Autowired  EngineTaskScheduler engineTaskScheduler;
 
 	@Override
 	public PageHolder<CustomEngine> list(PageHolder<CustomEngine> pm, String name) {

@@ -38,8 +38,7 @@ import static java.util.Objects.isNull;
 @Service
 public class IdcServiceImpl implements IdcService {
 
-	@Autowired
-	private IdcDao idcDao;
+	private @Autowired IdcDao idcDao;
 
 	@Override
 	public PageHolder<IdcBean> page(PageHolder<IdcBean> pm, String name) {

@@ -43,14 +43,11 @@ import static java.util.Objects.isNull;
 @Service
 public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
 
-	@Autowired
-	private DnsPrivateZoneDao dnsPrivateDomainDao;
+	private @Autowired DnsPrivateZoneDao dnsPrivateDomainDao;
 
-	@Autowired
-	private DnsPrivateResolutionDao privateResolutionDao;
+	private @Autowired DnsPrivateResolutionDao privateResolutionDao;
 
-	@Autowired
-	private DnsZoneHandler dnsZoneHandler;
+	private @Autowired DnsZoneHandler dnsZoneHandler;
 
 	@Override
 	public PageHolder<DnsPrivateZone> page(PageHolder<DnsPrivateZone> pm, String zone) {

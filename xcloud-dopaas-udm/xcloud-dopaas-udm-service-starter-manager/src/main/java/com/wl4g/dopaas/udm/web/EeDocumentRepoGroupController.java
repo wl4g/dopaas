@@ -32,47 +32,48 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EeDocumentRepoGroup}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EeDocumentRepoGroup}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/eedocumentrepogroup")
 public class EeDocumentRepoGroupController extends BaseController {
 
-    @Autowired
-    private EeDocumentRepoGroupService eeDocumentRepoGroupService;
+	@Autowired
+	private EeDocumentRepoGroupService eeDocumentRepoGroupService;
 
-    @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EeDocumentRepoGroup>> list(PageHolder<EeDocumentRepoGroup> pm, EeDocumentRepoGroup eeDocumentRepoGroup) {
-        RespBase<PageHolder<EeDocumentRepoGroup>> resp = RespBase.create();
-        RpcContextHolder.get().set("pm",pm);
-        resp.setData(eeDocumentRepoGroupService.page(eeDocumentRepoGroup));
-        return resp;
-    }
+	@RequestMapping(value = "/list", method = { GET })
+	public RespBase<PageHolder<EeDocumentRepoGroup>> list(PageHolder<EeDocumentRepoGroup> pm,
+			EeDocumentRepoGroup eeDocumentRepoGroup) {
+		RespBase<PageHolder<EeDocumentRepoGroup>> resp = RespBase.create();
+		RpcContextHolder.get().set("pm", pm);
+		resp.setData(eeDocumentRepoGroupService.page(eeDocumentRepoGroup));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EeDocumentRepoGroup eeDocumentRepoGroup) {
-        RespBase<Object> resp = RespBase.create();
-        eeDocumentRepoGroupService.save(eeDocumentRepoGroup);
-        return resp;
-    }
+	@RequestMapping(value = "/save", method = { POST, PUT })
+	public RespBase<?> save(@RequestBody EeDocumentRepoGroup eeDocumentRepoGroup) {
+		RespBase<Object> resp = RespBase.create();
+		eeDocumentRepoGroupService.save(eeDocumentRepoGroup);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EeDocumentRepoGroup> detail(@RequestParam(required = true) Long id) {
-        RespBase<EeDocumentRepoGroup> resp = RespBase.create();
-        resp.setData(eeDocumentRepoGroupService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail", method = { GET })
+	public RespBase<EeDocumentRepoGroup> detail(@RequestParam(required = true) Long id) {
+		RespBase<EeDocumentRepoGroup> resp = RespBase.create();
+		resp.setData(eeDocumentRepoGroupService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase<?> del(@RequestParam(required = true) Long id) {
-        RespBase<Object> resp = RespBase.create();
-        eeDocumentRepoGroupService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del", method = { POST, DELETE })
+	public RespBase<?> del(@RequestParam(required = true) Long id) {
+		RespBase<Object> resp = RespBase.create();
+		eeDocumentRepoGroupService.del(id);
+		return resp;
+	}
 
 }

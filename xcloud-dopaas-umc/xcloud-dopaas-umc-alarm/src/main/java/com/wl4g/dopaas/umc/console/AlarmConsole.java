@@ -37,8 +37,7 @@ public class AlarmConsole {
 
 	protected Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private RuleConfigManager ruleManager;
+	private @Autowired  RuleConfigManager ruleManager;
 
 	/**
 	 * Cleanup all of alarm rules cache.

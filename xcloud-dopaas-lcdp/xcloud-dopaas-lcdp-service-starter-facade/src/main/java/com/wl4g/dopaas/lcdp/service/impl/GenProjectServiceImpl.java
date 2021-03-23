@@ -46,8 +46,7 @@ import com.wl4g.dopaas.lcdp.service.GenProjectService;
 @Service
 public class GenProjectServiceImpl implements GenProjectService {
 
-	@Autowired
-	private GenProjectDao genProjectDao;
+	private @Autowired GenProjectDao genProjectDao;
 
 	@Override
 	public PageHolder<GenProject> page(PageHolder<GenProject> pm, String projectName) {

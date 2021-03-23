@@ -32,47 +32,48 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EeDocumentRepoVersion}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EeDocumentRepoVersion}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/eedocumentrepoversion")
 public class EeDocumentRepoVersionController extends BaseController {
 
-    @Autowired
-    private EeDocumentRepoVersionService eeDocumentRepoVersionService;
+	@Autowired
+	private EeDocumentRepoVersionService eeDocumentRepoVersionService;
 
-    @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EeDocumentRepoVersion>> list(PageHolder<EeDocumentRepoVersion> pm, EeDocumentRepoVersion eeDocumentRepoVersion) {
-        RpcContextHolder.get().set("pm",pm);
-        RespBase<PageHolder<EeDocumentRepoVersion>> resp = RespBase.create();
-        resp.setData(eeDocumentRepoVersionService.page(eeDocumentRepoVersion));
-        return resp;
-    }
+	@RequestMapping(value = "/list", method = { GET })
+	public RespBase<PageHolder<EeDocumentRepoVersion>> list(PageHolder<EeDocumentRepoVersion> pm,
+			EeDocumentRepoVersion eeDocumentRepoVersion) {
+		RpcContextHolder.get().set("pm", pm);
+		RespBase<PageHolder<EeDocumentRepoVersion>> resp = RespBase.create();
+		resp.setData(eeDocumentRepoVersionService.page(eeDocumentRepoVersion));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EeDocumentRepoVersion eeDocumentRepoVersion) {
-        RespBase<Object> resp = RespBase.create();
-        eeDocumentRepoVersionService.save(eeDocumentRepoVersion);
-        return resp;
-    }
+	@RequestMapping(value = "/save", method = { POST, PUT })
+	public RespBase<?> save(@RequestBody EeDocumentRepoVersion eeDocumentRepoVersion) {
+		RespBase<Object> resp = RespBase.create();
+		eeDocumentRepoVersionService.save(eeDocumentRepoVersion);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EeDocumentRepoVersion> detail(@RequestParam(required = true) Long id) {
-        RespBase<EeDocumentRepoVersion> resp = RespBase.create();
-        resp.setData(eeDocumentRepoVersionService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail", method = { GET })
+	public RespBase<EeDocumentRepoVersion> detail(@RequestParam(required = true) Long id) {
+		RespBase<EeDocumentRepoVersion> resp = RespBase.create();
+		resp.setData(eeDocumentRepoVersionService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase<?> del(@RequestParam(required = true) Long id) {
-        RespBase<Object> resp = RespBase.create();
-        eeDocumentRepoVersionService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del", method = { POST, DELETE })
+	public RespBase<?> del(@RequestParam(required = true) Long id) {
+		RespBase<Object> resp = RespBase.create();
+		eeDocumentRepoVersionService.del(id);
+		return resp;
+	}
 
 }

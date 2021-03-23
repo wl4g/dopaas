@@ -31,8 +31,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomAlarmEventServiceImpl implements CustomAlarmEventService {
 
-	@Autowired
-	private CustomAlarmEventDao customAlarmEventDao;
+private @Autowired  CustomAlarmEventDao customAlarmEventDao;
 
 	@Override
 	public PageHolder<CustomAlarmEvent> list(PageHolder<CustomAlarmEvent> pm, String name) {

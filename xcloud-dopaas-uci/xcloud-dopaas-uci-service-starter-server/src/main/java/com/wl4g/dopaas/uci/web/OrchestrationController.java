@@ -39,8 +39,7 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 @RequestMapping("/orchestration")
 public class OrchestrationController extends BaseController {
 
-	@Autowired
-	private OrchestrationService orchestrationService;
+	private @Autowired OrchestrationService orchestrationService;
 
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "uci:orchestration" }, logical = AND)

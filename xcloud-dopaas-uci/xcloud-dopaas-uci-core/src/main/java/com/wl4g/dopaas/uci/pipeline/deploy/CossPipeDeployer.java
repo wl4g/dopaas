@@ -43,8 +43,8 @@ import java.util.Objects;
 @SuppressWarnings("deprecation")
 public class CossPipeDeployer extends GenericHostPipeDeployer<ViewNativePipelineProvider> {
 
-//	@Autowired
-//	protected ClusterConfigDao clusterConfigDao;
+	// @Autowired
+	// protected ClusterConfigDao clusterConfigDao;
 
 	public CossPipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
@@ -53,28 +53,34 @@ public class CossPipeDeployer extends GenericHostPipeDeployer<ViewNativePipeline
 
 	@Override
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-		
+
 		// TODO using by COSS operators
-		
-//		// super.doRemoteDeploying(remoteHost, user, sshkey);
-//		// String url = "http://localhost:8080/Lock/nbdc/remoteUpdate";
-//		// String filePath = "/Users/vjay/Downloads/logo.png";
-//		String localFile = config.getJobBackupDir(getContext().getPipelineHistory().getId()) + "/" + getPrgramInstallFileName()
-//				+ "." + DEFAULT_ASSETS_SUFFIX;
-//		// CossCluster cossCluster =
-//		// cossClusterDao.selectByPrimaryKey(instance.getCossId());
-//
-//		ClusterConfig clusterConfig = clusterConfigDao.getByAppName("coss-manager", profile, null);
-//		String uploadServerUrl = clusterConfig.getExtranetBaseUri() + "/webservice/putObject";
-//
-//		String cossRefBucket = instance.getCossRefBucket();
-//		Assert2.hasTextOf(cossRefBucket, "cossRefBucket");
-//		String[] split = cossRefBucket.split(":");
-//		Assert2.notEmptyOf(split, "cossRefBucket");
-//		Assert2.isTrue(split.length == 2, "cossRefBucket unmatch format, cossRefBucket=%s", cossRefBucket);
-//		String cossProvider = split[0];
-//		String bucketName = split[1];
-//		transFile(uploadServerUrl, new File(localFile), cossProvider, bucketName);
+
+		// // super.doRemoteDeploying(remoteHost, user, sshkey);
+		// // String url = "http://localhost:8080/Lock/nbdc/remoteUpdate";
+		// // String filePath = "/Users/vjay/Downloads/logo.png";
+		// String localFile =
+		// config.getJobBackupDir(getContext().getPipelineHistory().getId()) +
+		// "/" + getPrgramInstallFileName()
+		// + "." + DEFAULT_ASSETS_SUFFIX;
+		// // CossCluster cossCluster =
+		// // cossClusterDao.selectByPrimaryKey(instance.getCossId());
+		//
+		// ClusterConfig clusterConfig =
+		// clusterConfigDao.getByAppName("coss-manager", profile, null);
+		// String uploadServerUrl = clusterConfig.getExtranetBaseUri() +
+		// "/webservice/putObject";
+		//
+		// String cossRefBucket = instance.getCossRefBucket();
+		// Assert2.hasTextOf(cossRefBucket, "cossRefBucket");
+		// String[] split = cossRefBucket.split(":");
+		// Assert2.notEmptyOf(split, "cossRefBucket");
+		// Assert2.isTrue(split.length == 2, "cossRefBucket unmatch format,
+		// cossRefBucket=%s", cossRefBucket);
+		// String cossProvider = split[0];
+		// String bucketName = split[1];
+		// transFile(uploadServerUrl, new File(localFile), cossProvider,
+		// bucketName);
 	}
 
 	public static void transFile(String uploadUrl, File file, String cossProvider, String bucketName) {
@@ -83,16 +89,18 @@ public class CossPipeDeployer extends GenericHostPipeDeployer<ViewNativePipeline
 		// factory.setReadTimeout(60_000);
 		// factory.setMaxResponseSize(1024 * 1024 * 10);
 
-//		RestTemplate restTemplate = new RestTemplate(factory);
-//		FileSystemResource resource = new FileSystemResource(file);
-//		MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
-//		param.add("file", resource);
-//		// need add few coss params
-//		param.add("cossProvider", cossProvider);
-//		param.add("bucketName", bucketName);
-//		param.add("acl", "default");
-//		RespBase<Object> resp = restTemplate.postForObject(uploadUrl, param, RespBase.class);
-//		isTrue(Objects.nonNull(resp) && resp.getCode() == 200, "TransFile Fail, cause: %s", toJSONString(resp));
+		// RestTemplate restTemplate = new RestTemplate(factory);
+		// FileSystemResource resource = new FileSystemResource(file);
+		// MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
+		// param.add("file", resource);
+		// // need add few coss params
+		// param.add("cossProvider", cossProvider);
+		// param.add("bucketName", bucketName);
+		// param.add("acl", "default");
+		// RespBase<Object> resp = restTemplate.postForObject(uploadUrl, param,
+		// RespBase.class);
+		// isTrue(Objects.nonNull(resp) && resp.getCode() == 200, "TransFile
+		// Fail, cause: %s", toJSONString(resp));
 	}
 
 }

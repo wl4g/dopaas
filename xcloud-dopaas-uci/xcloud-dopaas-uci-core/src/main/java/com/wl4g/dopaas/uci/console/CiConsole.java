@@ -47,12 +47,10 @@ import static java.util.Objects.isNull;
 public class CiConsole {
 
 	/** {@link TimeoutJobsEvictor}. */
-	@Autowired
-	private TimeoutJobsEvictor evictor;
+	private @Autowired TimeoutJobsEvictor evictor;
 
 	/** {@link LogPurger}. */
-	@Autowired
-	private LogPurger logPurger;
+	private @Autowired LogPurger logPurger;
 
 	/**
 	 * Modifiying eviction(expired) jobs cleanup internal(ms).

@@ -35,8 +35,7 @@ import static java.util.Objects.isNull;
 @Service
 public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 
-	@Autowired
-	private DnsPublicZoneDao publicZoneDao;
+	private @Autowired DnsPublicZoneDao publicZoneDao;
 
 	@Override
 	public PageHolder<DnsPublicZone> page(PageHolder<DnsPublicZone> pm, String zone) {

@@ -32,47 +32,48 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
-* {@link EnterpriseTeam}
-*
-* @author root
-* @version 0.0.1-SNAPSHOT
-* @Date 
-* @since v1.0
-*/
+ * {@link EnterpriseTeam}
+ *
+ * @author root
+ * @version 0.0.1-SNAPSHOT
+ * @Date
+ * @since v1.0
+ */
 @RestController
 @RequestMapping("/enterpriseteam")
 public class EnterpriseTeamController extends BaseController {
 
-    @Autowired
-    private EnterpriseTeamService enterpriseTeamService;
+	@Autowired
+	private EnterpriseTeamService enterpriseTeamService;
 
-    @RequestMapping(value = "/list", method = { GET })
-    public RespBase<PageHolder<EnterpriseTeam>> list(EnterpriseTeamPageRequest enterpriseTeamPageRequest,PageHolder<EnterpriseTeam> pm) {
-        RespBase<PageHolder<EnterpriseTeam>> resp = RespBase.create();
-        enterpriseTeamPageRequest.setPm(pm);
-        resp.setData(enterpriseTeamService.page(enterpriseTeamPageRequest));
-        return resp;
-    }
+	@RequestMapping(value = "/list", method = { GET })
+	public RespBase<PageHolder<EnterpriseTeam>> list(EnterpriseTeamPageRequest enterpriseTeamPageRequest,
+			PageHolder<EnterpriseTeam> pm) {
+		RespBase<PageHolder<EnterpriseTeam>> resp = RespBase.create();
+		enterpriseTeamPageRequest.setPm(pm);
+		resp.setData(enterpriseTeamService.page(enterpriseTeamPageRequest));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save", method = { POST, PUT })
-    public RespBase<?> save(@RequestBody EnterpriseTeam enterpriseTeam) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseTeamService.save(enterpriseTeam);
-        return resp;
-    }
+	@RequestMapping(value = "/save", method = { POST, PUT })
+	public RespBase<?> save(@RequestBody EnterpriseTeam enterpriseTeam) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseTeamService.save(enterpriseTeam);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail", method = { GET })
-    public RespBase<EnterpriseTeam> detail(@RequestParam(required = true) Long id) {
-        RespBase<EnterpriseTeam> resp = RespBase.create();
-        resp.setData(enterpriseTeamService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail", method = { GET })
+	public RespBase<EnterpriseTeam> detail(@RequestParam(required = true) Long id) {
+		RespBase<EnterpriseTeam> resp = RespBase.create();
+		resp.setData(enterpriseTeamService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del", method = { POST, DELETE })
-    public RespBase<?> del(@RequestParam(required = true) Long id) {
-        RespBase<Object> resp = RespBase.create();
-        enterpriseTeamService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del", method = { POST, DELETE })
+	public RespBase<?> del(@RequestParam(required = true) Long id) {
+		RespBase<Object> resp = RespBase.create();
+		enterpriseTeamService.del(id);
+		return resp;
+	}
 
 }

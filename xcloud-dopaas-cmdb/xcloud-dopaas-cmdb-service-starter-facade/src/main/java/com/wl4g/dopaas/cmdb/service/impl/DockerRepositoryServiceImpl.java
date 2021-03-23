@@ -61,8 +61,7 @@ public class DockerRepositoryServiceImpl implements DockerRepositoryService {
 
 	final private static String URL_FOR_PROJECT = "/api/v2.0/projects";
 
-	@Autowired
-	private DockerRepositoryDao dockerRepositoryDao;
+	private @Autowired DockerRepositoryDao dockerRepositoryDao;
 
 	@Override
 	public PageHolder<DockerRepository> page(PageHolder<DockerRepository> pm, String name) {

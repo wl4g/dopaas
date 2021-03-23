@@ -27,11 +27,10 @@ import java.io.IOException;
 
 // TODO using by coss-sdk
 @RestController
-@RequestMapping("/tmpHostImportFs")//TODO
+@RequestMapping("/tmpHostImportFs") // TODO
 public class TmpHostImportFsController {
 
-	@Autowired
-	private FsService fsService;
+	private @Autowired FsService fsService;
 
 	@PostMapping(value = "/uploadImg")
 	public RespBase<?> uploadImg(@RequestParam(value = "img") MultipartFile img) {

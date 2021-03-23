@@ -17,28 +17,17 @@
 
 package com.wl4g.dopaas.uds.service.elasticjobcloud.config;
 
-import com.google.common.base.Strings;
-import lombok.Setter;
-import org.apache.shardingsphere.elasticjob.reg.zookeeper.ZookeeperConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Component
-@ConfigurationProperties(prefix = "zk")
+@Getter
 @Setter
-public final class RegistryConfiguration {
+@ConfigurationProperties(prefix = "job.state")
+public final class JobStateProperties {
 
-	private String servers;
-
-	private String namespace;
-
-	private String digest;
-
-	public ZookeeperConfiguration getZookeeperConfiguration() {
-		ZookeeperConfiguration result = new ZookeeperConfiguration(servers, namespace);
-		if (!Strings.isNullOrEmpty(digest)) {
-			result.setDigest(digest);
-		}
-		return result;
-	}
+	private int queueSize = 10000;
 }

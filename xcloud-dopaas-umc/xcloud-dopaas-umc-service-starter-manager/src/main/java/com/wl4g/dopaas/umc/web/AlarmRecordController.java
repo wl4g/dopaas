@@ -34,8 +34,7 @@ import com.wl4g.dopaas.umc.service.AlarmRecordService;
 @RequestMapping("/record")
 public class AlarmRecordController extends BaseController {
 
-	@Autowired
-	private AlarmRecordService recordService;
+private @Autowired  AlarmRecordService recordService;
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "umc:record" })

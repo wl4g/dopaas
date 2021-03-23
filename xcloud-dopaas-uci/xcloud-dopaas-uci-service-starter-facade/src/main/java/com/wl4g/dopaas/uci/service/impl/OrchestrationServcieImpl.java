@@ -46,17 +46,13 @@ import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizat
 @Service
 public class OrchestrationServcieImpl implements OrchestrationService {
 
-	@Autowired
-	private OrchestrationDao orchestrationDao;
+	private @Autowired OrchestrationDao orchestrationDao;
 
-	@Autowired
-	private OrchestrationPipelineDao orchestrationPipelineDao;
+	private @Autowired OrchestrationPipelineDao orchestrationPipelineDao;
 
-	@Autowired
-	private OrchestrationManagerAdapter flowManagerService;
+	private @Autowired OrchestrationManagerAdapter flowManagerService;
 
-	@Autowired
-	private JedisService jedisService;
+	private @Autowired JedisService jedisService;
 
 	@Override
 	public PageHolder<Orchestration> list(PageHolder<Orchestration> pm, String name) {

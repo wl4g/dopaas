@@ -40,11 +40,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = UciFacade.class)
 public class PipelineManagerTests {
 
-	@Autowired
-	private PipelineManagerAdapter pipelineManager;
+private @Autowired  PipelineManagerAdapter pipelineManager;
 
-	@Autowired
-	private OrchestrationManagerAdapter flowManagerService;
+private @Autowired  OrchestrationManagerAdapter flowManagerService;
 
 	@Test
 	public void createTask() throws Exception {

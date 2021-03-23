@@ -34,8 +34,7 @@ import com.wl4g.devops.uos.common.CossEndpoint.CossProvider;
 @FixMethodOrder(MethodSorters.JVM)
 public class AliyunOssCossEndpointTests {
 
-	@Autowired
-	private GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter;
+private @Autowired  GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter;
 
 	@Test
 	public void ossEndpointTest1() {

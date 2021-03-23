@@ -18,6 +18,7 @@ package com.wl4g.dopaas.lcdp.service.impl;
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.hasTextOf;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -30,10 +31,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.log.SmartLoggerFactory;
 import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.lcdp.GenDataSource;
 import com.wl4g.dopaas.lcdp.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.dopaas.lcdp.data.GenDataSourceDao;
@@ -50,14 +50,10 @@ import com.wl4g.dopaas.lcdp.service.GenDataSourceService;
  */
 @Service
 public class GenDataSourceServiceImpl implements GenDataSourceService {
+	protected final SmartLogger log = getLogger(getClass());
 
-	final private static SmartLogger log = SmartLoggerFactory.getLogger(GenDataSourceServiceImpl.class);
-
-	@Autowired
-	protected NamingPrototypeBeanFactory beanFactory;
-
-	@Autowired
-	private GenDataSourceDao genDSDao;
+	private @Autowired NamingPrototypeBeanFactory beanFactory;
+	private @Autowired GenDataSourceDao genDSDao;
 
 	@Override
 	public PageHolder<GenDataSource> page(PageHolder<GenDataSource> pm, String name) {

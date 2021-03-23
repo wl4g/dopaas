@@ -45,11 +45,9 @@ public class DnsPrivateBlacklistServiceImpl implements DnsPrivateBlacklistServic
 	final private static String BLACKLIST = "1";
 	// final public static String WHITELIST = "2";
 
-	@Autowired
-	private DnsPrivateBlacklistDao dnsPrivateBlacklistDao;
+	private @Autowired DnsPrivateBlacklistDao dnsPrivateBlacklistDao;
 
-	@Autowired
-	private DnsZoneHandler dnsServerInterface;
+	private @Autowired DnsZoneHandler dnsServerInterface;
 
 	@Override
 	public PageHolder<DnsPrivateBlacklist> page(PageHolder<DnsPrivateBlacklist> pm, String expression) {

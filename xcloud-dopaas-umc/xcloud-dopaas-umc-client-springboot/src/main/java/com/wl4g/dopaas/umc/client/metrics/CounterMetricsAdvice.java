@@ -44,8 +44,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 public class CounterMetricsAdvice extends AbstractMetricsAdvice {
 	final private static Logger log = LoggerFactory.getLogger(CounterMetricsAdvice.class);
 
-	@Autowired
-	private MeterRegistry registry;
+private @Autowired  MeterRegistry registry;
 
 	/**
 	 * Number of times the AOP statistical method is called.

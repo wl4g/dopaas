@@ -36,8 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/dnsOperationLog")
 public class DnsOperationLogController extends BaseController {
 
-	@Autowired
-	private DnsOperationLogService dnsOperationLogService;
+	private @Autowired DnsOperationLogService dnsOperationLogService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageHolder<DnsOperationLog> pm, String name) {

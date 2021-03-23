@@ -53,8 +53,7 @@ public class PcmRedmineTests {
 	@Autowired
 	protected PcmService pcmService;
 
-	@Autowired
-	private GenericOperatorAdapter<PcmOperator.PcmKind, PcmOperator> pcmOperator;
+private @Autowired  GenericOperatorAdapter<PcmOperator.PcmKind, PcmOperator> pcmOperator;
 
 	@Test
 	public void getProjects() {

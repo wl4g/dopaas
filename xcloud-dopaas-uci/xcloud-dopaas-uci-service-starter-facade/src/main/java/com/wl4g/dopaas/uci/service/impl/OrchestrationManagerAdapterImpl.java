@@ -38,8 +38,7 @@ import com.wl4g.dopaas.common.bean.uci.model.PipelineModel;
 @Service
 public class OrchestrationManagerAdapterImpl implements OrchestrationManagerAdapter {
 
-	@Autowired
-	private OrchestrationManager orchestrationManager;
+	private @Autowired OrchestrationManager orchestrationManager;
 
 	@Override
 	public void runOrchestration(Orchestration orchestration, String remark, String taskTraceId, String taskTraceType,

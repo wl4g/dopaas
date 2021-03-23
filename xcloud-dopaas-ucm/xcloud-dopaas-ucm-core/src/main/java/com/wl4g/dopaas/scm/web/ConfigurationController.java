@@ -46,8 +46,7 @@ import java.util.List;
 @RequestMapping("/configGuration")
 public class ConfigurationController extends BaseController {
 
-	@Autowired
-	private ConfigurationService configService;
+	private @Autowired  ConfigurationService configService;
 
 	/**
 	 * 新增版本 -- 同时增加配置

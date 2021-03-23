@@ -46,18 +46,12 @@ import java.util.Map;
 @Transactional
 public class HistoryServiceImpl implements HistoryService {
 
-	@Autowired
-	private HistoryDao historyDao;
-	@Autowired
-	private ConfigurationDao configGurationDao;
-	@Autowired
-	private AppClusterDao appClusterDao;
-	@Autowired
-	private CentralConfigServerHandler configServerService;
-	@Autowired
-	private DictDao dictDao;
-	@Autowired
-	private AppInstanceDao appInstanceDao;
+private @Autowired  HistoryDao historyDao;
+private @Autowired  ConfigurationDao configGurationDao;
+private @Autowired  AppClusterDao appClusterDao;
+private @Autowired  CentralConfigServerHandler configServerService;
+private @Autowired  DictDao dictDao;
+private @Autowired  AppInstanceDao appInstanceDao;
 
 	@Override
 	public void insert(HistoryOfDetail historyOfDetail) {

@@ -42,8 +42,7 @@ import java.util.Map;
 @RequestMapping("/host")
 public class AppHostController extends BaseController {
 
-	@Autowired
-	private HostService hostService;
+	private @Autowired HostService hostService;
 
 	@RequestMapping(value = "/allHost")
 	public RespBase<?> all() {

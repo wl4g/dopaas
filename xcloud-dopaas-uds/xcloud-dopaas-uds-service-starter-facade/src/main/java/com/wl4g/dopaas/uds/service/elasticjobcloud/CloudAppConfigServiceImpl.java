@@ -41,8 +41,7 @@ import lombok.NoArgsConstructor;
 @Service("appConfigService")
 public final class CloudAppConfigServiceImpl implements CloudAppConfigService {
 
-	@Autowired
-	private CoordinatorRegistryCenter regCenter;
+	private @Autowired CoordinatorRegistryCenter regCenter;
 
 	/**
 	 * Add cloud app configuration.

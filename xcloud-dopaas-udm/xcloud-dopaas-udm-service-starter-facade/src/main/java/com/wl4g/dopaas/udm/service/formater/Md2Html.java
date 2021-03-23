@@ -60,17 +60,13 @@ public class Md2Html {
 	private static final Configuration defaultGenConfigurer = createDefault().withVersion(Configuration.VERSION_2_3_27)
 			.withTemplateLoaders(singletonList(new StringTemplateLoader())).build();
 
-	@Autowired
-	private DocProperties docProperties;
+	private @Autowired  DocProperties docProperties;
 
-	@Autowired
-	private EnterpriseApiService enterpriseApiService;
+	private @Autowired  EnterpriseApiService enterpriseApiService;
 
-	@Autowired
-	private GenTemplateLocator genTemplateLocator;
+	private @Autowired  GenTemplateLocator genTemplateLocator;
 
-	@Autowired
-	private MdLocator mdLocator;
+	private @Autowired  MdLocator mdLocator;
 
 	/**
 	 * 遍历模版和md文件，md转成html后渲染进template: 得到的文件是带有api标记的html文件
