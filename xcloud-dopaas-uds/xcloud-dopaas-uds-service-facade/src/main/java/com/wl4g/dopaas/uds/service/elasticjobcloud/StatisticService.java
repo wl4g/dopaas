@@ -19,6 +19,8 @@
  */
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.util.List;
 
 import org.apache.shardingsphere.elasticjob.cloud.statistics.StatisticInterval;
@@ -43,6 +45,7 @@ import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 @RequestMapping("/statistic-service")
 public interface StatisticService {
 
+	@RequestMapping(path = "getTaskResultStatisticsWeekly", method = GET)
 	TaskResultStatistics getTaskResultStatisticsWeekly();
 
 	/**
@@ -50,6 +53,7 @@ public interface StatisticService {
 	 * 
 	 * @return task result statistic
 	 */
+	@RequestMapping(path = "getTaskResultStatisticsSinceOnline", method = GET)
 	TaskResultStatistics getTaskResultStatisticsSinceOnline();
 
 	/**
@@ -59,6 +63,7 @@ public interface StatisticService {
 	 *            statistic interval
 	 * @return task result statistic
 	 */
+	@RequestMapping(path = "findLatestTaskResultStatistics", method = GET)
 	TaskResultStatistics findLatestTaskResultStatistics(final StatisticInterval statisticInterval);
 
 	/**
@@ -66,6 +71,7 @@ public interface StatisticService {
 	 * 
 	 * @return task result statistic
 	 */
+	@RequestMapping(path = "findTaskResultStatisticsDaily", method = GET)
 	List<TaskResultStatistics> findTaskResultStatisticsDaily();
 
 	/**
@@ -73,6 +79,7 @@ public interface StatisticService {
 	 * 
 	 * @return Job execution type statistics data object
 	 */
+	@RequestMapping(path = "getJobExecutionTypeStatistics", method = GET)
 	JobExecutionTypeStatistics getJobExecutionTypeStatistics();
 
 	/**
@@ -80,6 +87,7 @@ public interface StatisticService {
 	 * 
 	 * @return Collection of running task statistics data objects
 	 */
+	@RequestMapping(path = "findTaskRunningStatisticsWeekly", method = GET)
 	List<TaskRunningStatistics> findTaskRunningStatisticsWeekly();
 
 	/**
@@ -87,6 +95,7 @@ public interface StatisticService {
 	 * 
 	 * @return collection of running task statistics data objects
 	 */
+	@RequestMapping(path = "findJobRunningStatisticsWeekly", method = GET)
 	List<JobRunningStatistics> findJobRunningStatisticsWeekly();
 
 	/**
@@ -94,6 +103,7 @@ public interface StatisticService {
 	 * 
 	 * @return collection of running task statistics data objects
 	 */
+	@RequestMapping(path = "findJobRegisterStatisticsSinceOnline", method = GET)
 	List<JobRegisterStatistics> findJobRegisterStatisticsSinceOnline();
 
 }

@@ -19,9 +19,13 @@
  */
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
@@ -43,13 +47,15 @@ public interface ReadyService {
 	 * @param jobName
 	 *            job name
 	 */
-	void addTransient(final String jobName);
+	@RequestMapping(path = "addTransient", method = POST)
+	void addTransient(@RequestParam("jobName") String jobName);
 
 	/**
 	 * Get all ready tasks.
 	 * 
 	 * @return all ready tasks
 	 */
+	@RequestMapping(path = "getAllReadyTasks", method = GET)
 	Map<String, Integer> getAllReadyTasks();
 
 }

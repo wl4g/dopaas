@@ -19,7 +19,11 @@
  */
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
@@ -41,7 +45,8 @@ public interface DisableAppService {
 	 * @param appName
 	 *            application name
 	 */
-	void add(final String appName);
+	@RequestMapping(path = "add", method = POST)
+	void add(@RequestParam("appName") String appName);
 
 	/**
 	 * Remove application name from disable queue.
@@ -49,7 +54,8 @@ public interface DisableAppService {
 	 * @param appName
 	 *            application name
 	 */
-	void remove(final String appName);
+	@RequestMapping(path = "remove", method = POST)
+	void remove(@RequestParam("appName") String appName);
 
 	/**
 	 * Check whether the application name is disabled or not.
@@ -58,6 +64,7 @@ public interface DisableAppService {
 	 *            application name
 	 * @return true is in the disable queue, otherwise not
 	 */
-	boolean isDisabled(final String appName);
+	@RequestMapping(path = "isDisabled", method = GET)
+	boolean isDisabled(@RequestParam("appName") String appName);
 
 }

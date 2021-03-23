@@ -19,8 +19,12 @@
  */
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import org.apache.shardingsphere.elasticjob.cloud.config.pojo.CloudJobConfigurationPOJO;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 
@@ -42,7 +46,8 @@ public interface ProducerService {
 	 * @param cloudJobConfig
 	 *            cloud job configuration
 	 */
-	void register(final CloudJobConfigurationPOJO cloudJobConfig);
+	@RequestMapping(path = "register", method = POST)
+	void register(@RequestBody CloudJobConfigurationPOJO cloudJobConfig);
 
 	/**
 	 * Update the job.
@@ -50,7 +55,8 @@ public interface ProducerService {
 	 * @param cloudJobConfig
 	 *            cloud job configuration
 	 */
-	void update(final CloudJobConfigurationPOJO cloudJobConfig);
+	@RequestMapping(path = "update", method = POST)
+	void update(@RequestBody CloudJobConfigurationPOJO cloudJobConfig);
 
 	/**
 	 * Deregister the job.
@@ -58,6 +64,7 @@ public interface ProducerService {
 	 * @param jobName
 	 *            job name
 	 */
-	void deregister(final String jobName);
+	@RequestMapping(path = "deregister", method = POST)
+	void deregister(@RequestParam("jobName") String jobName);
 
 }

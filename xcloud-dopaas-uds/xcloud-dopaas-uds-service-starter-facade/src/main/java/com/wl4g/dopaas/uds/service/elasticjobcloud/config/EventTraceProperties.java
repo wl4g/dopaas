@@ -22,25 +22,28 @@ import java.util.Optional;
 import javax.sql.DataSource;
 
 import org.apache.shardingsphere.elasticjob.tracing.api.TracingConfiguration;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.base.Strings;
 
+import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * {@link EventTraceProperties}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-03-23
+ * @sine v1.0
+ * @see
+ */
+@Getter
 @Setter
-@Component
-@ConfigurationProperties(prefix = "event.trace")
 public final class EventTraceProperties {
 
 	private String rdbDriver;
-
 	private String rdbUrl;
-
 	private String rdbUsername;
-
 	private String rdbPassword;
 
 	public Optional<TracingConfiguration<DataSource>> getTracingConfiguration() {

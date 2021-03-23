@@ -17,16 +17,19 @@
 
 package com.wl4g.dopaas.uds.service.elasticjobcloud.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import lombok.Getter;
 import lombok.Setter;
 
-@Component
+/**
+ * {@link JobStateProperties}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-03-23
+ * @sine v1.0
+ * @see
+ */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "job.state")
 public final class JobStateProperties {
 
 	private int queueSize = 10000;
