@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DisableAppServiceImpl implements DisableAppService {
 
 	private @Autowired CoordinatorRegistryCenter regCenter;
-	private @Autowired JobStateProperties jobStateConfiguration;
+	private @Autowired JobStateProperties jobStateProperties;
 
 	/**
 	 * Add application name to disable queue.
@@ -44,9 +44,9 @@ public class DisableAppServiceImpl implements DisableAppService {
 	 *            application name
 	 */
 	public void add(final String appName) {
-		if (regCenter.getNumChildren(DisableAppNode.ROOT) > jobStateConfiguration.getQueueSize()) {
+		if (regCenter.getNumChildren(DisableAppNode.ROOT) > jobStateProperties.getQueueSize()) {
 			log.warn("Cannot add disable app, caused by read state queue size is larger than {}.",
-					jobStateConfiguration.getQueueSize());
+					jobStateProperties.getQueueSize());
 			return;
 		}
 		String disableAppNodePath = DisableAppNode.getDisableAppNodePath(appName);

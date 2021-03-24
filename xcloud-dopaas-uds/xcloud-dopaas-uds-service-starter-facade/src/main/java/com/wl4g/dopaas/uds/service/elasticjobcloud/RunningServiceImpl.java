@@ -30,8 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Sets;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.RunningService;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.StateNode;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -40,11 +38,10 @@ import lombok.NoArgsConstructor;
  * Running service.
  */
 @Service
-public final class RunningServiceImpl implements RunningService {
+public class RunningServiceImpl implements RunningService {
 
 	private @Autowired CoordinatorRegistryCenter regCenter;
-
-	private @Autowired CloudJobConfigServiceImpl configurationService;
+	private @Autowired CloudJobConfigService cloudJobConfigService;
 
 	/**
 	 * Get all running tasks.
@@ -55,7 +52,7 @@ public final class RunningServiceImpl implements RunningService {
 		Map<String, Set<TaskContext>> result = new HashMap<>();
 		List<String> jobKeys = regCenter.getChildrenKeys(RunningNode.ROOT);
 		for (String each : jobKeys) {
-			if (!configurationService.load(each).isPresent()) {
+			if (!cloudJobConfigService.load(each).isPresent()) {
 				continue;
 			}
 			result.put(each,

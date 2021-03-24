@@ -36,17 +36,15 @@ import org.apache.shardingsphere.elasticjob.cloud.statistics.type.task.TaskRunni
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.dopaas.uds.service.elasticjobcloud.StatisticService;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.repository.StatisticRdbRepository;
 
 /**
  * Statistic manager.
  */
 @Service
-public final class StatisticServiceImpl implements StatisticService {
+public class StatisticServiceImpl implements StatisticService {
 
-	private @Autowired CloudJobConfigServiceImpl configurationService;
-
+	private @Autowired CloudJobConfigService cloudJobConfigService;
 	private @Autowired StatisticRdbRepository rdbRepository;
 
 	/**
@@ -117,7 +115,7 @@ public final class StatisticServiceImpl implements StatisticService {
 	public JobExecutionTypeStatistics getJobExecutionTypeStatistics() {
 		int transientJobCnt = 0;
 		int daemonJobCnt = 0;
-		for (CloudJobConfigurationPOJO each : configurationService.loadAll()) {
+		for (CloudJobConfigurationPOJO each : cloudJobConfigService.loadAll()) {
 			if (CloudJobExecutionType.TRANSIENT.equals(each.getJobExecutionType())) {
 				transientJobCnt++;
 			} else if (CloudJobExecutionType.DAEMON.equals(each.getJobExecutionType())) {
