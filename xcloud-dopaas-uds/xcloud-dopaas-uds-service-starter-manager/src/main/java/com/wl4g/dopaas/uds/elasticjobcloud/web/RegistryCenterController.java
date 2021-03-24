@@ -40,7 +40,7 @@ import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfigur
  */
 @RestController
 @RequestMapping("/api/registry-center")
-public final class RegistryCenterController {
+public class RegistryCenterController {
 
 	public static final String REG_CENTER_CONFIG_KEY = "reg_center_config_key";
 
