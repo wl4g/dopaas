@@ -27,26 +27,18 @@ import org.apache.shardingsphere.elasticjob.infra.context.TaskContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.dopaas.uds.service.elasticjobcloud.FailoverTaskInfo;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.MesosFacadeService;
-
 /**
  * Mesos facade service.
  */
 @Service
-public final class MesosFacadeServiceImpl implements MesosFacadeService {
+public class MesosFacadeServiceImpl implements MesosFacadeService {
 
-	private @Autowired CloudJobConfigServiceImpl jobConfigService;
-
-	private @Autowired ReadyServiceImpl readyService;
-
-	private @Autowired RunningServiceImpl runningService;
-
-	private @Autowired FailoverServiceImpl failoverService;
-
-	private @Autowired DisableAppServiceImpl disableAppService;
-
-	private @Autowired DisableJobServiceImpl disableJobService;
+	private @Autowired CloudJobConfigService cloudJobConfigService;
+	private @Autowired ReadyService readyService;
+	private @Autowired RunningService runningService;
+	private @Autowired FailoverService failoverService;
+	private @Autowired DisableAppService disableAppService;
+	private @Autowired DisableJobService disableJobService;
 
 	/**
 	 * Add transient job to ready queue.
@@ -67,7 +59,7 @@ public final class MesosFacadeServiceImpl implements MesosFacadeService {
 	 */
 	@Override
 	public Optional<CloudJobConfigurationPOJO> load(final String jobName) {
-		return jobConfigService.load(jobName);
+		return cloudJobConfigService.load(jobName);
 	}
 
 	/**
@@ -109,7 +101,7 @@ public final class MesosFacadeServiceImpl implements MesosFacadeService {
 	 */
 	@Override
 	public boolean isJobDisabled(final String jobName) {
-		Optional<CloudJobConfigurationPOJO> jobConfiguration = jobConfigService.load(jobName);
+		Optional<CloudJobConfigurationPOJO> jobConfiguration = cloudJobConfigService.load(jobName);
 		return !jobConfiguration.isPresent() || disableAppService.isDisabled(jobConfiguration.get().getAppName())
 				|| disableJobService.isDisabled(jobName);
 	}

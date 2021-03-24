@@ -31,12 +31,10 @@ import com.wl4g.dopaas.uds.service.elasticjobcloud.model.CloudAppConfigurationPO
  * Producer manager.
  */
 @Service
-public final class ProducerServiceImpl implements ProducerService {
+public class ProducerServiceImpl implements ProducerService {
 
 	private @Autowired CloudAppConfigService appConfigService;
-
 	private @Autowired CloudJobConfigService configService;
-
 	private @Autowired DisableJobService disableJobService;
 
 	/**

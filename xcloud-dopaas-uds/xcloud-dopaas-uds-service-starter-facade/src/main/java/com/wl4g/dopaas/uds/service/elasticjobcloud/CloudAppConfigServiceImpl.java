@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.CloudAppConfigService;
+import com.wl4g.component.core.framework.proxy.SmartProxyFor;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.model.CloudAppConfigurationPOJO;
 
 import lombok.AccessLevel;
@@ -38,7 +38,8 @@ import lombok.NoArgsConstructor;
 /**
  * Cloud app configuration service.
  */
-@Service("appConfigService")
+@Service
+@SmartProxyFor(CloudAppConfigService.class)
 public final class CloudAppConfigServiceImpl implements CloudAppConfigService {
 
 	private @Autowired CoordinatorRegistryCenter regCenter;

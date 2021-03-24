@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.CloudJobConfigService;
+import com.wl4g.component.core.framework.proxy.SmartProxyFor;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -39,6 +39,7 @@ import lombok.NoArgsConstructor;
  * Cloud job configuration service.
  */
 @Service
+@SmartProxyFor(CloudJobConfigService.class)
 public final class CloudJobConfigServiceImpl implements CloudJobConfigService {
 
 	private @Autowired CoordinatorRegistryCenter regCenter;

@@ -30,9 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.FailoverService;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.FailoverTaskInfo;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.StateNode;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -41,7 +38,7 @@ import lombok.NoArgsConstructor;
  * Failover service.
  */
 @Service
-public final class FailoverServiceImpl implements FailoverService {
+public class FailoverServiceImpl implements FailoverService {
 
 	private @Autowired CoordinatorRegistryCenter regCenter;
 

@@ -17,22 +17,21 @@
 
 package com.wl4g.dopaas.uds.service.elasticjobcloud;
 
-import com.wl4g.dopaas.uds.service.elasticjobcloud.RegistryCenterConfigService;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.GlobalConfiguration;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfiguration;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfigurations;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.repository.ConfigurationsXmlRepository;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.repository.ConfigurationsXmlRepositoryImpl;
 
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
 /**
  * Registry center configuration service implementation.
  */
 @Service
-public final class RegistryCenterConfigServiceImpl implements RegistryCenterConfigService {
+public class RegistryCenterConfigServiceImpl implements RegistryCenterConfigService {
 
 	private ConfigurationsXmlRepository configurationsXmlRepository = new ConfigurationsXmlRepositoryImpl();
 

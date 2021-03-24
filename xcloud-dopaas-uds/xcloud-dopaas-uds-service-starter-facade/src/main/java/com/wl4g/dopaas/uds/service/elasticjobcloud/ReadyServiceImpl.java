@@ -30,8 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.ReadyService;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.StateNode;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.config.JobStateProperties;
 
 import lombok.AccessLevel;
@@ -43,13 +41,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public final class ReadyServiceImpl implements ReadyService {
+public class ReadyServiceImpl implements ReadyService {
 
 	private @Autowired CoordinatorRegistryCenter regCenter;
-
-	private @Autowired CloudJobConfigServiceImpl configService;
-
-	private @Autowired JobStateProperties jobStateConfiguration;
+	private @Autowired CloudJobConfigService cloudJobConfigService;
+	private @Autowired JobStateProperties jobStateProperties;
 
 	/**
 	 * Add transient job to ready queue.
@@ -58,12 +54,12 @@ public final class ReadyServiceImpl implements ReadyService {
 	 *            job name
 	 */
 	public void addTransient(final String jobName) {
-		if (regCenter.getNumChildren(ReadyNode.ROOT) > jobStateConfiguration.getQueueSize()) {
+		if (regCenter.getNumChildren(ReadyNode.ROOT) > jobStateProperties.getQueueSize()) {
 			log.warn("Cannot add transient job, caused by read state queue size is larger than {}.",
-					jobStateConfiguration.getQueueSize());
+					jobStateProperties.getQueueSize());
 			return;
 		}
-		Optional<CloudJobConfigurationPOJO> cloudJobConfig = configService.load(jobName);
+		Optional<CloudJobConfigurationPOJO> cloudJobConfig = cloudJobConfigService.load(jobName);
 		if (!cloudJobConfig.isPresent() || CloudJobExecutionType.TRANSIENT != cloudJobConfig.get().getJobExecutionType()) {
 			return;
 		}

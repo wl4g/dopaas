@@ -21,8 +21,6 @@ import org.apache.shardingsphere.elasticjob.reg.base.CoordinatorRegistryCenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.dopaas.uds.service.elasticjobcloud.DisableJobService;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.StateNode;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.config.JobStateProperties;
 
 import lombok.AccessLevel;
@@ -37,8 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DisableJobServiceImpl implements DisableJobService {
 
 	private @Autowired CoordinatorRegistryCenter regCenter;
-
-	private @Autowired JobStateProperties jobStateConfiguration;
+	private @Autowired JobStateProperties jobStateProperties;
 
 	/**
 	 * Add job to the disable queue.
@@ -47,9 +44,9 @@ public class DisableJobServiceImpl implements DisableJobService {
 	 *            job name
 	 */
 	public void add(final String jobName) {
-		if (regCenter.getNumChildren(DisableJobNode.ROOT) > jobStateConfiguration.getQueueSize()) {
+		if (regCenter.getNumChildren(DisableJobNode.ROOT) > jobStateProperties.getQueueSize()) {
 			log.warn("Cannot add disable job, caused by read state queue size is larger than {}.",
-					jobStateConfiguration.getQueueSize());
+					jobStateProperties.getQueueSize());
 			return;
 		}
 		String disableJobNodePath = DisableJobNode.getDisableJobNodePath(jobName);
