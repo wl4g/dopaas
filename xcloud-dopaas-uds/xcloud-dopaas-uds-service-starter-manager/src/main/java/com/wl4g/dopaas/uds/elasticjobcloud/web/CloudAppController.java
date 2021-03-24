@@ -46,7 +46,7 @@ import com.wl4g.dopaas.uds.service.elasticjobcloud.model.CloudAppConfigurationPO
  */
 @RestController
 @RequestMapping("/api/app")
-public final class CloudAppController {
+public class CloudAppController {
 
 	private @Autowired ProducerService producerService;
 	private @Autowired CloudAppConfigService cloudAppConfigService;

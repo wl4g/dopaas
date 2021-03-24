@@ -70,7 +70,7 @@ import com.wl4g.dopaas.uds.service.elasticjobcloud.StatisticService;
  */
 @RestController
 @RequestMapping("/api/job")
-public final class CloudJobController extends BaseController {
+public class CloudJobController extends BaseController {
 
 	private @Autowired JobEventRdbSearchFactory jobEventRdbSearchFactory;
 	private @Autowired ProducerService producerService;

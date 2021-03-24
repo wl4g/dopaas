@@ -48,4 +48,5 @@ public final class SessionRegistryCenterConfiguration {
 	public static void setRegistryCenterConfiguration(final RegistryCenterConfiguration regCenterConfig) {
 		SessionRegistryCenterConfiguration.regCenterConfig = regCenterConfig;
 	}
+
 }

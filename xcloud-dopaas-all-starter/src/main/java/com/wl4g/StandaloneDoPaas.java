@@ -15,13 +15,13 @@
  */
 package com.wl4g;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.wl4g.component.core.web.mapping.annotation.EnableSmartRequestMapping;
 import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 import com.wl4g.shell.springboot.annotation.EnableShellServer;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * {@link StandaloneDoPaas} </br>
@@ -42,7 +42,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @EnableSmartRequestMapping({ "com.wl4g.iam.web", "com.wl4g.dopaas.**.web" })
 @EnableIamClient
 @EnableShellServer
-@EnableComponentDBConfiguration({ "com.wl4g.dopaas.*.data", "com.wl4g.iam.data" })
+@EnableComponentDBConfiguration({ "com.wl4g.iam.data", "com.wl4g.dopaas.**.data" })
 @SpringBootApplication
 public class StandaloneDoPaas {
 
