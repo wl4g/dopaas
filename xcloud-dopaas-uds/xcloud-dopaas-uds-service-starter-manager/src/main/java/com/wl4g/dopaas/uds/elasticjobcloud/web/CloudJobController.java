@@ -17,20 +17,10 @@
 
 package com.wl4g.dopaas.uds.elasticjobcloud.web;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-
+import com.google.common.base.Strings;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.dopaas.uds.service.elasticjobcloud.*;
 import org.apache.shardingsphere.elasticjob.cloud.config.CloudJobExecutionType;
 import org.apache.shardingsphere.elasticjob.cloud.config.pojo.CloudJobConfigurationPOJO;
 import org.apache.shardingsphere.elasticjob.cloud.statistics.StatisticInterval;
@@ -45,25 +35,12 @@ import org.apache.shardingsphere.elasticjob.tracing.event.JobExecutionEvent;
 import org.apache.shardingsphere.elasticjob.tracing.event.JobStatusTraceEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.common.base.Strings;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.CloudJobConfigService;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.FailoverTaskInfo;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.JobEventRdbSearchFactory;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.MesosFacadeService;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.ProducerService;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.StatisticService;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Cloud job restful api.
@@ -186,11 +163,12 @@ public class CloudJobController extends BaseController {
 	 *            job name
 	 * @return the job detail
 	 */
-	@GetMapping("/jobs/{jobName}")
-	public RespBase<CloudJobConfigurationPOJO> detail(@PathVariable("jobName") final String jobName) {
+	@GetMapping("/jobs/detail")
+	public RespBase<CloudJobConfigurationPOJO> detail(final String jobName) {
 		RespBase<CloudJobConfigurationPOJO> resp = RespBase.create();
-		Optional<CloudJobConfigurationPOJO> cloudJobConfig = cloudJobConfigService.load(jobName);
-		return resp.withData(cloudJobConfig.orElse(null));
+		/*Optional<CloudJobConfigurationPOJO> cloudJobConfig = cloudJobConfigService.load(jobName);
+		return resp.withData(cloudJobConfig.orElse(null));*/
+		return resp.withData(new CloudJobConfigurationPOJO());
 	}
 
 	/**
