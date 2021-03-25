@@ -11,7 +11,7 @@
 # #### Environment base configuration. ####
 #
 spring:
-  application.name: dopaas-server
+  application.name: standalone-dopaas
   profiles:
     include: common,support,util
     active: dev
