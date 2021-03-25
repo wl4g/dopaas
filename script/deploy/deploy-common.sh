@@ -242,7 +242,7 @@ function checkInstallServiceScript() {
   fi
   log "[$appName/$host] Installing /etc/init.d/${appName}.service script ..."
   local appVersion="master"
-  local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: doc-manager => DocManager
+  local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: udm-manager => UdmManager
   local appInstallDir="${deployAppBaseDir}/${appName}-package"
   local appHome="${appInstallDir}/${appName}-${appVersion}-bin"
   local appClasspath=".:$appHome/conf:${appHome}/libs/*"
@@ -296,6 +296,7 @@ function checkInstallServiceScript() {
   doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appLogDir" "true"
   doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appDataDir" "true"
   # Make app services script.
+  local appShortNameUpper=$(echo $appName|tr '[a-z]' '[A-Z]'|awk -F '-' '{print $1}') # e.g cmdb-facade => CMDB
   local tmpServiceFile="$workspaceDir/${appName}.service"
 cat<<EOF>$tmpServiceFile
 #!/bin/bash
@@ -338,16 +339,16 @@ if [ -z "\$SPRING_PROFILES_ACTIVE" ]; then
 elif [ -n "\$(echo \$SPRING_PROFILES_ACTIVE|grep -i '^None\$')" ]; then
   export SPRING_PROFILES_ACTIVE="" # Use empty configuration.
 fi
-[ -z "\$DOPAAS_DB_URL" ] && export DOPAAS_DB_URL="$runtimeMysqlUrl"
-[ -z "\$DOPAAS_DB_USER" ] && export DOPAAS_DB_USER="$runtimeMysqlUser"
-[ -z "\$DOPAAS_DB_PASSWD" ] && export DOPAAS_DB_PASSWD="$runtimeMysqlPassword"
-[ -z "\$DOPAAS_REDIS_NODES" ] && export DOPAAS_REDIS_NODES="$runtimeRedisNodes"
-[ -z "\$DOPAAS_REDIS_PASSWD" ] && export DOPAAS_REDIS_PASSWD="$runtimeRedisPassword"
-[ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="\$DOPAAS_DB_URL"
-[ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="\$DOPAAS_DB_USER"
-[ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="\$DOPAAS_DB_PASSWD"
-[ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="\$DOPAAS_REDIS_NODES"
-[ -z "\$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="\$DOPAAS_REDIS_PASSWD"
+[ -z "\$${appShortNameUpper}_DOPAAS_DB_URL" ] && export ${appShortNameUpper}_DOPAAS_DB_URL="$runtimeMysqlUrl"
+[ -z "\$${appShortNameUpper}_DOPAAS_DB_USER" ] && export ${appShortNameUpper}_DOPAAS_DB_USER="$runtimeMysqlUser"
+[ -z "\$${appShortNameUpper}_DOPAAS_DB_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_DB_PASSWD="$runtimeMysqlPassword"
+[ -z "\$${appShortNameUpper}_DOPAAS_REDIS_NODES" ] && export ${appShortNameUpper}_DOPAAS_REDIS_NODES="$runtimeRedisNodes"
+[ -z "\$${appShortNameUpper}_DOPAAS_REDIS_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_REDIS_PASSWD="$runtimeRedisPassword"
+[ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$runtimeMysqlUrl"
+[ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="$runtimeMysqlUser"
+[ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="$runtimeMysqlPassword"
+[ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="$runtimeRedisNodes"
+[ -z "\$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="$runtimeRedisPassword"
 
 function start() {
   local pids=\$(getPids)
