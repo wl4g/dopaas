@@ -15,11 +15,11 @@ spring:
     component:
       support:
         jedis:
-          passwd: ${DOPAAS_REDIS_PASSWD:zzx!@#$%}
+          passwd: ${UDS_DOPAAS_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${DOPAAS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
+          nodes: ${UDS_DOPAAS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
     dopaas:
       uds:
         elasticjobcloud:
@@ -40,9 +40,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${DOPAAS_DB_URL:jdbc:mysql://owner-node5:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-      username: ${DOPAAS_DB_USER:gzsm}
-      password: ${DOPAAS_DB_PASSWD:gzsm@%#jh?}
+      url: ${UDS_DOPAAS_DB_URL:jdbc:mysql://owner-node5:3306/dopaas_uds?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
+      username: ${UDS_DOPAAS_DB_USER:gzsm}
+      password: ${UDS_DOPAAS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10

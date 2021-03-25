@@ -1,11 +1,11 @@
-# XCloud DoPaaS developers description.
+# XCloud DoPaaS 开发指南
 
-### 1. Project codes
+### 1. 代码目录
 
 ```
 ├── script # 开发、部署相关脚本
 │   └── deploy # 一键部署脚本
-├── thirdparty # 依赖的第三方中间件部署及相关资料
+├── thirdparty # 依赖的第三方中间件部署及相关资料(如, Sonatype OSS/Mesos/CoreDNS/MinIO等)
 ├── xcloud-dopaas-all-dependencies
 ├── xcloud-dopaas-all-starter # standalone模式的启动类
 ├── xcloud-dopaas-cmdb # CMDB管控中心，如主机、应用集群、密钥等配置管理
@@ -15,7 +15,7 @@
 │   ├── xcloud-dopaas-cmdb-service-starter-facade # 逻辑层逻辑层微服务spi接口实现，如 serviceImpl类
 │   └── xcloud-dopaas-cmdb-service-starter-manager # web层对外接口启动类，如 controller类
 ├── xcloud-dopaas-common # 跨模块公共类，如 各种bean/utils/constants/config
-├── xcloud-dopaas-uci # 统一构建流水线服务
+├── xcloud-dopaas-uci # 统一集成交付中心(CI/CD)
 │   ├── xcloud-dopaas-uci-cmdtools(alpha)
 │   ├── xcloud-dopaas-uci-core
 │   ├── xcloud-dopaas-uci-example
@@ -65,5 +65,5 @@
 │   ├── xcloud-dopaas-urm-service-facade
 │   ├── xcloud-dopaas-urm-service-starter-facade
 │   └── xcloud-dopaas-urm-service-starter-manager
-└── xcloud-dopaas-view # 前端项目
+└── xcloud-dopaas-view # 前端项目(link)
 ```

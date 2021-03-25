@@ -16,18 +16,18 @@ spring:
       support:
         # Redis configuration.
         jedis:
-          passwd: ${DOPAAS_REDIS_PASSWD:zzx!@#$%}
+          passwd: ${LCDP_DOPAAS_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
-          nodes: ${DOPAAS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
+          nodes: ${LCDP_DOPAAS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${DOPAAS_DB_URL:jdbc:mysql://owner-node5:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-      username: ${DOPAAS_DB_USER:gzsm}
-      password: ${DOPAAS_DB_PASSWD:gzsm@%#jh?}
+      url: ${LCDP_DOPAAS_DB_URL:jdbc:mysql://owner-node5:3306/dopaas_lcdp?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
+      username: ${LCDP_DOPAAS_DB_USER:gzsm}
+      password: ${LCDP_DOPAAS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10

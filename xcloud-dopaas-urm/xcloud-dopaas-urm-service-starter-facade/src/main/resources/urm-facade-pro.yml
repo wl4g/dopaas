@@ -15,19 +15,19 @@ spring:
     component:
       support:
         jedis:
-          passwd: ${DOPAAS_REDIS_PASSWD:zzx!@#$%}
+          passwd: ${URM_DOPAAS_REDIS_PASSWD:zzx!@#$%}
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${DOPAAS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
+          nodes: ${URM_DOPAAS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${DOPAAS_DB_URL:jdbc:mysql://safecloud-defaulti.mysql.rds.aliyuncs.com:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-      username: ${DOPAAS_DB_USER:dopaas}
-      password: ${DOPAAS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
+      url: ${URM_DOPAAS_DB_URL:jdbc:mysql://safecloud-defaulti.mysql.rds.aliyuncs.com:3306/dopaas_urm?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
+      username: ${URM_DOPAAS_DB_USER:dopaas}
+      password: ${URM_DOPAAS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       initial-size: 10
       max-active: 100
       min-idle: 10

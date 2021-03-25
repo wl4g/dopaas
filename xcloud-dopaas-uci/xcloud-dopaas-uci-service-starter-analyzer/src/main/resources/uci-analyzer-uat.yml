@@ -70,9 +70,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${DOPAAS_DB_URL:jdbc:mysql://owner-node5:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-      username: ${DOPAAS_DB_USER:gzsm}
-      password: ${DOPAAS_DB_PASSWD:gzsm@%#jh?}
+      url: ${UCI_DOPAAS_DB_URL:jdbc:mysql://owner-node5:3306/dopaas_uci?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
+      username: ${UCI_DOPAAS_DB_USER:gzsm}
+      password: ${UCI_DOPAAS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10
