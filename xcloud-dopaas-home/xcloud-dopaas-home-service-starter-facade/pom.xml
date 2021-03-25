@@ -7,7 +7,7 @@
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>xcloud-dopaas-cmdb</artifactId>
+		<artifactId>xcloud-dopaas-home</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
