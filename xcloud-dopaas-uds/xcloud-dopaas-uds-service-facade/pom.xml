@@ -25,9 +25,15 @@
 			<artifactId>xcloud-dopaas-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<!-- Elasticjob-Cloud -->
 		<dependency>
 			<groupId>org.apache.shardingsphere.elasticjob</groupId>
 			<artifactId>elasticjob-cloud-common</artifactId>
+		</dependency>
+		<!-- Elasticjob-Lite -->
+		<dependency>
+			<groupId>org.apache.shardingsphere.elasticjob</groupId>
+			<artifactId>elasticjob-lite-lifecycle</artifactId>
 		</dependency>
 
 		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
