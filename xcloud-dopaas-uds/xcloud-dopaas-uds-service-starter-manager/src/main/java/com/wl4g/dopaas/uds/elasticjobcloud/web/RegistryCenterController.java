@@ -18,8 +18,8 @@
 package com.wl4g.dopaas.uds.elasticjobcloud.web;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.RegistryCenterConfigService;
-import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfiguration;
+import com.wl4g.dopaas.uds.service.elasticjobcloud.CloudRegistryCenterConfigService;
+import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfig;
 import org.apache.shardingsphere.elasticjob.reg.exception.RegException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,13 +37,13 @@ public class RegistryCenterController {
 
 	public static final String REG_CENTER_CONFIG_KEY = "reg_center_config_key";
 
-	private RegistryCenterConfigService regCenterService;
+	private CloudRegistryCenterConfigService regCenterService;
 
 	public RegistryCenterController() {
 	}
 
 	@Autowired
-	public RegistryCenterController(final RegistryCenterConfigService regCenterService) {
+	public RegistryCenterController(final CloudRegistryCenterConfigService regCenterService) {
 		this.regCenterService = regCenterService;
 	}
 
@@ -53,8 +53,8 @@ public class RegistryCenterController {
 	 * @return registry center is activated or not
 	 */
 	@GetMapping("/activated")
-	public RespBase<RegistryCenterConfiguration> activated() {
-		return RespBase.<RegistryCenterConfiguration> create().withData(regCenterService.loadActivated().get());
+	public RespBase<RegistryCenterConfig> activated() {
+		return RespBase.<RegistryCenterConfig> create().withData(regCenterService.loadActivated().get());
 	}
 
 	/**
@@ -65,8 +65,8 @@ public class RegistryCenterController {
 	 * @return registry center configurations
 	 */
 	@GetMapping("/load")
-	public RespBase<Collection<RegistryCenterConfiguration>> load(final HttpServletRequest request) {
-		RespBase<Collection<RegistryCenterConfiguration>> resp = RespBase.create();
+	public RespBase<Collection<RegistryCenterConfig>> load(final HttpServletRequest request) {
+		RespBase<Collection<RegistryCenterConfig>> resp = RespBase.create();
 		regCenterService.loadActivated()
 				.ifPresent(regCenterConfig -> setRegistryCenterNameToSession(regCenterConfig, request.getSession()));
 		return resp.withData(regCenterService.loadAll().getRegistryCenterConfiguration());
@@ -80,7 +80,7 @@ public class RegistryCenterController {
 	 * @return success to add or not
 	 */
 	@PostMapping("/add")
-	public RespBase<Boolean> add(@RequestBody final RegistryCenterConfiguration config) {
+	public RespBase<Boolean> add(@RequestBody final RegistryCenterConfig config) {
 		return RespBase.<Boolean> create().withData(regCenterService.add(config));
 	}
 
@@ -91,7 +91,7 @@ public class RegistryCenterController {
 	 *            registry center configuration
 	 */
 	@DeleteMapping
-	public RespBase<?> delete(@RequestBody final RegistryCenterConfiguration config) {
+	public RespBase<?> delete(@RequestBody final RegistryCenterConfig config) {
 		regCenterService.delete(config.getName());
 		return RespBase.create();
 	}
@@ -106,7 +106,7 @@ public class RegistryCenterController {
 	 * @return connected or not
 	 */
 	@PostMapping(value = "/connect")
-	public RespBase<Boolean> connect(@RequestBody final RegistryCenterConfiguration config, final HttpServletRequest request) {
+	public RespBase<Boolean> connect(@RequestBody final RegistryCenterConfig config, final HttpServletRequest request) {
 		boolean isConnected = setRegistryCenterNameToSession(regCenterService.find(config.getName(), regCenterService.loadAll()),
 				request.getSession());
 		if (isConnected) {
@@ -115,13 +115,13 @@ public class RegistryCenterController {
 		return RespBase.<Boolean> create().withData(isConnected);
 	}
 
-	private boolean setRegistryCenterNameToSession(final RegistryCenterConfiguration regCenterConfig, final HttpSession session) {
+	private boolean setRegistryCenterNameToSession(final RegistryCenterConfig regCenterConfig, final HttpSession session) {
 		session.setAttribute(REG_CENTER_CONFIG_KEY, regCenterConfig);
 		try {
 			RegistryCenterFactory.createCoordinatorRegistryCenter(regCenterConfig.getZkAddressList(),
 					regCenterConfig.getNamespace(), regCenterConfig.getDigest());
 			SessionRegistryCenterConfiguration
-					.setRegistryCenterConfiguration((RegistryCenterConfiguration) session.getAttribute(REG_CENTER_CONFIG_KEY));
+					.setRegistryCenterConfiguration((RegistryCenterConfig) session.getAttribute(REG_CENTER_CONFIG_KEY));
 		} catch (final RegException ex) {
 			return false;
 		}

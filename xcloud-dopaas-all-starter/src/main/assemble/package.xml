@@ -35,33 +35,37 @@
 		</fileSet>
 		<fileSet>
 			<directory>target</directory>
-			<outputDirectory>libs</outputDirectory>
+			<outputDirectory>lib</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources</directory>
-			<outputDirectory>site-docs</outputDirectory>
+			<directory>.</directory>
+			<outputDirectory>ext-lib</outputDirectory>
 			<excludes>
-				<exclude>*.*</exclude>
-				<exclude>script/**</exclude>
+				<exclude>*/**</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources</directory>
+			<directory>.</directory>
 			<outputDirectory>logs</outputDirectory>
 			<excludes>
-				<exclude>*.*</exclude>
-				<exclude>script/**</exclude>
+				<exclude>*/**</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources</directory>
+			<directory>.</directory>
+			<outputDirectory>site-docs</outputDirectory>
+			<excludes>
+				<exclude>*/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>.</directory>
 			<outputDirectory>src</outputDirectory>
 			<excludes>
-				<exclude>*.*</exclude>
-				<exclude>script/**</exclude>
+				<exclude>*/**</exclude>
 			</excludes>
 		</fileSet>
 	</fileSets>
