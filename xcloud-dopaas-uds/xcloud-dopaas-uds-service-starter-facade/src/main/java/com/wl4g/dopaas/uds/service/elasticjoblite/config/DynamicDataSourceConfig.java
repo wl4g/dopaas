@@ -17,17 +17,18 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
-
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Dynamic datasource config.

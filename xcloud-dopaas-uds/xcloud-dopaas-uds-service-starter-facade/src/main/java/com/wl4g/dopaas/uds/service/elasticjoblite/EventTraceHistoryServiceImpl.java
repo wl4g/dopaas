@@ -17,20 +17,17 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite;
 
-import com.google.common.base.Strings;
-import lombok.extern.slf4j.Slf4j;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.persistence.criteria.Predicate;
+
 import org.apache.shardingsphere.elasticjob.tracing.event.JobExecutionEvent;
 import org.apache.shardingsphere.elasticjob.tracing.event.JobStatusTraceEvent;
-
-import com.wl4g.dopaas.uds.data.elasticjoblite.domain.JobExecutionLog;
-import com.wl4g.dopaas.uds.data.elasticjoblite.domain.JobStatusTraceLog;
-import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceHistoryService;
-import com.wl4g.dopaas.uds.service.elasticjoblite.dao.search.JobExecutionLogRepository;
-import com.wl4g.dopaas.uds.service.elasticjoblite.dao.search.JobStatusTraceLogRepository;
-import com.wl4g.dopaas.uds.service.elasticjoblite.model.BasePageRequest;
-import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobExecutionEventsRequest;
-import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobStatusTraceEventsRequest;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -43,18 +40,18 @@ import org.springframework.data.jpa.convert.QueryByExamplePredicateBuilder;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.criteria.Predicate;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.common.base.Strings;
+import com.wl4g.dopaas.uds.service.elasticjoblite.dao.JobExecutionLogRepository;
+import com.wl4g.dopaas.uds.service.elasticjoblite.dao.JobStatusTraceLogRepository;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.JobExecutionLog;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.JobStatusTraceLog;
+import com.wl4g.dopaas.uds.service.elasticjoblite.model.BasePageRequest;
+import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobExecutionEventsRequest;
+import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobStatusTraceEventsRequest;
 
 /**
  * Event trace history service implementation.
  */
-@Slf4j
 @Component
 public final class EventTraceHistoryServiceImpl implements EventTraceHistoryService {
 
@@ -112,7 +109,7 @@ public final class EventTraceHistoryServiceImpl implements EventTraceHistoryServ
 			page = pageRequest.getPageNumber() - 1;
 			perPage = pageRequest.getPageSize();
 		}
-		return new PageRequest(page, perPage, getSort(pageRequest, clazz));
+		return PageRequest.of(page, perPage, getSort(pageRequest, clazz));
 	}
 
 	private <T> Sort getSort(final BasePageRequest pageRequest, final Class<T> clazz) {
@@ -128,7 +125,7 @@ public final class EventTraceHistoryServiceImpl implements EventTraceHistoryServ
 				order = Sort.Direction.valueOf(pageRequest.getOrderType());
 			} catch (IllegalArgumentException ignored) {
 			}
-			sort = new Sort(order, pageRequest.getSortBy());
+			sort = Sort.by(order, pageRequest.getSortBy());
 		}
 		return sort;
 	}

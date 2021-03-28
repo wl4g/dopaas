@@ -23,41 +23,15 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-data</artifactId>
 		</dependency>
+		<!-- Elasticjob-Cloud -->
+		<dependency>
+			<groupId>org.apache.shardingsphere.elasticjob</groupId>
+			<artifactId>elasticjob-cloud-common</artifactId>
+		</dependency>
+		<!-- Elasticjob-Lite -->
 		<dependency>
 			<groupId>org.apache.shardingsphere.elasticjob</groupId>
 			<artifactId>elasticjob-lite-lifecycle</artifactId>
-		</dependency>
-		<!-- TODO remove -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<!-- TODO remove -->
-		<dependency>
-			<groupId>org.apache.openjpa</groupId>
-			<artifactId>openjpa</artifactId>
-			<version>3.1.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.geronimo.specs</groupId>
-					<artifactId>geronimo-jms_1.1_spec</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-dbcp2</artifactId>
-			<version>2.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.4.196</version>
-		</dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.2.5</version>
 		</dependency>
 	</dependencies>
 	<build>

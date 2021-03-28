@@ -17,10 +17,10 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite;
 
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfiguration;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfigurations;
-
 import java.util.Optional;
+
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfigs;
 
 /**
  * Registry center configuration service.
@@ -32,7 +32,7 @@ public interface LiteRegistryCenterConfigService {
 	 *
 	 * @return all registry center configurations
 	 */
-	RegistryCenterConfigurations loadAll();
+	LiteRegistryCenterConfigs loadAll();
 
 	/**
 	 * Load registry center configuration.
@@ -41,7 +41,7 @@ public interface LiteRegistryCenterConfigService {
 	 *            name of registry center configuration
 	 * @return registry center configuration
 	 */
-	RegistryCenterConfiguration load(String name);
+	LiteRegistryCenterConfig load(String name);
 
 	/**
 	 * Find registry center configuration.
@@ -52,14 +52,14 @@ public interface LiteRegistryCenterConfigService {
 	 *            registry center configurations
 	 * @return registry center configuration
 	 */
-	RegistryCenterConfiguration find(String name, RegistryCenterConfigurations configs);
+	LiteRegistryCenterConfig find(String name, LiteRegistryCenterConfigs configs);
 
 	/**
 	 * Load activated registry center configuration.
 	 *
 	 * @return activated registry center configuration
 	 */
-	Optional<RegistryCenterConfiguration> loadActivated();
+	Optional<LiteRegistryCenterConfig> loadActivated();
 
 	/**
 	 * Add registry center configuration.
@@ -68,7 +68,7 @@ public interface LiteRegistryCenterConfigService {
 	 *            registry center configuration
 	 * @return success to add or not
 	 */
-	boolean add(RegistryCenterConfiguration config);
+	boolean add(LiteRegistryCenterConfig config);
 
 	/**
 	 * Delete registry center configuration.

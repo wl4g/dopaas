@@ -27,32 +27,33 @@ import java.io.File;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HomeFolderUtils {
-    
-    private static final String USER_HOME = System.getProperty("user.home");
-    
-    private static final String CONSOLE_ROOT_FOLDER = ".elasticjob-console";
-    
-    /**
-     * Get file path in home folder.
-     * 
-     * @param fileName file name
-     * @return file path in home folder
-     */
-    public static String getFilePathInHomeFolder(final String fileName) {
-        return String.format("%s%s", getHomeFolder(), fileName);
-    }
-    
-    /**
-     * Create home folder if not existed.
-     */
-    public static void createHomeFolderIfNotExisted() {
-        File file = new File(getHomeFolder());
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-    }
-    
-    private static String getHomeFolder() {
-        return String.format("%s%s%s%s", USER_HOME, File.separator, CONSOLE_ROOT_FOLDER, File.separator);
-    }
+
+	private static final String USER_HOME = System.getProperty("user.home");
+
+	private static final String CONSOLE_ROOT_FOLDER = ".elasticjob-console";
+
+	/**
+	 * Get file path in home folder.
+	 * 
+	 * @param fileName
+	 *            file name
+	 * @return file path in home folder
+	 */
+	public static String getFilePathInHomeFolder(final String fileName) {
+		return String.format("%s%s", getHomeFolder(), fileName);
+	}
+
+	/**
+	 * Create home folder if not existed.
+	 */
+	public static void createHomeFolderIfNotExisted() {
+		File file = new File(getHomeFolder());
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+	}
+
+	private static String getHomeFolder() {
+		return String.format("%s%s%s%s", USER_HOME, File.separator, CONSOLE_ROOT_FOLDER, File.separator);
+	}
 }

@@ -245,7 +245,7 @@ function checkInstallServiceScript() {
   local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: udm-manager => UdmManager
   local appInstallDir="${deployAppBaseDir}/${appName}-package"
   local appHome="${appInstallDir}/${appName}-${appVersion}-bin"
-  local appClasspath=".:$appHome/conf:${appHome}/libs/*"
+  local appClasspath=".:$appHome/conf:${appHome}/lib/*"
   local appDataDir="${deployAppDataBaseDir}/${appName}"
   local appLogDir="${deployAppLogBaseDir}/${appName}"
   local appLogFile="${appLogDir}/${appName}_\${SPRING_PROFILES_ACTIVE}.log"
@@ -273,7 +273,7 @@ function checkInstallServiceScript() {
   fi
   if [ "$buildPkgType" == "mvnAssTar" ]; then
     local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -cp $appClasspath $appMainClass $appOpts"
-    local appShellRunCmd="$javaExec -client -Dprompt=$appName -Dservname=$appName $shellPort -cp .:$appHome/libs/* com.wl4g.ShellBootstrap"
+    local appShellRunCmd="$javaExec -client -Dprompt=$appName -Dservname=$appName $shellPort -cp .:$appHome/lib/* com.wl4g.ShellBootstrap"
   elif [ "$buildPkgType" == "springExecJar" ]; then
     local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -jar ${appHome}/${appName}-${appVersion}-bin.jar $appOpts"
     # for example using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher

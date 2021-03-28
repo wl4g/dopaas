@@ -10,57 +10,63 @@
 			<directory>src/main/resources/script</directory>
 			<outputDirectory>bin</outputDirectory>
 			<includes>
-				<include>**/*.sh</include>
+				<include>*.*</include>
 			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources/script/windows</directory>
 			<outputDirectory>bin/windows</outputDirectory>
 			<includes>
-				<include>**/*.bat</include>
-				<include>**/*.cmd</include>
+				<include>*.*</include>
 			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>src/main/resources</directory>
 			<outputDirectory>conf</outputDirectory>
 			<excludes>
-				<exclude>static/**</exclude>
 				<exclude>script/**</exclude>
+				<exclude>static/**</exclude>
 			</excludes>
 			<includes>
-				<include>**/*.yml</include>
-				<include>**/*.yaml</include>
-                <include>**/*.properties</include>
-                <include>**/*.conf</include>
-                <include>**/*.json</include>
-                <include>**/*.xml</include>
-                <include>**/*.txt</include>
-                <include>**/*.sql</include>
-                <include>**/*.db</include>
-                <include>**/*.dat</include>
+				<include>*.yml</include>
+				<include>*.yaml</include>
+				<include>*.properties</include>
 			</includes>
 		</fileSet>
 		<fileSet>
 			<directory>target</directory>
-			<outputDirectory>libs</outputDirectory>
+			<outputDirectory>lib</outputDirectory>
 			<includes>
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources</directory>
-			<outputDirectory>site-docs</outputDirectory>
-            <excludes>
-                <exclude>**/*.*</exclude>
-            </excludes>
+			<directory>.</directory>
+			<outputDirectory>ext-lib</outputDirectory>
+			<excludes>
+				<exclude>*/**</exclude>
+			</excludes>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources</directory>
-            <outputDirectory>logs</outputDirectory>
-            <excludes>
-                <exclude>**/*.*</exclude>
-            </excludes>
+			<directory>.</directory>
+			<outputDirectory>logs</outputDirectory>
+			<excludes>
+				<exclude>*/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>.</directory>
+			<outputDirectory>site-docs</outputDirectory>
+			<excludes>
+				<exclude>*/**</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>.</directory>
+			<outputDirectory>src</outputDirectory>
+			<excludes>
+				<exclude>*/**</exclude>
+			</excludes>
 		</fileSet>
 	</fileSets>
 	<dependencySets>

@@ -17,7 +17,8 @@
 
 package com.wl4g.dopaas.uds.elasticjobcloud.web;
 
-import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfiguration;
+import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfig;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -28,14 +29,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SessionRegistryCenterConfiguration {
 
-	private static RegistryCenterConfiguration regCenterConfig;
+	private static RegistryCenterConfig regCenterConfig;
 
 	/**
 	 * Get registry center configuration.
 	 *
 	 * @return registry center configuration
 	 */
-	public static RegistryCenterConfiguration getRegistryCenterConfiguration() {
+	public static RegistryCenterConfig getRegistryCenterConfiguration() {
 		return regCenterConfig;
 	}
 
@@ -45,7 +46,7 @@ public class SessionRegistryCenterConfiguration {
 	 * @param regCenterConfig
 	 *            registry center configuration
 	 */
-	public static void setRegistryCenterConfiguration(final RegistryCenterConfiguration regCenterConfig) {
+	public static void setRegistryCenterConfiguration(final LiteRegistryCenterConfig regCenterConfig) {
 		SessionRegistryCenterConfiguration.regCenterConfig = regCenterConfig;
 	}
 

@@ -34,12 +34,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.page.PageHolder.Page;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceDataSourceConfigurationService;
+import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceDataSourceConfigService;
 import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceHistoryService;
+import com.wl4g.dopaas.uds.service.elasticjoblite.SessionEventTraceDataSourceFactory;
 import com.wl4g.dopaas.uds.service.elasticjoblite.model.BasePageResponse;
 import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobExecutionEventsRequest;
 import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobStatusTraceEventsRequest;
-import com.wl4g.dopaas.uds.service.elasticjoblite.util.SessionEventTraceDataSourceConfiguration;
 
 /**
  * Event trace history RESTful API.
@@ -52,7 +52,7 @@ public final class EventTraceHistoryController extends BaseController {
 	private EventTraceHistoryService eventTraceHistoryService;
 
 	@Autowired
-	private EventTraceDataSourceConfigurationService eventTraceDataSourceConfigurationService;
+	private EventTraceDataSourceConfigService eventTraceDataSourceConfigurationService;
 
 	/**
 	 * Find job execution events.
@@ -125,6 +125,6 @@ public final class EventTraceHistoryController extends BaseController {
 	@ModelAttribute
 	private void initDataSource() {
 		eventTraceDataSourceConfigurationService.loadActivated()
-				.ifPresent(SessionEventTraceDataSourceConfiguration::setDataSourceConfiguration);
+				.ifPresent(SessionEventTraceDataSourceFactory::setDataSourceConfiguration);
 	}
 }

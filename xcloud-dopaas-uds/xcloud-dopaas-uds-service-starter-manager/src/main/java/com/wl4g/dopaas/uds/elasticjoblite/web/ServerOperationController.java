@@ -70,7 +70,7 @@ public final class ServerOperationController extends BaseController {
 		Collection<ServerBriefInfo> data = Objects.nonNull(SessionRegistryCenterConfiguration.getRegistryCenterConfiguration())
 				? jobAPIService.getServerStatisticsAPI().getAllServersBriefInfo()
 				: Collections.emptyList();
-		return RespBase.create().withData(data);
+		return RespBase.<Collection<ServerBriefInfo>> create().withData(data);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public final class ServerOperationController extends BaseController {
 	@PostMapping("/{serverIp}/disable")
 	public RespBase<Boolean> disableServer(@PathVariable("serverIp") final String serverIp) {
 		jobAPIService.getJobOperatorAPI().disable(null, serverIp);
-		return RespBase.create().withData(Boolean.TRUE);
+		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public final class ServerOperationController extends BaseController {
 	@PostMapping("/{serverIp}/enable")
 	public RespBase<Boolean> enableServer(@PathVariable("serverIp") final String serverIp) {
 		jobAPIService.getJobOperatorAPI().enable(null, serverIp);
-		return RespBase.create().withData(Boolean.TRUE);
+		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public final class ServerOperationController extends BaseController {
 	@PostMapping("/{serverIp}/shutdown")
 	public RespBase<Boolean> shutdownServer(@PathVariable("serverIp") final String serverIp) {
 		jobAPIService.getJobOperatorAPI().shutdown(null, serverIp);
-		return RespBase.create().withData(Boolean.TRUE);
+		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public final class ServerOperationController extends BaseController {
 	@DeleteMapping("/{serverIp:.+}")
 	public RespBase<Boolean> removeServer(@PathVariable("serverIp") final String serverIp) {
 		jobAPIService.getJobOperatorAPI().remove(null, serverIp);
-		return RespBase.create().withData(Boolean.TRUE);
+		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
 	/**
@@ -131,7 +131,7 @@ public final class ServerOperationController extends BaseController {
 	@GetMapping(value = "/{serverIp}/jobs")
 	public RespBase<Collection<JobBriefInfo>> getJobs(@PathVariable("serverIp") final String serverIp) {
 		Collection<JobBriefInfo> data = jobAPIService.getJobStatisticsAPI().getJobsBriefInfo(serverIp);
-		return RespBase.create().withData(data);
+		return RespBase.<Collection<JobBriefInfo>> create().withData(data);
 	}
 
 	/**
@@ -146,7 +146,7 @@ public final class ServerOperationController extends BaseController {
 	public RespBase<Boolean> disableServerJob(@PathVariable("serverIp") final String serverIp,
 			@PathVariable("jobName") final String jobName) {
 		jobAPIService.getJobOperatorAPI().disable(jobName, serverIp);
-		return RespBase.create().withData(Boolean.TRUE);
+		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public final class ServerOperationController extends BaseController {
 	public RespBase<Boolean> enableServerJob(@PathVariable("serverIp") final String serverIp,
 			@PathVariable("jobName") final String jobName) {
 		jobAPIService.getJobOperatorAPI().enable(jobName, serverIp);
-		return RespBase.create().withData(Boolean.TRUE);
+		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
 	/**
@@ -176,7 +176,7 @@ public final class ServerOperationController extends BaseController {
 	public RespBase<Boolean> shutdownServerJob(@PathVariable("serverIp") final String serverIp,
 			@PathVariable("jobName") final String jobName) {
 		jobAPIService.getJobOperatorAPI().shutdown(jobName, serverIp);
-		return RespBase.create().withData(Boolean.TRUE);
+		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
 	/**
@@ -191,6 +191,6 @@ public final class ServerOperationController extends BaseController {
 	public RespBase<Boolean> removeServerJob(@PathVariable("serverIp") final String serverIp,
 			@PathVariable("jobName") final String jobName) {
 		jobAPIService.getJobOperatorAPI().remove(jobName, serverIp);
-		return RespBase.create().withData(Boolean.TRUE);
+		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 }

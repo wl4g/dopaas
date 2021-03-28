@@ -33,5 +33,5 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class GlobalConfiguration {
 
-	private RegistryCenterConfigurations registryCenterConfigurations;
+	private RegistryCenterConfigs registryCenterConfigurations;
 }
