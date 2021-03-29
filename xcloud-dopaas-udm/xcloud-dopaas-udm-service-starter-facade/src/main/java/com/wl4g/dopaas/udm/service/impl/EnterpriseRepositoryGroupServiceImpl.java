@@ -53,7 +53,7 @@ public class EnterpriseRepositoryGroupServiceImpl implements EnterpriseRepositor
 	@Override
 	public PageHolder<EnterpriseRepositoryGroup> page(EnterpriseRepositoryGroupPageRequest enterpriseRepositoryGroupPageRequest) {
 		PageHolder<EnterpriseRepositoryGroup> pm = enterpriseRepositoryGroupPageRequest.getPm();
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		EnterpriseRepositoryGroup enterpriseRepositoryGroup = new EnterpriseRepositoryGroup();
 		BeanUtils.copyProperties(enterpriseRepositoryGroupPageRequest, enterpriseRepositoryGroup);
 		List<EnterpriseRepositoryGroup> list = enterpriseRepositoryGroupDao.list(enterpriseRepositoryGroup);

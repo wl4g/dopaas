@@ -57,7 +57,7 @@ private @Autowired  CustomDataSourcePropertiesDao customDataSourcePropertiesDao;
 
 	@Override
 	public PageHolder<CustomDataSource> list(PageHolder<CustomDataSource> pm, String name) {
-		pm.bindPage();
+		pm.bind();
 		pm.setRecords(customDatasourceDao.list(name));
 		return pm;
 	}

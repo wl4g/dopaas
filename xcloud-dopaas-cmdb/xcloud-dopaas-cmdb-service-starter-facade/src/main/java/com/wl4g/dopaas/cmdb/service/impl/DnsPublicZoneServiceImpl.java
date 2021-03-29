@@ -39,7 +39,7 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 
 	@Override
 	public PageHolder<DnsPublicZone> page(PageHolder<DnsPublicZone> pm, String zone) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(publicZoneDao.list(getRequestOrganizationCodes(), zone));
 		return pm;
 	}

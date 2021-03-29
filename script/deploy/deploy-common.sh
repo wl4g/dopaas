@@ -268,7 +268,7 @@ function checkInstallServiceScript() {
   local jvmGcLogOpts="-Xloggc:${jvmGcLogFile} -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
 -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
   # Java 9+
-  if [[ "$($JAVA -version 2>&1 | sed -E -n 's/.* version "([^.-]*).*"/\1/p')" -ge "9" ]] ; then
+  if [[ "$($JAVA -version 2>&1|sed -E -n 's/.* version \"([^.-]*).*\"/\1/p')" -ge "9" ]] ; then
     jvmGcLogOpts="-Xlog:gc*:file=${jvmGcLogFile}:time,tags:filecount=10,filesize=102400"
   fi
   if [ "$buildPkgType" == "mvnAssTar" ]; then
@@ -297,6 +297,10 @@ function checkInstallServiceScript() {
   doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appDataDir" "true"
   # Make app services script.
   local appShortNameUpper=$(echo $appName|tr '[a-z]' '[A-Z]'|awk -F '-' '{print $1}') # e.g cmdb-facade => CMDB
+  local runtimeMysqlUrl0="$runtimeMysqlUrl"
+  if [ "$runtimeMode" == "cluster" ]; then # When clustering mode, individual database should be used by each service.
+    local runtimeMysqlUrl0=$(echo $runtimeMysqlUrl|sed "s/dopaas/dopaas_$appShortNameUpper/g") 
+  fi
   local tmpServiceFile="$workspaceDir/${appName}.service"
 cat<<EOF>$tmpServiceFile
 #!/bin/bash
@@ -339,12 +343,12 @@ if [ -z "\$SPRING_PROFILES_ACTIVE" ]; then
 elif [ -n "\$(echo \$SPRING_PROFILES_ACTIVE|grep -i '^None\$')" ]; then
   export SPRING_PROFILES_ACTIVE="" # Use empty configuration.
 fi
-[ -z "\$${appShortNameUpper}_DOPAAS_DB_URL" ] && export ${appShortNameUpper}_DOPAAS_DB_URL="$runtimeMysqlUrl"
+[ -z "\$${appShortNameUpper}_DOPAAS_DB_URL" ] && export ${appShortNameUpper}_DOPAAS_DB_URL="$runtimeMysqlUrl0"
 [ -z "\$${appShortNameUpper}_DOPAAS_DB_USER" ] && export ${appShortNameUpper}_DOPAAS_DB_USER="$runtimeMysqlUser"
 [ -z "\$${appShortNameUpper}_DOPAAS_DB_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_DB_PASSWD="$runtimeMysqlPassword"
 [ -z "\$${appShortNameUpper}_DOPAAS_REDIS_NODES" ] && export ${appShortNameUpper}_DOPAAS_REDIS_NODES="$runtimeRedisNodes"
 [ -z "\$${appShortNameUpper}_DOPAAS_REDIS_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_REDIS_PASSWD="$runtimeRedisPassword"
-[ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$runtimeMysqlUrl"
+[ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$runtimeMysqlUrl0"
 [ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="$runtimeMysqlUser"
 [ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="$runtimeMysqlPassword"
 [ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="$runtimeRedisNodes"

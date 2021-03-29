@@ -50,7 +50,7 @@ private @Autowired  DocProperties docProperties;
 
 	@Override
 	public PageHolder<Share> list(PageHolder<Share> pm) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		List<Share> list = shareDao.list();
 		for (Share share : list) {
 			FileChanges fileChanges = docService.getLastByDocCode(share.getDocCode());

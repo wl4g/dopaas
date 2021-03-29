@@ -48,7 +48,7 @@ public class EnterpriseRepositoryServiceImpl implements EnterpriseRepositoryServ
 	@Override
 	public PageHolder<EnterpriseRepository> page(EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest) {
 		PageHolder<EnterpriseRepository> pm = enterpriseRepositoryPageRequest.getPm();
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		EnterpriseRepository enterpriseRepository = new EnterpriseRepository();
 		BeanUtils.copyProperties(enterpriseRepositoryPageRequest, enterpriseRepository);
 		pm.setRecords(enterpriseRepositoryDao.list(enterpriseRepository));

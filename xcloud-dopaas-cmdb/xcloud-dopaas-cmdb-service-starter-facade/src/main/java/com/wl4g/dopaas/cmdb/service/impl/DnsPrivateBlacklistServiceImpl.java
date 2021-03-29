@@ -51,7 +51,7 @@ public class DnsPrivateBlacklistServiceImpl implements DnsPrivateBlacklistServic
 
 	@Override
 	public PageHolder<DnsPrivateBlacklist> page(PageHolder<DnsPrivateBlacklist> pm, String expression) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(dnsPrivateBlacklistDao.list(expression));
 		return pm;
 	}

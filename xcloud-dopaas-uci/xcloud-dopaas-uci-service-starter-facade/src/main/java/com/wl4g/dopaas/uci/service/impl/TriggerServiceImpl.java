@@ -53,7 +53,7 @@ public class TriggerServiceImpl implements TriggerService {
 		if (isNotBlank(endDate)) {
 			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
 		}
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(triggerDao.list(getRequestOrganizationCodes(), id, name, taskId, enable, startDate, endDateStr));
 		return pm;
 	}

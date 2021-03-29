@@ -50,7 +50,7 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
 
 	@Override
 	public PageHolder<DnsPrivateResolution> page(PageHolder<DnsPrivateResolution> pm, String host, Long domainId) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(privateResolutionDao.list(getRequestOrganizationCodes(), host, domainId));
 		return pm;
 	}

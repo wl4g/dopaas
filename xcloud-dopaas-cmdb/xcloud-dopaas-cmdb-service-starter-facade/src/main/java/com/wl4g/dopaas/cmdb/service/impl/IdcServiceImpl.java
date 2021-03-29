@@ -42,7 +42,7 @@ public class IdcServiceImpl implements IdcService {
 
 	@Override
 	public PageHolder<IdcBean> page(PageHolder<IdcBean> pm, String name) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(idcDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

@@ -204,7 +204,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Override
 	public PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName,
 			String environment, String startDate, String endDate, String providerKind) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterName, environment, startDate,
 				endDate, providerKind, null, null));
 		return pm;

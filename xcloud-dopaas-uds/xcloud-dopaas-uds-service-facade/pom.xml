@@ -25,6 +25,10 @@
 			<artifactId>xcloud-dopaas-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+		</dependency>
 		<!-- Elasticjob-Cloud -->
 		<dependency>
 			<groupId>org.apache.shardingsphere.elasticjob</groupId>

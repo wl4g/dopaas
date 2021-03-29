@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
  * Event trace data source configuration in session.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class SessionEventTraceDataSourceFactory {
+public final class LiteSessionEventTraceDataSourceFactory {
 
 	private static EventTraceDataSourceConfig eventTraceDataSourceConfiguration;
 
@@ -39,7 +39,7 @@ public final class SessionEventTraceDataSourceFactory {
 	 */
 	public static void setDataSourceConfiguration(final EventTraceDataSourceConfig eventTraceDataSourceConfiguration) {
 		DynamicDataSourceConfig.DynamicDataSourceContextHolder.setDataSourceName(eventTraceDataSourceConfiguration.getName());
-		SessionEventTraceDataSourceFactory.eventTraceDataSourceConfiguration = eventTraceDataSourceConfiguration;
+		LiteSessionEventTraceDataSourceFactory.eventTraceDataSourceConfiguration = eventTraceDataSourceConfiguration;
 	}
 
 }

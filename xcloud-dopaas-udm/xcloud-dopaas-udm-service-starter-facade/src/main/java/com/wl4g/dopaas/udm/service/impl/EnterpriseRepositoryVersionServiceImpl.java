@@ -51,7 +51,7 @@ public class EnterpriseRepositoryVersionServiceImpl implements EnterpriseReposit
 	public PageHolder<EnterpriseRepositoryVersion> page(
 			EnterpriseRepositoryVersionPageRequest enterpriseRepositoryVersionPageRequest) {
 		PageHolder<EnterpriseRepositoryVersion> pm = enterpriseRepositoryVersionPageRequest.getPm();
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		EnterpriseRepositoryVersion enterpriseRepositoryVersion = new EnterpriseRepositoryVersion();
 		BeanUtils.copyProperties(enterpriseRepositoryVersionPageRequest, enterpriseRepositoryVersion);
 		pm.setRecords(enterpriseRepositoryVersionDao.list(enterpriseRepositoryVersion));

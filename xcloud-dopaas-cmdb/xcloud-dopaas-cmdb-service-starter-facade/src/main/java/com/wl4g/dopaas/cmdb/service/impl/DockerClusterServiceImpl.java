@@ -49,7 +49,7 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 
 	@Override
 	public PageHolder<DockerCluster> page(PageHolder<DockerCluster> pm, String name) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(dockerClusterDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

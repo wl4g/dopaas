@@ -48,11 +48,11 @@ public final class EventTraceDataSourceController extends BaseController {
 
 	public static final String DATA_SOURCE_CONFIG_KEY = "data_source_config_key";
 
-	private final EventTraceDataSourceConfigService eventTraceDataSourceConfigurationService;
+	private final EventTraceDataSourceConfigService eventTraceDataSourceConfigService;
 
 	@Autowired
 	public EventTraceDataSourceController(final EventTraceDataSourceConfigService eventTraceDataSourceConfigurationService) {
-		this.eventTraceDataSourceConfigurationService = eventTraceDataSourceConfigurationService;
+		this.eventTraceDataSourceConfigService = eventTraceDataSourceConfigurationService;
 	}
 
 	/**
@@ -78,7 +78,7 @@ public final class EventTraceDataSourceController extends BaseController {
 	@GetMapping("/activated")
 	public RespBase<Boolean> activated(final HttpServletRequest request) {
 		RespBase<Boolean> resp = RespBase.create();
-		boolean result = eventTraceDataSourceConfigurationService.loadActivated().isPresent();
+		boolean result = eventTraceDataSourceConfigService.loadActivated().isPresent();
 		return resp.withData(result);
 	}
 
@@ -92,9 +92,9 @@ public final class EventTraceDataSourceController extends BaseController {
 	@GetMapping("/load")
 	public RespBase<Collection<EventTraceDataSourceConfig>> load(final HttpServletRequest request) {
 		RespBase<Collection<EventTraceDataSourceConfig>> resp = RespBase.create();
-		eventTraceDataSourceConfigurationService.loadActivated().ifPresent(
+		eventTraceDataSourceConfigService.loadActivated().ifPresent(
 				eventTraceDataSourceConfig -> setDataSourceNameToSession(eventTraceDataSourceConfig, request.getSession()));
-		return resp.withData(eventTraceDataSourceConfigurationService.loadAll().getEventTraceDataSourceConfiguration());
+		return resp.withData(eventTraceDataSourceConfigService.loadAll().getEventTraceDataSourceConfiguration());
 	}
 
 	/**
@@ -107,7 +107,7 @@ public final class EventTraceDataSourceController extends BaseController {
 	@PostMapping("/add")
 	public RespBase<Boolean> add(@RequestBody final EventTraceDataSourceConfig config) {
 		RespBase<Boolean> resp = RespBase.create();
-		return resp.withData(eventTraceDataSourceConfigurationService.add(config));
+		return resp.withData(eventTraceDataSourceConfigService.add(config));
 	}
 
 	/**
@@ -118,7 +118,7 @@ public final class EventTraceDataSourceController extends BaseController {
 	 */
 	@DeleteMapping
 	public RespBase<?> delete(@RequestBody final EventTraceDataSourceConfig config) {
-		eventTraceDataSourceConfigurationService.delete(config.getName());
+		eventTraceDataSourceConfigService.delete(config.getName());
 		return RespBase.create();
 	}
 
@@ -150,9 +150,10 @@ public final class EventTraceDataSourceController extends BaseController {
 	@PostMapping(value = "/connect")
 	public RespBase<Boolean> connect(@RequestBody final EventTraceDataSourceConfig config, final HttpServletRequest request) {
 		RespBase<Boolean> resp = RespBase.create();
-		setDataSourceNameToSession(eventTraceDataSourceConfigurationService.find(config.getName(),
-				eventTraceDataSourceConfigurationService.loadAll()), request.getSession());
-		eventTraceDataSourceConfigurationService.load(config.getName());
+		setDataSourceNameToSession(
+				eventTraceDataSourceConfigService.find(config.getName(), eventTraceDataSourceConfigService.loadAll()),
+				request.getSession());
+		eventTraceDataSourceConfigService.load(config.getName());
 		return resp.withData(true);
 	}
 
@@ -160,7 +161,7 @@ public final class EventTraceDataSourceController extends BaseController {
 		session.setAttribute(DATA_SOURCE_CONFIG_KEY, dataSourceConfig);
 		EventTraceDataSourceFactory.createEventTraceDataSource(dataSourceConfig.getDriver(), dataSourceConfig.getUrl(),
 				dataSourceConfig.getUsername(), dataSourceConfig.getPassword());
-		SessionEventTraceDataSourceFactory
+		LiteSessionEventTraceDataSourceFactory
 				.setDataSourceConfiguration((EventTraceDataSourceConfig) session.getAttribute(DATA_SOURCE_CONFIG_KEY));
 	}
 

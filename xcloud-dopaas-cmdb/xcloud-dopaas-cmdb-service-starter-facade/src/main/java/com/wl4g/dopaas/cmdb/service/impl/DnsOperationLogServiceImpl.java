@@ -40,7 +40,7 @@ public class DnsOperationLogServiceImpl implements DnsOperationLogService {
 
 	@Override
 	public PageHolder<DnsOperationLog> page(PageHolder<DnsOperationLog> pm, String domain) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(dnsOperationLogDao.list(getRequestOrganizationCodes(), domain));
 		return pm;
 	}

@@ -48,7 +48,7 @@ public class EnterpriseDocumentServiceImpl implements EnterpriseDocumentService 
 	@Override
 	public PageHolder<EnterpriseDocument> page(EnterpriseDocumentPageRequest enterpriseDocumentPageRequest) {
 		PageHolder<EnterpriseDocument> pm = enterpriseDocumentPageRequest.getPm();
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		EnterpriseDocument enterpriseDocument = new EnterpriseDocument();
 		BeanUtils.copyProperties(enterpriseDocumentPageRequest, enterpriseDocument);
 		pm.setRecords(enterpriseDocumentDao.list(enterpriseDocument));

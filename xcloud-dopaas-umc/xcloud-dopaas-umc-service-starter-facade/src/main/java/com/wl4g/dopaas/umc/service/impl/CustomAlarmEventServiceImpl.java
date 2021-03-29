@@ -35,7 +35,7 @@ private @Autowired  CustomAlarmEventDao customAlarmEventDao;
 
 	@Override
 	public PageHolder<CustomAlarmEvent> list(PageHolder<CustomAlarmEvent> pm, String name) {
-		pm.bindPage();
+		pm.bind();
 		pm.setRecords(customAlarmEventDao.list(name));
 		return pm;
 	}

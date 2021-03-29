@@ -50,7 +50,7 @@ public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleServic
 	@Override
 	public PageHolder<EnterpriseApiModule> page(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest) {
 		PageHolder<EnterpriseApiModule> pm = enterpriseApiModulePageRequest.getPm();
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		EnterpriseApiModule enterpriseApiModule = new EnterpriseApiModule();
 		BeanUtils.copyProperties(enterpriseApiModulePageRequest, enterpriseApiModule);
 		pm.setRecords(enterpriseApiModuleDao.list(enterpriseApiModule));

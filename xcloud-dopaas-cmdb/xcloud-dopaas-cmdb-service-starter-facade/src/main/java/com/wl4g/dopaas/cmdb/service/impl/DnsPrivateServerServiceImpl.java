@@ -40,7 +40,7 @@ public class DnsPrivateServerServiceImpl implements DnsPrivateServerService {
 
 	@Override
 	public PageHolder<DnsPrivateServer> page(PageHolder<DnsPrivateServer> pm, String name) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(dnsPrivateServerDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

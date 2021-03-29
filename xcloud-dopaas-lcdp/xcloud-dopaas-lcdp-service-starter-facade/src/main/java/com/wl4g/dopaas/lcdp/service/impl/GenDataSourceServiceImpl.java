@@ -57,7 +57,7 @@ public class GenDataSourceServiceImpl implements GenDataSourceService {
 
 	@Override
 	public PageHolder<GenDataSource> page(PageHolder<GenDataSource> pm, String name) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		// desensitization
 		pm.setRecords(safeList(genDSDao.list(name)).stream().map(ds -> ds.withPassword("******")).collect(toList()));
 		return pm;

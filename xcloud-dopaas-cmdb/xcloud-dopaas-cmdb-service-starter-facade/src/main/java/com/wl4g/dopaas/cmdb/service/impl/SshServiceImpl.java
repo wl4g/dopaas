@@ -61,7 +61,7 @@ public class SshServiceImpl implements SshService {
 
 	@Override
 	public PageHolder<SshBean> page(PageHolder<SshBean> pm, String name) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(sshDao.list(getRequestOrganizationCodes(), name));
 		return pm;
 	}

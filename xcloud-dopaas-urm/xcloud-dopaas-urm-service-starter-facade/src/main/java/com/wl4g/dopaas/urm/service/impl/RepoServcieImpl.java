@@ -59,7 +59,7 @@ private @Autowired  RepoProperties vcsProperties;
 
 	@Override
 	public PageHolder<SourceRepo> list(PageHolder<SourceRepo> pm, String name, String providerKind, Integer authType) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(repoDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
 		return pm;
 	}

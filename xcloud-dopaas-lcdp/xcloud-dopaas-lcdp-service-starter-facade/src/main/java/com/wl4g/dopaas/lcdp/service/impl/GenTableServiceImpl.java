@@ -49,7 +49,7 @@ public class GenTableServiceImpl implements GenTableService {
 
 	@Override
 	public PageHolder<GenTable> page(PageHolder<GenTable> pm, String tableName, Long projectId) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(genTableDao.list(tableName, projectId));
 		return pm;
 	}

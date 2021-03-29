@@ -37,7 +37,7 @@ private @Autowired  MetricTemplateDao metricTemplateDao;
 
 	@Override
 	public PageHolder<MetricTemplate> list(PageHolder<MetricTemplate> pm, String metric, String classify) {
-		pm.bindPage();
+		pm.bind();
 		pm.setRecords(metricTemplateDao.list(metric, classify));
 		return pm;
 	}

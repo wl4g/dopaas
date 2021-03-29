@@ -46,7 +46,7 @@ public class AlarmAlarmRecordServiceImpl implements AlarmRecordService {
 
 	@Override
 	public PageHolder<AlarmRecord> list(PageHolder<AlarmRecord> pm, String name, String startDate, String endDate) {
-		pm.bindPage();
+		pm.bind();
 		pm.setRecords(alarmRecordDao.list(name, startDate, endDate));
 		return pm;
 	}

@@ -51,7 +51,7 @@ public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
 
 	@Override
 	public PageHolder<DnsPrivateZone> page(PageHolder<DnsPrivateZone> pm, String zone) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		List<DnsPrivateZone> list = dnsPrivateDomainDao.list(getRequestOrganizationCodes(), zone);
 		pm.setRecords(list);
 		return pm;
