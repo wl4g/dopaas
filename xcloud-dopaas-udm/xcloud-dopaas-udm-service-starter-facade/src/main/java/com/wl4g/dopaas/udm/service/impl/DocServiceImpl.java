@@ -75,7 +75,7 @@ private @Autowired  ShareDao shareDao;
 
 	@Override
 	public PageHolder<FileChanges> list(PageHolder<FileChanges> pm, String name, String lang, Long labelId) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		List<FileChanges> list = fileChangesDao.list(name, lang, labelId);
 		pm.setRecords(list);
 		return pm;

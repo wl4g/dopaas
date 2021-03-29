@@ -47,7 +47,7 @@ public class EeDocumentRepoGroupServiceImpl implements EeDocumentRepoGroupServic
 	@Override
 	public PageHolder<EeDocumentRepoGroup> page(EeDocumentRepoGroup eeDocumentRepoGroup) {
 		PageHolder pm = RpcContextHolder.get().get("pm", PageHolder.class);
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(eeDocumentRepoGroupDao.list(eeDocumentRepoGroup));
 		return pm;
 	}

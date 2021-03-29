@@ -53,7 +53,7 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 	@Override
 	public PageHolder<AppInstance> list(PageHolder<AppInstance> pm, String name, Long instanceId, String envType,
 			Integer deployType) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(appInstanceDao.list(getRequestOrganizationCodes(), name, instanceId, envType, deployType));
 		return pm;
 	}

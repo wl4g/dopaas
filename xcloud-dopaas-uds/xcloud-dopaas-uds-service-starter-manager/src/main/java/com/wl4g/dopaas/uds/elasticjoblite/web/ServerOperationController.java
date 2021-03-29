@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.dopaas.uds.elasticjobcloud.web.SessionRegistryCenterConfiguration;
+import com.wl4g.dopaas.uds.elasticjobcloud.web.SessionRegistryCenterFactory;
 import com.wl4g.dopaas.uds.service.elasticjoblite.JobAPIService;
 
 /**
@@ -67,7 +67,7 @@ public final class ServerOperationController extends BaseController {
 	 */
 	@GetMapping("/getAllServersBriefInfo")
 	public RespBase<Collection<ServerBriefInfo>> getAllServersBriefInfo() {
-		Collection<ServerBriefInfo> data = Objects.nonNull(SessionRegistryCenterConfiguration.getRegistryCenterConfiguration())
+		Collection<ServerBriefInfo> data = Objects.nonNull(SessionRegistryCenterFactory.getRegistryCenterConfiguration())
 				? jobAPIService.getServerStatisticsAPI().getAllServersBriefInfo()
 				: Collections.emptyList();
 		return RespBase.<Collection<ServerBriefInfo>> create().withData(data);

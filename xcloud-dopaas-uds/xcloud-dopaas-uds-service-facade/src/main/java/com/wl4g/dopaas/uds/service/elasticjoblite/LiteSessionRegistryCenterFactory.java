@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
  * Registry center configuration configuration.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class SessionRegistryCenterFactory {
+public final class LiteSessionRegistryCenterFactory {
 
 	private static LiteRegistryCenterConfig regCenterConfig;
 
@@ -46,7 +46,7 @@ public final class SessionRegistryCenterFactory {
 	 *            registry center configuration
 	 */
 	public static void setRegistryCenterConfiguration(final LiteRegistryCenterConfig regCenterConfig) {
-		SessionRegistryCenterFactory.regCenterConfig = regCenterConfig;
+		LiteSessionRegistryCenterFactory.regCenterConfig = regCenterConfig;
 	}
 
 }

@@ -4,7 +4,7 @@
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
 ### 一站式基于DevSecOps的PaaS平台解决方案
-> 基于SpringCloud/Docker/ServiceMesh(Istio)，主要集成模块：CMDB、统一持续交付CI/CD（分布式编译和部署）、IAM认证中心、统一监控中心、统一配置中心、统一分布式调度中心、统一文档、统一开发者中心（AutoGenerator），统一私有对象存储管理、统一源/包/映像库管理、Shell-Cli组件、各种工具链（如HBase/OSS运维）、即时通讯、轻量级风控等
+> 基于SpringCloud/Docker/ServiceMesh(istio)，主要模块：统一资产管理中心(CMDB)、统一持续交付中心(分布式编译CI/CD)、IAM认证中心(rbac/oauth2/oidc/[saml2])、统一监控中心(sba/zipkin/promethous)、统一配置中心、统一作业中心(elasticjob/spark/flink/mr)、统一文档中心(swagger/rap)、统一开发中心（lcdp/autoGen），统一私有对象存储管理、统一库管理(git/nexus(maven/image))、Shell-Cli、多种工具链(hdfs/hbase/phoenix/oss)、即时通讯、轻量级风控等
 
 
 [![Build Status](https://travis-ci.org/wl4g/xcloud-dopaas.svg)](https://travis-ci.org/wl4g/xcloud-dopaas)
@@ -21,6 +21,35 @@
 [![GiteeStars](https://gitee.com/wl4g/xcloud-dopaas/badge/star.svg)](https://gitee.com/wl4g/xcloud-dopaas)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-16+-green.svg)](https://gitee.com/wl4g/xcloud-dopaas)
 [![CentOS](https://img.shields.io/badge/CentOS-6.5+-green.svg)](https://gitee.com/wl4g/xcloud-dopaas)
+
+
+### 开发及运行时技术栈(主要)
+> 本项目主要基于springBoot/Cloud/Dubbo开发，支持传统单体(`standalone`)和完全分布式微服务(springCloud/Dubbo)运行，源码结构精心设计为&nbsp;<b>既是平台又是框架的示范</b>.
+
+- 必须依赖:
+<pre>
+Spring Boot:2.2 +
+Spring Cloud:2.2 +
+Eureka:1.10 +
+Zipkin:2.15 +
+Jdk:8 +
+Maven:3.5 +
+Mysql:5.6 +
+</pre>
+
+- 可选依赖:
+<pre>
+Kafka:0.10.0 +
+Zookeeper:3.4.6 +
+DockerCE:18.06 +
+CoreDNS:1.7.0 +
+MinIO:latest
+Elasticsearch(EFK):6.2.3 +
+Shardingsphere-Elasticjob:3.0.0 +
+Mesos:1.11.0 +
+</pre>
+
+- [二次开发说明](README_DEVEL_CN.md)
 
 
 ### 一键自动部署：
@@ -122,33 +151,6 @@ npm run build # 生产打包
 - [SHELL](xcloud-dopaas-shell/README_CN.md)         Shell Cli, 给应用添加类似hbase-shell的控制台功能
 - [IAM](xcloud-iam/README_CN.md)					统一身份识别与访问管理服务，支持SSO/CAS、oauth2、opensaml等，同时支持多种部署模式（local/cluster/gateway）
 - [Gateway](xcloud-gateway/README_CN.md)			基于spring-cloud-gateway的企业级微服务网关, 可与CI整合实现金丝雀部署等等高级特性.
-
-
-### 开发及运行时依赖技术栈(主要)
-- 必须依赖:
-<pre>
-Spring Boot:2.2 +
-Spring Cloud:2.2 +
-Eureka:1.10 +
-Zipkin:2.15 +
-Jdk:8 +
-Maven:3.5 +
-Mysql:5.6 +
-</pre>
-
-- 可选依赖:
-<pre>
-Kafka:0.10.0 +
-Zookeeper:3.4.6 +
-DockerCE:18.06 +
-CoreDNS:1.7.0 +
-MinIO:latest
-Elasticsearch(EFK):6.2.3 +
-Shardingsphere-Elasticjob:3.0.0 +
-Mesos:1.1.0 +
-</pre>
-
-- [二次开发说明](README_DEVEL_CN.md)
 
 
 ### 如何交流、反馈、参与贡献？

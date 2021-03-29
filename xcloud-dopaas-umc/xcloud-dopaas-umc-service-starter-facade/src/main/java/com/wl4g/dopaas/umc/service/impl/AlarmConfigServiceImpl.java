@@ -42,7 +42,7 @@ public class AlarmConfigServiceImpl implements AlarmConfigService {
 
 	@Override
 	public PageHolder<AlarmConfig> list(PageHolder<AlarmConfig> pm, Long templateId, Long contactGroupId) {
-		pm.bindPage();
+		pm.bind();
 		pm.setRecords(alarmConfigDao.list(templateId, contactGroupId));
 		return pm;
 	}

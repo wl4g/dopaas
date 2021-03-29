@@ -37,7 +37,7 @@ private @Autowired  LabelDao labelDao;
 
 	@Override
 	public PageHolder<Label> list(PageHolder<Label> pm, String name) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(labelDao.list(name));
 		return pm;
 	}

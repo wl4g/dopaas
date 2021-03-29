@@ -52,7 +52,7 @@ public class HostNetcardServiceImpl implements HostNetcardService {
 
 	@Override
 	public PageHolder<HostNetcard> page(PageHolder<HostNetcard> pm, Long hostId, String name) {
-		pm.useCount().bindPage();
+		pm.useCount().bind();
 		pm.setRecords(appHostNetCardDao.list(getRequestOrganizationCodes(), hostId, name));
 		return pm;
 	}

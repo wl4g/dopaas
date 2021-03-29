@@ -34,8 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.dopaas.uds.elasticjobcloud.web.RegistryCenterFactory;
-import com.wl4g.dopaas.uds.elasticjobcloud.web.SessionRegistryCenterConfiguration;
 import com.wl4g.dopaas.uds.service.elasticjoblite.LiteRegistryCenterConfigService;
+import com.wl4g.dopaas.uds.service.elasticjoblite.LiteSessionRegistryCenterFactory;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
 
 /**
@@ -43,14 +43,14 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfi
  */
 @RestController
 @RequestMapping("/api/registry-center")
-public final class RegistryCenterController extends BaseController {
+public final class LiteRegistryCenterController extends BaseController {
 
 	public static final String REG_CENTER_CONFIG_KEY = "reg_center_config_key";
 
 	private LiteRegistryCenterConfigService regCenterService;
 
 	@Autowired
-	public RegistryCenterController(final LiteRegistryCenterConfigService regCenterService) {
+	public LiteRegistryCenterController(final LiteRegistryCenterConfigService regCenterService) {
 		this.regCenterService = regCenterService;
 	}
 
@@ -127,7 +127,7 @@ public final class RegistryCenterController extends BaseController {
 		try {
 			RegistryCenterFactory.createCoordinatorRegistryCenter(regCenterConfig.getZkAddressList(),
 					regCenterConfig.getNamespace(), regCenterConfig.getDigest());
-			SessionRegistryCenterConfiguration
+			LiteSessionRegistryCenterFactory
 					.setRegistryCenterConfiguration((LiteRegistryCenterConfig) session.getAttribute(REG_CENTER_CONFIG_KEY));
 		} catch (final RegException ex) {
 			return false;

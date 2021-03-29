@@ -23,6 +23,7 @@ import java.util.Optional;
 import org.apache.shardingsphere.elasticjob.tracing.event.JobExecutionEvent;
 import org.apache.shardingsphere.elasticjob.tracing.event.JobStatusTraceEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,12 +33,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.page.PageHolder.Page;
+import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceDataSourceConfigService;
 import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceHistoryService;
-import com.wl4g.dopaas.uds.service.elasticjoblite.SessionEventTraceDataSourceFactory;
-import com.wl4g.dopaas.uds.service.elasticjoblite.model.BasePageResponse;
 import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobExecutionEventsRequest;
 import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobStatusTraceEventsRequest;
 
@@ -52,7 +51,7 @@ public final class EventTraceHistoryController extends BaseController {
 	private EventTraceHistoryService eventTraceHistoryService;
 
 	@Autowired
-	private EventTraceDataSourceConfigService eventTraceDataSourceConfigurationService;
+	private EventTraceDataSourceConfigService eventTraceDataSourceConfigService;
 
 	/**
 	 * Find job execution events.
@@ -61,11 +60,18 @@ public final class EventTraceHistoryController extends BaseController {
 	 *            query criteria
 	 * @return job execution event trace result
 	 */
+	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/execution")
-	public RespBase<BasePageResponse<JobExecutionEvent>> findJobExecutionEvents(
+	public RespBase<PageHolder<JobExecutionEvent>> findJobExecutionEvents(
 			@RequestBody final FindJobExecutionEventsRequest requestParams) {
-		Page<JobExecutionEvent> jobExecutionEvents = eventTraceHistoryService.findJobExecutionEvents(requestParams);
-		return RespBase.create().withData(BasePageResponse.of(jobExecutionEvents));
+		RespBase<PageHolder<JobExecutionEvent>> resp = RespBase.create();
+
+		Page<JobExecutionEvent> events = eventTraceHistoryService.findJobExecutionEvents(requestParams);
+		PageHolder<JobExecutionEvent> pageHolder = new PageHolder<>();
+		pageHolder.setTotal(events.getTotalElements());
+		pageHolder.setRecords(events.getContent());
+
+		return resp.withData(pageHolder);
 	}
 
 	/**
@@ -102,10 +108,16 @@ public final class EventTraceHistoryController extends BaseController {
 	 * @return job status trace result
 	 */
 	@PostMapping(value = "/status")
-	public RespBase<BasePageResponse<JobStatusTraceEvent>> findJobStatusTraceEvents(
+	public RespBase<PageHolder<JobStatusTraceEvent>> findJobStatusTraceEvents(
 			@RequestBody final FindJobStatusTraceEventsRequest requestParams) {
-		Page<JobStatusTraceEvent> jobStatusTraceEvents = eventTraceHistoryService.findJobStatusTraceEvents(requestParams);
-		return RespBase.create().withData(BasePageResponse.of(jobStatusTraceEvents));
+		RespBase<PageHolder<JobStatusTraceEvent>> resp = RespBase.create();
+
+		Page<JobStatusTraceEvent> events = eventTraceHistoryService.findJobStatusTraceEvents(requestParams);
+		PageHolder<JobStatusTraceEvent> pageHolder = new PageHolder<>();
+		pageHolder.setTotal(events.getTotalElements());
+		pageHolder.setRecords(events.getContent());
+
+		return resp.withData(pageHolder);
 	}
 
 	/**
@@ -124,7 +136,8 @@ public final class EventTraceHistoryController extends BaseController {
 
 	@ModelAttribute
 	private void initDataSource() {
-		eventTraceDataSourceConfigurationService.loadActivated()
-				.ifPresent(SessionEventTraceDataSourceFactory::setDataSourceConfiguration);
+		eventTraceDataSourceConfigService.loadActivated()
+				.ifPresent(LiteSessionEventTraceDataSourceFactory::setDataSourceConfiguration);
 	}
+
 }

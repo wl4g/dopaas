@@ -38,7 +38,7 @@ private @Autowired  EngineTaskScheduler engineTaskScheduler;
 
 	@Override
 	public PageHolder<CustomEngine> list(PageHolder<CustomEngine> pm, String name) {
-		pm.bindPage();
+		pm.bind();
 		pm.setRecords(customEngineDao.list(name));
 		return pm;
 	}

@@ -37,7 +37,7 @@ private @Autowired  CustomHistoryDao customHistoryDao;
 
 	@Override
 	public PageHolder<CustomHistory> list(PageHolder<CustomHistory> pm, String name) {
-		pm.bindPage();
+		pm.bind();
 		List<CustomHistory> list = customHistoryDao.list(name);
 		/*
 		 * for(CustomHistory customHistory : list){

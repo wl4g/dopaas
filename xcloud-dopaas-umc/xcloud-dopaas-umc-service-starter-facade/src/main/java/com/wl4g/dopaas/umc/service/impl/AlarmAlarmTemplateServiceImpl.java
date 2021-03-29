@@ -71,7 +71,7 @@ private @Autowired  AppInstanceService appInstanceService;
 
 	@Override
 	public PageHolder<AlarmTemplate> list(PageHolder<AlarmTemplate> pm, String name, Long metricId, String classify) {
-		pm.bindPage();
+		pm.bind();
 		List<AlarmTemplate> list = alarmTemplateDao.list(name, metricId, classify);
 		for (AlarmTemplate alarmTpl : list) {
 			String tags = alarmTpl.getTags();

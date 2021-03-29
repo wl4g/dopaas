@@ -4,7 +4,7 @@
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
 ### One stop solution of PaaS platform based on DevSecOps
-> Based on SpringCloud/Docker/ServiceMesh(Istio), primary integrated modules: CMDB, Unified Continuous delivery of CI/CD (distributed compilation and deployment), IAM Certification Center, Unified monitoring center, Unified configuration center, Unified Distributed task scheduling center, Unified documents, Unified developer center(AutoGenerator), Private object storage, source/package/image repository management, Shell tools, various tool chains (such as HBase/OSS operation and maintenance), Timely communication, lightweight risk control, Flexible scaling, etc
+> Based on SpringCloud/Docker/ServiceMesh(istio), the main modules are: unified asset management center (Cmdb), unified continuous delivery center (distributed compilation CI/CD), Iam Certification Center(Rbac/Oidc/[Saml2])), unified monitoring center (SBA/Zipkin/Promethous), unified configuration center, unified operation center (Elasticjob/Spark/Flink/MR), unified Document Center (Swagger/Rap), unified development center (Lcdp/Autogen), unified private object storage management, unified library management (Git/Nexus(Maven/Image)), Shell-Cli, multiple tool chains (Hdfs/HBase/Phoenix/OSS), instant messaging, lightweight risk control, etc
 
 [![Build Status](https://travis-ci.org/wl4g/xcloud-dopaas.svg)](https://travis-ci.org/wl4g/xcloud-dopaas)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
@@ -20,6 +20,35 @@
 [![GiteeStars](https://gitee.com/wl4g/xcloud-dopaas/badge/star.svg)](https://gitee.com/wl4g/xcloud-dopaas)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-16+-green.svg)](https://gitee.com/wl4g/xcloud-dopaas)
 [![CentOS](https://img.shields.io/badge/CentOS-6.5+-green.svg)](https://gitee.com/wl4g/xcloud-dopaas)
+
+
+### Development and runtime on technology stack(primary)
+> This project is mainly based on the development of springboot/cloud/dubbo, which supports the operation of traditional monomer (`standalone`) and fully distributed micro service (Springcloud/Dubbo). The source structure is carefully designed as &nbsp;<b>It's both a platform and a framework demonstration</b>.
+
+- Required dependencies:
+<pre>
+Spring Boot:2.2 +
+Spring Cloud:2.2 +
+Eureka:1.10 +
+Zipkin:2.15 +
+Jdk:8 +
+Maven:3.5 +
+Mysql:5.6 +
+</pre>
+
+- Optional dependencies:
+<pre>
+Kafka:0.10.0 +
+Zookeeper:3.4.6 +
+DockerCE:18.06 +
+CoreDNS:1.7.0 +
+MinIO:latest
+Elasticsearch(EFK):6.2.3 +
+Shardingsphere-Elasticjob:3.0.0 +
+Mesos:1.11.0 +
+</pre>
+
+- [Developments](README_DEVEL_CN.md)
 
 
 ### One click automatic deployment:
@@ -123,33 +152,6 @@ npm run build # Production building
 - [SHELL](xcloud-shell/README.md)            Shell Cli, adding a hbase-shell-like console to your app
 - [IAM](xcloud-iam/README.md)                Unified identity and access management services, support SSO/CAS/oauth2/opensaml etc, It also supports multiple deployment modes(local/cluster/gateway)
 - [Gateway](xcloud-gateway/README.md)        Enterprise microservice gateway based on spring cloud gateway, Can integrate with CI to realize Canary deployment.
-
-
-### Development and runtime depend on technology stack(primary)
-- Required dependencies:
-<pre>
-Spring Boot:2.2 +
-Spring Cloud:2.2 +
-Eureka:1.10 +
-Zipkin:2.15 +
-Jdk:8 +
-Maven:3.5 +
-Mysql:5.6 +
-</pre>
-
-- Optional dependencies:
-<pre>
-Kafka:0.10.0 +
-Zookeeper:3.4.6 +
-DockerCE:18.06 +
-CoreDNS:1.7.0 +
-MinIO:latest
-Elasticsearch(EFK):6.2.3 +
-Shardingsphere-Elasticjob:3.0.0 +
-Mesos:1.1.0 +
-</pre>
-
-- [Developments](README_DEVEL_CN.md)
 
 
 ### Communicate, feedback and contribute?
