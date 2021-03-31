@@ -28,15 +28,15 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from udc_gen_project
+		from lcdp_gen_project
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from udc_gen_project
+		delete from lcdp_gen_project
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenProject">
-		insert into udc_gen_project (id, project_name, datasource_id, organ_type, organ_name,
+		insert into lcdp_gen_project (id, project_name, datasource_id, organ_type, organ_name,
 		provider_set, version,
 		author, since, copyright,
 		remark, extra_options_json, del_flag, create_date,
@@ -52,7 +52,7 @@
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenProject">
-		insert into udc_gen_project
+		insert into lcdp_gen_project
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -161,7 +161,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenProject">
-		update udc_gen_project
+		update lcdp_gen_project
 		<set>
 			<if test="projectName != null">
 				project_name = #{projectName,jdbcType=VARCHAR},
@@ -215,7 +215,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenProject">
-		UPDATE udc_gen_project
+		UPDATE lcdp_gen_project
 		<set>
 			project_name = #{projectName,jdbcType=VARCHAR},
 			datasource_id = #{datasourceId,jdbcType=BIGINT},
@@ -245,7 +245,7 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
-		from udc_gen_project
+		from lcdp_gen_project
 		where del_flag!=1
 		<if test="projectName != null and projectName != ''">
 			AND `project_name` LIKE CONCAT('%','${projectName}','%')
