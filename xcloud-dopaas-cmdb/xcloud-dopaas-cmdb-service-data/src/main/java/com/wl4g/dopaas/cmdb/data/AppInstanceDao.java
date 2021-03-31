@@ -30,6 +30,8 @@ public interface AppInstanceDao {
 
 	AppInstance selectByPrimaryKey(Long id);
 
+	AppInstance getById(Long id);
+
 	int updateByPrimaryKeySelective(AppInstance record);
 
 	int updateByPrimaryKey(AppInstance record);

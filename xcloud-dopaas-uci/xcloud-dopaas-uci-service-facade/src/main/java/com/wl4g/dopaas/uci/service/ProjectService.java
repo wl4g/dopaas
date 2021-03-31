@@ -54,6 +54,9 @@ public interface ProjectService {
 	@RequestMapping(value = "/selectByPrimaryKey", method = POST)
 	Project selectByPrimaryKey(@RequestParam(name = "id", required = false) Long id);
 
+	@RequestMapping(value = "/getProjectById", method = POST)
+	Project getProjectById(@RequestParam(name = "id", required = false) Long id);
+
 	@RequestMapping(value = "/getByAppClusterId", method = POST)
 	Project getByAppClusterId(@RequestParam(name = "appClusteId", required = false) Long appClusteId);
 

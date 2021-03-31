@@ -16,8 +16,6 @@
 package com.wl4g.dopaas.uci.data;
 
 import com.wl4g.dopaas.common.bean.uci.Pipeline;
-import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
-
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -39,7 +37,6 @@ public interface PipelineDao {
 
 	List<Pipeline> list(@Param("organizationCodes") List<String> organizationCodes, @Param("id") Long id,
 			@Param("pipeName") String pipeName, @Param("providerKind") String providerKind,
-			@Param("environment") String environment, @Param("clusterName") String clusterName);
+			@Param("environment") String environment);
 
-	List<AppInstance> selectInstancesByDeployId(@Param("deployId") Long deployId);
 }

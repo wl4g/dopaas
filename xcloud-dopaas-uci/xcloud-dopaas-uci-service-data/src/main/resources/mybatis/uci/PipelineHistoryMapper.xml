@@ -26,6 +26,7 @@
 		<result column="environment" jdbcType="VARCHAR" property="environment" />
 		<result column="pipe_name" property="pipeName" jdbcType="VARCHAR" />
 		<result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
+		<result column="cluster_Id" property="clusterId" jdbcType="BIGINT" />
 		<result column="create_by_name" property="createByName" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -36,13 +37,13 @@
 		h.id, h.pipe_id, h.provider_kind, h.organization_code, h.status, h.sha_local, h.ref_id, h.cost_time, h.track_type, h.track_id,
 		h.annex, h.remark, h.create_date, h.create_by, h.update_date, h.update_by, h.del_flag, h.orchestration_type, h.orchestration_id
 	</sql>
+
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List_h" />
-		,p.pipe_name,c.name cluster_name
+		,p.pipe_name, p.cluster_id
 		from uci_pipe_history h
 		left join uci_pipeline p on p.id=h.pipe_id
-		left join cmdb_app_cluster c on p.cluster_id=c.id
 		where h.id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -270,11 +271,9 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List_h" />
-		,p.pipe_name,c.name cluster_name,u.user_name create_by_name, p.environment
+		,p.pipe_name, p.environment
 		from uci_pipe_history h
 		left join uci_pipeline p on p.id=h.pipe_id
-		left join cmdb_app_cluster c on p.cluster_id=c.id
-		left join sys_user u on u.id = h.create_by
 		where h.del_flag!=1
 		<if test="pipeName != null and pipeName != ''">
 			AND p.pipe_name LIKE CONCAT('%','${pipeName}','%')
@@ -285,8 +284,8 @@
 		<if test="providerKind != null and providerKind != ''">
 			AND h.provider_kind = #{providerKind,jdbcType=VARCHAR}
 		</if>
-		<if test="clusterName != null and clusterName != ''">
-			AND c.name LIKE CONCAT('%','${clusterName}','%')
+		<if test="clusterIds != null">
+			where p.cluster_id IN <foreach item="item" index="index" collection="clusterIds" open="(" separator="," close=")">#{item}</foreach>
 		</if>
 
 		<choose>

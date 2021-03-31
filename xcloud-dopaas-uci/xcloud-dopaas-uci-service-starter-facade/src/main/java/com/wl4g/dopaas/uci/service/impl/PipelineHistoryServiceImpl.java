@@ -19,11 +19,10 @@ import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.destroy.DestroySignal;
-import com.wl4g.dopaas.uci.data.PipelineDao;
-import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
-import com.wl4g.dopaas.uci.data.PipelineHistoryInstanceDao;
-import com.wl4g.dopaas.uci.data.PipelineInstanceDao;
-import com.wl4g.dopaas.uci.service.PipelineHistoryService;
+import com.wl4g.dopaas.cmdb.service.AppClusterService;
+import com.wl4g.dopaas.cmdb.service.AppInstanceService;
+import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
+import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import com.wl4g.dopaas.common.bean.uci.Pipeline;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistory;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;
@@ -31,7 +30,12 @@ import com.wl4g.dopaas.common.bean.uci.PipelineInstance;
 import com.wl4g.dopaas.common.bean.uci.param.HookParameter;
 import com.wl4g.dopaas.common.bean.uci.param.RollbackParameter;
 import com.wl4g.dopaas.common.bean.uci.param.RunParameter;
-
+import com.wl4g.dopaas.uci.data.PipelineDao;
+import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
+import com.wl4g.dopaas.uci.data.PipelineHistoryInstanceDao;
+import com.wl4g.dopaas.uci.data.PipelineInstanceDao;
+import com.wl4g.dopaas.uci.service.PipelineHistoryService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +62,8 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Autowired
 	protected DestroableProcessManager pm;
 	private @Autowired PipelineInstanceDao pipelineInstanceDao;
+	private @Autowired AppClusterService appClusterService;
+	private @Autowired AppInstanceService appInstanceService;
 
 	// --- Create Pipe Runner. ---
 
@@ -123,7 +129,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		Assert2.notNullOf(pipeId, "pipeId");
 		String remark = param.getRemark();
 
-		PipelineHistory oldPipelineHistory = pipelineHistoryDao.selectByPrimaryKey(pipeId);
+		PipelineHistory oldPipelineHistory = selectByPrimaryKey(pipeId);
 		Assert2.notNullOf(oldPipelineHistory, "pipelineHistory");
 
 		Long oldPipeId = oldPipelineHistory.getPipeId();
@@ -143,6 +149,16 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		createPipeHistoryInstance(pipeline.getId(), pipelineHistory.getId());
 		return pipelineHistory;
 
+	}
+
+	/**
+	 * fix Cross DB
+	 */
+	private PipelineHistory selectByPrimaryKey(Long id){
+		PipelineHistory oldPipelineHistory = pipelineHistoryDao.selectByPrimaryKey(id);
+		AppCluster appCluster = appClusterService.getById(oldPipelineHistory.getClusterId());
+		oldPipelineHistory.setClusterName(appCluster.getName());
+		return oldPipelineHistory;
 	}
 
 	// --- CRUD. ---
@@ -204,27 +220,57 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Override
 	public PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName,
 			String environment, String startDate, String endDate, String providerKind) {
-		pm.useCount().bind();
-		pm.setRecords(pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterName, environment, startDate,
+		pm.setRecords(list(pm, pipeName, clusterName, environment, startDate,
 				endDate, providerKind, null, null));
 		return pm;
 	}
 
+	// fix cross db
 	@Override
-	public List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Long pipeId) {
-		return pipeHistoryInstanceDao.selectByPipeHistoryId(pipeId);
+	public List<PipelineHistory> list(PageHolder<PipelineHistory> pm,String pipeName, String clusterName,
+									  String environment, String startDate, String endDate, String providerKind,Integer orchestrationType,Long orchestrationId){
+		List<Long> clusterIds = null;
+		if(StringUtils.isNotBlank(clusterName)){
+			clusterIds = appClusterService.getIdsByLikeName(clusterName);
+		}
+		if(pm != null){
+			pm.useCount().bind();
+		}
+		List<PipelineHistory> list = pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterIds, environment, startDate,
+				endDate, providerKind, orchestrationType, orchestrationId);
+		for(PipelineHistory pipelineHistory : list){
+			AppCluster appCluster = appClusterService.getById(pipelineHistory.getClusterId());
+			if(appCluster != null){
+				pipelineHistory.setClusterName(appCluster.getName());
+			}
+		}
+		return list;
 	}
 
 	@Override
+	public List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Long pipeId) {
+		List<PipelineHistoryInstance> pipelineHistoryInstances = pipeHistoryInstanceDao.selectByPipeHistoryId(pipeId);
+
+		for(PipelineHistoryInstance pipelineHistoryInstance : pipelineHistoryInstances){
+			AppInstance appInstance = appInstanceService.getById(pipelineHistoryInstance.getInstanceId());
+			pipelineHistoryInstance.setInstanceName(appInstance.getName());
+		}
+
+		return pipelineHistoryInstances;
+	}
+
+
+
+	@Override
 	public PipelineHistory detail(Long pipeId) {
-		PipelineHistory pipeHistory = pipelineHistoryDao.selectByPrimaryKey(pipeId);
-		pipeHistory.setPipelineHistoryInstances(pipeHistoryInstanceDao.selectByPipeHistoryId(pipeId));
+		PipelineHistory pipeHistory = selectByPrimaryKey(pipeId);
+		pipeHistory.setPipelineHistoryInstances(getPipeHisInstanceByPipeId(pipeId));
 		return pipeHistory;
 	}
 
 	@Override
 	public PipelineHistory getById(Long pipeHisId) {
-		return pipelineHistoryDao.selectByPrimaryKey(pipeHisId);
+		return selectByPrimaryKey(pipeHisId);
 	}
 
 	@Override

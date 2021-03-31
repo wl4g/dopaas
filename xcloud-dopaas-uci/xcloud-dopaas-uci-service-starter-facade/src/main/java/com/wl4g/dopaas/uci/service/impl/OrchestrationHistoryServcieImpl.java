@@ -16,18 +16,18 @@
 package com.wl4g.dopaas.uci.service.impl;
 
 import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.dopaas.common.bean.uci.OrchestrationHistory;
+import com.wl4g.dopaas.common.bean.uci.PipelineHistory;
 import com.wl4g.dopaas.uci.data.OrchestrationHistoryDao;
 import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
 import com.wl4g.dopaas.uci.service.OrchestrationHistoryService;
-import com.wl4g.dopaas.common.bean.uci.OrchestrationHistory;
-import com.wl4g.dopaas.common.bean.uci.PipelineHistory;
-
+import com.wl4g.dopaas.uci.service.PipelineHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
-
 import java.util.List;
+
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
 /**
  * @author vjay
@@ -40,12 +40,15 @@ public class OrchestrationHistoryServcieImpl implements OrchestrationHistoryServ
 
 	private @Autowired PipelineHistoryDao pipelineHistoryDao;
 
+	private @Autowired
+	PipelineHistoryService pipelineHistoryService;
+
 	@Override
 	public PageHolder<OrchestrationHistory> list(PageHolder<OrchestrationHistory> pm, String runId) {
 		pm.useCount().bind();
 		List<OrchestrationHistory> list = orchestrationHistoryDao.list(getRequestOrganizationCodes(), runId);
 		for (OrchestrationHistory orch : list) {
-			List<PipelineHistory> pipeHis = pipelineHistoryDao.list(getRequestOrganizationCodes(), null, null, null, null, null,
+			List<PipelineHistory> pipeHis = pipelineHistoryService.list(null,null, null, null, null, null,
 					null, 2, orch.getId());
 			orch.setPipeHistories(pipeHis);
 		}

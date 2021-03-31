@@ -57,6 +57,28 @@
 		where c.id = #{id,jdbcType=BIGINT}
 	</select>
 
+	<select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List_c" />
+		from cmdb_app_cluster c
+		where c.name = #{name,jdbcType=VARCHAR}
+		limit 1
+	</select>
+
+	<select id="getIdsByLikeName" resultType="java.lang.Long" parameterType="java.lang.String">
+		select
+		id
+		from cmdb_app_cluster
+		where name LIKE CONCAT('%','${name}','%')
+	</select>
+
+	<select id="getByLikeName" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from cmdb_app_cluster
+		where name LIKE CONCAT('%','${name}','%')
+	</select>
+
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
 		delete from cmdb_app_cluster
 		where id = #{id,jdbcType=BIGINT}

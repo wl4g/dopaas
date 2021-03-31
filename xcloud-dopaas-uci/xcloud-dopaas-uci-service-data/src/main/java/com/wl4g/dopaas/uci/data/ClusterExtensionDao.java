@@ -32,11 +32,8 @@ public interface ClusterExtensionDao {
 
 	ClusterExtension selectByClusterId(Long clusterId);
 
-	ClusterExtension selectByClusterName(String clusterName);
-
 	int updateByPrimaryKeySelective(ClusterExtension record);
 
 	int updateByPrimaryKey(ClusterExtension record);
 
-	List<ClusterExtension> list(@Param("clusterName") String clusterName);
 }

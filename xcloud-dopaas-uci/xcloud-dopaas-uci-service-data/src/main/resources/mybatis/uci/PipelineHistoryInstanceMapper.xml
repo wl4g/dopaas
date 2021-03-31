@@ -23,12 +23,11 @@
 		from uci_pipe_history_instance
 		where id = #{id,jdbcType=BIGINT}
 	</select>
+
 	<select id="selectByPipeHistoryId" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List_hi" />
-		,i.name instance_name
-		from uci_pipe_history_instance hi
-		left join cmdb_app_instance i on i.id=hi.instance_id
+		<include refid="Base_Column_List" />
+		from uci_pipe_history_instance
 		where pipe_history_id = #{pipeHistoryId,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

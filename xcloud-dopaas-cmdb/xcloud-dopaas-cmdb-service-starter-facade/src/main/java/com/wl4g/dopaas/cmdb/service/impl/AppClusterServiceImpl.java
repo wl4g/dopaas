@@ -180,6 +180,26 @@ public class AppClusterServiceImpl implements AppClusterService {
 		return appEnvironmentDao.selectByClusterIdAndEnv(clusterId, envType);
 	}
 
+	@Override
+	public AppCluster getById(Long clusterId) {
+		return appClusterDao.selectByPrimaryKey(clusterId);
+	}
+
+	@Override
+	public AppCluster getByName(String name) {
+		return appClusterDao.selectByName(name);
+	}
+
+	@Override
+	public List<Long> getIdsByLikeName(String name) {
+		return appClusterDao.getIdsByLikeName(name);
+	}
+
+	@Override
+	public List<AppCluster> getByLikeName(String name) {
+		return appClusterDao.getByLikeName(name);
+	}
+
 	public static final String DICT_APP_ENV_TYPE = "app_ns_type";
 
 }

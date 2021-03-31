@@ -33,15 +33,6 @@
 		limit 1
 	</select>
 
-	<select id="selectByClusterName" resultMap="BaseResultMap" parameterType="java.lang.String">
-		select
-		<include refid="Base_Column_List_e" />
-		from uci_cluster_extension e
-		inner join cmdb_app_cluster c on c.id = e.cluster_id
-		where c.name = #{clusterName,jdbcType=VARCHAR}
-		limit 1
-	</select>
-
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
 		delete from uci_cluster_extension
 		where id = #{id,jdbcType=BIGINT}
@@ -105,17 +96,5 @@
 		default_branch = #{defaultBranch,jdbcType=VARCHAR}
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-
-	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
-		select
-		<include refid="Base_Column_List_e" />
-		,c.name cluster_name,c.id cluster_id
-		from cmdb_app_cluster c
-		left join uci_cluster_extension e on c.id = e.cluster_id
-		where c.del_flag!=1
-		<if test="clusterName != null and clusterName != ''">
-			AND c.name LIKE CONCAT('%','${clusterName}','%')
-		</if>
-	</select>
 
 </mapper>

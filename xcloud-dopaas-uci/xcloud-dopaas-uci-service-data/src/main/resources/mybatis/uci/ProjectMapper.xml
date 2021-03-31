@@ -61,12 +61,9 @@
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List_p" />
-		,
-		<include refid="vcs_alias" />
-		from uci_project p
-		left join urm_source_repo v on v.id = p.vcs_id
-		where p.id = #{id,jdbcType=BIGINT}
+		<include refid="Base_Column_List" />
+		from uci_project
+		where id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
 		delete from uci_project
@@ -261,20 +258,15 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 
-
 	<select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List_p" />
-		,
-		<include refid="vcs_alias" />
-		,g.name as group_name
 		from uci_project p
-		left join cmdb_app_cluster g on p.app_cluster_id=g.id
-		left join urm_source_repo v on v.id=p.vcs_id
 		where p.del_flag!=1
-		<if test="groupName != null and groupName != ''">
-			AND g.name LIKE CONCAT('%','${groupName}','%')
+		<if test="clusterIds != null">
+			where p.app_cluster_id IN <foreach item="item" index="index" collection="clusterIds" open="(" separator="," close=")">#{item}</foreach>
 		</if>
+
 		<if test="projectName != null and projectName != ''">
 			AND p.project_name LIKE CONCAT('%','${projectName}','%')
 		</if>
@@ -289,23 +281,10 @@
 		</if>
 	</select>
 
-	<select id="getByProjectName" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List_p" />
-		,
-		<include refid="vcs_alias" />
-		from uci_project p
-		left join urm_source_repo v on v.id=p.vcs_id
-		where p.del_flag!=1 and p.project_name = #{projectName,jdbcType=VARCHAR}
-	</select>
-
 	<select id="getByAppClusterId" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List_p" />
-		,
-		<include refid="vcs_alias" />
 		from uci_project p
-		left join urm_source_repo v on v.id=p.vcs_id
 		where p.app_cluster_id = #{appClusterId,jdbcType=BIGINT} and p.del_flag!=1 limit 1
 	</select>
 </mapper>

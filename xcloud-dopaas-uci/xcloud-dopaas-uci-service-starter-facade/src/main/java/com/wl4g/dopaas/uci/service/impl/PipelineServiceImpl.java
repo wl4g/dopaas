@@ -19,22 +19,14 @@ import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.dopaas.uci.data.ClusterExtensionDao;
-import com.wl4g.dopaas.uci.data.PipeStageBuildingDao;
-import com.wl4g.dopaas.uci.data.PipeStageBuildingProjectDao;
-import com.wl4g.dopaas.uci.data.PipeStageDeployDao;
-import com.wl4g.dopaas.uci.data.PipeStageInstanceCommandDao;
-import com.wl4g.dopaas.uci.data.PipeStageNotificationDao;
-import com.wl4g.dopaas.uci.data.PipeStagePcmDao;
-import com.wl4g.dopaas.uci.data.PipelineDao;
-import com.wl4g.dopaas.uci.data.PipelineInstanceDao;
-import com.wl4g.dopaas.uci.data.ProjectDao;
+import com.wl4g.dopaas.cmdb.service.AppClusterService;
+import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
 import com.wl4g.dopaas.common.bean.uci.*;
 import com.wl4g.dopaas.uci.data.*;
 import com.wl4g.dopaas.uci.service.DependencyService;
 import com.wl4g.dopaas.uci.service.PipelineService;
 import com.wl4g.dopaas.uci.service.ProjectService;
-
+import com.wl4g.dopaas.urm.service.RepoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,10 +82,14 @@ public class PipelineServiceImpl implements PipelineService {
 
 	private @Autowired ClusterExtensionDao clusterExtensionDao;
 
+	private @Autowired AppClusterService appClusterService;
+
+	private @Autowired RepoService repoService;
+
 	@Override
 	public PageHolder<Pipeline> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
 		pm.useCount().bind();
-		List<Pipeline> pipes = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
+		List<Pipeline> pipes = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment);
 		for (Pipeline p : safeList(pipes)) {
 			p.setPipeStepBuildingProjects(pipeStepBuildingProjectDao.selectByPipeId(p.getId()));
 		}
@@ -104,7 +100,7 @@ public class PipelineServiceImpl implements PipelineService {
 	@Override
 	public List<Pipeline> findList(List<String> organizationCodes, Long id, String pipeName, String providerKind,
 			String environment, String clusterName) {
-		return pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment, null);
+		return pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment);
 	}
 
 	@Override
@@ -364,9 +360,10 @@ public class PipelineServiceImpl implements PipelineService {
 		return pipeStageBuildingDao.selectByPipeId(pipeId);
 	}
 
+
 	@Override
 	public PipeStageBuilding getPipeStageBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
-		Project project = notNullOf(projectDao.getByAppClusterId(clusterId), "project");
+		Project project = notNullOf(projectService.getByAppClusterId(clusterId), "project");
 
 		PipeStageBuilding pipeStepBuilding = pipeStageBuildingDao.selectByPipeId(pipeId);
 		if (Objects.isNull(pipeStepBuilding)) {
@@ -387,7 +384,7 @@ public class PipelineServiceImpl implements PipelineService {
 			if (isNull(pipeStepBuildingProject)) {
 				pipeStepBuildingProject = new PipeStageBuildingProject();
 			}
-			Project project1 = projectDao.selectByPrimaryKey(dependency.getDependentId());
+			Project project1 = projectService.getProjectById(dependency.getDependentId());
 			if (project1 == null) {
 				continue;
 			}
@@ -416,13 +413,21 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public List<Pipeline> getForSelect(String environment) {
-		return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment, null);
+		return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment);
 	}
 
 	@Override
 	public PageHolder<ClusterExtension> clusterExtensionList(PageHolder<ClusterExtension> pm, String clusterName) {
 		pm.useCount().bind();
-		pm.setRecords(clusterExtensionDao.list(clusterName));
+		List<AppCluster> appClusters = appClusterService.getByLikeName(clusterName);
+
+		List<ClusterExtension> list = new ArrayList<>();
+		for(AppCluster appCluster : appClusters){
+			ClusterExtension clusterExtension = clusterExtensionDao.selectByClusterId(appCluster.getId());
+			clusterExtension.setClusterName(appCluster.getName());
+			list.add(clusterExtension);
+		}
+		pm.setRecords(list);
 		return pm;
 	}
 
@@ -454,7 +459,9 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public ClusterExtension getClusterExtensionByName(String clusterName) {
-		return clusterExtensionDao.selectByClusterName(clusterName);
+		AppCluster appCluster = appClusterService.getByName(clusterName);
+		Assert2.notNullOf(appCluster, "appCluster");
+		return clusterExtensionDao.selectByClusterId(appCluster.getId());
 	}
 
 	@Override
