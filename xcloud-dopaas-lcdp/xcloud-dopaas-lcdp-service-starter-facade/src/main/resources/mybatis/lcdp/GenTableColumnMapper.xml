@@ -32,28 +32,28 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from udc_gen_table_column
+		from lcdp_gen_table_column
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByTableId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from udc_gen_table_column
+		from lcdp_gen_table_column
 		where table_id = #{tableId,jdbcType=BIGINT}
 		order by column_sort
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from udc_gen_table_column
+		delete from lcdp_gen_table_column
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<delete id="deleteByTableId" parameterType="java.lang.Long">
-		delete from udc_gen_table_column
+		delete from lcdp_gen_table_column
 		where table_id = #{tableId,jdbcType=BIGINT}
 	</delete>
 	<insert id="insert" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenTableColumn">
-		INSERT into udc_gen_table_column (
+		INSERT into lcdp_gen_table_column (
 			id, table_id, column_name,
 			column_comment, column_type, simple_column_type, sql_type, column_sort,
 			attr_type, attr_name, is_pk,
@@ -74,7 +74,7 @@
 	</insert>
 
 	<insert id="insertBatch" parameterType="java.util.Map">
-		INSERT into udc_gen_table_column (
+		INSERT into lcdp_gen_table_column (
 			id, table_id, column_name,
 			column_comment, column_type, simple_column_type, sql_type, column_sort,
 			attr_type, attr_name, is_pk,
@@ -97,7 +97,7 @@
 	</insert>
 
 	<insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenTableColumn">
-		insert into udc_gen_table_column
+		insert into lcdp_gen_table_column
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -230,7 +230,7 @@
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenTableColumn">
-		update udc_gen_table_column
+		update lcdp_gen_table_column
 		<set>
 			<if test="tableId != null">
 				table_id = #{tableId,jdbcType=BIGINT},
@@ -296,7 +296,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenTableColumn">
-		UPDATE udc_gen_table_column
+		UPDATE lcdp_gen_table_column
 		set table_id = #{tableId,jdbcType=BIGINT},
 			column_name = #{columnName,jdbcType=VARCHAR},
 			column_comment = #{columnComment,jdbcType=VARCHAR},

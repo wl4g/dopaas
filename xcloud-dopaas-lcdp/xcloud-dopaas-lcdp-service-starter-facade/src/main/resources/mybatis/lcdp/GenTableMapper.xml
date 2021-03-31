@@ -34,21 +34,21 @@
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from udc_gen_table
+		from lcdp_gen_table
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 
 	<select id="selectByProjectId" resultMap="BaseResultMap" parameterType="java.lang.Long">
 		select
 		<include refid="Base_Column_List" />
-		from udc_gen_table
+		from lcdp_gen_table
 		where project_id = #{id,jdbcType=BIGINT} and del_flag!=1
 	</select>
 
 	<select id="countByProjectIdAndTableName" resultType="java.lang.Long" parameterType="java.util.Map">
 		SELECT
 		COUNT(1)
-		FROM udc_gen_table
+		FROM lcdp_gen_table
 		<where>
 			project_id = #{projectId,jdbcType=BIGINT}
 			AND table_name = #{tableName,jdbcType=VARCHAR}
@@ -57,14 +57,14 @@
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		DELETE FROM udc_gen_table
+		DELETE FROM lcdp_gen_table
 		<where>
 			id = #{id,jdbcType=BIGINT}
 		</where>
 	</delete>
 
 	<insert id="insert" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenTable">
-		INSERT INTO udc_gen_table (
+		INSERT INTO lcdp_gen_table (
 		id, project_id, table_name,
 		entity_name, comments,
 		module_name, sub_module_name,
@@ -82,7 +82,7 @@
 	</insert>
 
 	<insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenTable">
-		INSERT INTO udc_gen_table
+		INSERT INTO lcdp_gen_table
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="id != null">
 				id,
@@ -198,7 +198,7 @@
 	</insert>
 
 	<update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenTable">
-		UPDATE udc_gen_table
+		UPDATE lcdp_gen_table
 		<set>
 			<if test="projectId != null">
 				project_id = #{projectId,jdbcType=BIGINT},
@@ -258,7 +258,7 @@
 	</update>
 
 	<update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.lcdp.GenTable">
-		UPDATE udc_gen_table
+		UPDATE lcdp_gen_table
 		<set>
 			project_id = #{projectId,jdbcType=BIGINT},
 			table_name = #{tableName,jdbcType=VARCHAR},
@@ -287,7 +287,7 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		SELECT
 		<include refid="Base_Column_List" />
-		FROM udc_gen_table
+		FROM lcdp_gen_table
 		<where>
 			del_flag != 1
 			<if test="tableName != null and tableName != ''">
