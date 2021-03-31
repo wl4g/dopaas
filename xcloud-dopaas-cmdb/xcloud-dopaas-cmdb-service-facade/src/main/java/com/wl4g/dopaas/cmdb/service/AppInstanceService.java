@@ -15,17 +15,16 @@
  */
 package com.wl4g.dopaas.cmdb.service;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.List;
-
+import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
-import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * 应用组管理Service接口
@@ -62,4 +61,7 @@ public interface AppInstanceService {
 			@RequestParam(name = "sshUser", required = false) String sshUser,
 			@RequestParam(name = "sshKey", required = false) String sshKey) throws Exception, InterruptedException;
 
+
+	@RequestMapping(value = "/getById", method = POST)
+	AppInstance getById(@RequestParam(name = "instanceId", required = false) Long instanceId);
 }

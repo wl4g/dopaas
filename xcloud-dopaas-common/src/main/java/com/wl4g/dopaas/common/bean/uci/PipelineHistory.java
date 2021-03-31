@@ -45,5 +45,6 @@ public class PipelineHistory extends BaseBean {
 	private String createByName;
 	private String environment;
 	private List<PipelineHistoryInstance> pipelineHistoryInstances;
+	private Long clusterId;
 
 }

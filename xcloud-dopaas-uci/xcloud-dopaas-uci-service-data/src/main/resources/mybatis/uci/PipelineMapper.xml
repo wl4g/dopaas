@@ -77,17 +77,6 @@
 		p.remark, p.create_date, p.create_by, p.update_date, p.update_by, p.del_flag
 	</sql>
 
-	<select id="selectInstancesByDeployId" resultMap="InstanceBaseResultMap"
-		parameterType="java.util.Map">
-		select
-		i.id,h.`hostname`,i.remark
-		from cmdb_app_instance i
-		inner join uci_pipe_step_deploy_instance pi on i.id=pi.instance_id
-		left join cmdb_host h on h.id=i.host_id
-		where pi.deploy_id= #{deployId};
-	</select>
-
-
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -275,9 +264,8 @@
 	<select id="list" resultMap="ListResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List_p" />
-		,c.name cluster_name,sp.enable pcm_enable,sp.pcm_id,d.id deploy_id
+		,sp.enable pcm_enable,sp.pcm_id,d.id deploy_id
 		from uci_pipeline p
-		left join cmdb_app_cluster c on p.cluster_id=c.id
 		left join uci_pipe_step_deploy d on d.pipe_id=p.id
 		left join uci_pipe_step_pcm sp on sp.pipe_id=p.id
 		where p.del_flag!=1
@@ -290,9 +278,7 @@
 		<if test="pipeName != null and pipeName != ''">
 			AND p.pipe_name LIKE CONCAT('%','${pipeName}','%')
 		</if>
-		<if test="clusterName != null and clusterName != ''">
-			AND c.name = #{clusterName,jdbcType=VARCHAR}
-		</if>
+
 		<if test="providerKind != null and providerKind != ''">
 			AND p.provider_kind = #{providerKind,jdbcType=VARCHAR}
 		</if>

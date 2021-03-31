@@ -15,20 +15,19 @@
  */
 package com.wl4g.dopaas.cmdb.service;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
 import com.wl4g.dopaas.common.bean.cmdb.AppEnvironment;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * Application cluster information service of {@link AppClusterService}
@@ -66,5 +65,18 @@ public interface AppClusterService {
 	@RequestMapping(value = "/getAppClusterEnvironment", method = POST)
 	AppEnvironment getAppClusterEnvironment(@RequestParam(name = "clusterId", required = false) Long clusterId,
 			@RequestParam(name = "envType", required = false) String envType);
+
+
+	@RequestMapping(value = "/getById", method = POST)
+	AppCluster getById(@RequestParam(name = "clusterId", required = true) Long clusterId);
+
+	@RequestMapping(value = "/getByName", method = POST)
+	AppCluster getByName(@RequestParam(name = "name", required = true) String name);
+
+	@RequestMapping(value = "/getIdsByLikeName", method = POST)
+	List<Long> getIdsByLikeName(@RequestParam(name = "name", required = true) String name);
+
+	@RequestMapping(value = "/getByLikeName", method = POST)
+	List<AppCluster> getByLikeName(@RequestParam(name = "name", required = true) String name);
 
 }

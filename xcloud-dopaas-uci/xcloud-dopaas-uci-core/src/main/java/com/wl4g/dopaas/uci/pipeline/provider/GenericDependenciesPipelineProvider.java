@@ -205,7 +205,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 
 		PipeStageBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
 
-		Project project = projectDao.selectByPrimaryKey(projectId);
+		Project project = projectService.getProjectById(projectId);
 		notNull(project, format("Not found project by %s", projectId));
 
 		// Obtain project source from VCS.

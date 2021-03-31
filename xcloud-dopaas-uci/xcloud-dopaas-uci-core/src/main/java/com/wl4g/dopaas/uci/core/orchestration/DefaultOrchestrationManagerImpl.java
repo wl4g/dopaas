@@ -21,11 +21,6 @@ import com.wl4g.component.common.task.RunnerProperties;
 import com.wl4g.component.support.redis.jedis.JedisService;
 import com.wl4g.component.support.redis.jedis.ScanCursor;
 import com.wl4g.component.support.task.ApplicationTaskRunner;
-import com.wl4g.dopaas.uci.core.PipelineJobExecutor;
-import com.wl4g.dopaas.uci.core.PipelineManager;
-import com.wl4g.dopaas.uci.data.OrchestrationDao;
-import com.wl4g.dopaas.uci.data.OrchestrationHistoryDao;
-import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
 import com.wl4g.dopaas.common.bean.uci.Orchestration;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationHistory;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationPipeline;
@@ -35,7 +30,12 @@ import com.wl4g.dopaas.common.bean.uci.model.RunModel;
 import com.wl4g.dopaas.common.bean.uci.model.RunModel.Pipeline;
 import com.wl4g.dopaas.common.bean.uci.param.RunParameter;
 import com.wl4g.dopaas.common.constant.UciConstants;
-
+import com.wl4g.dopaas.uci.core.PipelineJobExecutor;
+import com.wl4g.dopaas.uci.core.PipelineManager;
+import com.wl4g.dopaas.uci.data.OrchestrationDao;
+import com.wl4g.dopaas.uci.data.OrchestrationHistoryDao;
+import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
+import com.wl4g.dopaas.uci.service.PipelineHistoryService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -45,8 +45,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.*;
 import static com.wl4g.dopaas.common.constant.UciConstants.*;
+import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.*;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 
@@ -61,12 +61,13 @@ import static java.util.Objects.isNull;
 public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
 	protected final Logger log = getLogger(getClass());
 
-private @Autowired  JedisService jedisService;
-private @Autowired  PipelineManager pipelineManager;
-private @Autowired  PipelineJobExecutor jobExecutor;
-private @Autowired  OrchestrationDao orchestrationDao;
-private @Autowired  OrchestrationHistoryDao orchestrationHistoryDao;
-private @Autowired  PipelineHistoryDao pipelineHistoryDao;
+	private @Autowired  JedisService jedisService;
+	private @Autowired  PipelineManager pipelineManager;
+	private @Autowired  PipelineJobExecutor jobExecutor;
+	private @Autowired  OrchestrationDao orchestrationDao;
+	private @Autowired  OrchestrationHistoryDao orchestrationHistoryDao;
+	private @Autowired  PipelineHistoryDao pipelineHistoryDao;
+	private @Autowired PipelineHistoryService pipelineHistoryService;
 
 	/**
 	 * Start to run orchestration
@@ -218,7 +219,8 @@ private @Autowired  PipelineHistoryDao pipelineHistoryDao;
 			pipelineCompleteFocus(runModel.getRunId());
 			throw e;
 		} finally {
-			List<PipelineHistory> list = pipelineHistoryDao.list(null, null, null, null, null, null, null, 2,
+
+			List<PipelineHistory> list = pipelineHistoryService.list( null, null, null, null, null, null, null, 2,
 					orchestrationHistory.getId());
 
 			boolean isAllSuccess = true;

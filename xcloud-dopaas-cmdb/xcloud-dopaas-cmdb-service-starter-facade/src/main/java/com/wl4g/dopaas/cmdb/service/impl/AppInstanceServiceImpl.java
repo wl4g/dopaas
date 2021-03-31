@@ -125,4 +125,9 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 			throw new IOException("Test Connect Fail");
 		}
 	}
+
+	@Override
+	public AppInstance getById(Long instanceId) {
+		return appInstanceDao.getById(instanceId);
+	}
 }

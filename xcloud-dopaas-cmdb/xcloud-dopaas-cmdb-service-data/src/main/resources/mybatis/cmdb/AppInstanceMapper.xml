@@ -63,6 +63,13 @@
     where i.id = #{id,jdbcType=BIGINT}
   </select>
 
+  <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from cmdb_app_instance
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
   <select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />

@@ -36,6 +36,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import java.io.File;
 import java.util.List;
 
+import com.wl4g.dopaas.uci.service.ProjectService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -90,6 +91,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 	protected @Autowired DependencyService dependencyService;
 	protected @Autowired ProjectDao projectDao;
+	protected @Autowired ProjectService projectService;
 	protected @Autowired PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
 
 	protected @Autowired EnterpriseApiService enterpriseApiService;

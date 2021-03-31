@@ -81,6 +81,19 @@ public interface PipelineHistoryService {
 			@RequestParam(name = "endDate", required = false) String endDate,
 			@RequestParam(name = "providerKind", required = false) String providerKind);
 
+	@RequestMapping(value = "/list", method = POST)
+	List<PipelineHistory> list(
+			@RequestBody PageHolder<PipelineHistory> pm,
+			@RequestParam(name = "pipeName", required = false) String pipeName,
+			@RequestParam(name = "clusterName", required = false) String clusterName,
+			@RequestParam(name = "environment", required = false) String environment,
+			@RequestParam(name = "startDate", required = false) String startDate,
+			@RequestParam(name = "endDate", required = false) String endDate,
+			@RequestParam(name = "providerKind", required = false) String providerKind,
+			@RequestParam(name = "orchestrationType", required = false) Integer orchestrationType,
+			@RequestParam(name = "providerKind", required = false) Long orchestrationId);
+
+
 	@RequestMapping(value = "/getPipeHisInstanceByPipeId", method = POST)
 	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(@RequestParam(name = "pipeHisId", required = false) Long pipeHisId);
 

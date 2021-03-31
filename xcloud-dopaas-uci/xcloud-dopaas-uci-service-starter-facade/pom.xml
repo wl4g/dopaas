@@ -23,6 +23,16 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-dopaas-cmdb-service-facade</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-dopaas-urm-service-facade</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-dopaas-uci-core</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

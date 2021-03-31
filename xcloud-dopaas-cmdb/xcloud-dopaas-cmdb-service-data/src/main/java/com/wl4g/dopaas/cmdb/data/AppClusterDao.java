@@ -30,6 +30,12 @@ public interface AppClusterDao {
 
 	AppCluster selectByPrimaryKey(Long id);
 
+	AppCluster selectByName(String name);
+
+	List<Long> getIdsByLikeName(String name);
+
+	List<AppCluster> getByLikeName(String name);
+
 	int updateByPrimaryKeySelective(AppCluster record);
 
 	int updateByPrimaryKey(AppCluster record);

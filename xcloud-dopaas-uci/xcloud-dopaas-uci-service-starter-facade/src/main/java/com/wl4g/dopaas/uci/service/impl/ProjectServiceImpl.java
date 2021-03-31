@@ -19,16 +19,20 @@ import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.dopaas.cmdb.service.AppClusterService;
+import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
+import com.wl4g.dopaas.common.bean.uci.Dependency;
+import com.wl4g.dopaas.common.bean.uci.Project;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.uci.data.DependencyDao;
 import com.wl4g.dopaas.uci.data.ProjectDao;
 import com.wl4g.dopaas.uci.service.ProjectService;
-import com.wl4g.dopaas.common.bean.uci.Dependency;
-import com.wl4g.dopaas.common.bean.uci.Project;
-import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.VcsOperator;
 import com.wl4g.dopaas.urm.operator.VcsOperator.VcsProviderKind;
 import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
 import com.wl4g.dopaas.urm.operator.model.VcsTagModel;
+import com.wl4g.dopaas.urm.service.RepoService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +64,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private @Autowired ProjectDao projectDao;
 
 	private @Autowired DependencyDao dependencyDao;
+	private @Autowired RepoService repoService;
+	private @Autowired AppClusterService appClusterService;
 
 	@Override
 	public void save(Project project) {
@@ -77,7 +83,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Transactional
 	public int insert(Project project) {
-		Project hasProject = projectDao.getByAppClusterId(project.getAppClusterId());
+		Project hasProject = getByAppClusterId(project.getAppClusterId());
 		// check repeated
 		Assert.state(hasProject == null, "Config Repeated");
 		int result = projectDao.insertSelective(project);
@@ -95,7 +101,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Transactional
 	public int update(Project project) {
-		Project hasProject = projectDao.getByAppClusterId(project.getAppClusterId());
+		Project hasProject = getByAppClusterId(project.getAppClusterId());
 		// check repeated
 		Assert.state(hasProject == null || hasProject.getId().longValue() == project.getId().longValue(), "Config Repeated");
 		project.preUpdate();
@@ -129,10 +135,16 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public PageHolder<Project> list(PageHolder<Project> pm, String groupName, String projectName) {
+
+		List<Long> clusterIds = appClusterService.getIdsByLikeName(groupName);
+
 		pm.useCount().bind();
-		List<Project> list = projectDao.list(getRequestOrganizationCodes(), groupName, projectName, null);
+		List<Project> list = projectDao.list(getRequestOrganizationCodes(), clusterIds, projectName, null);
 		for (Project project : list) {
-			project.setVcs(null);
+			AppCluster appCluster = appClusterService.getById(project.getAppClusterId());
+			if(appCluster != null){
+				project.setGroupName(appCluster.getName());
+			}
 		}
 		pm.setRecords(list);
 		return pm;
@@ -140,20 +152,37 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public List<Project> getBySelect(Integer isBoot) {
-		return projectDao.list(getRequestOrganizationCodes(), null, null, isBoot);
+		List<Project> list = projectDao.list(getRequestOrganizationCodes(), null, null, isBoot);
+		for (Project project : list) {
+			AppCluster appCluster = appClusterService.getById(project.getAppClusterId());
+			if(appCluster != null){
+				project.setGroupName(appCluster.getName());
+			}
+		}
+		return list;
 	}
 
 	@Override
 	public Project selectByPrimaryKey(Long id) {
-		Project project = projectDao.selectByPrimaryKey(id);
+		Project project = getProjectById(id);
 		List<Dependency> dependencies = dependencyDao.getParentsByProjectId(project.getId());
 		project.setDependencies(dependencies);
 		return project;
 	}
 
 	@Override
+	public Project getProjectById(Long id){ //fix Cross db
+		Project project = projectDao.selectByPrimaryKey(id);
+		SourceRepo sourceRepo = repoService.detail(project.getVcsId());
+		project.setVcs(sourceRepo);
+		return project;
+	}
+
+	@Override
 	public Project getByAppClusterId(Long appClusteId) {
-		return projectDao.getByAppClusterId(appClusteId);
+		Project project = projectDao.getByAppClusterId(appClusteId);
+		project.setVcs(repoService.detail(project.getVcsId()));
+		return project;
 	}
 
 	@Override
@@ -167,7 +196,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public List<String> getBranchs(Long appClusterId, Integer tagOrBranch) throws Exception {
 		Assert.notNull(appClusterId, "id can not be null");
-		Project project = projectDao.getByAppClusterId(appClusterId);
+		Project project = getByAppClusterId(appClusterId);
 		buildVcsProject(project);
 		Assert.notNull(project, "not found project ,please check you project config");
 		return getBranchByProject(project, tagOrBranch);
@@ -176,7 +205,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public List<String> getBranchsByProjectId(Long projectId, Integer tagOrBranch) throws Exception {
 		Assert.notNull(projectId, "id can not be null");
-		Project project = projectDao.selectByPrimaryKey(projectId);
+		Project project = getProjectById(projectId);
 		buildVcsProject(project);
 		Assert.notNull(project, "not found project ,please check you project config");
 		return getBranchByProject(project, tagOrBranch);

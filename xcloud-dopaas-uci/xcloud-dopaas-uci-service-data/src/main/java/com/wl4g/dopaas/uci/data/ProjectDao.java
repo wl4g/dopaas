@@ -34,10 +34,9 @@ public interface ProjectDao {
 
 	int updateByPrimaryKey(Project record);
 
-	List<Project> list(@Param("organizationCodes") List<String> organizationCodes, @Param("groupName") String groupName,
+	List<Project> list(@Param("organizationCodes") List<String> organizationCodes, @Param("clusterIds") List<Long> clusterIds,
 			@Param("projectName") String projectName, @Param("isBoot") Integer isBoot);
 
-	Project getByProjectName(String projectName);
 
 	Project getByAppClusterId(Long appGrouPId);
 
