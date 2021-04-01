@@ -34,14 +34,12 @@
     from cmdb_app_cluster_env
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <!--TODO 解决跨库连表-->
   <select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List_e"/>
     from cmdb_app_cluster_env e
-    left join sys_dict d on e.env_type = d.value and d.type='app_ns_type'
     where e.cluster_id = #{clusterId,jdbcType=BIGINT}
-    order by d.sort
+    order by field(env_type,'dev','fat','uat','pro');
   </select>
   <select id="selectByClusterIdAndEnv" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
