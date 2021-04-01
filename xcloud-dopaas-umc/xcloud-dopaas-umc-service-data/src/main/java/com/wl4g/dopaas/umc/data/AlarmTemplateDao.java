@@ -35,8 +35,6 @@ public interface AlarmTemplateDao {
 
 	int updateByPrimaryKey(AlarmTemplate record);
 
-	List<AlarmTemplate> getByCollectAddr(@Param("collectAddr") String collectAddr);
-
 	List<AlarmTemplate> getByClusterId(@Param("clusterId") Serializable clusterId);
 
 	List<AlarmTemplate> list(@Param("name") String name, @Param("metricId") Long metricId, @Param("classify") String classify);

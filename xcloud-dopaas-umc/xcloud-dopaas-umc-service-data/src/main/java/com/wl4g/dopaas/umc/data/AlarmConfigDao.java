@@ -40,10 +40,7 @@ public interface AlarmConfigDao {
 
 	List<AlarmConfig> selectByTemplateId(Long templateId);
 
-	List<AlarmConfig> getByCollectAddrAndTemplateId(@Param("templateId") Long templateId,
-			@Param("collectAddr") String collectAddr);
-
 	List<AlarmConfig> getByClusterIdAndTemplateId(@Param("templateId") Long templateId, @Param("clusterId") Long clusterId);
 
-	List<AlarmConfig> getAlarmConfigTpls(@Param("host") String host, @Param("endpoint") String endpoint);
+	List<AlarmConfig> getAlarmConfigTpls(@Param("instanceIds") List<Long> instanceIds);
 }

@@ -15,16 +15,15 @@
  */
 package com.wl4g.dopaas.umc.handler;
 
-import java.util.List;
-
-import org.springframework.beans.factory.InitializingBean;
-
 import com.wl4g.dopaas.common.bean.umc.AlarmConfig;
 import com.wl4g.dopaas.common.bean.umc.AlarmRecord;
 import com.wl4g.dopaas.common.bean.umc.AlarmRule;
 import com.wl4g.dopaas.common.bean.umc.AlarmTemplate;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.common.bean.NotificationContact;
+import org.springframework.beans.factory.InitializingBean;
+
+import java.util.List;
 
 /**
  * Check required implements rule handler.
@@ -42,11 +41,6 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 
 	@Override
 	public List<AlarmConfig> findAlarmConfigByEndpoint(String host, String endpoint) {
-		return null;
-	}
-
-	@Override
-	public List<AlarmConfig> findAlarmConfig(Long templateId, String collectId) {
 		return null;
 	}
 

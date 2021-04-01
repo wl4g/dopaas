@@ -15,16 +15,8 @@
  */
 package com.wl4g.dopaas.umc.alarm;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.wl4g.dopaas.common.bean.umc.AlarmConfig;
-import com.wl4g.dopaas.common.bean.umc.AlarmRecord;
-import com.wl4g.dopaas.common.bean.umc.AlarmRecordRule;
-import com.wl4g.dopaas.common.bean.umc.AlarmRule;
-import com.wl4g.dopaas.common.bean.umc.AlarmTemplate;
+import com.wl4g.dopaas.cmdb.service.AppInstanceService;
+import com.wl4g.dopaas.common.bean.umc.*;
 import com.wl4g.dopaas.umc.data.AlarmConfigDao;
 import com.wl4g.dopaas.umc.data.AlarmRecordDao;
 import com.wl4g.dopaas.umc.data.AlarmRecordRuleDao;
@@ -33,6 +25,11 @@ import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.common.bean.NotificationContact;
 import com.wl4g.iam.service.ContactService;
 import com.wl4g.iam.service.NotificationContactService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Service metric indicators rule handler.
@@ -48,19 +45,22 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	private @Autowired AlarmRecordRuleDao alarmRecordRuleDao;
 	private @Autowired ContactService contactService;
 	private @Autowired NotificationContactService notificationContactService;
+	private @Autowired AppInstanceService appInstanceService;
 
 	/**
 	 * Large search from db
 	 */
 	@Override
 	public List<AlarmConfig> findAlarmConfigByEndpoint(String host, String endpoint) {
-		List<AlarmConfig> configs = alarmConfigDao.getAlarmConfigTpls(host, endpoint);
+		List<Long> instanceIds = appInstanceService.getIdsByEndpointAndHostname(endpoint, host);
+		List<AlarmConfig> configs = alarmConfigDao.getAlarmConfigTpls(instanceIds);
+		for(AlarmConfig alarmConfig : configs){
+			List<Long> ids = new ArrayList<>();
+			ids.add(alarmConfig.getContactGroupId());
+			List<Contact> contacts = contactService.getContactByGroupIds(ids);
+			alarmConfig.setContacts(contacts);
+		}
 		return configs;
-	}
-
-	@Override
-	public List<AlarmConfig> findAlarmConfig(Long templateId, String collectAddr) {
-		return alarmConfigDao.getByCollectAddrAndTemplateId(templateId, collectAddr);
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 
 	@Override
 	public List<Contact> getContactByGroupIds(List<Long> groupIds) {
-		return contactService.findContactByGroupIds(groupIds);
+		return contactService.getContactByGroupIds(groupIds);
 	}
 
 	@Override

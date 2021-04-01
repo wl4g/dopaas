@@ -14,6 +14,7 @@
     <![CDATA[ start_time <= #{startTime} ]]>
   </delete>
 
+  <!--TODO 解决跨库连表-->
   <delete id="cleanUmcAlarmRecordSublist" parameterType="java.util.Map">
     DELETE sys_notification_contact,umc_alarm_record_rule
     FROM umc_alarm_record
@@ -30,7 +31,7 @@
     <![CDATA[ umc_alarm_record.create_time <= #{createTime} ]]>
   </delete>
 
-
+  <!--TODO 解决跨库连表-->
   <delete id="cleanCiTaskHistorySublist" parameterType="java.util.Map">
     DELETE uci_task_history_instance,uci_task_history_build_command
     FROM uci_task_history

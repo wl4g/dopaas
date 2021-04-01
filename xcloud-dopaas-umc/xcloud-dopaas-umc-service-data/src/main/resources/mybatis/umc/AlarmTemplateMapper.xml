@@ -202,23 +202,6 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-
-  <select id="getByCollectAddr" resultMap="BaseResultMap" parameterType="java.util.Map">
-    select
-    <include refid="Base_Column_List_t" />,mt.metric,mt.classify
-    ,
-    <include refid="Rule_Column_List" />
-    from umc_alarm_template t
-    left join umc_alarm_config uac on t.id=uac.template_id
-    left join umc_metric_template mt on mt.id=t.metric_id
-    left join cmdb_app_instance i on i.id=uac.collect_id
-    LEFT JOIN umc_alarm_rule r on t.id=r.template_id
-    where uac.enable=1 and t.enable=1 and t.del_flag!=1 and and uac.del_flag!=1
-    <if test="collectAddr != null and collectAddr != 0 " >
-      and  i.endpoint=#{collectAddr,jdbcType=VARCHAR}
-    </if>
-  </select>
-
   <select id="getByClusterId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
     <include refid="Base_Column_List_t" />,mt.metric,mt.classify

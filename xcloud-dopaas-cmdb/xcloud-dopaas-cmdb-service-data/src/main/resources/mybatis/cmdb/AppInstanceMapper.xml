@@ -87,6 +87,16 @@
     and i.del_flag!=1
   </select>
 
+  <select id="getIdsByEndpointAndHostname" resultType="java.lang.Long" parameterType="java.util.Map">
+    select
+    i.id
+    from cmdb_app_instance i
+    left join cmdb_host h on i.host_id=h.id
+    where i.endpoint = #{endpoint}
+    and h.hostname = #{hostname}
+    and i.del_flag!=1
+  </select>
+
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List_i" />,c.name cluster_name

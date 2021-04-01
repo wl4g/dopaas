@@ -34,6 +34,7 @@
     from cmdb_app_cluster_env
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <!--TODO 解决跨库连表-->
   <select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List_e"/>
