@@ -15,6 +15,8 @@
  */
 package com.wl4g.dopaas.umc.service.impl;
 
+import com.wl4g.iam.common.bean.ContactGroup;
+import com.wl4g.iam.service.ContactGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -29,6 +31,8 @@ import com.wl4g.dopaas.umc.data.AlarmConfigDao;
 import com.wl4g.dopaas.umc.data.AlarmTemplateDao;
 import com.wl4g.dopaas.umc.service.AlarmConfigService;
 
+import java.util.List;
+
 /**
  * @author vjay
  * @date 2019-08-09 14:06:00
@@ -39,11 +43,17 @@ public class AlarmConfigServiceImpl implements AlarmConfigService {
 	private @Autowired AlarmConfigDao alarmConfigDao;
 	private @Autowired AlarmTemplateDao alarmTemplateDao;
 	private @Autowired AppInstanceService appInstanceService;
+	private @Autowired ContactGroupService contactGroupService;
 
 	@Override
 	public PageHolder<AlarmConfig> list(PageHolder<AlarmConfig> pm, Long templateId, Long contactGroupId) {
 		pm.bind();
-		pm.setRecords(alarmConfigDao.list(templateId, contactGroupId));
+		List<AlarmConfig> list = alarmConfigDao.list(templateId, contactGroupId);
+		for(AlarmConfig alarmConfig : list){
+			ContactGroup contactGroup = contactGroupService.getById(alarmConfig.getContactGroupId());
+			alarmConfig.setContactGroupName(contactGroup.getName());
+		}
+		pm.setRecords(list);
 		return pm;
 	}
 

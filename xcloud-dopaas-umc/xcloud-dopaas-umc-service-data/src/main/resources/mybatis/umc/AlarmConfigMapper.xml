@@ -62,38 +62,6 @@
         <result column="r.del_flag" property="delFlag" jdbcType="INTEGER" />
       </collection>
     </association>
-    <!-- contacts -->
-    <collection property="contacts" ofType="com.wl4g.iam.common.bean.Contact" javaType="list">
-      <id column="ct.id" property="id" jdbcType="INTEGER" />
-      <result column="ct.name" property="name" jdbcType="VARCHAR" />
-      <result column="ct.email" property="email" jdbcType="VARCHAR" />
-      <result column="ct.phone" property="phone" jdbcType="VARCHAR" />
-      <result column="ct.dingtalk" property="dingtalk" jdbcType="VARCHAR" />
-      <result column="ct.wechat" property="wechat" jdbcType="VARCHAR" />
-      <result column="ct.twitter" property="twitter" jdbcType="VARCHAR" />
-      <result column="ct.facebook" property="facebook" jdbcType="VARCHAR" />
-      <result column="ct.email_enable" property="emailEnable" jdbcType="INTEGER" />
-      <result column="ct.phone_enable" property="phoneEnable" jdbcType="INTEGER" />
-      <result column="ct.dingtalk_enable" property="dingtalkEnable" jdbcType="INTEGER" />
-      <result column="ct.wechat_enable" property="wechatEnable" jdbcType="INTEGER" />
-      <result column="ct.twitter_enable" property="twitterEnable" jdbcType="INTEGER" />
-      <result column="ct.facebook_enable" property="facebookEnable" jdbcType="INTEGER" />
-      <result column="ct.phone_time_of_freq" property="phoneTimeOfFreq" jdbcType="INTEGER" />
-      <result column="ct.dingtalk_time_of_freq" property="dingtalkTimeOfFreq" jdbcType="INTEGER" />
-      <result column="ct.wechat_time_of_freq" property="wechatTimeOfFreq" jdbcType="INTEGER" />
-      <result column="ct.twitter_time_of_freq" property="twitterTimeOfFreq" jdbcType="INTEGER" />
-      <result column="ct.facebook_time_of_freq" property="facebookTimeOfFreq" jdbcType="INTEGER" />
-      <result column="ct.phone_num_of_freq" property="phoneNumOfFreq" jdbcType="INTEGER" />
-      <result column="ct.dingtalk_num_of_freq" property="dingtalkNumOfFreq" jdbcType="INTEGER" />
-      <result column="ct.wechat_num_of_freq" property="wechatNumOfFreq" jdbcType="INTEGER" />
-      <result column="ct.twitter_num_of_freq" property="twitterNumOfFreq" jdbcType="INTEGER" />
-      <result column="ct.facebook_num_of_freq" property="facebookNumOfFreq" jdbcType="INTEGER" />
-      <result column="ct.create_by" property="createBy" jdbcType="VARCHAR" />
-      <result column="ct.create_date" property="createDate" jdbcType="TIMESTAMP" />
-      <result column="ct.update_by" property="updateBy" jdbcType="VARCHAR" />
-      <result column="ct.update_date" property="updateDate" jdbcType="TIMESTAMP" />
-      <result column="ct.del_flag" property="delFlag" jdbcType="INTEGER" />
-    </collection>
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -114,15 +82,6 @@
   <sql id="template_alias" >
     t.id as "t.id", t.name as "t.name", t.metric_id as "t.metric_id", t.tags as "t.tags", t.notify_level as "t.notify_level",t.enable as "t.enable", t.remark as "t.remark", t.del_flag as "t.del_flag", t.create_date as "t.create_date", t.create_by as "t.create_by",
     t.update_date as "t.update_date", t.update_by as "t.update_by"
-  </sql>
-
-  <sql id="contact_alias" >
-    ct.id as "ct.id", ct.name as "ct.name", ct.email as "ct.email", ct.phone as "ct.phone", ct.dingtalk as "ct.dingtalk", ct.wechat as "ct.wechat", ct.twitter as "ct.twitter",
-    ct.facebook as "ct.facebook", ct.email_enable as "ct.email_enable", ct.phone_enable as "ct.phone_enable",
-    ct.dingtalk_enable as "ct.dingtalk_enable", ct.wechat_enable as "ct.wechat_enable", ct.twitter_enable as "ct.twitter_enable", ct.facebook_enable as "ct.facebook_enable", ct.phone_time_of_freq as "ct.phone_time_of_freq",
-    ct.dingtalk_time_of_freq as "ct.dingtalk_time_of_freq", ct.wechat_time_of_freq as "ct.wechat_time_of_freq", ct.twitter_time_of_freq as "ct.twitter_time_of_freq", ct.facebook_time_of_freq as "ct.facebook_time_of_freq",
-    ct.phone_num_of_freq as "ct.phone_num_of_freq", ct.dingtalk_num_of_freq as "ct.dingtalk_num_of_freq", ct.wechat_num_of_freq as "ct.wechat_num_of_freq", ct.twitter_num_of_freq as "ct.twitter_num_of_freq",
-    ct.facebook_num_of_freq as "ct.facebook_num_of_freq", ct.create_by as "ct.create_by", ct.create_date as "ct.create_date", ct.update_by as "ct.update_by", ct.update_date as "ct.update_date", ct.del_flag as "ct.del_flag"
   </sql>
 
   <sql id="rules_alias" >
@@ -291,27 +250,17 @@
     where del_flag!=1 and template_id = #{templateId,jdbcType=BIGINT}
   </select>
 
-  <select id="getByCollectAddrAndTemplateId" resultMap="BaseResultMap" parameterType="java.util.Map">
-    select * from umc_alarm_config c
-    left join umc_alarm_template t on t.id=c.template_id
-    left join umc_alarm_config_collect cc on cc.config_id=c.id
-    left join cmdb_app_instance i on i.id=cc.collect_id
-    where c.template_id=#{templateId,jdbcType=BIGINT} and i.endpoint=#{collectAddr,jdbcType=VARCHAR} and c.del_flag!=1 and t.del_flag!=1
-</select>
-
   <select id="getByClusterIdAndTemplateId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select * from umc_alarm_config c
     left join umc_alarm_template t on t.id=c.template_id
     where c.del_flag!=1 and t.del_flag!=1 and c.template_id=#{templateId,jdbcType=BIGINT} and c.cluster_id=#{appClusterId,jdbcType=BIGINT}
 </select>
 
-
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
-    <include refid="Base_Column_List_c"/>,t.name template_name,cg.name contact_group_name
+    <include refid="Base_Column_List_c"/>,t.name template_name
     from umc_alarm_config c
     left join umc_alarm_template t on t.id=c.template_id
-    left join sys_contact_group cg on c.contact_group_id=cg.id
     where c.del_flag!=1
     <if test="templateId != null" >
       and c.template_id=#{templateId,jdbcType=BIGINT}
@@ -321,19 +270,21 @@
     </if>
   </select>
 
-
   <select id="getAlarmConfigTpls" resultMap="BaseResultMap2" parameterType="java.util.Map">
     select
     <include refid="config_alias"/>,<include refid="template_alias"/>,
-    <include refid="contact_alias"/>,<include refid="rules_alias"/>,m.metric as "m.metric",m.classify as "m.classify"
+    <include refid="rules_alias"/>,m.metric as "m.metric",m.classify as "m.classify"
     from umc_alarm_config c
     left join umc_alarm_template t on c.template_id = t.id
     left join umc_metric_template m on m.id=t.metric_id
     left join umc_alarm_rule r on t.id = r.template_id
-    left join sys_contact_group_ref gr on gr.contact_group_id = c.contact_group_id
-    left join sys_contact ct on gr.contact_id = ct.id
-    left join cmdb_app_instance i on c.collect_id = i.id
-    left join app_host h on i.host_id=h.id where i.endpoint = #{endpoint,jdbcType=VARCHAR} and h.hostname = #{host,jdbcType=VARCHAR} and t.del_flag!=1 and c.del_flag!=1 and r.del_flag!=1
+    where t.del_flag!=1 and c.del_flag!=1 and r.del_flag!=1
+    <if test="instanceIds != null and instanceIds.size() > 0">
+      and c.collect_id in
+      <foreach collection="instanceIds" item="instanceId" index="index" open="(" close=")" separator=",">
+        #{instanceId}
+      </foreach>
+    </if>
   </select>
 
 

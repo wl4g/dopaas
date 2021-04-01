@@ -130,4 +130,9 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 	public AppInstance getById(Long instanceId) {
 		return appInstanceDao.getById(instanceId);
 	}
+
+	@Override
+	public List<Long> getIdsByEndpointAndHostname(String endpoint, String hostname) {
+		return appInstanceDao.getIdsByEndpointAndHostname(endpoint, hostname);
+	}
 }

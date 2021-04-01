@@ -15,14 +15,14 @@
  */
 package com.wl4g.dopaas.umc.handler;
 
-import java.util.List;
-
 import com.wl4g.dopaas.common.bean.umc.AlarmConfig;
 import com.wl4g.dopaas.common.bean.umc.AlarmRecord;
 import com.wl4g.dopaas.common.bean.umc.AlarmRule;
 import com.wl4g.dopaas.common.bean.umc.AlarmTemplate;
 import com.wl4g.iam.common.bean.Contact;
 import com.wl4g.iam.common.bean.NotificationContact;
+
+import java.util.List;
 
 /**
  * Rule configuration handler.
@@ -34,8 +34,6 @@ import com.wl4g.iam.common.bean.NotificationContact;
 public interface AlarmConfigurer {
 
 	List<AlarmConfig> findAlarmConfigByEndpoint(String host, String endpoint);
-
-	List<AlarmConfig> findAlarmConfig(Long templateId, String collectId);
 
 	AlarmRecord saveAlarmRecord(AlarmTemplate alarmTemplate, Long gatherTime, List<AlarmRule> rules, String alarmNote);
 
