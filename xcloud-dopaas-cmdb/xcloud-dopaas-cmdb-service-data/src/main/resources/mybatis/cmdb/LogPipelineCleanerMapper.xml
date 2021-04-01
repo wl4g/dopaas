@@ -14,15 +14,14 @@
     <![CDATA[ start_time <= #{startTime} ]]>
   </delete>
 
-  <!--TODO 解决跨库连表-->
-  <delete id="cleanUmcAlarmRecordSublist" parameterType="java.util.Map">
+  <!--<delete id="cleanUmcAlarmRecordSublist" parameterType="java.util.Map">
     DELETE sys_notification_contact,umc_alarm_record_rule
     FROM umc_alarm_record
     LEFT JOIN sys_notification_contact ON umc_alarm_record.id=sys_notification_contact.record_id
     LEFT JOIN umc_alarm_record_rule ON umc_alarm_record.id=umc_alarm_record_rule.record_id
     WHERE
     <![CDATA[ umc_alarm_record.create_time <= #{createTime} ]]>
-  </delete>
+  </delete>-->
 
   <delete id="cleanUmcAlarmRecord" parameterType="java.util.Map">
     DELETE
@@ -31,15 +30,14 @@
     <![CDATA[ umc_alarm_record.create_time <= #{createTime} ]]>
   </delete>
 
-  <!--TODO 解决跨库连表-->
-  <delete id="cleanCiTaskHistorySublist" parameterType="java.util.Map">
+  <!--<delete id="cleanCiTaskHistorySublist" parameterType="java.util.Map">
     DELETE uci_task_history_instance,uci_task_history_build_command
     FROM uci_task_history
     LEFT JOIN uci_task_history_instance ON uci_task_history.id=uci_task_history_instance.task_id
     LEFT JOIN uci_task_history_build_command ON uci_task_history.id=uci_task_history_build_command.task_id
     WHERE
     <![CDATA[ uci_task_history.create_date <= #{createDate} ]]>
-  </delete>
+  </delete>-->
 
   <delete id="cleanCiTaskHistory" parameterType="java.util.Map">
     DELETE FROM uci_task_history

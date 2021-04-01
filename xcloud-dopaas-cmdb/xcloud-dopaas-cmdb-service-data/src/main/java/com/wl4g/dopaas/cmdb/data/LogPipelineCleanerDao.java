@@ -34,11 +34,11 @@ public interface LogPipelineCleanerDao {
 
 	int cleanJobExecutionLog(@Param("startTime") Date startTime);
 
-	int cleanUmcAlarmRecordSublist(@Param("createTime") Date createTime);
+	//int cleanUmcAlarmRecordSublist(@Param("createTime") Date createTime);
 
 	int cleanUmcAlarmRecord(@Param("createTime") Date createTime);
 
-	int cleanCiTaskHistorySublist(@Param("createDate") Date createDate);
+	//int cleanCiTaskHistorySublist(@Param("createDate") Date createDate);
 
 	int cleanCiTaskHistory(@Param("createDate") Date createDate);
 
