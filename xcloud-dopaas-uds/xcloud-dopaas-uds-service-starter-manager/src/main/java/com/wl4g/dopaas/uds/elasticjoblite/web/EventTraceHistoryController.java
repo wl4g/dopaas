@@ -25,7 +25,6 @@ import org.apache.shardingsphere.elasticjob.tracing.event.JobStatusTraceEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,11 +46,8 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobStatusTraceEvents
 @RequestMapping("/api/event-trace")
 public final class EventTraceHistoryController extends BaseController {
 
-	@Autowired
-	private EventTraceHistoryService eventTraceHistoryService;
-
-	@Autowired
-	private EventTraceDataSourceConfigService eventTraceDataSourceConfigService;
+	private @Autowired EventTraceHistoryService eventTraceHistoryService;
+	private @Autowired EventTraceDataSourceConfigService eventTraceDataSourceConfigService;
 
 	/**
 	 * Find job execution events.
@@ -60,7 +56,6 @@ public final class EventTraceHistoryController extends BaseController {
 	 *            query criteria
 	 * @return job execution event trace result
 	 */
-	@SuppressWarnings("unchecked")
 	@PostMapping(value = "/execution")
 	public RespBase<PageHolder<JobExecutionEvent>> findJobExecutionEvents(
 			@RequestBody final FindJobExecutionEventsRequest requestParams) {
@@ -134,10 +129,10 @@ public final class EventTraceHistoryController extends BaseController {
 				.withData(eventTraceHistoryService.findJobNamesInStatusTraceLog(Optional.ofNullable(jobNamePrefix).orElse("")));
 	}
 
-	@ModelAttribute
-	private void initDataSource() {
-		eventTraceDataSourceConfigService.loadActivated()
-				.ifPresent(LiteSessionEventTraceDataSourceFactory::setDataSourceConfiguration);
-	}
+	// @ModelAttribute
+	// private void initDataSource() {
+	// eventTraceDataSourceConfigService.loadActivated()
+	// .ifPresent(LiteSessionEventTraceDataSourceFactory::setDataSourceConfiguration);
+	// }
 
 }
