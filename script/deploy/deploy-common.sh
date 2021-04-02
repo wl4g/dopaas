@@ -297,9 +297,10 @@ function checkInstallServiceScript() {
   doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appDataDir" "true"
   # Make app services script.
   local appShortNameUpper=$(echo $appName|tr '[a-z]' '[A-Z]'|awk -F '-' '{print $1}') # e.g cmdb-facade => CMDB
+  local appShortNameLower=$(echo $appShortNameUpper|tr '[A-Z]' '[a-z]') # e.g cmdb-facade => cmdb
   local runtimeMysqlUrl0="$runtimeMysqlUrl"
   if [ "$runtimeMode" == "cluster" ]; then # When clustering mode, individual database should be used by each service.
-    local runtimeMysqlUrl0=$(echo $runtimeMysqlUrl|sed "s/dopaas/dopaas_$appShortNameUpper/g") 
+    local runtimeMysqlUrl0=$(echo $runtimeMysqlUrl|sed "s/dopaas/dopaas_$appShortNameLower/g") 
   fi
   local tmpServiceFile="$workspaceDir/${appName}.service"
 cat<<EOF>$tmpServiceFile
