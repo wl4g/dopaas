@@ -49,7 +49,7 @@
 		</fileSet>
 		<fileSet>
 			<directory>.</directory>
-			<outputDirectory>logs</outputDirectory>
+			<outputDirectory>log</outputDirectory>
 			<excludes>
 				<exclude>*/**</exclude>
 			</excludes>
@@ -71,7 +71,7 @@
 	</fileSets>
 	<dependencySets>
 		<dependencySet>
-			<outputDirectory>libs</outputDirectory>
+			<outputDirectory>lib</outputDirectory>
 			<scope>runtime</scope>
 			<excludes>
 				<exclude>${groupId}:${artifactId}</exclude>
