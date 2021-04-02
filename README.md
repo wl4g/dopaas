@@ -114,12 +114,15 @@ npm run build # Production building
 
 # dev:
 127.0.0.1 wl4g.debug
+
 # fat:
-127.0.0.1 wl4g.fat dopaas.wl4g.fat iam.wl4g.fat erm.wl4g.fat ci.wl4g.fat dts.wl4g.fat vcs.wl4g.fat umc.wl4g.fat
+127.0.0.1 wl4g.fat dopaas.wl4g.fat iam.wl4g.fat home.wl4g.fat cmdb.wl4g.fat lcdp.wl4g.fat ucm.wl4g.fat urm.wl4g.fat uci.wl4g.fat uos.wl4g.fat uds.wl4g.fat umc.wl4g.fat
+
 # uat:
-127.0.0.1 wl4g.uat dopaas.wl4g.uat iam.wl4g.uat erm.wl4g.uat ci.wl4g.uat dts.wl4g.uat vcs.wl4g.uat umc.wl4g.uat
+wl4g.uat dopaas.wl4g.uat iam.wl4g.uat home.wl4g.uat cmdb.wl4g.uat lcdp.wl4g.uat ucm.wl4g.uat urm.wl4g.uat uci.wl4g.uat uos.wl4g.uat uds.wl4g.uat umc.wl4g.uat
+
 # pro:
-127.0.0.1 wl4g.com dopaas.wl4g.com iam.wl4g.com erm.wl4g.com ci.wl4g.com dts.wl4g.com vcs.wl4g.com umc.wl4g.com
+wl4g.com dopaas.wl4g.com iam.wl4g.com home.wl4g.com cmdb.wl4g.com lcdp.wl4g.com ucm.wl4g.com urm.wl4g.com uci.wl4g.com uos.wl4g.com uds.wl4g.com umc.wl4g.com
 ```
 
 - Quickly build a redis cluster/docker (optional)
