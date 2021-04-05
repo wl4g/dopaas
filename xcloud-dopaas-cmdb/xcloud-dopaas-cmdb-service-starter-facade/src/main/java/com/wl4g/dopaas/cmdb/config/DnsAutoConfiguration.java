@@ -15,6 +15,8 @@
  */
 package com.wl4g.dopaas.cmdb.config;
 
+import static com.wl4g.dopaas.common.constant.CmdbConstants.KEY_CMDB_PREFIX;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +27,7 @@ import com.wl4g.dopaas.cmdb.handler.JedisCorednsZoneHandler;
 public class DnsAutoConfiguration {
 
 	@Bean
-	@ConfigurationProperties(prefix = "dns")
+	@ConfigurationProperties(prefix = KEY_CMDB_PREFIX + ".dns")
 	public DnsProperties dnsProperties() {
 		return new DnsProperties();
 	}

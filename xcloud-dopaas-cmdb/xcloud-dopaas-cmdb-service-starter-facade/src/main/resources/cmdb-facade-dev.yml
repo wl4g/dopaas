@@ -51,6 +51,3 @@ cipher-key: 03DE18C2FC4E605F
 fs:
   base-path: /Users/vjay/Downloads/myupload
   base-url: http://wl4g.debug:17010/cmdb-manager
-
-dns:
-  prefix: "_dns:"

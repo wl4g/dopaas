@@ -17,6 +17,10 @@ spring:
     component:
       support:
         cli.enable: true
+    dopaas:
+      cmdb:
+        dns:
+          prefix: "_coredns:"
 
 # Mybatis configuration.
 mybatis:

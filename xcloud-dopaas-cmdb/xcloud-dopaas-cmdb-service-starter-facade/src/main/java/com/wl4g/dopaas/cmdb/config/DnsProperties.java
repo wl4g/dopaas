@@ -15,21 +15,15 @@
  */
 package com.wl4g.dopaas.cmdb.config;
 
-import org.apache.commons.lang3.StringUtils;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
 public class DnsProperties {
 
-	private String prefix;
-
-	public String getPrefix() {
-		if (StringUtils.isNoneBlank(prefix)) {
-			return prefix;
-		}
-		return "";
-	}
-
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
+	private String prefix = "_coredns:";
 
 }
