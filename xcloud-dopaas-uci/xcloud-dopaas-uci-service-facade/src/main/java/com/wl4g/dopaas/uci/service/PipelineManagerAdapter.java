@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.common.io.FileIOUtils.ReadTailFrame;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.uci.utils.HookCommandHolder.HookCommand;
 import com.wl4g.dopaas.common.bean.uci.param.RollbackParameter;
 import com.wl4g.dopaas.common.bean.uci.param.RunParameter;

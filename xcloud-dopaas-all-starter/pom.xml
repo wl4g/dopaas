@@ -24,15 +24,15 @@
 			<exclusions>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-feign-core</artifactId>
+					<artifactId>xcloud-component-integration-feign-core</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-feign-springcloud</artifactId>
+					<artifactId>xcloud-component-integration-feign-springcloud</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>com.wl4g</groupId>
-					<artifactId>xcloud-component-rpc-springcloud-dubbo</artifactId>
+					<artifactId>xcloud-component-integration-springcloud-dubbo</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.springframework.cloud</groupId>
@@ -47,7 +47,7 @@
 		<!-- If there is a compiler dependent annotation such as @HystrixCommand, our only purpose is to enable it to be compiled and packaged -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-component-rpc-feign-common</artifactId>
+			<artifactId>xcloud-component-integration-feign-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

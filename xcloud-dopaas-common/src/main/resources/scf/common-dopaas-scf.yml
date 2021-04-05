@@ -14,7 +14,7 @@ spring:
   util.timeout.sec: 60 # Default by 1sec
   xcloud:
     component:
-      rpc:
+      integration:
         feign:
           loadbalancer: # fallback default: RoundRobinLoadbalancer
             random:

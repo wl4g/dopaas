@@ -14,7 +14,7 @@
 spring:
   xcloud:
     component:
-      rpc:
+      integration:
         feign:
           #default-url: http://n1.dopaas.wl4gsafeclolcdps.com:18081/doc-facade
           default-url: http://n1.dopaas.wl4gsafeclolcdps.com:${provider.serverPort}${provider.contextPath}

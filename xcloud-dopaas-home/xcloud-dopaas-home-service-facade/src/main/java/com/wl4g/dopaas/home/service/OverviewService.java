@@ -17,7 +17,7 @@ package com.wl4g.dopaas.home.service;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 
 /**
  * {@link OverviewService}
