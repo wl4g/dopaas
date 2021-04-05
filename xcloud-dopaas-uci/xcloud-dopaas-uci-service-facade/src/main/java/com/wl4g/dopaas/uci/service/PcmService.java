@@ -17,7 +17,7 @@ package com.wl4g.dopaas.uci.service;
 
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.bean.model.SelectionModel;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.uci.Pcm;
 import com.wl4g.dopaas.common.bean.uci.PipeHistoryPcm;
 import org.springframework.web.bind.annotation.RequestBody;

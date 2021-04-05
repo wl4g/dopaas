@@ -14,7 +14,7 @@
 spring:
   xcloud:
     component:
-      rpc:
+      integration:
         feign:
           default-url: http://localhost:${provider.serverPort}${provider.contextPath}
           default-log-level: BASIC # NONE|BASIC|HEADERS|FULL

@@ -19,7 +19,7 @@
 package com.wl4g.dopaas.udm.service;
 
 import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.udm.EeDocumentRepo;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

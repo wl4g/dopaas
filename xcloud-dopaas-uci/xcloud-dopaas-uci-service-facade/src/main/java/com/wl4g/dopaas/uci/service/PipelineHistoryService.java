@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.uci.service;
 
 import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.rpc.feign.core.annotation.FeignConsumer;
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistory;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;
 import com.wl4g.dopaas.common.bean.uci.param.HookParameter;

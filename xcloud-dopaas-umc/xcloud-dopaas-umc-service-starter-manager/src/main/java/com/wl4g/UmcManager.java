@@ -19,7 +19,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-import com.wl4g.component.rpc.feign.core.annotation.EnableFeignConsumers;
+import com.wl4g.component.integration.feign.core.annotation.EnableFeignConsumers;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient

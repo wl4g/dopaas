@@ -20,7 +20,7 @@ package com.wl4g.dopaas.udm.web;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.rpc.feign.core.context.RpcContextHolder;
+import com.wl4g.component.integration.feign.core.context.RpcContextHolder;
 import com.wl4g.dopaas.common.bean.udm.EeDocumentRepoVersion;
 import com.wl4g.dopaas.udm.service.EeDocumentRepoVersionService;
 import org.springframework.beans.factory.annotation.Autowired;

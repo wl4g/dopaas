@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.rpc.feign.core.context.RpcContextHolder;
+import com.wl4g.component.integration.feign.core.context.RpcContextHolder;
 import com.wl4g.dopaas.common.bean.udm.EeDocumentRepoGroup;
 import com.wl4g.dopaas.udm.data.EeDocumentRepoGroupDao;
 import com.wl4g.dopaas.udm.service.EeDocumentRepoGroupService;
