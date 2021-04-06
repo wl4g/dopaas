@@ -65,7 +65,7 @@ public interface AppInstanceService {
 	@RequestMapping(value = "/getById", method = POST)
 	AppInstance getById(@RequestParam(name = "instanceId", required = false) Long instanceId);
 
-	@RequestMapping(value = "/getById", method = POST)
+	@RequestMapping(value = "/getIdsByEndpointAndHostname", method = POST)
 	List<Long> getIdsByEndpointAndHostname(@RequestParam(name = "endpoint", required = false) String endpoint,
 										 @RequestParam(name = "hostname", required = false) String hostname);
 }
