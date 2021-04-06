@@ -158,15 +158,23 @@ function doRemoteCmd() {
   local password=$2
   local host=$3
   local cmd=$4
-  local exitOnFail=$5
+  local exitOnFail=$5 # (default:false)
+  local isOutput=$6 # (default:false) Whether output data needs to be read.
   # Check must args.
   if [[ $# < 4 || "$user" == "" || "$host" == "" || "$cmd" == "" ]]; then
     log "Exec remote command User/Host/Command is required and args should be 4"; exit -1
   fi
   # Check host is locally? (direct exec local command)
   if [[ "$host" == "localhost" || "$host" == "127.0.0.1" ]]; then
-    bash -c "$cmd"
-    return $?
+    if [ "$isOutput" == "true" ]; then
+      local output=$(bash -c "$cmd")
+      local exitStatus=$?
+      echo "$output"
+      return $exitStatus
+    else
+      bash -c "$cmd"
+      return $?
+    fi
   fi
   # Check whether it is login passwordless.(When the password is empty)
   if [ "$password" == "" ]; then
@@ -181,8 +189,18 @@ function doRemoteCmd() {
     fi
   else # Exec remote by sshpass
     installSshpass
-    sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd"
-    [[ $? -ne 0 && "$exitOnFail" == "true" ]] && exit -1
+    if [ "$isOutput" == "true" ]; then
+      local output=$(sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd")
+      local exitStatus=$?
+      [[ $exitStatus -ne 0 && "$exitOnFail" == "true" ]] && exit -1
+      echo "$output"
+      return $exitStatus
+    else
+      sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd"
+      local exitStatus=$?
+      [[ $exitStatus -ne 0 && "$exitOnFail" == "true" ]] && exit -1
+      return $exitStatus
+    fi
   fi
 }
 
@@ -245,7 +263,7 @@ function checkInstallServiceScript() {
   local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: udm-manager => UdmManager
   local appInstallDir="${deployAppBaseDir}/${appName}-package"
   local appHome="${appInstallDir}/${appName}-${appVersion}-bin"
-  local appClasspath=".:$appHome/conf:${appHome}/lib/*"
+  local appClasspath=".:$appHome/conf:${appHome}/ext-lib/*:${appHome}/lib/*" # In case of conflict, custom extension library takes precedence.
   local appDataDir="${deployAppDataBaseDir}/${appName}"
   local appLogDir="${deployAppLogBaseDir}/${appName}"
   local appLogFile="${appLogDir}/${appName}_\${SPRING_PROFILES_ACTIVE}.log"
@@ -256,7 +274,7 @@ function checkInstallServiceScript() {
   local appOpts="$appOpts --logging.file.name=${appLogFile}"
   local appOpts="$appOpts --spring.application.name=${appName}"
   local appOpts="$appOpts --spring.profiles.active=\${SPRING_PROFILES_ACTIVE}"
-  local javaExec="java"
+  local javaExec=$([ -n "$JAVA_HOME" ] && echo "$JAVA_HOME/bin/java" || echo "java")
   #local jvmDebugOpts="-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n"
   #local jvmJmxOpts="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=5000"
   local jvmHeapOpts="-Xms256M -Xmx1G"
@@ -272,14 +290,16 @@ function checkInstallServiceScript() {
     jvmGcLogOpts="-Xlog:gc*:file=${jvmGcLogFile}:time,tags:filecount=10,filesize=102400"
   fi
   if [ "$buildPkgType" == "mvnAssTar" ]; then
-    local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -cp $appClasspath $appMainClass $appOpts"
-    local appShellRunCmd="$javaExec -client -Dprompt=$appName -Dservname=$appName $shellPort -cp .:$appHome/lib/* com.wl4g.ShellBootstrap"
+    local appRunCmd="$javaExec -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -cp $appClasspath $appMainClass $appOpts"
+    local appShellRunCmd="$javaExec -client -Dprompt=$appName -Dservname=$appName $shellPort -cp .:$appHome/ext-lib/*:$appHome/lib/* com.wl4g.ShellBootstrap"
   elif [ "$buildPkgType" == "springExecJar" ]; then
-    local appRunCmd="java -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -jar ${appHome}/${appName}-${appVersion}-bin.jar $appOpts"
+    local appRunCmd="$javaExec -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -jar ${appHome}/${appName}-${appVersion}-bin.jar $appOpts"
     # for example using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher
     # for example: xcloud-dopaas/xcloud-dopaas-ci/xcloud-dopaas-ci-service-starter-facade/pom.xml#profile.id=springExecJar
     # refer to: https://www.baeldung.com/spring-boot-main-class, https://www.jianshu.com/p/66a101c85485
     local appShellRunCmd="$javaExec -client -Dloader.main=com.wl4g.ShellBootstrap -Dprompt=$appName -Dservname=$appName $shellPort -jar .:$appHome/${appName}-${appVersion}-bin.jar"
+  else
+    log "Invalid buildPkgType: $buildPkgType" && exit -1
   fi
   # Check make directory.
   if [ "$appGroup" != "root" ]; then

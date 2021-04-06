@@ -47,6 +47,12 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
       if [[ "$host" == "" || "$user" == "" ]]; then
         logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
       fi
+      # Check deployer user of root group.
+      local deployerUserGroups=$(doRemoteCmd "$user" "$passwd" "$host" "$(echo groups)" "true" "true")
+      if [ ! "$deployerUserGroups" = "root" ]; then
+        logErr "Please use the remote host user belonging to the root groups to perform the deployment !" && exit -1
+      fi
+      # Storage deployer all nodes. 
       globalAllNodes[index]="${host}ξ${user}ξ${passwd}"
       if [ "$globalAllHostsString" == "" ]; then
         globalAllHostsString="$host"
@@ -396,9 +402,6 @@ function main() {
   log " Installation logs writing: $logFile"
   log " -------------------------------------------------------------------"
   log ""
-  if [[ "$(echo groups)" == "root" ]]; then
-    logErr "Please execute the scripts as a user with root privileges !" && exit -1
-  fi
   [ "$asyncDeploy" == "true" ] && log "Using asynchronous deployment, you can usage: export asyncDeploy=\"false\" to set it."
   beginTime=`date +%s`
   initConfig
