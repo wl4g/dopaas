@@ -220,7 +220,7 @@ public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
 			throw e;
 		} finally {
 
-			List<PipelineHistory> list = pipelineHistoryService.list( null, null, null, null, null, null, null, 2,
+			List<PipelineHistory> list = pipelineHistoryService.listWithoutPage( null, null, null, null, null, null, null, 2,
 					orchestrationHistory.getId());
 
 			boolean isAllSuccess = true;

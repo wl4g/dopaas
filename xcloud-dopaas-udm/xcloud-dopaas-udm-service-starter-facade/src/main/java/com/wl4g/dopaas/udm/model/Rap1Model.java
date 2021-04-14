@@ -1,7 +1,5 @@
 package com.wl4g.dopaas.udm.model;
 
-import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -9,7 +7,7 @@ import java.util.List;
  * @date 2021-04-13 17:40:00
  */
 public class Rap1Model {
-    private LocalDate createDateStr;
+    private String createDateStr;
     private User user;
     private long id;
     private String version;
@@ -17,8 +15,13 @@ public class Rap1Model {
     private String name;
     private List<Model> moduleList;
 
-    public LocalDate getCreateDateStr() { return createDateStr; }
-    public void setCreateDateStr(LocalDate value) { this.createDateStr = value; }
+    public String getCreateDateStr() {
+        return createDateStr;
+    }
+
+    public void setCreateDateStr(String createDateStr) {
+        this.createDateStr = createDateStr;
+    }
 
     public User getUser() { return user; }
     public void setUser(User value) { this.user = value; }
@@ -49,17 +52,17 @@ public class Rap1Model {
     }
 
     public static class Model {
-        private long id;
+        private Long id;
         private String introduction;
         private String name;
         private List<Model> pageList;
         private List<Action> actionList;
 
-        public long getId() {
+        public Long getId() {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(Long id) {
             this.id = id;
         }
 
@@ -87,20 +90,20 @@ public class Rap1Model {
     }
 
     public static class Action {
-        private long id;
+        private Long id;
         private String name;
         private String description;
         private String requestType;
-        private String requestURL;
+        private String requestUrl;
         private String responseTemplate;
         private List<Parameter> requestParameterList;
         private List<Parameter> responseParameterList;
 
-        public long getId() {
+        public Long getId() {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(Long id) {
             this.id = id;
         }
 
@@ -113,8 +116,13 @@ public class Rap1Model {
         public String getRequestType() { return requestType; }
         public void setRequestType(String value) { this.requestType = value; }
 
-        public String getRequestURL() { return requestURL; }
-        public void setRequestURL(String value) { this.requestURL = value; }
+        public String getRequestUrl() {
+            return requestUrl;
+        }
+
+        public void setRequestUrl(String requestUrl) {
+            this.requestUrl = requestUrl;
+        }
 
         public String getResponseTemplate() { return responseTemplate; }
         public void setResponseTemplate(String value) { this.responseTemplate = value; }
@@ -137,19 +145,19 @@ public class Rap1Model {
     }
 
     public static class Parameter {
-        private long id;
+        private Long id;
         private String identifier;
         private String name;
         private String remark;
         private List<Parameter> parameterList;
         private String validator;
-        private DataType dataType;
+        private String dataType;
 
-        public long getId() {
+        public Long getId() {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(Long id) {
             this.id = id;
         }
 
@@ -173,27 +181,32 @@ public class Rap1Model {
         public String getValidator() { return validator; }
         public void setValidator(String value) { this.validator = value; }
 
-        public DataType getDataType() { return dataType; }
-        public void setDataType(DataType value) { this.dataType = value; }
+        public String getDataType() {
+            return dataType;
+        }
+
+        public void setDataType(String dataType) {
+            this.dataType = dataType;
+        }
     }
 
     public static class User {
         private String name;
-        private long id;
+        private Long id;
 
         public String getName() { return name; }
         public void setName(String value) { this.name = value; }
 
-        public long getId() {
+        public Long getId() {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(Long id) {
             this.id = id;
         }
     }
 
-    public static enum DataType {
+    /*public static enum DataType {
         ARRAY_OBJECT, EMPTY, OBJECT, STRING;
 
         public String toValue() {
@@ -213,7 +226,7 @@ public class Rap1Model {
             if (value.equals("string")) return STRING;
             throw new IOException("Cannot deserialize DataType");
         }
-    }
+    }*/
 
 }
 
