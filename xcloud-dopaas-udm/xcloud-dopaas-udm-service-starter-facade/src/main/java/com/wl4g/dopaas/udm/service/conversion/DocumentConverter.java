@@ -19,16 +19,16 @@
  */
 package com.wl4g.dopaas.udm.service.conversion;
 
-import static java.util.Objects.isNull;
-import static org.springframework.util.Assert.notNull;
+import com.wl4g.component.core.framework.operator.Operator;
+import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
+import com.wl4g.dopaas.udm.service.conversion.DocumentConverter.ConverterProviderKind;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wl4g.component.core.framework.operator.Operator;
-import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
-import com.wl4g.dopaas.udm.service.conversion.DocumentConverter.ConverterProviderKind;
+import static java.util.Objects.isNull;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * {@link DocumentConverter}
@@ -73,7 +73,10 @@ public interface DocumentConverter<T> extends Operator<ConverterProviderKind> {
 		OAS3(3),
 
 		/** Document converter for rap2. */
-		RAP2(2);
+		RAP2(2),
+
+		/** Document converter for rap1. */
+		RAP1(4);
 
 		final private int value;
 
