@@ -42,6 +42,7 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 	@Override
 	public XCloudDocumentModel convertFrom(String documentJson) {
 		Rap1ModelJson rap1ModelJson = JacksonUtils.parseJSON(documentJson, Rap1ModelJson.class);
+		rap1ModelJson.setModelJSON(rap1ModelJson.getModelJSON().replaceAll("\\\\'", "'"));
 		Rap1Model rap1Model = JacksonUtils.parseJSON(rap1ModelJson.getModelJSON(), Rap1Model.class);
 		return convertFrom(rap1Model);
 	}
@@ -56,14 +57,27 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 		// TODO Auto-generated method stub
 		List<EnterpriseApi> enterpriseApis = new ArrayList<>();
 		List<Rap1Model.Model> moduleList = document.getModuleList();
-		for(Rap1Model.Model model : moduleList){
+		for (Rap1Model.Model model : moduleList) {
 			List<Rap1Model.Action> actionList = model.getActionList();
+			if (CollectionUtils.isEmpty(actionList)) {
+				actionList = new ArrayList<>();
+			}
+
+			if (!CollectionUtils.isEmpty(model.getPageList())) {
+				for (Rap1Model.Model page : model.getPageList()) {
+					actionList.addAll(page.getActionList());
+				}
+			}
+			if (CollectionUtils.isEmpty(actionList)) {
+				continue;
+			}
+
 			for(Rap1Model.Action action : actionList){
 				EnterpriseApi enterpriseApi = new EnterpriseApi();
 				enterpriseApi.setDescription(action.getDescription());
 				enterpriseApi.setName(action.getName());
 				enterpriseApi.setMethod(action.getRequestType());
-				enterpriseApi.setUrl(action.getRequestURL());
+				enterpriseApi.setUrl(action.getRequestUrl());
 
 				List<EnterpriseApiProperties> properties = new ArrayList<>();
 				List<Rap1Model.Parameter> requestParameterList = action.getRequestParameterList();
@@ -76,6 +90,7 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 				}
 
 				enterpriseApi.setProperties(properties);
+				enterpriseApis.add(enterpriseApi);
 			}
 		}
 		return new XCloudDocumentModel(enterpriseApis);
@@ -85,11 +100,11 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 		for (Rap1Model.Parameter parameter : requestParameterList) {
 			EnterpriseApiProperties enterpriseApiProperties = new EnterpriseApiProperties();
 
-			enterpriseApiProperties.setName(parameter.getName());
-			enterpriseApiProperties.setDescription(parameter.getRemark());
-			enterpriseApiProperties.setType(parameter.getDataType().toValue());
+			enterpriseApiProperties.setName(parameter.getIdentifier());
+			enterpriseApiProperties.setDescription(parameter.getName());
+			enterpriseApiProperties.setType(parameter.getDataType());
 			enterpriseApiProperties.setRule(parameter.getValidator());
-			enterpriseApiProperties.setRequired(parameter.getIdentifier());
+			enterpriseApiProperties.setScope(scope);
 
 			List<Rap1Model.Parameter> children = parameter.getParameterList();
 			if (!CollectionUtils.isEmpty(children)) {

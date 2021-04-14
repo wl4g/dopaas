@@ -48,7 +48,7 @@ public class OrchestrationHistoryServcieImpl implements OrchestrationHistoryServ
 		pm.useCount().bind();
 		List<OrchestrationHistory> list = orchestrationHistoryDao.list(getRequestOrganizationCodes(), runId);
 		for (OrchestrationHistory orch : list) {
-			List<PipelineHistory> pipeHis = pipelineHistoryService.list(null,null, null, null, null, null,
+			List<PipelineHistory> pipeHis = pipelineHistoryService.listWithoutPage(null,null, null, null, null, null,
 					null, 2, orch.getId());
 			orch.setPipeHistories(pipeHis);
 		}

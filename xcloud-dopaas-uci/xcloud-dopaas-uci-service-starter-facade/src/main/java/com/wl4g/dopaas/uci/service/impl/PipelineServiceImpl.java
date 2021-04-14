@@ -20,7 +20,9 @@ import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.cmdb.service.AppClusterService;
+import com.wl4g.dopaas.cmdb.service.AppInstanceService;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
+import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import com.wl4g.dopaas.common.bean.uci.*;
 import com.wl4g.dopaas.uci.data.*;
 import com.wl4g.dopaas.uci.service.DependencyService;
@@ -84,6 +86,8 @@ public class PipelineServiceImpl implements PipelineService {
 
 	private @Autowired AppClusterService appClusterService;
 
+	private @Autowired AppInstanceService appInstanceService;
+
 	private @Autowired RepoService repoService;
 
 	@Override
@@ -92,6 +96,14 @@ public class PipelineServiceImpl implements PipelineService {
 		List<Pipeline> pipes = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment);
 		for (Pipeline p : safeList(pipes)) {
 			p.setPipeStepBuildingProjects(pipeStepBuildingProjectDao.selectByPipeId(p.getId()));
+
+			List<AppInstance> appInstances = new ArrayList<>();
+			List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(p.getId());
+			for(PipelineInstance pipelineInstance : pipelineInstances){
+				AppInstance detail = appInstanceService.detail(pipelineInstance.getInstanceId());
+				appInstances.add(detail);
+			}
+			p.setInstances(appInstances);
 		}
 		pm.setRecords(pipes);
 		return pm;

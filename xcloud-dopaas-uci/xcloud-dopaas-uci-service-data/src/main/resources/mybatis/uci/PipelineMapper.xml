@@ -61,11 +61,8 @@
 		</association>
 	</resultMap>
 
-	<resultMap id="ListResultMap" type="com.wl4g.dopaas.common.bean.uci.Pipeline" extends="BaseResultMap">
-		<collection property="instances" select="selectInstancesByDeployId" column="{deployId = deploy_id}"
-			ofType="com.wl4g.dopaas.common.bean.cmdb.AppInstance" javaType="java.util.List">
-		</collection>
-	</resultMap>
+	<!--<resultMap id="ListResultMap" type="com.wl4g.dopaas.common.bean.uci.Pipeline" extends="BaseResultMap">
+	</resultMap>-->
 
 	<sql id="Base_Column_List">
 		id, pipe_name, organization_code, cluster_id, provider_kind, environment, parent_app_home, assets_dir,
@@ -261,7 +258,7 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 
-	<select id="list" resultMap="ListResultMap" parameterType="java.util.Map">
+	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List_p" />
 		,sp.enable pcm_enable,sp.pcm_id,d.id deploy_id

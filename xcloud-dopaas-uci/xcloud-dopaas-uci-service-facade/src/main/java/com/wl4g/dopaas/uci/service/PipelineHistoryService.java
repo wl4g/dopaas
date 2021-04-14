@@ -81,8 +81,8 @@ public interface PipelineHistoryService {
 			@RequestParam(name = "endDate", required = false) String endDate,
 			@RequestParam(name = "providerKind", required = false) String providerKind);
 
-	@RequestMapping(value = "/list", method = POST)
-	List<PipelineHistory> list(
+	@RequestMapping(value = "/listWithoutPage", method = POST)
+	List<PipelineHistory> listWithoutPage(
 			@RequestBody PageHolder<PipelineHistory> pm,
 			@RequestParam(name = "pipeName", required = false) String pipeName,
 			@RequestParam(name = "clusterName", required = false) String clusterName,

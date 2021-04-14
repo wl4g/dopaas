@@ -220,15 +220,15 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Override
 	public PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName,
 			String environment, String startDate, String endDate, String providerKind) {
-		pm.setRecords(list(pm, pipeName, clusterName, environment, startDate,
+		pm.setRecords(listWithoutPage(pm, pipeName, clusterName, environment, startDate,
 				endDate, providerKind, null, null));
 		return pm;
 	}
 
 	// fix cross db
 	@Override
-	public List<PipelineHistory> list(PageHolder<PipelineHistory> pm,String pipeName, String clusterName,
-									  String environment, String startDate, String endDate, String providerKind,Integer orchestrationType,Long orchestrationId){
+	public List<PipelineHistory> listWithoutPage(PageHolder<PipelineHistory> pm, String pipeName, String clusterName,
+												 String environment, String startDate, String endDate, String providerKind, Integer orchestrationType, Long orchestrationId){
 		List<Long> clusterIds = null;
 		if(StringUtils.isNotBlank(clusterName)){
 			clusterIds = appClusterService.getIdsByLikeName(clusterName);

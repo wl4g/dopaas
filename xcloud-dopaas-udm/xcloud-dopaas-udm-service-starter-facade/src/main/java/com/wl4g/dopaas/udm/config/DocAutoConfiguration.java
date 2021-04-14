@@ -63,6 +63,11 @@ public class DocAutoConfiguration {
 	}
 
 	@Bean
+	public DocumentConverter rap1DocumentConverter() {
+		return new Rap1DocumentConverter();
+	}
+
+	@Bean
 	public DocumentConverterAdapter documentConverterAdapter(List<DocumentConverter<ConverterProviderKind>> conversions) {
 		return new DocumentConverterAdapter(conversions);
 	}
