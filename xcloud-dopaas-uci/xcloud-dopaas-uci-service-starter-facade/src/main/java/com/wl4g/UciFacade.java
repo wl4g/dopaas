@@ -35,7 +35,7 @@ import com.wl4g.shell.springboot.annotation.EnableShellServer;
  * @see
  */
 @EnableShellServer
-@EnableFeignConsumers({ "com.wl4g.dopaas.cmdb.service", "com.wl4g.iam.service" })
+@EnableFeignConsumers({ "com.wl4g.dopaas.urm.service", "com.wl4g.dopaas.cmdb.service", "com.wl4g.iam.service" })
 @EnableComponentDBConfiguration("com.wl4g.dopaas.uci.data")
 @SpringBootApplication
 public class UciFacade {

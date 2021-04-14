@@ -46,7 +46,6 @@ CoreDNS:1.7.0 +
 MinIO:latest
 Elasticsearch(EFK):6.2.3 +
 Shardingsphere-Elasticjob:3.0.0 +
-Mesos:1.11.0 +
 </pre>
 
 - [二次开发说明](README_DEVEL_CN.md)
