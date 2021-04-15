@@ -145,7 +145,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void installRemoteNewerProgram(String remoteHost, String user, String sshkey) throws Exception {
-		String decompressedTmpFile = config.getDeploy().getRemoteHomeTmpDir() + "/" + getPrgramInstallFileName();
+		String decompressedTmpFile = config.getDeploy().getRemoteHomeTmpDir() + "/*" + getPrgramInstallFileName();
 		String command = "mv " + decompressedTmpFile + " " + getProgramInstallDir();
 		writeDeployLog("Install remote newer program: %s@%s [%s]", user, remoteHost, command);
 
