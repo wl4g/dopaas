@@ -21,6 +21,7 @@ import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseDocument;
 import com.wl4g.dopaas.udm.fsview.config.FsViewerProperties;
+import com.wl4g.dopaas.udm.service.DocumentionExporter;
 import com.wl4g.dopaas.udm.service.EnterpriseMdService;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class EnterpriseMdController extends BaseController {
 	@Autowired
 	private FsViewerProperties fsViewerProperties;
 
+	@Autowired
+	private DocumentionExporter documentionExporter;
+
 	@RequestMapping(value = "/mdToHtml", method = { POST, GET })
 	public RespBase<?> mdToHtml(String md) throws IOException, TemplateException {
 		RespBase<Object> resp = RespBase.create();
@@ -71,9 +75,12 @@ public class EnterpriseMdController extends BaseController {
 	@RequestMapping(value = "/formatTemplate", method = { POST, GET })
 	public void formatTemplate(HttpServletResponse response, String md, String template) throws Exception {
 		// RespBase<Object> resp = RespBase.create();
-		String genPath = enterpriseMdService.formatTemplate(md, template);
+		//String genPath = enterpriseMdService.formatTemplate(md, template);
+		String export = documentionExporter.export(md, template);
+		//TODO 根据不同的情况返回，如果是导出文件，直接导出，如果是导出到minio，给访问地址
+
 		// resp.setData();
-		writeZip(response, genPath, "codegen-".concat(md).concat("-").concat(template));
+		writeZip(response, export, "codegen-".concat(md).concat("-").concat(template));
 		// return resp;
 	}
 
