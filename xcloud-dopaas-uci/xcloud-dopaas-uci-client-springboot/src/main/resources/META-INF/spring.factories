@@ -1,0 +1,3 @@
+# Application Auto Configuration.
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.wl4g.dopaas.uci.client.springboot.config.UciClientAutoConfiguration

@@ -15,20 +15,22 @@
  */
 package com.wl4g.dopaas.uci.config;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
-
-import com.wl4g.component.common.log.SmartLogger;
-
-import java.io.File;
-import java.util.Objects;
-
+import static com.wl4g.component.common.lang.Assert2.hasText;
+import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.component.common.lang.SystemUtils2.cleanSystemPath;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_NAME;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
-import static org.springframework.util.Assert.hasText;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+
+import org.springframework.beans.factory.InitializingBean;
+
+import com.wl4g.component.common.log.SmartLogger;
 
 /**
  * CI configuration properties.
@@ -190,8 +192,24 @@ public class CiProperties implements InitializingBean {
 	 * @return
 	 */
 	public File getJobBaseDir(Long taskHisyId) {
-		Assert.notNull(taskHisyId, "Task history ID must not be null.");
+		notNull(taskHisyId, "Task history ID must not be null.");
 		return new File(getWorkspace() + "/" + DEFUALT_JOB_BASEDIR + "/job." + taskHisyId);
+	}
+
+	/**
+	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/.BUILD-META.json
+	 * 
+	 * @param taskHisyId
+	 * @return
+	 */
+	public File getTmpBuildMetaFile(Long taskHisyId) {
+		notNull(taskHisyId, "Task history ID must not be null.");
+		try {
+			return new File(getJobBaseDir(taskHisyId).getCanonicalPath(), DEFAULT_META_NAME);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**
@@ -202,7 +220,7 @@ public class CiProperties implements InitializingBean {
 	 * @return
 	 */
 	public File getJobLog(Long taskHisyId) {
-		Assert.notNull(taskHisyId, "Task history ID must not be null.");
+		notNull(taskHisyId, "Task history ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/build.out.log");
 	}
 
@@ -215,8 +233,8 @@ public class CiProperties implements InitializingBean {
 	 * @return
 	 */
 	public File getJobDeployerLog(Long taskHisyId, Long instanceId) {
-		Assert.notNull(taskHisyId, "Task history ID must not be null.");
-		Assert.notNull(instanceId, "Task history instanceId ID must not be null.");
+		notNull(taskHisyId, "Task history ID must not be null.");
+		notNull(instanceId, "Task history instanceId ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/deploy." + instanceId + ".out.log");
 	}
 
@@ -228,7 +246,7 @@ public class CiProperties implements InitializingBean {
 	 * @return
 	 */
 	public File getJobBackupDir(Long taskHisId) {
-		Assert.notNull(taskHisId, "Rollback task history ref ID must not be null.");
+		notNull(taskHisId, "Rollback task history ref ID must not be null.");
 		return new File(getJobBaseDir(taskHisId).getAbsolutePath());
 	}
 
@@ -241,8 +259,8 @@ public class CiProperties implements InitializingBean {
 	 * @return
 	 */
 	public File getJobTmpCommandFile(Long taskHisyId, Long projectId) {
-		Assert.notNull(taskHisyId, "Task history ID must not be null.");
-		Assert.notNull(projectId, "Task project ID must not be null.");
+		notNull(taskHisyId, "Task history ID must not be null.");
+		notNull(projectId, "Task project ID must not be null.");
 		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/" + "tmp.build." + projectId + ".sh");
 	}
 
@@ -254,7 +272,7 @@ public class CiProperties implements InitializingBean {
 	 * @return
 	 */
 	public File getProjectSourceDir(String projectName) {
-		Assert.hasText(projectName, "ProjectName must not be empty.");
+		hasText(projectName, "ProjectName must not be empty.");
 		return new File(getWorkspace() + "/" + DEFUALT_VCS_SOURCEDIR + "/" + projectName);
 	}
 

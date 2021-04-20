@@ -37,7 +37,7 @@ spring:
         server-uri: http://iam.${DOPAAS_SERVICE_ZONE:wl4g.uat}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: http://dopaas.${DOPAAS_SERVICE_ZONE:wl4g.uat}/#/ci/taskhis
-    dopaas.ci:
+    dopaas.uci:
       testing-report:
         upload-path: /mnt/dist1/upload
         download-url: http://uci.wl4g.uat/ci-server/fs/download

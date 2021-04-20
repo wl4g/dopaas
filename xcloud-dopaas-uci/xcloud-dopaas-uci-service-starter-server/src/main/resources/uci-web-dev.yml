@@ -42,7 +42,7 @@ spring:
         server-uri: http://wl4g.debug:18080/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: http://wl4g.debug:8080/#/ci/taskhis
-    dopaas.ci:
+    dopaas.uci:
       testing-report:
         upload-path: /Users/vjay/Downloads/myupload
         download-url: http://wl4g.debug:17020/ci-server/fs/download

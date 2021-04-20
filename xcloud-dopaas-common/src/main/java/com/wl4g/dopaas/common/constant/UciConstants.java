@@ -24,7 +24,10 @@ package com.wl4g.dopaas.common.constant;
  */
 public abstract class UciConstants extends DoPaaSConstants {
 
-	// --- Flow pipeline constants. ---
+	public static final String KEY_UCI_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".uci";
+
+	// --- CI configuration constants. ---
+
 	public static final String REDIS_CI_RUN_PRE = "CI_RUN_";// redis key
 	public static final int REDIS_CI_RUN_SCAN_BATCH = 100;// redis scan batch
 	// TODO use config
@@ -83,13 +86,17 @@ public abstract class UciConstants extends DoPaaSConstants {
 	public static final String LOG_FILE_START = "<[EOF]";
 	public static final String LOG_FILE_END = "[EOF]>";
 
-	// --- Codes analyzers. ---
+	/**
+	 * UCI building meta configuraton.
+	 * {@link com.wl4g.dopaas.uci.pipeline.provider.RestorableDeployPipelineProvider#buildMeta}
+	 */
+	public static final String DEFAULT_META_NAME = ".BUILD-META.json";
+	public static final String DEFAULT_META_HEADER_NAME = "X-Api-Meta";
+	public static final String KEY_UCI_CLIENT_PREFIX = KEY_UCI_PREFIX + ".client.";
+
+	// --- Codes analyzers constants. ---
 
 	/** Analyzers API base URI path. */
 	public static final String URL_ANALYZER_BASE_PATH = "/analyzer";
-
-	// --- CI configuration constants. ---
-
-	public static final String KEY_CI_CONFIG_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".ci";
 
 }
