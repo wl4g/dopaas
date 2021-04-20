@@ -15,8 +15,23 @@
  */
 package com.wl4g.dopaas.uci.config;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
+import java.util.List;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+
 import com.wl4g.component.core.framework.beans.NamingPrototype;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
+import com.wl4g.dopaas.common.bean.uci.Pipeline;
+import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;
+import com.wl4g.dopaas.common.bean.uci.Trigger;
+import com.wl4g.dopaas.common.constant.UciConstants;
 import com.wl4g.dopaas.uci.console.CiConsole;
 import com.wl4g.dopaas.uci.core.DefaultPipelineManagerImpl;
 import com.wl4g.dopaas.uci.core.PipelineJobExecutor;
@@ -30,27 +45,29 @@ import com.wl4g.dopaas.uci.pcm.jira.JiraPcmOperator;
 import com.wl4g.dopaas.uci.pcm.redmine.RedminePcmOperator;
 import com.wl4g.dopaas.uci.pipeline.TimeoutJobsEvictor;
 import com.wl4g.dopaas.uci.pipeline.TimingPipelineManager;
-import com.wl4g.dopaas.uci.pipeline.deploy.*;
-import com.wl4g.dopaas.uci.pipeline.provider.*;
+import com.wl4g.dopaas.uci.pipeline.deploy.CossPipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.deploy.DockerNativePipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.deploy.GolangModPipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.deploy.MvnAssembleTarPipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.deploy.NpmViewPipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.deploy.Python3PipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.deploy.RktNativePipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.deploy.SpringExecutableJarPipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.deploy.ViewNativePipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.deploy.WarTomcatPipeDeployer;
+import com.wl4g.dopaas.uci.pipeline.provider.GolangModPipelineProvider;
+import com.wl4g.dopaas.uci.pipeline.provider.MvnAssembleTarPipelineProvider;
+import com.wl4g.dopaas.uci.pipeline.provider.NpmViewPipelineProvider;
+import com.wl4g.dopaas.uci.pipeline.provider.PipelineProvider;
 import com.wl4g.dopaas.uci.pipeline.provider.PipelineProvider.PipelineKind;
+import com.wl4g.dopaas.uci.pipeline.provider.Python3PipelineProvider;
+import com.wl4g.dopaas.uci.pipeline.provider.SpringExecutableJarPipelineProvider;
+import com.wl4g.dopaas.uci.pipeline.provider.TimingPipelineProvider;
+import com.wl4g.dopaas.uci.pipeline.provider.ViewNativePipelineProvider;
+import com.wl4g.dopaas.uci.pipeline.provider.WarTomcatPipelineProvider;
 import com.wl4g.dopaas.uci.pipeline.provider.container.DockerNativePipelineProvider;
 import com.wl4g.dopaas.uci.pipeline.provider.container.RktNativePipelineProvider;
 import com.wl4g.dopaas.uci.tool.LogPurger;
-import com.wl4g.dopaas.common.bean.uci.Pipeline;
-import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;
-import com.wl4g.dopaas.common.bean.uci.Trigger;
-import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
-import com.wl4g.dopaas.common.constant.UciConstants;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-
-import java.util.List;
-
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 /**
  * CI/CD auto configuration.
@@ -65,7 +82,7 @@ public class CiAutoConfiguration {
 	// --- Basic's ---
 
 	@Bean
-	@ConfigurationProperties(prefix = UciConstants.KEY_CI_CONFIG_PREFIX)
+	@ConfigurationProperties(prefix = UciConstants.KEY_UCI_PREFIX)
 	public CiProperties ciCdProperties() {
 		return new CiProperties();
 	}

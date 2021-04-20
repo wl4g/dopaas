@@ -15,31 +15,31 @@
  */
 package com.wl4g.dopaas.uci.pipeline.provider;
 
-import com.wl4g.component.common.io.CompressUtils;
-import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.support.cli.command.DestroableCommand;
-import com.wl4g.component.support.cli.command.LocalDestroableCommand;
-import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
-import com.wl4g.dopaas.common.bean.uci.PipeStepApi;
-import com.wl4g.dopaas.common.bean.uci.Project;
-import com.wl4g.dopaas.common.bean.uci.model.ActionControl;
-import com.wl4g.dopaas.common.exception.ci.NotFoundBackupAssetsFileException;
-import com.wl4g.dopaas.uci.core.context.PipelineContext;
-import com.wl4g.dopaas.uci.pipeline.provider.container.DockerNativePipelineProvider;
-import com.wl4g.dopaas.uci.pipeline.provider.model.MetaModel;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import static com.wl4g.component.common.codec.FingerprintUtils.getMd5Fingerprint;
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.dopaas.uci.pipeline.provider.PipelineProvider.PipelineKind.DOCKER_NATIVE;
 import static com.wl4g.dopaas.uci.utils.PipelineUtils.ensureDirectory;
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+
+import org.apache.commons.io.FileUtils;
+
+import com.wl4g.component.common.io.CompressUtils;
+import com.wl4g.component.common.io.FileIOUtils;
+import com.wl4g.component.support.cli.command.DestroableCommand;
+import com.wl4g.component.support.cli.command.LocalDestroableCommand;
+import com.wl4g.dopaas.common.bean.uci.PipeStepApi;
+import com.wl4g.dopaas.common.bean.uci.Project;
+import com.wl4g.dopaas.common.bean.uci.model.ActionControl;
+import com.wl4g.dopaas.common.bean.uci.model.BuildMetaInfo;
+import com.wl4g.dopaas.common.exception.ci.NotFoundBackupAssetsFileException;
+import com.wl4g.dopaas.uci.core.context.PipelineContext;
+import com.wl4g.dopaas.uci.pipeline.provider.container.DockerNativePipelineProvider;
 
 /**
  * Recoverable deployment pipeline provider based on physical backup (local
@@ -69,7 +69,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 			setAssetsFingerprint(getMd5Fingerprint(assetsFile));
 		}
 
-		//build Meta
+		// build Meta
 		buildMeta();
 
 		// build api document
@@ -92,49 +92,41 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	}
 
 	private void buildMeta() {
-		String assetsFilePath = getContext().getProjectSourceDir() + config.getAssetsFullFilename(getContext().getPipeline().getAssetsDir(),
-				getContext().getAppCluster().getName());
-
-		String tempMetaFilePath = config.getJobBaseDir(getContext().getPipelineHistory().getId()).getAbsolutePath() + "/.uci-meta.json";
-
 		// Step1 : build Meta model
-		MetaModel model = new MetaModel();
+		BuildMetaInfo meta = new BuildMetaInfo();
 
-		MetaModel.BuildInfo buildInfo = model.getBuildInfo();
+		BuildMetaInfo.BuildInfo buildInfo = meta.getBuildInfo();
 		buildInfo.setMd5(getAssetsFingerprint());
 		buildInfo.setServiceName(getContext().getAppCluster().getName());
-		buildInfo.setTotalBytes(FileUtils.sizeOf(new File(assetsFilePath)));
+		File assetsFile = new File(getContext().getProjectSourceDir() + config
+				.getAssetsFullFilename(getContext().getPipeline().getAssetsDir(), getContext().getAppCluster().getName()));
+		buildInfo.setTotalBytes(FileUtils.sizeOf(assetsFile));
 
-
-		MetaModel.SourceInfo sourceInfo = model.getSourceInfo();
+		BuildMetaInfo.SourceInfo sourceInfo = meta.getSourceInfo();
 		sourceInfo.setCommitId(getSourceFingerprint());
 		sourceInfo.setBranchOrTag(getContext().getPipeline().getPipeStepBuilding().getRef());
 		sourceInfo.setProjectUrl(getContext().getProject().getHttpUrl());
 		sourceInfo.setTimestamp(System.currentTimeMillis());
 		sourceInfo.setComment(getContext().getPipelineHistory().getRemark());
 
-		MetaModel.PcmInfo pcmInfo = model.getPcmInfo();
+		BuildMetaInfo.PcmInfo pcmInfo = meta.getPcmInfo();
 		pcmInfo.setPcmIssuesId(getContext().getPipelineHistory().getTrackId());
 		pcmInfo.setPcmIssuesSubject(getContext().getPipelineHistory().getPipeName());
 		pcmInfo.setPcmProjectName(getContext().getPipelineHistory().getPipeName());
 
-		MetaModel.DeployInfo deployInfo = model.getDeployInfo();
-		List<String> hosts = new ArrayList<>();
-		for(AppInstance instance : getContext().getInstances()){
-			hosts.add(instance.getHostname());
-		}
-		deployInfo.setHosts(hosts);
+		BuildMetaInfo.DeployInfo deployInfo = meta.getDeployInfo();
+		deployInfo.setHosts(safeList(getContext().getInstances()).stream().map(i -> i.getHostname()).collect(toList()));
 
-		String content = JacksonUtils.toJSONString(model);
-		FileIOUtils.writeFile(new File(tempMetaFilePath), content,false);
+		String content = toJSONString(meta);
+		File tmpMetaFile = config.getTmpBuildMetaFile(getContext().getPipelineHistory().getId());
+		FileIOUtils.writeFile(tmpMetaFile, content, false);
 
 		try {
-			// 写第一个文件
-			CompressUtils.appendToTar(assetsFilePath, tempMetaFilePath,".uci-meta.json");
-		}catch (Exception e){
+			// Write to first file
+			CompressUtils.appendTarArchive(assetsFile, tmpMetaFile, ".uci-meta.json");
+		} catch (Exception e) {
 			log.error("append file to tar error", e);
 		}
-
 	}
 
 	private void buildImage() throws Exception {
@@ -152,7 +144,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 			String jsonFilePath = projectDir + getContext().getPipeline().getAssetsDir()
 					+ "/generated-docs/swagger-swagger2-by-springfox.json";
 			File file = new File(jsonFilePath);
-			if(!file.exists()){
+			if (!file.exists()) {
 				return;
 			}
 			String json = FileIOUtils.readFileToString(file, "UTF-8");

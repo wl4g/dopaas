@@ -29,7 +29,7 @@ import com.wl4g.dopaas.common.constant.UciConstants;
  * @see
  */
 @Component
-@ConfigurationProperties(UciConstants.KEY_CI_CONFIG_PREFIX + ".testing-report")
+@ConfigurationProperties(UciConstants.KEY_UCI_PREFIX + ".testing-report")
 public class TestingReportProperties {
 
 	private String uploadPath;
