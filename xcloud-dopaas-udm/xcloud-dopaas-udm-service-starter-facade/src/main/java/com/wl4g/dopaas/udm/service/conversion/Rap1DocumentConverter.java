@@ -19,13 +19,16 @@
  */
 package com.wl4g.dopaas.udm.service.conversion;
 
+import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.serialize.JacksonUtils;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
 import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
 import com.wl4g.dopaas.udm.model.Rap1Model;
 import com.wl4g.dopaas.udm.model.Rap1ModelJson;
+import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +44,46 @@ import java.util.List;
 public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> {
 	@Override
 	public XCloudDocumentModel convertFrom(String documentJson) {
+
+		if(documentJson.startsWith("http")){
+			// http://rap.anjiancloud.repo/workspace/myWorkspace.do?projectId=29#2099
+
+			String url = documentJson;
+			if(!documentJson.contains("queryRAPModel")){
+				String prefix = "";
+				if(documentJson.startsWith("https")){
+					prefix = "https://";
+				}else{
+					prefix = "http://";
+				}
+
+				documentJson = documentJson.replaceAll("http://", "");
+				documentJson = documentJson.replaceAll("https://", "");
+
+				String domain = documentJson.substring(0, documentJson.indexOf("/"));
+
+				String args = documentJson.substring(documentJson.indexOf("projectId=") + 10);
+				if(args.contains("#")){
+					args = args.substring(0, args.indexOf("#"));
+				}
+
+				if(args.contains("&")){
+					args = args.substring(0, args.indexOf("&"));
+				}
+				url = prefix + domain + "/api/queryRAPModel.do?projectId=" + args;
+			}
+
+			Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+			factory.setReadTimeout(10000);
+			factory.setConnectTimeout(6000);
+			factory.setMaxResponseSize(65535);
+			// factory.setSslContext(sslContext);
+			RestTemplate restTemplate = new RestTemplate(factory);
+			documentJson = restTemplate.getForObject(url, String.class);
+		}
+
 		Rap1ModelJson rap1ModelJson = JacksonUtils.parseJSON(documentJson, Rap1ModelJson.class);
+		Assert2.notNullOf(rap1ModelJson, "rap1ModelJson");
 		rap1ModelJson.setModelJSON(rap1ModelJson.getModelJSON().replaceAll("\\\\'", "'"));
 		Rap1Model rap1Model = JacksonUtils.parseJSON(rap1ModelJson.getModelJSON(), Rap1Model.class);
 		return convertFrom(rap1Model);

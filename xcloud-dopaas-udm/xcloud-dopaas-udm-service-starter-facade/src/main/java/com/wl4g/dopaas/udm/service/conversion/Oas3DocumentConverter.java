@@ -19,27 +19,12 @@
  */
 package com.wl4g.dopaas.udm.service.conversion;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
 import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
-
 import io.swagger.v3.core.util.Json;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.PathItem;
-import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
@@ -48,6 +33,11 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.parser.OpenAPIV3Parser;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * {@link Oas3DocumentConverter}
@@ -222,7 +212,9 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
 
 			setResponseBodyRef(openAPI, operation, responseProperties, enterpriseApi.getName() + "ResponseBody");
 
-			paths.addPathItem(enterpriseApi.getUrl(), item);
+			if(StringUtils.isNotBlank(enterpriseApi.getUrl())){
+				paths.addPathItem(enterpriseApi.getUrl(), item);
+			}
 		}
 
 		openAPI.setPaths(paths);

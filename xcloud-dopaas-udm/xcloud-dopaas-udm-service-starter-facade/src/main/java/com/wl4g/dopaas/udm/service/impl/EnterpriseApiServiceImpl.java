@@ -22,9 +22,15 @@ import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.dopaas.common.bean.udm.*;
+import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
+import com.wl4g.dopaas.common.bean.udm.EnterpriseApiModule;
+import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
+import com.wl4g.dopaas.common.bean.udm.EnterpriseRepositoryVersion;
 import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
-import com.wl4g.dopaas.udm.data.*;
+import com.wl4g.dopaas.udm.data.EnterpriseApiDao;
+import com.wl4g.dopaas.udm.data.EnterpriseApiModuleDao;
+import com.wl4g.dopaas.udm.data.EnterpriseApiPropertiesDao;
+import com.wl4g.dopaas.udm.data.EnterpriseRepositoryVersionDao;
 import com.wl4g.dopaas.udm.service.EnterpriseApiService;
 import com.wl4g.dopaas.udm.service.conversion.DocumentConverter;
 import com.wl4g.dopaas.udm.service.conversion.DocumentConverterAdapter;
@@ -106,6 +112,9 @@ public class EnterpriseApiServiceImpl implements EnterpriseApiService {
 	}
 
 	private void tree2List(List<EnterpriseApiProperties> tree, List<EnterpriseApiProperties> list, Long parentId) {
+		if(CollectionUtils.isEmpty(tree)){
+			return;
+		}
 		for (EnterpriseApiProperties enterpriseApiProperties : tree) {
 			enterpriseApiProperties.setId(SnowflakeIdGenerator.getDefault().nextId());
 			enterpriseApiProperties.preInsert();
