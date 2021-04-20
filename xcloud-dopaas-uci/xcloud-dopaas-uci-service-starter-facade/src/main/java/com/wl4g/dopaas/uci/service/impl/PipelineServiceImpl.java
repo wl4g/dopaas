@@ -352,7 +352,7 @@ public class PipelineServiceImpl implements PipelineService {
 		pipeStepPcmDao.deleteByPipeId(pipeline.getId());
 		PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
 		if (nonNull(pipeStepPcm)) {
-			pipeStepPcm.preInsert();
+			//pipeStepPcm.preInsert();
 			pipeStepPcm.setPipeId(pipeline.getId());
 			pipeStepPcmDao.insertSelective(pipeStepPcm);
 		}
