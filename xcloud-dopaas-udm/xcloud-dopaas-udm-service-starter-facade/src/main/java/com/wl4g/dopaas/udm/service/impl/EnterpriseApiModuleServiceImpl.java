@@ -18,21 +18,19 @@
 
 package com.wl4g.dopaas.udm.service.impl;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static java.util.Objects.isNull;
-
-import java.util.List;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.wl4g.component.core.bean.BaseBean;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiModule;
 import com.wl4g.dopaas.udm.data.EnterpriseApiModuleDao;
 import com.wl4g.dopaas.udm.service.EnterpriseApiModuleService;
 import com.wl4g.dopaas.udm.service.dto.EnterpriseApiModulePageRequest;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static java.util.Objects.isNull;
 
 /**
  * service implements of {@link EnterpriseApiModule}
@@ -82,10 +80,7 @@ public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleServic
 	@Override
 	public int del(Long id) {
 		notNullOf(id, "id");
-		EnterpriseApiModule enterpriseApiModule = new EnterpriseApiModule();
-		enterpriseApiModule.setId(id);
-		enterpriseApiModule.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		return enterpriseApiModuleDao.updateByPrimaryKeySelective(enterpriseApiModule);
+		return enterpriseApiModuleDao.deleteByPrimaryKey(id);
 	}
 
 }
