@@ -22,6 +22,7 @@ package com.wl4g.dopaas.uci.client.springboot.config;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -41,8 +42,8 @@ public class UciClientAutoConfiguration {
 
 	@ConfigurationProperties(prefix = UciConstants.KEY_UCI_CLIENT_PREFIX)
 	@Bean
-	public UciClientProperties uciClientProperties() {
-		return new UciClientProperties();
+	public UciClientProperties uciClientProperties(ApplicationContext actx) {
+		return new UciClientProperties(actx);
 	}
 
 	@Bean

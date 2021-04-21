@@ -19,11 +19,16 @@
  */
 package com.wl4g.dopaas.uci.client.springboot.config;
 
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_HEADER_NAME;
 import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_NAME;
 import static java.lang.String.format;
 
-import com.wl4g.component.core.utils.context.SpringContextHolder;
+import java.io.File;
+
+import javax.validation.constraints.NotNull;
+
+import org.springframework.context.ApplicationContext;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,10 +46,12 @@ import lombok.Setter;
 public class UciClientProperties {
 
 	private String metaInfoHeaderName = DEFAULT_META_HEADER_NAME;
-	private String defaultMetaFile = format("/opt/apps/acm/%s-package/%s-master-bin/%s", getAppName0(), DEFAULT_META_NAME);
+	private File defaultMetaFile;
 
-	private final String getAppName0() {
-		return SpringContextHolder.getApplicationContext().getEnvironment().getProperty("spring.application.name", "");
+	public UciClientProperties(@NotNull final ApplicationContext actx) {
+		notNullOf(actx, "applicationContext");
+		String appName = actx.getEnvironment().getRequiredProperty("spring.application.name");
+		this.defaultMetaFile = new File(format("/opt/apps/acm/%s-package/%s-master-bin/%s", appName, DEFAULT_META_NAME));
 	}
 
 }

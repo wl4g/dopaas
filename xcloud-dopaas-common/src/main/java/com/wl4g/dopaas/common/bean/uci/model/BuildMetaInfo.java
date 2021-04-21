@@ -34,7 +34,7 @@ import lombok.Setter;
 @Setter
 public class BuildMetaInfo {
 
-	private String uciMetaVersion;
+	private String metaVersion;
 	private BuildInfo buildInfo = new BuildInfo();
 	private SourceInfo sourceInfo = new SourceInfo();
 	private PcmInfo pcmInfo = new PcmInfo();
