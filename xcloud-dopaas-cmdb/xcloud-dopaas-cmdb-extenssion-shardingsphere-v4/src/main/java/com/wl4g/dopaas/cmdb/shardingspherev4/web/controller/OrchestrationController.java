@@ -45,7 +45,7 @@ public final class OrchestrationController {
      *
      * @return response result
      */
-    @RequestMapping(value = "/instance", method = RequestMethod.GET)
+    @RequestMapping(value = "/instance/get", method = RequestMethod.GET)
     public ResponseResult<Collection<InstanceDTO>> loadAllInstances() {
         return ResponseResultUtil.build(orchestrationService.getALLInstance());
     }
@@ -56,7 +56,7 @@ public final class OrchestrationController {
      * @param instanceDTO instance DTO
      * @return response result
      */
-    @RequestMapping(value = "/instance", method = RequestMethod.PUT)
+    @RequestMapping(value = "/instance/put", method = RequestMethod.PUT)
     public ResponseResult updateInstanceStatus(@RequestBody final InstanceDTO instanceDTO) {
         orchestrationService.updateInstanceStatus(instanceDTO.getInstanceId(), instanceDTO.isEnabled());
         return ResponseResultUtil.success();
@@ -67,7 +67,7 @@ public final class OrchestrationController {
      *
      * @return response result
      */
-    @RequestMapping(value = "/datasource", method = RequestMethod.GET)
+    @RequestMapping(value = "/datasource/get", method = RequestMethod.GET)
     public ResponseResult<Collection<SlaveDataSourceDTO>> loadAllSlaveDataSources() {
         return ResponseResultUtil.build(orchestrationService.getAllSlaveDataSource());
     }
@@ -78,7 +78,7 @@ public final class OrchestrationController {
      * @param slaveDataSourceDTO slave data source DTO
      * @return response result
      */
-    @RequestMapping(value = "/datasource", method = RequestMethod.PUT)
+    @RequestMapping(value = "/datasource/put", method = RequestMethod.PUT)
     public ResponseResult updateSlaveDataSourceStatus(@RequestBody final SlaveDataSourceDTO slaveDataSourceDTO) {
         orchestrationService.updateSlaveDataSourceStatus(slaveDataSourceDTO.getSchema(), slaveDataSourceDTO.getSlaveDataSourceName(), slaveDataSourceDTO.isEnabled());
         return ResponseResultUtil.success();
