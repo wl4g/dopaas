@@ -22,7 +22,6 @@ import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.ShardingSchemaService;
 import com.wl4g.dopaas.cmdb.shardingspherev4.web.response.ResponseResult;
 import com.wl4g.dopaas.cmdb.shardingspherev4.web.response.ResponseResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,7 +45,7 @@ public final class ShardingSchemaController {
      *
      * @return response result
      */
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "get", method = RequestMethod.GET)
     public ResponseResult<Collection<String>> loadAllSchemaNames() {
         return ResponseResultUtil.build(shardingSchemaService.getAllSchemaNames());
     }
@@ -57,7 +56,7 @@ public final class ShardingSchemaController {
      * @param shardingSchema sharding schema DTO.
      * @return response result
      */
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "post", method = RequestMethod.POST)
     public ResponseResult addSchema(final @RequestBody ShardingSchemaDTO shardingSchema) {
         shardingSchemaService.addSchemaConfiguration(shardingSchema.getName(), shardingSchema.getRuleConfiguration(), shardingSchema.getDataSourceConfiguration());
         return ResponseResultUtil.success();
@@ -69,8 +68,8 @@ public final class ShardingSchemaController {
      * @param schemaName schema name
      * @return response result
      */
-    @RequestMapping(value = "/rule/{schemaName}", method = RequestMethod.GET)
-    public ResponseResult<String> loadRuleConfiguration(@PathVariable("schemaName") final String schemaName) {
+    @RequestMapping(value = "/rule/get", method = RequestMethod.GET)
+    public ResponseResult<String> loadRuleConfiguration(final String schemaName) {
         return ResponseResultUtil.build(shardingSchemaService.getRuleConfiguration(schemaName));
     }
     
@@ -81,9 +80,9 @@ public final class ShardingSchemaController {
      * @param configMap config map
      * @return response result
      */
-    @RequestMapping(value = "/rule/{schemaName}", method = RequestMethod.PUT)
-    public ResponseResult updateRuleConfiguration(@PathVariable("schemaName") final String schemaName, @RequestBody final Map<String, String> configMap) {
-        shardingSchemaService.updateRuleConfiguration(schemaName, configMap.get("ruleConfig"));
+    @RequestMapping(value = "/rule/put", method = RequestMethod.PUT)
+    public ResponseResult updateRuleConfiguration(@RequestBody final Map<String, String> configMap) {
+        shardingSchemaService.updateRuleConfiguration(configMap.get("schemaName"), configMap.get("ruleConfig"));
         return ResponseResultUtil.success();
     }
     
@@ -93,8 +92,8 @@ public final class ShardingSchemaController {
      * @param schemaName schema name
      * @return response result
      */
-    @RequestMapping(value = "/datasource/{schemaName}", method = RequestMethod.GET)
-    public ResponseResult<String> loadDataSourceConfiguration(@PathVariable("schemaName") final String schemaName) {
+    @RequestMapping(value = "/datasource/get", method = RequestMethod.GET)
+    public ResponseResult<String> loadDataSourceConfiguration(final String schemaName) {
         return ResponseResultUtil.build(shardingSchemaService.getDataSourceConfiguration(schemaName));
     }
     
@@ -105,9 +104,9 @@ public final class ShardingSchemaController {
      * @param configMap config map
      * @return response result
      */
-    @RequestMapping(value = "/datasource/{schemaName}", method = RequestMethod.PUT)
-    public ResponseResult updateDataSourceConfiguration(@PathVariable("schemaName") final String schemaName, @RequestBody final Map<String, String> configMap) {
-        shardingSchemaService.updateDataSourceConfiguration(schemaName, configMap.get("dataSourceConfig"));
+    @RequestMapping(value = "/datasource/put", method = RequestMethod.PUT)
+    public ResponseResult updateDataSourceConfiguration( @RequestBody final Map<String, String> configMap) {
+        shardingSchemaService.updateDataSourceConfiguration(configMap.get("schemaName"), configMap.get("dataSourceConfig"));
         return ResponseResultUtil.success();
     }
     
