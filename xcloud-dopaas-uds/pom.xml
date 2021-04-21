@@ -12,6 +12,7 @@
 		<version>master</version>
 	</parent>
 	<modules>
+		<module>xcloud-dopaas-uds-example</module>
 		<module>xcloud-dopaas-uds-service-data</module>
 		<module>xcloud-dopaas-uds-service-facade</module>
 		<module>xcloud-dopaas-uds-service-starter-facade</module>
