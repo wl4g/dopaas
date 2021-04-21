@@ -12,7 +12,7 @@
 spring:
   application.name: udm-manager
   profiles:
-    include: common,support,util,base,etc
+    include: common,support,util,base
     active: dev
   xcloud:
     component:

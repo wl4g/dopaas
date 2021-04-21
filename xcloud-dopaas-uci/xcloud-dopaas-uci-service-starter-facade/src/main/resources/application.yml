@@ -13,7 +13,7 @@
 spring:
   application.name: uci-facade
   profiles:
-    include: common,support,util,etc
+    include: common,support,util
     active: dev
   xcloud:
     component:
@@ -81,7 +81,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.uci.data: DEBUG
+      wl4g.dopaas.uci: DEBUG
 
 # ### Server configuration. ###
 server:

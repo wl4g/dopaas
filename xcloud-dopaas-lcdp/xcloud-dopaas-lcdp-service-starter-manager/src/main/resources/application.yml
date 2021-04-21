@@ -11,7 +11,7 @@
 spring:
   application.name: lcdp-manager
   profiles:
-    include: common,support,util,base,etc
+    include: common,support,util,base
     active: dev
   xcloud:
     iam: # IAM client configuration.

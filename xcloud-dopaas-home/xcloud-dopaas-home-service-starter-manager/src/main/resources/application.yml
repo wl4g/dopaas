@@ -11,7 +11,7 @@
 spring:
   application.name: home-manager
   profiles:
-    include: common,support,util,base,etc
+    include: common,support,util,base
     active: dev
   xcloud:
     iam: # IAM client configuration.
@@ -58,7 +58,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.cmdb.web: DEBUG
+      wl4g.dopaas.home: DEBUG
 
 # ### Server configuration. ###
 server:

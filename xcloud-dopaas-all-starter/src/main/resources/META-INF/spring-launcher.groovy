@@ -29,7 +29,7 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 
 	@Override
 	def int getOrder() {
-		return -100
+		return -200
 	}
 
 	@Override
@@ -43,64 +43,40 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		configName.append(",common-dopaas")
 		// HOME
 		configName.append(",home-facade")
-		configName.append(",home-facade-etc")
 		configName.append(",home-manager")
-		configName.append(",home-manager-etc")
 		// UCI
 		configName.append(",uci-facade")
-		configName.append(",uci-facade-etc")
 		configName.append(",uci-server")
-		configName.append(",uci-server-etc")
 		configName.append(",uci-analyzer")
 		// UDM
 		configName.append(",udm-facade")
-		configName.append(",udm-facade-etc")
 		configName.append(",udm-manager")
-		configName.append(",udm-manager-etc")
 		// LCDP
 		configName.append(",lcdp-facade")
-		configName.append(",lcdp-facade-etc")
 		configName.append(",lcdp-manager")
-		configName.append(",lcdp-manager-etc")
 		// UDS
 		configName.append(",uds-facade")
-		configName.append(",uds-facade-etc")
 		configName.append(",uds-manager")
-		configName.append(",uds-manager-etc")
 		// CMDB
 		configName.append(",cmdb-facade")
-		configName.append(",cmdb-facade-etc")
 		configName.append(",cmdb-manager")
-		configName.append(",cmdb-manager-etc")
 		// ESM
 		//configName.append(",esm-facade")
-		//configName.append(",esm-facade-etc")
 		//configName.append(",esm-manager")
-		//configName.append(",esm-manager-etc")
 		// UCM
 		configName.append(",ucm-facade")
-		configName.append(",ucm-facade-etc")
 		configName.append(",ucm-server")
-		configName.append(",ucm-server-etc")
 		// UMC
 		configName.append(",umc-facade")
-		configName.append(",umc-facade-etc")
 		configName.append(",umc-manager")
-		configName.append(",umc-manager-etc")
 		configName.append(",umc-collector")
-		configName.append(",umc-collector-etc")
 		configName.append(",umc-tracker")
-		configName.append(",umc-tracker-etc")
 		// URM
 		configName.append(",urm-facade")
-		configName.append(",urm-facade-etc")
 		configName.append(",urm-manager")
-		configName.append(",urm-manager-etc")
 		// UOS
 		configName.append(",uos-facade")
-		configName.append(",uos-facade-etc")
 		configName.append(",uos-manager")
-		configName.append(",uos-manager-etc")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-web-dev.yml'

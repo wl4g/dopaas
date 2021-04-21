@@ -12,14 +12,6 @@
 #
 spring:
   xcloud:
-    component:
-      support:
-        jedis:
-          passwd: ${CMDB_DOPAAS_REDIS_PASSWD:zzx!@#$%}
-          connect-timeout: 10000
-          max-attempts: 10
-          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${CMDB_DOPAAS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
     iam:
       cors:
         rules:

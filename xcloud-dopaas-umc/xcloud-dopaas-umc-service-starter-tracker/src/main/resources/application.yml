@@ -13,7 +13,7 @@
 spring:
   application.name: umc-tracker
   profiles:
-    include: common,support,util,base,etc
+    include: common,support,util,base
     active: dev
 
 # Logging configuration.
@@ -36,7 +36,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.data: DEBUG
+      wl4g.dopaas.umc: DEBUG
 
 # ### Server configuration. ###
 server:

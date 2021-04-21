@@ -11,7 +11,7 @@
 spring:
   application.name: uds-facade
   profiles:
-    include: common,support,util,etc
+    include: common,support,util
     active: dev
 
 # Mybatis configuration.
@@ -38,7 +38,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.uds.data: DEBUG
+      wl4g.dopaas.uds: DEBUG
 
 # ### Server configuration. ###
 server:
