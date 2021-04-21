@@ -28,29 +28,30 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ProxyAuthenticationServiceImpl implements ProxyAuthenticationService {
-    
-    @Autowired
-    private ConfigCenterService configCenterService;
-    
-    @Override
-    public String getAuthentication() {
-        return configCenterService.getActivatedConfigCenter().get(configCenterService.getActivateConfigurationNode().getAuthenticationPath());
-    }
-    
-    @Override
-    public void updateAuthentication(final String authentication) {
-        checkAuthenticationConfiguration(authentication);
-        configCenterService.getActivatedConfigCenter()
-                .persist(configCenterService.getActivateConfigurationNode().getAuthenticationPath(), authentication);
-    }
-    
-    private void checkAuthenticationConfiguration(final String data) {
-        try {
-            ConfigurationYamlConverter.loadAuthentication(data);
-            // CHECKSTYLE:OFF
-        } catch (final Exception ex) {
-            // CHECKSTYLE:ON
-            throw new IllegalArgumentException("authentication configuration is invalid.");
-        }
-    }
+
+	@Autowired
+	private ConfigCenterService configCenterService;
+
+	@Override
+	public String getAuthentication() {
+		return configCenterService.getActivatedConfigCenter()
+				.get(configCenterService.getActivateConfigurationNode().getAuthenticationPath());
+	}
+
+	@Override
+	public void updateAuthentication(final String authentication) {
+		checkAuthenticationConfiguration(authentication);
+		configCenterService.getActivatedConfigCenter()
+				.persist(configCenterService.getActivateConfigurationNode().getAuthenticationPath(), authentication);
+	}
+
+	private void checkAuthenticationConfiguration(final String data) {
+		try {
+			ConfigurationYamlConverter.loadAuthentication(data);
+			// CHECKSTYLE:OFF
+		} catch (final Exception ex) {
+			// CHECKSTYLE:ON
+			throw new IllegalArgumentException("authentication configuration is invalid.");
+		}
+	}
 }

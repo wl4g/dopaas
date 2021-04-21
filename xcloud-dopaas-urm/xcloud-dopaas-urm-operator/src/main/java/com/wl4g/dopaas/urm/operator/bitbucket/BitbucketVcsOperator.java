@@ -41,7 +41,8 @@ public class BitbucketVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsBranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<VcsBranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
 		throw new UnsupportedOperationException();
 	}

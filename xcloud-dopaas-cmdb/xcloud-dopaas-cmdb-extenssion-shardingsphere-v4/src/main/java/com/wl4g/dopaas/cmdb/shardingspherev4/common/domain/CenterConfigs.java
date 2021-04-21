@@ -29,6 +29,6 @@ import java.util.List;
 @Getter
 @Setter
 public class CenterConfigs {
-    
-    private List<CenterConfig> centerConfigs = new ArrayList<>();
+
+	private List<CenterConfig> centerConfigs = new ArrayList<>();
 }

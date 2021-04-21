@@ -17,7 +17,6 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.servcie;
 
-
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfig;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfigs;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.CenterConfigDTO;
@@ -28,66 +27,76 @@ import java.util.Optional;
  * Center config service.
  */
 public interface CenterConfigService {
-    
-    /**
-     * Load center config.
-     *
-     * @param name center config name
-     * @param orchestrationType orchestration type
-     * @return center config
-     */
-    CenterConfig load(String name, String orchestrationType);
-    
-    /**
-     * Load the activated center config.
-     *
-     * @param orchestrationType orchestration type
-     * @return activated center config
-     */
-    Optional<CenterConfig> loadActivated(String orchestrationType);
-    
-    /**
-     * Add center config.
-     *
-     * @param config center config
-     */
-    void add(CenterConfig config);
-    
-    /**
-     * Delete center config.
-     *
-     * @param name center config name
-     * @param orchestrationType orchestration type
-     */
-    void delete(String name, String orchestrationType);
-    
-    /**
-     * Set activated center config.
-     *
-     * @param name center config name
-     * @param orchestrationType orchestration type
-     */
-    void setActivated(String name, String orchestrationType);
-    
-    /**
-     * Load all center configs.
-     *
-     * @return all center configs.
-     */
-    CenterConfigs loadAll();
-    
-    /**
-     * Load all center configs.
-     *
-     * @param orchestrationType orchestration type
-     * @return all center configs.
-     */
-    CenterConfigs loadAll(String orchestrationType);
-    
-    /**
-     * update config center
-     *
-     * @param config center config
-     */
-    void update(CenterConfigDTO config);
+
+	/**
+	 * Load center config.
+	 *
+	 * @param name
+	 *            center config name
+	 * @param orchestrationType
+	 *            orchestration type
+	 * @return center config
+	 */
+	CenterConfig load(String name, String orchestrationType);
+
+	/**
+	 * Load the activated center config.
+	 *
+	 * @param orchestrationType
+	 *            orchestration type
+	 * @return activated center config
+	 */
+	Optional<CenterConfig> loadActivated(String orchestrationType);
+
+	/**
+	 * Add center config.
+	 *
+	 * @param config
+	 *            center config
+	 */
+	void add(CenterConfig config);
+
+	/**
+	 * Delete center config.
+	 *
+	 * @param name
+	 *            center config name
+	 * @param orchestrationType
+	 *            orchestration type
+	 */
+	void delete(String name, String orchestrationType);
+
+	/**
+	 * Set activated center config.
+	 *
+	 * @param name
+	 *            center config name
+	 * @param orchestrationType
+	 *            orchestration type
+	 */
+	void setActivated(String name, String orchestrationType);
+
+	/**
+	 * Load all center configs.
+	 *
+	 * @return all center configs.
+	 */
+	CenterConfigs loadAll();
+
+	/**
+	 * Load all center configs.
+	 *
+	 * @param orchestrationType
+	 *            orchestration type
+	 * @return all center configs.
+	 */
+	CenterConfigs loadAll(String orchestrationType);
+
+	/**
+	 * update config center
+	 *
+	 * @param config
+	 *            center config
+	 */
+	void update(CenterConfigDTO config);
 }

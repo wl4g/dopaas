@@ -35,25 +35,25 @@ import java.util.Optional;
  */
 @Service
 public class ConfigCenterServiceImpl implements ConfigCenterService {
-    
-    @Autowired
-    private CenterConfigService centerConfigService;
-    
-    @Override
-    public ConfigCenterRepository getActivatedConfigCenter() {
-        Optional<CenterConfig> optional = centerConfigService.loadActivated(OrchestrationType.CONFIG_CENTER.getValue());
-        if (optional.isPresent()) {
-            return CenterRepositoryFactory.createConfigCenter(optional.get());
-        }
-        throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "No activated config center!");
-    }
-    
-    @Override
-    public ConfigCenterNode getActivateConfigurationNode() {
-        Optional<CenterConfig> optional = centerConfigService.loadActivated(OrchestrationType.CONFIG_CENTER.getValue());
-        if (optional.isPresent()) {
-            return new ConfigCenterNode(optional.get().getOrchestrationName());
-        }
-        throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "No activated config center!");
-    }
+
+	@Autowired
+	private CenterConfigService centerConfigService;
+
+	@Override
+	public ConfigCenterRepository getActivatedConfigCenter() {
+		Optional<CenterConfig> optional = centerConfigService.loadActivated(OrchestrationType.CONFIG_CENTER.getValue());
+		if (optional.isPresent()) {
+			return CenterRepositoryFactory.createConfigCenter(optional.get());
+		}
+		throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "No activated config center!");
+	}
+
+	@Override
+	public ConfigCenterNode getActivateConfigurationNode() {
+		Optional<CenterConfig> optional = centerConfigService.loadActivated(OrchestrationType.CONFIG_CENTER.getValue());
+		if (optional.isPresent()) {
+			return new ConfigCenterNode(optional.get().getOrchestrationName());
+		}
+		throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "No activated config center!");
+	}
 }

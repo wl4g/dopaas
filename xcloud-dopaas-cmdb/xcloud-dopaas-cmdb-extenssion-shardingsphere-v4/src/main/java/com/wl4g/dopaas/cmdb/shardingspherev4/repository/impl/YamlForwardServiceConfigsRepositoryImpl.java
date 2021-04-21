@@ -32,34 +32,34 @@ import java.nio.charset.StandardCharsets;
  */
 @Repository
 public class YamlForwardServiceConfigsRepositoryImpl implements ForwardServiceConfigsRepository {
-    
-    private final File file;
-    
-    public YamlForwardServiceConfigsRepositoryImpl() {
-        file = new File(new File(System.getProperty("user.home")), "shardingsphere-ui-forward-services.yaml");
-    }
-    
-    @Override
-    public ForwardServiceConfigs load() {
-        if (!file.exists()) {
-            return new ForwardServiceConfigs();
-        }
-        try (FileInputStream fileInputStream = new FileInputStream(file);
-            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)) {
-            return new Yaml(new Constructor(ForwardServiceConfigs.class)).loadAs(inputStreamReader, ForwardServiceConfigs.class);
-        } catch (IOException e) {
-            throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "load forward services config error");
-        }
-    }
-    
-    @Override
-    public void save(final ForwardServiceConfigs forwardServiceConfigs) {
-        Yaml yaml = new Yaml();
-        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-            bufferedOutputStream.write(yaml.dumpAsMap(forwardServiceConfigs).getBytes());
-            bufferedOutputStream.flush();
-        } catch (IOException e) {
-            throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "save registry config error");
-        }
-    }
+
+	private final File file;
+
+	public YamlForwardServiceConfigsRepositoryImpl() {
+		file = new File(new File(System.getProperty("user.home")), "shardingsphere-ui-forward-services.yaml");
+	}
+
+	@Override
+	public ForwardServiceConfigs load() {
+		if (!file.exists()) {
+			return new ForwardServiceConfigs();
+		}
+		try (FileInputStream fileInputStream = new FileInputStream(file);
+				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)) {
+			return new Yaml(new Constructor(ForwardServiceConfigs.class)).loadAs(inputStreamReader, ForwardServiceConfigs.class);
+		} catch (IOException e) {
+			throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "load forward services config error");
+		}
+	}
+
+	@Override
+	public void save(final ForwardServiceConfigs forwardServiceConfigs) {
+		Yaml yaml = new Yaml();
+		try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+			bufferedOutputStream.write(yaml.dumpAsMap(forwardServiceConfigs).getBytes());
+			bufferedOutputStream.flush();
+		} catch (IOException e) {
+			throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "save registry config error");
+		}
+	}
 }

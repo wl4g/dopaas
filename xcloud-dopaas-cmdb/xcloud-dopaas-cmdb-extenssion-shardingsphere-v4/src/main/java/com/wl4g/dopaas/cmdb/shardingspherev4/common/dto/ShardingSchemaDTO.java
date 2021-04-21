@@ -30,11 +30,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShardingSchemaDTO {
-    
-    private String name;
-    
-    private String ruleConfiguration;
-    
-    private String dataSourceConfiguration;
-    
+
+	private String name;
+
+	private String ruleConfiguration;
+
+	private String dataSourceConfiguration;
+
 }

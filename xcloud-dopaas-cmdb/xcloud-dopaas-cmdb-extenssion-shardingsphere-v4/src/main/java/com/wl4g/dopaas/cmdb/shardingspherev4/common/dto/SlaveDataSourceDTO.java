@@ -30,13 +30,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SlaveDataSourceDTO {
-    
-    private String schema;
-    
-    private String masterDataSourceName;
-    
-    private String slaveDataSourceName;
-    
-    private boolean enabled;
-    
+
+	private String schema;
+
+	private String masterDataSourceName;
+
+	private String slaveDataSourceName;
+
+	private boolean enabled;
+
 }

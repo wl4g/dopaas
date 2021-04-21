@@ -28,18 +28,18 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class InstanceDTO {
-    
-    private static final String DELIMITER = "@";
-    
-    private String serverIp;
-    
-    private String instanceId;
-    
-    private boolean enabled;
-    
-    public InstanceDTO(final String instanceId, final boolean enabled) {
-        this.instanceId = instanceId;
-        this.enabled = enabled;
-        this.serverIp = instanceId.split(DELIMITER)[0];
-    }
+
+	private static final String DELIMITER = "@";
+
+	private String serverIp;
+
+	private String instanceId;
+
+	private boolean enabled;
+
+	public InstanceDTO(final String instanceId, final boolean enabled) {
+		this.instanceId = instanceId;
+		this.enabled = enabled;
+		this.serverIp = instanceId.split(DELIMITER)[0];
+	}
 }

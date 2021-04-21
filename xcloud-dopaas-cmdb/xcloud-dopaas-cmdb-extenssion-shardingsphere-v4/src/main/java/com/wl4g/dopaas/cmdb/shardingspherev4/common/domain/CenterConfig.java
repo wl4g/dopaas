@@ -28,22 +28,22 @@ import java.util.Properties;
 @Getter
 @Setter
 public class CenterConfig {
-    
-    private String name;
-    
-    private String instanceType;
-    
-    private String serverLists;
-    
-    private String namespace;
-    
-    private String orchestrationName;
-    
-    private String orchestrationType;
-    
-    private String digest;
-    
-    private boolean activated;
-    
-    private Properties props = new Properties();
+
+	private String name;
+
+	private String instanceType;
+
+	private String serverLists;
+
+	private String namespace;
+
+	private String orchestrationName;
+
+	private String orchestrationType;
+
+	private String digest;
+
+	private boolean activated;
+
+	private Properties props = new Properties();
 }

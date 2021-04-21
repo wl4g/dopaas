@@ -31,29 +31,31 @@ import java.util.Properties;
  */
 @Service
 public class ShardingPropertiesServiceImpl implements ShardingPropertiesService {
-    
-    @Autowired
-    private ConfigCenterService configCenterService;
-    
-    @Override
-    public String loadShardingProperties() {
-        return configCenterService.getActivatedConfigCenter().get(configCenterService.getActivateConfigurationNode().getPropsPath());
-    }
-    
-    @Override
-    public void updateShardingProperties(final String configData) {
-        checkShardingProperties(configData);
-        configCenterService.getActivatedConfigCenter().persist(configCenterService.getActivateConfigurationNode().getPropsPath(), configData);
-    }
-    
-    private void checkShardingProperties(final String configData) {
-        try {
-            Properties properties = ConfigurationYamlConverter.loadProperties(configData);
-            new ConfigurationProperties(properties);
-            // CHECKSTYLE:OFF
-        } catch (final Exception ex) {
-            // CHECKSTYLE:ON
-            throw new IllegalArgumentException("Sharding properties is invalid.");
-        }
-    }
+
+	@Autowired
+	private ConfigCenterService configCenterService;
+
+	@Override
+	public String loadShardingProperties() {
+		return configCenterService.getActivatedConfigCenter()
+				.get(configCenterService.getActivateConfigurationNode().getPropsPath());
+	}
+
+	@Override
+	public void updateShardingProperties(final String configData) {
+		checkShardingProperties(configData);
+		configCenterService.getActivatedConfigCenter().persist(configCenterService.getActivateConfigurationNode().getPropsPath(),
+				configData);
+	}
+
+	private void checkShardingProperties(final String configData) {
+		try {
+			Properties properties = ConfigurationYamlConverter.loadProperties(configData);
+			new ConfigurationProperties(properties);
+			// CHECKSTYLE:OFF
+		} catch (final Exception ex) {
+			// CHECKSTYLE:ON
+			throw new IllegalArgumentException("Sharding properties is invalid.");
+		}
+	}
 }

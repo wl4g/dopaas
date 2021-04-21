@@ -18,25 +18,24 @@
 package com.wl4g.dopaas.cmdb.shardingspherev4.servcie;
 
 import org.apache.shardingsphere.orchestration.center.RegistryCenterRepository;
-import org.apache.shardingsphere.orchestration.core.configcenter.ConfigCenterNode;
 import org.apache.shardingsphere.orchestration.core.registrycenter.RegistryCenterNode;
 
 /**
  * Registry center service.
  */
 public interface RegistryCenterService {
-    
-    /**
-     * Get activated registry center.
-     *
-     * @return registry center
-     */
-    RegistryCenterRepository getActivatedRegistryCenter();
-    
-    /**
-     * Get activated state node.
-     *
-     * @return state node
-     */
-    RegistryCenterNode getActivatedStateNode();
+
+	/**
+	 * Get activated registry center.
+	 *
+	 * @return registry center
+	 */
+	RegistryCenterRepository getActivatedRegistryCenter();
+
+	/**
+	 * Get activated state node.
+	 *
+	 * @return state node
+	 */
+	RegistryCenterNode getActivatedStateNode();
 }

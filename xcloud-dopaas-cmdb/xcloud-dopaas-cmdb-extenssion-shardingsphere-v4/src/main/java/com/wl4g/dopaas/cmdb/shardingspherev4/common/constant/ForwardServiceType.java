@@ -26,11 +26,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum ForwardServiceType {
-    
-    /**
-     * sharding scaling forward service.
-     */
-    SHARDING_SCALING("ShardingScaling");
-    
-    private final String name;
+
+	/**
+	 * sharding scaling forward service.
+	 */
+	SHARDING_SCALING("ShardingScaling");
+
+	private final String name;
 }

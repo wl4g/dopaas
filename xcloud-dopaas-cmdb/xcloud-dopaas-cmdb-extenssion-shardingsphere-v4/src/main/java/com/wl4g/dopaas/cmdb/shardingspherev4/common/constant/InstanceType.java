@@ -23,27 +23,29 @@ import com.wl4g.dopaas.cmdb.shardingspherev4.common.exception.ShardingSphereUIEx
  * Orchestration instance type.
  */
 public enum InstanceType {
-    
-    ZOOKEEPER("Zookeeper"), ETCD("Etcd");
-    
-    private final String name;
-    
-    InstanceType(final String name) {
-        this.name = name;
-    }
-    
-    /**
-     * Get instance type via name.
-     *
-     * @param name instance name
-     * @return instance type
-     */
-    public static InstanceType nameOf(final String name) {
-        for (InstanceType each : InstanceType.values()) {
-            if ((each.name).equals(name)) {
-                return each;
-            }
-        }
-        throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, String.format("Unsupported orchestration instance type `%s`", name));
-    }
+
+	ZOOKEEPER("Zookeeper"), ETCD("Etcd");
+
+	private final String name;
+
+	InstanceType(final String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Get instance type via name.
+	 *
+	 * @param name
+	 *            instance name
+	 * @return instance type
+	 */
+	public static InstanceType nameOf(final String name) {
+		for (InstanceType each : InstanceType.values()) {
+			if ((each.name).equals(name)) {
+				return each;
+			}
+		}
+		throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR,
+				String.format("Unsupported orchestration instance type `%s`", name));
+	}
 }

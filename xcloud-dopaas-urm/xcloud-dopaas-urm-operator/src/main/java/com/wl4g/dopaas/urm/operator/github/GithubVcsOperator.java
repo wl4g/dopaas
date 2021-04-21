@@ -15,25 +15,6 @@
  */
 package com.wl4g.dopaas.urm.operator.github;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.component.support.redis.locks.JedisLockManager;
-import com.wl4g.dopaas.common.bean.urm.SourceRepo;
-import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
-import com.wl4g.dopaas.urm.operator.GenericBasedGitVcsOperator;
-import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
-import com.wl4g.dopaas.urm.operator.model.VcsProjectModel;
-import com.wl4g.dopaas.urm.operator.model.VcsTagModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.stream.Collectors;
-
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
@@ -47,6 +28,26 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.dopaas.common.bean.urm.SourceRepo;
+import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
+import com.wl4g.dopaas.urm.operator.GenericBasedGitVcsOperator;
+import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
+import com.wl4g.dopaas.urm.operator.model.VcsProjectModel;
+import com.wl4g.dopaas.urm.operator.model.VcsTagModel;
+
 /**
  * VCS operator for GITHUB.
  *
@@ -56,9 +57,9 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 
-private @Autowired  JedisService jedisService;
+	private @Autowired JedisService jedisService;
 
-private @Autowired  JedisLockManager jedisLockManager;
+	private @Autowired JedisLockManager jedisLockManager;
 
 	@Override
 	public VcsProviderKind kind() {
@@ -66,7 +67,8 @@ private @Autowired  JedisLockManager jedisLockManager;
 	}
 
 	@Override
-	public List<VcsBranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<VcsBranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
 
 		// Search projects.

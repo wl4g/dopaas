@@ -23,52 +23,61 @@ import java.util.Collection;
  * Sharding schema service.
  */
 public interface ShardingSchemaService {
-    
-    /**
-     * Get all schema names.
-     *
-     * @return all schema names
-     */
-    Collection<String> getAllSchemaNames();
-    
-    /**
-     * Get rule configuration.
-     *
-     * @param schemaName schema name
-     * @return rule configuration
-     */
-    String getRuleConfiguration(String schemaName);
-    
-    /**
-     * Get data source configuration.
-     *
-     * @param schemaName schema name
-     * @return data source configuration
-     */
-    String getDataSourceConfiguration(String schemaName);
-    
-    /**
-     * Update rule configuration.
-     *
-     * @param schemaName schema name
-     * @param configData config data
-     */
-    void updateRuleConfiguration(String schemaName, String configData);
-    
-    /**
-     * Update data source configuration.
-     *
-     * @param schemaName schema name
-     * @param configData config data
-     */
-    void updateDataSourceConfiguration(String schemaName, String configData);
-    
-    /**
-     * Add schema configuration.
-     *
-     * @param schemaName schema name
-     * @param ruleConfiguration rule configuration
-     * @param dataSourceConfiguration data source configuration
-     */
-    void addSchemaConfiguration(String schemaName, String ruleConfiguration, String dataSourceConfiguration);
+
+	/**
+	 * Get all schema names.
+	 *
+	 * @return all schema names
+	 */
+	Collection<String> getAllSchemaNames();
+
+	/**
+	 * Get rule configuration.
+	 *
+	 * @param schemaName
+	 *            schema name
+	 * @return rule configuration
+	 */
+	String getRuleConfiguration(String schemaName);
+
+	/**
+	 * Get data source configuration.
+	 *
+	 * @param schemaName
+	 *            schema name
+	 * @return data source configuration
+	 */
+	String getDataSourceConfiguration(String schemaName);
+
+	/**
+	 * Update rule configuration.
+	 *
+	 * @param schemaName
+	 *            schema name
+	 * @param configData
+	 *            config data
+	 */
+	void updateRuleConfiguration(String schemaName, String configData);
+
+	/**
+	 * Update data source configuration.
+	 *
+	 * @param schemaName
+	 *            schema name
+	 * @param configData
+	 *            config data
+	 */
+	void updateDataSourceConfiguration(String schemaName, String configData);
+
+	/**
+	 * Add schema configuration.
+	 *
+	 * @param schemaName
+	 *            schema name
+	 * @param ruleConfiguration
+	 *            rule configuration
+	 * @param dataSourceConfiguration
+	 *            data source configuration
+	 */
+	void addSchemaConfiguration(String schemaName, String ruleConfiguration, String dataSourceConfiguration);
 }

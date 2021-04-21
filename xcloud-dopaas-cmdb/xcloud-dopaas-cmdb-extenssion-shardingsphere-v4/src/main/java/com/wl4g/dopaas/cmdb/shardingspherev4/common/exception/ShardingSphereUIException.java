@@ -24,21 +24,19 @@ import lombok.Getter;
  */
 @Getter
 public class ShardingSphereUIException extends RuntimeException {
-    
-    public static final int INVALID_PARAM = 400;
-    
-    public static final int NO_RIGHT = 403;
-    
-    public static final int SERVER_ERROR = 500;
-    
-    private final int errorCode;
-    
-    private final String errorMessage;
-    
-    public ShardingSphereUIException(final int errorCode, final String errorMessage) {
-        super(errorMessage);
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
-    }
-    
+	private static final long serialVersionUID = 6535687493270452502L;
+
+	public static final int INVALID_PARAM = 400;
+	public static final int NO_RIGHT = 403;
+	public static final int SERVER_ERROR = 500;
+
+	private final int errorCode;
+	private final String errorMessage;
+
+	public ShardingSphereUIException(final int errorCode, final String errorMessage) {
+		super(errorMessage);
+		this.errorCode = errorCode;
+		this.errorMessage = errorMessage;
+	}
+
 }
