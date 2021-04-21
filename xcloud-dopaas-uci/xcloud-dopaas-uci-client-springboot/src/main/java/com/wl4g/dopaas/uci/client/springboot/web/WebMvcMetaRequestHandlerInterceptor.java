@@ -20,13 +20,18 @@
 package com.wl4g.dopaas.uci.client.springboot.web;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.component.common.codec.Encodes.urlDecode;
 import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.component.common.lang.ClassUtils2.getDefaultClassLoader;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_NAME;
 import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.codec.binary.Base64.encodeBase64String;
+import static org.apache.commons.io.FileUtils.readFileToString;
+import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -36,16 +41,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.wl4g.component.common.codec.Encodes;
-import com.wl4g.component.common.io.FileIOUtils;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.dopaas.common.bean.uci.model.BuildMetaInfo;
 import com.wl4g.dopaas.common.bean.uci.model.BuildMetaInfo.SourceInfo;
-import com.wl4g.dopaas.common.constant.UciConstants;
 import com.wl4g.dopaas.uci.client.springboot.config.UciClientProperties;
 
 /**
@@ -57,11 +58,17 @@ import com.wl4g.dopaas.uci.client.springboot.config.UciClientProperties;
  * @see
  */
 public class WebMvcMetaRequestHandlerInterceptor implements HandlerInterceptor {
-
 	protected final SmartLogger log = getLogger(getClass());
 
 	@Autowired
 	private UciClientProperties config;
+
+	private final File metaFile;
+	private BuildMetaInfo metaInfo;
+
+	public WebMvcMetaRequestHandlerInterceptor() {
+		this.metaFile = determineMetaFile(getDefaultClassLoader().getResource("").getPath());
+	}
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
@@ -81,50 +88,67 @@ public class WebMvcMetaRequestHandlerInterceptor implements HandlerInterceptor {
 	 * @return
 	 */
 	private BuildMetaInfo getBuildMetaInfo() {
-		if (nonNull(cacheMetaInfo)) {
-			return cacheMetaInfo;
-		}
-		try {
-			if (nonNull(appHomePath)) {
-				String metaPath = format("%s%s%s", appHomePath, File.separator, UciConstants.DEFAULT_META_NAME);
-				String metaContent = FileIOUtils.readFileToString(new File(metaPath), UTF_8);
-				cacheMetaInfo = parseJSON(metaContent, BuildMetaInfo.class);
-				log.info("Reading build meta info: {}", toJSONString(cacheMetaInfo));
+		if (isNull(metaInfo)) {
+			synchronized (this) {
+				if (isNull(metaInfo)) {
+					try {
+						if (nonNull(metaFile) && metaFile.exists()) {
+							String metaContent = readFileToString(metaFile, UTF_8);
+							this.metaInfo = parseJSON(metaContent, BuildMetaInfo.class);
+							log.info("Reading build meta info: {}", metaContent);
+						}
+					} catch (Exception e) {
+						log.warn("Unable read UCI build meta file.", e);
+					}
+					return metaInfo;
+				}
 			}
-		} catch (Exception e) {
-			log.warn("Unable read UCI build meta file.", e);
 		}
-		return cacheMetaInfo;
+		return metaInfo;
 	}
 
-	public static String getAppHomePath() {
-		String thisClassPath = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-		thisClassPath = trimToEmpty(thisClassPath).replaceAll("\\\\", "/");
-		thisClassPath = Encodes.urlDecode(thisClassPath); // Solving-chinese-problems
+	/**
+	 * Determine meta file.
+	 * 
+	 * @param classpath
+	 * @return
+	 */
+	final File determineMetaFile(final String classpath) {
+		String appHomePath = "";
+		String path = urlDecode(trimToEmpty(classpath).replaceAll("\\\\", "/")); // Solving-chinese-problems
+		path = endsWith(path, "/") ? path : path.concat("/");
 
-		if (thisClassPath.contains("/BOOT-INF/classes")) { // SpringBoot jar
+		// Maven project Server environment:
+		if (path.contains("/BOOT-INF/classes")) {
 			// e.g:/opt/apps/acm/portal-master-bin/portal-master-bin.jar!/BOOT-INF/classes!/
-			int index = thisClassPath.indexOf(DEFAULT_SPRING_BOOT_INF_CLASSES);
-			isTrue(index > 0, "Unkown spring boot jar class path. %s", thisClassPath);
-			String springbootJarPath = thisClassPath.substring(0, index);
-			return springbootJarPath.substring(0, springbootJarPath.lastIndexOf("/"));
+			int index = path.indexOf(DEFAULT_SPRING_BOOT_INF_CLASSES);
+			isTrue(index > 0, "Unkown spring boot jar class path. %s", path);
+			String springbootJarPath = path.substring(0, index);
+			appHomePath = springbootJarPath.substring(0, springbootJarPath.lastIndexOf("/"));
 		}
-
-		// e.g:/home/myuser/safecloud-web-portal/portal-rest/target/classes/
-		if (thisClassPath.endsWith("/target/classes")) { // Local IDE
+		// Maven project assemble environment:
+		// e.g:/opt/apps/acm/portal-package/portal-master-bin/lib/
+		else if (endsWithAny(path, "/lib/", "/libs/", "/ext-lib/", "/ext-libs/")) {
+			appHomePath = path.substring(0, path.lastIndexOf("/"));
+		}
+		// Maven(Gradle|Ant) project local IDE environment:
+		// e.g:/home/myuser/safecloud-web-portal/portal-web/target/classes/
+		// e.g:/home/myuser/safecloud-web-portal/portal-web/target/test-classes/
+		// e.g:/home/myuser/safecloud-web-portal/portal-web/bin/
+		// e.g:/home/myuser/safecloud-web-portal/portal-web/build/
+		else if (endsWithAny(path, "/target/classes/", "/target/test-classes/", "/bin/", "/build/")) {
 			return null;
 		}
 
-		// e.g:/opt/apps/acm/portal-package/portal-master-bin/lib/
-		if (endsWithAny(thisClassPath, "/lib", "/libs", "/ext-lib", "/ext-libs")) {
-			return thisClassPath.substring(0, thisClassPath.lastIndexOf("/"));
+		// Metafiles must exist to be useful.
+		File metaFile = nonNull(appHomePath) ? new File(appHomePath, DEFAULT_META_NAME) : config.getDefaultMetaFile();
+		if (!metaFile.exists()) {
+			log.warn("Don't exist build metafile: {}", metaFile);
+			return null;
 		}
-
-		return null;
+		return metaFile;
 	}
 
-	private static BuildMetaInfo cacheMetaInfo;
-	private static final String appHomePath = getAppHomePath();
 	private static final String DEFAULT_SPRING_BOOT_INF_CLASSES = "!/BOOT-INF/classes!";
 
 }

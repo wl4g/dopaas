@@ -19,6 +19,9 @@
  */
 package com.wl4g.dopaas.uci.client.springboot.web;
 
+import static java.lang.System.out;
+import static org.springframework.util.ClassUtils.getDefaultClassLoader;
+
 import org.junit.Test;
 
 /**
@@ -31,9 +34,14 @@ import org.junit.Test;
  */
 public class WebMvcMetaRequestHandlerInterceptorTests {
 
+	WebMvcMetaRequestHandlerInterceptor interceptor = new WebMvcMetaRequestHandlerInterceptor();
+
 	@Test
-	public void getAppHomePathCase1() {
-		System.out.println(WebMvcMetaRequestHandlerInterceptor.getAppHomePath());
+	public void getMetaFileCase1() {
+		out.println(interceptor.determineMetaFile(getDefaultClassLoader().getResource("").getPath()));
+		out.println(interceptor.determineMetaFile("/opt/apps/acm/portal-master-bin/portal-master-bin.jar!/BOOT-INF/classes!/"));
+		out.println(interceptor.determineMetaFile("/home/myuser/safecloud-web-portal/portal-web/target/classes/"));
+		out.println(interceptor.determineMetaFile("/home/myuser/safecloud-web-portal/portal-web/target/test-classes/"));
 	}
 
 }
