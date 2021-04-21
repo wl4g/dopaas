@@ -43,7 +43,7 @@ public final class ProxyAuthenticationController {
      *
      * @return response result
      */
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "get", method = RequestMethod.GET)
     public ResponseResult<String> loadAuthentication() {
         return ResponseResultUtil.build(proxyAuthenticationService.getAuthentication());
     }
@@ -54,7 +54,7 @@ public final class ProxyAuthenticationController {
      * @param configMap config map
      * @return response result
      */
-    @RequestMapping(value = "", method = RequestMethod.PUT)
+    @RequestMapping(value = "put", method = RequestMethod.PUT)
     public ResponseResult updateAuthentication(@RequestBody final Map<String, String> configMap) {
         proxyAuthenticationService.updateAuthentication(configMap.get("authentication"));
         return ResponseResultUtil.success();
