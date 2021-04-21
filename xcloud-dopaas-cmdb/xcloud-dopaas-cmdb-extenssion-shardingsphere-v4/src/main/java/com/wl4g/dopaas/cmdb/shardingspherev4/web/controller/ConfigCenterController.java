@@ -47,7 +47,7 @@ public final class ConfigCenterController {
      *
      * @return response result
      */
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "get", method = RequestMethod.GET)
     public ResponseResult<List<CenterConfig>> loadConfigs() {
         return ResponseResultUtil.build(centerConfigService.loadAll(OrchestrationType.CONFIG_CENTER.getValue()).getCenterConfigs());
     }
@@ -58,7 +58,7 @@ public final class ConfigCenterController {
      * @param config config center config
      * @return response result
      */
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "post", method = RequestMethod.POST)
     public ResponseResult add(@RequestBody final CenterConfig config) {
         centerConfigService.add(config);
         return ResponseResultUtil.success();
@@ -70,7 +70,7 @@ public final class ConfigCenterController {
      * @param config config center config
      * @return response result
      */
-    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    @RequestMapping(value = "del", method = RequestMethod.DELETE)
     public ResponseResult delete(@RequestBody final CenterConfig config) {
         centerConfigService.delete(config.getName(), OrchestrationType.CONFIG_CENTER.getValue());
         return ResponseResultUtil.success();
