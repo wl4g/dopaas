@@ -112,6 +112,7 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 				git.checkout().setName(refName).setForced(true).call();
 				return null; // needn't pull
 			} else if (hasBranch) {
+				git.reset().call();
 				git.checkout().setName(refName).setForceRefUpdate(true).setForced(true).call();
 			} else { // Not exist to checkout & create local branch
 				git.checkout().setCreateBranch(true).setName(refName).setStartPoint("origin/" + refName).setForceRefUpdate(true)
