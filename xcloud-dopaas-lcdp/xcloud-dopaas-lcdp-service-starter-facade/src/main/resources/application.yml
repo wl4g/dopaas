@@ -12,7 +12,7 @@
 spring:
   application.name: lcdp-facade
   profiles:
-    include: common,support,util,etc
+    include: common,support,util
     active: dev
   xcloud:
     component:
@@ -45,7 +45,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.dts: DEBUG
+      wl4g.dopaas.lcdp: DEBUG
 
 # ### Server configuration. ###
 server:

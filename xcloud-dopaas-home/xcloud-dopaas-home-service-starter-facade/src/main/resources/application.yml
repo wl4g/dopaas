@@ -11,7 +11,7 @@
 spring:
   application.name: cmdb-facade
   profiles:
-    include: common,support,util,etc
+    include: common,support,util
     active: dev
   xcloud:
     component:
@@ -44,7 +44,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dopaas.cmdb.data: DEBUG
+      wl4g.dopaas.home: DEBUG
 
 # ### Server configuration. ###
 server:
