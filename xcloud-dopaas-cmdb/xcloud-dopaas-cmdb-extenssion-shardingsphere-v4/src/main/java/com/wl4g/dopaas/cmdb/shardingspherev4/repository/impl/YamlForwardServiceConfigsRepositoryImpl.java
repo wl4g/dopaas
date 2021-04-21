@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
  * Implementation of forward service configs repository.
  */
 @Repository
-public final class YamlForwardServiceConfigsRepositoryImpl implements ForwardServiceConfigsRepository {
+public class YamlForwardServiceConfigsRepositoryImpl implements ForwardServiceConfigsRepository {
     
     private final File file;
     

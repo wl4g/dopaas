@@ -34,7 +34,7 @@ import java.util.Optional;
  * Implementation of forward server for sharding scaling.
  */
 @Service
-public final class ShardingScalingForwardServiceImpl implements ShardingScalingForwardService {
+public class ShardingScalingForwardServiceImpl implements ShardingScalingForwardService {
     
     private static final String LIST_JOBS_FORWARD_URL = "http://%s/shardingscaling/job/list";
     

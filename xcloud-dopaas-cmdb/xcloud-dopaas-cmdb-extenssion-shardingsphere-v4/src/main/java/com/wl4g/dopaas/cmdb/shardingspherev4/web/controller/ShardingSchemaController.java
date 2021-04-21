@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/schema")
-public final class ShardingSchemaController {
+public class ShardingSchemaController {
     
     @Autowired
     private ShardingSchemaService shardingSchemaService;

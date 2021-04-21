@@ -33,7 +33,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/authentication")
-public final class ProxyAuthenticationController {
+public class ProxyAuthenticationController {
     
     @Autowired
     private ProxyAuthenticationService proxyAuthenticationService;

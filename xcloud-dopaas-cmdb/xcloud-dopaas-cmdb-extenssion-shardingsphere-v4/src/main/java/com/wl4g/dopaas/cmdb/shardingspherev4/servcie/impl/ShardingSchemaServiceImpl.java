@@ -38,7 +38,7 @@ import java.util.Map;
  * Implementation of sharding schema service.
  */
 @Service
-public final class ShardingSchemaServiceImpl implements ShardingSchemaService {
+public class ShardingSchemaServiceImpl implements ShardingSchemaService {
     
     @Autowired
     private ConfigCenterService configCenterService;

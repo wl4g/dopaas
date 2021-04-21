@@ -34,7 +34,7 @@ import java.util.Optional;
  * Implementation of Config center service.
  */
 @Service
-public final class ConfigCenterServiceImpl implements ConfigCenterService {
+public class ConfigCenterServiceImpl implements ConfigCenterService {
     
     @Autowired
     private CenterConfigService centerConfigService;

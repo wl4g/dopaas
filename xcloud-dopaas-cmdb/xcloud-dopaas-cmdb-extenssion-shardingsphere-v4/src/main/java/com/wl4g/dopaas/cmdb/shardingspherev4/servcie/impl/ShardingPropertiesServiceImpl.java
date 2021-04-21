@@ -30,7 +30,7 @@ import java.util.Properties;
  * Implementation of sharding properties service.
  */
 @Service
-public final class ShardingPropertiesServiceImpl implements ShardingPropertiesService {
+public class ShardingPropertiesServiceImpl implements ShardingPropertiesService {
     
     @Autowired
     private ConfigCenterService configCenterService;

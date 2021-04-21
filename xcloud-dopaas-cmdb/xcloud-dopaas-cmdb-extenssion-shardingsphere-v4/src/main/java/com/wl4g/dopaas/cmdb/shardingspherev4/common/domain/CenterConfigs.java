@@ -28,7 +28,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public final class CenterConfigs {
+public class CenterConfigs {
     
     private List<CenterConfig> centerConfigs = new ArrayList<>();
 }

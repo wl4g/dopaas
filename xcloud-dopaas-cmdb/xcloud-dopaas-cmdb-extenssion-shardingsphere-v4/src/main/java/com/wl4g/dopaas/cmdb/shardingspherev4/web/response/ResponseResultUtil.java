@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
  * Response result utility.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ResponseResultUtil {
+public class ResponseResultUtil {
     
     /**
      * Build the successful response without data model.
