@@ -27,7 +27,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public final class InstanceDTO {
+public class InstanceDTO {
     
     private static final String DELIMITER = "@";
     

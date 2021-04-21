@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * Authentication filter.
  */
-public final class AuthenticationFilter implements Filter {
+public class AuthenticationFilter implements Filter {
     
     private static final String LOGIN_URI = "/api/login";
     

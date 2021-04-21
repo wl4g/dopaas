@@ -33,7 +33,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/props")
-public final class ShardingPropertiesController {
+public class ShardingPropertiesController {
     
     @Autowired
     private ShardingPropertiesService shardingPropertiesService;

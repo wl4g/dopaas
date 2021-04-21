@@ -35,7 +35,7 @@ import java.util.Optional;
  * Implementation of Registry center service.
  */
 @Service
-public final class RegistryCenterServiceImpl implements RegistryCenterService {
+public class RegistryCenterServiceImpl implements RegistryCenterService {
     
     @Autowired
     private CenterConfigService centerConfigService;

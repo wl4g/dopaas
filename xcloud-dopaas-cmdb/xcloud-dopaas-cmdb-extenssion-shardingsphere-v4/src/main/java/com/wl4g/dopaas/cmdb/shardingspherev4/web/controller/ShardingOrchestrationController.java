@@ -35,7 +35,7 @@ import java.util.Collection;
  */
 @RestController
 @RequestMapping("/api/orchestration")
-public final class OrchestrationController {
+public class ShardingOrchestrationController {
     
     @Autowired
     private OrchestrationService orchestrationService;

@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Center factory.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class CenterRepositoryFactory {
+public class CenterRepositoryFactory {
     
     private static final ConcurrentHashMap<String, RegistryCenterRepository> REGISTRY_CENTER_MAP = new ConcurrentHashMap<>();
     

@@ -39,7 +39,7 @@ import java.util.Map.Entry;
 /**
  * Http client util.
  */
-public final class HttpClientUtil {
+public class HttpClientUtil {
     
     private static final String ENCODING = "UTF-8";
     

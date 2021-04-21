@@ -29,7 +29,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public final class ShardingSchemaDTO {
+public class ShardingSchemaDTO {
     
     private String name;
     

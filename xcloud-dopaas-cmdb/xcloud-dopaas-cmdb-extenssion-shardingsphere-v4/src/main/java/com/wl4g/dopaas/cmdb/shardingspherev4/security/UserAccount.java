@@ -25,7 +25,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public final class UserAccount {
+public class UserAccount {
     
     private String username;
     

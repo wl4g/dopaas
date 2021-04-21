@@ -29,7 +29,7 @@ import java.util.Optional;
  */
 @Getter
 @Setter
-public final class ForwardServiceConfigs {
+public class ForwardServiceConfigs {
     
     private Map<String, ForwardServiceConfig> forwardServiceConfigs = new HashMap<>();
     

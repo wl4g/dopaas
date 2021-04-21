@@ -27,7 +27,7 @@ import java.util.Properties;
  */
 @Getter
 @Setter
-public final class CenterConfig {
+public class CenterConfig {
     
     private String name;
     
