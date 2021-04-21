@@ -1,0 +1,59 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# #### Environment(PRO) configuration. ####
+#
+spring:
+  xcloud:
+    component:
+      support:
+        notification:
+          mail:
+            host: smtp.163.com
+            port: 465
+            username: babaa1f4@163.com
+            password: XBurnerAir00
+            protocol: smtp
+          sms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+          vms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+              calledShowNumber: 055162153866
+    iam:
+      cors:
+        rules:
+          '[/**]':
+            allows-origins:
+              - https://${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - http://${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - https://*.${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - http://*.${DOPAAS_SERVICE_ZONE:wl4g.com}
+      acl:
+        secure: false # Turn off protection will trust any same intranet IP.
+        allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
+        denyIpRange: ${DOPAAS_IAM_ACL_DENY}
+      client:
+        server-uri: ${DOPAAS_SERVICE_SCHEMA:https}://iam.${DOPAAS_SERVICE_ZONE:wl4g.com}/iam-web
+        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
+        success-uri: ${DOPAAS_SERVICE_SCHEMA:https}://dopaas.${DOPAAS_SERVICE_ZONE:wl4g.com}/#/umc/config
+
+# Spring-security config.
+security.user:
+  name: sba_user
+  password: hnGsFm6k0klJP9j
+
+# OpenTSDB configuration.
+opentsdb:
+  url: http://10.0.0.57
+  port: 4242

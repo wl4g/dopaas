@@ -38,32 +38,45 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'
 		def configName = new StringBuffer("application")
+		// Standalone
+		configName.append(",standalone-dopaas")
 		configName.append(",common-dopaas")
-		configName.append(",home-web")
+		// HOME
 		configName.append(",home-facade")
-		configName.append(",uci-web")
+		configName.append(",home-manager")
+		// UCI
 		configName.append(",uci-facade")
+		configName.append(",uci-server")
 		configName.append(",uci-analyzer")
-		configName.append(",udm-web")
+		// UDM
 		configName.append(",udm-facade")
-		configName.append(",lcdp-web")
+		configName.append(",udm-manager")
+		// LCDP
 		configName.append(",lcdp-facade")
-		configName.append(",uds-web")
+		configName.append(",lcdp-manager")
+		// UDS
 		configName.append(",uds-facade")
-		configName.append(",cmdb-web")
+		configName.append(",uds-manager")
+		// CMDB
 		configName.append(",cmdb-facade")
-		//configName.append(",esm-web")
+		configName.append(",cmdb-manager")
+		// ESM
 		//configName.append(",esm-facade")
-		configName.append(",ucm-web")
+		//configName.append(",esm-manager")
+		// UCM
+		configName.append(",ucm-facade")
+		configName.append(",ucm-server")
+		// UMC
+		configName.append(",umc-facade")
+		configName.append(",umc-manager")
 		configName.append(",umc-collector")
 		configName.append(",umc-tracker")
-		configName.append(",ucm-facade")
-		configName.append(",umc-web")
-		configName.append(",umc-facade")
-		configName.append(",urm-web")
+		// URM
 		configName.append(",urm-facade")
-		configName.append(",uos-web")
+		configName.append(",urm-manager")
+		// UOS
 		configName.append(",uos-facade")
+		configName.append(",uos-manager")
 
 		// Preset spring.config.location
 		// for example: spring auto load for 'classpath:/application-web-dev.yml'
@@ -77,32 +90,41 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 			archConfigSuffix = "sbf"
 		}
 		configName.append(",common-dopaas-" + archConfigSuffix)
-		//configName.append(",common-dopaas-web-" + archConfigSuffix)
-		//configName.append(",common-dopaas-facade-" + archConfigSuffix)
-		configName.append(",home-web-" + archConfigSuffix)
+		// HOME
 		configName.append(",home-facade-" + archConfigSuffix)
-		configName.append(",uci-web-" + archConfigSuffix)
+		configName.append(",home-manager-" + archConfigSuffix)
+		// UCI
 		configName.append(",uci-facade-" + archConfigSuffix)
-		configName.append(",udm-web-" + archConfigSuffix)
+		configName.append(",uci-server-" + archConfigSuffix)
+		// UDM
 		configName.append(",udm-facade-" + archConfigSuffix)
-		configName.append(",lcdp-web-" + archConfigSuffix)
+		configName.append(",udm-manager-" + archConfigSuffix)
+		// LCDP
 		configName.append(",lcdp-facade-" + archConfigSuffix)
-		configName.append(",uds-web-" + archConfigSuffix)
+		configName.append(",lcdp-manager-" + archConfigSuffix)
+		// UDS
 		configName.append(",uds-facade-" + archConfigSuffix)
-		configName.append(",cmdb-web-" + archConfigSuffix)
+		configName.append(",uds-manager-" + archConfigSuffix)
+		// CMDB
 		configName.append(",cmdb-facade-" + archConfigSuffix)
-		//configName.append(",esm-web-" + archConfigSuffix)
+		configName.append(",cmdb-manager-" + archConfigSuffix)
+		// ESM
 		//configName.append(",esm-facade-" + archConfigSuffix)
-		configName.append(",ucm-web-" + archConfigSuffix)
+		//configName.append(",esm-manager-" + archConfigSuffix)
+		// UCM
+		configName.append(",ucm-facade-" + archConfigSuffix)
+		configName.append(",ucm-server-" + archConfigSuffix)
+		// UMC
+		configName.append(",umc-facade-" + archConfigSuffix)
+		configName.append(",umc-manager-" + archConfigSuffix)
 		configName.append(",umc-collector-" + archConfigSuffix)
 		configName.append(",umc-tracker-" + archConfigSuffix)
-		configName.append(",ucm-facade-" + archConfigSuffix)
-		configName.append(",umc-web-" + archConfigSuffix)
-		configName.append(",umc-facade-" + archConfigSuffix)
-		configName.append(",urm-web-" + archConfigSuffix)
+		// URM
 		configName.append(",urm-facade-" + archConfigSuffix)
-		configName.append(",uos-web-" + archConfigSuffix)
+		configName.append(",urm-manager-" + archConfigSuffix)
+		// UOS
 		configName.append(",uos-facade-" + archConfigSuffix)
+		configName.append(",uos-manager-" + archConfigSuffix)
 
 		defaultProperties.put(CONFIG_NAME_PROPERTY, configName.toString())
 		defaultProperties.put(CONFIG_ADDITIONAL_LOCATION_PROPERTY, location.toString())

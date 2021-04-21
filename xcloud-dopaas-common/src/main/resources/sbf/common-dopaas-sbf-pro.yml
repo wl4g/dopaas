@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(SpringBoot Feign for Pro) configuration. ####
+# #### Environment(DoPaaS Common SpringBoot-Feign Pro Configuration) configuration. ####
 #
 
 spring:

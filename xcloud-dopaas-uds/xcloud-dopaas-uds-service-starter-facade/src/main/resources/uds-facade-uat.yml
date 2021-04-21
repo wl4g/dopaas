@@ -12,14 +12,6 @@
 #
 spring:
   xcloud:
-    component:
-      support:
-        jedis:
-          passwd: ${UDS_DOPAAS_REDIS_PASSWD:zzx!@#$%}
-          connect-timeout: 10000
-          max-attempts: 10
-          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${UDS_DOPAAS_REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}
     dopaas:
       uds:
         elasticjobcloud:
@@ -34,26 +26,3 @@ spring:
             #rdbPassword:
           jobstate:
             queue_size: 10000 # Max size of job accumulated
-
-  # Datasource configuration.
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
-    druid:
-      url: ${UDS_DOPAAS_DB_URL:jdbc:mysql://owner-node5:3306/dopaas_uds?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-      username: ${UDS_DOPAAS_DB_USER:gzsm}
-      password: ${UDS_DOPAAS_DB_PASSWD:gzsm@%#jh?}
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true

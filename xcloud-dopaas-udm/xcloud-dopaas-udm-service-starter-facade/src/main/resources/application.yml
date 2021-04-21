@@ -12,7 +12,7 @@
 spring:
   application.name: udm-facade
   profiles:
-    include: common,support,util
+    include: common,support,util,etc
     active: dev
   xcloud:
     component:
