@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "user.admin")
-public final class UserAuthenticationService {
+public class UserAuthenticationService {
     
     @Getter
     @Setter

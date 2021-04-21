@@ -37,7 +37,7 @@ import java.util.List;
  * Implementation of orchestration operation service.
  */
 @Service
-public final class OrchestrationServiceImpl implements OrchestrationService {
+public class OrchestrationServiceImpl implements OrchestrationService {
     
     @Autowired
     private RegistryCenterService registryCenterService;

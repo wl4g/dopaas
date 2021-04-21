@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
  * Implementation of Center configs repository.
  */
 @Repository
-public final class YamlCenterConfigsRepositoryImpl implements CenterConfigsRepository {
+public class YamlCenterConfigsRepositoryImpl implements CenterConfigsRepository {
     
     private final File file;
     

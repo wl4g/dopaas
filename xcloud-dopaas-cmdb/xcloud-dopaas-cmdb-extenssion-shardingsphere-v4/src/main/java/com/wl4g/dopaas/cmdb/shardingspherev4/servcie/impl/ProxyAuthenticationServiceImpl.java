@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
  * Implementation of sharding proxy authentication service.
  */
 @Service
-public final class ProxyAuthenticationServiceImpl implements ProxyAuthenticationService {
+public class ProxyAuthenticationServiceImpl implements ProxyAuthenticationService {
     
     @Autowired
     private ConfigCenterService configCenterService;

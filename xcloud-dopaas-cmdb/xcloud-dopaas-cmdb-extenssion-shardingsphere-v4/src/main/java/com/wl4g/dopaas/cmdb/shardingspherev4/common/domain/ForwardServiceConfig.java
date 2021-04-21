@@ -25,7 +25,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public final class ForwardServiceConfig {
+public class ForwardServiceConfig {
     
     private String serviceName;
     

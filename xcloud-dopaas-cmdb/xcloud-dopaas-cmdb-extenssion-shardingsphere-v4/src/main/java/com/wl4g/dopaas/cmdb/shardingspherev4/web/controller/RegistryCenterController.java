@@ -37,7 +37,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/reg-center")
-public final class RegistryCenterController {
+public class RegistryCenterController {
     
     @Autowired
     private CenterConfigService centerConfigService;

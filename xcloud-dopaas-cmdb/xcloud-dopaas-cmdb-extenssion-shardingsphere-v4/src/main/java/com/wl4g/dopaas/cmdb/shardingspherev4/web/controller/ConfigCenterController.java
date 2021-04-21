@@ -37,7 +37,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/config-center")
-public final class ConfigCenterController {
+public class ConfigCenterController {
     
     @Autowired
     private CenterConfigService centerConfigService;

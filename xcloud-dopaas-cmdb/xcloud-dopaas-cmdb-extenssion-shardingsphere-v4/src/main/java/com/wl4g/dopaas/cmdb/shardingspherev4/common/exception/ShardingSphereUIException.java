@@ -23,7 +23,7 @@ import lombok.Getter;
  * ShardingSphere UI system exception.
  */
 @Getter
-public final class ShardingSphereUIException extends RuntimeException {
+public class ShardingSphereUIException extends RuntimeException {
     
     public static final int INVALID_PARAM = 400;
     
