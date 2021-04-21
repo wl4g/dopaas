@@ -94,6 +94,7 @@ public class PipelineServiceImpl implements PipelineService {
 	public PageHolder<Pipeline> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
 		pm.useCount().bind();
 		List<Pipeline> pipes = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment);
+		pm.setRecords(pipes);
 		for (Pipeline p : safeList(pipes)) {
 			p.setPipeStepBuildingProjects(pipeStepBuildingProjectDao.selectByPipeId(p.getId()));
 
@@ -105,7 +106,6 @@ public class PipelineServiceImpl implements PipelineService {
 			}
 			p.setInstances(appInstances);
 		}
-		pm.setRecords(pipes);
 		return pm;
 	}
 
@@ -436,8 +436,10 @@ public class PipelineServiceImpl implements PipelineService {
 		List<ClusterExtension> list = new ArrayList<>();
 		for(AppCluster appCluster : appClusters){
 			ClusterExtension clusterExtension = clusterExtensionDao.selectByClusterId(appCluster.getId());
-			clusterExtension.setClusterName(appCluster.getName());
-			list.add(clusterExtension);
+			if(Objects.nonNull(clusterExtension)){
+				clusterExtension.setClusterName(appCluster.getName());
+				list.add(clusterExtension);
+			}
 		}
 		pm.setRecords(list);
 		return pm;

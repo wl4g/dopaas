@@ -220,8 +220,8 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Override
 	public PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName,
 			String environment, String startDate, String endDate, String providerKind) {
-		pm.setRecords(listWithoutPage(pm, pipeName, clusterName, environment, startDate,
-				endDate, providerKind, null, null));
+		listWithoutPage(pm, pipeName, clusterName, environment, startDate,
+				endDate, providerKind, null, null);
 		return pm;
 	}
 
@@ -238,6 +238,10 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		}
 		List<PipelineHistory> list = pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterIds, environment, startDate,
 				endDate, providerKind, orchestrationType, orchestrationId);
+		PageHolder<Object> current = PageHolder.current();
+		if(pm != null){
+			pm.setRecords(list);
+		}
 		for(PipelineHistory pipelineHistory : list){
 			AppCluster appCluster = appClusterService.getById(pipelineHistory.getClusterId());
 			if(appCluster != null){
