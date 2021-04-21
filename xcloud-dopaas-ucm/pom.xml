@@ -25,21 +25,6 @@
 		<java.version>1.8</java.version>
 		<final.name>ucm-server</final.name>
 	</properties>
-	<repositories>
-		<repository>
-			<id>aliyun-public</id>
-			<name>Aliyun public</name>
-			<url>https://maven.aliyun.com/repository/public</url>
-		</repository>
-		<repository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/libs-snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	<build>
 		<plugins>
 			<plugin>

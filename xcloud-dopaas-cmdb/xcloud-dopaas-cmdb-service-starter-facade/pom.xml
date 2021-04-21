@@ -38,42 +38,9 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-support</artifactId>
 		</dependency>
-		<!--shardingsphere-->
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-governance-core-facade</artifactId>
-			<version>5.0.0-alpha</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-governance-repository-zookeeper-curator</artifactId>
-			<version>5.0.0-alpha</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-governance-repository-etcd</artifactId>
-			<version>5.0.0-alpha</version>
-		</dependency>
 
-		<dependency>
-			<groupId>org.apache.shardingsphere</groupId>
-			<artifactId>shardingsphere-sharding-common</artifactId>
-			<version>5.0.0-alpha</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.shardingsphere</groupId>
-					<artifactId>shardingsphere-sql-parser-spi</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.shardingsphere</groupId>
-					<artifactId>shardingsphere-sql-parser-engine</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.shardingsphere</groupId>
-					<artifactId>shardingsphere-sql-parser-binder</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
+
 
 	</dependencies>
 	<build>

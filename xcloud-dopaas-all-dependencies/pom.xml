@@ -76,7 +76,7 @@
 			<artifactId>xcloud-dopaas-lcdp-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-dopaas-uds-service-starter-facade</artifactId>
 			<version>${project.parent.version}</version>
@@ -85,7 +85,7 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-dopaas-uds-service-starter-manager</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
+		</dependency>-->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
 		<!-- <artifactId>xcloud-dopaas-umc-service-starter-facade</artifactId> -->
