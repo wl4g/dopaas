@@ -32,7 +32,7 @@ import java.io.IOException;
 /**
  * CORS filter.
  */
-public final class CORSFilter implements Filter {
+public class CORSFilter implements Filter {
     
     @Override
     public void init(final FilterConfig filterConfig) {

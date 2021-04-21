@@ -46,7 +46,7 @@ import java.util.Properties;
  * YAML converter for configuration.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ConfigurationYamlConverter {
+public class ConfigurationYamlConverter {
 
     /**
      * Load data source configurations.

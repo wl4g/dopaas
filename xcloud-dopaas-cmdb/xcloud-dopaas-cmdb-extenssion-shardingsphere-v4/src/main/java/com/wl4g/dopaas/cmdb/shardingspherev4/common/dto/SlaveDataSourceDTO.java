@@ -29,7 +29,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public final class SlaveDataSourceDTO {
+public class SlaveDataSourceDTO {
     
     private String schema;
     

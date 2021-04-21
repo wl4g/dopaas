@@ -25,7 +25,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public final class CenterConfigDTO {
+public class CenterConfigDTO {
     
     private String name;
     

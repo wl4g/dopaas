@@ -21,6 +21,11 @@
 			<artifactId>xcloud-dopaas-cmdb-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-dopaas-cmdb-extenssion-shardingsphere-v4</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
 		<!-- <artifactId>xcloud-dopaas-cmdb-initializer</artifactId> -->

@@ -37,7 +37,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/shardingscaling")
-public final class ShardingScalingForwardController {
+public class ShardingScalingForwardController {
     
     @Autowired
     private ShardingScalingForwardService shardingScalingForwardService;
