@@ -16,7 +16,6 @@
 		<!--<module>xcloud-dopaas-cmdb-extenssion-shardingsphere-v5</module>-->
 		<module>xcloud-dopaas-cmdb-service-starter-facade</module>
 		<module>xcloud-dopaas-cmdb-service-starter-manager</module>
-		<module>xcloud-dopaas-cmdb-extenssion-shardingsphere-v4</module>
 		<!-- <module>xcloud-dopaas-cmdb-initializer</module> -->
 	</modules>
 	<properties>
