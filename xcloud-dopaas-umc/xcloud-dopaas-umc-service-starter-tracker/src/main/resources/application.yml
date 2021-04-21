@@ -13,7 +13,7 @@
 spring:
   application.name: umc-tracker
   profiles:
-    include: common,support,util,base
+    include: common,support,util,base,etc
     active: dev
 
 # Logging configuration.

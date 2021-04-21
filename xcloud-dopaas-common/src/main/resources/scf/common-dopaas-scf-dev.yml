@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(SpringCloud Feign for Dev) configuration. ####
+# #### Environment(DoPaaS Common SpringCloud-Feign Dev Configuration) configuration. ####
 #
 
 spring:

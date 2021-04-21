@@ -11,7 +11,7 @@
 spring:
   application.name: urm-manager
   profiles:
-    include: common,support,util,base
+    include: common,support,util,base,etc
     active: dev
   xcloud:
     iam: # IAM client configuration.
