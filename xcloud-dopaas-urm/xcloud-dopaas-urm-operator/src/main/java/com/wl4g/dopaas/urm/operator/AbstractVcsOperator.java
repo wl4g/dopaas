@@ -97,8 +97,8 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	 * @param ref
 	 * @return
 	 */
-	protected final <T> ResponseEntity<T> doRemoteRequest(HttpMethod method, SourceRepo credentials, String url, HttpHeaders headers,
-														  ParameterizedTypeReference<T> ref) {
+	protected final <T> ResponseEntity<T> doRemoteRequest(HttpMethod method, SourceRepo credentials, String url,
+			HttpHeaders headers, ParameterizedTypeReference<T> ref) {
 		notNullOf(method, "method");
 		notNullOf(credentials, "credentials");
 		notNullOf(ref, "typeReference");

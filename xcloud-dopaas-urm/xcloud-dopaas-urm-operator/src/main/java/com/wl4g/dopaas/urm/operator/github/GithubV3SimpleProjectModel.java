@@ -15,11 +15,15 @@
  */
 package com.wl4g.dopaas.urm.operator.github;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.model.VcsProjectModel;
 
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Gitlab API-v4 for projects simple model.
@@ -28,6 +32,9 @@ import java.io.Serializable;
  * @version v1.0 2019年11月13日
  * @since
  */
+@Getter
+@Setter
+@ToString
 public class GithubV3SimpleProjectModel implements VcsProjectModel, Serializable {
 	private static final long serialVersionUID = 3384209918335868080L;
 
@@ -46,71 +53,7 @@ public class GithubV3SimpleProjectModel implements VcsProjectModel, Serializable
 
 	@Override
 	public CompositeBasicVcsProjectModel toCompositeVcsProject() {
-		return new CompositeBasicVcsProjectModel(getId(), getName(), getCloneUrl(), getSshUrl(),
-				getFullName());
+		return new CompositeBasicVcsProjectModel(getId(), getName(), getCloneUrl(), getSshUrl(), getFullName());
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
-	public String getHtmlUrl() {
-		return htmlUrl;
-	}
-
-	public void setHtmlUrl(String htmlUrl) {
-		this.htmlUrl = htmlUrl;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getSshUrl() {
-		return sshUrl;
-	}
-
-	public void setSshUrl(String sshUrl) {
-		this.sshUrl = sshUrl;
-	}
-
-	public String getCloneUrl() {
-		return cloneUrl;
-	}
-
-	public void setCloneUrl(String cloneUrl) {
-		this.cloneUrl = cloneUrl;
-	}
 }

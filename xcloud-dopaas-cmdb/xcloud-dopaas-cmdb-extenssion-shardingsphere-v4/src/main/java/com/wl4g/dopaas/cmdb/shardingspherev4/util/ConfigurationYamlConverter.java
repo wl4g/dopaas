@@ -17,10 +17,9 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.util;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.shardingsphere.api.config.masterslave.MasterSlaveRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.core.rule.Authentication;
@@ -39,8 +38,11 @@ import org.apache.shardingsphere.orchestration.core.configuration.YamlDataSource
 import org.apache.shardingsphere.underlying.common.config.DataSourceConfiguration;
 import org.apache.shardingsphere.underlying.common.yaml.engine.YamlEngine;
 
-import java.util.Map;
-import java.util.Properties;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * YAML converter for configuration.
@@ -48,67 +50,74 @@ import java.util.Properties;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConfigurationYamlConverter {
 
-    /**
-     * Load data source configurations.
-     *
-     * @param data data
-     * @return data source configurations
-     */
-    @SuppressWarnings("unchecked")
-    public static Map<String, DataSourceConfiguration> loadDataSourceConfigurations(final String data) {
-        Map<String, YamlDataSourceConfiguration> result = (Map) YamlEngine.unmarshal(data);
-        Preconditions.checkState(null != result && !result.isEmpty(), "No available data sources to load for orchestration.");
-        return Maps.transformValues(result, new DataSourceConfigurationYamlSwapper()::swap);
-    }
+	/**
+	 * Load data source configurations.
+	 *
+	 * @param data
+	 *            data
+	 * @return data source configurations
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Map<String, DataSourceConfiguration> loadDataSourceConfigurations(final String data) {
+		Map<String, YamlDataSourceConfiguration> result = (Map) YamlEngine.unmarshal(data);
+		Preconditions.checkState(null != result && !result.isEmpty(), "No available data sources to load for orchestration.");
+		return Maps.transformValues(result, new DataSourceConfigurationYamlSwapper()::swap);
+	}
 
-    /**
-     * Load sharding rule configuration.
-     *
-     * @param data data
-     * @return sharding rule configuration
-     */
-    public static ShardingRuleConfiguration loadShardingRuleConfiguration(final String data) {
-        return new ShardingRuleConfigurationYamlSwapper().swap(
-                YamlEngine.unmarshal(data, YamlShardingRuleConfiguration.class, new YamlRootShardingConfigurationConstructor()));
-    }
+	/**
+	 * Load sharding rule configuration.
+	 *
+	 * @param data
+	 *            data
+	 * @return sharding rule configuration
+	 */
+	public static ShardingRuleConfiguration loadShardingRuleConfiguration(final String data) {
+		return new ShardingRuleConfigurationYamlSwapper().swap(
+				YamlEngine.unmarshal(data, YamlShardingRuleConfiguration.class, new YamlRootShardingConfigurationConstructor()));
+	}
 
-    /**
-     * Load master-slave rule configuration.
-     *
-     * @param data data
-     * @return master-slave rule configuration
-     */
-    public static MasterSlaveRuleConfiguration loadMasterSlaveRuleConfiguration(final String data) {
-        return new MasterSlaveRuleConfigurationYamlSwapper().swap(YamlEngine.unmarshal(data, YamlMasterSlaveRuleConfiguration.class));
-    }
+	/**
+	 * Load master-slave rule configuration.
+	 *
+	 * @param data
+	 *            data
+	 * @return master-slave rule configuration
+	 */
+	public static MasterSlaveRuleConfiguration loadMasterSlaveRuleConfiguration(final String data) {
+		return new MasterSlaveRuleConfigurationYamlSwapper()
+				.swap(YamlEngine.unmarshal(data, YamlMasterSlaveRuleConfiguration.class));
+	}
 
-    /**
-     * Load authentication.
-     *
-     * @param data data
-     * @return authentication
-     */
-    public static Authentication loadAuthentication(final String data) {
-        return new AuthenticationYamlSwapper().swap(YamlEngine.unmarshal(data, YamlAuthenticationConfiguration.class));
-    }
-    
-    /**
-     * Load properties configuration.
-     *
-     * @param data data
-     * @return properties
-     */
-    public static Properties loadProperties(final String data) {
-        return YamlEngine.unmarshalProperties(data);
-    }
-    
-    /**
-     * Load encrypt rule configuration.
-     *
-     * @param data data
-     * @return encrypt rule configuration
-     */
-    public static EncryptRuleConfiguration loadEncryptRuleConfiguration(final String data) {
-        return new EncryptRuleConfigurationYamlSwapper().swap(YamlEngine.unmarshal(data, YamlEncryptRuleConfiguration.class));
-    }
+	/**
+	 * Load authentication.
+	 *
+	 * @param data
+	 *            data
+	 * @return authentication
+	 */
+	public static Authentication loadAuthentication(final String data) {
+		return new AuthenticationYamlSwapper().swap(YamlEngine.unmarshal(data, YamlAuthenticationConfiguration.class));
+	}
+
+	/**
+	 * Load properties configuration.
+	 *
+	 * @param data
+	 *            data
+	 * @return properties
+	 */
+	public static Properties loadProperties(final String data) {
+		return YamlEngine.unmarshalProperties(data);
+	}
+
+	/**
+	 * Load encrypt rule configuration.
+	 *
+	 * @param data
+	 *            data
+	 * @return encrypt rule configuration
+	 */
+	public static EncryptRuleConfiguration loadEncryptRuleConfiguration(final String data) {
+		return new EncryptRuleConfigurationYamlSwapper().swap(YamlEngine.unmarshal(data, YamlEncryptRuleConfiguration.class));
+	}
 }

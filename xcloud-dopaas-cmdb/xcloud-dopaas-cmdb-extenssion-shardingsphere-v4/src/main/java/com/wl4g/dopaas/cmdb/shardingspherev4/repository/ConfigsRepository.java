@@ -21,18 +21,19 @@ package com.wl4g.dopaas.cmdb.shardingspherev4.repository;
  * Configs repository.
  */
 public interface ConfigsRepository<T> {
-    
-    /**
-     * Load configs.
-     *
-     * @return configs
-     */
-    T load();
-    
-    /**
-     * Save configs.
-     *
-     * @param configs configs
-     */
-    void save(T configs);
+
+	/**
+	 * Load configs.
+	 *
+	 * @return configs
+	 */
+	T load();
+
+	/**
+	 * Save configs.
+	 *
+	 * @param configs
+	 *            configs
+	 */
+	void save(T configs);
 }

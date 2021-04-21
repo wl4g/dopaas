@@ -21,35 +21,38 @@ package com.wl4g.dopaas.cmdb.shardingspherev4.servcie.forward;
  * Forward server of sharding scaling.
  */
 public interface ShardingScalingForwardService {
-    
-    /**
-     * list all sharding scaling jobs.
-     *
-     * @return response string from sharding scaling server
-     */
-    String listAllShardingScalingJobs();
-    
-    /**
-     * Start sharding scaling job.
-     *
-     * @param requestBody request body of start sharding scaling job
-     * @return response string from sharding scaling server
-     */
-    String startShardingScalingJobs(String requestBody);
-    
-    /**
-     * Get sharding scaling job progress.
-     *
-     * @param jobId job id.
-     * @return response string from sharding scaling server
-     */
-    String getShardingScalingJobProgress(int jobId);
-    
-    /**
-     * Stop sharding scaling job.
-     *
-     * @param requestBody request body of stop sharding scaling job
-     * @return response string from sharding scaling server
-     */
-    String stopShardingScalingJob(String requestBody);
+
+	/**
+	 * list all sharding scaling jobs.
+	 *
+	 * @return response string from sharding scaling server
+	 */
+	String listAllShardingScalingJobs();
+
+	/**
+	 * Start sharding scaling job.
+	 *
+	 * @param requestBody
+	 *            request body of start sharding scaling job
+	 * @return response string from sharding scaling server
+	 */
+	String startShardingScalingJobs(String requestBody);
+
+	/**
+	 * Get sharding scaling job progress.
+	 *
+	 * @param jobId
+	 *            job id.
+	 * @return response string from sharding scaling server
+	 */
+	String getShardingScalingJobProgress(int jobId);
+
+	/**
+	 * Stop sharding scaling job.
+	 *
+	 * @param requestBody
+	 *            request body of stop sharding scaling job
+	 * @return response string from sharding scaling server
+	 */
+	String stopShardingScalingJob(String requestBody);
 }

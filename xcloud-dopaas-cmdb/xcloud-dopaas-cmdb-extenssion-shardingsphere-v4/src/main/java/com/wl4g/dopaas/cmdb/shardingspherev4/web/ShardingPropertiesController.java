@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.cmdb.shardingspherev4.web.controller;
+package com.wl4g.dopaas.cmdb.shardingspherev4.web;
 
-import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.ShardingPropertiesService;
-import com.wl4g.dopaas.cmdb.shardingspherev4.web.response.ResponseResult;
-import com.wl4g.dopaas.cmdb.shardingspherev4.web.response.ResponseResultUtil;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.ShardingPropertiesService;
 
 /**
  * RESTful API of sharding properties.
@@ -34,29 +34,30 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/props")
 public class ShardingPropertiesController {
-    
-    @Autowired
-    private ShardingPropertiesService shardingPropertiesService;
-    
-    /**
-     * Load sharding properties.
-     *
-     * @return response result
-     */
-    @RequestMapping(value = "get", method = RequestMethod.GET)
-    public ResponseResult<String> loadShardingProperties() {
-        return ResponseResultUtil.build(shardingPropertiesService.loadShardingProperties());
-    }
-    
-    /**
-     * Update sharding properties.
-     *
-     * @param configMap config map
-     * @return response result
-     */
-    @RequestMapping(value = "put", method = RequestMethod.PUT)
-    public ResponseResult updateShardingProperties(@RequestBody final Map<String, String> configMap) {
-        shardingPropertiesService.updateShardingProperties(configMap.get("props"));
-        return ResponseResultUtil.success();
-    }
+
+	@Autowired
+	private ShardingPropertiesService shardingPropertiesService;
+
+	/**
+	 * Load sharding properties.
+	 *
+	 * @return response result
+	 */
+	@RequestMapping(value = "get", method = RequestMethod.GET)
+	public RespBase<String> loadShardingProperties() {
+		return RespBase.<String> create().withData(shardingPropertiesService.loadShardingProperties());
+	}
+
+	/**
+	 * Update sharding properties.
+	 *
+	 * @param configMap
+	 *            config map
+	 * @return response result
+	 */
+	@RequestMapping(value = "put", method = RequestMethod.PUT)
+	public RespBase<?> updateShardingProperties(@RequestBody final Map<String, String> configMap) {
+		shardingPropertiesService.updateShardingProperties(configMap.get("props"));
+		return RespBase.create();
+	}
 }

@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.cmdb.shardingspherev4.web.controller;
+package com.wl4g.dopaas.cmdb.shardingspherev4.web;
 
-import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.ProxyAuthenticationService;
-import com.wl4g.dopaas.cmdb.shardingspherev4.web.response.ResponseResult;
-import com.wl4g.dopaas.cmdb.shardingspherev4.web.response.ResponseResultUtil;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.ProxyAuthenticationService;
 
 /**
  * RESTful API of sharding proxy authentication.
@@ -34,29 +34,30 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/authentication")
 public class ProxyAuthenticationController {
-    
-    @Autowired
-    private ProxyAuthenticationService proxyAuthenticationService;
-    
-    /**
-     * Load authentication.
-     *
-     * @return response result
-     */
-    @RequestMapping(value = "get", method = RequestMethod.GET)
-    public ResponseResult<String> loadAuthentication() {
-        return ResponseResultUtil.build(proxyAuthenticationService.getAuthentication());
-    }
-    
-    /**
-     * Update authentication.
-     *
-     * @param configMap config map
-     * @return response result
-     */
-    @RequestMapping(value = "put", method = RequestMethod.PUT)
-    public ResponseResult updateAuthentication(@RequestBody final Map<String, String> configMap) {
-        proxyAuthenticationService.updateAuthentication(configMap.get("authentication"));
-        return ResponseResultUtil.success();
-    }
+
+	@Autowired
+	private ProxyAuthenticationService proxyAuthenticationService;
+
+	/**
+	 * Load authentication.
+	 *
+	 * @return response result
+	 */
+	@RequestMapping(value = "get", method = RequestMethod.GET)
+	public RespBase<String> loadAuthentication() {
+		return RespBase.<String> create().withData(proxyAuthenticationService.getAuthentication());
+	}
+
+	/**
+	 * Update authentication.
+	 *
+	 * @param configMap
+	 *            config map
+	 * @return response result
+	 */
+	@RequestMapping(value = "put", method = RequestMethod.PUT)
+	public RespBase<?> updateAuthentication(@RequestBody final Map<String, String> configMap) {
+		proxyAuthenticationService.updateAuthentication(configMap.get("authentication"));
+		return RespBase.create();
+	}
 }

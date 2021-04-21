@@ -15,13 +15,13 @@
  */
 package com.wl4g.dopaas.urm.operator.gitlab;
 
+import java.io.Serializable;
+import java.util.List;
+
 import com.wl4g.dopaas.urm.operator.model.VcsGroupModel;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * Gitlab API-v4 for projects simple model.
@@ -50,8 +50,5 @@ public class GitlabV4SimpleTeamModel implements VcsGroupModel, Serializable {
 
 	// Other
 	List<GitlabV4SimpleTeamModel> children;
-
-	public GitlabV4SimpleTeamModel() {
-	}
 
 }

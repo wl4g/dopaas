@@ -21,18 +21,19 @@ package com.wl4g.dopaas.cmdb.shardingspherev4.servcie;
  * Sharding proxy Authentication service.
  */
 public interface ProxyAuthenticationService {
-    
-    /**
-     * Get authentication.
-     * 
-     * @return authentication
-     */
-    String getAuthentication();
-    
-    /**
-     * Update authentication.
-     *
-     * @param authentication authentication
-     */
-    void updateAuthentication(String authentication);
+
+	/**
+	 * Get authentication.
+	 * 
+	 * @return authentication
+	 */
+	String getAuthentication();
+
+	/**
+	 * Update authentication.
+	 *
+	 * @param authentication
+	 *            authentication
+	 */
+	void updateAuthentication(String authentication);
 }

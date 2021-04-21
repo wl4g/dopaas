@@ -26,10 +26,10 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ForwardServiceConfig {
-    
-    private String serviceName;
-    
-    private String serviceType;
-    
-    private String serviceUrl;
+
+	private String serviceName;
+
+	private String serviceType;
+
+	private String serviceUrl;
 }

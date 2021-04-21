@@ -21,18 +21,19 @@ package com.wl4g.dopaas.cmdb.shardingspherev4.servcie;
  * Sharding properties service.
  */
 public interface ShardingPropertiesService {
-    
-    /**
-     * Load sharding properties.
-     *
-     * @return sharding properties
-     */
-    String loadShardingProperties();
-    
-    /**
-     * Update sharding properties.
-     *
-     * @param configData config data
-     */
-    void updateShardingProperties(String configData);
+
+	/**
+	 * Load sharding properties.
+	 *
+	 * @return sharding properties
+	 */
+	String loadShardingProperties();
+
+	/**
+	 * Update sharding properties.
+	 *
+	 * @param configData
+	 *            config data
+	 */
+	void updateShardingProperties(String configData);
 }

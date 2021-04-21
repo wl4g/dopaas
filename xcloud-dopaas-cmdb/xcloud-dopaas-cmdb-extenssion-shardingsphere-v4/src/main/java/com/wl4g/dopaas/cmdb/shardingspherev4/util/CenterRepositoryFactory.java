@@ -33,65 +33,67 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CenterRepositoryFactory {
-    
-    private static final ConcurrentHashMap<String, RegistryCenterRepository> REGISTRY_CENTER_MAP = new ConcurrentHashMap<>();
-    
-    private static final ConcurrentHashMap<String, ConfigCenterRepository> CONFIG_CENTER_MAP = new ConcurrentHashMap<>();
-    
-    /**
-     * Create registry center instance.
-     *
-     * @param config registry center config
-     * @return registry center
-     */
-    public static RegistryCenterRepository createRegistryCenter(final CenterConfig config) {
-        RegistryCenterRepository result = REGISTRY_CENTER_MAP.get(config.getName());
-        if (null != result) {
-            return result;
-        }
-        InstanceType instanceType = InstanceType.nameOf(config.getInstanceType());
-        switch (instanceType) {
-            case ZOOKEEPER:
-                result = new CuratorZookeeperCenterRepository();
-                break;
-            default:
-                throw new UnsupportedOperationException(config.getName());
-        }
-        result.init(convert(config));
-        REGISTRY_CENTER_MAP.put(config.getName(), result);
-        return result;
-    }
-    
-    /**
-     * Create config center instance
-     * @param config config center config
-     * @return config center
-     */
-    public static ConfigCenterRepository createConfigCenter(final CenterConfig config) {
-        ConfigCenterRepository result = CONFIG_CENTER_MAP.get(config.getName());
-        if (null != result) {
-            return result;
-        }
-        InstanceType instanceType = InstanceType.nameOf(config.getInstanceType());
-        switch (instanceType) {
-            case ZOOKEEPER:
-                result = new CuratorZookeeperCenterRepository();
-                break;
-            default:
-                throw new UnsupportedOperationException(config.getName());
-        }
-        result.init(convert(config));
-        CONFIG_CENTER_MAP.put(config.getName(), result);
-        return result;
-    }
-    
-    
-    private static CenterConfiguration convert(final CenterConfig config) {
-        CenterConfiguration result = new CenterConfiguration(config.getInstanceType());
-        result.setServerLists(config.getServerLists());
-        result.setNamespace(config.getNamespace());
-        result.getProperties().put("digest", config.getDigest());
-        return result;
-    }
-    
+
+	private static final ConcurrentHashMap<String, RegistryCenterRepository> REGISTRY_CENTER_MAP = new ConcurrentHashMap<>();
+
+	private static final ConcurrentHashMap<String, ConfigCenterRepository> CONFIG_CENTER_MAP = new ConcurrentHashMap<>();
+
+	/**
+	 * Create registry center instance.
+	 *
+	 * @param config
+	 *            registry center config
+	 * @return registry center
+	 */
+	public static RegistryCenterRepository createRegistryCenter(final CenterConfig config) {
+		RegistryCenterRepository result = REGISTRY_CENTER_MAP.get(config.getName());
+		if (null != result) {
+			return result;
+		}
+		InstanceType instanceType = InstanceType.nameOf(config.getInstanceType());
+		switch (instanceType) {
+		case ZOOKEEPER:
+			result = new CuratorZookeeperCenterRepository();
+			break;
+		default:
+			throw new UnsupportedOperationException(config.getName());
+		}
+		result.init(convert(config));
+		REGISTRY_CENTER_MAP.put(config.getName(), result);
+		return result;
+	}
+
+	/**
+	 * Create config center instance
+	 * 
+	 * @param config
+	 *            config center config
+	 * @return config center
+	 */
+	public static ConfigCenterRepository createConfigCenter(final CenterConfig config) {
+		ConfigCenterRepository result = CONFIG_CENTER_MAP.get(config.getName());
+		if (null != result) {
+			return result;
+		}
+		InstanceType instanceType = InstanceType.nameOf(config.getInstanceType());
+		switch (instanceType) {
+		case ZOOKEEPER:
+			result = new CuratorZookeeperCenterRepository();
+			break;
+		default:
+			throw new UnsupportedOperationException(config.getName());
+		}
+		result.init(convert(config));
+		CONFIG_CENTER_MAP.put(config.getName(), result);
+		return result;
+	}
+
+	private static CenterConfiguration convert(final CenterConfig config) {
+		CenterConfiguration result = new CenterConfiguration(config.getInstanceType());
+		result.setServerLists(config.getServerLists());
+		result.setNamespace(config.getNamespace());
+		result.getProperties().put("digest", config.getDigest());
+		return result;
+	}
+
 }

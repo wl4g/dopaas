@@ -75,7 +75,8 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GitlabV4TagModel> getRemoteTags(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<GitlabV4TagModel> getRemoteTags(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception {
 		super.getRemoteTags(credentials, vcsProject);
 
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + vcsProject.getId() + "/repository/tags";
@@ -102,7 +103,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	@SuppressWarnings("unchecked")
 	@Override
 	public GitlabV4TagModel createRemoteTag(SourceRepo credentials, Long projectId, String tag, String ref, String message,
-											String releaseDescription) {
+			String releaseDescription) {
 		super.createRemoteTag(credentials, projectId, tag, ref, message, releaseDescription);
 
 		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId
@@ -148,7 +149,7 @@ public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(SourceRepo credentials, Long groupId, String projectName,
-																 SearchMeta meta) throws Exception {
+			SearchMeta meta) throws Exception {
 		super.searchRemoteProjects(credentials, groupId, projectName, meta);
 
 		// Parameters correcting.

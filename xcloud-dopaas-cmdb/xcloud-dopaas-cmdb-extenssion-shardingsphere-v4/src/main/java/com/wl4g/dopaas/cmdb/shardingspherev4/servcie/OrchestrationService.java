@@ -26,35 +26,40 @@ import java.util.Collection;
  * Orchestration operation service.
  */
 public interface OrchestrationService {
-    
-    /**
-     * Get all instances.
-     *
-     * @return all instances
-     */
-    Collection<InstanceDTO> getALLInstance();
-    
-    /**
-     * Update instance status.
-     *
-     * @param instanceId instance id
-     * @param enabled enabled
-     */
-    void updateInstanceStatus(String instanceId, boolean enabled);
-    
-    /**
-     * Get all slave data source.
-     *
-     * @return all slaver data source dto
-     */
-    Collection<SlaveDataSourceDTO> getAllSlaveDataSource();
-    
-    /**
-     * update slave data source status.
-     *
-     * @param schemaNames schema name
-     * @param slaveDataSourceName slave data source name
-     * @param enabled enabled
-     */
-    void updateSlaveDataSourceStatus(String schemaNames, String slaveDataSourceName, boolean enabled);
+
+	/**
+	 * Get all instances.
+	 *
+	 * @return all instances
+	 */
+	Collection<InstanceDTO> getALLInstance();
+
+	/**
+	 * Update instance status.
+	 *
+	 * @param instanceId
+	 *            instance id
+	 * @param enabled
+	 *            enabled
+	 */
+	void updateInstanceStatus(String instanceId, boolean enabled);
+
+	/**
+	 * Get all slave data source.
+	 *
+	 * @return all slaver data source dto
+	 */
+	Collection<SlaveDataSourceDTO> getAllSlaveDataSource();
+
+	/**
+	 * update slave data source status.
+	 *
+	 * @param schemaNames
+	 *            schema name
+	 * @param slaveDataSourceName
+	 *            slave data source name
+	 * @param enabled
+	 *            enabled
+	 */
+	void updateSlaveDataSourceStatus(String schemaNames, String slaveDataSourceName, boolean enabled);
 }

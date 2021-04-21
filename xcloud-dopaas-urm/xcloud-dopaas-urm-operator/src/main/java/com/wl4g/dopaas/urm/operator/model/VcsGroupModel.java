@@ -24,6 +24,4 @@ package com.wl4g.dopaas.urm.operator.model;
  */
 public interface VcsGroupModel {
 
-
-
 }

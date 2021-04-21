@@ -40,131 +40,157 @@ import java.util.Map.Entry;
  * Http client util.
  */
 public class HttpClientUtil {
-    
-    private static final String ENCODING = "UTF-8";
-    
-    private static final int CONNECT_TIMEOUT = 60 * 1000;
-    
-    private static final int SOCKET_TIMEOUT = 60 * 1000;
-    
-    /**
-     * Do get method.
-     *
-     * @param url url of get method
-     * @param headers headers of get method
-     * @param params parameters of get method
-     * @return response string of get method
-     * @throws IOException io exception
-     * @throws URISyntaxException uri syntax exception
-     */
-    public static String doGet(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException, URISyntaxException {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet(newInstanceURIBuilder(url, params).build());
-            httpGet.setConfig(RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT).setSocketTimeout(SOCKET_TIMEOUT).build());
-            packageHeader(headers, httpGet);
-            return getHttpClientResult(httpClient, httpGet);
-        }
-    }
-    
-    /**
-     * Do get method with default headers.
-     *
-     * @param url url of get method
-     * @param params parameters of get method
-     * @return response string of get method
-     * @throws IOException io exception
-     * @throws URISyntaxException uri syntax exception
-     */
-    public static String doGet(final String url, final Map<String, String> params) throws IOException, URISyntaxException {
-        return doGet(url, null, params);
-    }
-    
-    /**
-     * Do get method with default headers and without parameters.
-     *
-     * @param url url of get method
-     * @return response string of get method
-     * @throws IOException io exception
-     * @throws URISyntaxException uri syntax exception
-     */
-    public static String doGet(final String url) throws IOException, URISyntaxException {
-        return doGet(url, null, null);
-    }
-    
-    /**
-     * Do post method.
-     *
-     * @param url url of post method
-     * @param headers headers of post method
-     * @param params parameters of post method
-     * @return response string of post method
-     * @throws IOException io exception
-     */
-    public static String doPost(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httpPost = new HttpPost(url);
-            httpPost.setConfig(RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT).setSocketTimeout(SOCKET_TIMEOUT).build());
-            packageHeader(headers, httpPost);
-            packageParam(params, httpPost);
-            return getHttpClientResult(httpClient, httpPost);
-        }
-    }
-    
-    /**
-     * Do post method with json request body.
-     *
-     * @param url url of post method
-     * @param requestBody json request body
-     * @return response string of post method
-     * @throws IOException io exception
-     */
-    public static String doPostWithJsonRequestBody(final String url, final String requestBody) throws IOException {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httpPost = new HttpPost(url);
-            httpPost.setConfig(RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT).setSocketTimeout(SOCKET_TIMEOUT).build());
-            httpPost.setHeader("Content-type", "application/json");
-            StringEntity requestEntity = new StringEntity(requestBody, ENCODING);
-            requestEntity.setContentEncoding(ENCODING);
-            httpPost.setEntity(requestEntity);
-            return getHttpClientResult(httpClient, httpPost);
-        }
-    }
-    
-    private static URIBuilder newInstanceURIBuilder(final String url, final Map<String, String> params) throws URISyntaxException {
-        URIBuilder result = new URIBuilder(url);
-        if (null != params) {
-            for (Entry<String, String> each : params.entrySet()) {
-                result.setParameter(each.getKey(), each.getValue());
-            }
-        }
-        return result;
-    }
-    
-    private static void packageHeader(final Map<String, String> headers, final HttpRequestBase httpMethod) {
-        if (null != headers) {
-            for (Entry<String, String> each : headers.entrySet()) {
-                httpMethod.setHeader(each.getKey(), each.getValue());
-            }
-        }
-    }
-    
-    private static void packageParam(final Map<String, String> params, final HttpEntityEnclosingRequestBase httpMethod) throws UnsupportedEncodingException {
-        if (null != params && !params.isEmpty()) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            for (Entry<String, String> each : params.entrySet()) {
-                nameValuePairs.add(new BasicNameValuePair(each.getKey(), each.getValue()));
-            }
-            httpMethod.setEntity(new UrlEncodedFormEntity(nameValuePairs, ENCODING));
-        }
-    }
-    
-    private static String getHttpClientResult(final CloseableHttpClient httpClient, final HttpRequestBase httpMethod) throws IOException {
-        try (CloseableHttpResponse httpResponse = httpClient.execute(httpMethod)) {
-            return isValidResponse(httpResponse) ? EntityUtils.toString(httpResponse.getEntity(), ENCODING) : "";
-        }
-    }
-    
-    private static boolean isValidResponse(final CloseableHttpResponse httpResponse) {
-        return null != httpResponse && null != httpResponse.getEntity();
-    }
+
+	private static final String ENCODING = "UTF-8";
+
+	private static final int CONNECT_TIMEOUT = 60 * 1000;
+
+	private static final int SOCKET_TIMEOUT = 60 * 1000;
+
+	/**
+	 * Do get method.
+	 *
+	 * @param url
+	 *            url of get method
+	 * @param headers
+	 *            headers of get method
+	 * @param params
+	 *            parameters of get method
+	 * @return response string of get method
+	 * @throws IOException
+	 *             io exception
+	 * @throws URISyntaxException
+	 *             uri syntax exception
+	 */
+	public static String doGet(final String url, final Map<String, String> headers, final Map<String, String> params)
+			throws IOException, URISyntaxException {
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			HttpGet httpGet = new HttpGet(newInstanceURIBuilder(url, params).build());
+			httpGet.setConfig(RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT).setSocketTimeout(SOCKET_TIMEOUT).build());
+			packageHeader(headers, httpGet);
+			return getHttpClientResult(httpClient, httpGet);
+		}
+	}
+
+	/**
+	 * Do get method with default headers.
+	 *
+	 * @param url
+	 *            url of get method
+	 * @param params
+	 *            parameters of get method
+	 * @return response string of get method
+	 * @throws IOException
+	 *             io exception
+	 * @throws URISyntaxException
+	 *             uri syntax exception
+	 */
+	public static String doGet(final String url, final Map<String, String> params) throws IOException, URISyntaxException {
+		return doGet(url, null, params);
+	}
+
+	/**
+	 * Do get method with default headers and without parameters.
+	 *
+	 * @param url
+	 *            url of get method
+	 * @return response string of get method
+	 * @throws IOException
+	 *             io exception
+	 * @throws URISyntaxException
+	 *             uri syntax exception
+	 */
+	public static String doGet(final String url) throws IOException, URISyntaxException {
+		return doGet(url, null, null);
+	}
+
+	/**
+	 * Do post method.
+	 *
+	 * @param url
+	 *            url of post method
+	 * @param headers
+	 *            headers of post method
+	 * @param params
+	 *            parameters of post method
+	 * @return response string of post method
+	 * @throws IOException
+	 *             io exception
+	 */
+	public static String doPost(final String url, final Map<String, String> headers, final Map<String, String> params)
+			throws IOException {
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			HttpPost httpPost = new HttpPost(url);
+			httpPost.setConfig(
+					RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT).setSocketTimeout(SOCKET_TIMEOUT).build());
+			packageHeader(headers, httpPost);
+			packageParam(params, httpPost);
+			return getHttpClientResult(httpClient, httpPost);
+		}
+	}
+
+	/**
+	 * Do post method with json request body.
+	 *
+	 * @param url
+	 *            url of post method
+	 * @param requestBody
+	 *            json request body
+	 * @return response string of post method
+	 * @throws IOException
+	 *             io exception
+	 */
+	public static String doPostWithJsonRequestBody(final String url, final String requestBody) throws IOException {
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+			HttpPost httpPost = new HttpPost(url);
+			httpPost.setConfig(
+					RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT).setSocketTimeout(SOCKET_TIMEOUT).build());
+			httpPost.setHeader("Content-type", "application/json");
+			StringEntity requestEntity = new StringEntity(requestBody, ENCODING);
+			requestEntity.setContentEncoding(ENCODING);
+			httpPost.setEntity(requestEntity);
+			return getHttpClientResult(httpClient, httpPost);
+		}
+	}
+
+	private static URIBuilder newInstanceURIBuilder(final String url, final Map<String, String> params)
+			throws URISyntaxException {
+		URIBuilder result = new URIBuilder(url);
+		if (null != params) {
+			for (Entry<String, String> each : params.entrySet()) {
+				result.setParameter(each.getKey(), each.getValue());
+			}
+		}
+		return result;
+	}
+
+	private static void packageHeader(final Map<String, String> headers, final HttpRequestBase httpMethod) {
+		if (null != headers) {
+			for (Entry<String, String> each : headers.entrySet()) {
+				httpMethod.setHeader(each.getKey(), each.getValue());
+			}
+		}
+	}
+
+	private static void packageParam(final Map<String, String> params, final HttpEntityEnclosingRequestBase httpMethod)
+			throws UnsupportedEncodingException {
+		if (null != params && !params.isEmpty()) {
+			List<NameValuePair> nameValuePairs = new ArrayList<>();
+			for (Entry<String, String> each : params.entrySet()) {
+				nameValuePairs.add(new BasicNameValuePair(each.getKey(), each.getValue()));
+			}
+			httpMethod.setEntity(new UrlEncodedFormEntity(nameValuePairs, ENCODING));
+		}
+	}
+
+	private static String getHttpClientResult(final CloseableHttpClient httpClient, final HttpRequestBase httpMethod)
+			throws IOException {
+		try (CloseableHttpResponse httpResponse = httpClient.execute(httpMethod)) {
+			return isValidResponse(httpResponse) ? EntityUtils.toString(httpResponse.getEntity(), ENCODING) : "";
+		}
+	}
+
+	private static boolean isValidResponse(final CloseableHttpResponse httpResponse) {
+		return null != httpResponse && null != httpResponse.getEntity();
+	}
 }

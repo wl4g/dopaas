@@ -26,9 +26,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum OrchestrationType {
-    
-    REGISTRY_CENTER("registry_center"),
-    CONFIG_CENTER("config_center");
-    
-    private final String value;
+
+	REGISTRY_CENTER("registry_center"), CONFIG_CENTER("config_center");
+
+	private final String value;
 }

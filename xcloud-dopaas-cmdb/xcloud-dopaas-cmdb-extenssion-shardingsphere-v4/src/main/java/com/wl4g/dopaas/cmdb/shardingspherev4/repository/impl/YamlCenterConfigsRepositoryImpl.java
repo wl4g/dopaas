@@ -37,37 +37,37 @@ import java.nio.charset.StandardCharsets;
  */
 @Repository
 public class YamlCenterConfigsRepositoryImpl implements CenterConfigsRepository {
-    
-    private final File file;
-    
-    public YamlCenterConfigsRepositoryImpl() {
-        file = new File(new File(System.getProperty("user.home")), "shardingsphere-ui-configs.yaml");
-    }
-    
-    @Override
-    public CenterConfigs load() {
-        if (!file.exists()) {
-            return new CenterConfigs();
-        }
-        
-        try (FileInputStream fileInputStream = new FileInputStream(file);
-             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)) {
-            return new Yaml(new Constructor(CenterConfigs.class)).loadAs(inputStreamReader, CenterConfigs.class);
-        } catch (IOException e) {
-            throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "load center config error");
-        }
-        
-    }
-    
-    @Override
-    public void save(final CenterConfigs centerConfigs) {
-        Yaml yaml = new Yaml();
-        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-            bufferedOutputStream.write(yaml.dumpAsMap(centerConfigs).getBytes());
-            bufferedOutputStream.flush();
-        } catch (IOException e) {
-            throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "save center config error");
-        }
-    }
-    
+
+	private final File file;
+
+	public YamlCenterConfigsRepositoryImpl() {
+		file = new File(new File(System.getProperty("user.home")), "shardingsphere-ui-configs.yaml");
+	}
+
+	@Override
+	public CenterConfigs load() {
+		if (!file.exists()) {
+			return new CenterConfigs();
+		}
+
+		try (FileInputStream fileInputStream = new FileInputStream(file);
+				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)) {
+			return new Yaml(new Constructor(CenterConfigs.class)).loadAs(inputStreamReader, CenterConfigs.class);
+		} catch (IOException e) {
+			throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "load center config error");
+		}
+
+	}
+
+	@Override
+	public void save(final CenterConfigs centerConfigs) {
+		Yaml yaml = new Yaml();
+		try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+			bufferedOutputStream.write(yaml.dumpAsMap(centerConfigs).getBytes());
+			bufferedOutputStream.flush();
+		} catch (IOException e) {
+			throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "save center config error");
+		}
+	}
+
 }

@@ -15,11 +15,15 @@
  */
 package com.wl4g.dopaas.urm.operator.gitee;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.model.VcsProjectModel;
 
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Gitlab API-v4 for projects simple model.
@@ -28,6 +32,9 @@ import java.io.Serializable;
  * @version v1.0 2019年11月13日
  * @since
  */
+@Getter
+@Setter
+@ToString
 public class GiteeV5SimpleProjectModel implements VcsProjectModel, Serializable {
 	private static final long serialVersionUID = 3384209918335868080L;
 
@@ -49,95 +56,7 @@ public class GiteeV5SimpleProjectModel implements VcsProjectModel, Serializable 
 
 	@Override
 	public CompositeBasicVcsProjectModel toCompositeVcsProject() {
-		return new CompositeBasicVcsProjectModel(getId(), getName(), getHtmlUrl(), getSshUrl(),
-				getFullName());
+		return new CompositeBasicVcsProjectModel(getId(), getName(), getHtmlUrl(), getSshUrl(), getFullName());
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
-	public String getHumanName() {
-		return humanName;
-	}
-
-	public void setHumanName(String humanName) {
-		this.humanName = humanName;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public boolean isInternal() {
-		return internal;
-	}
-
-	public void setInternal(boolean internal) {
-		this.internal = internal;
-	}
-
-	public boolean isFork() {
-		return fork;
-	}
-
-	public void setFork(boolean fork) {
-		this.fork = fork;
-	}
-
-	public String getHtmlUrl() {
-		return htmlUrl;
-	}
-
-	public void setHtmlUrl(String htmlUrl) {
-		this.htmlUrl = htmlUrl;
-	}
-
-	public String getSshUrl() {
-		return sshUrl;
-	}
-
-	public void setSshUrl(String sshUrl) {
-		this.sshUrl = sshUrl;
-	}
 }

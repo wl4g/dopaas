@@ -115,8 +115,8 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param <T>
 	 * @return
 	 */
-	default <T extends VcsTagModel> T createRemoteTag(SourceRepo credentials, Long projectId, String tag, String ref, String message,
-													  String releaseDescription) {
+	default <T extends VcsTagModel> T createRemoteTag(SourceRepo credentials, Long projectId, String tag, String ref,
+			String message, String releaseDescription) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -157,8 +157,8 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param meta
 	 * @return
 	 */
-	default <T extends VcsProjectModel> List<T> searchRemoteProjects(@NotNull SourceRepo credentials, @Nullable Long groupId, @Nullable String projectName,
-																	 @NotNull SearchMeta meta) throws Exception {
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(@NotNull SourceRepo credentials, @Nullable Long groupId,
+			@Nullable String projectName, @NotNull SearchMeta meta) throws Exception {
 		notNull(credentials, "Search remote projects credentials can't is null.");
 		notNull(meta, "Search remote projects meta can't is null.");
 		/*

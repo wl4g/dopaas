@@ -26,20 +26,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CenterConfigDTO {
-    
-    private String name;
-    
-    private String instanceType;
-    
-    private String serverLists;
-    
-    private String namespace;
-    
-    private String orchestrationName;
-    
-    private String orchestrationType;
-    
-    private String digest;
-    
-    private String primaryName;
+
+	private String name;
+
+	private String instanceType;
+
+	private String serverLists;
+
+	private String namespace;
+
+	private String orchestrationName;
+
+	private String orchestrationType;
+
+	private String digest;
+
+	private String primaryName;
 }

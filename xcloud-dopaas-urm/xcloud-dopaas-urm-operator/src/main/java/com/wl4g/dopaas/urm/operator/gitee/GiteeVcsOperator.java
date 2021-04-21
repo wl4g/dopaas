@@ -57,7 +57,8 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	}
 
 	@Override
-	public List<VcsBranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject) throws Exception {
+	public List<VcsBranchModel> getRemoteBranchs(SourceRepo credentials, CompositeBasicVcsProjectModel vcsProject)
+			throws Exception {
 		super.getRemoteBranchs(credentials, vcsProject);
 
 		String url = String.format((credentials.getBaseUri() + "/api/v5/repos/%s/branches?access_token=%s"),
@@ -91,7 +92,7 @@ public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public List<GiteeV5SimpleProjectModel> searchRemoteProjects(SourceRepo credentials, Long groupId, String projectName,
-																SearchMeta meta) throws Exception {
+			SearchMeta meta) throws Exception {
 		super.searchRemoteProjects(credentials, groupId, projectName, meta);
 
 		// Parameters correcting.

@@ -30,36 +30,40 @@ import java.util.Optional;
 @Getter
 @Setter
 public class ForwardServiceConfigs {
-    
-    private Map<String, ForwardServiceConfig> forwardServiceConfigs = new HashMap<>();
-    
-    /**
-     * Put forward service config.
-     *
-     * @param forwardServiceType forward service type
-     * @param forwardServiceConfig forward service config
-     */
-    public void putForwardServiceConfig(final String forwardServiceType, final ForwardServiceConfig forwardServiceConfig) {
-        forwardServiceConfigs.put(forwardServiceType, forwardServiceConfig);
-    }
-    
-    /**
-     * Get forward service config by type.
-     *
-     * @param forwardServiceType forward service config
-     * @return forward service config
-     */
-    public Optional<ForwardServiceConfig> getForwardServiceConfig(final String forwardServiceType) {
-        return Optional.ofNullable(forwardServiceConfigs.get(forwardServiceType));
-    }
-    
-    /**
-     * Remove forward service config by type.
-     *
-     * @param forwardServiceType forward service config
-     * @return forward service config
-     */
-    public Optional<ForwardServiceConfig> removeForwardServiceConfig(final String forwardServiceType) {
-        return Optional.ofNullable(forwardServiceConfigs.remove(forwardServiceType));
-    }
+
+	private Map<String, ForwardServiceConfig> forwardServiceConfigs = new HashMap<>();
+
+	/**
+	 * Put forward service config.
+	 *
+	 * @param forwardServiceType
+	 *            forward service type
+	 * @param forwardServiceConfig
+	 *            forward service config
+	 */
+	public void putForwardServiceConfig(final String forwardServiceType, final ForwardServiceConfig forwardServiceConfig) {
+		forwardServiceConfigs.put(forwardServiceType, forwardServiceConfig);
+	}
+
+	/**
+	 * Get forward service config by type.
+	 *
+	 * @param forwardServiceType
+	 *            forward service config
+	 * @return forward service config
+	 */
+	public Optional<ForwardServiceConfig> getForwardServiceConfig(final String forwardServiceType) {
+		return Optional.ofNullable(forwardServiceConfigs.get(forwardServiceType));
+	}
+
+	/**
+	 * Remove forward service config by type.
+	 *
+	 * @param forwardServiceType
+	 *            forward service config
+	 * @return forward service config
+	 */
+	public Optional<ForwardServiceConfig> removeForwardServiceConfig(final String forwardServiceType) {
+		return Optional.ofNullable(forwardServiceConfigs.remove(forwardServiceType));
+	}
 }

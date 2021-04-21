@@ -24,18 +24,18 @@ import org.apache.shardingsphere.orchestration.core.configcenter.ConfigCenterNod
  * Config center service
  */
 public interface ConfigCenterService {
-    
-    /**
-     * Get activated config center.
-     *
-     * @return config center
-     */
-    ConfigCenterRepository getActivatedConfigCenter();
-    
-    /**
-     * Get activated configuration node.
-     *
-     * @return configuration node
-     */
-    ConfigCenterNode getActivateConfigurationNode();
+
+	/**
+	 * Get activated config center.
+	 *
+	 * @return config center
+	 */
+	ConfigCenterRepository getActivatedConfigCenter();
+
+	/**
+	 * Get activated configuration node.
+	 *
+	 * @return configuration node
+	 */
+	ConfigCenterNode getActivateConfigurationNode();
 }
