@@ -42,7 +42,8 @@
                <include refid="Base_Column_List" />
         FROM udm_ee_api_repo
         <where>
-            group_id = #{groupId, jdbcType=BIGINT}
+            AND del_flag != 1
+            AND group_id = #{groupId, jdbcType=BIGINT}
         </where>
     </select>
 

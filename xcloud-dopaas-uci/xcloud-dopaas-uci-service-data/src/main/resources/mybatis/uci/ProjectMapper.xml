@@ -264,7 +264,7 @@
 		from uci_project p
 		where p.del_flag!=1
 		<if test="clusterIds != null">
-			where p.app_cluster_id IN <foreach item="item" index="index" collection="clusterIds" open="(" separator="," close=")">#{item}</foreach>
+			AND p.app_cluster_id IN <foreach item="item" index="index" collection="clusterIds" open="(" separator="," close=")">#{item}</foreach>
 		</if>
 
 		<if test="projectName != null and projectName != ''">
