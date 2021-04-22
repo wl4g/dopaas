@@ -17,10 +17,10 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.servcie.impl;
 
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfig;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfigs;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.CenterConfigDTO;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfig;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfigList;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.exception.ShardingSphereUIException;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.CenterConfigModel;
 import com.wl4g.dopaas.cmdb.shardingspherev4.repository.CenterConfigsRepository;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.CenterConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class CenterConfigServiceImpl implements CenterConfigService {
 
 	@Override
 	public void add(final CenterConfig config) {
-		CenterConfigs configs = loadAll();
+		CenterConfigList configs = loadAll();
 		CenterConfig existedConfig = find(config.getName(), config.getOrchestrationType(), configs);
 		if (null != existedConfig) {
 			throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR,
@@ -63,7 +63,7 @@ public class CenterConfigServiceImpl implements CenterConfigService {
 
 	@Override
 	public void delete(final String name, final String orchestrationType) {
-		CenterConfigs configs = loadAll();
+		CenterConfigList configs = loadAll();
 		CenterConfig toBeRemovedConfig = find(name, orchestrationType, configs);
 		if (null != toBeRemovedConfig) {
 			configs.getCenterConfigs().remove(toBeRemovedConfig);
@@ -73,7 +73,7 @@ public class CenterConfigServiceImpl implements CenterConfigService {
 
 	@Override
 	public void setActivated(final String name, final String orchestrationType) {
-		CenterConfigs configs = loadAll();
+		CenterConfigList configs = loadAll();
 		CenterConfig config = find(name, orchestrationType, configs);
 		if (null == config) {
 			throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "Center not existed!");
@@ -89,13 +89,13 @@ public class CenterConfigServiceImpl implements CenterConfigService {
 	}
 
 	@Override
-	public CenterConfigs loadAll() {
+	public CenterConfigList loadAll() {
 		return centerConfigsRepository.load();
 	}
 
 	@Override
-	public CenterConfigs loadAll(String orchestrationType) {
-		CenterConfigs result = new CenterConfigs();
+	public CenterConfigList loadAll(String orchestrationType) {
+		CenterConfigList result = new CenterConfigList();
 		List<CenterConfig> centerConfigs = new ArrayList<>();
 		centerConfigsRepository.load().getCenterConfigs().stream()
 				.filter(each -> orchestrationType.equals(each.getOrchestrationType())).forEach(each -> centerConfigs.add(each));
@@ -104,8 +104,8 @@ public class CenterConfigServiceImpl implements CenterConfigService {
 	}
 
 	@Override
-	public void update(CenterConfigDTO config) {
-		CenterConfigs configs = loadAll();
+	public void update(CenterConfigModel config) {
+		CenterConfigList configs = loadAll();
 		if (!config.getPrimaryName().equals(config.getName())) {
 			CenterConfig existedConfig = find(config.getName(), config.getOrchestrationType(), configs);
 			if (null != existedConfig) {
@@ -126,17 +126,17 @@ public class CenterConfigServiceImpl implements CenterConfigService {
 		}
 	}
 
-	private CenterConfig findActivatedCenterConfiguration(final CenterConfigs centerConfigs) {
+	private CenterConfig findActivatedCenterConfiguration(final CenterConfigList centerConfigs) {
 		return centerConfigs.getCenterConfigs().stream().filter(each -> each.isActivated()).findAny().orElse(null);
 	}
 
-	private CenterConfig findActivatedCenterConfiguration(final CenterConfigs centerConfigs, final String orchestrationType) {
+	private CenterConfig findActivatedCenterConfiguration(final CenterConfigList centerConfigs, final String orchestrationType) {
 		return centerConfigs.getCenterConfigs().stream()
 				.filter(each -> each.isActivated() && orchestrationType.equals(each.getOrchestrationType())).findAny()
 				.orElse(null);
 	}
 
-	private CenterConfig find(final String name, final String orchestrationType, final CenterConfigs configs) {
+	private CenterConfig find(final String name, final String orchestrationType, final CenterConfigList configs) {
 		return configs.getCenterConfigs().stream()
 				.filter(each -> name.equals(each.getName()) && orchestrationType.equals(each.getOrchestrationType())).findAny()
 				.orElse(null);

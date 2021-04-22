@@ -15,20 +15,21 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.cmdb.shardingspherev4.common.domain;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.wl4g.dopaas.cmdb.shardingspherev4.common.bean;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Center configs.
  */
 @Getter
 @Setter
-public class CenterConfigs {
+public class CenterConfigList {
 
 	private List<CenterConfig> centerConfigs = new ArrayList<>();
+
 }

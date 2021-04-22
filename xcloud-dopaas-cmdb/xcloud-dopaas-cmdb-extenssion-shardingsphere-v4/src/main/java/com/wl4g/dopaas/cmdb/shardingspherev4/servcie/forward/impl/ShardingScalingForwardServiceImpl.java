@@ -17,8 +17,8 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.servcie.forward.impl;
 
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.ForwardServiceConfig;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.constant.ForwardServiceType;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.ForwardServiceConfig;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.exception.ShardingSphereUIException;
 import com.wl4g.dopaas.cmdb.shardingspherev4.repository.ForwardServiceConfigsRepository;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.forward.ShardingScalingForwardService;

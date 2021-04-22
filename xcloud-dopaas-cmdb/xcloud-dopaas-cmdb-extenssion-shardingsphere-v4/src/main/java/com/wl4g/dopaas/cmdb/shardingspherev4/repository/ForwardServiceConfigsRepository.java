@@ -17,10 +17,10 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.repository;
 
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.ForwardServiceConfigs;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.ForwardServiceConfigList;
 
 /**
  * Sharding scaling config repository.
  */
-public interface ForwardServiceConfigsRepository extends ConfigsRepository<ForwardServiceConfigs> {
+public interface ForwardServiceConfigsRepository extends ConfigsRepository<ForwardServiceConfigList> {
 }

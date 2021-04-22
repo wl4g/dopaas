@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.ForwardServiceConfig;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.ForwardServiceConfigList;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.constant.ForwardServiceType;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.ForwardServiceConfig;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.ForwardServiceConfigs;
 import com.wl4g.dopaas.cmdb.shardingspherev4.repository.ForwardServiceConfigsRepository;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.forward.ShardingScalingForwardService;
 
@@ -68,7 +68,7 @@ public class ShardingScalingForwardController {
 	@RequestMapping(value = "post", method = RequestMethod.POST)
 	public RespBase<?> configService(@RequestBody final ForwardServiceConfig shardingScalingServiceConfig) {
 		RespBase<?> resp = RespBase.create();
-		ForwardServiceConfigs currentForwardServiceConfig = forwardServiceConfigsRepository.load();
+		ForwardServiceConfigList currentForwardServiceConfig = forwardServiceConfigsRepository.load();
 		currentForwardServiceConfig.putForwardServiceConfig(ForwardServiceType.SHARDING_SCALING.getName(),
 				shardingScalingServiceConfig);
 		forwardServiceConfigsRepository.save(currentForwardServiceConfig);
@@ -82,7 +82,7 @@ public class ShardingScalingForwardController {
 	 */
 	@RequestMapping(value = "del", method = RequestMethod.DELETE)
 	public RespBase<?> deleteService() {
-		ForwardServiceConfigs currentForwardServiceConfig = forwardServiceConfigsRepository.load();
+		ForwardServiceConfigList currentForwardServiceConfig = forwardServiceConfigsRepository.load();
 		currentForwardServiceConfig.removeForwardServiceConfig(ForwardServiceType.SHARDING_SCALING.getName());
 		forwardServiceConfigsRepository.save(currentForwardServiceConfig);
 		return RespBase.create();

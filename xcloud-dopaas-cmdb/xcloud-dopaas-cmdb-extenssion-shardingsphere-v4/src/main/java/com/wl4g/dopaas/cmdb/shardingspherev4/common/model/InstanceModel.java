@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.cmdb.shardingspherev4.common.dto;
+package com.wl4g.dopaas.cmdb.shardingspherev4.common.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,19 +27,18 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class InstanceDTO {
-
-	private static final String DELIMITER = "@";
+public class InstanceModel {
 
 	private String serverIp;
-
 	private String instanceId;
-
 	private boolean enabled;
 
-	public InstanceDTO(final String instanceId, final boolean enabled) {
+	public InstanceModel(final String instanceId, final boolean enabled) {
 		this.instanceId = instanceId;
 		this.enabled = enabled;
 		this.serverIp = instanceId.split(DELIMITER)[0];
 	}
+
+	private static final String DELIMITER = "@";
+
 }

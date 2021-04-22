@@ -17,10 +17,10 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.repository;
 
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfigs;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfigList;
 
 /**
  * Center configs repository interface.
  */
-public interface CenterConfigsRepository extends ConfigsRepository<CenterConfigs> {
+public interface CenterConfigsRepository extends ConfigsRepository<CenterConfigList> {
 }

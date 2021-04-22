@@ -15,35 +15,25 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.cmdb.shardingspherev4.common.domain;
+package com.wl4g.dopaas.cmdb.shardingspherev4.common.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Properties;
-
 /**
- * Center config.
+ * Slave data source DTO.
  */
-@Getter
 @Setter
-public class CenterConfig {
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class SlaveDataSourceModel {
 
-	private String name;
+	private String schema;
+	private String masterDataSourceName;
+	private String slaveDataSourceName;
+	private boolean enabled;
 
-	private String instanceType;
-
-	private String serverLists;
-
-	private String namespace;
-
-	private String orchestrationName;
-
-	private String orchestrationType;
-
-	private String digest;
-
-	private boolean activated;
-
-	private Properties props = new Properties();
 }

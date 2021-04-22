@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.InstanceDTO;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.SlaveDataSourceDTO;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.InstanceModel;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.SlaveDataSourceModel;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.OrchestrationService;
 
 /**
@@ -46,8 +46,8 @@ public class ShardingOrchestrationController {
 	 * @return response result
 	 */
 	@RequestMapping(value = "/instance/get", method = RequestMethod.GET)
-	public RespBase<Collection<InstanceDTO>> loadAllInstances() {
-		return RespBase.<Collection<InstanceDTO>> create().withData(orchestrationService.getALLInstance());
+	public RespBase<Collection<InstanceModel>> loadAllInstances() {
+		return RespBase.<Collection<InstanceModel>> create().withData(orchestrationService.getALLInstance());
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class ShardingOrchestrationController {
 	 * @return response result
 	 */
 	@RequestMapping(value = "/instance/put", method = RequestMethod.PUT)
-	public RespBase<?> updateInstanceStatus(@RequestBody final InstanceDTO instanceDTO) {
+	public RespBase<?> updateInstanceStatus(@RequestBody final InstanceModel instanceDTO) {
 		orchestrationService.updateInstanceStatus(instanceDTO.getInstanceId(), instanceDTO.isEnabled());
 		return RespBase.create();
 	}
@@ -69,8 +69,8 @@ public class ShardingOrchestrationController {
 	 * @return response result
 	 */
 	@RequestMapping(value = "/datasource/get", method = RequestMethod.GET)
-	public RespBase<Collection<SlaveDataSourceDTO>> loadAllSlaveDataSources() {
-		return RespBase.<Collection<SlaveDataSourceDTO>> create().withData(orchestrationService.getAllSlaveDataSource());
+	public RespBase<Collection<SlaveDataSourceModel>> loadAllSlaveDataSources() {
+		return RespBase.<Collection<SlaveDataSourceModel>> create().withData(orchestrationService.getAllSlaveDataSource());
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class ShardingOrchestrationController {
 	 * @return response result
 	 */
 	@RequestMapping(value = "/datasource/put", method = RequestMethod.PUT)
-	public RespBase<?> updateSlaveDataSourceStatus(@RequestBody final SlaveDataSourceDTO slaveDataSourceDTO) {
+	public RespBase<?> updateSlaveDataSourceStatus(@RequestBody final SlaveDataSourceModel slaveDataSourceDTO) {
 		orchestrationService.updateSlaveDataSourceStatus(slaveDataSourceDTO.getSchema(),
 				slaveDataSourceDTO.getSlaveDataSourceName(), slaveDataSourceDTO.isEnabled());
 		return RespBase.create();

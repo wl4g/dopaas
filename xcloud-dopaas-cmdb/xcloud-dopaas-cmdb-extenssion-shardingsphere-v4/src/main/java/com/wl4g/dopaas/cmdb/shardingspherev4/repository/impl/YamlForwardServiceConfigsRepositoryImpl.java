@@ -17,7 +17,7 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.repository.impl;
 
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.ForwardServiceConfigs;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.ForwardServiceConfigList;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.exception.ShardingSphereUIException;
 import com.wl4g.dopaas.cmdb.shardingspherev4.repository.ForwardServiceConfigsRepository;
 import org.springframework.stereotype.Repository;
@@ -40,20 +40,20 @@ public class YamlForwardServiceConfigsRepositoryImpl implements ForwardServiceCo
 	}
 
 	@Override
-	public ForwardServiceConfigs load() {
+	public ForwardServiceConfigList load() {
 		if (!file.exists()) {
-			return new ForwardServiceConfigs();
+			return new ForwardServiceConfigList();
 		}
 		try (FileInputStream fileInputStream = new FileInputStream(file);
 				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)) {
-			return new Yaml(new Constructor(ForwardServiceConfigs.class)).loadAs(inputStreamReader, ForwardServiceConfigs.class);
+			return new Yaml(new Constructor(ForwardServiceConfigList.class)).loadAs(inputStreamReader, ForwardServiceConfigList.class);
 		} catch (IOException e) {
 			throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "load forward services config error");
 		}
 	}
 
 	@Override
-	public void save(final ForwardServiceConfigs forwardServiceConfigs) {
+	public void save(final ForwardServiceConfigList forwardServiceConfigs) {
 		Yaml yaml = new Yaml();
 		try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
 			bufferedOutputStream.write(yaml.dumpAsMap(forwardServiceConfigs).getBytes());

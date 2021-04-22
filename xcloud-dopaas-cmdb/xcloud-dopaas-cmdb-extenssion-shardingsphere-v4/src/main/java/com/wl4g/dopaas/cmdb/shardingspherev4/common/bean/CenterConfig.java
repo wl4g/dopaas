@@ -15,21 +15,28 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.cmdb.shardingspherev4.common.domain;
+package com.wl4g.dopaas.cmdb.shardingspherev4.common.bean;
+
+import java.util.Properties;
 
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Forward service config.
+ * Center config.
  */
-@Setter
 @Getter
-public class ForwardServiceConfig {
+@Setter
+public class CenterConfig {
 
-	private String serviceName;
+	private String name;
+	private String instanceType;
+	private String serverLists;
+	private String namespace;
+	private String orchestrationName;
+	private String orchestrationType;
+	private String digest;
+	private boolean activated;
+	private Properties props = new Properties();
 
-	private String serviceType;
-
-	private String serviceUrl;
 }

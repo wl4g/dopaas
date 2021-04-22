@@ -24,8 +24,8 @@ import org.apache.shardingsphere.orchestration.core.registrycenter.RegistryCente
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfig;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.constant.OrchestrationType;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfig;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.exception.ShardingSphereUIException;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.CenterConfigService;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.RegistryCenterService;

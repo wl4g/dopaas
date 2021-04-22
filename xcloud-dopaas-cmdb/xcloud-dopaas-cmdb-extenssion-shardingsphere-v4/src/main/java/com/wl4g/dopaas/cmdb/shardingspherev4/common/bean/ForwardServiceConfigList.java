@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.cmdb.shardingspherev4.common.domain;
+package com.wl4g.dopaas.cmdb.shardingspherev4.common.bean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +29,7 @@ import java.util.Optional;
  */
 @Getter
 @Setter
-public class ForwardServiceConfigs {
+public class ForwardServiceConfigList {
 
 	private Map<String, ForwardServiceConfig> forwardServiceConfigs = new HashMap<>();
 

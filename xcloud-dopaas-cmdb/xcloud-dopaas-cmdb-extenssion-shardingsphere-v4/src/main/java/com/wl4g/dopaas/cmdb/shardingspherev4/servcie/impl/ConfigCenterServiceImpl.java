@@ -19,8 +19,9 @@ package com.wl4g.dopaas.cmdb.shardingspherev4.servcie.impl;
 
 import org.apache.shardingsphere.orchestration.center.ConfigCenterRepository;
 import org.apache.shardingsphere.orchestration.core.configcenter.ConfigCenterNode;
+
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfig;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.constant.OrchestrationType;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfig;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.exception.ShardingSphereUIException;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.CenterConfigService;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.ConfigCenterService;
