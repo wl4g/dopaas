@@ -23,8 +23,9 @@ import org.apache.shardingsphere.orchestration.center.ConfigCenterRepository;
 import org.apache.shardingsphere.orchestration.center.RegistryCenterRepository;
 import org.apache.shardingsphere.orchestration.center.config.CenterConfiguration;
 import org.apache.shardingsphere.orchestration.center.instance.CuratorZookeeperCenterRepository;
+
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfig;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.constant.InstanceType;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfig;
 
 import java.util.concurrent.ConcurrentHashMap;
 

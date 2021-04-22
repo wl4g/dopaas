@@ -17,9 +17,9 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.servcie;
 
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfig;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfigs;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.CenterConfigDTO;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfig;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfigList;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.CenterConfigModel;
 
 import java.util.Optional;
 
@@ -81,7 +81,7 @@ public interface CenterConfigService {
 	 *
 	 * @return all center configs.
 	 */
-	CenterConfigs loadAll();
+	CenterConfigList loadAll();
 
 	/**
 	 * Load all center configs.
@@ -90,7 +90,7 @@ public interface CenterConfigService {
 	 *            orchestration type
 	 * @return all center configs.
 	 */
-	CenterConfigs loadAll(String orchestrationType);
+	CenterConfigList loadAll(String orchestrationType);
 
 	/**
 	 * update config center
@@ -98,5 +98,5 @@ public interface CenterConfigService {
 	 * @param config
 	 *            center config
 	 */
-	void update(CenterConfigDTO config);
+	void update(CenterConfigModel config);
 }

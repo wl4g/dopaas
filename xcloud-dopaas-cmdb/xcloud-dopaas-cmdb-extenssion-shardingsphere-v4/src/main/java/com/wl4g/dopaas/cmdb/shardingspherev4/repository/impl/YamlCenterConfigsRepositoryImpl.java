@@ -17,7 +17,7 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.repository.impl;
 
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfigs;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfigList;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.exception.ShardingSphereUIException;
 import com.wl4g.dopaas.cmdb.shardingspherev4.repository.CenterConfigsRepository;
 import org.springframework.stereotype.Repository;
@@ -45,14 +45,14 @@ public class YamlCenterConfigsRepositoryImpl implements CenterConfigsRepository 
 	}
 
 	@Override
-	public CenterConfigs load() {
+	public CenterConfigList load() {
 		if (!file.exists()) {
-			return new CenterConfigs();
+			return new CenterConfigList();
 		}
 
 		try (FileInputStream fileInputStream = new FileInputStream(file);
 				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)) {
-			return new Yaml(new Constructor(CenterConfigs.class)).loadAs(inputStreamReader, CenterConfigs.class);
+			return new Yaml(new Constructor(CenterConfigList.class)).loadAs(inputStreamReader, CenterConfigList.class);
 		} catch (IOException e) {
 			throw new ShardingSphereUIException(ShardingSphereUIException.SERVER_ERROR, "load center config error");
 		}
@@ -60,7 +60,7 @@ public class YamlCenterConfigsRepositoryImpl implements CenterConfigsRepository 
 	}
 
 	@Override
-	public void save(final CenterConfigs centerConfigs) {
+	public void save(final CenterConfigList centerConfigs) {
 		Yaml yaml = new Yaml();
 		try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file))) {
 			bufferedOutputStream.write(yaml.dumpAsMap(centerConfigs).getBytes());

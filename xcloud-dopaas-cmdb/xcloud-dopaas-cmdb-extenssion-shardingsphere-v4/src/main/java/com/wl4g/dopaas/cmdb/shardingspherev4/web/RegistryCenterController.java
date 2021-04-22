@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.bean.CenterConfig;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.constant.OrchestrationType;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.domain.CenterConfig;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.CenterConfigDTO;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.CenterConfigModel;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.CenterConfigService;
 import com.wl4g.dopaas.cmdb.shardingspherev4.util.CenterRepositoryFactory;
 
@@ -113,7 +113,7 @@ public class RegistryCenterController {
 	 * @return response result
 	 */
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public RespBase<?> update(@RequestBody final CenterConfigDTO config) {
+	public RespBase<?> update(@RequestBody final CenterConfigModel config) {
 		centerConfigService.update(config);
 		return RespBase.create();
 	}

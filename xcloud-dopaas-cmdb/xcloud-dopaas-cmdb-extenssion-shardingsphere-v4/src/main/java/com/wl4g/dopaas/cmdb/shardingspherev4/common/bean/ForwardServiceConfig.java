@@ -15,26 +15,20 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.cmdb.shardingspherev4.common.dto;
+package com.wl4g.dopaas.cmdb.shardingspherev4.common.bean;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Sharding schema DTO.
+ * Forward service config.
  */
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class ShardingSchemaDTO {
+public class ForwardServiceConfig {
 
-	private String name;
-
-	private String ruleConfiguration;
-
-	private String dataSourceConfiguration;
+	private String serviceName;
+	private String serviceType;
+	private String serviceUrl;
 
 }

@@ -18,8 +18,9 @@
 package com.wl4g.dopaas.cmdb.shardingspherev4.servcie.impl;
 
 import org.apache.shardingsphere.orchestration.core.registrycenter.RegistryCenterNodeStatus;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.InstanceDTO;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.SlaveDataSourceDTO;
+
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.InstanceModel;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.SlaveDataSourceModel;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.OrchestrationService;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.RegistryCenterService;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.ShardingSchemaService;
@@ -46,14 +47,14 @@ public class OrchestrationServiceImpl implements OrchestrationService {
 	private ShardingSchemaService shardingSchemaService;
 
 	@Override
-	public Collection<InstanceDTO> getALLInstance() {
+	public Collection<InstanceModel> getALLInstance() {
 		List<String> instanceIds = registryCenterService.getActivatedRegistryCenter()
 				.getChildrenKeys(getInstancesNodeFullRootPath());
-		Collection<InstanceDTO> result = new ArrayList<>(instanceIds.size());
+		Collection<InstanceModel> result = new ArrayList<>(instanceIds.size());
 		for (String instanceId : instanceIds) {
 			String value = registryCenterService.getActivatedRegistryCenter()
 					.get(registryCenterService.getActivatedStateNode().getInstancesNodeFullPath(instanceId));
-			result.add(new InstanceDTO(instanceId, !RegistryCenterNodeStatus.DISABLED.toString().equalsIgnoreCase(value)));
+			result.add(new InstanceModel(instanceId, !RegistryCenterNodeStatus.DISABLED.toString().equalsIgnoreCase(value)));
 		}
 		return result;
 	}
@@ -66,8 +67,8 @@ public class OrchestrationServiceImpl implements OrchestrationService {
 	}
 
 	@Override
-	public Collection<SlaveDataSourceDTO> getAllSlaveDataSource() {
-		Collection<SlaveDataSourceDTO> result = new ArrayList<>();
+	public Collection<SlaveDataSourceModel> getAllSlaveDataSource() {
+		Collection<SlaveDataSourceModel> result = new ArrayList<>();
 		for (String schemaName : shardingSchemaService.getAllSchemaNames()) {
 			String configData = shardingSchemaService.getRuleConfiguration(schemaName);
 			if (!configData.contains("encryptors:\n")) {
@@ -94,7 +95,7 @@ public class OrchestrationServiceImpl implements OrchestrationService {
 		return result.substring(0, result.length() - 1);
 	}
 
-	private void handleShardingRuleConfiguration(final Collection<SlaveDataSourceDTO> slaveDataSourceDTOS,
+	private void handleShardingRuleConfiguration(final Collection<SlaveDataSourceModel> slaveDataSourceDTOS,
 			final String configData, final String schemaName) {
 		ShardingRuleConfiguration shardingRuleConfiguration = ConfigurationYamlConverter
 				.loadShardingRuleConfiguration(configData);
@@ -104,18 +105,18 @@ public class OrchestrationServiceImpl implements OrchestrationService {
 		}
 	}
 
-	private void handleMasterSlaveRuleConfiguration(final Collection<SlaveDataSourceDTO> slaveDataSourceDTOS,
+	private void handleMasterSlaveRuleConfiguration(final Collection<SlaveDataSourceModel> slaveDataSourceDTOS,
 			final String configData, final String schemaName) {
 		MasterSlaveRuleConfiguration masterSlaveRuleConfiguration = ConfigurationYamlConverter
 				.loadMasterSlaveRuleConfiguration(configData);
 		addSlaveDataSource(slaveDataSourceDTOS, masterSlaveRuleConfiguration, schemaName);
 	}
 
-	private void addSlaveDataSource(final Collection<SlaveDataSourceDTO> slaveDataSourceDTOS,
+	private void addSlaveDataSource(final Collection<SlaveDataSourceModel> slaveDataSourceDTOS,
 			final MasterSlaveRuleConfiguration masterSlaveRuleConfiguration, final String schemaName) {
 		Collection<String> disabledSchemaDataSourceNames = getDisabledSchemaDataSourceNames();
 		for (String slaveDateSourceName : masterSlaveRuleConfiguration.getSlaveDataSourceNames()) {
-			slaveDataSourceDTOS.add(new SlaveDataSourceDTO(schemaName, masterSlaveRuleConfiguration.getMasterDataSourceName(),
+			slaveDataSourceDTOS.add(new SlaveDataSourceModel(schemaName, masterSlaveRuleConfiguration.getMasterDataSourceName(),
 					slaveDateSourceName, !disabledSchemaDataSourceNames.contains(schemaName + "." + slaveDateSourceName)));
 		}
 	}

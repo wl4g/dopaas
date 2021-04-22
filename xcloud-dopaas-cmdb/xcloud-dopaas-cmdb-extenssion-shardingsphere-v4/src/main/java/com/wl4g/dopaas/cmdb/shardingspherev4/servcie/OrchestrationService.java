@@ -17,10 +17,10 @@
 
 package com.wl4g.dopaas.cmdb.shardingspherev4.servcie;
 
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.InstanceDTO;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.SlaveDataSourceDTO;
-
 import java.util.Collection;
+
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.InstanceModel;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.SlaveDataSourceModel;
 
 /**
  * Orchestration operation service.
@@ -32,7 +32,7 @@ public interface OrchestrationService {
 	 *
 	 * @return all instances
 	 */
-	Collection<InstanceDTO> getALLInstance();
+	Collection<InstanceModel> getALLInstance();
 
 	/**
 	 * Update instance status.
@@ -49,7 +49,7 @@ public interface OrchestrationService {
 	 *
 	 * @return all slaver data source dto
 	 */
-	Collection<SlaveDataSourceDTO> getAllSlaveDataSource();
+	Collection<SlaveDataSourceModel> getAllSlaveDataSource();
 
 	/**
 	 * update slave data source status.

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.dopaas.cmdb.shardingspherev4.common.dto.ShardingSchemaDTO;
+import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.ShardingSchemaModel;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.ShardingSchemaService;
 
 /**
@@ -58,7 +58,7 @@ public class ShardingSchemaController {
 	 * @return response result
 	 */
 	@RequestMapping(value = "post", method = RequestMethod.POST)
-	public RespBase<?> addSchema(final @RequestBody ShardingSchemaDTO shardingSchema) {
+	public RespBase<?> addSchema(final @RequestBody ShardingSchemaModel shardingSchema) {
 		shardingSchemaService.addSchemaConfiguration(shardingSchema.getName(), shardingSchema.getRuleConfiguration(),
 				shardingSchema.getDataSourceConfiguration());
 		return RespBase.create();

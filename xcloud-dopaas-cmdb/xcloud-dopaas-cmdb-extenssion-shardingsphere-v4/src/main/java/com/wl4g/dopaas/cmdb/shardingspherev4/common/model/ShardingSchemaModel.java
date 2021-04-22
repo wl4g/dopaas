@@ -15,31 +15,24 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.cmdb.shardingspherev4.common.dto;
+package com.wl4g.dopaas.cmdb.shardingspherev4.common.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * CenterConfig DTO
+ * Sharding schema DTO.
  */
-@Getter
 @Setter
-public class CenterConfigDTO {
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ShardingSchemaModel {
 
 	private String name;
+	private String ruleConfiguration;
+	private String dataSourceConfiguration;
 
-	private String instanceType;
-
-	private String serverLists;
-
-	private String namespace;
-
-	private String orchestrationName;
-
-	private String orchestrationType;
-
-	private String digest;
-
-	private String primaryName;
 }
