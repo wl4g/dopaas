@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.dopaas.common.bean.udm.Share">
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="share_code" jdbcType="VARCHAR" property="shareCode" />
-    <result column="udm_code" jdbcType="VARCHAR" property="docCode" />
+    <result column="doc_code" jdbcType="VARCHAR" property="docCode" />
     <result column="share_type" jdbcType="INTEGER" property="shareType" />
     <result column="passwd" jdbcType="VARCHAR" property="passwd" />
     <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
@@ -16,7 +16,7 @@
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, share_code, udm_code, share_type, passwd, expire_time, expire_type, create_date, 
+    id, share_code, doc_code, share_type, passwd, expire_time, expire_type, create_date,
     create_by, update_date, update_by, del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -46,7 +46,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.wl4g.dopaas.common.bean.udm.Share">
-    insert into udm_share (id, share_code, udm_code, 
+    insert into udm_share (id, share_code, doc_code,
       share_type, passwd, expire_time, 
       expire_type, create_date, create_by, 
       update_date, update_by, del_flag
@@ -67,7 +67,7 @@
         share_code,
       </if>
       <if test="docCode != null">
-        udm_code,
+        doc_code,
       </if>
       <if test="shareType != null">
         share_type,
@@ -143,7 +143,7 @@
         share_code = #{shareCode,jdbcType=VARCHAR},
       </if>
       <if test="docCode != null">
-        udm_code = #{docCode,jdbcType=VARCHAR},
+        doc_code = #{docCode,jdbcType=VARCHAR},
       </if>
       <if test="shareType != null">
         share_type = #{shareType,jdbcType=INTEGER},
@@ -178,7 +178,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.dopaas.common.bean.udm.Share">
     update udm_share
     set share_code = #{shareCode,jdbcType=VARCHAR},
-      udm_code = #{docCode,jdbcType=VARCHAR},
+      doc_code = #{docCode,jdbcType=VARCHAR},
       share_type = #{shareType,jdbcType=INTEGER},
       passwd = #{passwd,jdbcType=VARCHAR},
       expire_time = #{expireTime,jdbcType=TIMESTAMP},
