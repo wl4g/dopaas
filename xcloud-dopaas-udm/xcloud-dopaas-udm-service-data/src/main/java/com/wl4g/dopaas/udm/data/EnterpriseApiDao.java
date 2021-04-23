@@ -18,11 +18,10 @@
 
 package com.wl4g.dopaas.udm.data;
 
-import java.util.List;
-
+import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import org.apache.ibatis.annotations.Param;
 
-import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
+import java.util.List;
 
 /**
  * {@link EnterpriseApi}
@@ -37,6 +36,8 @@ public interface EnterpriseApiDao {
 	int insertSelective(EnterpriseApi enterpriseApi);
 
 	int deleteByPrimaryKey(Long id);
+
+	int deleteByModuleId(Long id);
 
 	EnterpriseApi selectByPrimaryKey(Long id);
 
