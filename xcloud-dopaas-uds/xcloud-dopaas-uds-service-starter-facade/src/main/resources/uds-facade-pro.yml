@@ -14,10 +14,10 @@ spring:
   xcloud:
     dopaas:
       uds:
-        elasticjobcloud:
+        elasticjoblite:
           zookeeper:
             servers: n1.dopaas.wl4gsafecloudcs.com,n2.dopaas.wl4gsafecloudcs.com:2181
-            namespace: elasticjob-cloud
+            namespace: elasticjob-lite
             digest: 
           trace:
             #rdbDriver: com.mysql.jdbc.Driver
