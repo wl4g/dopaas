@@ -444,6 +444,11 @@ public class PipelineServiceImpl implements PipelineService {
 			if(Objects.nonNull(clusterExtension)){
 				clusterExtension.setClusterName(appCluster.getName());
 				list.add(clusterExtension);
+			}else{
+				clusterExtension = new ClusterExtension();
+				clusterExtension.setClusterName(appCluster.getName());
+				clusterExtension.setClusterId(appCluster.getId());
+				list.add(clusterExtension);
 			}
 		}
 		pm.setRecords(list);
