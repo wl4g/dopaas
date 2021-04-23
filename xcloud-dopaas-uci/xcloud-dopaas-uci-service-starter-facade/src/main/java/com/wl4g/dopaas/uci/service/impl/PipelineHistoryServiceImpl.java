@@ -238,7 +238,6 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		}
 		List<PipelineHistory> list = pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterIds, environment, startDate,
 				endDate, providerKind, orchestrationType, orchestrationId);
-		PageHolder<Object> current = PageHolder.current();
 		if(pm != null){
 			pm.setRecords(list);
 		}

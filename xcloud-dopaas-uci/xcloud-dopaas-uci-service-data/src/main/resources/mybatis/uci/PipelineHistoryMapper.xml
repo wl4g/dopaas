@@ -271,7 +271,7 @@
 	<select id="list" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List_h" />
-		,p.pipe_name, p.environment
+		,p.pipe_name, p.environment, p.cluster_id
 		from uci_pipe_history h
 		left join uci_pipeline p on p.id=h.pipe_id
 		where h.del_flag!=1

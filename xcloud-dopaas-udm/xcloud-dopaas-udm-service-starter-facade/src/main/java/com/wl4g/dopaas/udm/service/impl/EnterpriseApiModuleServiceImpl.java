@@ -20,6 +20,7 @@ package com.wl4g.dopaas.udm.service.impl;
 
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiModule;
+import com.wl4g.dopaas.udm.data.EnterpriseApiDao;
 import com.wl4g.dopaas.udm.data.EnterpriseApiModuleDao;
 import com.wl4g.dopaas.udm.service.EnterpriseApiModuleService;
 import com.wl4g.dopaas.udm.service.dto.EnterpriseApiModulePageRequest;
@@ -44,6 +45,7 @@ import static java.util.Objects.isNull;
 public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleService {
 
 	private @Autowired  EnterpriseApiModuleDao enterpriseApiModuleDao;
+	private @Autowired  EnterpriseApiDao enterpriseApiDao;
 
 	@Override
 	public PageHolder<EnterpriseApiModule> page(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest) {
@@ -80,6 +82,7 @@ public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleServic
 	@Override
 	public int del(Long id) {
 		notNullOf(id, "id");
+		enterpriseApiDao.deleteByModuleId(id);
 		return enterpriseApiModuleDao.deleteByPrimaryKey(id);
 	}
 
