@@ -21,7 +21,7 @@ public class HostNetcard extends BaseBean {
 
 	private static final long serialVersionUID = 4324569366421220002L;
 
-	private Integer hostId;
+	private Long hostId;
 
 	private String name;
 
@@ -45,11 +45,11 @@ public class HostNetcard extends BaseBean {
 
 	private String getway;
 
-	public Integer getHostId() {
+	public Long getHostId() {
 		return hostId;
 	}
 
-	public void setHostId(Integer hostId) {
+	public void setHostId(Long hostId) {
 		this.hostId = hostId;
 	}
 
