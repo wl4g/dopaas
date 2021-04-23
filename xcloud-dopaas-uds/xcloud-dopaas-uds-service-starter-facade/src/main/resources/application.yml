@@ -13,6 +13,7 @@ spring:
   profiles:
     include: common,support,util
     active: dev
+  jpa.database-platform: org.hibernate.dialect.MySQLDialect 
 
 # Mybatis configuration.
 mybatis:

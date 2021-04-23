@@ -16,8 +16,8 @@ spring:
       uds:
         elasticjobcloud:
           zookeeper:
-            servers: 10.0.0.162:3181 #owner-node2:2181,owner-node3:2181,owner-node4:2181
-            namespace: elasticjob-cloud
+            servers: localhost:2181
+            namespace: elasticjob-lite
             digest: 
           trace:
             #rdbDriver: com.mysql.jdbc.Driver

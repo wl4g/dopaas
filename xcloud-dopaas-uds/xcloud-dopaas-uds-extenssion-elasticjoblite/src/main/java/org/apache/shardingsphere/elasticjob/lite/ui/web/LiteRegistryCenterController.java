@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.wl4g.dopaas.uds.elasticjoblite.web;
+package org.apache.shardingsphere.elasticjob.lite.ui.web;
 
 import java.util.Collection;
 
@@ -23,6 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.shardingsphere.elasticjob.lite.lifecycle.internal.reg.RegistryCenterFactory;
+import org.apache.shardingsphere.elasticjob.lite.ui.domain.LiteRegistryCenterConfig;
+import org.apache.shardingsphere.elasticjob.lite.ui.service.LiteRegistryCenterConfigService;
+import org.apache.shardingsphere.elasticjob.lite.ui.util.LiteSessionRegistryCenterFactory;
 import org.apache.shardingsphere.elasticjob.reg.exception.RegException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,9 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.dopaas.uds.service.elasticjoblite.LiteRegistryCenterConfigService;
-import com.wl4g.dopaas.uds.service.elasticjoblite.LiteSessionRegistryCenterFactory;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
 
 /**
  * Registry center RESTful API.
