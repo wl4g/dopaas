@@ -77,7 +77,7 @@
 		<!-- JDBC's -->
 		<derby.version>10.14.2.0</derby.version>
 		<hikariCP.version>3.4.5</hikariCP.version>
-		<mybatis.version>3.5.5</mybatis.version>
+		<mybatis.version>3.5.6</mybatis.version>
 		<!-- Performance & quality's. -->
 		<spotbugs.version>4.0.0-beta4</spotbugs.version>
 		<metrics.version>3.0.2</metrics.version>
