@@ -23,7 +23,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-dopaas-cmdb-extenssion-shardingsphere-v4</artifactId>
+			<artifactId>xcloud-dopaas-cmdb-extension-shardingsphere-v4</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<!-- <dependency> -->
