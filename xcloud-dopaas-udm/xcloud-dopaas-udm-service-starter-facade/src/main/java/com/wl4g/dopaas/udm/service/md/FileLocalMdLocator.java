@@ -45,7 +45,7 @@ public class FileLocalMdLocator implements MdLocator {
 
 	final private static String MD_PATH = "/md";
 
-	private @Autowired  DocProperties docProperties;
+	private @Autowired DocProperties docProperties;
 
 	@Override
 	public List<MdResource> locate(String provider) throws Exception {

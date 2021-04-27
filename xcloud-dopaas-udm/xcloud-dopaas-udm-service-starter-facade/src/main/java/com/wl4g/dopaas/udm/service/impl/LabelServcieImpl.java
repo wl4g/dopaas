@@ -33,7 +33,7 @@ import com.wl4g.dopaas.udm.service.LabelService;
 @Service
 public class LabelServcieImpl implements LabelService {
 
-private @Autowired  LabelDao labelDao;
+	private @Autowired LabelDao labelDao;
 
 	@Override
 	public PageHolder<Label> list(PageHolder<Label> pm, String name) {

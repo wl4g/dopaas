@@ -43,7 +43,7 @@ import com.wl4g.dopaas.udm.service.dto.EnterpriseTeamPageRequest;
 @Service
 public class EnterpriseTeamServiceImpl implements EnterpriseTeamService {
 
-	private @Autowired  EnterpriseTeamDao enterpriseTeamDao;
+	private @Autowired EnterpriseTeamDao enterpriseTeamDao;
 
 	@Override
 	public PageHolder<EnterpriseTeam> page(EnterpriseTeamPageRequest enterpriseTeamPageRequest) {

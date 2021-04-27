@@ -3,6 +3,8 @@
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
+> <font color=red>注：当前完全分布式版正在孵化中，不建议在生产环境使用！</font>
+
 ### 一站式基于DevSecOps的PaaS平台解决方案
 > 基于SpringCloud/Docker/ServiceMesh(istio)，主要模块：统一资产管理中心(CMDB)、统一持续交付中心(分布式编译CI/CD)、IAM认证中心(rbac/oauth2/oidc/[saml2])、统一监控中心(sba/zipkin/promethous)、统一配置中心、统一作业中心(elasticjob/spark/flink/mr)、统一文档中心(swagger/rap)、统一开发中心（lcdp/autoGen），统一私有对象存储管理、统一库管理(git/nexus(maven/image))、Shell-Cli、多种工具链(hdfs/hbase/phoenix/oss)、即时通讯、轻量级风控等
 

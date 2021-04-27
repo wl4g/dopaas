@@ -15,13 +15,10 @@
  */
 package com.wl4g.dopaas.uci.data;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.wl4g.dopaas.common.bean.uci.ClusterExtension;
 
-import java.util.List;
-
 public interface ClusterExtensionDao {
+
 	int deleteByPrimaryKey(Long id);
 
 	int insert(ClusterExtension record);

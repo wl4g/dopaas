@@ -8,8 +8,8 @@ import com.wl4g.dopaas.udm.service.DocumentionExporter;
  */
 public abstract class AbstractDocumentionExporter implements DocumentionExporter {
 
-    @Override
-    public String export(String md, String template) throws Exception {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public String export(String md, String template) throws Exception {
+		throw new UnsupportedOperationException();
+	}
 }

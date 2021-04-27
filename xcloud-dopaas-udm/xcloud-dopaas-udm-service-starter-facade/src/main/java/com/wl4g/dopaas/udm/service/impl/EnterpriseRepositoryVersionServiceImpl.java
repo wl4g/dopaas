@@ -45,7 +45,7 @@ import com.wl4g.dopaas.udm.service.dto.EnterpriseRepositoryVersionPageRequest;
 @Service
 public class EnterpriseRepositoryVersionServiceImpl implements EnterpriseRepositoryVersionService {
 
-	private @Autowired  EnterpriseRepositoryVersionDao enterpriseRepositoryVersionDao;
+	private @Autowired EnterpriseRepositoryVersionDao enterpriseRepositoryVersionDao;
 
 	@Override
 	public PageHolder<EnterpriseRepositoryVersion> page(

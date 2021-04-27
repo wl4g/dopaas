@@ -17,19 +17,23 @@
  */
 package com.wl4g.dopaas.udm.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.integration.feign.core.context.RpcContextHolder;
-import com.wl4g.dopaas.common.bean.udm.EeDocumentRepoGroup;
-import com.wl4g.dopaas.udm.service.EeDocumentRepoGroupService;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.component.integration.feign.core.context.RpcContextHolder;
+import com.wl4g.dopaas.common.bean.udm.EeDocumentRepoGroup;
+import com.wl4g.dopaas.udm.service.EeDocumentRepoGroupService;
 
 /**
  * {@link EeDocumentRepoGroup}
@@ -50,8 +54,10 @@ public class EeDocumentRepoGroupController extends BaseController {
 	public RespBase<PageHolder<EeDocumentRepoGroup>> list(PageHolder<EeDocumentRepoGroup> pm,
 			EeDocumentRepoGroup eeDocumentRepoGroup) {
 		RespBase<PageHolder<EeDocumentRepoGroup>> resp = RespBase.create();
-		RpcContextHolder.get().set("pm", pm);
+
+		RpcContextHolder.getContext().set("pm", pm);
 		resp.setData(eeDocumentRepoGroupService.page(eeDocumentRepoGroup));
+
 		return resp;
 	}
 

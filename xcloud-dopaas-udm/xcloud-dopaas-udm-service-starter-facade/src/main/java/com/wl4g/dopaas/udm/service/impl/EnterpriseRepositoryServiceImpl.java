@@ -43,7 +43,7 @@ import com.wl4g.dopaas.udm.service.dto.EnterpriseRepositoryPageRequest;
 @Service
 public class EnterpriseRepositoryServiceImpl implements EnterpriseRepositoryService {
 
-	private @Autowired  EnterpriseRepositoryDao enterpriseRepositoryDao;
+	private @Autowired EnterpriseRepositoryDao enterpriseRepositoryDao;
 
 	@Override
 	public PageHolder<EnterpriseRepository> page(EnterpriseRepositoryPageRequest enterpriseRepositoryPageRequest) {

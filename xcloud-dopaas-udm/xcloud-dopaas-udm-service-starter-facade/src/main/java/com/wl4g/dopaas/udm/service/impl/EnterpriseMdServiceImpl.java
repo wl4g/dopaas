@@ -40,7 +40,7 @@ import freemarker.template.TemplateException;
 @Service
 public class EnterpriseMdServiceImpl implements EnterpriseMdService {
 
-	private @Autowired  Md2Html md2Html;
+	private @Autowired Md2Html md2Html;
 
 	@Override
 	public String mdToHtml(String md) throws IOException, TemplateException {

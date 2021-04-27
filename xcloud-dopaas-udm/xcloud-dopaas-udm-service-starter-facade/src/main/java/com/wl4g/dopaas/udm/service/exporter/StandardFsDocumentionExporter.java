@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class StandardFsDocumentionExporter extends AbstractDocumentionExporter implements DocumentionExporter {
 
-    @Autowired
-    private EnterpriseMdService enterpriseMdService;
+	@Autowired
+	private EnterpriseMdService enterpriseMdService;
 
-    @Override
-    public String export(String md, String template) throws Exception {
-        return enterpriseMdService.formatTemplate(md, template);
-    }
+	@Override
+	public String export(String md, String template) throws Exception {
+		return enterpriseMdService.formatTemplate(md, template);
+	}
 
 }
