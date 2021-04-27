@@ -42,11 +42,12 @@ import com.wl4g.dopaas.udm.service.EeDocumentRepoVersionService;
 @Service
 public class EeDocumentRepoVersionServiceImpl implements EeDocumentRepoVersionService {
 
-	private @Autowired  EeDocumentRepoVersionDao eeDocumentRepoVersionDao;
+	private @Autowired EeDocumentRepoVersionDao eeDocumentRepoVersionDao;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public PageHolder<EeDocumentRepoVersion> page(EeDocumentRepoVersion eeDocumentRepoVersion) {
-		PageHolder pm = RpcContextHolder.get().get("pm", PageHolder.class);
+		PageHolder<EeDocumentRepoVersion> pm = RpcContextHolder.getServerContext().get("pm", PageHolder.class);
 		pm.useCount().bind();
 		pm.setRecords(eeDocumentRepoVersionDao.list(eeDocumentRepoVersion));
 		return pm;

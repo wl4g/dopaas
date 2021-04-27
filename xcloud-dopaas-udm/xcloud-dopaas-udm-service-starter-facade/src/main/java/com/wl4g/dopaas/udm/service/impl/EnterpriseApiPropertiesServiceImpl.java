@@ -43,7 +43,7 @@ import com.wl4g.dopaas.udm.service.dto.EnterpriseApiPropertiesPageRequest;
 @Service
 public class EnterpriseApiPropertiesServiceImpl implements EnterpriseApiPropertiesService {
 
-	private @Autowired  EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
+	private @Autowired EnterpriseApiPropertiesDao enterpriseApiPropertiesDao;
 
 	@Override
 	public PageHolder<EnterpriseApiProperties> page(EnterpriseApiPropertiesPageRequest enterpriseApiPropertiesPageRequest) {

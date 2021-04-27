@@ -212,7 +212,7 @@ public class Oas3DocumentConverter extends AbstractDocumentConverter<OpenAPI> {
 
 			setResponseBodyRef(openAPI, operation, responseProperties, enterpriseApi.getName() + "ResponseBody");
 
-			if(StringUtils.isNotBlank(enterpriseApi.getUrl())){
+			if (StringUtils.isNotBlank(enterpriseApi.getUrl())) {
 				paths.addPathItem(enterpriseApi.getUrl(), item);
 			}
 		}

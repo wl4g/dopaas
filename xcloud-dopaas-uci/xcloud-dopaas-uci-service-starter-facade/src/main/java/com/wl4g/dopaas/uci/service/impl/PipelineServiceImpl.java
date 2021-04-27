@@ -15,6 +15,24 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.wl4g.component.common.id.SnowflakeIdGenerator;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.bean.BaseBean;
@@ -23,29 +41,31 @@ import com.wl4g.dopaas.cmdb.service.AppClusterService;
 import com.wl4g.dopaas.cmdb.service.AppInstanceService;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
-import com.wl4g.dopaas.common.bean.uci.*;
-import com.wl4g.dopaas.uci.data.*;
+import com.wl4g.dopaas.common.bean.uci.ClusterExtension;
+import com.wl4g.dopaas.common.bean.uci.Dependency;
+import com.wl4g.dopaas.common.bean.uci.PipeStageBuilding;
+import com.wl4g.dopaas.common.bean.uci.PipeStageBuildingProject;
+import com.wl4g.dopaas.common.bean.uci.PipeStageDeploy;
+import com.wl4g.dopaas.common.bean.uci.PipeStageInstanceCommand;
+import com.wl4g.dopaas.common.bean.uci.PipeStageNotification;
+import com.wl4g.dopaas.common.bean.uci.PipeStagePcm;
+import com.wl4g.dopaas.common.bean.uci.PipeStepApi;
+import com.wl4g.dopaas.common.bean.uci.Pipeline;
+import com.wl4g.dopaas.common.bean.uci.PipelineInstance;
+import com.wl4g.dopaas.common.bean.uci.Project;
+import com.wl4g.dopaas.uci.data.ClusterExtensionDao;
+import com.wl4g.dopaas.uci.data.PipeStageBuildingDao;
+import com.wl4g.dopaas.uci.data.PipeStageBuildingProjectDao;
+import com.wl4g.dopaas.uci.data.PipeStageDeployDao;
+import com.wl4g.dopaas.uci.data.PipeStageInstanceCommandDao;
+import com.wl4g.dopaas.uci.data.PipeStageNotificationDao;
+import com.wl4g.dopaas.uci.data.PipeStagePcmDao;
+import com.wl4g.dopaas.uci.data.PipeStepApiDao;
+import com.wl4g.dopaas.uci.data.PipelineDao;
+import com.wl4g.dopaas.uci.data.PipelineInstanceDao;
 import com.wl4g.dopaas.uci.service.DependencyService;
 import com.wl4g.dopaas.uci.service.PipelineService;
 import com.wl4g.dopaas.uci.service.ProjectService;
-import com.wl4g.dopaas.urm.service.RepoService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
-import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * {@link PipelineServiceImpl}
@@ -59,36 +79,19 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class PipelineServiceImpl implements PipelineService {
 
 	private @Autowired PipelineDao pipelineDao;
-
 	private @Autowired PipelineInstanceDao pipelineInstanceDao;
-
 	private @Autowired PipeStageBuildingDao pipeStageBuildingDao;
-
 	private @Autowired PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
-
 	private @Autowired PipeStagePcmDao pipeStepPcmDao;
-
 	private @Autowired PipeStepApiDao pipeStepApiDao;
-
 	private @Autowired PipeStageNotificationDao pipeStepNotificationDao;
-
-	private @Autowired ProjectDao projectDao;
-
 	private @Autowired DependencyService dependencyService;
-
 	private @Autowired ProjectService projectService;
-
 	private @Autowired PipeStageInstanceCommandDao pipeStepInstanceCommandDao;
-
 	private @Autowired PipeStageDeployDao pipeStepDeployDao;
-
 	private @Autowired ClusterExtensionDao clusterExtensionDao;
-
 	private @Autowired AppClusterService appClusterService;
-
 	private @Autowired AppInstanceService appInstanceService;
-
-	private @Autowired RepoService repoService;
 
 	@Override
 	public PageHolder<Pipeline> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
@@ -100,7 +103,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 			List<AppInstance> appInstances = new ArrayList<>();
 			List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(p.getId());
-			for(PipelineInstance pipelineInstance : pipelineInstances){
+			for (PipelineInstance pipelineInstance : pipelineInstances) {
 				AppInstance detail = appInstanceService.detail(pipelineInstance.getInstanceId());
 				appInstances.add(detail);
 			}
@@ -253,7 +256,7 @@ public class PipelineServiceImpl implements PipelineService {
 		// Insert Pcm
 		PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
 		if (nonNull(pipeStepPcm)) {
-			//pipeStepPcm.preInsert();
+			// pipeStepPcm.preInsert();
 			pipeStepPcm.setPipeId(pipeline.getId());
 			pipeStepPcmDao.insertSelective(pipeStepPcm);
 		}
@@ -372,7 +375,6 @@ public class PipelineServiceImpl implements PipelineService {
 		return pipeStageBuildingDao.selectByPipeId(pipeId);
 	}
 
-
 	@Override
 	public PipeStageBuilding getPipeStageBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
 		Project project = notNullOf(projectService.getByAppClusterId(clusterId), "project");
@@ -434,9 +436,9 @@ public class PipelineServiceImpl implements PipelineService {
 		List<AppCluster> appClusters = appClusterService.getByLikeName(clusterName);
 
 		List<ClusterExtension> list = new ArrayList<>();
-		for(AppCluster appCluster : appClusters){
+		for (AppCluster appCluster : appClusters) {
 			ClusterExtension clusterExtension = clusterExtensionDao.selectByClusterId(appCluster.getId());
-			if(Objects.nonNull(clusterExtension)){
+			if (nonNull(clusterExtension)) {
 				clusterExtension.setClusterName(appCluster.getName());
 				list.add(clusterExtension);
 			}

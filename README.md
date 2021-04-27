@@ -3,6 +3,9 @@
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
+> <font color=red>Notes: Currently, the fully distributed version is being incubation, so it is not a good choice to run directly in the production environment !</font>
+
+
 ### One stop solution of PaaS platform based on DevSecOps
 > Based on SpringCloud/Docker/ServiceMesh(istio), the main modules are: unified asset management center (Cmdb), unified continuous delivery center (distributed compilation CI/CD), Iam Certification Center(Rbac/Oidc/[Saml2])), unified monitoring center (SBA/Zipkin/Promethous), unified configuration center, unified operation center (Elasticjob/Spark/Flink/MR), unified Document Center (Swagger/Rap), unified development center (Lcdp/Autogen), unified private object storage management, unified library management (Git/Nexus(Maven/Image)), Shell-Cli, multiple tool chains (Hdfs/HBase/Phoenix/OSS), instant messaging, lightweight risk control, etc
 

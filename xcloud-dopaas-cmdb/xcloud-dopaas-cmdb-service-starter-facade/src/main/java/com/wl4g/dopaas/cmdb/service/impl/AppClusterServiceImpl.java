@@ -15,20 +15,16 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
-import com.wl4g.dopaas.common.bean.cmdb.AppEnvironment;
-import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
-import com.wl4g.dopaas.common.bean.cmdb.DockerRepository;
-import com.wl4g.dopaas.cmdb.data.AppClusterDao;
-import com.wl4g.dopaas.cmdb.data.AppEnvironmentDao;
-import com.wl4g.dopaas.cmdb.data.AppInstanceDao;
-import com.wl4g.dopaas.cmdb.service.AppClusterService;
-import com.wl4g.iam.common.bean.Dict;
-import com.wl4g.iam.service.DictService;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +32,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
-import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
+import com.wl4g.component.common.id.SnowflakeIdGenerator;
+import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.dopaas.cmdb.data.AppClusterDao;
+import com.wl4g.dopaas.cmdb.data.AppEnvironmentDao;
+import com.wl4g.dopaas.cmdb.data.AppInstanceDao;
+import com.wl4g.dopaas.cmdb.service.AppClusterService;
+import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
+import com.wl4g.dopaas.common.bean.cmdb.AppEnvironment;
+import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
+import com.wl4g.dopaas.common.bean.cmdb.DockerRepository;
+import com.wl4g.iam.common.bean.Dict;
+import com.wl4g.iam.service.DictService;
 
 @Service
 public class AppClusterServiceImpl implements AppClusterService {
@@ -49,21 +53,16 @@ public class AppClusterServiceImpl implements AppClusterService {
 	protected SmartLogger log = getLogger(getClass());
 
 	private @Autowired AppClusterDao appClusterDao;
-
 	private @Autowired AppInstanceDao appInstanceDao;
-
 	private @Autowired AppEnvironmentDao appEnvironmentDao;
-
 	private @Autowired DictService dictService;
 
 	@Override
 	public Map<String, Object> list(PageHolder<?> pm, String clusterName, Integer deployType) {
 		Map<String, Object> data = new HashMap<>();
 		pm.useCount().bind();
-		// Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(),
-		// pm.getPageSize(), true);
+		// Page<AppCluster>page=PageHelper.startPage(pm.getPageNum(),pm.getPageSize(),true);
 		List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(), clusterName, deployType);
-		pm.setTotal(PageHolder.current().getTotal());
 
 		for (AppCluster appCluster : list) {
 			Long count = appInstanceDao.countByClusterId(appCluster.getId());

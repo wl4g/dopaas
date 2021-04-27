@@ -17,19 +17,23 @@
  */
 package com.wl4g.dopaas.udm.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.integration.feign.core.context.RpcContextHolder;
-import com.wl4g.dopaas.common.bean.udm.EeDocumentRepoVersion;
-import com.wl4g.dopaas.udm.service.EeDocumentRepoVersionService;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.component.core.web.BaseController;
+import com.wl4g.component.integration.feign.core.context.RpcContextHolder;
+import com.wl4g.dopaas.common.bean.udm.EeDocumentRepoVersion;
+import com.wl4g.dopaas.udm.service.EeDocumentRepoVersionService;
 
 /**
  * {@link EeDocumentRepoVersion}
@@ -49,9 +53,11 @@ public class EeDocumentRepoVersionController extends BaseController {
 	@RequestMapping(value = "/list", method = { GET })
 	public RespBase<PageHolder<EeDocumentRepoVersion>> list(PageHolder<EeDocumentRepoVersion> pm,
 			EeDocumentRepoVersion eeDocumentRepoVersion) {
-		RpcContextHolder.get().set("pm", pm);
 		RespBase<PageHolder<EeDocumentRepoVersion>> resp = RespBase.create();
+
+		RpcContextHolder.getContext().set("pm", pm);
 		resp.setData(eeDocumentRepoVersionService.page(eeDocumentRepoVersion));
+
 		return resp;
 	}
 

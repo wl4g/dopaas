@@ -15,6 +15,21 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_CREATE;
+import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_STOPING;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
+import static java.util.Collections.emptyList;
+
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.support.cli.DestroableProcessManager;
@@ -35,19 +50,6 @@ import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
 import com.wl4g.dopaas.uci.data.PipelineHistoryInstanceDao;
 import com.wl4g.dopaas.uci.data.PipelineInstanceDao;
 import com.wl4g.dopaas.uci.service.PipelineHistoryService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
-
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_CREATE;
-import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_STOPING;
-import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
-import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
 /**
  * @author vjay
@@ -154,7 +156,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	/**
 	 * fix Cross DB
 	 */
-	private PipelineHistory selectByPrimaryKey(Long id){
+	private PipelineHistory selectByPrimaryKey(Long id) {
 		PipelineHistory oldPipelineHistory = pipelineHistoryDao.selectByPrimaryKey(id);
 		AppCluster appCluster = appClusterService.getById(oldPipelineHistory.getClusterId());
 		oldPipelineHistory.setClusterName(appCluster.getName());
@@ -220,50 +222,46 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	@Override
 	public PageHolder<PipelineHistory> list(PageHolder<PipelineHistory> pm, String pipeName, String clusterName,
 			String environment, String startDate, String endDate, String providerKind) {
-		listWithoutPage(pm, pipeName, clusterName, environment, startDate,
-				endDate, providerKind, null, null);
+		listWithoutPage(pm, pipeName, clusterName, environment, startDate, endDate, providerKind, null, null);
 		return pm;
 	}
 
 	// fix cross db
 	@Override
 	public List<PipelineHistory> listWithoutPage(PageHolder<PipelineHistory> pm, String pipeName, String clusterName,
-												 String environment, String startDate, String endDate, String providerKind, Integer orchestrationType, Long orchestrationId){
+			String environment, String startDate, String endDate, String providerKind, Integer orchestrationType,
+			Long orchestrationId) {
 		List<Long> clusterIds = null;
-		if(StringUtils.isNotBlank(clusterName)){
+		if (StringUtils.isNotBlank(clusterName)) {
 			clusterIds = appClusterService.getIdsByLikeName(clusterName);
 		}
-		if(pm != null){
+		if (pm != null) {
 			pm.useCount().bind();
-		}
-		List<PipelineHistory> list = pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterIds, environment, startDate,
-				endDate, providerKind, orchestrationType, orchestrationId);
-		PageHolder<Object> current = PageHolder.current();
-		if(pm != null){
+			List<PipelineHistory> list = pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterIds, environment,
+					startDate, endDate, providerKind, orchestrationType, orchestrationId);
 			pm.setRecords(list);
-		}
-		for(PipelineHistory pipelineHistory : list){
-			AppCluster appCluster = appClusterService.getById(pipelineHistory.getClusterId());
-			if(appCluster != null){
-				pipelineHistory.setClusterName(appCluster.getName());
+			for (PipelineHistory pipelineHistory : list) {
+				AppCluster appCluster = appClusterService.getById(pipelineHistory.getClusterId());
+				if (appCluster != null) {
+					pipelineHistory.setClusterName(appCluster.getName());
+				}
 			}
+			return list;
 		}
-		return list;
+		return emptyList();
 	}
 
 	@Override
 	public List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Long pipeId) {
 		List<PipelineHistoryInstance> pipelineHistoryInstances = pipeHistoryInstanceDao.selectByPipeHistoryId(pipeId);
 
-		for(PipelineHistoryInstance pipelineHistoryInstance : pipelineHistoryInstances){
+		for (PipelineHistoryInstance pipelineHistoryInstance : pipelineHistoryInstances) {
 			AppInstance appInstance = appInstanceService.getById(pipelineHistoryInstance.getInstanceId());
 			pipelineHistoryInstance.setInstanceName(appInstance.getName());
 		}
 
 		return pipelineHistoryInstances;
 	}
-
-
 
 	@Override
 	public PipelineHistory detail(Long pipeId) {

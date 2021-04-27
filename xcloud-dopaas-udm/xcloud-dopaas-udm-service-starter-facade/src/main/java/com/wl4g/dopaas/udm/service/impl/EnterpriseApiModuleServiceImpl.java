@@ -43,7 +43,7 @@ import static java.util.Objects.isNull;
 @Service
 public class EnterpriseApiModuleServiceImpl implements EnterpriseApiModuleService {
 
-	private @Autowired  EnterpriseApiModuleDao enterpriseApiModuleDao;
+	private @Autowired EnterpriseApiModuleDao enterpriseApiModuleDao;
 
 	@Override
 	public PageHolder<EnterpriseApiModule> page(EnterpriseApiModulePageRequest enterpriseApiModulePageRequest) {

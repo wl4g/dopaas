@@ -125,7 +125,7 @@ public class Swagger2DocumentConverter extends AbstractDocumentConverter<Swagger
 				Model responseSchema = response.getResponseSchema();
 				if (responseSchema != null) {
 					String reference = responseSchema.getReference();
-					if(reference != null){
+					if (reference != null) {
 						String ref = reference.substring(14);
 						convertBodyProperties(swagger, ref, properties, RESPONSE);
 					}

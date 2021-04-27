@@ -45,15 +45,15 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 	@Override
 	public XCloudDocumentModel convertFrom(String documentJson) {
 
-		if(documentJson.startsWith("http")){
+		if (documentJson.startsWith("http")) {
 			// http://rap.anjiancloud.repo/workspace/myWorkspace.do?projectId=29#2099
 
 			String url = documentJson;
-			if(!documentJson.contains("queryRAPModel")){
+			if (!documentJson.contains("queryRAPModel")) {
 				String prefix = "";
-				if(documentJson.startsWith("https")){
+				if (documentJson.startsWith("https")) {
 					prefix = "https://";
-				}else{
+				} else {
 					prefix = "http://";
 				}
 
@@ -63,11 +63,11 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 				String domain = documentJson.substring(0, documentJson.indexOf("/"));
 
 				String args = documentJson.substring(documentJson.indexOf("projectId=") + 10);
-				if(args.contains("#")){
+				if (args.contains("#")) {
 					args = args.substring(0, args.indexOf("#"));
 				}
 
-				if(args.contains("&")){
+				if (args.contains("&")) {
 					args = args.substring(0, args.indexOf("&"));
 				}
 				url = prefix + domain + "/api/queryRAPModel.do?projectId=" + args;
@@ -114,7 +114,7 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 				continue;
 			}
 
-			for(Rap1Model.Action action : actionList){
+			for (Rap1Model.Action action : actionList) {
 				EnterpriseApi enterpriseApi = new EnterpriseApi();
 				enterpriseApi.setDescription(action.getDescription());
 				enterpriseApi.setName(action.getName());
@@ -123,11 +123,11 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 
 				List<EnterpriseApiProperties> properties = new ArrayList<>();
 				List<Rap1Model.Parameter> requestParameterList = action.getRequestParameterList();
-				if(!CollectionUtils.isEmpty(requestParameterList)){
+				if (!CollectionUtils.isEmpty(requestParameterList)) {
 					buildProperties(requestParameterList, properties, REQUEST);
 				}
 				List<Rap1Model.Parameter> responseParameterList = action.getResponseParameterList();
-				if(!CollectionUtils.isEmpty(responseParameterList)){
+				if (!CollectionUtils.isEmpty(responseParameterList)) {
 					buildProperties(responseParameterList, properties, RESPONSE);
 				}
 
@@ -138,7 +138,8 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 		return new XCloudDocumentModel(enterpriseApis);
 	}
 
-	private void buildProperties(List<Rap1Model.Parameter> requestParameterList, List<EnterpriseApiProperties> properties, String scope) {
+	private void buildProperties(List<Rap1Model.Parameter> requestParameterList, List<EnterpriseApiProperties> properties,
+			String scope) {
 		for (Rap1Model.Parameter parameter : requestParameterList) {
 			EnterpriseApiProperties enterpriseApiProperties = new EnterpriseApiProperties();
 
@@ -156,7 +157,6 @@ public class Rap1DocumentConverter extends AbstractDocumentConverter<Rap1Model> 
 			properties.add(enterpriseApiProperties);
 		}
 	}
-
 
 	@Override
 	public Rap1Model convertTo(XCloudDocumentModel document) {
