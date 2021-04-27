@@ -20,7 +20,6 @@ import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_CREATE;
 import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_STOPING;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
-import static java.util.Collections.emptyList;
 
 import java.util.List;
 
@@ -61,11 +60,10 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 	private @Autowired PipelineDao pipelineDao;
 	private @Autowired PipelineHistoryDao pipelineHistoryDao;
 	private @Autowired PipelineHistoryInstanceDao pipeHistoryInstanceDao;
-	@Autowired
-	protected DestroableProcessManager pm;
 	private @Autowired PipelineInstanceDao pipelineInstanceDao;
 	private @Autowired AppClusterService appClusterService;
 	private @Autowired AppInstanceService appInstanceService;
+	private @Autowired DestroableProcessManager pm;
 
 	// --- Create Pipe Runner. ---
 
@@ -237,18 +235,19 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		}
 		if (pm != null) {
 			pm.useCount().bind();
-			List<PipelineHistory> list = pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterIds, environment,
-					startDate, endDate, providerKind, orchestrationType, orchestrationId);
-			pm.setRecords(list);
-			for (PipelineHistory pipelineHistory : list) {
-				AppCluster appCluster = appClusterService.getById(pipelineHistory.getClusterId());
-				if (appCluster != null) {
-					pipelineHistory.setClusterName(appCluster.getName());
-				}
-			}
-			return list;
 		}
-		return emptyList();
+		List<PipelineHistory> list = pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterIds, environment,
+				startDate, endDate, providerKind, orchestrationType, orchestrationId);
+		if (pm != null) {
+			pm.setRecords(list);
+		}
+		for (PipelineHistory pipelineHistory : list) {
+			AppCluster appCluster = appClusterService.getById(pipelineHistory.getClusterId());
+			if (appCluster != null) {
+				pipelineHistory.setClusterName(appCluster.getName());
+			}
+		}
+		return list;
 	}
 
 	@Override
