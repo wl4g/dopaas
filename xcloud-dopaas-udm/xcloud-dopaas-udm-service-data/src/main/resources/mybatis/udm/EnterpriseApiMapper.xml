@@ -67,6 +67,12 @@
             id = #{id, jdbcType=BIGINT}
         </where>
     </delete>
+    <delete id="deleteByModuleId" parameterType="java.lang.Long">
+        DELETE FROM udm_ee_api
+        <where>
+            module_id = #{moduleId, jdbcType=BIGINT}
+        </where>
+    </delete>
 
     <insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.udm.EnterpriseApi">
         INSERT INTO udm_ee_api

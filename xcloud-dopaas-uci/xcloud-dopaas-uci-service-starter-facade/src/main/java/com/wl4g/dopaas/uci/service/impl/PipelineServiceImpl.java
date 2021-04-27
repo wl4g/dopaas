@@ -101,6 +101,11 @@ public class PipelineServiceImpl implements PipelineService {
 		for (Pipeline p : safeList(pipes)) {
 			p.setPipeStepBuildingProjects(pipeStepBuildingProjectDao.selectByPipeId(p.getId()));
 
+			AppCluster appCluster = appClusterService.getById(p.getClusterId());
+			if (Objects.nonNull(appCluster)) {
+				p.setClusterName(appCluster.getName());
+			}
+
 			List<AppInstance> appInstances = new ArrayList<>();
 			List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(p.getId());
 			for (PipelineInstance pipelineInstance : pipelineInstances) {
@@ -440,6 +445,11 @@ public class PipelineServiceImpl implements PipelineService {
 			ClusterExtension clusterExtension = clusterExtensionDao.selectByClusterId(appCluster.getId());
 			if (nonNull(clusterExtension)) {
 				clusterExtension.setClusterName(appCluster.getName());
+				list.add(clusterExtension);
+			} else {
+				clusterExtension = new ClusterExtension();
+				clusterExtension.setClusterName(appCluster.getName());
+				clusterExtension.setClusterId(appCluster.getId());
 				list.add(clusterExtension);
 			}
 		}

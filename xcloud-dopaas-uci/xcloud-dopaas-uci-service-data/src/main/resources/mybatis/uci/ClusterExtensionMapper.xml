@@ -30,7 +30,6 @@
 		<include refid="Base_Column_List" />
 		from uci_cluster_extension
 		where cluster_id = #{clusterId,jdbcType=BIGINT}
-		limit 1
 	</select>
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
