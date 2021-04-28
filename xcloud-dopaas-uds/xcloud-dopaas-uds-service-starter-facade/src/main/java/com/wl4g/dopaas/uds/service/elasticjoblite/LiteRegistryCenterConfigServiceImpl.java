@@ -17,16 +17,16 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite;
 
-import com.wl4g.dopaas.uds.service.elasticjoblite.LiteRegistryCenterConfigService;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.GlobalConfiguration;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfigs;
-import com.wl4g.dopaas.uds.service.elasticjoblite.repository.ConfigurationsXmlRepository;
-import com.wl4g.dopaas.uds.service.elasticjoblite.repository.ConfigurationsXmlRepositoryImpl;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.wl4g.dopaas.uds.service.elasticjoblite.LiteRegistryCenterConfigService;
+import com.wl4g.dopaas.uds.service.elasticjoblite.config.GlobalConfig;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfigs;
+import com.wl4g.dopaas.uds.service.elasticjoblite.repository.ConfigurationsXmlRepository;
+import com.wl4g.dopaas.uds.service.elasticjoblite.repository.impl.ConfigurationsXmlRepositoryImpl;
 
 /**
  * Registry center configuration service implementation.
@@ -43,7 +43,7 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 
 	@Override
 	public LiteRegistryCenterConfig load(final String name) {
-		GlobalConfiguration configs = loadGlobal();
+		GlobalConfig configs = loadGlobal();
 		LiteRegistryCenterConfig result = find(name, configs.getRegistryCenterConfigurations());
 		setActivated(configs, result);
 		return result;
@@ -59,7 +59,7 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 		return null;
 	}
 
-	private void setActivated(final GlobalConfiguration configs, final LiteRegistryCenterConfig toBeConnectedConfig) {
+	private void setActivated(final GlobalConfig configs, final LiteRegistryCenterConfig toBeConnectedConfig) {
 		LiteRegistryCenterConfig activatedConfig = findActivatedRegistryCenterConfiguration(configs);
 		if (!toBeConnectedConfig.equals(activatedConfig)) {
 			if (null != activatedConfig) {
@@ -75,7 +75,7 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 		return Optional.ofNullable(findActivatedRegistryCenterConfiguration(loadGlobal()));
 	}
 
-	private LiteRegistryCenterConfig findActivatedRegistryCenterConfiguration(final GlobalConfiguration configs) {
+	private LiteRegistryCenterConfig findActivatedRegistryCenterConfiguration(final GlobalConfig configs) {
 		for (LiteRegistryCenterConfig each : configs.getRegistryCenterConfigurations().getRegistryCenterConfiguration()) {
 			if (each.isActivated()) {
 				return each;
@@ -86,7 +86,7 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 
 	@Override
 	public boolean add(final LiteRegistryCenterConfig config) {
-		GlobalConfiguration configs = loadGlobal();
+		GlobalConfig configs = loadGlobal();
 		boolean result = configs.getRegistryCenterConfigurations().getRegistryCenterConfiguration().add(config);
 		if (result) {
 			configurationsXmlRepository.save(configs);
@@ -96,7 +96,7 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 
 	@Override
 	public void delete(final String name) {
-		GlobalConfiguration configs = loadGlobal();
+		GlobalConfig configs = loadGlobal();
 		LiteRegistryCenterConfig toBeRemovedConfig = find(name, configs.getRegistryCenterConfigurations());
 		if (null != toBeRemovedConfig) {
 			configs.getRegistryCenterConfigurations().getRegistryCenterConfiguration().remove(toBeRemovedConfig);
@@ -104,8 +104,8 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 		}
 	}
 
-	private GlobalConfiguration loadGlobal() {
-		GlobalConfiguration result = configurationsXmlRepository.load();
+	private GlobalConfig loadGlobal() {
+		GlobalConfig result = configurationsXmlRepository.load();
 		if (null == result.getRegistryCenterConfigurations()) {
 			result.setRegistryCenterConfigurations(new LiteRegistryCenterConfigs());
 		}

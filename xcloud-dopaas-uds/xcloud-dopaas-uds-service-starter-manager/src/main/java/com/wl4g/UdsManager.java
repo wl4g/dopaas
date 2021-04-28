@@ -30,7 +30,7 @@ import com.wl4g.iam.client.annotation.EnableIamClient;
  * @see
  */
 @EnableIamClient
-@EnableFeignConsumers("com.wl4g.dopaas.uds.service")
+@EnableFeignConsumers({ "com.wl4g.dopaas.uds.service", "com.wl4g.dopaas.uds.service.*" })
 @SpringBootApplication
 public class UdsManager {
 

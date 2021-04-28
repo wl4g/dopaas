@@ -19,16 +19,20 @@ package com.wl4g.dopaas.uds.service.elasticjoblite;
 
 import java.util.List;
 
-import org.apache.shardingsphere.elasticjob.tracing.event.JobExecutionEvent;
-import org.apache.shardingsphere.elasticjob.tracing.event.JobStatusTraceEvent;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.dopaas.common.bean.uds.elasticjoblite.JobExecutionEvent;
+import com.wl4g.dopaas.common.bean.uds.elasticjoblite.JobStatusTraceEvent;
 import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobExecutionEventsRequest;
 import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobStatusTraceEventsRequest;
 
 /**
  * Event trace history service.
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/eventTraceHistory-service")
 public interface EventTraceHistoryService {
 
 	/**

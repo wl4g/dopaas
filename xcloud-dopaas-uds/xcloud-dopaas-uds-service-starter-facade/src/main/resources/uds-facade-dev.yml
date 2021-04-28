@@ -14,7 +14,7 @@ spring:
   xcloud:
     dopaas:
       uds:
-        elasticjobcloud:
+        elasticjoblite:
           zookeeper:
             servers: localhost:2181
             namespace: elasticjob-lite

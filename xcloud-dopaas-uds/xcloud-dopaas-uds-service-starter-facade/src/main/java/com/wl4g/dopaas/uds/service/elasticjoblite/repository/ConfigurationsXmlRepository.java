@@ -17,10 +17,10 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite.repository;
 
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.GlobalConfiguration;
+import com.wl4g.dopaas.uds.service.elasticjoblite.config.GlobalConfig;
 
 /**
  * Configurations XML repository.
  */
-public interface ConfigurationsXmlRepository extends XmlRepository<GlobalConfiguration> {
+public interface ConfigurationsXmlRepository extends XmlRepository<GlobalConfig> {
 }

@@ -26,14 +26,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceDataSourceConfigService;
-import com.wl4g.dopaas.uds.service.elasticjoblite.config.DynamicDataSourceConfig;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.DataSourceFactory;
+import com.wl4g.dopaas.uds.service.elasticjoblite.config.DataSourceFactory;
+import com.wl4g.dopaas.uds.service.elasticjoblite.config.DynamicDSAutoConfiguration;
+import com.wl4g.dopaas.uds.service.elasticjoblite.config.GlobalConfig;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.EventTraceDataSourceConfig;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.EventTraceDataSourceConfigs;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.GlobalConfiguration;
 import com.wl4g.dopaas.uds.service.elasticjoblite.exception.JdbcDriverNotFoundException;
 import com.wl4g.dopaas.uds.service.elasticjoblite.repository.ConfigurationsXmlRepository;
-import com.wl4g.dopaas.uds.service.elasticjoblite.repository.ConfigurationsXmlRepositoryImpl;
+import com.wl4g.dopaas.uds.service.elasticjoblite.repository.impl.ConfigurationsXmlRepositoryImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,11 +43,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public final class EventTraceDataSourceConfigServiceImpl implements EventTraceDataSourceConfigService, InitializingBean {
-
 	private final ConfigurationsXmlRepository configurationsXmlRepository = new ConfigurationsXmlRepositoryImpl();
 
-	@Autowired
-	private DynamicDataSourceConfig.DynamicDataSource dynamicDataSource;
+	private @Autowired DynamicDSAutoConfiguration.DynamicDataSource dynamicDataSource;
 
 	@Override
 	public EventTraceDataSourceConfigs loadAll() {
@@ -56,11 +54,11 @@ public final class EventTraceDataSourceConfigServiceImpl implements EventTraceDa
 
 	@Override
 	public EventTraceDataSourceConfig load(final String name) {
-		GlobalConfiguration configs = loadGlobal();
+		GlobalConfig configs = loadGlobal();
 		EventTraceDataSourceConfig result = find(name, configs.getEventTraceDataSourceConfigurations());
 		setActivated(configs, result);
 		// Activate the dataSource by data source name for spring boot
-		DynamicDataSourceConfig.DynamicDataSourceContextHolder.setDataSourceName(name);
+		DynamicDSAutoConfiguration.DynamicDataSourceContextHolder.setDataSourceName(name);
 		return result;
 	}
 
@@ -74,7 +72,7 @@ public final class EventTraceDataSourceConfigServiceImpl implements EventTraceDa
 		return null;
 	}
 
-	private void setActivated(final GlobalConfiguration configs, final EventTraceDataSourceConfig toBeConnectedConfig) {
+	private void setActivated(final GlobalConfig configs, final EventTraceDataSourceConfig toBeConnectedConfig) {
 		EventTraceDataSourceConfig activatedConfig = findActivatedDataSourceConfiguration(configs);
 		if (!toBeConnectedConfig.equals(activatedConfig)) {
 			if (null != activatedConfig) {
@@ -90,7 +88,7 @@ public final class EventTraceDataSourceConfigServiceImpl implements EventTraceDa
 		return Optional.ofNullable(findActivatedDataSourceConfiguration(loadGlobal()));
 	}
 
-	private EventTraceDataSourceConfig findActivatedDataSourceConfiguration(final GlobalConfiguration configs) {
+	private EventTraceDataSourceConfig findActivatedDataSourceConfiguration(final GlobalConfig configs) {
 		for (EventTraceDataSourceConfig each : configs.getEventTraceDataSourceConfigurations()
 				.getEventTraceDataSourceConfiguration()) {
 			if (each.isActivated()) {
@@ -102,7 +100,7 @@ public final class EventTraceDataSourceConfigServiceImpl implements EventTraceDa
 
 	@Override
 	public boolean add(final EventTraceDataSourceConfig config) {
-		GlobalConfiguration configs = loadGlobal();
+		GlobalConfig configs = loadGlobal();
 		DataSource dataSource = DataSourceFactory.createDataSource(config);
 		dynamicDataSource.addDataSource(config.getName(), dataSource);
 		boolean result = configs.getEventTraceDataSourceConfigurations().getEventTraceDataSourceConfiguration().add(config);
@@ -114,7 +112,7 @@ public final class EventTraceDataSourceConfigServiceImpl implements EventTraceDa
 
 	@Override
 	public void delete(final String name) {
-		GlobalConfiguration configs = loadGlobal();
+		GlobalConfig configs = loadGlobal();
 		EventTraceDataSourceConfig toBeRemovedConfig = find(name, configs.getEventTraceDataSourceConfigurations());
 		if (null != toBeRemovedConfig) {
 			configs.getEventTraceDataSourceConfigurations().getEventTraceDataSourceConfiguration().remove(toBeRemovedConfig);
@@ -122,8 +120,8 @@ public final class EventTraceDataSourceConfigServiceImpl implements EventTraceDa
 		}
 	}
 
-	private GlobalConfiguration loadGlobal() {
-		GlobalConfiguration result = configurationsXmlRepository.load();
+	private GlobalConfig loadGlobal() {
+		GlobalConfig result = configurationsXmlRepository.load();
 		if (null == result.getEventTraceDataSourceConfigurations()) {
 			result.setEventTraceDataSourceConfigurations(new EventTraceDataSourceConfigs());
 		}
@@ -145,6 +143,6 @@ public final class EventTraceDataSourceConfigServiceImpl implements EventTraceDa
 	private void afterLoad(final EventTraceDataSourceConfig config) {
 		DataSource dataSource = DataSourceFactory.createDataSource(config);
 		dynamicDataSource.addDataSource(config.getName(), dataSource);
-		DynamicDataSourceConfig.DynamicDataSourceContextHolder.setDataSourceName(config.getName());
+		DynamicDSAutoConfiguration.DynamicDataSourceContextHolder.setDataSourceName(config.getName());
 	}
 }

@@ -26,7 +26,9 @@ import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ShardingOperateAP
 import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ShardingStatisticsAPI;
 import org.springframework.stereotype.Service;
 
+import com.wl4g.dopaas.uds.service.elasticjoblite.JobAPIService;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
+import com.wl4g.dopaas.uds.service.elasticjoblite.util.LiteSessionRegistryCenterFactory;
 
 /**
  * Job API service implementation.

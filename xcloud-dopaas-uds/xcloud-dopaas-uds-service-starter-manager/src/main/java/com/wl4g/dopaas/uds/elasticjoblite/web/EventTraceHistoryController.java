@@ -20,8 +20,6 @@ package com.wl4g.dopaas.uds.elasticjoblite.web;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.shardingsphere.elasticjob.tracing.event.JobExecutionEvent;
-import org.apache.shardingsphere.elasticjob.tracing.event.JobStatusTraceEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.web.BaseController;
-import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceDataSourceConfigService;
+import com.wl4g.dopaas.common.bean.uds.elasticjoblite.JobExecutionEvent;
+import com.wl4g.dopaas.common.bean.uds.elasticjoblite.JobStatusTraceEvent;
 import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceHistoryService;
 import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobExecutionEventsRequest;
 import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobStatusTraceEventsRequest;
@@ -47,7 +46,6 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobStatusTraceEvents
 public final class EventTraceHistoryController extends BaseController {
 
 	private @Autowired EventTraceHistoryService eventTraceHistoryService;
-	private @Autowired EventTraceDataSourceConfigService eventTraceDataSourceConfigService;
 
 	/**
 	 * Find job execution events.
