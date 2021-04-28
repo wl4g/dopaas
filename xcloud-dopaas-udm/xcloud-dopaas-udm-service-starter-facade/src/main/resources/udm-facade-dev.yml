@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(Dev) configuration. ####
+# #### Configuration of specical on which DoPaaS(udm-facade) service(dev). ####
 #
 
 cipher-key: 03DE18C2FC4E605F

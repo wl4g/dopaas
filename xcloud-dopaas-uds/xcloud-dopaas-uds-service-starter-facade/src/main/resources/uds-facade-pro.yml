@@ -7,8 +7,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-# #### Environment(PRO) configuration. ####
+# #### Configuration of specical on which DoPaaS(uds-facade) service(pro). ####
 #
 spring:
   xcloud:

@@ -8,14 +8,14 @@
 # limitations under the License.
 #
 
-# #### Environment(UAT Test) configuration. ####
+# #### Configuration of specical on which DoPaaS(uci-server) service(uat). ####
 #
 spring:
   xcloud:
     component:
       support:
         jedis:
-          passwd: ${UCI_DOPAAS_REDIS_PASSWD:zzx!@#$%}
+          passwd: ${UCI_DOPAAS_REDIS_PASSWD:123456}
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.

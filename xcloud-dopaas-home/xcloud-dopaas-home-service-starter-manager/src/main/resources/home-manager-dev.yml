@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(Dev) configuration. ####
+# #### Configuration of specical on which DoPaaS(home-manager) service(dev). ####
 #
 spring:
   xcloud:
