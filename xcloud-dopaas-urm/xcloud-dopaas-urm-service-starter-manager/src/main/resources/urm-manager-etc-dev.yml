@@ -8,9 +8,8 @@
 # limitations under the License.
 #
 
-# #### Environment(DoPaaS Common Middleware Dev Configuration) configuration. ####
+# #### Configuration of middleware on which DoPaaS(urm-manager) service(dev) depends. ####
 #
-
 spring:
   xcloud:
     component:
