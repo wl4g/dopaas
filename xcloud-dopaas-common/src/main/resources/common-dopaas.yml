@@ -12,4 +12,4 @@
 #
 spring:
   banner:
-    location: classpath:dopaas-banner.txt
+    location: classpath:banner.txt
