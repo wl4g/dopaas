@@ -8,28 +8,27 @@
 # limitations under the License.
 #
 
-# #### Environment(DoPaaS Common Middleware Dev Configuration) configuration. ####
+# #### Configuration of middleware on which DoPaaS(urm-facade) service(dev) depends. ####
 #
-
 spring:
   xcloud:
     component:
       support:
         # Redis configuration.
         jedis:
-          passwd: ${UMC_DOPAAS_REDIS_PASSWD:123456}
+          passwd: ${URM_DOPAAS_REDIS_PASSWD:123456}
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${UMC_DOPAAS_REDIS_NODES:redis.wl4g.debug:6379,redis.wl4g.debug:6380,redis.wl4g.debug:6381,redis.wl4g.debug:7379,redis.wl4g.debug:7380,redis.wl4g.debug:7381}
+          nodes: ${URM_DOPAAS_REDIS_NODES:redis.wl4g.debug:6379,redis.wl4g.debug:6380,redis.wl4g.debug:6381,redis.wl4g.debug:7379,redis.wl4g.debug:7380,redis.wl4g.debug:7381}
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${UMC_DOPAAS_DB_URL:jdbc:mysql://rds.wl4g.debug:3306/dopaas_uds?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
-      username: ${UMC_DOPAAS_DB_USER:dopaas_urm}
-      password: ${UMC_DOPAAS_DB_PASSWD:123456}
+      url: ${URM_DOPAAS_DB_URL:jdbc:mysql://rds.wl4g.debug:3306/dopaas_uds?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+      username: ${URM_DOPAAS_DB_USER:dopaas_urm}
+      password: ${URM_DOPAAS_DB_PASSWD:123456}
       initial-size: 10
       max-active: 100
       min-idle: 10
