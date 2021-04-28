@@ -8,16 +8,15 @@
 # limitations under the License.
 #
 
-# #### Environment(DoPaaS Common Middleware Dev Configuration) configuration. ####
+# #### Configuration of middleware on which DoPaaS(home-manager) service(dev) depends. ####
 #
-
 spring:
   xcloud:
     component:
       support:
         # Redis configuration.
         jedis:
-          passwd: ${HOME_DOPAAS_REDIS_PASSWD:zzx!@#$%}
+          passwd: ${HOME_DOPAAS_REDIS_PASSWD:123456}
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.

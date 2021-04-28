@@ -20,6 +20,9 @@
 
 import static com.wl4g.component.common.lang.ClassUtils2.isPresent
 import static org.springframework.boot.context.config.ConfigFileApplicationListener.*
+
+import org.springframework.boot.Banner
+
 import com.wl4g.component.core.boot.listener.ISpringLauncherConfigurer
 
 /**
@@ -30,6 +33,10 @@ class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
 	@Override
 	def int getOrder() {
 		return -200
+	}
+
+	def Banner.Mode bannerMode() {
+		return Banner.Mode.LOG;
 	}
 
 	@Override

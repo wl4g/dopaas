@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(PRO) configuration. ####
+# #### Configuration of specical on which DoPaaS(udm-manager) service(pro). ####
 #
 spring:
   xcloud:
