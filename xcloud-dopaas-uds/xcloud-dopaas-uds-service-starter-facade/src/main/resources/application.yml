@@ -13,7 +13,17 @@ spring:
   profiles:
     include: common,support,util
     active: dev
-  jpa.database-platform: org.hibernate.dialect.MySQLDialect 
+  jpa: # @see:https://docs.spring.io/spring-data/jpa/docs/2.2.3.RELEASE/reference/html/#reference
+    database: mysql
+    #database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQLDialect
+      hibernate.current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+      hibernate.format_sql: false
+      hibernate.show_sql: true
+      hibernate.ddl.auto: create-drop # create|create-drop|validate|update
 
 # Mybatis configuration.
 mybatis:

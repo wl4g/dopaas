@@ -23,7 +23,12 @@ import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.JobStatisticsAPI;
 import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ServerStatisticsAPI;
 import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ShardingOperateAPI;
 import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ShardingStatisticsAPI;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/jobAPI-service")
 public interface JobAPIService {
 
 	/**

@@ -19,12 +19,17 @@ package com.wl4g.dopaas.uds.service.elasticjoblite;
 
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.EventTraceDataSourceConfig;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.EventTraceDataSourceConfigs;
 
 /**
  * Event trace data source configuration service.
  */
+@FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
+@RequestMapping("/eventTraceDataSourceConfig-service")
 public interface EventTraceDataSourceConfigService {
 
 	/**

@@ -22,7 +22,6 @@ import com.google.common.base.Strings;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
