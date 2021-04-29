@@ -37,7 +37,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "UDS_TASK_RUNNING_STATISTICS")
+@Table(name = "uds_task_running_statistics")
 public class TaskRunningStatistics {
 
 	@Id

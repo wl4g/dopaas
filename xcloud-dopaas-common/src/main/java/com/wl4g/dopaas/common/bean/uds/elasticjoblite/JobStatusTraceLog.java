@@ -27,7 +27,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 @Data
-@Table(name = "UDS_JOB_STATUS_TRACE_LOG")
+@Table(name = "uds_job_status_trace_log")
 @Entity
 public class JobStatusTraceLog {
 

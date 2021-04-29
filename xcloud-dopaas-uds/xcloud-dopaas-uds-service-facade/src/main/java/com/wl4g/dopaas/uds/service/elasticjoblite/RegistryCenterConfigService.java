@@ -27,15 +27,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfigs;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfig;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfigs;
 
 /**
  * Registry center configuration service.
  */
 @FeignConsumer(name = "${provider.serviceId.uds-facade:uds-facade}")
 @RequestMapping("/liteRegistryCenterConfig-service")
-public interface LiteRegistryCenterConfigService {
+public interface RegistryCenterConfigService {
 
 	/**
 	 * Load all registry center configurations.
@@ -43,7 +43,7 @@ public interface LiteRegistryCenterConfigService {
 	 * @return all registry center configurations
 	 */
 	@RequestMapping(path = "loadAll", method = GET)
-	LiteRegistryCenterConfigs loadAll();
+	RegistryCenterConfigs loadAll();
 
 	/**
 	 * Load registry center configuration.
@@ -53,7 +53,7 @@ public interface LiteRegistryCenterConfigService {
 	 * @return registry center configuration
 	 */
 	@RequestMapping(path = "load", method = GET)
-	LiteRegistryCenterConfig load(@RequestParam(name = "name") String name);
+	RegistryCenterConfig load(@RequestParam(name = "name") String name);
 
 	/**
 	 * Find registry center configuration.
@@ -65,7 +65,7 @@ public interface LiteRegistryCenterConfigService {
 	 * @return registry center configuration
 	 */
 	@RequestMapping(path = "find", method = GET)
-	LiteRegistryCenterConfig find(@RequestParam(name = "name") String name, @RequestBody LiteRegistryCenterConfigs configs);
+	RegistryCenterConfig find(@RequestParam(name = "name") String name, @RequestBody RegistryCenterConfigs configs);
 
 	/**
 	 * Load activated registry center configuration.
@@ -73,7 +73,7 @@ public interface LiteRegistryCenterConfigService {
 	 * @return activated registry center configuration
 	 */
 	@RequestMapping(path = "loadActivated", method = GET)
-	Optional<LiteRegistryCenterConfig> loadActivated();
+	Optional<RegistryCenterConfig> loadActivated();
 
 	/**
 	 * Add registry center configuration.
@@ -83,7 +83,7 @@ public interface LiteRegistryCenterConfigService {
 	 * @return success to add or not
 	 */
 	@RequestMapping(path = "add", method = POST)
-	boolean add(@RequestBody LiteRegistryCenterConfig config);
+	boolean add(@RequestBody RegistryCenterConfig config);
 
 	/**
 	 * Delete registry center configuration.

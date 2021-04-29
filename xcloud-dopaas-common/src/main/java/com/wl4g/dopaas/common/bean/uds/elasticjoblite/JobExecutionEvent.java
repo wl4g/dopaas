@@ -34,27 +34,17 @@ import lombok.Setter;
 public final class JobExecutionEvent {
 
 	private String id = UUID.randomUUID().toString();
-
 	private final String hostname;
-
 	private final String ip;
-
 	private final String taskId;
-
 	private final String jobName;
-
 	private final ExecutionSource source;
-
 	private final int shardingItem;
-
 	private Date startTime = new Date();
-
 	@Setter
 	private Date completeTime;
-
 	@Setter
 	private boolean success;
-
 	@Setter
 	private String failureCause;
 

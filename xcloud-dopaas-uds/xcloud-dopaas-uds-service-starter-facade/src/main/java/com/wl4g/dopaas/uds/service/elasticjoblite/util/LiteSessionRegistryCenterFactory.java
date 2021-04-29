@@ -19,7 +19,7 @@ package com.wl4g.dopaas.uds.service.elasticjoblite.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfig;
 
 /**
  * Registry center configuration configuration.
@@ -27,14 +27,14 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfi
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LiteSessionRegistryCenterFactory {
 
-	private static LiteRegistryCenterConfig regCenterConfig;
+	private static RegistryCenterConfig regCenterConfig;
 
 	/**
 	 * Get registry center configuration.
 	 *
 	 * @return registry center configuration
 	 */
-	public static LiteRegistryCenterConfig getRegistryCenterConfiguration() {
+	public static RegistryCenterConfig getRegistryCenterConfiguration() {
 		return regCenterConfig;
 	}
 
@@ -44,7 +44,7 @@ public final class LiteSessionRegistryCenterFactory {
 	 * @param regCenterConfig
 	 *            registry center configuration
 	 */
-	public static void setRegistryCenterConfiguration(final LiteRegistryCenterConfig regCenterConfig) {
+	public static void setRegistryCenterConfiguration(final RegistryCenterConfig regCenterConfig) {
 		LiteSessionRegistryCenterFactory.regCenterConfig = regCenterConfig;
 	}
 }
