@@ -15,15 +15,17 @@ spring:
     active: dev
   jpa: # @see:https://docs.spring.io/spring-data/jpa/docs/2.2.3.RELEASE/reference/html/#reference
     database: mysql
-    #database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true
     generate-ddl: true
     properties:
-      hibernate.dialect: org.hibernate.dialect.MySQLDialect
-      hibernate.current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+      #hibernate.dialect: org.hibernate.dialect.MySQLDialect
+      #hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      #hibernate.dialect: org.hibernate.dialect.MySQL57InnoDBDialect
+      #hibernate.current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+      #hibernate.ddl-auto: update # create|create-drop|validate|update
+      #hibernate.show_sql: true
       hibernate.format_sql: false
-      hibernate.show_sql: true
-      hibernate.ddl.auto: create-drop # create|create-drop|validate|update
 
 # Mybatis configuration.
 mybatis:

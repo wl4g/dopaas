@@ -24,7 +24,6 @@ import javax.sql.DataSource;
 
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
@@ -34,7 +33,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 /**
  * Dynamic datasource config.
  */
-@Configuration
+//@Configuration
 public class DynamicDSAutoConfiguration {
 
 	public static final String DRIVER_CLASS_NAME = "spring.datasource.default.driver-class-name";

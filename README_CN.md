@@ -52,7 +52,7 @@ Shardingsphere-Elasticjob:3.0.0 +
 适用于服务器(非容器)环境快速部署，需自行搭建 redis-cluster、mysql等依赖服务
 
 ```
-# 需指定自建的依赖服务(示例)：
+# 首先，需指定自建的依赖服务(示例)：
 export defaultGitBranch=master
 export runtimeMysqlUrl='jdbc:mysql://127.0.0.1:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true'
 export runtimeMysqlUser='root'
@@ -71,7 +71,7 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 | 运行模式 | 最低配置要求建议 | 说明 |
 | ---- | ---- | ---- |
 | cluster | CentOS7+ / Ubuntu18+ (4C+8G+) | 当只有1台机时即为伪集群 |
-| standalone | 2C+2GB+ | 单体应用 |
+| standalone | 2C+2G+ | 单体应用 |
 
 
 ### 2.2 手动编译部署
