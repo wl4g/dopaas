@@ -1,4 +1,4 @@
-## XCloud DoPaaS
+# XCloud DoPaaS
 ![XCloud DoPaaS](shots/logo.jpg)
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
@@ -6,7 +6,7 @@
 <b style="color:red">Notes: Currently, the fully distributed version is being incubation, so it is not a good choice to run directly in the production environment !</b>
 
 
-### One stop solution of PaaS platform based on DevSecOps
+## One stop solution of PaaS platform based on DevSecOps
 > Based on SpringCloud/Docker/ServiceMesh(istio), the main modules are: unified asset management center (Cmdb), unified continuous delivery center (distributed compilation CI/CD), Iam Certification Center(Rbac/Oidc/[Saml2])), unified monitoring center (SBA/Zipkin/Promethous), unified configuration center, unified operation center (Elasticjob/Spark/Flink/MR), unified Document Center (Swagger/Rap), unified development center (Lcdp/Autogen), unified private object storage management, unified library management (Git/Nexus(Maven/Image)), Shell-Cli, multiple tool chains (Hdfs/HBase/Phoenix/OSS), instant messaging, lightweight risk control, etc
 
 [![Build Status](https://travis-ci.org/wl4g/xcloud-dopaas.svg)](https://travis-ci.org/wl4g/xcloud-dopaas)
@@ -25,38 +25,42 @@
 [![CentOS](https://img.shields.io/badge/CentOS-6.5+-green.svg)](https://gitee.com/wl4g/xcloud-dopaas)
 
 
-### Development and runtime on technology stack(primary)
-> This project is mainly based on the development of springboot/cloud/dubbo, which supports the operation of traditional monomer (`standalone`) and fully distributed micro service (Springcloud/Dubbo). The source structure is carefully designed as &nbsp;<b>It's both a platform and a framework demonstration</b>.
+## 1. Development and runtime on technology stack(primary)
+> This project is mainly based on the development of SpringBoot/Cloud/Dubbo, which supports the operation of traditional monomer (`standalone`) mode and fully distributed micro service (`cluster`) mode. The source structure is carefully designed as &nbsp;<b>It's both a platform and a framework demonstration</b>.
 
 - Required dependencies:
-<pre>
-Spring Boot:2.2 +
-Spring Cloud:2.2 +
-Eureka:1.10 +
-Zipkin:2.15 +
-Jdk:8 +
-Maven:3.5 +
-Mysql:5.6 +
-</pre>
+Spring Boot:2.2 +  
+Spring Cloud:2.2 +  
+Eureka:1.10 +  
+Zipkin:2.15 +  
+Jdk:8 +  
+Maven:3.5 +  
+Mysql:5.6 +  
+- Optional dependencies:  
+Kafka:0.10.0 +  
+Zookeeper:3.4.6 +  
+DockerCE:18.06 +  
+CoreDNS:1.7.0 +  
+MinIO:latest  
+Elasticsearch(EFK):6.2.3 +  
+Shardingsphere-Elasticjob:3.0.0 +  
 
-- Optional dependencies:
-<pre>
-Kafka:0.10.0 +
-Zookeeper:3.4.6 +
-DockerCE:18.06 +
-CoreDNS:1.7.0 +
-MinIO:latest
-Elasticsearch(EFK):6.2.3 +
-Shardingsphere-Elasticjob:3.0.0 +
-</pre>
-
-- [Developments](README_DEVEL_CN.md)
+- [Developments Guide](README_DEVEL_CN.md)
 
 
-### One click automatic deployment:
-> It is suitable for rapid deployment in server environment, Note: only backend spring services (including Eureka) deployment are temporarily supported, For other dependent service deployment, please refer to [frontend deploy](#Frontend compiling), It is not recommended to use in high concurrency production environment. If necessary, please replace nginx with ELB/SLB/LVS.
+### 2.1 One click automatic deployment(only spring main services are supported, not dependence services)
+> It is suitable for rapid deployment in server (non container) environment, and build redis cluster, MySQL and other dependent services.
 
 ```
+# You need to specify some self built dependent services (examples):
+export defaultGitBranch=master
+export runtimeMysqlUrl='jdbc:mysql://127.0.0.1:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true'
+export runtimeMysqlUser='root'
+export runtimeMysqlPassword='123456'
+export runtimeRedisNodes='127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381,127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381'
+export runtimeRedisPassword='123456'
+export runtimeAppSpringProfilesActive='pro' # dev|fat|uat|pro
+
 bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy/deploy-boot.sh)"
 # or
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
@@ -70,10 +74,10 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 | standalone | 2C+2G+ | Monomer application |
 
 
-### Manual compilation and build:
-> It is suitable for build secondary development environment
+### 2.2 Manual compilation and build
+It is suitable for build secondary development environment
 
-- vim .m2/settings.xml
+#### 2.2.1 Editing .m2/settings.xml
 ```xml
 <mirror>
     <id>nexus-aliyun</id>
@@ -83,7 +87,7 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 </mirror>
 ```
 
-- Backend compiling
+#### 2.2.2 Backend compiling
 > Compile according to the order of project dependency. The `mvn -P` options are: `springExecJar` (packaged as a single executable jar) and `mvnAssTar` (packaged as a general software release package), default. 
 
 ```
@@ -100,7 +104,7 @@ git clone https://github.com/wl4g/xcloud-dopaas.git # Relatively new upstream (r
 mvn -f xcloud-dopaas -U clean install -DskipTests -T 2C
 ```
 
-- Frontend compiling
+#### 2.2.3 Frontend compiling
 ```
 git clone https://github.com/wl4g/xcloud-dopaas-view.git # Relatively new upstream (recommended)
 or git clone https://gitee.com/wl4g/xcloud-dopaas-view.git
@@ -108,29 +112,67 @@ npm run dev # Development debugging
 npm run build # Production building
 ```
 
-- Init DB: first, prepare a MySQL5.6+ instance and create a database named `dopaas`(utf8/utf8)_bin), and then [Init DB sql](../../../xcloud-dopaas-db).  
+### 2.3 Init DB: first, prepare a MySQL5.6+ instance and create a database named `dopaas`(utf8/utf8)_bin), and then [Init DB sql](../../../xcloud-dopaas-db).  
 (Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
 
-- Configure DNS resolutio(C:\Windows\System32\drivers\etc or vim /etc/hosts)  
+### 2.4 Configure DNS resolutio(C:\Windows\System32\drivers\etc or vim /etc/hosts)  
 (Note: the domain names used for external services in different environments should correspond to `sys_cluster_config.extranet_base_uri` table)  
 [Standalone mode resolution example](dns/hosts.standalone.tpl)  
 [Cluster mode resolution example](dns/hosts.cluster.tpl)  
 
-- Quickly build a redis cluster/docker (optional)
+### 2.5 Quickly build a redis cluster/docker (optional)
 > [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) or   
 > [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)  
 
-- Browser Access (Chrome recommended)
+### 2.6 Launch and testing access (chrome recommended)
+Notes：  
+a. When starting, you do not need to specify any JVM parameters, then you can use the default configuration, for example, activate the `dev` configuration by default;  
+b. Whether it is `standalone` mode or `cluster` mode, it can correspond to four environments respectively (`dev`/`fat`/`uat`/`pro`).
+
+#### 2.6.1 `standalone` mode starting(dev).
+Dopaas unified boot class：com.wl4g.StandaloneDopaas  
+IAM boot class：com.wl4g.StandaloneIam  
+
+#### 2.6.2 `cluster` mode starting(dev).
+Run the following startup classes:
+```
+com.wl4g.EurekaServer  
+com.wl4g.IamWeb  
+com.wl4g.IamFacade  
+com.wl4g.IamData  
+com.wl4g.CmdbFacade  
+com.wl4g.CmdbManager  
+com.wl4g.HomeFacade  
+com.wl4g.HomeManager  
+com.wl4g.LcdpFacade  
+com.wl4g.LcdpManager  
+com.wl4g.UciFacade  
+com.wl4g.UciServer  
+com.wl4g.UdmFacade  
+com.wl4g.UdmManager  
+com.wl4g.UdsFacade  
+com.wl4g.UdsManager 
+com.wl4g.UmcFacade 
+com.wl4g.UmcManager  
+com.wl4g.UmcTracker 
+com.wl4g.UmcCollector 
+com.wl4g.UosFacade  
+com.wl4g.UosManager  
+com.wl4g.UrmFacade  
+com.wl4g.UrmManager  
+```
+
+#### 2.6.3 Testing access (chrome recommended)
 > http://wl4g.debug &nbsp;&nbsp; Default account password: root/wl4g.com
 
-- Deployed successful screenshot:
+### 2.7 Deployed successful screenshot:
 > Tips: the screenshot may be slightly different due to the version evolution, if you have any questions, please join the communication group (see the end section)
 
 ![registered-eureka-apps](shots/registered-eureka-apps.png)
 - [More shots](shots/)
 
 
-### Submodule documents
+## 3. Submodule documents
 - [UCI](../../blob/master/xcloud-dopaas-uci/README.md)  Unified Continuous Integration Service(CI/CD)
 - [UMC](../../blob/master/xcloud-dopaas-umc/README.md)  Unified Monitoring and Operation Center(applications healthing, tracking, alarming, ELK log analysis, etc)
 - [URM](../../blob/master/xcloud-dopaas-urm/README.md)  Unified Repository Management(source repo/build repo/image repo)
@@ -143,13 +185,13 @@ npm run build # Production building
 - [UIM](../../blob/master/xcloud-dopaas-uim/README.md)  Unified instant messaging service, convenient for project personnel to communicate in time, safe distribution of internal data.
 
 
-### Other related apps and components documents
+## 4. Other related apps and components documents
 - [SHELL](xcloud-shell/README.md)            Shell Cli, adding a hbase-shell-like console to your app
 - [IAM](xcloud-iam/README.md)                Unified identity and access management services, support SSO/CAS/oauth2/opensaml etc, It also supports multiple deployment modes(local/cluster/gateway)
 - [Gateway](xcloud-gateway/README.md)        Enterprise microservice gateway based on spring cloud gateway, Can integrate with CI to realize Canary deployment.
 
 
-### Communicate, feedback and contribute?
+## 5. Communicate, feedback and contribute?
 - Click add to group [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)
 - ![q855349515](shots/q855349515.jpg)
 - GitHub: https://github.com/wl4g/xcloud-dopaas
