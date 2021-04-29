@@ -3,7 +3,7 @@
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
-> <font color=red>Notes: Currently, the fully distributed version is being incubation, so it is not a good choice to run directly in the production environment !</font>
+<font color=red>Notes: Currently, the fully distributed version is being incubation, so it is not a good choice to run directly in the production environment !</font>
 
 
 ### One stop solution of PaaS platform based on DevSecOps
@@ -110,22 +110,9 @@ npm run build # Production building
 
 - Initial DB: first, prepare a MySQL5.6+ instance and create a database named `dopaas`(utf8/utf8)_bin), and then [Initial DB sql](../../../xcloud-dopaas-db). (Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
 
-- Configure local DNS: add local virtual domain name resolution （C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
-```
-# Notes: The default virtual domain names of various environment databases are different. In rare cases, it may not correspond to the document due to the change of version module. Please check the retention table (sys_cluster_config.extranet_base_uri) The configuration of hosts is as follows:
-
-# dev:
-127.0.0.1 wl4g.debug
-
-# fat:
-127.0.0.1 wl4g.fat dopaas.wl4g.fat iam.wl4g.fat home.wl4g.fat cmdb.wl4g.fat lcdp.wl4g.fat ucm.wl4g.fat urm.wl4g.fat uci.wl4g.fat uos.wl4g.fat uds.wl4g.fat umc.wl4g.fat
-
-# uat:
-wl4g.uat dopaas.wl4g.uat iam.wl4g.uat home.wl4g.uat cmdb.wl4g.uat lcdp.wl4g.uat ucm.wl4g.uat urm.wl4g.uat uci.wl4g.uat uos.wl4g.uat uds.wl4g.uat umc.wl4g.uat
-
-# pro:
-wl4g.com dopaas.wl4g.com iam.wl4g.com home.wl4g.com cmdb.wl4g.com lcdp.wl4g.com ucm.wl4g.com urm.wl4g.com uci.wl4g.com uos.wl4g.com uds.wl4g.com umc.wl4g.com
-```
+- Configure DNS resolution（C:\Windows\System32\drivers\etc or vim /etc/hosts）：(Note: the domain names used for external services in different environments should correspond to `sys_cluster_config.extranet_base_uri` table.)</br>
+[Standalone模式域名解析示例](dns/hosts.standalone.tpl)</br>
+[Cluster模式域名解析示例](dns/hosts.cluster.tpl)</br>
 
 - Quickly build a redis cluster/docker (optional)
 > [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或者 [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)

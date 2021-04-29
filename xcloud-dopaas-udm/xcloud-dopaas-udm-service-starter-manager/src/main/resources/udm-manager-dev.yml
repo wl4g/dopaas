@@ -36,7 +36,7 @@ spring:
         # logic is in global_variable.js:55, related database table: sys_cluster_config
         server-uri: http://wl4g.debug:18080/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: http://wl4g.debug:8080/#/umc/config
+        success-uri: http://wl4g.debug/#/home/overview
 
 doc:
   storage-type: local # local(本地存储) ｜ minio | ....

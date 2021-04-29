@@ -40,14 +40,9 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.JobAPIService;
  */
 @RestController
 @RequestMapping("/api/servers")
-public final class ServerOperationController extends BaseController {
+public class ServerOperationController extends BaseController {
 
-	private JobAPIService jobAPIService;
-
-	@Autowired
-	public ServerOperationController(final JobAPIService jobAPIService) {
-		this.jobAPIService = jobAPIService;
-	}
+	private @Autowired JobAPIService jobAPIService;
 
 	/**
 	 * Get servers total count.

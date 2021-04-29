@@ -36,7 +36,7 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.JobAPIService;
  */
 @RestController
 @RequestMapping("/api/jobs/config")
-public final class JobConfigController extends BaseController {
+public class JobConfigController extends BaseController {
 
 	private @Autowired JobAPIService jobAPIService;
 
