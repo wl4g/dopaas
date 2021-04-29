@@ -20,13 +20,13 @@ spring:
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${CMDB_DOPAAS_REDIS_NODES:redis.wl4g.uat:6379,redis.wl4g.uat:6380,redis.wl4g.uat:6381,redis.wl4g.uat:7379,redis.wl4g.uat:7380,redis.wl4g.uat:7381}
+          nodes: ${CMDB_DOPAAS_REDIS_NODES:redis.cmdb.wl4g.uat:6379,redis.cmdb.wl4g.uat:6380,redis.cmdb.wl4g.uat:6381,redis.cmdb.wl4g.uat:7379,redis.cmdb.wl4g.uat:7380,redis.cmdb.wl4g.uat:7381}
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${CMDB_DOPAAS_DB_URL:jdbc:mysql://rds.wl4g.uat:3306/dopaas_cmdb?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+      url: ${CMDB_DOPAAS_DB_URL:jdbc:mysql://rds.cmdb.wl4g.uat:3306/dopaas_cmdb?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${CMDB_DOPAAS_DB_USER:dopaas_cmdb}
       password: ${CMDB_DOPAAS_DB_PASSWD:123456}
       initial-size: 10

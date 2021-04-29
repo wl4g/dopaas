@@ -43,16 +43,10 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.domain.EventTraceDataSourceCon
  */
 @RestController
 @RequestMapping("/api/data-source")
-public final class EventTraceDataSourceController extends BaseController {
-
+public class EventTraceDataSourceController extends BaseController {
 	public static final String DATA_SOURCE_CONFIG_KEY = "data_source_config_key";
 
-	private final EventTraceDataSourceConfigService eventTraceDataSourceConfigService;
-
-	@Autowired
-	public EventTraceDataSourceController(final EventTraceDataSourceConfigService eventTraceDataSourceConfigurationService) {
-		this.eventTraceDataSourceConfigService = eventTraceDataSourceConfigurationService;
-	}
+	private @Autowired EventTraceDataSourceConfigService eventTraceDataSourceConfigService;
 
 	/**
 	 * Get all available driver classes.
@@ -157,11 +151,13 @@ public final class EventTraceDataSourceController extends BaseController {
 	}
 
 	private void setDataSourceNameToSession(final EventTraceDataSourceConfig dataSourceConfig, final HttpSession session) {
-//		session.setAttribute(DATA_SOURCE_CONFIG_KEY, dataSourceConfig);
-//		EventTraceDataSourceFactory.createEventTraceDataSource(dataSourceConfig.getDriver(), dataSourceConfig.getUrl(),
-//				dataSourceConfig.getUsername(), dataSourceConfig.getPassword());
-//		LiteSessionEventTraceDataSourceFactory
-//				.setDataSourceConfiguration((EventTraceDataSourceConfig) session.getAttribute(DATA_SOURCE_CONFIG_KEY));
+		// session.setAttribute(DATA_SOURCE_CONFIG_KEY, dataSourceConfig);
+		// EventTraceDataSourceFactory.createEventTraceDataSource(dataSourceConfig.getDriver(),
+		// dataSourceConfig.getUrl(),
+		// dataSourceConfig.getUsername(), dataSourceConfig.getPassword());
+		// LiteSessionEventTraceDataSourceFactory
+		// .setDataSourceConfiguration((EventTraceDataSourceConfig)
+		// session.getAttribute(DATA_SOURCE_CONFIG_KEY));
 	}
 
 }

@@ -3,7 +3,7 @@
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
-> <font color=red>注：当前完全分布式版正在孵化中，不建议在生产环境使用！</font>
+<font color=red>注：当前完全分布式版正在孵化中，不建议在生产环境使用！</font>
 
 ### 一站式基于DevSecOps的PaaS平台解决方案
 > 基于SpringCloud/Docker/ServiceMesh(istio)，主要模块：统一资产管理中心(CMDB)、统一持续交付中心(分布式编译CI/CD)、IAM认证中心(rbac/oauth2/oidc/[saml2])、统一监控中心(sba/zipkin/promethous)、统一配置中心、统一作业中心(elasticjob/spark/flink/mr)、统一文档中心(swagger/rap)、统一开发中心（lcdp/autoGen），统一私有对象存储管理、统一库管理(git/nexus(maven/image))、Shell-Cli、多种工具链(hdfs/hbase/phoenix/oss)、即时通讯、轻量级风控等
@@ -109,22 +109,9 @@ npm run build # 生产打包
 
 - 初始数据库：首先准备一台MySQL5.6+实例，创建名为dopaas(utf8/utf8_bin)的库，再 [初始数据库](../../../xcloud-dopaas-db)。（注：sql脚本需与源码版本对应，我们会定期更新，建议都使用最新）
 
-- 配置本地DNS：添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
-```
-# 注：多种环境数据库默认配置的虚拟域名不同，极少情况可能由于版本模块变化导致与文档不对应，具体请检查保持表(sys_cluster_config.extranet_base_uri)配置对应即可，如下hosts配置供参考：
-
-# dev:
-127.0.0.1 wl4g.debug
-
-# fat:
-127.0.0.1 wl4g.fat dopaas.wl4g.fat iam.wl4g.fat home.wl4g.fat cmdb.wl4g.fat lcdp.wl4g.fat ucm.wl4g.fat urm.wl4g.fat uci.wl4g.fat uos.wl4g.fat uds.wl4g.fat umc.wl4g.fat
-
-# uat:
-wl4g.uat dopaas.wl4g.uat iam.wl4g.uat home.wl4g.uat cmdb.wl4g.uat lcdp.wl4g.uat ucm.wl4g.uat urm.wl4g.uat uci.wl4g.uat uos.wl4g.uat uds.wl4g.uat umc.wl4g.uat
-
-# pro:
-wl4g.com dopaas.wl4g.com iam.wl4g.com home.wl4g.com cmdb.wl4g.com lcdp.wl4g.com ucm.wl4g.com urm.wl4g.com uci.wl4g.com uos.wl4g.com uds.wl4g.com umc.wl4g.com
-```
+- 配置DNS虚拟解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：（注：对外的服务使用的域名在不同环境下请对应`sys_cluster_config.extranet_base_uri`表）</br>
+[Standalone模式域名解析示例](dns/hosts.standalone.tpl)</br>
+[Cluster模式域名解析示例](dns/hosts.cluster.tpl)</br>
 
 - 快速搭建redis/docker集群(可选)
 > [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或者 [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)

@@ -43,7 +43,7 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.model.FindJobStatusTraceEvents
  */
 @RestController
 @RequestMapping("/api/event-trace")
-public final class EventTraceHistoryController extends BaseController {
+public class EventTraceHistoryController extends BaseController {
 
 	private @Autowired EventTraceHistoryService eventTraceHistoryService;
 

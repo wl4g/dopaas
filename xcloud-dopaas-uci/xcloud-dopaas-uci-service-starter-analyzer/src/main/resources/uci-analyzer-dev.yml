@@ -33,7 +33,7 @@ spring:
       client:
         server-uri: http://wl4g.debug:18080/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: http://wl4g.debug:8080/#/ci/taskhis
+        success-uri: http://wl4g.debug/#/home/overview
     tool:
       devel:
         mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
@@ -70,7 +70,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${UCI_DOPAAS_DB_URL:jdbc:mysql://rds.wl4g.debug:3306/dopaas_uci?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+      url: ${UCI_DOPAAS_DB_URL:jdbc:mysql://rds.uci.wl4g.debug:3306/dopaas_uci?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${UCI_DOPAAS_DB_USER:dopaas_uci}
       password: ${UCI_DOPAAS_DB_PASSWD:123456}
       initial-size: 10

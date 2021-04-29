@@ -61,6 +61,7 @@ public interface JobAPIService {
 	 * @param jobName
 	 *            job name
 	 */
+	@RequestMapping(path = "removeJobConfiguration", method = POST)
 	void removeJobConfiguration(@RequestParam(name = "jobName") String jobName);
 
 	// --- Job Statistics. ---

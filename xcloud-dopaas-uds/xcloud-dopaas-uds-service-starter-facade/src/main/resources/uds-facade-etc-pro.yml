@@ -26,7 +26,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: ${UDS_DOPAAS_DB_URL:jdbc:mysql://rds.wl4g.com:3306/dopaas_uds?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+      url: ${UDS_DOPAAS_DB_URL:jdbc:mysql://rds.uds.wl4g.com:3306/dopaas_uds?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${UDS_DOPAAS_DB_USER:dopaas_uds}
       password: ${UDS_DOPAAS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       initial-size: 10

@@ -43,16 +43,10 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfi
  */
 @RestController
 @RequestMapping("/api/registry-center")
-public final class LiteRegistryCenterController extends BaseController {
-
+public class RegistryCenterController extends BaseController {
 	public static final String REG_CENTER_CONFIG_KEY = "reg_center_config_key";
 
-	private LiteRegistryCenterConfigService regCenterService;
-
-	@Autowired
-	public LiteRegistryCenterController(final LiteRegistryCenterConfigService regCenterService) {
-		this.regCenterService = regCenterService;
-	}
+	private @Autowired LiteRegistryCenterConfigService regCenterService;
 
 	/**
 	 * Judge whether registry center is activated.
