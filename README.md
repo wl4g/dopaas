@@ -52,7 +52,7 @@ Shardingsphere-Elasticjob:3.0.0 +
 > It is suitable for rapid deployment in server (non container) environment, and build redis cluster, MySQL and other dependent services.
 
 ```
-# You need to specify some self built dependent services (examples):
+# First, you need to specify some self built dependent services (examples):
 export defaultGitBranch=master
 export runtimeMysqlUrl='jdbc:mysql://127.0.0.1:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true'
 export runtimeMysqlUser='root'
