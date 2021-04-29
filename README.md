@@ -3,7 +3,7 @@
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
-<font color=red>Notes: Currently, the fully distributed version is being incubation, so it is not a good choice to run directly in the production environment !</font>
+<b style="color:red">Notes: Currently, the fully distributed version is being incubation, so it is not a good choice to run directly in the production environment !</b>
 
 
 ### One stop solution of PaaS platform based on DevSecOps
@@ -66,8 +66,8 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 
 | Runtime Mode | Min specs requirements(Suggested) | Description |
 | ---- | ---- | ---- |
-| cluster | CentOS7+ / Ubuntu18+ (4Core+ 8GB+) | Only pseudo clusters can be deployed when there is only one host |
-| standalone | 2Core+ 2GB+ | Monomer application |
+| cluster | CentOS7+ / Ubuntu18+ (4C+8G+) | Only pseudo clusters can be deployed when there is only one host |
+| standalone | 2C+2G+ | Monomer application |
 
 
 ### Manual compilation and build:
@@ -103,19 +103,22 @@ mvn -f xcloud-dopaas -U clean install -DskipTests -T 2C
 - Frontend compiling
 ```
 git clone https://github.com/wl4g/xcloud-dopaas-view.git # Relatively new upstream (recommended)
-或者 git clone https://gitee.com/wl4g/xcloud-dopaas-view.git
+or git clone https://gitee.com/wl4g/xcloud-dopaas-view.git
 npm run dev # Development debugging
 npm run build # Production building
 ```
 
-- Initial DB: first, prepare a MySQL5.6+ instance and create a database named `dopaas`(utf8/utf8)_bin), and then [Initial DB sql](../../../xcloud-dopaas-db). (Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
+- Init DB: first, prepare a MySQL5.6+ instance and create a database named `dopaas`(utf8/utf8)_bin), and then [Init DB sql](../../../xcloud-dopaas-db).  
+(Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
 
-- Configure DNS resolution（C:\Windows\System32\drivers\etc or vim /etc/hosts）：(Note: the domain names used for external services in different environments should correspond to `sys_cluster_config.extranet_base_uri` table.)</br>
-[Standalone模式域名解析示例](dns/hosts.standalone.tpl)</br>
-[Cluster模式域名解析示例](dns/hosts.cluster.tpl)</br>
+- Configure DNS resolutio(C:\Windows\System32\drivers\etc or vim /etc/hosts)  
+(Note: the domain names used for external services in different environments should correspond to `sys_cluster_config.extranet_base_uri` table)  
+[Standalone mode resolution example](dns/hosts.standalone.tpl)  
+[Cluster mode resolution example](dns/hosts.cluster.tpl)  
 
 - Quickly build a redis cluster/docker (optional)
-> [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或者 [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)
+> [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) or   
+> [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)  
 
 - Browser Access (Chrome recommended)
 > http://wl4g.debug &nbsp;&nbsp; Default account password: root/wl4g.com
