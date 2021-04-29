@@ -67,3 +67,12 @@
 │   └── xcloud-dopaas-urm-service-starter-manager
 └── xcloud-dopaas-view # 前端项目(link)
 ```
+
+### 2. 配置
+2.1 支持使用标准的 SpringBoot 方式配置，以 `cmdb-facade-etc-dev.yml` 为例：
+> 注，配置加载顺序依次为：
+```
+a. 启动命令行指定(如：--spring.xcloud.component.support.redis.passwd=123456)
+b. 名为配置属性的环境变量(如：export SPRING_PROFILES_ACTIVE=dev 或 export spring.profiles.active=dev)
+c. 在配置值中使用环境变量(如：spring.xcloud.component.support.redis.passwd: ${CMDB_DOPAAS_REDIS_PASSWD:123456})
+```
