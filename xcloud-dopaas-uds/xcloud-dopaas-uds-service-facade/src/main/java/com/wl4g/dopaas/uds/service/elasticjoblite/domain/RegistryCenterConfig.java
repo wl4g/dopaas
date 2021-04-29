@@ -18,20 +18,39 @@
 package com.wl4g.dopaas.uds.service.elasticjoblite.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.io.Serializable;
 
 /**
- * Registry center configurations.
+ * Registry center configuration.
  */
 @Getter
+@Setter
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class LiteRegistryCenterConfigs {
+@NoArgsConstructor
+public final class RegistryCenterConfig implements Serializable {
 
-	private Set<LiteRegistryCenterConfig> registryCenterConfiguration = new LinkedHashSet<>();
+	private static final long serialVersionUID = 8667013870431703376L;
+
+	@XmlAttribute(required = true)
+	private String name;
+
+	@XmlAttribute(required = true)
+	private String zkAddressList;
+
+	@XmlAttribute
+	private String namespace;
+
+	@XmlAttribute
+	private String digest;
+
+	@XmlAttribute
+	private boolean activated;
 }

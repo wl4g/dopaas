@@ -28,7 +28,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "UDS_JOB_EXECUTION_LOG")
+@Table(name = "uds_job_execution_log")
 public class JobExecutionLog {
 
 	@Id

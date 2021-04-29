@@ -21,10 +21,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.wl4g.dopaas.uds.service.elasticjoblite.LiteRegistryCenterConfigService;
+import com.wl4g.dopaas.uds.service.elasticjoblite.RegistryCenterConfigService;
 import com.wl4g.dopaas.uds.service.elasticjoblite.config.GlobalConfig;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfigs;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfig;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfigs;
 import com.wl4g.dopaas.uds.service.elasticjoblite.repository.ConfigurationsXmlRepository;
 import com.wl4g.dopaas.uds.service.elasticjoblite.repository.impl.ConfigurationsXmlRepositoryImpl;
 
@@ -32,26 +32,26 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.repository.impl.Configurations
  * Registry center configuration service implementation.
  */
 @Service
-public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCenterConfigService {
+public final class RegistryCenterConfigServiceImpl implements RegistryCenterConfigService {
 
 	private ConfigurationsXmlRepository configurationsXmlRepository = new ConfigurationsXmlRepositoryImpl();
 
 	@Override
-	public LiteRegistryCenterConfigs loadAll() {
+	public RegistryCenterConfigs loadAll() {
 		return loadGlobal().getRegistryCenterConfigurations();
 	}
 
 	@Override
-	public LiteRegistryCenterConfig load(final String name) {
+	public RegistryCenterConfig load(final String name) {
 		GlobalConfig configs = loadGlobal();
-		LiteRegistryCenterConfig result = find(name, configs.getRegistryCenterConfigurations());
+		RegistryCenterConfig result = find(name, configs.getRegistryCenterConfigurations());
 		setActivated(configs, result);
 		return result;
 	}
 
 	@Override
-	public LiteRegistryCenterConfig find(final String name, final LiteRegistryCenterConfigs configs) {
-		for (LiteRegistryCenterConfig each : configs.getRegistryCenterConfiguration()) {
+	public RegistryCenterConfig find(final String name, final RegistryCenterConfigs configs) {
+		for (RegistryCenterConfig each : configs.getRegistryCenterConfiguration()) {
 			if (name.equals(each.getName())) {
 				return each;
 			}
@@ -59,8 +59,8 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 		return null;
 	}
 
-	private void setActivated(final GlobalConfig configs, final LiteRegistryCenterConfig toBeConnectedConfig) {
-		LiteRegistryCenterConfig activatedConfig = findActivatedRegistryCenterConfiguration(configs);
+	private void setActivated(final GlobalConfig configs, final RegistryCenterConfig toBeConnectedConfig) {
+		RegistryCenterConfig activatedConfig = findActivatedRegistryCenterConfiguration(configs);
 		if (!toBeConnectedConfig.equals(activatedConfig)) {
 			if (null != activatedConfig) {
 				activatedConfig.setActivated(false);
@@ -71,12 +71,12 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 	}
 
 	@Override
-	public Optional<LiteRegistryCenterConfig> loadActivated() {
+	public Optional<RegistryCenterConfig> loadActivated() {
 		return Optional.ofNullable(findActivatedRegistryCenterConfiguration(loadGlobal()));
 	}
 
-	private LiteRegistryCenterConfig findActivatedRegistryCenterConfiguration(final GlobalConfig configs) {
-		for (LiteRegistryCenterConfig each : configs.getRegistryCenterConfigurations().getRegistryCenterConfiguration()) {
+	private RegistryCenterConfig findActivatedRegistryCenterConfiguration(final GlobalConfig configs) {
+		for (RegistryCenterConfig each : configs.getRegistryCenterConfigurations().getRegistryCenterConfiguration()) {
 			if (each.isActivated()) {
 				return each;
 			}
@@ -85,7 +85,7 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 	}
 
 	@Override
-	public boolean add(final LiteRegistryCenterConfig config) {
+	public boolean add(final RegistryCenterConfig config) {
 		GlobalConfig configs = loadGlobal();
 		boolean result = configs.getRegistryCenterConfigurations().getRegistryCenterConfiguration().add(config);
 		if (result) {
@@ -97,7 +97,7 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 	@Override
 	public void delete(final String name) {
 		GlobalConfig configs = loadGlobal();
-		LiteRegistryCenterConfig toBeRemovedConfig = find(name, configs.getRegistryCenterConfigurations());
+		RegistryCenterConfig toBeRemovedConfig = find(name, configs.getRegistryCenterConfigurations());
 		if (null != toBeRemovedConfig) {
 			configs.getRegistryCenterConfigurations().getRegistryCenterConfiguration().remove(toBeRemovedConfig);
 			configurationsXmlRepository.save(configs);
@@ -107,7 +107,7 @@ public final class LiteRegistryCenterConfigServiceImpl implements LiteRegistryCe
 	private GlobalConfig loadGlobal() {
 		GlobalConfig result = configurationsXmlRepository.load();
 		if (null == result.getRegistryCenterConfigurations()) {
-			result.setRegistryCenterConfigurations(new LiteRegistryCenterConfigs());
+			result.setRegistryCenterConfigurations(new RegistryCenterConfigs());
 		}
 		return result;
 	}

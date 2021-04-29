@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.EventTraceDataSourceConfigs;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfigs;
+import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfigs;
 
 /**
  * Global configuration.
@@ -36,7 +36,7 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfi
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class GlobalConfig {
 
-	private LiteRegistryCenterConfigs registryCenterConfigurations;
+	private RegistryCenterConfigs registryCenterConfigurations;
 
 	private EventTraceDataSourceConfigs eventTraceDataSourceConfigurations;
 }

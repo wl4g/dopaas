@@ -37,7 +37,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "UDS_JOB_REGISTER_STATISTICS")
+@Table(name = "uds_job_register_statistics")
 public class JobRegisterStatistics {
 
 	@Id
