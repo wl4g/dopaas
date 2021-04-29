@@ -17,13 +17,18 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite;
 
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.JobConfigurationAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.JobOperateAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.JobStatisticsAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ServerStatisticsAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ShardingOperateAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ShardingStatisticsAPI;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.Collection;
+
+import org.apache.shardingsphere.elasticjob.infra.pojo.JobConfigurationPOJO;
+import org.apache.shardingsphere.elasticjob.lite.lifecycle.domain.JobBriefInfo;
+import org.apache.shardingsphere.elasticjob.lite.lifecycle.domain.ServerBriefInfo;
+import org.apache.shardingsphere.elasticjob.lite.lifecycle.domain.ShardingInfo;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 
@@ -31,45 +36,187 @@ import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 @RequestMapping("/jobAPI-service")
 public interface JobAPIService {
 
-	/**
-	 * Job configuration API.
-	 *
-	 * @return job configuration API
-	 */
-	JobConfigurationAPI getJobConfigurationAPI();
+	// --- Job configuration. ---
 
 	/**
-	 * Job operate API.
+	 * Gets Job configuration .
 	 *
-	 * @return Job operate API
+	 * @return job configuration
 	 */
-	JobOperateAPI getJobOperatorAPI();
+	@RequestMapping(path = "getJobConfiguration", method = GET)
+	JobConfigurationPOJO getJobConfiguration(@RequestParam(name = "jobName") String jobName);
 
 	/**
-	 * Sharding operate API.
+	 * Update job configuration.
 	 *
-	 * @return sharding operate API
+	 * @param jobConfig
+	 *            job configuration
 	 */
-	ShardingOperateAPI getShardingOperateAPI();
+	@RequestMapping(path = "updateJobConfiguration", method = POST)
+	void updateJobConfiguration(@RequestBody JobConfigurationPOJO jobConfig);
 
 	/**
-	 * Job statistics API.
+	 * Remove job configuration.
 	 *
-	 * @return job statistics API
+	 * @param jobName
+	 *            job name
 	 */
-	JobStatisticsAPI getJobStatisticsAPI();
+	void removeJobConfiguration(@RequestParam(name = "jobName") String jobName);
+
+	// --- Job Statistics. ---
 
 	/**
-	 * Servers statistics API.
+	 * Get jobs total count.
 	 *
-	 * @return server statistics API
+	 * @return jobs total count.
 	 */
-	ServerStatisticsAPI getServerStatisticsAPI();
+	@RequestMapping(path = "getJobsTotalCount", method = GET)
+	int getJobsTotalCount();
 
 	/**
-	 * Sharding statistics API.
+	 * Get all jobs brief info.
 	 *
-	 * @return sharding statistics API
+	 * @return all jobs brief info.
 	 */
-	ShardingStatisticsAPI getShardingStatisticsAPI();
+	@RequestMapping(path = "getAllJobsBriefInfo", method = GET)
+	Collection<JobBriefInfo> getAllJobsBriefInfo();
+
+	/**
+	 * Get job brief info.
+	 *
+	 * @param jobName
+	 *            job name
+	 * @return job brief info
+	 */
+	@RequestMapping(path = "getJobBriefInfo", method = GET)
+	JobBriefInfo getJobBriefInfo(@RequestParam(name = "jobName") String jobName);
+
+	/**
+	 * Get jobs brief info.
+	 *
+	 * @param ip
+	 *            server IP address
+	 * @return jobs brief info
+	 */
+	@RequestMapping(path = "getJobsBriefInfo", method = GET)
+	Collection<JobBriefInfo> getJobsBriefInfo(@RequestParam(name = "ip") String ip);
+
+	// --- Job operators. ---
+
+	/**
+	 * Trigger job to run at once.
+	 *
+	 * <p>
+	 * Job will not start until it does not conflict with the last running job,
+	 * and this tag will be automatically cleaned up after it starts.
+	 * </p>
+	 *
+	 * @param jobName
+	 *            job name
+	 */
+	@RequestMapping(path = "triggerJob", method = POST)
+	void triggerJob(@RequestParam(name = "jobName") String jobName);
+
+	/**
+	 * Disable job.
+	 * 
+	 * <p>
+	 * Will cause resharding.
+	 * </p>
+	 *
+	 * @param jobName
+	 *            job name
+	 * @param serverIp
+	 *            server IP address
+	 */
+	@RequestMapping(path = "disableJob", method = POST)
+	void disableJob(@RequestParam(name = "jobName") String jobName, @RequestParam(name = "serverIp") String serverIp);
+
+	/**
+	 * Enable job.
+	 * 
+	 * @param jobName
+	 *            job name
+	 * @param serverIp
+	 *            server IP address
+	 */
+	@RequestMapping(path = "enableJob", method = POST)
+	void enableJob(@RequestParam(name = "jobName") String jobName, @RequestParam(name = "serverIp") String serverIp);
+
+	/**
+	 * Shutdown Job.
+	 *
+	 * @param jobName
+	 *            job name
+	 * @param serverIp
+	 *            server IP address
+	 */
+	@RequestMapping(path = "shutdownJob", method = POST)
+	void shutdownJob(@RequestParam(name = "jobName") String jobName, @RequestParam(name = "serverIp") String serverIp);
+
+	/**
+	 * Remove job.
+	 * 
+	 * @param jobName
+	 *            job name
+	 * @param serverIp
+	 *            server IP address
+	 */
+	@RequestMapping(path = "removeJob", method = POST)
+	void removeJob(@RequestParam(name = "jobName") String jobName, @RequestParam(name = "serverIp") String serverIp);
+
+	// --- Sharding operators. ---
+
+	/**
+	 * Disable job sharding item.
+	 * 
+	 * @param jobName
+	 *            job name
+	 * @param item
+	 *            sharding item
+	 */
+	@RequestMapping(path = "disableSharding", method = POST)
+	void disableSharding(@RequestParam(name = "jobName") String jobName, @RequestParam(name = "item") String item);
+
+	/**
+	 * Enable job sharding item.
+	 *
+	 * @param jobName
+	 *            job name
+	 * @param item
+	 *            sharding item
+	 */
+	@RequestMapping(path = "enableSharding", method = POST)
+	void enableSharding(@RequestParam(name = "jobName") String jobName, @RequestParam(name = "item") String item);
+
+	// --- Server statistics. ---
+
+	/**
+	 * Get servers total count.
+	 *
+	 * @return servers total count
+	 */
+	@RequestMapping(path = "getServersTotalCount", method = GET)
+	int getServersTotalCount();
+
+	/**
+	 * Get all servers brief info.
+	 *
+	 * @return all servers brief info
+	 */
+	@RequestMapping(path = "getAllServersBriefInfo", method = GET)
+	Collection<ServerBriefInfo> getAllServersBriefInfo();
+
+	// --- Sharding statistics. ---
+
+	/**
+	 * Get sharding info.
+	 *
+	 * @param jobName
+	 *            job name
+	 * @return sharding info of job
+	 */
+	@RequestMapping(path = "getShardingInfo", method = GET)
+	Collection<ShardingInfo> getShardingInfo(@RequestParam(name = "jobName") String jobName);
+
 }

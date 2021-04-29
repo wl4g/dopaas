@@ -17,18 +17,21 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite.domain;
 
-import lombok.Getter;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.LinkedHashSet;
-import java.util.Set;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Event trace data source configurations.
  */
 @Getter
+@Setter
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class EventTraceDataSourceConfigs {

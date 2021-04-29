@@ -1,80 +1,139 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright (C) 2017 ~ 2025 the original author or authors.
+ * <Wanglsir@gmail.com, 983708408@qq.com> Technology CO.LTD.
+ * All rights reserved.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * 
+ * Reference to website: http://wl4g.com
  */
-
 package com.wl4g.dopaas.uds.service.elasticjoblite;
 
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.JobAPIFactory;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.JobConfigurationAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.JobOperateAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.JobStatisticsAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ServerStatisticsAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ShardingOperateAPI;
-import org.apache.shardingsphere.elasticjob.lite.lifecycle.api.ShardingStatisticsAPI;
-import org.springframework.stereotype.Service;
+import java.util.Collection;
 
-import com.wl4g.dopaas.uds.service.elasticjoblite.JobAPIService;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.LiteRegistryCenterConfig;
-import com.wl4g.dopaas.uds.service.elasticjoblite.util.LiteSessionRegistryCenterFactory;
+import org.apache.shardingsphere.elasticjob.infra.pojo.JobConfigurationPOJO;
+import org.apache.shardingsphere.elasticjob.lite.lifecycle.domain.JobBriefInfo;
+import org.apache.shardingsphere.elasticjob.lite.lifecycle.domain.ServerBriefInfo;
+import org.apache.shardingsphere.elasticjob.lite.lifecycle.domain.ShardingInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Job API service implementation.
+ * {@link JobAPIServiceImpl}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-04-29
+ * @sine v1.0
+ * @see
  */
-@Service
-public final class JobAPIServiceImpl implements JobAPIService {
+public class JobAPIServiceImpl implements JobAPIService {
+
+	private @Autowired InternalJobAPIHandler jobAPIHandler;
+
+	// --- Job configuration. ---
 
 	@Override
-	public JobConfigurationAPI getJobConfigurationAPI() {
-		LiteRegistryCenterConfig regCenterConfig = LiteSessionRegistryCenterFactory.getRegistryCenterConfiguration();
-		return JobAPIFactory.createJobConfigurationAPI(regCenterConfig.getZkAddressList(), regCenterConfig.getNamespace(),
-				regCenterConfig.getDigest());
+	public JobConfigurationPOJO getJobConfiguration(String jobName) {
+		return jobAPIHandler.getJobConfigurationAPI().getJobConfiguration(jobName);
 	}
 
 	@Override
-	public JobOperateAPI getJobOperatorAPI() {
-		LiteRegistryCenterConfig regCenterConfig = LiteSessionRegistryCenterFactory.getRegistryCenterConfiguration();
-		return JobAPIFactory.createJobOperateAPI(regCenterConfig.getZkAddressList(), regCenterConfig.getNamespace(),
-				regCenterConfig.getDigest());
+	public void updateJobConfiguration(JobConfigurationPOJO jobConfig) {
+		jobAPIHandler.getJobConfigurationAPI().updateJobConfiguration(jobConfig);
 	}
 
 	@Override
-	public ShardingOperateAPI getShardingOperateAPI() {
-		LiteRegistryCenterConfig regCenterConfig = LiteSessionRegistryCenterFactory.getRegistryCenterConfiguration();
-		return JobAPIFactory.createShardingOperateAPI(regCenterConfig.getZkAddressList(), regCenterConfig.getNamespace(),
-				regCenterConfig.getDigest());
+	public void removeJobConfiguration(String jobName) {
+		jobAPIHandler.getJobConfigurationAPI().removeJobConfiguration(jobName);
+	}
+
+	// --- Job Statistics. ---
+
+	@Override
+	public int getJobsTotalCount() {
+		return jobAPIHandler.getJobStatisticsAPI().getJobsTotalCount();
 	}
 
 	@Override
-	public JobStatisticsAPI getJobStatisticsAPI() {
-		LiteRegistryCenterConfig regCenterConfig = LiteSessionRegistryCenterFactory.getRegistryCenterConfiguration();
-		return JobAPIFactory.createJobStatisticsAPI(regCenterConfig.getZkAddressList(), regCenterConfig.getNamespace(),
-				regCenterConfig.getDigest());
+	public Collection<JobBriefInfo> getAllJobsBriefInfo() {
+		return jobAPIHandler.getJobStatisticsAPI().getAllJobsBriefInfo();
 	}
 
 	@Override
-	public ServerStatisticsAPI getServerStatisticsAPI() {
-		LiteRegistryCenterConfig regCenterConfig = LiteSessionRegistryCenterFactory.getRegistryCenterConfiguration();
-		return JobAPIFactory.createServerStatisticsAPI(regCenterConfig.getZkAddressList(), regCenterConfig.getNamespace(),
-				regCenterConfig.getDigest());
+	public JobBriefInfo getJobBriefInfo(String jobName) {
+		return jobAPIHandler.getJobStatisticsAPI().getJobBriefInfo(jobName);
 	}
 
 	@Override
-	public ShardingStatisticsAPI getShardingStatisticsAPI() {
-		LiteRegistryCenterConfig regCenterConfig = LiteSessionRegistryCenterFactory.getRegistryCenterConfiguration();
-		return JobAPIFactory.createShardingStatisticsAPI(regCenterConfig.getZkAddressList(), regCenterConfig.getNamespace(),
-				regCenterConfig.getDigest());
+	public Collection<JobBriefInfo> getJobsBriefInfo(String ip) {
+		return jobAPIHandler.getJobStatisticsAPI().getJobsBriefInfo(ip);
 	}
+
+	// --- Job operators. ---
+
+	@Override
+	public void triggerJob(String jobName) {
+		jobAPIHandler.getJobOperatorAPI().trigger(jobName);
+	}
+
+	@Override
+	public void disableJob(String jobName, String serverIp) {
+		jobAPIHandler.getJobOperatorAPI().disable(jobName, serverIp);
+	}
+
+	@Override
+	public void enableJob(String jobName, String serverIp) {
+		jobAPIHandler.getJobOperatorAPI().enable(jobName, serverIp);
+	}
+
+	@Override
+	public void shutdownJob(String jobName, String serverIp) {
+		jobAPIHandler.getJobOperatorAPI().shutdown(jobName, serverIp);
+	}
+
+	@Override
+	public void removeJob(String jobName, String serverIp) {
+		jobAPIHandler.getJobOperatorAPI().remove(jobName, serverIp);
+	}
+
+	// --- Sharding operators. ---
+
+	@Override
+	public void disableSharding(String jobName, String item) {
+		jobAPIHandler.getShardingOperateAPI().disable(jobName, item);
+	}
+
+	@Override
+	public void enableSharding(String jobName, String item) {
+		jobAPIHandler.getShardingOperateAPI().enable(jobName, item);
+	}
+
+	// --- Server statistics. ---
+
+	@Override
+	public int getServersTotalCount() {
+		return jobAPIHandler.getServerStatisticsAPI().getServersTotalCount();
+	}
+
+	@Override
+	public Collection<ServerBriefInfo> getAllServersBriefInfo() {
+		return jobAPIHandler.getServerStatisticsAPI().getAllServersBriefInfo();
+	}
+
+	// --- Sharding statistics. ---
+
+	@Override
+	public Collection<ShardingInfo> getShardingInfo(String jobName) {
+		return jobAPIHandler.getShardingStatisticsAPI().getShardingInfo(jobName);
+	}
+
 }

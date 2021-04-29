@@ -17,9 +17,14 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.EventTraceDataSourceConfig;
@@ -37,6 +42,7 @@ public interface EventTraceDataSourceConfigService {
 	 *
 	 * @return all event trace data source configuration
 	 */
+	@RequestMapping(path = "loadAll", method = GET)
 	EventTraceDataSourceConfigs loadAll();
 
 	/**
@@ -46,7 +52,8 @@ public interface EventTraceDataSourceConfigService {
 	 *            name of event trace data source configuration
 	 * @return event trace data source configuration
 	 */
-	EventTraceDataSourceConfig load(String name);
+	@RequestMapping(path = "load", method = GET)
+	EventTraceDataSourceConfig load(@RequestParam(name = "name") String name);
 
 	/**
 	 * Find event trace data source configuration.
@@ -57,13 +64,15 @@ public interface EventTraceDataSourceConfigService {
 	 *            event trace data source configurations
 	 * @return event trace data source configuration
 	 */
-	EventTraceDataSourceConfig find(String name, EventTraceDataSourceConfigs configs);
+	@RequestMapping(path = "find", method = GET)
+	EventTraceDataSourceConfig find(@RequestParam(name = "name") String name, @RequestBody EventTraceDataSourceConfigs configs);
 
 	/**
 	 * Load activated event trace data source configuration.
 	 * 
 	 * @return activated event trace data source configuration
 	 */
+	@RequestMapping(path = "loadActivated", method = POST)
 	Optional<EventTraceDataSourceConfig> loadActivated();
 
 	/**
@@ -73,7 +82,8 @@ public interface EventTraceDataSourceConfigService {
 	 *            event trace data source configuration
 	 * @return success to add or not
 	 */
-	boolean add(EventTraceDataSourceConfig config);
+	@RequestMapping(path = "add", method = POST)
+	boolean add(@RequestBody EventTraceDataSourceConfig config);
 
 	/**
 	 * Delete event trace data source configuration.
@@ -81,5 +91,6 @@ public interface EventTraceDataSourceConfigService {
 	 * @param name
 	 *            name of event trace data source configuration
 	 */
-	void delete(String name);
+	@RequestMapping(path = "delete", method = POST)
+	void delete(@RequestParam(name = "name") String name);
 }
