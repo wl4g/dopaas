@@ -38,12 +38,7 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.JobAPIService;
 @RequestMapping("/api/jobs/config")
 public final class JobConfigController extends BaseController {
 
-	private JobAPIService jobAPIService;
-
-	@Autowired
-	public JobConfigController(final JobAPIService jobAPIService) {
-		this.jobAPIService = jobAPIService;
-	}
+	private @Autowired JobAPIService jobAPIService;
 
 	/**
 	 * Get job configuration.
@@ -54,7 +49,7 @@ public final class JobConfigController extends BaseController {
 	 */
 	@GetMapping(value = "/{jobName:.+}")
 	public RespBase<JobConfigurationPOJO> getJobConfig(@PathVariable("jobName") final String jobName) {
-		JobConfigurationPOJO data = jobAPIService.getJobConfigurationAPI().getJobConfiguration(jobName);
+		JobConfigurationPOJO data = jobAPIService.getJobConfiguration(jobName);
 		data.setJobExtraConfigurations(null);
 		return RespBase.<JobConfigurationPOJO> create().withData(data);
 	}
@@ -67,9 +62,9 @@ public final class JobConfigController extends BaseController {
 	 */
 	@PutMapping
 	public RespBase<Boolean> updateJobConfig(@RequestBody final JobConfigurationPOJO jobConfiguration) {
-		jobConfiguration.setJobExtraConfigurations(jobAPIService.getJobConfigurationAPI()
-				.getJobConfiguration(jobConfiguration.getJobName()).getJobExtraConfigurations());
-		jobAPIService.getJobConfigurationAPI().updateJobConfiguration(jobConfiguration);
+		jobConfiguration.setJobExtraConfigurations(
+				jobAPIService.getJobConfiguration(jobConfiguration.getJobName()).getJobExtraConfigurations());
+		jobAPIService.updateJobConfiguration(jobConfiguration);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -81,7 +76,7 @@ public final class JobConfigController extends BaseController {
 	 */
 	@DeleteMapping("/{jobName:.+}")
 	public RespBase<Boolean> removeJob(@PathVariable("jobName") final String jobName) {
-		jobAPIService.getJobConfigurationAPI().removeJobConfiguration(jobName);
+		jobAPIService.removeJobConfiguration(jobName);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 

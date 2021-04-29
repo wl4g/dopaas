@@ -17,9 +17,10 @@
 
 package com.wl4g.dopaas.uds.elasticjoblite.web;
 
+import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
+
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
 
 import org.apache.shardingsphere.elasticjob.lite.lifecycle.domain.JobBriefInfo;
 import org.apache.shardingsphere.elasticjob.lite.lifecycle.domain.ShardingInfo;
@@ -41,12 +42,7 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.JobAPIService;
 @RequestMapping("/api/jobs")
 public final class JobOperationController extends BaseController {
 
-	private JobAPIService jobAPIService;
-
-	@Autowired
-	public JobOperationController(final JobAPIService jobAPIService) {
-		this.jobAPIService = jobAPIService;
-	}
+	private @Autowired JobAPIService jobAPIService;
 
 	/**
 	 * Get jobs total count.
@@ -55,7 +51,7 @@ public final class JobOperationController extends BaseController {
 	 */
 	@GetMapping("/count")
 	public int getJobsTotalCount() {
-		return jobAPIService.getJobStatisticsAPI().getJobsTotalCount();
+		return jobAPIService.getJobsTotalCount();
 	}
 
 	/**
@@ -65,9 +61,9 @@ public final class JobOperationController extends BaseController {
 	 */
 	@GetMapping("/getAllJobsBriefInfo")
 	public RespBase<Collection<JobBriefInfo>> getAllJobsBriefInfo() {
-		Collection<JobBriefInfo> data = Objects.nonNull(SessionRegistryCenterFactory.getRegistryCenterConfiguration())
-				? jobAPIService.getJobStatisticsAPI().getAllJobsBriefInfo()
-				: Collections.emptyList();
+		Collection<JobBriefInfo> data = nonNull(SessionRegistryCenterFactory.getRegistryCenterConfiguration())
+				? jobAPIService.getAllJobsBriefInfo()
+				: emptyList();
 		return RespBase.<Collection<JobBriefInfo>> create().withData(data);
 	}
 
@@ -79,7 +75,7 @@ public final class JobOperationController extends BaseController {
 	 */
 	@PostMapping("/{jobName}/trigger")
 	public RespBase<Boolean> triggerJob(@PathVariable("jobName") final String jobName) {
-		jobAPIService.getJobOperatorAPI().trigger(jobName);
+		jobAPIService.triggerJob(jobName);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -91,7 +87,7 @@ public final class JobOperationController extends BaseController {
 	 */
 	@PostMapping(value = "/{jobName}/disable")
 	public RespBase<Boolean> disableJob(@PathVariable("jobName") final String jobName) {
-		jobAPIService.getJobOperatorAPI().disable(jobName, null);
+		jobAPIService.disableJob(jobName, null);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -103,7 +99,7 @@ public final class JobOperationController extends BaseController {
 	 */
 	@PostMapping(value = "/{jobName}/enable")
 	public RespBase<Boolean> enableJob(@PathVariable("jobName") final String jobName) {
-		jobAPIService.getJobOperatorAPI().enable(jobName, null);
+		jobAPIService.enableJob(jobName, null);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -115,7 +111,7 @@ public final class JobOperationController extends BaseController {
 	 */
 	@PostMapping(value = "/{jobName}/shutdown")
 	public RespBase<Boolean> shutdownJob(@PathVariable("jobName") final String jobName) {
-		jobAPIService.getJobOperatorAPI().shutdown(jobName, null);
+		jobAPIService.shutdownJob(jobName, null);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -128,7 +124,7 @@ public final class JobOperationController extends BaseController {
 	 */
 	@GetMapping(value = "/{jobName}/sharding")
 	public RespBase<Collection<ShardingInfo>> getShardingInfo(@PathVariable("jobName") final String jobName) {
-		Collection<ShardingInfo> data = jobAPIService.getShardingStatisticsAPI().getShardingInfo(jobName);
+		Collection<ShardingInfo> data = jobAPIService.getShardingInfo(jobName);
 		return RespBase.<Collection<ShardingInfo>> create().withData(data);
 	}
 
@@ -143,7 +139,7 @@ public final class JobOperationController extends BaseController {
 	@PostMapping(value = "/{jobName}/sharding/{item}/disable")
 	public RespBase<Boolean> disableSharding(@PathVariable("jobName") final String jobName,
 			@PathVariable("item") final String item) {
-		jobAPIService.getShardingOperateAPI().disable(jobName, item);
+		jobAPIService.disableJob(jobName, item);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -158,7 +154,7 @@ public final class JobOperationController extends BaseController {
 	@PostMapping(value = "/{jobName}/sharding/{item}/enable")
 	public RespBase<Boolean> enableSharding(@PathVariable("jobName") final String jobName,
 			@PathVariable("item") final String item) {
-		jobAPIService.getShardingOperateAPI().enable(jobName, item);
+		jobAPIService.enableJob(jobName, item);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 }

@@ -56,7 +56,7 @@ public final class ServerOperationController extends BaseController {
 	 */
 	@GetMapping("/count")
 	public int getServersTotalCount() {
-		return jobAPIService.getServerStatisticsAPI().getServersTotalCount();
+		return jobAPIService.getServersTotalCount();
 	}
 
 	/**
@@ -67,7 +67,7 @@ public final class ServerOperationController extends BaseController {
 	@GetMapping("/getAllServersBriefInfo")
 	public RespBase<Collection<ServerBriefInfo>> getAllServersBriefInfo() {
 		Collection<ServerBriefInfo> data = Objects.nonNull(SessionRegistryCenterFactory.getRegistryCenterConfiguration())
-				? jobAPIService.getServerStatisticsAPI().getAllServersBriefInfo()
+				? jobAPIService.getAllServersBriefInfo()
 				: Collections.emptyList();
 		return RespBase.<Collection<ServerBriefInfo>> create().withData(data);
 	}
@@ -80,7 +80,7 @@ public final class ServerOperationController extends BaseController {
 	 */
 	@PostMapping("/{serverIp}/disable")
 	public RespBase<Boolean> disableServer(@PathVariable("serverIp") final String serverIp) {
-		jobAPIService.getJobOperatorAPI().disable(null, serverIp);
+		jobAPIService.disableJob(null, serverIp);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -92,7 +92,7 @@ public final class ServerOperationController extends BaseController {
 	 */
 	@PostMapping("/{serverIp}/enable")
 	public RespBase<Boolean> enableServer(@PathVariable("serverIp") final String serverIp) {
-		jobAPIService.getJobOperatorAPI().enable(null, serverIp);
+		jobAPIService.enableJob(null, serverIp);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -104,7 +104,7 @@ public final class ServerOperationController extends BaseController {
 	 */
 	@PostMapping("/{serverIp}/shutdown")
 	public RespBase<Boolean> shutdownServer(@PathVariable("serverIp") final String serverIp) {
-		jobAPIService.getJobOperatorAPI().shutdown(null, serverIp);
+		jobAPIService.shutdownJob(null, serverIp);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -116,7 +116,7 @@ public final class ServerOperationController extends BaseController {
 	 */
 	@DeleteMapping("/{serverIp:.+}")
 	public RespBase<Boolean> removeServer(@PathVariable("serverIp") final String serverIp) {
-		jobAPIService.getJobOperatorAPI().remove(null, serverIp);
+		jobAPIService.removeJob(null, serverIp);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -129,7 +129,7 @@ public final class ServerOperationController extends BaseController {
 	 */
 	@GetMapping(value = "/{serverIp}/jobs")
 	public RespBase<Collection<JobBriefInfo>> getJobs(@PathVariable("serverIp") final String serverIp) {
-		Collection<JobBriefInfo> data = jobAPIService.getJobStatisticsAPI().getJobsBriefInfo(serverIp);
+		Collection<JobBriefInfo> data = jobAPIService.getJobsBriefInfo(serverIp);
 		return RespBase.<Collection<JobBriefInfo>> create().withData(data);
 	}
 
@@ -144,7 +144,7 @@ public final class ServerOperationController extends BaseController {
 	@PostMapping(value = "/{serverIp}/jobs/{jobName}/disable")
 	public RespBase<Boolean> disableServerJob(@PathVariable("serverIp") final String serverIp,
 			@PathVariable("jobName") final String jobName) {
-		jobAPIService.getJobOperatorAPI().disable(jobName, serverIp);
+		jobAPIService.disableJob(jobName, serverIp);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -159,7 +159,7 @@ public final class ServerOperationController extends BaseController {
 	@PostMapping("/{serverIp}/jobs/{jobName}/enable")
 	public RespBase<Boolean> enableServerJob(@PathVariable("serverIp") final String serverIp,
 			@PathVariable("jobName") final String jobName) {
-		jobAPIService.getJobOperatorAPI().enable(jobName, serverIp);
+		jobAPIService.enableJob(jobName, serverIp);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -174,7 +174,7 @@ public final class ServerOperationController extends BaseController {
 	@PostMapping("/{serverIp}/jobs/{jobName}/shutdown")
 	public RespBase<Boolean> shutdownServerJob(@PathVariable("serverIp") final String serverIp,
 			@PathVariable("jobName") final String jobName) {
-		jobAPIService.getJobOperatorAPI().shutdown(jobName, serverIp);
+		jobAPIService.shutdownJob(jobName, serverIp);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 
@@ -189,7 +189,7 @@ public final class ServerOperationController extends BaseController {
 	@DeleteMapping("/{serverIp}/jobs/{jobName:.+}")
 	public RespBase<Boolean> removeServerJob(@PathVariable("serverIp") final String serverIp,
 			@PathVariable("jobName") final String jobName) {
-		jobAPIService.getJobOperatorAPI().remove(jobName, serverIp);
+		jobAPIService.removeJob(jobName, serverIp);
 		return RespBase.<Boolean> create().withData(Boolean.TRUE);
 	}
 }

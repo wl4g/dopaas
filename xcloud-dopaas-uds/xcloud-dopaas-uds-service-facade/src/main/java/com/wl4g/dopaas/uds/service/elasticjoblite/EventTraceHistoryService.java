@@ -17,10 +17,14 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.uds.elasticjoblite.JobExecutionEvent;
@@ -42,7 +46,8 @@ public interface EventTraceHistoryService {
 	 *            query params
 	 * @return job execution events
 	 */
-	Page<JobExecutionEvent> findJobExecutionEvents(FindJobExecutionEventsRequest findJobExecutionEventsRequest);
+	@RequestMapping(path = "findJobExecutionEvents", method = GET)
+	Page<JobExecutionEvent> findJobExecutionEvents(@RequestBody FindJobExecutionEventsRequest findJobExecutionEventsRequest);
 
 	/**
 	 * Find job names with specific prefix.
@@ -51,7 +56,8 @@ public interface EventTraceHistoryService {
 	 *            job name prefix
 	 * @return matched job names
 	 */
-	List<String> findJobNamesInExecutionLog(String jobNamePrefix);
+	@RequestMapping(path = "findJobNamesInExecutionLog", method = GET)
+	List<String> findJobNamesInExecutionLog(@RequestParam(name = "jobNamePrefix") String jobNamePrefix);
 
 	/**
 	 * Find ip addresses with specific prefix.
@@ -60,7 +66,8 @@ public interface EventTraceHistoryService {
 	 *            ip prefix
 	 * @return matched ip addresses
 	 */
-	List<String> findIpInExecutionLog(String ipPrefix);
+	@RequestMapping(path = "findIpInExecutionLog", method = GET)
+	List<String> findIpInExecutionLog(@RequestParam(name = "ipPrefix") String ipPrefix);
 
 	/**
 	 * Find job status trace events.
@@ -69,7 +76,9 @@ public interface EventTraceHistoryService {
 	 *            query params
 	 * @return job status trace events
 	 */
-	Page<JobStatusTraceEvent> findJobStatusTraceEvents(FindJobStatusTraceEventsRequest findJobStatusTraceEventsRequest);
+	@RequestMapping(path = "findJobStatusTraceEvents", method = GET)
+	Page<JobStatusTraceEvent> findJobStatusTraceEvents(
+			@RequestBody FindJobStatusTraceEventsRequest findJobStatusTraceEventsRequest);
 
 	/**
 	 * Find job names with specific prefix in status trace log.
@@ -78,6 +87,7 @@ public interface EventTraceHistoryService {
 	 *            job name prefix
 	 * @return matched job names
 	 */
-	List<String> findJobNamesInStatusTraceLog(String jobNamePrefix);
+	@RequestMapping(path = "findJobNamesInStatusTraceLog", method = GET)
+	List<String> findJobNamesInStatusTraceLog(@RequestParam(name = "jobNamePrefix") String jobNamePrefix);
 
 }
