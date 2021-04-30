@@ -21,9 +21,9 @@ import javax.sql.DataSource;
 
 import org.springframework.boot.jdbc.DataSourceBuilder;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.EventTraceDataSource;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.EventTraceDataSourceConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -44,7 +44,7 @@ public final class DataSourceFactory {
 	public static DataSource createDataSource(final EventTraceDataSourceConfig config) {
 		// Determine whether the data source is valid.
 		new EventTraceDataSource(config).init();
-		return DataSourceBuilder.create().type(DruidDataSource.class).driverClassName(config.getDriver()).url(config.getUrl())
+		return DataSourceBuilder.create().type(HikariDataSource.class).driverClassName(config.getDriver()).url(config.getUrl())
 				.username(config.getUsername()).password(config.getPassword()).build();
 	}
 

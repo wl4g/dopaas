@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.dopaas.uds.data.elasticjoblite.RegCenterConfigDao">
+    <select id="list" parameterType="java.util.Map" resultType="com.wl4g.dopaas.common.bean.uds.elasticjoblite.RegistryCenterConfig">
+        SELECT
+		    rc.id,
+		    rc.name AS "name",
+		    rc.type AS "type",
+		    rc.config_json AS "configJson",
+		    rc.remark AS "remark",
+		    rc.create_by AS "createBy",
+		    rc.create_date AS "createDate",
+		    rc.update_by AS "updateBy",
+		    rc.update_date AS "updateDate",
+		    rc.organization_code AS "organizationCode"
+		FROM
+		    uds_regcenter_config rc
+        WHERE del_flag == 0
+        <if test="name != null and name != ''">
+            AND name LIKE CONCAT('%','${name}','%')
+        </if>
+        <if test="type != null">
+            AND type = #{type,jdbcType=INTEGER}
+        </if>
+        <if test="organizationCodes != null and organizationCodes.size() > 0">
+            and organization_code in
+            <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+                #{organizationCode}
+            </foreach>
+        </if>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE from uds_regcenter_config WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insertSelective" parameterType="com.wl4g.dopaas.common.bean.uds.elasticjoblite.RegistryCenterConfig" useGeneratedKeys="true"
+        keyProperty="id">
+        INSERT INTO uds_regcenter_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="configJson != null">
+                config_json,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="organizationCode != null">
+                organization_code,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+            <if test="delFlag != null">
+                del_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="configJson != null">
+                #{configJson,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationCode != null">
+                #{organizationCode,jdbcType=VARCHAR},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                #{delFlag,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.dopaas.common.bean.uds.elasticjoblite.RegistryCenterConfig">
+        UPDATE uds_regcenter_config
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="configJson != null">
+                config_json = #{configJson,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationCode != null">
+                organization_code = #{organizationCode,jdbcType=VARCHAR},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=BIGINT},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

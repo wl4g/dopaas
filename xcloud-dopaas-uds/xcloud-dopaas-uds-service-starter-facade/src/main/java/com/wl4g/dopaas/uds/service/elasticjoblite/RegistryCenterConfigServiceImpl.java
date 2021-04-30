@@ -19,11 +19,12 @@ package com.wl4g.dopaas.uds.service.elasticjoblite;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.dopaas.uds.service.elasticjoblite.RegistryCenterConfigService;
+import com.wl4g.dopaas.common.bean.uds.elasticjoblite.RegistryCenterConfig;
+import com.wl4g.dopaas.uds.data.elasticjoblite.RegCenterConfigDao;
 import com.wl4g.dopaas.uds.service.elasticjoblite.config.GlobalConfig;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfig;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfigs;
 import com.wl4g.dopaas.uds.service.elasticjoblite.repository.ConfigurationsXmlRepository;
 import com.wl4g.dopaas.uds.service.elasticjoblite.repository.impl.ConfigurationsXmlRepositoryImpl;
@@ -35,6 +36,8 @@ import com.wl4g.dopaas.uds.service.elasticjoblite.repository.impl.Configurations
 public final class RegistryCenterConfigServiceImpl implements RegistryCenterConfigService {
 
 	private ConfigurationsXmlRepository configurationsXmlRepository = new ConfigurationsXmlRepositoryImpl();
+
+	private @Autowired RegCenterConfigDao regCenterConfigDao;
 
 	@Override
 	public RegistryCenterConfigs loadAll() {
@@ -86,12 +89,7 @@ public final class RegistryCenterConfigServiceImpl implements RegistryCenterConf
 
 	@Override
 	public boolean add(final RegistryCenterConfig config) {
-		GlobalConfig configs = loadGlobal();
-		boolean result = configs.getRegistryCenterConfigurations().getRegistryCenterConfiguration().add(config);
-		if (result) {
-			configurationsXmlRepository.save(configs);
-		}
-		return result;
+		return regCenterConfigDao.insertSelective(config) > 0;
 	}
 
 	@Override

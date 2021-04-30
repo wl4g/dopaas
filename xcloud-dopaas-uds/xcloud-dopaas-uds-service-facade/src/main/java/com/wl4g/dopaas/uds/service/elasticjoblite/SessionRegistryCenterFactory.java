@@ -17,7 +17,7 @@
 
 package com.wl4g.dopaas.uds.service.elasticjoblite;
 
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfig;
+import com.wl4g.dopaas.common.bean.uds.elasticjoblite.RegistryCenterConfig;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

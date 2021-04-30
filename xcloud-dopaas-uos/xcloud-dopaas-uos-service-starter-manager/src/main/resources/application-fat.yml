@@ -44,26 +44,26 @@ spring:
         access:
   # Datasource configuration.
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
+    type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
-    druid:
+#    druid:
       url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: ${DEVOPS_DB_USER:dopaas}
-      password: ${DEVOPS_DB_PASSWD:123456}
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true
+#      username: ${DEVOPS_DB_USER:dopaas}
+#      password: ${DEVOPS_DB_PASSWD:123456}
+#      initial-size: 10
+#      max-active: 100
+#      min-idle: 10
+#      max-wait: 60000
+#      pool-prepared-statements: true
+#      max-pool-prepared-statement-per-connection-size: 20
+#      time-between-eviction-runs-millis: 60000
+#      min-evictable-idle-time-millis: 300000
+#      validation-query: SELECT 1
+#      test-while-idle: true
+#      test-on-borrow: false
+#      test-on-return: false
+#      filters: stat,wall
+#      log-slow-sql: true
 
 # Redis configuration.
 redis:

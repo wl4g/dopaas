@@ -34,9 +34,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wl4g.component.common.web.rest.RespBase;
 import com.wl4g.component.core.web.BaseController;
+import com.wl4g.dopaas.common.bean.uds.elasticjoblite.RegistryCenterConfig;
 import com.wl4g.dopaas.uds.service.elasticjoblite.RegistryCenterConfigService;
 import com.wl4g.dopaas.uds.service.elasticjoblite.SessionRegistryCenterFactory;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfig;
 
 /**
  * Registry center RESTful API.

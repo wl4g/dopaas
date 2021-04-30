@@ -16,26 +16,26 @@ spring:
       notify.composite:
         href-url: http://127.0.0.1:${server.port}/${spring.application.name}
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
+    type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
-    druid:
+#    druid:
       url: jdbc:mysql://${DOPAAS_DB_URL:owner-node1:3306}/${DOPAAS_DB_NAME:dopaas}}?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
       username: gzsm
       password: gzsm@%#jh?
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true
+#      initial-size: 10
+#      max-active: 100
+#      min-idle: 10
+#      max-wait: 60000
+#      pool-prepared-statements: true
+#      max-pool-prepared-statement-per-connection-size: 20
+#      time-between-eviction-runs-millis: 60000
+#      min-evictable-idle-time-millis: 300000
+#      validation-query: SELECT 1
+#      test-while-idle: true
+#      test-on-borrow: false
+#      test-on-return: false
+#      filters: stat,wall
+#      log-slow-sql: true
 
 # Spring-security config.
 security.user:

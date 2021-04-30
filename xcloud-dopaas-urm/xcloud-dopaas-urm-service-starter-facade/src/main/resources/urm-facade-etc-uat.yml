@@ -23,23 +23,35 @@ spring:
           nodes: ${URM_DOPAAS_REDIS_NODES:redis.urm.wl4g.uat:6379,redis.urm.wl4g.uat:6380,redis.urm.wl4g.uat:6381,redis.urm.wl4g.uat:7379,redis.urm.wl4g.uat:7380,redis.urm.wl4g.uat:7381}
   # Datasource configuration.
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
+    type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
-    druid:
-      url: ${URM_DOPAAS_DB_URL:jdbc:mysql://rds.urm.wl4g.uat:3306/dopaas_uds?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+    hikari:
+      jdbcUrl: ${URM_DOPAAS_DB_URL:jdbc:mysql://rds.urm.wl4g.uat:3306/dopaas_urm?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${URM_DOPAAS_DB_USER:dopaas_urm}
       password: ${URM_DOPAAS_DB_PASSWD:123456}
-      initial-size: 10
-      max-active: 100
-      min-idle: 10
-      max-wait: 60000
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      filters: stat,wall
-      log-slow-sql: true
+      connectionTimeout: 30000
+      idleTimeout: 600000
+      initializationFailTimeout: 1
+      minimumIdle: 10
+      maxLifetime: 1800000
+      maximumPoolSize: 100
+      validationTimeout: 5000
+      leakDetectionThreshold: 0
+#    druid:
+#      url: ${URM_DOPAAS_DB_URL:jdbc:mysql://rds.urm.wl4g.uat:3306/dopaas_urm?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+#      username: ${URM_DOPAAS_DB_USER:dopaas_urm}
+#      password: ${URM_DOPAAS_DB_PASSWD:123456}
+#      initial-size: 10
+#      max-active: 100
+#      min-idle: 10
+#      max-wait: 60000
+#      pool-prepared-statements: true
+#      max-pool-prepared-statement-per-connection-size: 20
+#      time-between-eviction-runs-millis: 60000
+#      min-evictable-idle-time-millis: 300000
+#      validation-query: SELECT 1
+#      test-while-idle: true
+#      test-on-borrow: false
+#      test-on-return: false
+#      filters: stat,wall
+#      log-slow-sql: true

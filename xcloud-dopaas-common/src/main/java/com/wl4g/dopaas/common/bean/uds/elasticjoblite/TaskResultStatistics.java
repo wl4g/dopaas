@@ -33,11 +33,11 @@ import lombok.NoArgsConstructor;
 /**
  * Task result statistics.
  */
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Entity
 @Table(name = "uds_task_result_statistics")
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskResultStatistics {
 
 	@Id
