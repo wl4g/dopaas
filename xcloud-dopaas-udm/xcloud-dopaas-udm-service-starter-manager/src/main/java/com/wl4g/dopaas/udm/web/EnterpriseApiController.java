@@ -24,7 +24,7 @@ import com.wl4g.component.core.web.BaseController;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import com.wl4g.dopaas.udm.fsview.config.FsViewerProperties;
 import com.wl4g.dopaas.udm.service.EnterpriseApiService;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseApiPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseApiPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

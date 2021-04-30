@@ -82,8 +82,7 @@ public interface PipelineHistoryService {
 			@RequestParam(name = "providerKind", required = false) String providerKind);
 
 	@RequestMapping(value = "/listWithoutPage", method = POST)
-	List<PipelineHistory> listWithoutPage(
-			@RequestBody PageHolder<PipelineHistory> pm,
+	List<PipelineHistory> listWithoutPage(@RequestBody PageHolder<PipelineHistory> pm,
 			@RequestParam(name = "pipeName", required = false) String pipeName,
 			@RequestParam(name = "clusterName", required = false) String clusterName,
 			@RequestParam(name = "environment", required = false) String environment,
@@ -92,7 +91,6 @@ public interface PipelineHistoryService {
 			@RequestParam(name = "providerKind", required = false) String providerKind,
 			@RequestParam(name = "orchestrationType", required = false) Integer orchestrationType,
 			@RequestParam(name = "providerKind", required = false) Long orchestrationId);
-
 
 	@RequestMapping(value = "/getPipeHisInstanceByPipeId", method = POST)
 	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(@RequestParam(name = "pipeHisId", required = false) Long pipeHisId);

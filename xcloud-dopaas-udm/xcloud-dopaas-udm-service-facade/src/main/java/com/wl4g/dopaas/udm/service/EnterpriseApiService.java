@@ -21,7 +21,7 @@ package com.wl4g.dopaas.udm.service;
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseApiPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseApiPageRequest;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -93,15 +93,12 @@ public interface EnterpriseApiService {
 	 * @return
 	 */
 	@RequestMapping(value = "/importApi", method = POST)
-	void importApi(@RequestParam(name = "kind", required = false)String kind,@RequestBody String json,
-				   @RequestParam(name = "moduleId", required = false) Long moduleId);
-
+	void importApi(@RequestParam(name = "kind", required = false) String kind, @RequestBody String json,
+			@RequestParam(name = "moduleId", required = false) Long moduleId);
 
 	@RequestMapping(value = "/exportApi", method = POST)
-	String exportApi(@RequestParam(name = "kind", required = false)String kind,
-				   @RequestParam(name = "moduleId", required = false) Long moduleId) throws IOException;
-
-
+	String exportApi(@RequestParam(name = "kind", required = false) String kind,
+			@RequestParam(name = "moduleId", required = false) Long moduleId) throws IOException;
 
 	/**
 	 * importApi.
@@ -110,8 +107,7 @@ public interface EnterpriseApiService {
 	 * @return
 	 */
 	@RequestMapping(value = "/importApiAndUpdateVersion", method = POST)
-	void importApiAndUpdateVersion(@RequestParam(name = "kind", required = false)String kind,@RequestBody String json,
-				   @RequestParam(name = "repositoryId", required = false) Long repositoryId);
-
+	void importApiAndUpdateVersion(@RequestParam(name = "kind", required = false) String kind, @RequestBody String json,
+			@RequestParam(name = "repositoryId", required = false) Long repositoryId);
 
 }

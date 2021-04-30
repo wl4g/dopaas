@@ -48,7 +48,7 @@ import com.wl4g.dopaas.udm.data.EnterpriseRepositoryVersionDao;
 import com.wl4g.dopaas.udm.service.EnterpriseApiService;
 import com.wl4g.dopaas.udm.service.conversion.DocumentConverter;
 import com.wl4g.dopaas.udm.service.conversion.DocumentConverterAdapter;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseApiPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseApiPageRequest;
 
 /**
  * service implements of {@link EnterpriseApi}

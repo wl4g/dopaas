@@ -30,7 +30,7 @@ import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseTeam;
 import com.wl4g.dopaas.udm.data.EnterpriseTeamDao;
 import com.wl4g.dopaas.udm.service.EnterpriseTeamService;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseTeamPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseTeamPageRequest;
 
 /**
  * service implements of {@link EnterpriseTeam}

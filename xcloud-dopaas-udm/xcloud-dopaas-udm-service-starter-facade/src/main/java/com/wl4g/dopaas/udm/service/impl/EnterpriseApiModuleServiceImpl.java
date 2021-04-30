@@ -32,7 +32,7 @@ import com.wl4g.dopaas.common.bean.udm.EnterpriseApiModule;
 import com.wl4g.dopaas.udm.data.EnterpriseApiDao;
 import com.wl4g.dopaas.udm.data.EnterpriseApiModuleDao;
 import com.wl4g.dopaas.udm.service.EnterpriseApiModuleService;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseApiModulePageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseApiModulePageRequest;
 
 /**
  * service implements of {@link EnterpriseApiModule}

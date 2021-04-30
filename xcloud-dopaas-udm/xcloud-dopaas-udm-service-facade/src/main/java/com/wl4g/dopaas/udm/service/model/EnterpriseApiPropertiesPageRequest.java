@@ -1,7 +1,8 @@
-package com.wl4g.dopaas.udm.service.dto;
+package com.wl4g.dopaas.udm.service.model;
 
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,9 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EnterpriseApiPropertiesPageRequest extends EnterpriseApiProperties {
+	private static final long serialVersionUID = 1L;
 
-    private PageHolder<EnterpriseApiProperties> pm;
-
-
-
+	private PageHolder<EnterpriseApiProperties> pm;
 }

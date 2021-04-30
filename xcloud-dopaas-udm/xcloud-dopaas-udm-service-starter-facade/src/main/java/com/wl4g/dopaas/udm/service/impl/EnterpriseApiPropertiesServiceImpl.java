@@ -30,7 +30,7 @@ import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
 import com.wl4g.dopaas.udm.data.EnterpriseApiPropertiesDao;
 import com.wl4g.dopaas.udm.service.EnterpriseApiPropertiesService;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseApiPropertiesPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseApiPropertiesPageRequest;
 
 /**
  * service implements of {@link EnterpriseApiProperties}

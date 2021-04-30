@@ -37,7 +37,6 @@ public interface ProjectDao {
 	List<Project> list(@Param("organizationCodes") List<String> organizationCodes, @Param("clusterIds") List<Long> clusterIds,
 			@Param("projectName") String projectName, @Param("isBoot") Integer isBoot);
 
-
 	Project getByAppClusterId(Long appGrouPId);
 
 }

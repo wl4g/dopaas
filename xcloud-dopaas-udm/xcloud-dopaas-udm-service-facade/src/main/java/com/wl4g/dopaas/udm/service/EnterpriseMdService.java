@@ -38,16 +38,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/enterpriseMd-service")
 public interface EnterpriseMdService {
 
-
 	/**
 	 * formatHtml.
 	 */
 	@RequestMapping(value = "/mdToHtml", method = POST)
 	String mdToHtml(@RequestParam("md") String md) throws IOException, TemplateException;
 
-
 	@RequestMapping(value = "/formatTemplate", method = POST)
-	String formatTemplate(@RequestParam("md") String md,@RequestParam("template") String template)
-			throws Exception;
+	String formatTemplate(@RequestParam("md") String md, @RequestParam("template") String template) throws Exception;
 
 }

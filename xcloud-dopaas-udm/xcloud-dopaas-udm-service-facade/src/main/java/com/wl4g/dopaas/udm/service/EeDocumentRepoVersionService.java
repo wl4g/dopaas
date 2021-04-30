@@ -28,53 +28,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- *  service of {@link EeDocumentRepoVersion}
+ * service of {@link EeDocumentRepoVersion}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
- * @Date 
+ * @Date
  * @since v1.0
  */
 @FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
 @RequestMapping("/eeDocumentRepoVersion-service")
 public interface EeDocumentRepoVersionService {
 
-    /**
-     *  page query.
-     *
-     * @param pm
-     * @param eeDocumentRepoVersion
-     * @return 
-     */
-    @RequestMapping(value = "/page", method = POST)
-    PageHolder<EeDocumentRepoVersion> page(@RequestBody EeDocumentRepoVersion eeDocumentRepoVersion);
+	/**
+	 * page query.
+	 *
+	 * @param pm
+	 * @param eeDocumentRepoVersion
+	 * @return
+	 */
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<EeDocumentRepoVersion> page(@RequestBody EeDocumentRepoVersion eeDocumentRepoVersion);
 
-    /**
-     *  save.
-     *
-     * @param eeDocumentRepoVersion
-     * @return 
-     */
-    @RequestMapping(value = "/save", method = POST)
-    int save(@RequestBody EeDocumentRepoVersion eeDocumentRepoVersion);
+	/**
+	 * save.
+	 *
+	 * @param eeDocumentRepoVersion
+	 * @return
+	 */
+	@RequestMapping(value = "/save", method = POST)
+	int save(@RequestBody EeDocumentRepoVersion eeDocumentRepoVersion);
 
-    /**
-     *  detail query.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/detail", method = POST)
-    EeDocumentRepoVersion detail(@RequestParam(name = "id", required = false) Long id);
+	/**
+	 * detail query.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/detail", method = POST)
+	EeDocumentRepoVersion detail(@RequestParam(name = "id", required = false) Long id);
 
-    /**
-     *  delete.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/del", method = POST)
-    int del(@RequestParam(name = "id", required = false) Long id);
+	/**
+	 * delete.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/del", method = POST)
+	int del(@RequestParam(name = "id", required = false) Long id);
 
 }
-

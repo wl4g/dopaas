@@ -25,40 +25,40 @@ import java.util.List;
 
 public interface FsService {
 
-    default  List<FileInfo> getTreeFiles(String subPath){
-        throw new UnsupportedOperationException();
-    }
+	default List<FileInfo> getTreeFiles(String subPath) {
+		throw new UnsupportedOperationException();
+	}
 
-    default FileInfo getFileInfo(String path, String subPath) throws IOException{
-        throw new UnsupportedOperationException();
-    }
+	default FileInfo getFileInfo(String path, String subPath) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
-    default void delFile(String path) throws IOException{
-        throw new UnsupportedOperationException();
-    }
+	default void delFile(String path) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
-    default void addDir(String path) throws IOException{
-        throw new UnsupportedOperationException();
-    }
+	default void addDir(String path) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
-    default void addFile(String path) throws IOException{
-        throw new UnsupportedOperationException();
-    }
+	default void addFile(String path) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
-    default void renameFile(String path, String toPath) throws IOException{
-        throw new UnsupportedOperationException();
-    }
+	default void renameFile(String path, String toPath) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
-    default void saveFile(String path, String content){
-        throw new UnsupportedOperationException();
-    }
+	default void saveFile(String path, String content) {
+		throw new UnsupportedOperationException();
+	}
 
-    default String uploadFile(MultipartFile img, String path){
-        throw new UnsupportedOperationException();
-    }
+	default String uploadFile(MultipartFile img, String path) {
+		throw new UnsupportedOperationException();
+	}
 
-    default ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException{
-        throw new UnsupportedOperationException();
-    }
+	default ResponseEntity<FileSystemResource> downloadFile(String path) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
 }

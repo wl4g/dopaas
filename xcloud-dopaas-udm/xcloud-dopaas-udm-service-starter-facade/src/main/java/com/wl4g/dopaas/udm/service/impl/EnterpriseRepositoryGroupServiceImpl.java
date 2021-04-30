@@ -33,7 +33,7 @@ import com.wl4g.dopaas.common.bean.udm.EnterpriseRepositoryGroup;
 import com.wl4g.dopaas.udm.data.EnterpriseRepositoryDao;
 import com.wl4g.dopaas.udm.data.EnterpriseRepositoryGroupDao;
 import com.wl4g.dopaas.udm.service.EnterpriseRepositoryGroupService;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseRepositoryGroupPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseRepositoryGroupPageRequest;
 
 /**
  * service implements of {@link EnterpriseRepositoryGroup}

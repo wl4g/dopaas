@@ -66,7 +66,6 @@ public interface AppClusterService {
 	AppEnvironment getAppClusterEnvironment(@RequestParam(name = "clusterId", required = false) Long clusterId,
 			@RequestParam(name = "envType", required = false) String envType);
 
-
 	@RequestMapping(value = "/getById", method = POST)
 	AppCluster getById(@RequestParam(name = "clusterId", required = true) Long clusterId);
 

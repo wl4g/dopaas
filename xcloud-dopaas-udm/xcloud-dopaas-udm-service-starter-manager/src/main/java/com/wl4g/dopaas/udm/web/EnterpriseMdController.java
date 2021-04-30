@@ -75,9 +75,9 @@ public class EnterpriseMdController extends BaseController {
 	@RequestMapping(value = "/formatTemplate", method = { POST, GET })
 	public void formatTemplate(HttpServletResponse response, String md, String template) throws Exception {
 		// RespBase<Object> resp = RespBase.create();
-		//String genPath = enterpriseMdService.formatTemplate(md, template);
+		// String genPath = enterpriseMdService.formatTemplate(md, template);
 		String export = documentionExporter.export(md, template);
-		//TODO 根据不同的情况返回，如果是导出文件，直接导出，如果是导出到minio，给访问地址
+		// TODO 根据不同的情况返回，如果是导出文件，直接导出，如果是导出到minio，给访问地址
 
 		// resp.setData();
 		writeZip(response, export, "codegen-".concat(md).concat("-").concat(template));

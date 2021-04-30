@@ -22,7 +22,7 @@ import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.core.web.BaseController;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseDocument;
 import com.wl4g.dopaas.udm.service.EnterpriseDocumentService;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseDocumentPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseDocumentPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

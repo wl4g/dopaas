@@ -30,7 +30,7 @@ import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseDocument;
 import com.wl4g.dopaas.udm.data.EnterpriseDocumentDao;
 import com.wl4g.dopaas.udm.service.EnterpriseDocumentService;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseDocumentPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseDocumentPageRequest;
 
 /**
  * service implements of {@link EnterpriseDocument}
