@@ -29,16 +29,16 @@
 > This project is mainly based on the development of SpringBoot/Cloud/Dubbo, which supports the operation of traditional monomer (`standalone`) mode and fully distributed micro service (`cluster`) mode. The source structure is carefully designed as &nbsp;<b>It's both a platform and a framework demonstration</b>.
 
 - Required dependencies:
-Spring Boot:2.2 +  
-Spring Cloud:2.2 +  
+Spring Boot:2.3 +  
+Spring Cloud:Hoxton.x +  
 Eureka:1.10 +  
 Zipkin:2.15 +  
 Jdk:8 +  
 Maven:3.5 +  
 Mysql:5.6 +  
 - Optional dependencies:  
-Kafka:0.10.0 +  
-Zookeeper:3.4.6 +  
+Kafka:2.3.1 +  
+Zookeeper:3.6.0 +  
 DockerCE:18.06 +  
 CoreDNS:1.7.0 +  
 MinIO:latest  
