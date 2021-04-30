@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
-import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfig;
+import com.wl4g.dopaas.common.bean.uds.elasticjoblite.RegistryCenterConfig;
 import com.wl4g.dopaas.uds.service.elasticjoblite.domain.RegistryCenterConfigs;
 
 /**

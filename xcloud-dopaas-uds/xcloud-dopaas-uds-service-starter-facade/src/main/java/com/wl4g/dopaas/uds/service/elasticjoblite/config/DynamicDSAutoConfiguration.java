@@ -28,12 +28,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * Dynamic datasource config.
  */
-//@Configuration
+// @Configuration
 public class DynamicDSAutoConfiguration {
 
 	public static final String DRIVER_CLASS_NAME = "spring.datasource.default.driver-class-name";
@@ -64,7 +64,7 @@ public class DynamicDSAutoConfiguration {
 		String url = environment.getProperty(DATASOURCE_URL);
 		String username = environment.getProperty(DATASOURCE_USERNAME);
 		String password = environment.getProperty(DATASOURCE_PASSWORD);
-		return DataSourceBuilder.create().driverClassName(driverName).type(DruidDataSource.class).url(url).username(username)
+		return DataSourceBuilder.create().driverClassName(driverName).type(HikariDataSource.class).url(url).username(username)
 				.password(password).build();
 	}
 

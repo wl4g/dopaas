@@ -11,7 +11,7 @@
 spring:
   application.name: uds-example
   profiles:
-    include: elasticjob
+    include: elasticjoblite
     active: dev
 
 # Logging configuration.
