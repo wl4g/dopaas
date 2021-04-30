@@ -144,10 +144,12 @@ function installSshpass() {
     elif [ -n "$(command -v apt-get)" ]; then
       sudo apt-get install -y sshpass
     else
-      logErr "Failed to auto install sshpass! Please manual installation!"; exit -1
+      logErr "Failed to auto install sshpass! Please manual installation, \
+refer to: https://gitee.com/wl4g/sshpass or https://github.com/wl4g/sshpass"; exit -1
     fi
     # Check installization result.
-    [ $? -ne 0 ] && logErr "Failed to auto install sshpass! Please manual installation!" && exit -1
+    [ $? -ne 0 ] && logErr "Failed to auto install sshpass! Please manual installation, \
+refer to: https://gitee.com/wl4g/sshpass or https://github.com/wl4g/sshpass" && exit -1
   fi
 }
 
