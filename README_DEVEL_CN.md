@@ -5,7 +5,7 @@
 ```
 ├── script # 开发、部署相关脚本
 │   └── deploy # 一键部署脚本
-├── thirdparty # 依赖的第三方中间件部署及相关资料(如, Sonatype OSS/Mesos/CoreDNS/MinIO等)
+├── thirdparty # 依赖的第三方中间件部署及相关资料(如, Sonatype OSS/Shardingsphere/MGR/CoreDNS/MinIO等)
 ├── xcloud-dopaas-all-dependencies
 ├── xcloud-dopaas-all-starter # standalone模式的启动类
 ├── xcloud-dopaas-cmdb # CMDB管控中心，如主机、应用集群、密钥等配置管理
