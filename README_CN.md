@@ -68,10 +68,10 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 
 建议配置
 
-| 运行模式 | 最低配置要求建议 | 说明 |
+| 运行模式 | 最低配置要求 | 说明 |
 | ---- | ---- | ---- |
 | cluster | CentOS7+ / Ubuntu18+ (4C+8G+) | 当只有1台机时即为伪集群 |
-| standalone | 2C+2G+ | 单体应用 |
+| standalone | 2C+4G+ | 单体应用 |
 
 
 ### 2.2 手动编译部署
@@ -119,9 +119,9 @@ npm run build # 生产打包
 [Cluster模式Hosts解析示例](dns/hosts.cluster.tpl)  
 > 注：对外的服务使用的域名在不同环境下请对应`sys_cluster_config.extranet_base_uri`表  
 
-### 2.5 快速搭建redis/docker集群(可选,或自行搭建)
-> [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或   
-> [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)  
+### 2.5 快速搭建redis/docker集群(或自行搭建)
+[https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或   
+[https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)  
 
 ### 2.6 启动与测试访问
 说明：  

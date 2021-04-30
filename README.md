@@ -68,10 +68,10 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 
 - Server specs requirements
 
-| Runtime Mode | Min specs requirements(Suggested) | Description |
+| Runtime Mode | Min requirements | Description |
 | ---- | ---- | ---- |
 | cluster | CentOS7+ / Ubuntu18+ (4C+8G+) | Only pseudo clusters can be deployed when there is only one host |
-| standalone | 2C+2G+ | Monomer application |
+| standalone | 2C+4G+ | Monomer application |
 
 
 ### 2.2 Manual compilation and build
@@ -120,9 +120,9 @@ npm run build # Production building
 [Cluster mode resolution example](dns/hosts.cluster.tpl)  
 > Note: the domain names used for external services in different environments should correspond to `sys_cluster_config.extranet_base_uri` table  
 
-### 2.5 Quickly build a redis cluster/docker(optional or self built)
-> [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) or   
-> [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)  
+### 2.5 Quickly build a redis cluster/docker(or self built)
+[https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) or   
+[https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)  
 
 ### 2.6 Launch and testing access (chrome recommended)
 Notes：  
