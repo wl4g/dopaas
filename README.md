@@ -113,20 +113,20 @@ npm run build # Production building
 ```
 
 ### 2.3 Init DB: first, prepare a MySQL5.6+ instance and create a database named `dopaas`(utf8/utf8)_bin), and then [Init DB sql](../../../xcloud-dopaas-db).  
-(Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version)
+> Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version
 
 ### 2.4 Configure DNS resolutio(C:\Windows\System32\drivers\etc or vim /etc/hosts)  
-(Note: the domain names used for external services in different environments should correspond to `sys_cluster_config.extranet_base_uri` table)  
 [Standalone mode resolution example](dns/hosts.standalone.tpl)  
 [Cluster mode resolution example](dns/hosts.cluster.tpl)  
+> Note: the domain names used for external services in different environments should correspond to `sys_cluster_config.extranet_base_uri` table  
 
-### 2.5 Quickly build a redis cluster/docker (optional)
+### 2.5 Quickly build a redis cluster/docker(optional or self built)
 > [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) or   
 > [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)  
 
 ### 2.6 Launch and testing access (chrome recommended)
 Notes：  
-a. When starting, you do not need to specify any JVM parameters, then you can use the default configuration, for example, activate the `dev` configuration by default;  
+a. There is no need to specify any JVM args when trying to start (the default configuration is used). For example, only the configuration of `dev` environment will be activated by default;  
 b. Whether it is `standalone` mode or `cluster` mode, it can correspond to four environments respectively (`dev`/`fat`/`uat`/`pro`).
 
 #### 2.6.1 `standalone` mode starting(dev).

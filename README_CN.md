@@ -111,20 +111,21 @@ npm run dev # 开发调试
 npm run build # 生产打包
 ```
 
-### 2.3 初始数据库：首先准备一台MySQL5.6+实例，创建名为dopaas(utf8/utf8_bin)的库，再 [初始数据库](../../../xcloud-dopaas-db)。  
-（注：sql脚本需与源码版本对应，我们会定期更新，建议都使用最新）
+### 2.3 初始数据库：首先准备一台MySQL5.6+实例，创建名为dopaas(utf8/utf8_bin)的库，再[初始数据库](../../../xcloud-dopaas-db)。  
+> 注：sql脚本需与源码版本对应，我们会定期更新，建议都使用最新 
 
 ### 2.4 配置DNS虚拟解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：  
-（注：对外的服务使用的域名在不同环境下请对应`sys_cluster_config.extranet_base_uri`表）  
-[Standalone模式域名解析示例](dns/hosts.standalone.tpl)  
-[Cluster模式域名解析示例](dns/hosts.cluster.tpl)  
+[Standalone模式Hosts解析示例](dns/hosts.standalone.tpl)  
+[Cluster模式Hosts解析示例](dns/hosts.cluster.tpl)  
+> 注：对外的服务使用的域名在不同环境下请对应`sys_cluster_config.extranet_base_uri`表  
 
-### 2.5 快速搭建redis/docker集群(可选)
-> [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或者 [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)
+### 2.5 快速搭建redis/docker集群(可选,或自行搭建)
+> [https://github.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster) 或   
+> [https://gitee.com/wl4g/docker-redis-cluster](https://github.com/wl4g/docker-redis-cluster)  
 
 ### 2.6 启动与测试访问
 说明：  
-a. 启动时无需指定任何jvm参数，则都使用默认配置即可，如：默认激活 `dev` 配置;  
+a. 尝试启动时无需指定任何jvm参数(即, 都使用默认配置), 如：默认仅会激活 `dev` 环境的配置;  
 b. 无论是运行 `standalone` 模式还是 `cluster` 模式，都可以分别对应(`dev`/`fat`/`uat`/`pro`)4种环境。
 
 #### 2.6.1 `standalone` 模式启动

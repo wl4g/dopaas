@@ -9,13 +9,14 @@
 #
 ########## The default domain names of all services in DoPaaS cluster mode. ##########
 
-## All external web services default DNS records example.
+## All external web services default DNS records example(extranet).
 ## Notes:
 ## 1. The following is a sample domains resolution record of all 
 ##    the sub services of DoPaaS, which are forwarded by Nginx/LB and 
 ##    other load balancers according to the sub domain.(where 47.0.0.100 is Nginx/LB IP)
 ##
 ## 2. If you use nginx as lb, please refer to the example: {PROJECT_HOME}/nginx/conf.d/dopaas_http.conf
+##    or {PROJECT_HOME}/nginx/conf.d/dopaas_https.conf
 ##
 ## 3. The following domain will be used outside and inside the service. If you want to deploy 
 ##    in the public network, you need to configure the IP to be resolved to Nginx/LB in the domain 
@@ -35,7 +36,7 @@
 #47.0.0.100    uos.wl4g.com                     # [uos-manager] service access domain.
 #
 #
-## All dependence services default DNS records example.
+## All internal dependence services default DNS records example(intranet).
 ## Notes:
 ## 1. The following is an example of DNS resolution with default configuration domain name. 
 ##    In terms of architecture design, Redis/MySQL/Elasticsearch/OSS etc, can be used separately 
