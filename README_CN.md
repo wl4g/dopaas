@@ -29,16 +29,16 @@
 本项目主要基于 SpringBoot/Cloud/Dubbo 开发，支持传统单体 (`standalone`) 模式 和 完全分布式微服务 (`cluster`) 模式运行，源码结构被精心设计为&nbsp;<b>既是平台又是框架的示范</b>.
 
 - 必须依赖:  
-Spring Boot:2.2 +  
-Spring Cloud:2.2 +  
+Spring Boot:2.3 +  
+Spring Cloud:Hoxton.x +  
 Eureka:1.10 +  
 Zipkin:2.15 +  
 Jdk:8 +  
 Maven:3.5 +  
 Mysql:5.6 +  
 - 可选依赖:  
-Kafka:0.10.0 +  
-Zookeeper:3.4.6 +  
+Kafka:2.3.1 +  
+Zookeeper:3.6.0 +  
 DockerCE:18.06 +  
 CoreDNS:1.7.0 +  
 MinIO:latest  
