@@ -32,7 +32,7 @@ import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseRepositoryVersion;
 import com.wl4g.dopaas.udm.data.EnterpriseRepositoryVersionDao;
 import com.wl4g.dopaas.udm.service.EnterpriseRepositoryVersionService;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseRepositoryVersionPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseRepositoryVersionPageRequest;
 
 /**
  * service implements of {@link EnterpriseRepositoryVersion}

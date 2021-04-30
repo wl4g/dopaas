@@ -28,53 +28,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- *  service of {@link EeDocumentRepo}
+ * service of {@link EeDocumentRepo}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
- * @Date 
+ * @Date
  * @since v1.0
  */
 @FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
 @RequestMapping("/eeDocumentRepo-service")
 public interface EeDocumentRepoService {
 
-    /**
-     *  page query.
-     *
-     * @param pm
-     * @param eeDocumentRepo
-     * @return 
-     */
-    @RequestMapping(value = "/page", method = POST)
-    PageHolder<EeDocumentRepo> page(@RequestBody EeDocumentRepo eeDocumentRepo);
+	/**
+	 * page query.
+	 *
+	 * @param pm
+	 * @param eeDocumentRepo
+	 * @return
+	 */
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<EeDocumentRepo> page(@RequestBody EeDocumentRepo eeDocumentRepo);
 
-    /**
-     *  save.
-     *
-     * @param eeDocumentRepo
-     * @return 
-     */
-    @RequestMapping(value = "/save", method = POST)
-    int save(@RequestBody EeDocumentRepo eeDocumentRepo);
+	/**
+	 * save.
+	 *
+	 * @param eeDocumentRepo
+	 * @return
+	 */
+	@RequestMapping(value = "/save", method = POST)
+	int save(@RequestBody EeDocumentRepo eeDocumentRepo);
 
-    /**
-     *  detail query.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/detail", method = POST)
-    EeDocumentRepo detail(@RequestParam(name = "id", required = false)Long id);
+	/**
+	 * detail query.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/detail", method = POST)
+	EeDocumentRepo detail(@RequestParam(name = "id", required = false) Long id);
 
-    /**
-     *  delete.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/del", method = POST)
-    int del(@RequestParam(name = "id", required = false)Long id);
+	/**
+	 * delete.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/del", method = POST)
+	int del(@RequestParam(name = "id", required = false) Long id);
 
 }
-

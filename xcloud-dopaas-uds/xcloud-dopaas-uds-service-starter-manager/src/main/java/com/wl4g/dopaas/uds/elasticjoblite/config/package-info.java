@@ -13,18 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.udm.fsview.config;
-
-public class FsViewerProperties {
-
-	private String basePath;
-
-	public String getBasePath() {
-		return basePath;
-	}
-
-	public void setBasePath(String basePath) {
-		this.basePath = basePath;
-	}
-
-}
+/**
+ * {@link package-info}
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version v1.0 2021-04-30 
+ * @sine v1.0
+ * @see 
+ */
+package com.wl4g.dopaas.uds.elasticjoblite.config;

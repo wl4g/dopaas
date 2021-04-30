@@ -142,7 +142,7 @@ public class ProjectServiceImpl implements ProjectService {
 		List<Project> list = projectDao.list(getRequestOrganizationCodes(), clusterIds, projectName, null);
 		for (Project project : list) {
 			AppCluster appCluster = appClusterService.getById(project.getAppClusterId());
-			if(appCluster != null){
+			if (appCluster != null) {
 				project.setGroupName(appCluster.getName());
 			}
 		}
@@ -155,7 +155,7 @@ public class ProjectServiceImpl implements ProjectService {
 		List<Project> list = projectDao.list(getRequestOrganizationCodes(), null, null, isBoot);
 		for (Project project : list) {
 			AppCluster appCluster = appClusterService.getById(project.getAppClusterId());
-			if(appCluster != null){
+			if (appCluster != null) {
 				project.setGroupName(appCluster.getName());
 			}
 		}
@@ -171,7 +171,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public Project getProjectById(Long id){ //fix Cross db
+	public Project getProjectById(Long id) { // fix Cross db
 		Project project = projectDao.selectByPrimaryKey(id);
 		SourceRepo sourceRepo = repoService.detail(project.getVcsId());
 		project.setVcs(sourceRepo);

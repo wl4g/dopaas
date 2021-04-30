@@ -30,7 +30,7 @@ import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseRepository;
 import com.wl4g.dopaas.udm.data.EnterpriseRepositoryDao;
 import com.wl4g.dopaas.udm.service.EnterpriseRepositoryService;
-import com.wl4g.dopaas.udm.service.dto.EnterpriseRepositoryPageRequest;
+import com.wl4g.dopaas.udm.service.model.EnterpriseRepositoryPageRequest;
 
 /**
  * service implements of {@link EnterpriseRepository}

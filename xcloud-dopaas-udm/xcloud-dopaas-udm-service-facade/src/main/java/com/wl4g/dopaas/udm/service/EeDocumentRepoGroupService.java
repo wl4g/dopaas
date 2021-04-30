@@ -18,7 +18,6 @@
 
 package com.wl4g.dopaas.udm.service;
 
-
 import com.wl4g.component.core.page.PageHolder;
 import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.udm.EeDocumentRepoGroup;
@@ -29,53 +28,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- *  service of {@link EeDocumentRepoGroup}
+ * service of {@link EeDocumentRepoGroup}
  *
  * @author root
  * @version 0.0.1-SNAPSHOT
- * @Date 
+ * @Date
  * @since v1.0
  */
 @FeignConsumer(name = "${provider.serviceId.udm-facade:udm-facade}")
 @RequestMapping("/eeDocumentRepoGroup-service")
 public interface EeDocumentRepoGroupService {
 
-    /**
-     *  page query.
-     *
-     * @param pm
-     * @param eeDocumentRepoGroup
-     * @return 
-     */
-    @RequestMapping(value = "/page", method = POST)
-    PageHolder<EeDocumentRepoGroup> page(@RequestBody EeDocumentRepoGroup eeDocumentRepoGroup);
+	/**
+	 * page query.
+	 *
+	 * @param pm
+	 * @param eeDocumentRepoGroup
+	 * @return
+	 */
+	@RequestMapping(value = "/page", method = POST)
+	PageHolder<EeDocumentRepoGroup> page(@RequestBody EeDocumentRepoGroup eeDocumentRepoGroup);
 
-    /**
-     *  save.
-     *
-     * @param eeDocumentRepoGroup
-     * @return 
-     */
-    @RequestMapping(value = "/save", method = POST)
-    int save(@RequestBody EeDocumentRepoGroup eeDocumentRepoGroup);
+	/**
+	 * save.
+	 *
+	 * @param eeDocumentRepoGroup
+	 * @return
+	 */
+	@RequestMapping(value = "/save", method = POST)
+	int save(@RequestBody EeDocumentRepoGroup eeDocumentRepoGroup);
 
-    /**
-     *  detail query.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/detail", method = POST)
-    EeDocumentRepoGroup detail(@RequestParam(name = "id", required = false) Long id);
+	/**
+	 * detail query.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/detail", method = POST)
+	EeDocumentRepoGroup detail(@RequestParam(name = "id", required = false) Long id);
 
-    /**
-     *  delete.
-     *
-     * @param id
-     * @return 
-     */
-    @RequestMapping(value = "/del", method = POST)
-    int del(@RequestParam(name = "id", required = false) Long id);
+	/**
+	 * delete.
+	 *
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/del", method = POST)
+	int del(@RequestParam(name = "id", required = false) Long id);
 
 }
-

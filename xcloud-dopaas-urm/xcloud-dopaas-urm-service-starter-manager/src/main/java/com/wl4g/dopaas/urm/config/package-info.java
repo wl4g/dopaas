@@ -16,8 +16,8 @@
 /**
  * {@link package-info}
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2021-03-26 
+ * @version v1.0 2021-04-30 
  * @sine v1.0
  * @see 
  */
-package com.wl4g.dopaas.uds.elasticjoblite;
+package com.wl4g.dopaas.urm.config;

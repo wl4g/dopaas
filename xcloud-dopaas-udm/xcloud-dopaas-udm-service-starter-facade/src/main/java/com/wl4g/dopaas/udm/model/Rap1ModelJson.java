@@ -6,13 +6,13 @@ package com.wl4g.dopaas.udm.model;
  */
 public class Rap1ModelJson {
 
-    private String modelJSON;
+	private String modelJSON;
 
-    public String getModelJSON() {
-        return modelJSON;
-    }
+	public String getModelJSON() {
+		return modelJSON;
+	}
 
-    public void setModelJSON(String modelJSON) {
-        this.modelJSON = modelJSON;
-    }
+	public void setModelJSON(String modelJSON) {
+		this.modelJSON = modelJSON;
+	}
 }

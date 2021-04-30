@@ -61,11 +61,10 @@ public interface AppInstanceService {
 			@RequestParam(name = "sshUser", required = false) String sshUser,
 			@RequestParam(name = "sshKey", required = false) String sshKey) throws Exception, InterruptedException;
 
-
 	@RequestMapping(value = "/getById", method = POST)
 	AppInstance getById(@RequestParam(name = "instanceId", required = false) Long instanceId);
 
 	@RequestMapping(value = "/getIdsByEndpointAndHostname", method = POST)
 	List<Long> getIdsByEndpointAndHostname(@RequestParam(name = "endpoint", required = false) String endpoint,
-										 @RequestParam(name = "hostname", required = false) String hostname);
+			@RequestParam(name = "hostname", required = false) String hostname);
 }
