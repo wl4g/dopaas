@@ -22,7 +22,7 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
+import com.wl4g.component.data.annotation.EnableComponentDataConfiguration;
 
 /**
  * {@link UrmFacade}
@@ -32,7 +32,7 @@ import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
  * @sine v1.0
  * @see
  */
-@EnableComponentDBConfiguration("com.wl4g.dopaas.urm.data")
+@EnableComponentDataConfiguration("com.wl4g.dopaas.urm.data")
 @SpringBootApplication
 public class UrmFacade {
 

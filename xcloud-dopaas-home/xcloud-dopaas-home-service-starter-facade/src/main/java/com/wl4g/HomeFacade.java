@@ -22,7 +22,7 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.data.annotation.EnableComponentDBConfiguration;
+import com.wl4g.component.data.annotation.EnableComponentDataConfiguration;
 import com.wl4g.component.integration.feign.core.annotation.EnableFeignConsumers;
 
 /**
@@ -34,7 +34,7 @@ import com.wl4g.component.integration.feign.core.annotation.EnableFeignConsumers
  * @see
  */
 @EnableFeignConsumers("com.wl4g.iam.service")
-@EnableComponentDBConfiguration("com.wl4g.dopaas.home.data")
+@EnableComponentDataConfiguration("com.wl4g.dopaas.home.data")
 @SpringBootApplication
 public class HomeFacade {
 

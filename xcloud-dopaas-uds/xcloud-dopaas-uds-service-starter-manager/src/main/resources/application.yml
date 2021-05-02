@@ -38,12 +38,6 @@ spring:
         session:
           enable-access-token-validity: true # Default by true
 
-# Mybatis configuration.
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.dopaas.common.bean.*.*
-
 # Logging configuration.
 logging:
   file:

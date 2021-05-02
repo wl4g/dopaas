@@ -22,12 +22,6 @@ spring:
         dns:
           prefix: "_coredns:"
 
-# Mybatis configuration.
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.dopaas.common.bean.*.*
-
 # Logging configuration.
 logging:
   file:
