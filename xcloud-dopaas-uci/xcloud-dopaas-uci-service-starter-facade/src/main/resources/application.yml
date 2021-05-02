@@ -55,12 +55,6 @@ spring:
         max-file-size: 50Mb
         max-request-size: 50Mb
 
-# Mybatis configuration.
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.dopaas.common.bean.*.*
-
 # Logging configuration.
 logging:
   file:
