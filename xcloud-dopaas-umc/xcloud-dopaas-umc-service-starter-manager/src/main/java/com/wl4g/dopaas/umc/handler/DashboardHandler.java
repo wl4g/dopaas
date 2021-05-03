@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.cache.jedis.JedisService;
 import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.umc.model.StatusMessage;
 

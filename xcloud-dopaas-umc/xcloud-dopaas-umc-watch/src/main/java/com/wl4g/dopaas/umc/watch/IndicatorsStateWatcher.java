@@ -28,7 +28,7 @@ import org.apache.shardingsphere.elasticjob.dataflow.job.DataflowJob;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.cache.jedis.JedisService;
 import com.wl4g.dopaas.umc.watch.config.WatchProperties;
 import com.wl4g.dopaas.umc.watch.fetch.IndicatorsMetaFetcher;
 import com.wl4g.dopaas.umc.watch.fetch.IndicatorsMetaInfo;

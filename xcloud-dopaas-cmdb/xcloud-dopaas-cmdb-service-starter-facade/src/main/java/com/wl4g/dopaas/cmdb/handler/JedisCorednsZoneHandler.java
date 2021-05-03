@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.wl4g.component.common.collection.CollectionUtils2;
 import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.cache.jedis.JedisService;
 import com.wl4g.dopaas.cmdb.config.DnsProperties;
 import com.wl4g.dopaas.cmdb.handler.standard.DNSResolveType;
 import com.wl4g.dopaas.common.bean.cmdb.DnsPrivateResolution;

@@ -28,7 +28,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.cache.jedis.JedisService;
 import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.umc.model.StatusMessage;
 

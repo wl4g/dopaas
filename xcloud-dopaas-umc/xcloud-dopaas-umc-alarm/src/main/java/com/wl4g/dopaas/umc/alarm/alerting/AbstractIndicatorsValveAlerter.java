@@ -30,8 +30,8 @@ import org.springframework.util.Assert;
 
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.component.support.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.common.bean.umc.model.MetricValue;
 import com.wl4g.dopaas.umc.alarm.metric.MetricAggregateWrapper;

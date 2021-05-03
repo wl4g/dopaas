@@ -28,8 +28,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
-import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.component.support.redis.jedis.ScanCursor;
+import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.component.support.cache.jedis.ScanCursor;
 import com.wl4g.dopaas.common.bean.umc.AlarmConfig;
 import com.wl4g.dopaas.umc.handler.AlarmConfigurer;
 

@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.uci;
 
 import com.wl4g.UciFacade;
-import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.component.support.redis.jedis.ScanCursor;
+import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.component.support.cache.jedis.ScanCursor;
 import com.wl4g.dopaas.common.bean.uci.model.RunModel;
 
 import static com.wl4g.dopaas.common.constant.UciConstants.REDIS_CI_RUN_PRE;
