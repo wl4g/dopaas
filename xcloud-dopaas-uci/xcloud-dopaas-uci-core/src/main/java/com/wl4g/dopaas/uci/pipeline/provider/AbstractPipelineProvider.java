@@ -47,7 +47,7 @@ import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.component.support.cli.DestroableProcessManager;
 import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
-import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import com.wl4g.dopaas.common.bean.cmdb.SshBean;
 import com.wl4g.dopaas.common.bean.uci.Project;

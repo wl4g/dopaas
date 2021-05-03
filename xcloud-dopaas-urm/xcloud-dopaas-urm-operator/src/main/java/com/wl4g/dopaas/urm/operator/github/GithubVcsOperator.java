@@ -39,8 +39,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.support.redis.jedis.JedisService;
-import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.dopaas.common.bean.urm.SourceRepo;
 import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.GenericBasedGitVcsOperator;

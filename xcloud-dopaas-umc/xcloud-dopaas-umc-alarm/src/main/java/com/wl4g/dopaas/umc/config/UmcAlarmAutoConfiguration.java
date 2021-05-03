@@ -22,10 +22,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.support.redis.locks.JedisLockManager;
+import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.component.support.notification.MessageNotifier;
 import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.component.support.redis.jedis.JedisService;
+import com.wl4g.component.support.cache.jedis.JedisService;
 import com.wl4g.dopaas.umc.alarm.alerting.DefaultIndicatorsValveAlerter;
 import com.wl4g.dopaas.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.dopaas.umc.alarm.alerting.SimulateIndicatorsValveAleter;

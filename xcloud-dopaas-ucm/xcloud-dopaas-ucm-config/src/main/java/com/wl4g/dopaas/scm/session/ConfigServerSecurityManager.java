@@ -26,7 +26,7 @@ package com.wl4g.dopaas.scm.session;
 //
 //import com.wl4g.component.common.crypto.asymmetric.AsymmetricCryptor;
 //import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
-//import com.wl4g.component.support.redis.jedis.JedisService;
+//import com.wl4g.component.support.cache.jedis.JedisService;
 //import com.wl4g.dopaas.scm.session.HandshakeResult;
 //
 ///**
