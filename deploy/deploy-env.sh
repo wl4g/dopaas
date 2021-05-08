@@ -17,56 +17,63 @@
 # */
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
-# ----------------------- Initialization. ------------------------------------------------------
+# ----------------------- Initialization. -----------------------------------------------------------
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 
-# ----------------------- Base environment variables. ------------------------------------------
-[ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir
+# ----------------------- Basic environment configuration. ---------------------------------------------------
+[ -z "$workspaceDir" ] && export workspaceDir="${HOME}/.deploy-workspace" && mkdir -p $workspaceDir
 currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$logFile" ] && export logFile="${workspaceDir}/install_${currDate}.log" && touch $logFile
 [ -z "$deployDebug" ] && export deployDebug="false" # true|false
 [ -z "$asyncDeploy" ] && export asyncDeploy="true" # true|false
 
-# ----------------------- Maven environment variables. -----------------------------------------
-[ -z "$apacheMvnDownloadTarUrl" ] && export apacheMvnDownloadTarUrl="https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
-[ -z "$secondaryApacheMvnDownloadTarUrl" ] && export secondaryApacheMvnDownloadTarUrl="https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
-[ -z "$apacheMvnInstallDir" ] && export apacheMvnInstallDir="$workspaceDir"
-# You can customize the overlay. (for example: mvn -Dmaven.repo.local=$HOME/.m2/repository/ -f $HOME/myproject_dir/pom.xml clean install)
-[ -z "$apacheMvnLocalRepoDir" ] && export apacheMvnLocalRepoDir="$HOME/.m2/repository/"
+# ----------------------- Sources(Git) environment configuration. --------------------------------------------
 
-# ----------------------- Deployment environment variables. ------------------------------------
-
-# Git URLs definition.
-[ -z "$gitBaseUri" ] && export gitBaseUri="https://gitee.com/wl4g" # for example options: https://github.com/wl4g or https://gitee.com/wl4g
+# Git clone URLs definition.
+[ -z "$gitBaseUri" ] && export gitBaseUri="https://github.com/wl4g" # Options: https://github.com/wl4g | https://gitee.com/wl4g
 [ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
 [ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
 [ -z "$gitXCloudDoPaaSUrl" ] && export gitXCloudDoPaaSUrl="${gitBaseUri}/xcloud-dopaas"
-# Git pull branchs.
+[ -z "$gitXCloudDoPaaSFrontendUrl" ] && export gitXCloudDoPaaSFrontendUrl="${gitBaseUri}/xcloud-dopaas-view"
+# Git pull branchs definition.
 [ -z "$defaultGitBranch" ] && export defaultGitBranch="master"
 [ -z "$xcloudComponentGitBranch" ] && export xcloudComponentGitBranch="${defaultGitBranch}"
 [ -z "$xcloudIamGitBranch" ] && export xcloudIamGitBranch="${defaultGitBranch}"
 [ -z "$xcloudDoPaaSGitBranch" ] && export xcloudDoPaaSGitBranch="${defaultGitBranch}"
+[ -z "$xcloudDoPaaSFrontendGitBranch" ] && export xcloudDoPaaSFrontendGitBranch="${defaultGitBranch}"
 
-# Build definition.
+# ----------------------- Deployment(backend) environment configuration. -------------------------------------
+# Maven environment.
+[ -z "$apacheMvnDownloadTarUrl" ] && export apacheMvnDownloadTarUrl="https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
+[ -z "$secondaryApacheMvnDownloadTarUrl" ] && export secondaryApacheMvnDownloadTarUrl="https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
+[ -z "$apacheMvnInstallDir" ] && export apacheMvnInstallDir="$workspaceDir"
+# You can customize the overlay. (e.g: mvn -Dmaven.repo.local=$HOME/.m2/repository/ -f $HOME/myproject_dir/pom.xml clean install)
+[ -z "$apacheMvnLocalRepoDir" ] && export apacheMvnLocalRepoDir="$HOME/.m2/repository/"
+
+# Maven build definition.
 [ -z "$buildPkgType" ] && export buildPkgType="mvnAssTar" # Options: mvnAssTar|springExecJar
 [ -z "$buildPkgVersion" ] && export buildPkgVersion="master"
 [ -z "$rebuildOfGitPullAlreadyUpToDate" ] && export rebuildOfGitPullAlreadyUpToDate="false"
 
-# Deploy common definition.
+# Deploy backend common definition.
 [ -z "$runtimeMode" ] && export runtimeMode="cluster" # Options: standalone|cluster
 [ -z "$deployAppBaseDir" ] && export deployAppBaseDir="/opt/apps/acm"
 [ -z "$deployAppDataBaseDir" ] && export deployAppDataBaseDir="/mnt/disk1"
 [ -z "$deployAppLogBaseDir" ] && export deployAppLogBaseDir="${deployAppDataBaseDir}/log"
 [ -z "$forceInstallServiceScript" ] && export forceInstallServiceScript="true"
 
-# Delopy(standalone) modules definition.
+# Deploy(eureka) backend modules defintion.
+export deployEurekaBuildModule="eureka-server,${currDir}/xcloud-component/xcloud-component-integration/xcloud-component-integration-regcenter-eureka-server/target"
+
+# Delopy(standalone mode) backend modules definition.
 export deployStandaloneBuildModules=(
   "standalone-iam,${currDir}/xcloud-iam/xcloud-iam-service-starter-all/target"
   "standalone-dopaas,${currDir}/xcloud-dopaas/xcloud-dopaas-all-starter/target"
 )
 
-# Deploy(cluster) modules definition.
+# Deploy(cluster mode) backend modules definition.
 export deployClusterNodesConfigPath="$currDir/deploy-host.csv"
+# for example: "{appName},{buildAssetsDir}"
 export deployClusterBuildModules=(
   "iam-data,${currDir}/xcloud-iam/xcloud-iam-service-starter-data/target"
   "iam-facade,${currDir}/xcloud-iam/xcloud-iam-service-starter-facade/target"
@@ -90,10 +97,19 @@ export deployClusterBuildModules=(
   "urm-facade,${currDir}/xcloud-dopaas/xcloud-dopaas-urm/xcloud-dopaas-urm-service-starter-facade/target"
   "urm-manager,${currDir}/xcloud-dopaas/xcloud-dopaas-urm/xcloud-dopaas-urm-service-starter-manager/target"
 )
-# Eureka build module info.
-export deployEurekaBuildModule="eureka-server,${currDir}/xcloud-component/xcloud-component-integration/xcloud-component-integration-regcenter-eureka-server/target"
 
-# Runtime dependency external services configuration.
+# ----------------------- Deployment(frontend) environment configuration. -------------------------------------
+
+# Nodejs environment.
+[ -z "$nodejsDownloadTarUrl" ] && export nodejsDownloadTarUrl="https://nodejs.org/dist/v14.16.1/node-v14.16.1-linux-x64.tar.xz"
+[ -z "$secondaryNodejsDownloadTarUrl" ] && export secondaryNodejsDownloadTarUrl="https://nodejs.org/dist/v14.16.1/node-v14.16.1-linux-x64.tar.xz"
+[ -z "$nodejsInstallDir" ] && export nodejsInstallDir="$workspaceDir"
+
+# Deploy frontend definition.
+[ -z "$deployFrontendAppBaseDir" ] && export deployFrontendAppBaseDir="/usr/share/nginx/html/xcloud-dopaas-view-package/xcloud-dopaas-view-master-bin"
+
+# ----------------------- Runtime dependent external services configuration. ---------------------------------
+
 [ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
 [ -z "$runtimeMysqlUser" ] && export runtimeMysqlUser="root"
 [ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"

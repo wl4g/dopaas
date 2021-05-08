@@ -27,12 +27,12 @@ export currDir=$(cd "`dirname $0`"/ ; pwd)
 # Basic deploy environment variables.
 [ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir
 [ -z "$deployDebug" ] && export deployDebug="false"
-[ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy"
-[ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy"
+[ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/deploy"
+[ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-dopaas/raw/master/deploy"
 [ -z "$gitBaseUrl" ] && export gitBaseUrl="https://github.com/wl4g"
 [ -z "$gitBaseUrlBackup1" ] && export gitBaseUrlBackup1="https://gitee.com/wl4g"
 # Deploy services runtime depend environment variables.
-[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false"
+[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
 [ -z "$runtimeMysqlUser" ] && export runtimeMysqlUser="root"
 [ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"
 [ -z "$runtimeRedisNodes" ] && export runtimeRedisNodes="localhost:6379"
@@ -43,7 +43,8 @@ export currDir=$(cd "`dirname $0`"/ ; pwd)
 echo "Checking network to best resources and automatically allocating  ..."
 export isNetworkInGfwWall="$(cat $workspaceDir/isNetworkInGfwWall 2>/dev/null)" # Load last configuration first.
 if [ -z "$isNetworkInGfwWall" ]; then # Checking url1
-  ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ip.taobao.com/outGetIpInfo?ip=113.109.55.66&accessKey=alibaba-inc" 2>/dev/null)
+  #ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ip.taobao.com/outGetIpInfo?ip=113.109.55.66&accessKey=alibaba-inc" 2>/dev/null)
+  ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ip.taobao.com/outGetIpInfo?ip=myip&accessKey=alibaba-inc" 2>/dev/null)
   export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo "")
 fi
 if [ -z "$isNetworkInGfwWall" ]; then # Checking url2
@@ -81,8 +82,9 @@ if [ "$deployDebug" == "false" ]; then # Debug mode does not need to download de
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv.tpl"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-docker.sh"; [ $? -ne 0 ] && exit -1
+  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/install-nginx.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/undeploy-host.sh"; [ $? -ne 0 ] && exit -1
-  chmod 750 $currDir/*deploy-*.sh
+  chmod 750 $currDir/*-*.sh
 fi
 
 # Depend scripts.
