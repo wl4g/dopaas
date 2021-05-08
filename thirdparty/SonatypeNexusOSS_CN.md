@@ -3,20 +3,19 @@
 ### 安装nexus(这里选用docker安装)
 
 ```
-docker run -p 8081:8081 -d --name nexus sonatype/nexus3
+mkdir -p /mnt/disk1/nexus3
+chmod 777 -R /mnt/disk1/nexus3
+docker run -p 8081:8081 -d --name nexus3 -v /mnt/disk1/nexus3:/nexus-data sonatype/nexus3
+docker logs -f --tail 10 nexus3
 ```
-nexus的文件存放地址是：/nexus-data/blobs
-可以配置文件映射:
-```
-docker run -p 8081:8081 -d --name nexus -v /mnt/dist1/nexus/nexus-data:/nexus-data snoatype/nexus3
-```
+nexus3(docker)的文件存放路径是：/nexus-data/blobs
 
-### 仓库类型说明
-- hosted 类型的仓库，内部项目的发布仓库
-- releases内部的模块中release模块的发布仓库
-- snapshots发布内部的SNAPSHOT模块的仓库
-- proxy 类型的仓库，从远程中央仓库中寻找数据的仓库
-- group 类型的仓库，组仓库用来方便我们开发人员进行设置的仓库
+### 仓库类型
+- `snapshots`  快照仓库，发布内部的SNAPSHOT版本包。
+- `hosted`  宿主仓库，通常我们会部署自己的构件到这一类型的仓库，比如公司的第二方库。
+- `proxy`  代理仓库，它们被用来代理上游远程公共仓库，如maven中央仓库。
+- `group`  组仓库(相当于`proxy`+`hosted`)，用来合并多个hosted/proxy仓库，当你的项目希望在多个repository使用资源时就不需要多次引用了，只需要引用一个group即可。
+- `releases`  发布仓库，release项目发布到远程仓库
 
 ### maven配置
 #### proxy地址

@@ -26,7 +26,7 @@ globalAllNodesString=""
 globalDeployStatsMsg="" # Deployed stats message.
 
 # Init configuration.
-function initConfig() {
+function initConfiguration() {
   # 1. Load cluster nodes information.
   if [ "$runtimeMode" == "cluster" ]; then # Only cluster mode need a hosts csv file.
     if [ ! -f "$deployClusterNodesConfigPath" ]; then
@@ -76,8 +76,8 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
   fi
 }
 
-# Pull and compile.
-function pullAndCompile() {
+# Pull project sources. (Return 'Y' for pull success)
+function pullSources() {
   local projectName=$1 # e.g xcloud-dopaas
   local cloneUrl=$2
   local branch=$3
@@ -87,38 +87,55 @@ function pullAndCompile() {
     cd $currDir && git clone $cloneUrl 2>&1 | tee -a $logFile
     cd $projectDir && git checkout $branch
     [ $? -ne 0 ] && exit -1
-    log "Compiling $projectName ..."
-    $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
-    [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
+    echo "Y"
   else
     log "Git pull $projectName from ($branch)$cloneUrl ..."
-    # Check and update remote url.
+    # Check and set remote url.
     local oldRemoteUrl=$(cd $projectDir && git remote -v|grep fetch|awk '{print $2}';cd ..)
     if [ "$oldRemoteUrl" != "$cloneUrl" ]; then
       log "Updating origin remote url to \"$cloneUrl\" ..."
       cd $projectDir && git remote set-url origin $cloneUrl
     fi
-    # Check already updated?
+    # Check and pull
     local pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
     cd $projectDir && git checkout $branch
     [ $? -ne 0 ] && exit -1
     if [[ "$pullResult" != "Already up-to-date."* || "$rebuildOfGitPullAlreadyUpToDate" == "true" ]]; then
-      log "Compiling $projectName ..."
-      cd $projectDir
-      $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
-      [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
+      echo "Y"
     else
       log "Skip build of $projectName(latest)"
       # Tips rebuild usage.
       if [ "$rebuildOfGitPullAlreadyUpToDate" != "true" ]; then
         log " [Tips]: If you still want to recompile, you can usage: export rebuildOfGitPullAlreadyUpToDate=\"true\" to set it."
+        echo "Y"
       fi
     fi
   fi
-  # If the mvn command is currently executed as root, but the local warehouse directory owner is another user, 
-  # the owner should be reset (because there may be a newly downloaded dependent library)
-  chown -R $apacheMvnLocalRepoDirOfUser:$apacheMvnLocalRepoDirOfUser $projectDir
-  chown -R $apacheMvnLocalRepoDirOfUser:$apacheMvnLocalRepoDirOfUser $apacheMvnLocalRepoDir
+  echo "N"
+  return 0
+}
+
+# Pull and maven compile.
+function pullAndMvnCompile() {
+  local projectName=$1 # e.g xcloud-dopaas
+  local cloneUrl=$2
+  local branch=$3
+  local projectDir="$currDir/$projectName"
+  # Pulling project sources.
+  local isPullSuccess=$(pullSources "$projectName" "$cloneUrl" "$branch")
+  if [ "$isPullSuccess" == "Y" ]; then
+    log "Compiling $projectName ..."
+    cd $projectDir
+    $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
+    [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
+
+    # If the mvn command is currently executed as root, but the local warehouse directory owner is another user, 
+    # the owner should be reset (because there may be a newly downloaded dependent library)
+    chown -R $apacheMvnLocalRepoDirOfUser:$apacheMvnLocalRepoDirOfUser $projectDir
+    chown -R $apacheMvnLocalRepoDirOfUser:$apacheMvnLocalRepoDirOfUser $apacheMvnLocalRepoDir
+  else
+    log "[WARNING] Unable compile project for $projectName"
+  fi
 }
 
 # Deploy app to local. (standalone)
@@ -230,7 +247,7 @@ function doDeployToNodeOfCluster() {
 }
 
 # Do deploy app.
-function doDeployApp() {
+function doDeployBackendApp() {
   local buildModule=$1
   local springProfilesActive=$2 # Priority custom active.
   local nodeArr=$3
@@ -290,8 +307,11 @@ function doDeployApp() {
   fi
 }
 
-# Deploy and startup dopaas all apps.
-function deployDoPaaSAppsAll() {
+# Deploy DoPaaS all apps and startup.
+function deployBackendApps() {
+  prepareDeployBackendApps # Prepare deploy backend apps.
+
+  # Deploy DoPaaS apps.
   local deployBuildModulesSize=0
   if [ "$runtimeMode" == "standalone" ]; then
     local deployBuildModules=("${deployStandaloneBuildModules[@]}") # Copy build targets array
@@ -304,15 +324,20 @@ function deployDoPaaSAppsAll() {
   if [ $deployBuildModulesSize -gt 0 ]; then
     for ((i=0;i<${#deployBuildModules[@]};i++)) do
       local buildModule=${deployBuildModules[i]}
-      doDeployApp "$buildModule" "${runtimeAppSpringProfilesActive}" "${globalAllNodes[*]}"
+      doDeployBackendApp "$buildModule" "${runtimeAppSpringProfilesActive}" "${globalAllNodes[*]}"
     done
     [ "$asyncDeploy" == "true" ] && wait # Wait all apps async deploy complete.
   fi
   return 0
 }
 
-# Check and deploy dependency services. (e.g: eureka-server/redis/mysql/...)
-function deployPreDependsServices() {
+# Prepare deploy backend applications.
+function prepareDeployBackendApps() {
+  log "Pulling and compile backend project sources ..."
+  pullAndMvnCompile "xcloud-component" "$gitXCloudComponentUrl" "$xcloudComponentGitBranch"
+  pullAndMvnCompile "xcloud-iam" "$gitXCloudIamUrl" "$xcloudIamGitBranch"
+  pullAndMvnCompile "xcloud-dopaas" "$gitXCloudDoPaaSUrl" "$xcloudDoPaaSGitBranch"
+  # Deploying dependent for eureka servers.
   deployEurekaServers
 }
 
@@ -329,7 +354,7 @@ function deployEurekaServers() {
       local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
       # Node1:
       log "[eureka/$host1] Deploy eureka by peer1 (Disguised) ..."
-      doDeployApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
+      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
       # Due to the asynchronous call of the previous function, we have to wait for 
       # synchronous execution to ensure the integrity of the first build package.
       wait
@@ -345,17 +370,17 @@ function deployEurekaServers() {
       local node1=${globalAllNodes[0]}
       local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
       log "[eureka/$host1] Deploy eureka by peer1 ..."
-      doDeployApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
+      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
       log "[eureka/$host2] Deploy eureka by peer2 ..."
-      doDeployApp "$deployEurekaBuildModule" "ha,peer2" "$node2"
+      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer2" "$node2"
       # Node3:
       local node3=${globalAllNodes[2]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
       log "[eureka/$host3] Deploy eureka by peer3 ..."
-      doDeployApp "$deployEurekaBuildModule" "ha,peer3" "$node3"
+      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer3" "$node3"
       # Check add dns resloving.
       addDnsResolving "$host1" "$host2" "$host3"
     fi
@@ -388,11 +413,45 @@ function addDnsResolving() {
   fi
 }
 
+# Deploy frontend apps to nginx.
+function deployFrontendApps() {
+  local appInstallDir="${deployFrontendAppBaseDir}/${appName}-package"
+  local node=${globalAllNodes[0]} # First node deploy the nginx by default.
+  local host=$(echo $node|awk -F 'ξ' '{print $1}')
+  local user=$(echo $node|awk -F 'ξ' '{print $2}')
+  local passwd=$(echo $node|awk -F 'ξ' '{print $3}')
+  if [[ "$host" == "" || "$user" == "" ]]; then
+    logErr "[$appName] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
+  fi
+  # Check install remote nginx
+  local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
+  if [ -z "$checkRemoteNginxResult" ]; then
+    local scriptFilename="install-nginx.sh"
+    doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
+  fi
+  [ $? -ne 0 ] && exit -1 || return 0
+  ## Pull frontend.
+  local fProjectDir="$currDir/xcloud-dopaas-view"
+  cd $fProjectDir
+  pullSources "xcloud-dopaas-view" "$gitXCloudDoPaaSFrontendUrl" "$xcloudDoPaaSFrontendGitBranch" 1>/dev/null
+  # Compile frontend.
+  sudo $cmdNpm install 2>&1 | tee -a $logFile
+  sudo $cmdNpm run build 2>&1 | tee -a $logFile
+  [ $? -ne 0 ] && exit -1 || return 0
+  # Deploy frontend.
+  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendAppBaseDir && \rm -rf $deployFrontendAppBaseDir/*" "true" "true"
+  cd $fProjectDir && tar -cf dist.tar dist/
+  doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar" "$deployFrontendAppBaseDir" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendAppBaseDir && tar -xf dist.tar --strip-components=1" "true" "true"
+  [ $? -ne 0 ] && exit -1 || return 0
+}
+
 # ----- Main call. -----
 function main() {
   [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
   log ""
-  log "「 Welcome to XCloud DoPaaS Deployer(Host) 」"
+  log "「 Welcome to XCloud DoPaaS Deployer (Host) 」"
   log ""
   log " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
   log " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
@@ -404,13 +463,10 @@ function main() {
   log ""
   [ "$asyncDeploy" == "true" ] && log "Using asynchronous deployment, you can usage: export asyncDeploy=\"false\" to set it."
   beginTime=`date +%s`
-  initConfig
-  checkInstallBasicSoftware
-  pullAndCompile "xcloud-component" "$gitXCloudComponentUrl" "$xcloudComponentGitBranch"
-  pullAndCompile "xcloud-iam" "$gitXCloudIamUrl" "$xcloudIamGitBranch"
-  pullAndCompile "xcloud-dopaas" "$gitXCloudDoPaaSUrl" "$xcloudDoPaaSGitBranch"
-  deployPreDependsServices
-  deployDoPaaSAppsAll
+  initConfiguration
+  checkInstallInfraSoftware
+  #deployBackendApps
+  deployFrontendApps
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   echo -n "---------------------------------------------------------------"

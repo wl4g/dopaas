@@ -21,6 +21,19 @@
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 . ${currDir}/deploy-env.sh
 
+# Gets OS info and check. return values(centos6_x64,centos7_x64,ubuntu_x64)
+function getOsTypeAndCheck() {
+  local osType=$([ -n "$(cat /etc/*release|grep -i 'centos linux release 7')" ] && echo centos7)
+  if [ -z "$osType" ]; then
+    osType=$([ -n "$(cat /etc/*release|grep -i 'centos release 6')" ] && echo centos6)
+  fi
+  if [ -z "$osType" ]; then
+    osType=$([ -n "$(cat /etc/*release|grep -i 'ubuntu')" ] && echo ubuntu)
+  fi
+  local osArch=$([ -n "$(uname -a|grep -i x86_64)" ] && echo x64)
+  echo "${osType}_${osArch}"
+}
+
 # Security delete local object.
 function secDeleteLocal() {
   local targetPath=$1
@@ -63,8 +76,8 @@ function logErr() {
   log "ERROR" "$@"
 }
 
-# Check and install basic software.
-function checkInstallBasicSoftware() {
+# Check and install infra software.
+function checkInstallInfraSoftware() {
   log "Checking basic software pre dependencies ..."
   # Check java/javac
   if [[ "$(command -v java)" == "" || "$(command -v javac)" == "" ]]; then
@@ -75,6 +88,7 @@ function checkInstallBasicSoftware() {
   if [[ ${numJavaVersion} -lt 18 ]]; then # must is jdk1.8+
     log "Installed java version: ${javaVersionJDK}, must be jdk8+, please reinstallation!"; exit -1
   fi
+
   # Check git
   if [ ! -n "$(command -v git)" ]; then
     log "No command git, auto installing git ..."
@@ -85,11 +99,12 @@ function checkInstallBasicSoftware() {
     elif [ -n "$(command -v apt-get)" ]; then
       sudo apt-get install -y git
     else
-      logErr "Failed to auto install git! Please manual installation!"; exit -1
+      logErr "Failed to auto install git!(currently only the OS is supported: CentOS/Ubuntu), Please manual installation!"; exit -1
     fi
-    # Check installization
+    # Check git installization?
     [ $? -ne 0 ] && logErr "Failed to auto install git! Please manual installation!" && exit -1
   fi
+
   # Check maven
   local mvnHome="$apacheMvnInstallDir/apache-maven-current"
   if [ -n "$(command -v mvn)" ]; then # Default installed maven.
@@ -98,8 +113,10 @@ function checkInstallBasicSoftware() {
     log "No command mvn, auto installing maven ..."
     cd $workspaceDir
     local tmpTarFile="$workspaceDir/apache-maven-current.tar"
+    log "Downloading for $apacheMvnDownloadTarUrl"
     curl -o "$tmpTarFile" "$apacheMvnDownloadTarUrl"
     if [ $? -ne 0 ]; then # Fallback
+      log "Downloading for $secondaryApacheMvnDownloadTarUrl"
       curl -o "$tmpTarFile" "$secondaryApacheMvnDownloadTarUrl"
     fi
     # Check installization result.
@@ -132,11 +149,43 @@ EOF
     export cmdMvn="$mvnHome/bin/mvn"
   fi
   log "Use installed maven command: $cmdMvn"
+
+  # Check nodejs
+  local nodeHome="$nodejsInstallDir/node-current"
+  if [ -n "$(command -v npm)" ]; then # Default installed node.
+    export cmdNpm="npm"
+  elif [ ! -d "$nodeHome" ]; then # Need install tmp node.
+    log "No command nodejs, auto installing nodejs ..."
+    cd $workspaceDir
+    local tmpTarFile="$workspaceDir/node-current.tar"
+    log "Downloading for $nodejsDownloadTarUrl"
+    curl -o "$tmpTarFile" "$nodejsDownloadTarUrl"
+    if [ $? -ne 0 ]; then # Fallback
+      log "Downloading for $secondaryNodejsDownloadTarUrl"
+      curl -o "$tmpTarFile" "$secondaryNodejsDownloadTarUrl"
+    fi
+    # Check installization result.
+    [ $? -ne 0 ] && logErr "Failed to auto install nodejs! Please manual installation!" && exit -1
+    mkdir -p $nodeHome
+    secDeleteLocal "$nodeHome/*" # Rmove old files(if necessary)
+    tar -xf "$tmpTarFile" --strip-components=1 -C "$nodeHome"
+    secDeleteLocal "$tmpTarFile" # Cleanup
+    export cmdNpm="$nodeHome/bin/npm" && sudo ln -snf "$nodeHome/bin/node" /bin/node
+  else # Installed tmp nodejs.
+    export cmdNpm="$nodeHome/bin/npm"
+  fi
+  # Use china fast nodejs mirror to config.
+  if [ "$isNetworkInGfwWall" == "Y" ]; then # see: deploy-boot.sh
+    log "Currently in china gfw network, configuring taobao npm fast mirror ..."
+    $cmdNpm config set registry https://registry.npm.taobao.org/
+  fi
+  log "Use installed node(npm) command: $cmdNpm"
 }
 
-function installSshpass() {
-  if [ -z "$(command -v sshpass)" ]; then
-    log "Installzation sshpass ..."
+function checkAndInstallSshpass() {
+  local errmsg="Failed to auto install sshpass! Please manual installation, refer to: https://gitee.com/wl4g/sshpass or https://github.com/wl4g/sshpass"
+  if [ -z "$(command -v /bin/sshpass)" ]; then
+    log "Online installzation sshpass ..."
     if [ -n "$(command -v yum)" ]; then
       sudo yum install -y sshpass
     elif [ -n "$(command -v apt)" ]; then
@@ -144,12 +193,32 @@ function installSshpass() {
     elif [ -n "$(command -v apt-get)" ]; then
       sudo apt-get install -y sshpass
     else
-      logErr "Failed to auto install sshpass! Please manual installation, \
-refer to: https://gitee.com/wl4g/sshpass or https://github.com/wl4g/sshpass"; exit -1
+      logErr "$errmsg"; exit -1
+    fi
+    # Fackball, online install failure?
+    if [ -z "$(command -v /bin/sshpass)" ]; then
+      local osType=$(getOsTypeAndCheck)
+      if [ "$isNetworkInGfwWall" == "Y" ]; then
+        if [ "$osType" == "centos6_x64" ]; then
+          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://gitee.com/wl4g/sshpass/attach_files/690539/download/sshpass_centos6_x64_1.09"; [ $? -ne 0 ] && exit -1
+        elif [ "$osType" == "centos7_x64" ]; then
+          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://gitee.com/wl4g/sshpass/attach_files/690539/download/sshpass_centos7_x64_1.09"; [ $? -ne 0 ] && exit -1
+        elif [ "$osType" == "ubuntu_x64" ]; then
+          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://gitee.com/wl4g/sshpass/attach_files/690539/download/sshpass_ubuntu_x64_1.09"; [ $? -ne 0 ] && exit -1
+        fi
+      else
+        if [ "$osType" == "centos6_x64" ]; then
+          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://github.com/wl4g/sshpass/releases/download/1.09/sshpass_centos6_x64_1.09"; [ $? -ne 0 ] && exit -1
+        elif [ "$osType" == "centos7_x64" ]; then
+          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://github.com/wl4g/sshpass/releases/download/1.09/sshpass_centos7_x64_1.09"; [ $? -ne 0 ] && exit -1
+        elif [ "$osType" == "ubuntu_x64" ]; then
+          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://github.com/wl4g/sshpass/releases/download/1.09/sshpass_ubuntu20_x64_1.09"; [ $? -ne 0 ] && exit -1
+        fi
+      fi
+      sudo chmod +x /bin/sshpass
     fi
     # Check installization result.
-    [ $? -ne 0 ] && logErr "Failed to auto install sshpass! Please manual installation, \
-refer to: https://gitee.com/wl4g/sshpass or https://github.com/wl4g/sshpass" && exit -1
+    [ $? -ne 0 ] && logErr "$errmsg" && exit -1
   fi
 }
 
@@ -190,7 +259,7 @@ function doRemoteCmd() {
       logErr "Failed to exec remote, bacause not ssh-passwordless authorized!"; exit -1
     fi
   else # Exec remote by sshpass
-    installSshpass
+    checkAndInstallSshpass
     if [ "$isOutput" == "true" ]; then
       local output=$(sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd")
       local exitStatus=$?
@@ -198,7 +267,7 @@ function doRemoteCmd() {
       echo "$output"
       return $exitStatus
     else
-      sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd"
+      /bin/sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd"
       local exitStatus=$?
       [[ $exitStatus -ne 0 && "$exitOnFail" == "true" ]] && exit -1
       return $exitStatus
@@ -237,7 +306,7 @@ function doScp() {
       logErr "Failed to scp \"$localPath\" to remote, bacause not ssh-passwordless authorized!"; exit -1
     fi
   else # Exec remote by sshpass
-    installSshpass
+    checkAndInstallSshpass
     sshpass -p $password scp $localPath $user@$host:$remotePath
     [[ $? -ne 0 && "$exitOnFail" == "true" ]] && exit -1
   fi
