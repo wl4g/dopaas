@@ -465,7 +465,7 @@ function main() {
   beginTime=`date +%s`
   initConfiguration
   checkInstallInfraSoftware
-  #deployBackendApps
+  deployBackendApps
   deployFrontendApps
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
