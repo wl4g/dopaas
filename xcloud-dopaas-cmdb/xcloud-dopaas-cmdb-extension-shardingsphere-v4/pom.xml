@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-dopaas-cmdb-extension-shardingsphere-v4</artifactId>
 	<packaging>jar</packaging>
-	<name>xcloud-dopaas-cmdb-extension-shardingsphere-v4</name>
+	<name>XCloud DoPaaS CMDB Extension on Shardingsphere-V4</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

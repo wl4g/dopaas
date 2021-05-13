@@ -63,7 +63,7 @@
 					<!-- not append assembly id in release file name -->
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>
-						<descriptor>src/main/assemble/package.xml</descriptor>
+						<descriptor>src/main/assembly/package.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>
