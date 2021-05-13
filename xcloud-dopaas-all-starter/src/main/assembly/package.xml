@@ -69,7 +69,7 @@
 			</excludes>
 		</fileSet>
 		<fileSet>
-			<directory>../../</directory>
+			<directory>../</directory>
 			<includes>
 				<include>LICENSE</include>
 				<include>NOTICE</include>

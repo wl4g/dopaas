@@ -309,8 +309,8 @@ function doDeployBackendApp() {
 
 # Deploy DoPaaS all apps and startup.
 function deployBackendApps() {
-  prepareDeployBackendApps # Prepare deploy backend apps.
-
+  # Prepare deploy backend apps.
+  prepareDeployBackendApps
   # Deploy DoPaaS apps.
   local deployBuildModulesSize=0
   if [ "$runtimeMode" == "standalone" ]; then
