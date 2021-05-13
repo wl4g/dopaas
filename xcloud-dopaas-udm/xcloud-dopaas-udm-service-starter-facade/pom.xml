@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-dopaas-udm-service-starter-facade</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DoPaaS Doc Service Impl</name>
+	<name>XCloud DoPaaS UDM Service Impl</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
@@ -107,7 +107,7 @@
 							<finalName>${final.name}-${project.version}-bin</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptors>
-								<descriptor>src/main/assemble/package.xml</descriptor>
+								<descriptor>src/main/assembly/package.xml</descriptor>
 							</descriptors>
 						</configuration>
 						<executions>

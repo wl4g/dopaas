@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-dopaas-udm-service-facade</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DoPaaS Doc Service API</name>
+	<name>XCloud DoPaaS UDM Service API</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

@@ -100,13 +100,13 @@ function pullSources() {
     local pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
     cd $projectDir && git checkout $branch
     [ $? -ne 0 ] && exit -1
-    if [[ "$pullResult" != "Already up-to-date."* || "$rebuildOfGitPullAlreadyUpToDate" == "true" ]]; then
+    if [[ "$pullResult" != "Already up-to-date."* || "$buildForcedOnPullUpToDate" == "true" ]]; then
       echo "Y"
     else
       log "Skip build of $projectName(latest)"
       # Tips rebuild usage.
-      if [ "$rebuildOfGitPullAlreadyUpToDate" != "true" ]; then
-        log " [Tips]: If you still want to recompile, you can usage: export rebuildOfGitPullAlreadyUpToDate=\"true\" to set it."
+      if [ "$buildForcedOnPullUpToDate" != "true" ]; then
+        log " [Tips]: If you still want to recompile, you can usage: export buildForcedOnPullUpToDate='true' to set it."
         echo "Y"
       fi
     fi
@@ -198,14 +198,14 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
       logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
     fi
     # Do deploy to instance.
-    if [ "$asyncDeploy" == "true" ]; then
+    if [ "$deployAsync" == "true" ]; then
       doDeployToNodeOfCluster "$appName" "$appInstallDir" "$buildFilePath" "$host" "$user" "$passwd" "$springProfilesActive" &
     else
       doDeployToNodeOfCluster "$appName" "$appInstallDir" "$buildFilePath" "$host" "$user" "$passwd" "$springProfilesActive"
     fi
     [ $? -ne 0 ] && exit -1
   done
-  [ "$asyncDeploy" == "true" ] && wait # Wait all instances async deploy complete.
+  [ "$deployAsync" == "true" ] && wait # Wait all instances async deploy complete.
   return 0
 }
 
@@ -284,7 +284,7 @@ function doDeployBackendApp() {
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
     log "[$appName/standalone] deploying to local ..."
-    if [ "$asyncDeploy" == "true" ]; then
+    if [ "$deployAsync" == "true" ]; then
       deployToLocalOfStandalone "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" &
     else
       deployToLocalOfStandalone "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive"
@@ -293,7 +293,7 @@ function doDeployBackendApp() {
     log "[$appName/standalone] Deployed to local completed !"
   elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
     log "[$appName/cluster] Deploying to cluster nodes ..."
-    if [ "$asyncDeploy" == "true" ]; then
+    if [ "$deployAsync" == "true" ]; then
       deployToNodesOfCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}" &
     else
       deployToNodesOfCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}"
@@ -326,7 +326,7 @@ function deployBackendApps() {
       local buildModule=${deployBuildModules[i]}
       doDeployBackendApp "$buildModule" "${runtimeAppSpringProfilesActive}" "${globalAllNodes[*]}"
     done
-    [ "$asyncDeploy" == "true" ] && wait # Wait all apps async deploy complete.
+    [ "$deployAsync" == "true" ] && wait # Wait all apps async deploy complete.
   fi
   return 0
 }
@@ -334,9 +334,9 @@ function deployBackendApps() {
 # Prepare deploy backend applications.
 function prepareDeployBackendApps() {
   log "Pulling and compile backend project sources ..."
-  pullAndMvnCompile "xcloud-component" "$gitXCloudComponentUrl" "$xcloudComponentGitBranch"
-  pullAndMvnCompile "xcloud-iam" "$gitXCloudIamUrl" "$xcloudIamGitBranch"
-  pullAndMvnCompile "xcloud-dopaas" "$gitXCloudDoPaaSUrl" "$xcloudDoPaaSGitBranch"
+  pullAndMvnCompile "xcloud-component" "$gitXCloudComponentUrl" "$gitComponentBranch"
+  pullAndMvnCompile "xcloud-iam" "$gitXCloudIamUrl" "$gitIamBranch"
+  pullAndMvnCompile "xcloud-dopaas" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
   # Deploying dependent for eureka servers.
   deployEurekaServers
 }
@@ -434,7 +434,7 @@ function deployFrontendApps() {
   ## Pull frontend.
   local fProjectDir="$currDir/xcloud-dopaas-view"
   cd $fProjectDir
-  pullSources "xcloud-dopaas-view" "$gitXCloudDoPaaSFrontendUrl" "$xcloudDoPaaSFrontendGitBranch" 1>/dev/null
+  pullSources "xcloud-dopaas-view" "$gitXCloudDoPaaSFrontendUrl" "$gitDoPaaSFrontendBranch" 1>/dev/null
   # Compile frontend.
   sudo $cmdNpm install 2>&1 | tee -a $logFile
   sudo $cmdNpm run build 2>&1 | tee -a $logFile
@@ -461,7 +461,7 @@ function main() {
   log " Installation logs writing: $logFile"
   log " -------------------------------------------------------------------"
   log ""
-  [ "$asyncDeploy" == "true" ] && log "Using asynchronous deployment, you can usage: export asyncDeploy=\"false\" to set it."
+  [ "$deployAsync" == "true" ] && log "Using asynchronous deployment, you can usage: export deployAsync=\"false\" to set it."
   beginTime=`date +%s`
   initConfiguration
   checkInstallInfraSoftware

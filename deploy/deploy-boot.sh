@@ -29,44 +29,35 @@ export currDir=$(cd "`dirname $0`"/ ; pwd)
 [ -z "$deployDebug" ] && export deployDebug="false"
 [ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/deploy"
 [ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-dopaas/raw/master/deploy"
-[ -z "$gitBaseUrl" ] && export gitBaseUrl="https://github.com/wl4g"
-[ -z "$gitBaseUrlBackup1" ] && export gitBaseUrlBackup1="https://gitee.com/wl4g"
-# Deploy services runtime depend environment variables.
-[ -z "$runtimeMysqlUrl" ] && export runtimeMysqlUrl="jdbc:mysql://localhost:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
-[ -z "$runtimeMysqlUser" ] && export runtimeMysqlUser="root"
-[ -z "$runtimeMysqlPassword" ] && export runtimeMysqlPassword="123456"
-[ -z "$runtimeRedisNodes" ] && export runtimeRedisNodes="localhost:6379"
-[ -z "$runtimeRedisPassword" ] && export runtimeRedisPassword="123456"
-[ -z "$runtimeAppSpringProfilesActive" ] && export runtimeAppSpringProfilesActive="pro"
 
-# Checking the host networking.
-echo "Checking network to best resources and automatically allocating  ..."
-export isNetworkInGfwWall="$(cat $workspaceDir/isNetworkInGfwWall 2>/dev/null)" # Load last configuration first.
-if [ -z "$isNetworkInGfwWall" ]; then # Checking url1
+# Detecting network environment.
+echo "Detecting networking to fetch best resources allocating  ..."
+export isGFWNetwork="$(cat $workspaceDir/isGFWNetwork 2>/dev/null)" # Load last configuration first.
+if [ -z "$isGFWNetwork" ]; then # Primary checker url1
   #ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ip.taobao.com/outGetIpInfo?ip=113.109.55.66&accessKey=alibaba-inc" 2>/dev/null)
   ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ip.taobao.com/outGetIpInfo?ip=myip&accessKey=alibaba-inc" 2>/dev/null)
-  export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo "")
+  export isGFWNetwork=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo "")
 fi
-if [ -z "$isNetworkInGfwWall" ]; then # Checking url2
+if [ -z "$isGFWNetwork" ]; then # Fallback checker url2
   echo "Try checking the network again with http://cip.cc ..."
   ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://cip.cc" 2>/dev/null)
-  export isNetworkInGfwWall=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo "")
+  export isGFWNetwork=$([[ "$ipArea" =~ "中国" || "$ipArea" =~ "朝鲜" ]] && echo Y || echo "")
 fi
-if [ -z "$isNetworkInGfwWall" ]; then # Checking url3
+if [ -z "$isGFWNetwork" ]; then # Fallback checker url3
   echo "Try checking the network again with http://ipinfo.io ..."
   ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ipinfo.io" 2>/dev/null)
-  export isNetworkInGfwWall=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo "")
+  export isGFWNetwork=$([[ "$ipArea" =~ "\"country\": \"CN\"" ]] && echo Y || echo "")
 fi
-if [ -z "$isNetworkInGfwWall" ]; then # Checking url4
+if [ -z "$isGFWNetwork" ]; then # Fallback checker url4
   echo "Try checking the network again with https://api.myip.com ..."
   ipArea=$(curl --connect-timeout 10 -m 20 -sSL "https://api.myip.com" 2>/dev/null)
-  export isNetworkInGfwWall=$([[ "$ipArea" =~ "China" ]] && echo Y || echo "")
+  export isGFWNetwork=$([[ "$ipArea" =~ "China" ]] && echo Y || echo "")
 fi
-[ "$isNetworkInGfwWall" != "Y" ] && export isNetworkInGfwWall="N"
-echo "$isNetworkInGfwWall" > "$workspaceDir/isNetworkInGfwWall"
+[ "$isGFWNetwork" != "Y" ] && export isGFWNetwork="N"
+echo "$isGFWNetwork" > "$workspaceDir/isGFWNetwork"
+
 # Choose best fast-resources intelligently.
-if [ "$isNetworkInGfwWall" == "Y" ]; then
-  export gitBaseUri="$gitBaseUrlBackup1" # for speed-up, fuck gfw!
+if [ "$isGFWNetwork" == "Y" ]; then
   export scriptsBaseUrl="$scriptsBaseUrlBackup1"
 fi
 
@@ -74,10 +65,11 @@ fi
 if [ "$deployDebug" == "false" ]; then # Debug mode does not need to download depend scripts.
   cd $currDir
   #\rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v $0) # Cleanup scripts.
-  echo "Downloading deploy scripts dependencies ..."
+  echo "Downloading deployer scripts dependencies ..."
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-i18n-zh_CN.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-i18n-en_US.sh"; [ $? -ne 0 ] && exit -1
-  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env.sh"; [ $? -ne 0 ] && exit -1
+  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env-conf.sh"; [ $? -ne 0 ] && exit -1
+  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env-base.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv.tpl"; [ $? -ne 0 ] && exit -1

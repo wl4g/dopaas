@@ -19,7 +19,7 @@
 
 # Init.
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
-. ${currDir}/deploy-env.sh
+. ${currDir}/deploy-env-conf.sh
 
 # Gets OS info and check. return values(centos6_x64,centos7_x64,ubuntu_x64)
 function getOsTypeAndCheck() {
@@ -126,7 +126,7 @@ function checkInstallInfraSoftware() {
     tar -xf "$tmpTarFile" --strip-components=1 -C "$mvnHome"
     secDeleteLocal "$tmpTarFile" # Cleanup
     # Use china fast maven mirror to settings.xml
-    if [ "$isNetworkInGfwWall" == "Y" ]; then # see: deploy-boot.sh
+    if [ "$isGFWNetwork" == "Y" ]; then # see: deploy-boot.sh
       log "Currently in china gfw network, configuring aliyun maven fast mirror ..."
 cat<<EOF>$mvnHome/conf/settings.xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -175,7 +175,7 @@ EOF
     export cmdNpm="$nodeHome/bin/npm"
   fi
   # Use china fast nodejs mirror to config.
-  if [ "$isNetworkInGfwWall" == "Y" ]; then # see: deploy-boot.sh
+  if [ "$isGFWNetwork" == "Y" ]; then # see: deploy-boot.sh
     log "Currently in china gfw network, configuring taobao npm fast mirror ..."
     $cmdNpm config set registry https://registry.npm.taobao.org/
   fi
@@ -195,10 +195,10 @@ function checkAndInstallSshpass() {
     else
       logErr "$errmsg"; exit -1
     fi
-    # Fackball, online install failure?
+    # Fallback, online install failure?
     if [ -z "$(command -v /bin/sshpass)" ]; then
       local osType=$(getOsTypeAndCheck)
-      if [ "$isNetworkInGfwWall" == "Y" ]; then
+      if [ "$isGFWNetwork" == "Y" ]; then
         if [ "$osType" == "centos6_x64" ]; then
           sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://gitee.com/wl4g/sshpass/attach_files/690539/download/sshpass_centos6_x64_1.09"; [ $? -ne 0 ] && exit -1
         elif [ "$osType" == "centos7_x64" ]; then
@@ -313,7 +313,7 @@ function doScp() {
 }
 
 # Check and install remote services script.
-# for testing => checkInstallServiceScript "iam-data" "root" "cn#!7%7^^" "10.0.0.160"
+# for testing => checkInstallServiceScript "iam-web" "root" "123456" "10.0.0.160"
 function checkInstallServiceScript() {
   local appName=$1
   local user=$2
@@ -325,7 +325,7 @@ function checkInstallServiceScript() {
     logErr "[$appName/$host] Cannot installization app services, args appName/user/host is required and args should be 4 !"; exit -1
   fi
   # Check installed service script?
-  if [ "$forceInstallServiceScript" == "false" ]; then
+  if [ "$deployForcedInstallMgtScript" == "false" ]; then
     local hasServiceFile=$(doRemoteCmd "$user" "$password" "$host" "echo $([ -f /etc/init.d/$appName.service ] && echo Y || echo N)" "true")
     [ "$hasServiceFile" == "Y" ] && return 0 # Skip installed
   fi
@@ -542,8 +542,8 @@ EOF
 # Load i18n config scripts.
 function loadi18n() {
   local isCN="N"
-  if [ -n "$isNetworkInGfwWall" ]; then
-    isCN="$isNetworkInGfwWall"
+  if [ -n "$isGFWNetwork" ]; then
+    isCN="$isGFWNetwork"
   else
     isCN=$([[ "$LANG" == *"zh_CN"* ]] && echo Y || echo N)
   fi
