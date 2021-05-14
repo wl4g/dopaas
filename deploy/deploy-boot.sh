@@ -20,7 +20,16 @@
 if [[ "$(echo groups)" == "root" ]]; then
   logErr "Please execute the scripts as a user with root privileges !"; exit -1
 fi
+
 [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
+echo ""
+echo "「 Welcome to XCloud DoPaaS Deployer (Boot) 」"
+echo ""
+echo " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
+echo " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
+echo " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
+echo " Version: 2.0.0"
+echo " Time: $(date '+%Y-%m-%d %H:%M:%S')"
 
 # Global definition.
 export currDir=$(cd "`dirname $0`"/ ; pwd)
@@ -68,8 +77,9 @@ if [ "$deployDebug" == "false" ]; then # Debug mode does not need to download de
   echo "Downloading deployer scripts dependencies ..."
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-i18n-zh_CN.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-i18n-en_US.sh"; [ $? -ne 0 ] && exit -1
-  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env-conf.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env-base.sh"; [ $? -ne 0 ] && exit -1
+  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-logging.sh"; [ $? -ne 0 ] && exit -1
+  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env-conf.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv.tpl"; [ $? -ne 0 ] && exit -1
@@ -80,20 +90,16 @@ if [ "$deployDebug" == "false" ]; then # Debug mode does not need to download de
 fi
 
 # Depend scripts.
-. $currDir/deploy-common.sh
+[ "$loadedDeployCommonWithProcessNum" != "$$" ] && . $currDir/deploy-common.sh && export loadedDeployCommonWithProcessNum="$$"
 loadi18n
 
 # Option1: Check runtime dependency external services. (e.g: mysql/redis/...)
 echo ""
 while true
 do
-  read -t 300 -p """$confirmServicesRuntimeConfigEnvVarMsg
-    export runtimeMysqlUrl='$runtimeMysqlUrl'
-    export runtimeMysqlUser='$runtimeMysqlUser'
-    export runtimeMysqlPassword='$runtimeMysqlPassword'
-    export runtimeRedisNodes='$runtimeRedisNodes'
-    export runtimeRedisPassword='$runtimeRedisPassword'
-    export runtimeAppSpringProfilesActive='$runtimeAppSpringProfilesActive'
+  echo -e """$confirmServicesRuntimeConfigEnvVarMsg
+$globalExportedEnvStr"""
+  read -t 300 -p """
   $confirmServicesRuntimeConfigEnvVarTip1Msg
   $confirmServicesRuntimeConfigEnvVarTip2Msg
   $confirmServicesRuntimeConfigEnvVarTip3Msg """ confirm
@@ -164,4 +170,3 @@ fi
 
 #cd $currDir && \rm -rf $(ls deploy-*.sh 2>/dev/null|grep -v "deploy-boot.sh"|grep -v "undeploy-host.sh") # Cleanup scripts.
 exit 0
-

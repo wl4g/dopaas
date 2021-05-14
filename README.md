@@ -129,12 +129,17 @@ Notes：
 a. There is no need to specify any JVM args when trying to start (the default configuration is used). For example, only the configuration of `dev` environment will be activated by default;  
 b. Whether it is `standalone` mode or `cluster` mode, it can correspond to four environments respectively (`dev`/`fat`/`uat`/`pro`).
 
-#### 2.6.1 `standalone` mode starting(dev).
-Dopaas unified boot class：com.wl4g.StandaloneDopaas  
-IAM boot class：com.wl4g.StandaloneIam  
+#### 2.6.1 Starting for `standalone` mode.
+Just run the following bootstrap classes:
 
-#### 2.6.2 `cluster` mode starting(dev).
-Run the following startup classes:
+```
+com.wl4g.StandaloneDopaas  
+com.wl4g.StandaloneIam  
+```
+
+#### 2.6.2 Starting for `cluster` mode.
+Run the following bootstrap classes:
+
 ```
 com.wl4g.EurekaServer  
 com.wl4g.IamWeb  

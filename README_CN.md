@@ -128,12 +128,17 @@ npm run build # 生产打包
 a. 尝试启动时无需指定任何jvm参数(即, 都使用默认配置), 如：默认仅会激活 `dev` 环境的配置;  
 b. 无论是运行 `standalone` 模式还是 `cluster` 模式，都可以分别对应(`dev`/`fat`/`uat`/`pro`)4种环境。
 
-#### 2.6.1 `standalone` 模式启动
-DoPaaS统一启动类：com.wl4g.StandaloneDopaas  
-IAM启动类：com.wl4g.StandaloneIam
+#### 2.6.1 以 `standalone` 模式启动
+只需运行以下启动类：
 
-#### 2.6.2 `cluster` 模式启动
-执行以下为启动类：
+```
+com.wl4g.StandaloneDopaas  
+com.wl4g.StandaloneIam
+```
+
+#### 2.6.2 以 `cluster` 模式启动
+请运行以下启动类：
+
 ```
 com.wl4g.EurekaServer  
 com.wl4g.IamWeb  
