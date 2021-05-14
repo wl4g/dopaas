@@ -360,6 +360,32 @@ function checkInstallServiceScript() {
   # Make app services script.
   local appShortNameUpper=$(echo $appName|tr '[a-z]' '[A-Z]'|awk -F '-' '{print $1}') # e.g cmdb-facade => CMDB
   local appShortNameLower=$(echo $appShortNameUpper|tr '[A-Z]' '[a-z]') # e.g cmdb-facade => cmdb
+  # Make app runtime environments.
+  local runtimeEnvStr=""
+  if [ "$appShortNameUpper" == "IAM" ]; then
+    runtimeEnvStr="""[ -z \"\$IAM_DB_URL\" ] && export IAM_DB_URL='$IAM_DB_URL'
+[ -z \"\$IAM_DB_USER\" ] && export IAM_DB_USER='$IAM_DB_USER'
+[ -z \"\$IAM_DB_PASSWD\" ] && export IAM_DB_PASSWD='$IAM_DB_PASSWD'
+[ -z \"\$IAM_REDIS_PASSWD\" ] && export IAM_REDIS_PASSWD='$IAM_REDIS_PASSWD'
+[ -z \"\$IAM_REDIS_NODES\" ] && export IAM_REDIS_NODES='$IAM_REDIS_NODES'"""
+  else
+    if [ "$runtimeMode" == "standalone" ]; then
+      runtimeEnvStr="""[ -z \"\$STANDALONE_DOPAAS_DB_URL\" ] && export STANDALONE_DOPAAS_DB_URL='$STANDALONE_DOPAAS_DB_URL'
+${runtimeEnvStr}[ -z \"\$STANDALONE_DOPAAS_DB_USER\" ] && export STANDALONE_DOPAAS_DB_USER='$STANDALONE_DOPAAS_DB_USER'
+${runtimeEnvStr}[ -z \"\$STANDALONE_DOPAAS_DB_PASSWD\" ] && export STANDALONE_DOPAAS_DB_PASSWD='$STANDALONE_DOPAAS_DB_PASSWD'
+${runtimeEnvStr}[ -z \"\$STANDALONE_DOPAAS_REDIS_NODES\" ] && export STANDALONE_DOPAAS_REDIS_NODES='$STANDALONE_DOPAAS_REDIS_NODES'
+${runtimeEnvStr}[ -z \"\$STANDALONE_DOPAAS_REDIS_PASSWD\" ] && export STANDALONE_DOPAAS_REDIS_PASSWD='$STANDALONE_DOPAAS_REDIS_PASSWD'"""
+    elif [ "$runtimeMode" == "cluster" ]; then
+      runtimeEnvStr="""[ -z \"\$${appShortNameUpper}_DOPAAS_DB_URL\" ] && export ${appShortNameUpper}_DOPAAS_DB_URL='$(eval echo '$'${appShortNameUpper}_DOPAAS_DB_URL)'
+${runtimeEnvStr}[ -z \"\$${appShortNameUpper}_DOPAAS_DB_USER\" ] && export ${appShortNameUpper}_DOPAAS_DB_USER='$(eval echo '$'${appShortNameUpper}_DOPAAS_DB_USER)'
+${runtimeEnvStr}[ -z \"\$${appShortNameUpper}_DOPAAS_DB_PASSWD\" ] && export ${appShortNameUpper}_DOPAAS_DB_PASSWD='$(eval echo '$'${appShortNameUpper}_DOPAAS_DB_PASSWD)'
+${runtimeEnvStr}[ -z \"\$${appShortNameUpper}_DOPAAS_REDIS_NODES\" ] && export ${appShortNameUpper}_DOPAAS_REDIS_NODES='$(eval echo '$'${appShortNameUpper}_DOPAAS_REDIS_NODES)'
+${runtimeEnvStr}[ -z \"\$${appShortNameUpper}_DOPAAS_REDIS_PASSWD\" ] && export ${appShortNameUpper}_DOPAAS_REDIS_PASSWD='$(eval echo '$'${appShortNameUpper}_DOPAAS_REDIS_PASSWD)'"""
+    else
+      echo "Invalid runtime mode to $runtimeMode"; exit -1
+    fi
+  fi
+
   local tmpServiceFile="$workspaceDir/${appName}.service"
 cat<<EOF>$tmpServiceFile
 #!/bin/bash
@@ -403,29 +429,8 @@ elif [ -n "\$(echo \$SPRING_PROFILES_ACTIVE|grep -i '^None\$')" ]; then
   export SPRING_PROFILES_ACTIVE="" # Use empty configuration.
 fi
 
-if [ "$appShortNameUpper" == "IAM" ]; then
-  [ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$IAM_DB_URL"
-  [ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="$IAM_DB_USER"
-  [ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="$IAM_DB_PASSWD"
-  [ -z "\$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="$IAM_REDIS_PASSWD"
-  [ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="$IAM_REDIS_NODES"
-else
-  if [ "$runtimeMode" == "standalone" ]; then
-    [ -z "\$STANDALONE_DOPAAS_DB_URL" ] && export STANDALONE_DOPAAS_DB_URL="$STANDALONE_DOPAAS_DB_URL"
-    [ -z "\$STANDALONE_DOPAAS_DB_USER" ] && export STANDALONE_DOPAAS_DB_USER="$STANDALONE_DOPAAS_DB_USER"
-    [ -z "\$STANDALONE_DOPAAS_DB_PASSWD" ] && export STANDALONE_DOPAAS_DB_PASSWD="$STANDALONE_DOPAAS_DB_PASSWD"
-    [ -z "\$STANDALONE_DOPAAS_REDIS_NODES" ] && export STANDALONE_DOPAAS_REDIS_NODES="$STANDALONE_DOPAAS_REDIS_NODES"
-    [ -z "\$STANDALONE_DOPAAS_REDIS_PASSWD" ] && export STANDALONE_DOPAAS_REDIS_PASSWD="$STANDALONE_DOPAAS_REDIS_PASSWD"
-  elif [ "$runtimeMode" == "cluster" ]; then
-    [ -z "\$${appShortNameUpper}_DOPAAS_DB_URL" ] && export ${appShortNameUpper}_DOPAAS_DB_URL="$(eval echo '$'${appShortNameUpper}_DOPAAS_DB_URL)"
-    [ -z "\$${appShortNameUpper}_DOPAAS_DB_USER" ] && export ${appShortNameUpper}_DOPAAS_DB_USER="$(eval echo '$'${appShortNameUpper}_DOPAAS_DB_USER)"
-    [ -z "\$${appShortNameUpper}_DOPAAS_DB_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_DB_PASSWD="$(eval echo '$'${appShortNameUpper}_DOPAAS_DB_PASSWD)"
-    [ -z "\$${appShortNameUpper}_DOPAAS_REDIS_NODES" ] && export ${appShortNameUpper}_DOPAAS_REDIS_NODES="$(eval echo '$'${appShortNameUpper}_DOPAAS_REDIS_NODES)"
-    [ -z "\$${appShortNameUpper}_DOPAAS_REDIS_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_REDIS_PASSWD="$(eval echo '$'${appShortNameUpper}_DOPAAS_REDIS_PASSWD)"
-  else
-    echo "Invalid runtime mode to $runtimeMode"; exit -1
-  fi
-fi
+# '$appName' runtime environment configuration.
+$runtimeEnvStr
 
 function start() {
   local pids=\$(getPids)

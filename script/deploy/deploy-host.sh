@@ -108,11 +108,10 @@ function pullSources() {
       # Tips rebuild usage.
       if [ "$buildForcedOnPullUpToDate" != "true" ]; then
         log " [Tips]: If you still want to recompile, you can usage: export buildForcedOnPullUpToDate='true' to set it."
-        return 0
+        return 1
       fi
     fi
   fi
-  return -1
 }
 
 # Pull and maven compile.
@@ -272,15 +271,15 @@ function doDeployBackendApp() {
   local cmdRestart="/etc/init.d/${appName}.service restart"
 
   # Add deployed xcloud-dopaas primary services names.
-  globalDeployStatsMsg="${globalDeployStatsMsg}"$(echo -e """
-[${appName}]:
-          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/
-            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/
-       Profiles Active: ${springProfilesActive}
-              PID File: /mnt/disk1/${appName}/${appName}.pid
-       Restart Command: /etc/init.d/$appName.service restart
-             Logs File: /mnt/disk1/log/${appName}/${appName}_${springProfilesActive}.log
-        Deployed Hosts:""")
+  globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
+            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/\n
+       Profiles Active: ${springProfilesActive}\n
+              PID File: /mnt/disk1/${appName}/${appName}.pid\n
+       Restart Command: /etc/init.d/$appName.service restart\n
+             Logs File: /mnt/disk1/log/${appName}/${appName}_${springProfilesActive}.log\n
+        Deployed Hosts:"
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
     log "[$appName/standalone] deploying to local ..."
@@ -430,15 +429,15 @@ function deployFrontendApps() {
     logErr "[$appName] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
   fi
   # Add deployed xcloud-dopaas primary service host.
-  globalDeployStatsMsg="${globalDeployStatsMsg}"$(echo -e """
-[${appName}]:
-          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/
-            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/
-       Profiles Active: ${springProfilesActive}
-              PID File: /run/nginx.pid
-       Restart Command: sudo systemctl restart nginx or sudo /etc/init.d/nginx.service restart
-             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log
-        Deployed Hosts: $host""")
+  globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/\n
+            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/\n
+       Profiles Active: ${springProfilesActive}\n
+              PID File: /run/nginx.pid\n
+       Restart Command: sudo systemctl restart nginx or sudo /etc/init.d/nginx.service restart\n
+             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log\n
+        Deployed Hosts: $host"
 
   {
     # Check install to remote nginx
@@ -497,14 +496,14 @@ function main() {
   wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
-  echo -n "---------------------------------------------------------------"
-  log "\nDeployed APPs Summary:\n${globalDeployStatsMsg}"
-  log "-------------------------------------------------------------------"
+  log "--------------------------------------------------------------------"
+  log "Deployed APPs Summary:\n${globalDeployStatsMsg}"
+  log "--------------------------------------------------------------------"
   log "DEPLOY $deployStatus"
-  log "-------------------------------------------------------------------"
+  log "--------------------------------------------------------------------"
   log "Total time: ${costTime} sec (Wall Clock)"
   log "Finished at: $(date '+%Y-%m-%d %H:%M:%S')"
   log "Installing details logs see: $logFile"
-  log "-------------------------------------------------------------------"
+  log "--------------------------------------------------------------------"
 }
 main
