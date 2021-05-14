@@ -63,7 +63,7 @@ if [ -z "$isChinaLANNetwork" ]; then # Fallback checker url4
   export isChinaLANNetwork=$([[ "$ipArea" =~ "China" ]] && echo Y || echo "")
 fi
 [ "$isChinaLANNetwork" != "Y" ] && export isChinaLANNetwork="N"
-echo "$isChinaLANNetwork" > "$workspaceDir/isChinaLANNetwork"
+echo "$isChinaLANNetwork" > "$workspaceDir/.isChinaLANNetwork"
 
 # Choose best fast-resources intelligently.
 if [ "$isChinaLANNetwork" == "Y" ]; then

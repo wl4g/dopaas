@@ -453,15 +453,15 @@ function deployFrontendApps() {
     cd $workspaceDir && rm -rf nginx && cp -r $currDir/xcloud-dopaas/nginx . && cd nginx && tar -cf nginx.tar *
     doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginx.tar" "/etc/nginx" "true"
     doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginx.tar && rm -rf nginx.tar" "true" "true"
-    
+
     ## Pull frontend.
     pullSources "xcloud-dopaas-view" "$gitXCloudDoPaaSFrontendUrl" "$gitDoPaaSFrontendBranch"
-    
+
     # Compile frontend.
     sudo $cmdNpm install 2>&1 | tee -a $logFile
     sudo $cmdNpm run build 2>&1 | tee -a $logFile
     [ $? -ne 0 ] && exit -1 || return 0
-    
+
     # Deploy frontend.
     local deployFrontendDir="${appInstallDir}/${appName}-${buildPkgVersion}-bin"
     local fProjectDir="$currDir/xcloud-dopaas-view"
@@ -498,7 +498,7 @@ function main() {
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   echo -n "---------------------------------------------------------------"
-  echo -e "\nDeployed APPs Summary:\n${globalDeployStatsMsg}"
+  log "\nDeployed APPs Summary:\n${globalDeployStatsMsg}"
   log "-------------------------------------------------------------------"
   log "DEPLOY $deployStatus"
   log "-------------------------------------------------------------------"

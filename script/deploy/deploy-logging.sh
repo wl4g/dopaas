@@ -17,8 +17,7 @@
 # */
 
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
-
-[ "$loadedDeployEnvBaseWithProcessNum" != "$$" ] && . $currDir/deploy-env-base.sh && export loadedDeployEnvBaseWithProcessNum="$$"
+. $currDir/deploy-base.sh
 
 function getCurrPid() {
   local pid=$!
