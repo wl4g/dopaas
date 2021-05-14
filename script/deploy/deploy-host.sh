@@ -273,13 +273,13 @@ function doDeployBackendApp() {
   # Add deployed xcloud-dopaas primary services names.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
-          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
-            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/\n
-       Profiles Active: ${springProfilesActive}\n
-              PID File: /mnt/disk1/${appName}/${appName}.pid\n
-       Restart Command: /etc/init.d/$appName.service restart\n
-             Logs File: /mnt/disk1/log/${appName}/${appName}_${springProfilesActive}.log\n
-        Deployed Hosts:"
+\t          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
+\t            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/\n
+\t       Profiles Active: ${springProfilesActive}\n
+\t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
+\t       Restart Command: /etc/init.d/$appName.service restart\n
+\t             Logs File: /mnt/disk1/log/${appName}/${appName}_${springProfilesActive}.log\n
+\t        Deployed Hosts:"
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
     log "[$appName/standalone] deploying to local ..."
@@ -431,13 +431,13 @@ function deployFrontendApps() {
   # Add deployed xcloud-dopaas primary service host.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
-          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/\n
-            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/\n
-       Profiles Active: ${springProfilesActive}\n
-              PID File: /run/nginx.pid\n
-       Restart Command: sudo systemctl restart nginx or sudo /etc/init.d/nginx.service restart\n
-             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log\n
-        Deployed Hosts: $host"
+\t          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/\n
+\t            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/\n
+\t       Profiles Active: ${springProfilesActive}\n
+\t              PID File: /run/nginx.pid\n
+\t       Restart Command: sudo systemctl restart nginx or sudo /etc/init.d/nginx.service restart\n
+\t             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log\n
+\t        Deployed Hosts: $host"
 
   {
     # Check install to remote nginx
