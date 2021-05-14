@@ -30,11 +30,11 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 # ----------------------- Sources(Git) environment configuration. --------------------------------------------
 
 # Git clone URLs definition.
-[ -z "$gitBaseUri" ] && export gitBaseUri=$([ "$isChinaLANNetwork" == "Y" ] && echo "https://gitee.com" || echo "https://github.com") # For speed-up, fuck!
-[ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/wl4g/xcloud-component"
-[ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/wl4g/xcloud-iam"
-[ -z "$gitXCloudDoPaaSUrl" ] && export gitXCloudDoPaaSUrl="${gitBaseUri}/wl4g/xcloud-dopaas"
-[ -z "$gitXCloudDoPaaSFrontendUrl" ] && export gitXCloudDoPaaSFrontendUrl="${gitBaseUri}/wl4g/xcloud-dopaas-view"
+[ -z "$gitBaseUri" ] && export gitBaseUri=$([ "$isChinaLANNetwork" == "Y" ] && echo "https://gitee.com/wl4g" || echo "https://github.com/wl4g") # For speed-up, fuck!
+[ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
+[ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
+[ -z "$gitXCloudDoPaaSUrl" ] && export gitXCloudDoPaaSUrl="${gitBaseUri}/xcloud-dopaas"
+[ -z "$gitXCloudDoPaaSFrontendUrl" ] && export gitXCloudDoPaaSFrontendUrl="${gitBaseUri}/xcloud-dopaas-view"
 # Git pull branchs definition.
 [ -z "$gitDefaultBranch" ] && export gitDefaultBranch="master"
 [ -z "$gitComponentBranch" ] && export gitComponentBranch="${gitDefaultBranch}"

@@ -36,8 +36,8 @@ export currDir=$(cd "`dirname $0`"/ ; pwd)
 # Basic deploy environment variables.
 [ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir
 [ -z "$deployDebug" ] && export deployDebug="false"
-[ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/deploy"
-[ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-dopaas/raw/master/deploy"
+[ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy"
+[ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy"
 
 # Detecting network environment.
 echo "Detecting networking to fetch best resources allocating  ..."
