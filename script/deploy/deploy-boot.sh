@@ -77,9 +77,9 @@ if [ "$deployDebug" == "false" ]; then # Debug mode does not need to download de
   echo "Downloading deployer scripts dependencies ..."
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-i18n-zh_CN.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-i18n-en_US.sh"; [ $? -ne 0 ] && exit -1
-  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env-base.sh"; [ $? -ne 0 ] && exit -1
+  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-conf.sh"; [ $? -ne 0 ] && exit -1
+  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-base.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-logging.sh"; [ $? -ne 0 ] && exit -1
-  curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-env-conf.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-common.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.sh"; [ $? -ne 0 ] && exit -1
   curl -sLk --connect-timeout 10 -m 20 -O "$scriptsBaseUrl/deploy-host.csv.tpl"; [ $? -ne 0 ] && exit -1
@@ -90,7 +90,7 @@ if [ "$deployDebug" == "false" ]; then # Debug mode does not need to download de
 fi
 
 # Depend scripts.
-[ "$loadedDeployCommonWithProcessNum" != "$$" ] && . $currDir/deploy-common.sh && export loadedDeployCommonWithProcessNum="$$"
+. $currDir/deploy-common.sh
 loadi18n
 
 # Option1: Check runtime dependency external services. (e.g: mysql/redis/...)
