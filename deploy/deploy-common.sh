@@ -19,7 +19,7 @@
 
 # Init.
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
-. ${currDir}/deploy-env-conf.sh
+[ "$loadedDeployEnvConfWithProcessNum" != "$$" ] && . $currDir/deploy-env-conf.sh && export loadedDeployEnvConfWithProcessNum="$$"
 
 # Gets OS info and check. return values(centos6_x64,centos7_x64,ubuntu_x64)
 function getOsTypeAndCheck() {
@@ -45,35 +45,6 @@ function secDeleteLocal() {
   local delStatus="$?"
   [ "$delStatus" -ne 0 ] && echo "Deletion can't seem to success. target: $targetPath, causeBy: $result"
   return $delStatus
-}
-
-function getCurrPid() {
-  local pid=$!
-  if [ "$pid" == "" ]; then
-    echo "main"
-    return 0
-  fi
-  echo "pid/$pid"
-  return 0
-}
-
-# Core logging.
-# e.g1: log "error" "Failed to xxx"
-# e.g2: log "xxx complete!"
-function log() {
-  local logLevel="INFO "
-  local logContent=$1
-  if [[ $# > 1 ]]; then
-    logLevel=$(echo "$1" | tr 'a-z' 'A-Z') # To UpperCase
-    logContent=$2
-  fi
-  local logMsg="[$logLevel] "$(date '+%Y-%m-%d %H:%M:%S')" - [$(getCurrPid)] $logContent"
-  echo -e $logMsg
-  echo -e $logMsg >> ${logFile}
-}
-# Error logging.
-function logErr() {
-  log "ERROR" "$@"
 }
 
 # Check and install infra software.

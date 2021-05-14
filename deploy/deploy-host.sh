@@ -18,7 +18,7 @@
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
-. ${currDir}/deploy-common.sh
+[ "$loadedDeployCommonWithProcessNum" != "$$" ] && . $currDir/deploy-common.sh && export loadedDeployCommonWithProcessNum="$$"
 
 # Global variables.
 globalAllNodes=()
@@ -111,8 +111,7 @@ function pullSources() {
       fi
     fi
   fi
-  echo "N"
-  return 0
+  echo "N" && return 0
 }
 
 # Pull and maven compile.
@@ -134,7 +133,7 @@ function pullAndMvnCompile() {
     chown -R $apacheMvnLocalRepoDirOfUser:$apacheMvnLocalRepoDirOfUser $projectDir
     chown -R $apacheMvnLocalRepoDirOfUser:$apacheMvnLocalRepoDirOfUser $apacheMvnLocalRepoDir
   else
-    log "[WARNING] Unable compile project for $projectName"
+    log "[WARNING] Skip compiling project for $projectName"
   fi
 }
 
@@ -415,6 +414,10 @@ function addDnsResolving() {
 
 # Deploy frontend apps to nginx.
 function deployFrontendApps() {
+  # Check is skiped.
+  if [ "$deployFrontendSkip" == "true" ]; then
+    log "Skiped for deploy frontend application, you can set export deployFrontendSkip=false to turn off the skip deployment frontend!"
+  fi
   local appInstallDir="${deployFrontendAppBaseDir}/${appName}-package"
   local node=${globalAllNodes[0]} # First node deploy the nginx by default.
   local host=$(echo $node|awk -F 'ξ' '{print $1}')
@@ -430,7 +433,6 @@ function deployFrontendApps() {
     doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
     doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
   fi
-  [ $? -ne 0 ] && exit -1 || return 0
   ## Pull frontend.
   local fProjectDir="$currDir/xcloud-dopaas-view"
   cd $fProjectDir
@@ -461,12 +463,13 @@ function main() {
   log " Installation logs writing: $logFile"
   log " -------------------------------------------------------------------"
   log ""
-  [ "$deployAsync" == "true" ] && log "Using asynchronous deployment, you can usage: export deployAsync=\"false\" to set it."
+  [ "$deployAsync" == "true" ] && log "Using asynchronous deployment, you can usage: export deployAsync='false' to set it."
   beginTime=`date +%s`
   initConfiguration
   checkInstallInfraSoftware
+  deployFrontendApps &
   deployBackendApps
-  deployFrontendApps
+  wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   echo -n "---------------------------------------------------------------"

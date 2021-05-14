@@ -17,7 +17,7 @@
 # */
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
-# ----------------------- Initialization. -----------------------------------------------------------
+# ----------------------- Initialization. --------------------------------------------------------------------
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 
 # ----------------------- Basic environment configuration. ---------------------------------------------------
@@ -42,6 +42,10 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$gitDoPaaSBranch" ] && export gitDoPaaSBranch="${gitDefaultBranch}"
 [ -z "$gitDoPaaSFrontendBranch" ] && export gitDoPaaSFrontendBranch="${gitDefaultBranch}"
 
+# ----------------------- Deployment(common) environment configuration. --------------------------------------
+# Common build definition.
+[ -z "$buildForcedOnPullUpToDate" ] && export buildForcedOnPullUpToDate="false"
+
 # ----------------------- Deployment(backend) environment configuration. -------------------------------------
 # Maven environment.
 [ -z "$apacheMvnDownloadTarUrl" ] && export apacheMvnDownloadTarUrl="https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
@@ -53,7 +57,6 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 # Maven build definition.
 [ -z "$buildPkgType" ] && export buildPkgType="mvnAssTar" # Options: mvnAssTar|springExecJar
 [ -z "$buildPkgVersion" ] && export buildPkgVersion="master"
-[ -z "$buildForcedOnPullUpToDate" ] && export buildForcedOnPullUpToDate="false"
 
 # Deploy backend common definition.
 [ -z "$runtimeMode" ] && export runtimeMode="cluster" # Options: standalone|cluster
@@ -98,12 +101,12 @@ export deployClusterBuildModules=(
   "urm-manager,${currDir}/xcloud-dopaas/xcloud-dopaas-urm/xcloud-dopaas-urm-service-starter-manager/target"
 )
 
-# ----------------------- Deployment(frontend) environment configuration. -------------------------------------
-
-# Nodejs environment.
+# ----------------------- Deployment(frontend) environment configuration. ------------------------------------
+# NodeJS environment definition.
 [ -z "$nodejsDownloadTarUrl" ] && export nodejsDownloadTarUrl="https://nodejs.org/dist/v14.16.1/node-v14.16.1-linux-x64.tar.xz"
 [ -z "$secondaryNodejsDownloadTarUrl" ] && export secondaryNodejsDownloadTarUrl="https://nodejs.org/dist/v14.16.1/node-v14.16.1-linux-x64.tar.xz"
 [ -z "$nodejsInstallDir" ] && export nodejsInstallDir="$workspaceDir"
 
 # Deploy frontend definition.
+[ -z "$deployFrontendSkip" ] && export deployFrontendSkip="false"
 [ -z "$deployFrontendAppBaseDir" ] && export deployFrontendAppBaseDir="/usr/share/nginx/html/xcloud-dopaas-view-package/xcloud-dopaas-view-master-bin"
