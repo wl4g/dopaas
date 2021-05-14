@@ -66,6 +66,8 @@ bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/s
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
 ```
 
+> Please pay attention to modify the 'deploy-env.sh' custom environment configuration according to the script prompt.
+
 - Server specs requirements
 
 | Runtime Mode | Min requirements | Description |
