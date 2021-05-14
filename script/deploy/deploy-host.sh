@@ -18,7 +18,7 @@
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
-[ "$loadedDeployCommonWithProcessNum" != "$$" ] && . $currDir/deploy-common.sh && export loadedDeployCommonWithProcessNum="$$"
+. $currDir/deploy-common.sh
 
 # Global variables.
 globalAllNodes=()
@@ -323,7 +323,7 @@ function deployBackendApps() {
   if [ $deployBuildModulesSize -gt 0 ]; then
     for ((i=0;i<${#deployBuildModules[@]};i++)) do
       local buildModule=${deployBuildModules[i]}
-      doDeployBackendApp "$buildModule" "${runtimeAppSpringProfilesActive}" "${globalAllNodes[*]}"
+      doDeployBackendApp "$buildModule" "${springProfilesActive}" "${globalAllNodes[*]}"
     done
     [ "$deployAsync" == "true" ] && wait # Wait all apps async deploy complete.
   fi

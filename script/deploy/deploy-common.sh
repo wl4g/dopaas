@@ -19,7 +19,7 @@
 
 # Init.
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
-[ "$loadedDeployEnvConfWithProcessNum" != "$$" ] && . $currDir/deploy-env-conf.sh && export loadedDeployEnvConfWithProcessNum="$$"
+. $currDir/deploy-base.sh
 
 # Gets OS info and check. return values(centos6_x64,centos7_x64,ubuntu_x64)
 function getOsTypeAndCheck() {
@@ -360,10 +360,6 @@ function checkInstallServiceScript() {
   # Make app services script.
   local appShortNameUpper=$(echo $appName|tr '[a-z]' '[A-Z]'|awk -F '-' '{print $1}') # e.g cmdb-facade => CMDB
   local appShortNameLower=$(echo $appShortNameUpper|tr '[A-Z]' '[a-z]') # e.g cmdb-facade => cmdb
-  local runtimeMysqlUrl0="$runtimeMysqlUrl"
-  if [ "$runtimeMode" == "cluster" ]; then # When clustering mode, individual database should be used by each service.
-    local runtimeMysqlUrl0=$(echo $runtimeMysqlUrl|sed "s/dopaas/dopaas_$appShortNameLower/g") 
-  fi
   local tmpServiceFile="$workspaceDir/${appName}.service"
 cat<<EOF>$tmpServiceFile
 #!/bin/bash
@@ -406,16 +402,30 @@ if [ -z "\$SPRING_PROFILES_ACTIVE" ]; then
 elif [ -n "\$(echo \$SPRING_PROFILES_ACTIVE|grep -i '^None\$')" ]; then
   export SPRING_PROFILES_ACTIVE="" # Use empty configuration.
 fi
-[ -z "\$${appShortNameUpper}_DOPAAS_DB_URL" ] && export ${appShortNameUpper}_DOPAAS_DB_URL="$runtimeMysqlUrl0"
-[ -z "\$${appShortNameUpper}_DOPAAS_DB_USER" ] && export ${appShortNameUpper}_DOPAAS_DB_USER="$runtimeMysqlUser"
-[ -z "\$${appShortNameUpper}_DOPAAS_DB_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_DB_PASSWD="$runtimeMysqlPassword"
-[ -z "\$${appShortNameUpper}_DOPAAS_REDIS_NODES" ] && export ${appShortNameUpper}_DOPAAS_REDIS_NODES="$runtimeRedisNodes"
-[ -z "\$${appShortNameUpper}_DOPAAS_REDIS_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_REDIS_PASSWD="$runtimeRedisPassword"
-[ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$runtimeMysqlUrl0"
-[ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="$runtimeMysqlUser"
-[ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="$runtimeMysqlPassword"
-[ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="$runtimeRedisNodes"
-[ -z "\$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="$runtimeRedisPassword"
+
+if [ "$appShortNameUpper" == "IAM" ]; then
+  [ -z "\$IAM_DB_URL" ] && export IAM_DB_URL="$IAM_DB_URL"
+  [ -z "\$IAM_DB_USER" ] && export IAM_DB_USER="$IAM_DB_USER"
+  [ -z "\$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="$IAM_DB_PASSWD"
+  [ -z "\$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="$IAM_REDIS_PASSWD"
+  [ -z "\$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="$IAM_REDIS_NODES"
+else
+  if [ "$runtimeMode" == "standalone" ]; then
+    [ -z "\$STANDALONE_DOPAAS_DB_URL" ] && export STANDALONE_DOPAAS_DB_URL="$STANDALONE_DOPAAS_DB_URL"
+    [ -z "\$STANDALONE_DOPAAS_DB_USER" ] && export STANDALONE_DOPAAS_DB_USER="$STANDALONE_DOPAAS_DB_USER"
+    [ -z "\$STANDALONE_DOPAAS_DB_PASSWD" ] && export STANDALONE_DOPAAS_DB_PASSWD="$STANDALONE_DOPAAS_DB_PASSWD"
+    [ -z "\$STANDALONE_DOPAAS_REDIS_NODES" ] && export STANDALONE_DOPAAS_REDIS_NODES="$STANDALONE_DOPAAS_REDIS_NODES"
+    [ -z "\$STANDALONE_DOPAAS_REDIS_PASSWD" ] && export STANDALONE_DOPAAS_REDIS_PASSWD="$STANDALONE_DOPAAS_REDIS_PASSWD"
+  elif [ "$runtimeMode" == "cluster" ]; then
+    [ -z "\$${appShortNameUpper}_DOPAAS_DB_URL" ] && export ${appShortNameUpper}_DOPAAS_DB_URL="$(eval echo '$'${appShortNameUpper}_DOPAAS_DB_URL)"
+    [ -z "\$${appShortNameUpper}_DOPAAS_DB_USER" ] && export ${appShortNameUpper}_DOPAAS_DB_USER="$(eval echo '$'${appShortNameUpper}_DOPAAS_DB_USER)"
+    [ -z "\$${appShortNameUpper}_DOPAAS_DB_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_DB_PASSWD="$(eval echo '$'${appShortNameUpper}_DOPAAS_DB_PASSWD)"
+    [ -z "\$${appShortNameUpper}_DOPAAS_REDIS_NODES" ] && export ${appShortNameUpper}_DOPAAS_REDIS_NODES="$(eval echo '$'${appShortNameUpper}_DOPAAS_REDIS_NODES)"
+    [ -z "\$${appShortNameUpper}_DOPAAS_REDIS_PASSWD" ] && export ${appShortNameUpper}_DOPAAS_REDIS_PASSWD="$(eval echo '$'${appShortNameUpper}_DOPAAS_REDIS_PASSWD)"
+  else
+    echo "Invalid runtime mode to $runtimeMode"; exit -1
+  fi
+fi
 
 function start() {
   local pids=\$(getPids)
