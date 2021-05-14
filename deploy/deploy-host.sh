@@ -417,6 +417,7 @@ function deployFrontendApps() {
   # Check is skiped.
   if [ "$deployFrontendSkip" == "true" ]; then
     log "Skiped for deploy frontend application, you can set export deployFrontendSkip=false to turn off the skip deployment frontend!"
+    return 0
   fi
   local appInstallDir="${deployFrontendAppBaseDir}/${appName}-package"
   local node=${globalAllNodes[0]} # First node deploy the nginx by default.
