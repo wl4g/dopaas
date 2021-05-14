@@ -117,7 +117,7 @@ export deployClusterBuildModules=(
 
 # Deploy frontend definition.
 [ -z "$deployFrontendSkip" ] && export deployFrontendSkip="false"
-[ -z "$deployFrontendAppBaseDir" ] && export deployFrontendAppBaseDir="/usr/share/nginx/html/xcloud-dopaas-view-package/xcloud-dopaas-view-master-bin"
+[ -z "$deployFrontendAppBaseDir" ] && export deployFrontendAppBaseDir="/usr/share/nginx/html/"
 
 # ----------------------- Runtime environment configuration. ------------------------------------
 
