@@ -21,9 +21,9 @@
 # Deploy i18n(en_US) message definitions.
 export confirmServicesRuntimeConfigEnvVarMsg="Option1: The services that will be deploy depends on are configuration in the form of environment variables:"
 export confirmServicesRuntimeConfigEnvVarTip1Msg="[y] Confirm to use the above configuration;"
-export confirmServicesRuntimeConfigEnvVarTip2Msg="[n] Exit and then customize the reconfiguration;"
+export confirmServicesRuntimeConfigEnvVarTip2Msg="[n] Exit first, modify the '$curDir/deploy-env.sh' configuration items to override the default value, and then execute again;"
 export confirmServicesRuntimeConfigEnvVarTip3Msg="Please confirm to (y|n)?"
-export confirmServicesRuntimeConfigEnvVarTip4Msg="Please modify the configuration item in $currDir/deploy-env.sh to override the default configuration value, and then execute it again."
+export confirmServicesRuntimeConfigEnvVarTip4Msg="Please modify the '$currDir/deploy-env.sh' configuration items !"
 export choosingDeployModeMsg="Option2: Choosing deployment mode:"
 export choosingDeployModeTip1Msg="[1] If you choose host deploy mode, next the app services is deployed to the remote host;"
 export choosingDeployModeTip2Msg="[2] If you choose docker deploy mode, next the app services is deployed to the remote docker;"

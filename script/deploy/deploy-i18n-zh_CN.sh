@@ -21,9 +21,9 @@
 # Deploy i18n(zh_CN) message definitions.
 export confirmServicesRuntimeConfigEnvVarMsg="选项1: 您即将部署的服务需依赖以下环境变量形式的配置:"
 export confirmServicesRuntimeConfigEnvVarTip1Msg="[y] 确认使用以上配置;"
-export confirmServicesRuntimeConfigEnvVarTip2Msg="[n] 先退出, 然后在当前shell终端重新执行export自定义值来覆盖这些默认配置;"
+export confirmServicesRuntimeConfigEnvVarTip2Msg="[n] 先退出, 再修改 '$currDir/deploy-env.sh' 配置项来覆盖默认配置值, 然后重新执行;"
 export confirmServicesRuntimeConfigEnvVarTip3Msg="请输入(y|n)?"
-export confirmServicesRuntimeConfigEnvVarTip4Msg="请在修改 $currDir/deploy-env.sh 中的配置项来覆盖默认配置值, 然后重新执行"
+export confirmServicesRuntimeConfigEnvVarTip4Msg="请修改 '$currDir/deploy-env.sh' 配置项!"
 export choosingDeployModeMsg="选项2: 请选择即将要部署模式:"
 export choosingDeployModeTip1Msg="[1] 如果选择主机部署模式, 则下一步就会将程序服务部署到远程宿主机上;"
 export choosingDeployModeTip2Msg="[2] 如果选择docker部署模式, 那么接下来就会将程序服务将部署到远程docker上;"
