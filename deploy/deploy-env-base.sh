@@ -30,7 +30,7 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 # ----------------------- Sources(Git) environment configuration. --------------------------------------------
 
 # Git clone URLs definition.
-[ -z "$gitBaseUri" ] && export gitBaseUri=$([ "$isGFWNetwork" == "Y" ] && echo "https://gitee.com" || echo "https://github.com") # For speed-up, fuck gfw!
+[ -z "$gitBaseUri" ] && export gitBaseUri=$([ "$isChinaLANNetwork" == "Y" ] && echo "https://gitee.com" || echo "https://github.com") # For speed-up, fuck!
 [ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/wl4g/xcloud-component"
 [ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/wl4g/xcloud-iam"
 [ -z "$gitXCloudDoPaaSUrl" ] && export gitXCloudDoPaaSUrl="${gitBaseUri}/wl4g/xcloud-dopaas"
