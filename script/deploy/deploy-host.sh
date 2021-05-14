@@ -19,6 +19,7 @@
 
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
 . $currDir/deploy-common.sh
+loadi18n
 
 # Global variables.
 globalAllNodes=()
@@ -87,7 +88,7 @@ function pullSources() {
     cd $currDir && git clone $cloneUrl 2>&1 | tee -a $logFile
     cd $projectDir && git checkout $branch
     [ $? -ne 0 ] && exit -1
-    echo "Y"
+    return 0
   else
     log "Git pull $projectName from ($branch)$cloneUrl ..."
     # Check and set remote url.
@@ -101,17 +102,17 @@ function pullSources() {
     cd $projectDir && git checkout $branch
     [ $? -ne 0 ] && exit -1
     if [[ "$pullResult" != "Already up-to-date."* || "$buildForcedOnPullUpToDate" == "true" ]]; then
-      echo "Y"
+      return 0
     else
       log "Skip build of $projectName(latest)"
       # Tips rebuild usage.
       if [ "$buildForcedOnPullUpToDate" != "true" ]; then
         log " [Tips]: If you still want to recompile, you can usage: export buildForcedOnPullUpToDate='true' to set it."
-        echo "Y"
+        return 0
       fi
     fi
   fi
-  echo "N" && return 0
+  return -1
 }
 
 # Pull and maven compile.
@@ -121,8 +122,8 @@ function pullAndMvnCompile() {
   local branch=$3
   local projectDir="$currDir/$projectName"
   # Pulling project sources.
-  local isPullSuccess=$(pullSources "$projectName" "$cloneUrl" "$branch")
-  if [ "$isPullSuccess" == "Y" ]; then
+  pullSources "$projectName" "$cloneUrl" "$branch"
+  if [ $? -eq 0 ]; then
     log "Compiling $projectName ..."
     cd $projectDir
     $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
@@ -271,7 +272,7 @@ function doDeployBackendApp() {
   local cmdRestart="/etc/init.d/${appName}.service restart"
 
   # Add deployed xcloud-dopaas primary services names.
-  globalDeployStatsMsg="${globalDeployStatsMsg}"$(echo -n -e """
+  globalDeployStatsMsg="${globalDeployStatsMsg}"$(echo -e """
 [${appName}]:
           Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/
             Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/
@@ -419,6 +420,7 @@ function deployFrontendApps() {
     log "Skiped for deploy frontend application, you can set export deployFrontendSkip=false to turn off the skip deployment frontend!"
     return 0
   fi
+  local appName="xcloud-dopaas-view"
   local appInstallDir="${deployFrontendAppBaseDir}/${appName}-package"
   local node=${globalAllNodes[0]} # First node deploy the nginx by default.
   local host=$(echo $node|awk -F 'ξ' '{print $1}')
@@ -427,27 +429,49 @@ function deployFrontendApps() {
   if [[ "$host" == "" || "$user" == "" ]]; then
     logErr "[$appName] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
   fi
-  # Check install remote nginx
-  local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
-  if [ -z "$checkRemoteNginxResult" ]; then
-    local scriptFilename="install-nginx.sh"
-    doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
-    doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
-  fi
-  ## Pull frontend.
-  local fProjectDir="$currDir/xcloud-dopaas-view"
-  cd $fProjectDir
-  pullSources "xcloud-dopaas-view" "$gitXCloudDoPaaSFrontendUrl" "$gitDoPaaSFrontendBranch" 1>/dev/null
-  # Compile frontend.
-  sudo $cmdNpm install 2>&1 | tee -a $logFile
-  sudo $cmdNpm run build 2>&1 | tee -a $logFile
-  [ $? -ne 0 ] && exit -1 || return 0
-  # Deploy frontend.
-  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendAppBaseDir && \rm -rf $deployFrontendAppBaseDir/*" "true" "true"
-  cd $fProjectDir && tar -cf dist.tar dist/
-  doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar" "$deployFrontendAppBaseDir" "true"
-  doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendAppBaseDir && tar -xf dist.tar --strip-components=1" "true" "true"
-  [ $? -ne 0 ] && exit -1 || return 0
+  # Add deployed xcloud-dopaas primary service host.
+  globalDeployStatsMsg="${globalDeployStatsMsg}"$(echo -e """
+[${appName}]:
+          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/
+            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/
+       Profiles Active: ${springProfilesActive}
+              PID File: /run/nginx.pid
+       Restart Command: sudo systemctl restart nginx or sudo /etc/init.d/nginx.service restart
+             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log
+        Deployed Hosts: $host""")
+
+  {
+    # Check install to remote nginx
+    local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
+    if [ -z "$checkRemoteNginxResult" ]; then
+      # Installing nginx.
+      local scriptFilename="install-nginx.sh"
+      doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
+      doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
+    fi
+    # Make nginx configuration.
+    cd $workspaceDir && rm -rf nginx && cp -r $currDir/xcloud-dopaas/nginx . && cd nginx && tar -cf nginx.tar *
+    doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginx.tar" "/etc/nginx" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginx.tar && rm -rf nginx.tar" "true" "true"
+    
+    ## Pull frontend.
+    pullSources "xcloud-dopaas-view" "$gitXCloudDoPaaSFrontendUrl" "$gitDoPaaSFrontendBranch"
+    
+    # Compile frontend.
+    sudo $cmdNpm install 2>&1 | tee -a $logFile
+    sudo $cmdNpm run build 2>&1 | tee -a $logFile
+    [ $? -ne 0 ] && exit -1 || return 0
+    
+    # Deploy frontend.
+    local deployFrontendDir="${appInstallDir}/${appName}-${buildPkgVersion}-bin"
+    local fProjectDir="$currDir/xcloud-dopaas-view"
+    doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendDir && \rm -rf $deployFrontendDir/*" "true" "true"
+    cd $fProjectDir && tar -cf dist.tar dist/
+    doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar" "$deployFrontendDir" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -xf dist.tar --strip-components=1 && rm -rf dist.tar" "true" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(echo command -v systemctl)\" ] && sudo systemctl restart nginx || /etc/init.d/nginx.service restart" "true" "true"
+    [ $? -ne 0 ] && exit -1 || return 0
+  } &
 }
 
 # ----- Main call. -----
@@ -468,7 +492,7 @@ function main() {
   beginTime=`date +%s`
   initConfiguration
   checkInstallInfraSoftware
-  deployFrontendApps &
+  deployFrontendApps
   deployBackendApps
   wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")

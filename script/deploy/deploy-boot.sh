@@ -34,14 +34,14 @@ echo " Time: $(date '+%Y-%m-%d %H:%M:%S')"
 # Global definition.
 export currDir=$(cd "`dirname $0`"/ ; pwd)
 # Basic deploy environment variables.
-[ -z "$workspaceDir" ] && export workspaceDir="/tmp/.deploy-workspace" && mkdir -p $workspaceDir
+[ -z "$workspaceDir" ] && export workspaceDir="${HOME}/.deploy-workspace" && mkdir -p $workspaceDir
 [ -z "$deployDebug" ] && export deployDebug="false"
 [ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy"
 [ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy"
 
 # Detecting network environment.
 echo "Detecting networking to fetch best resources allocating  ..."
-export isChinaLANNetwork="$(cat $workspaceDir/isChinaLANNetwork 2>/dev/null)" # Load last configuration first.
+export isChinaLANNetwork="$(cat $workspaceDir/.isChinaLANNetwork 2>/dev/null)" # Load last configuration first.
 if [ -z "$isChinaLANNetwork" ]; then # Primary checker url1
   #ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ip.taobao.com/outGetIpInfo?ip=113.109.55.66&accessKey=alibaba-inc" 2>/dev/null)
   ipArea=$(curl --connect-timeout 10 -m 20 -sSL "http://ip.taobao.com/outGetIpInfo?ip=myip&accessKey=alibaba-inc" 2>/dev/null)
