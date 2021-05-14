@@ -97,8 +97,8 @@ function checkInstallInfraSoftware() {
     tar -xf "$tmpTarFile" --strip-components=1 -C "$mvnHome"
     secDeleteLocal "$tmpTarFile" # Cleanup
     # Use china fast maven mirror to settings.xml
-    if [ "$isGFWNetwork" == "Y" ]; then # see: deploy-boot.sh
-      log "Currently in china gfw network, configuring aliyun maven fast mirror ..."
+    if [ "$isChinaLANNetwork" == "Y" ]; then # see: deploy-boot.sh
+      log "Currently in china LAN network, configuring aliyun maven fast mirror ..."
 cat<<EOF>$mvnHome/conf/settings.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -146,8 +146,8 @@ EOF
     export cmdNpm="$nodeHome/bin/npm"
   fi
   # Use china fast nodejs mirror to config.
-  if [ "$isGFWNetwork" == "Y" ]; then # see: deploy-boot.sh
-    log "Currently in china gfw network, configuring taobao npm fast mirror ..."
+  if [ "$isChinaLANNetwork" == "Y" ]; then # see: deploy-boot.sh
+    log "Currently in china LAN network, configuring taobao npm fast mirror ..."
     $cmdNpm config set registry https://registry.npm.taobao.org/
   fi
   log "Use installed node(npm) command: $cmdNpm"
@@ -169,7 +169,7 @@ function checkAndInstallSshpass() {
     # Fallback, online install failure?
     if [ -z "$(command -v /bin/sshpass)" ]; then
       local osType=$(getOsTypeAndCheck)
-      if [ "$isGFWNetwork" == "Y" ]; then
+      if [ "$isChinaLANNetwork" == "Y" ]; then
         if [ "$osType" == "centos6_x64" ]; then
           sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://gitee.com/wl4g/sshpass/attach_files/690539/download/sshpass_centos6_x64_1.09"; [ $? -ne 0 ] && exit -1
         elif [ "$osType" == "centos7_x64" ]; then
@@ -513,8 +513,8 @@ EOF
 # Load i18n config scripts.
 function loadi18n() {
   local isCN="N"
-  if [ -n "$isGFWNetwork" ]; then
-    isCN="$isGFWNetwork"
+  if [ -n "$isChinaLANNetwork" ]; then
+    isCN="$isChinaLANNetwork"
   else
     isCN=$([[ "$LANG" == *"zh_CN"* ]] && echo Y || echo N)
   fi

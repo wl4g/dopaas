@@ -61,9 +61,9 @@ export runtimeRedisNodes='127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381,127.0.0.1
 export runtimeRedisPassword='123456'
 export runtimeAppSpringProfilesActive='pro' # dev|fat|uat|pro
 
-bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy/deploy-boot.sh)"
+bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/deploy/deploy-boot.sh)"
 # 或者
-bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
+bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/deploy/deploy-boot.sh)"
 ```
 
 建议配置
