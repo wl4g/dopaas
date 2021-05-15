@@ -448,8 +448,9 @@ function deployFrontendApps() {
       doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
       doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
     fi
-    # Make nginx configuration.
-    cd $workspaceDir && rm -rf nginx && cp -r $currDir/xcloud-dopaas/nginx . && cd nginx && tar -cf nginx.tar *
+    # Make nginx configuration and install.
+    cd $workspaceDir && rm -rf nginx && cp -r $currDir/xcloud-dopaas/nginx .
+    cd nginx && sed -i "s/wl4g.com/wl4g.$springProfilesActive/g" conf.d/dopaas_http* && tar -cf nginx.tar *
     doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginx.tar" "/etc/nginx" "true"
     doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginx.tar && rm -rf nginx.tar" "true" "true"
 
@@ -467,9 +468,7 @@ function deployFrontendApps() {
     doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendDir && \rm -rf $deployFrontendDir/*" "true" "true"
     cd $fProjectDir && tar -cf dist.tar dist/
     doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar" "$deployFrontendDir" "true"
-    doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -xf dist.tar --strip-components=1 && rm -rf dist.tar" "true" "true"
-    # Replace nginx bind domain.
-    doRemoteCmd "$user" "$passwd" "$host" "sed -i 's/wl4g.com/wl4g.$springProfilesActive/g' /etc/nginx/conf.d/dopaas_http*.conf" "true" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -xf dist.tar --strip-components=1 && rm -rf dist.tar && chmod 755 -R $deployFrontendDir" "true" "true"
     # Restart nginx(first install).
     doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(echo command -v systemctl)\" ] && sudo systemctl restart nginx || /etc/init.d/nginx.service restart" "true" "true"
     [ $? -ne 0 ] && exit -1 || return 0
