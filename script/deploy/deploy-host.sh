@@ -458,15 +458,17 @@ function deployFrontendApps() {
     pullSources "xcloud-dopaas-view" "$gitXCloudDoPaaSFrontendUrl" "$gitDoPaaSFrontendBranch"
 
     # Compile frontend.
-    sudo $cmdNpm install 2>&1 | tee -a $logFile
-    sudo $cmdNpm run build 2>&1 | tee -a $logFile
-    [ $? -ne 0 ] && exit -1 || return 0
+    if [ $? -eq 0 ]; then
+      sudo $cmdNpm install 2>&1 | tee -a $logFile
+      sudo $cmdNpm run build 2>&1 | tee -a $logFile
+      [ $? -ne 0 ] && exit -1 || return 0
+    fi
 
     # Deploy frontend.
     local deployFrontendDir="${appInstallDir}/${appName}-${buildPkgVersion}-bin"
     local fProjectDir="$currDir/xcloud-dopaas-view"
-    doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendDir && \rm -rf $deployFrontendDir/*" "true" "true"
     cd $fProjectDir && tar -cf dist.tar dist/
+    doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendDir && \rm -rf $deployFrontendDir/*" "true" "true"
     doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar" "$deployFrontendDir" "true"
     doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -xf dist.tar --strip-components=1 && rm -rf dist.tar && chmod 755 -R $deployFrontendDir" "true" "true"
     # Restart nginx(first install).
