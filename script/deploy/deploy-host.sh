@@ -468,6 +468,9 @@ function deployFrontendApps() {
     cd $fProjectDir && tar -cf dist.tar dist/
     doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar" "$deployFrontendDir" "true"
     doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -xf dist.tar --strip-components=1 && rm -rf dist.tar" "true" "true"
+    # Replace nginx bind domain.
+    doRemoteCmd "$user" "$passwd" "$host" "sed -i 's/wl4g.com/wl4g.$springProfilesActive/g' /etc/nginx/conf.d/dopaas_http*.conf" "true" "true"
+    # Restart nginx(first install).
     doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(echo command -v systemctl)\" ] && sudo systemctl restart nginx || /etc/init.d/nginx.service restart" "true" "true"
     [ $? -ne 0 ] && exit -1 || return 0
   } &
