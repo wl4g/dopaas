@@ -25,7 +25,7 @@ loadi18n
 globalAllNodes=()
 globalAllNodesString=""
 globalDeployStatsMsg="" # Deployed stats message.
-isBackendUpdatableOfDependencies="" # Backend project analysis from dependency, whether git submits updates
+isBackendPullUpdated="false" # Backend project analysis from dependency, whether git submits updates
 
 # Init configuration.
 function initConfiguration() {
@@ -78,7 +78,7 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
   fi
 }
 
-# Pull project sources. (Return 'Y' for pull success)
+# Pull project sources, return(0/1)
 function pullSources() {
   local projectName=$1 # e.g xcloud-dopaas
   local cloneUrl=$2
@@ -102,19 +102,11 @@ function pullSources() {
     local pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
     cd $projectDir && git checkout $branch
     [ $? -ne 0 ] && exit -1
-    if [ "$isBackendUpdatableOfDependencies" == "true" ]; then # There are upstream dependencies and updates
-      buildForcedOnPullUpToDate="true"
-      return 0
-    elif [[ "$pullResult" != "Already up-to-date."* || "$buildForcedOnPullUpToDate" == "true" ]]; then
-      buildForcedOnPullUpToDate="true"
+    if [[ "$pullResult" != "Already up-to-date."* ]]; then
+      isBackendPullUpdated='true' # There are upstream dependencies and updates
       return 0
     else
-      log "Skip build of $projectName(latest)"
-      # Tips rebuild usage.
-      if [ "$buildForcedOnPullUpToDate" != "true" ]; then
-        log " [Tips]: If you still want to recompile, you can usage: export buildForcedOnPullUpToDate='true' to set it."
-        return 1
-      fi
+      return 1
     fi
   fi
 }
@@ -127,7 +119,7 @@ function pullAndMvnCompile() {
   local projectDir="$currDir/$projectName"
   # Pulling project sources.
   pullSources "$projectName" "$cloneUrl" "$branch"
-  if [ $? -eq 0 ]; then
+  if [[ $? -eq 0 || "$buildForcedOnPullUpToDate" == 'true' || "$isBackendPullUpdated" == 'true' ]]; then
     log "Compiling $projectName ..."
     cd $projectDir
     $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
@@ -138,7 +130,11 @@ function pullAndMvnCompile() {
     chown -R $apacheMvnLocalRepoDirOfUser:$apacheMvnLocalRepoDirOfUser $projectDir
     chown -R $apacheMvnLocalRepoDirOfUser:$apacheMvnLocalRepoDirOfUser $apacheMvnLocalRepoDir
   else
-    log "[WARNING] Skip compiling project for $projectName"
+    log "[WARNING] Skip building project for $projectName"
+    # Tips rebuild usage.
+    if [ "$buildForcedOnPullUpToDate" != "true" ]; then
+      log " [Tips]: If you still want to recompile, you can usage: export buildForcedOnPullUpToDate='true' to set it."
+    fi
   fi
 }
 
