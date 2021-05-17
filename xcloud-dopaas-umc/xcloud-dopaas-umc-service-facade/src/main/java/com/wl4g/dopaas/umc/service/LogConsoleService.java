@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.cmdb.service;
+package com.wl4g.dopaas.umc.service;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 

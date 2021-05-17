@@ -39,7 +39,7 @@ spring:
         success-uri: ${DOPAAS_SERVICE_SCHEMA:https}://dopaas.${DOPAAS_SERVICE_ZONE:wl4g.com}/#/ci/taskhis
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
 #    druid:
 #      url: ${STANDALONE_DOPAAS_DB_URL:jdbc:mysql://rds.standalone.wl4g.com:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
 #      username: ${STANDALONE_DOPAAS_DB_USER:dopaas}

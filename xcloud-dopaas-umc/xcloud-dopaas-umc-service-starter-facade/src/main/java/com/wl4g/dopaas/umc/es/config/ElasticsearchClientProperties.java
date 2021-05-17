@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.cmdb.es.config;
+package com.wl4g.dopaas.umc.es.config;
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.elasticsearch.client.RestHighLevelClient;

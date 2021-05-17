@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.cmdb.es.config;
+package com.wl4g.dopaas.umc.es.config;
 
-import com.wl4g.dopaas.cmdb.es.EnhancedRestHighLevelClient;
-import com.wl4g.dopaas.cmdb.es.config.ElasticsearchClientProperties.ElasticsearchClientPoolProperties;
-import com.wl4g.dopaas.cmdb.es.pool.ElasticsearchClientFactory;
-import com.wl4g.dopaas.cmdb.es.pool.ElasticsearchClientPool;
+import com.wl4g.dopaas.umc.es.EnhancedRestHighLevelClient;
+import com.wl4g.dopaas.umc.es.config.ElasticsearchClientProperties.ElasticsearchClientPoolProperties;
+import com.wl4g.dopaas.umc.es.pool.ElasticsearchClientFactory;
+import com.wl4g.dopaas.umc.es.pool.ElasticsearchClientPool;
+
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.*;

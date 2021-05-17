@@ -45,7 +45,7 @@ spring:
   # Datasource configuration.
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
 #    druid:
       url: jdbc:mysql://${DEVOPS_DB_URL:owner-node5:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
 #      username: ${DEVOPS_DB_USER:dopaas}

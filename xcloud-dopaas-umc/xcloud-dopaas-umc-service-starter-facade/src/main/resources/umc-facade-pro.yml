@@ -11,6 +11,8 @@
 # #### Configuration of specical on which DoPaaS(umc-facade) service(pro). ####
 #
 spring:
+  es:
+    hosts: 10.0.0.160
   xcloud:
     component:
       support:

@@ -19,7 +19,7 @@ spring:
             namespace: elasticjob-lite
             digest: 
           trace:
-            #rdbDriver: com.mysql.jdbc.Driver
+            #rdbDriver: com.mysql.cj.jdbc.Driver
             #rdbUrl: jdbc:mysql://localhost:3306/elastic_job_cloud_log
             #rdbUsername: root
             #rdbPassword:

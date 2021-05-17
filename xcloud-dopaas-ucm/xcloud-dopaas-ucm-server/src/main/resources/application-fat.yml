@@ -31,7 +31,7 @@ spring:
         success-uri: http://dopaas.${DOPAAS_SERVICE_ZONE:wl4g.fat}/#/scm
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
 #    druid:
 #      url: ${DOPAAS_DB_URL:jdbc:mysql://owner-node1:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
 #      username: ${DOPAAS_DB_USER:dopaas}

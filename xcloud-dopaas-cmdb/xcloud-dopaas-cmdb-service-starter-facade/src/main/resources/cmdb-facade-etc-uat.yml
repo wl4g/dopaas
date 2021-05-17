@@ -24,7 +24,7 @@ spring:
   # Datasource configuration.
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
       jdbcUrl: ${CMDB_DOPAAS_DB_URL:jdbc:mysql://rds.cmdb.wl4g.uat:3306/dopaas_cmdb?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${CMDB_DOPAAS_DB_USER:dopaas_cmdb}

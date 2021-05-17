@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.cmdb.es.listener;
+package com.wl4g.dopaas.umc.es.listener;
 
 import org.elasticsearch.action.search.ShardSearchFailure;
 import org.springframework.stereotype.Component;

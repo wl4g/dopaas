@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.cmdb.service.impl;
+package com.wl4g.dopaas.umc.service.impl;
 
 import static com.wl4g.component.common.lang.Assert2.hasText;
 import static com.wl4g.component.common.lang.Assert2.notNull;
@@ -42,11 +42,11 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.wl4g.component.common.lang.DateUtils2;
-import com.wl4g.dopaas.cmdb.es.handler.LogHandler;
-import com.wl4g.dopaas.cmdb.service.LogConsoleService;
 import com.wl4g.dopaas.common.bean.cmdb.Log;
 import com.wl4g.dopaas.common.bean.cmdb.QueryLogModel;
 import com.wl4g.dopaas.common.bean.cmdb.Querycriteria;
+import com.wl4g.dopaas.umc.es.handler.LogHandler;
+import com.wl4g.dopaas.umc.service.LogConsoleService;
 
 @Service
 public class LogConsoleServiceImpl implements LogConsoleService {

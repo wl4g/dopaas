@@ -17,7 +17,7 @@ spring:
         href-url: http://127.0.0.1:${server.port}/${spring.application.name}
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
 #    druid:
       url: jdbc:mysql://safecloud-defaulti.mysql.rds.aliyuncs.com:3306/${DOPAAS_DB_NAME:dopaas}?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: dopaas
