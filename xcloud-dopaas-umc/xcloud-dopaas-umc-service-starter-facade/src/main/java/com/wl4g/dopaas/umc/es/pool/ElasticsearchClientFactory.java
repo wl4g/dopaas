@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.cmdb.es.pool;
+package com.wl4g.dopaas.umc.es.pool;
 
-import com.wl4g.dopaas.cmdb.es.config.ElasticsearchClientProperties;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
@@ -25,6 +24,8 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.wl4g.dopaas.umc.es.config.ElasticsearchClientProperties;
 
 import java.io.IOException;
 import java.util.HashSet;

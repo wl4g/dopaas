@@ -10,9 +10,6 @@
 
 # #### Configuration of specical on which DoPaaS(cmdb-facade) service(uat). ####
 #
-spring:
-  es:
-    hosts: 10.0.0.160
 
 cipher-key: 03DE18C2FC4E605F
 

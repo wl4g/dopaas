@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.cmdb.es.listener;
+package com.wl4g.dopaas.umc.es.handler;
 
-import org.elasticsearch.action.search.ShardSearchFailure;
+import org.springframework.stereotype.Component;
 
-public interface Listener {
+import com.wl4g.dopaas.common.bean.cmdb.Log;
 
-	void onFailure(ShardSearchFailure failure);
+@Component
+public class LogHandler extends ElasticsearchSupportHandler<Log> {
 
 }

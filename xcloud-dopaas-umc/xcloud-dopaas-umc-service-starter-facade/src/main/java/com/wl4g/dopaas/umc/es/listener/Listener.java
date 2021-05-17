@@ -13,26 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.cmdb.es.handler;
+package com.wl4g.dopaas.umc.es.listener;
 
-import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.ShardSearchFailure;
 
-import java.io.Serializable;
-import java.util.List;
+public interface Listener {
 
-public interface ElasticsearchBasedHandler<T> {
-	// 添加
-	public void add(T t);
+	void onFailure(ShardSearchFailure failure);
 
-	// 删除
-	public void delete(T t);
-
-	// 更新
-	public void update(T t);
-
-	// 根据id查询
-	public T findOne(Serializable id);
-
-	// 查询所有
-	public List<T> findAll(SearchRequest searchRequest) throws Exception;
 }

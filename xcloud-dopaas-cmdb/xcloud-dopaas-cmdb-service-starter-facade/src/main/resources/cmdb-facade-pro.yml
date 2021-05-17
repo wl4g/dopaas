@@ -10,9 +10,6 @@
 
 # #### Configuration of specical on which DoPaaS(cmdb-facade) service(pro) depends. ####
 #
-spring:
-  es:
-    hosts: 127.0.0.1
 
 cipher-key: 03DE18C2FC4E605F
 

@@ -24,7 +24,7 @@ spring:
   # Datasource configuration.
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
       jdbcUrl: ${LCDP_DOPAAS_DB_URL:jdbc:mysql://rds.lcdp.wl4g.fat:3306/dopaas_lcdp?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${LCDP_DOPAAS_DB_USER:dopaas_lcdp}

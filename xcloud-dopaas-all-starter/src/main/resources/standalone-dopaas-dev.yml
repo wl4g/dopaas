@@ -48,7 +48,7 @@ spring:
         success-uri: http://wl4g.debug/#/home/overview
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
 #    druid:
 #      url: ${STANDALONE_DOPAAS_DB_URL:jdbc:mysql://rds.standalone.wl4g.debug:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
 #      username: ${STANDALONE_DOPAAS_DB_USER:dopaas}
