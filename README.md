@@ -49,7 +49,7 @@ Shardingsphere-Elasticjob:3.0.0 +
 
 
 ### 2.1 One click automatic deployment(only spring main services are supported, not dependence services)
-> It is suitable for rapid deployment in server (non container) environment, and build redis cluster, MySQL and other dependent services.
+> It is suitable for the rapid deployment of non container hosts. You need to install redis/redis-cluster, mysql and other dependent services in advance.
 
 ```
 # First, you need to specify some self built dependent services (examples):
