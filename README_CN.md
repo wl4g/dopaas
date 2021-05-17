@@ -49,7 +49,7 @@ Shardingsphere-Elasticjob:3.0.0 +
 
 ## 2. 部署与搭建
 ### 2.1 一键自动部署(暂仅支持spring主服务，不包括依赖服务)
-适用于服务器(非容器)环境快速部署，需自行搭建 redis-cluster、mysql等依赖服务
+适用于非容器主机快速部署，需提前自行搭建好 redis/redis-cluster、mysql等依赖服务.
 
 ```
 # 首先，需指定自建的依赖服务(示例)：

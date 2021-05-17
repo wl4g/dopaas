@@ -25,6 +25,7 @@ loadi18n
 globalAllNodes=()
 globalAllNodesString=""
 globalDeployStatsMsg="" # Deployed stats message.
+isBackendUpdatableOfDependencies="" # Backend project analysis from dependency, whether git submits updates
 
 # Init configuration.
 function initConfiguration() {
@@ -101,7 +102,11 @@ function pullSources() {
     local pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
     cd $projectDir && git checkout $branch
     [ $? -ne 0 ] && exit -1
-    if [[ "$pullResult" != "Already up-to-date."* || "$buildForcedOnPullUpToDate" == "true" ]]; then
+    if [ "$isBackendUpdatableOfDependencies" == "true" ]; then # There are upstream dependencies and updates
+      buildForcedOnPullUpToDate="true"
+      return 0
+    elif [[ "$pullResult" != "Already up-to-date."* || "$buildForcedOnPullUpToDate" == "true" ]]; then
+      buildForcedOnPullUpToDate="true"
       return 0
     else
       log "Skip build of $projectName(latest)"
