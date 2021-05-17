@@ -42,15 +42,15 @@ public class CodeExecutor {
 
 	SmartLogger log = SmartLoggerFactory.getLogger(getClass());
 
-private @Autowired  CustomHistoryDao customHistoryDao;
+	private @Autowired CustomHistoryDao customHistoryDao;
 
-private @Autowired  CustomDatasourceDao customDatasourceDao;
+	private @Autowired CustomDatasourceDao customDatasourceDao;
 
-private @Autowired  CustomAlarmEventDao customAlarmEventDao;
+	private @Autowired CustomAlarmEventDao customAlarmEventDao;
 
-private @Autowired  CustomDataSourceService customDataSourceService;
+	private @Autowired CustomDataSourceService customDataSourceService;
 
-private @Autowired  DemoEngine demoEngine;
+	private @Autowired DemoEngine demoEngine;
 
 	public void executeCode(CustomEngine customEngine) {
 		CustomHistory customHistory = beforeStart(customEngine.getId());
@@ -61,7 +61,7 @@ private @Autowired  DemoEngine demoEngine;
 		if (baseDataSource instanceof MysqlDataSource) {
 			MysqlDataSource mysqlDataSource = (MysqlDataSource) baseDataSource;
 
-			SingleDataSource singleDataSource = new SingleDataSource("com.mysql.jdbc.Driver", mysqlDataSource.getUrl(),
+			SingleDataSource singleDataSource = new SingleDataSource("com.mysql.cj.jdbc.Driver", mysqlDataSource.getUrl(),
 					mysqlDataSource.getUsername(), mysqlDataSource.getPassword());
 
 			JdbcTemplate jdbcTemplate = new JdbcTemplate(singleDataSource);
