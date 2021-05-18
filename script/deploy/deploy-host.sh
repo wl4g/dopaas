@@ -309,8 +309,6 @@ function doDeployBackendApp() {
 
 # Deploy DoPaaS all apps and startup.
 function deployBackendApps() {
-  # Prepare deploy backend apps.
-  prepareDeployBackendApps
   # Deploy DoPaaS apps.
   local deployBuildModulesSize=0
   if [ "$runtimeMode" == "standalone" ]; then
@@ -335,10 +333,9 @@ function deployBackendApps() {
 function prepareDeployBackendApps() {
   log "Pulling and compile backend project sources ..."
   pullAndMvnCompile "xcloud-component" "$gitXCloudComponentUrl" "$gitComponentBranch"
+  deployEurekaServers
   pullAndMvnCompile "xcloud-iam" "$gitXCloudIamUrl" "$gitIamBranch"
   pullAndMvnCompile "xcloud-dopaas" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
-  # Deploying dependent for eureka servers.
-  deployEurekaServers
 }
 
 # Check and deploy eureka servers.
@@ -497,6 +494,7 @@ function main() {
   initConfiguration
   checkInstallInfraSoftware
   deployFrontendApps
+  prepareDeployBackendApps
   deployBackendApps
   wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
