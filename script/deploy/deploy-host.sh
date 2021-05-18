@@ -85,13 +85,13 @@ function pullSources() {
   local branch=$3
   local projectDir="$currDir/$projectName"
   if [ ! -d "$projectDir" ]; then
-    log "Git clone $projectName from ($branch)$cloneUrl ..."
-    cd $currDir && git clone $cloneUrl 2>&1 | tee -a $logFile
+    log "Git clone $projectName from [${branch}]:$cloneUrl ..."
+    cd $currDir && timeout --foreground 180 git clone $cloneUrl 2>&1 | tee -a $logFile
+    [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     cd $projectDir && git checkout $branch
-    [ $? -ne 0 ] && exit -1
     return 0
   else
-    log "Git pull $projectName from ($branch)$cloneUrl ..."
+    log "Git pull $projectName from [${branch}]:$cloneUrl ..."
     # Check and set remote url.
     local oldRemoteUrl=$(cd $projectDir && git remote -v|grep fetch|awk '{print $2}';cd ..)
     if [ "$oldRemoteUrl" != "$cloneUrl" ]; then
@@ -100,8 +100,8 @@ function pullSources() {
     fi
     # Check and pull
     local pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
+    [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     cd $projectDir && git checkout $branch
-    [ $? -ne 0 ] && exit -1
     if [[ "$pullResult" != "Already up-to-date."* ]]; then
       isBackendPullUpdated='true' # There are upstream dependencies and updates
       return 0
