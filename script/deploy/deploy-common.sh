@@ -17,21 +17,23 @@
 # */
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
-# Init.
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 . $currDir/deploy-base.sh
 
-# Gets OS info and check. return values(centos6_x64,centos7_x64,ubuntu_x64)
+# Gets OS info and check. return values(centos6_x64/centos7_x64/centos8_x64/ubuntu_x64/unknown)
 function getOsTypeAndCheck() {
-  local osType=$([ -n "$(cat /etc/*release|grep -i 'centos linux release 7')" ] && echo centos7)
+  local osType=$([ -n "$(cat /etc/*release|grep -i 'centos release 6')" ] && echo centos6)
   if [ -z "$osType" ]; then
-    osType=$([ -n "$(cat /etc/*release|grep -i 'centos release 6')" ] && echo centos6)
+    osType=$([ -n "$(cat /etc/*release|grep -i 'centos linux release 7')" ] && echo centos7)
+  fi
+  if [ -z "$osType" ]; then
+    osType=$([ -n "$(cat /etc/*release|grep -i 'centos linux release 8')" ] && echo centos8)
   fi
   if [ -z "$osType" ]; then
     osType=$([ -n "$(cat /etc/*release|grep -i 'ubuntu')" ] && echo ubuntu)
   fi
   local osArch=$([ -n "$(uname -a|grep -i x86_64)" ] && echo x64)
-  echo "${osType}_${osArch}"
+  [[ -n "$osType" && -n "$osArch" ]] && echo "${osType}_${osArch}" || echo "unknown"
 }
 
 # Security delete local object.
@@ -50,52 +52,163 @@ function secDeleteLocal() {
 # Check and install infra software.
 function checkInstallInfraSoftware() {
   log "Checking basic software pre dependencies ..."
-  # Check java/javac
-  if [[ "$(command -v java)" == "" || "$(command -v javac)" == "" ]]; then
-    log "Not detected java and javac, please install at least jdk8+, note not just JRE !"; exit -1
-  fi
-  local javaVersion=$(java -version 2>&1 | sed '1!d' | sed -e 's/"//g' | awk '{print $3}')
-  local numJavaVersion=$(echo $javaVersion|sed 's/\.//g'|sed 's/_//g')
-  if [[ ${numJavaVersion} -lt 18 ]]; then # must is jdk1.8+
-    log "Installed java version: ${javaVersionJDK}, must be jdk8+, please reinstallation!"; exit -1
-  fi
+  local osType=$(getOsTypeAndCheck)
 
-  # Check git
-  if [ ! -n "$(command -v git)" ]; then
-    log "No command git, auto installing git ..."
-    if [ -n "$(command -v yum)" ]; then
-      sudo yum install -y git
-    elif [ -n "$(command -v apt)" ]; then
-      sudo apt install -y git
-    elif [ -n "$(command -v apt-get)" ]; then
-      sudo apt-get install -y git
-    else
-      logErr "Failed to auto install git!(currently only the OS is supported: CentOS/Ubuntu), Please manual installation!"; exit -1
+  # [Check install jdk]
+  local javaHome="$jdkInstallDir"
+  if [[ -n "$(command -v java)" && -n "$(command -v javac)" ]]; then
+    # check existing jdk version.
+    local javaVersion=$(java -version 2>&1 | sed '1!d' | sed -e 's/"//g' | awk '{print $3}')
+    local numJavaVersion=$(echo $javaVersion|sed 's/\.//g'|sed 's/_//g')
+    if [[ ${numJavaVersion} -lt 18 ]]; then # must is jdk1.8+
+      log "Installed java version: ${javaVersionJDK}, must be jdk8+, please reinstallation!"; exit -1
     fi
-    # Check git installization?
-    [ $? -ne 0 ] && logErr "Failed to auto install git! Please manual installation!" && exit -1
+    export cmdJava="java"
+  else
+    log "Not detected java and javac, installing jdk ..."
+    if [ "$deployNetworkMode" == "extranet" ]; then
+      if [ -n "$(command -v yum)" ]; then
+        sudo yum install -y "$jdk8YumX64PkgName"
+      elif [ -n "$(command -v apt)" ]; then
+        sudo apt install -y "$jdk8AptX64PkgName"
+      elif [ -n "$(command -v apt-get)" ]; then
+        sudo apt-get install -y "$jdk8AptX64PkgName"
+      else
+        logErr "Failed to install JDK!"; exit -1
+      fi
+    elif [ "$deployNetworkMode" == "intranet" ]; then
+      local tmpJdkTarFile="$workspaceDir/jdk8-linux-x64.tar.gz"
+      downloadFile "$localJdk8DownloadUrl" "$tmpJdkTarFile"
+      mkdir -p $javaHome
+      secDeleteLocal "$javaHome/*" # Rmove old files(if necessary)
+      tar -zxf "$tmpJdkTarFile" --strip-components=1 -C "$javaHome"
+      secDeleteLocal "$tmpJdkTarFile" # Cleanup
+      export cmdJava="$javaHome/bin/java" && sudo ln -snf "$javaHome/bin/java" /bin/java && sudo chmod +x /bin/java
+    else
+      logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
+    fi
   fi
+  log "Use installed java command: $cmdJava"
 
-  # Check maven
+  # [Check install sshpass]
+  local sshpassFile="$workspaceDir/sshpass"
+  if [ -z "$(command -v /bin/sshpass)" ]; then
+    if [ "$deployNetworkMode" == "extranet" ]; then
+      if [ "$isChinaLANNetwork" == "Y" ]; then
+        if [ "$osType" == "centos6_x64" ]; then
+          downloadFile "$sshpassForCentos6x64" "$sshpassFile"
+        elif [ "$osType" == "centos7_x64" ]; then
+          downloadFile "$sshpassForCentos7x64" "$sshpassFile"
+        elif [ "$osType" == "centos8_x64" ]; then
+          downloadFile "$sshpassForCentos8x64" "$sshpassFile"
+        elif [ "$osType" == "ubuntu_x64" ]; then
+          downloadFile "sshpassForUbuntu20x64" "$sshpassFile"
+        fi
+      else
+        if [ "$osType" == "centos6_x64" ]; then
+          downloadFile "$secondarySshpassForCentos6x64" "$sshpassFile"
+        elif [ "$osType" == "centos7_x64" ]; then
+          downloadFile "$secondarySshpassForCentos7x64" "$sshpassFile"
+        elif [ "$osType" == "centos8_x64" ]; then
+          downloadFile "$secondarySshpassForCentos8x64" "$sshpassFile"
+        elif [ "$osType" == "ubuntu_x64" ]; then
+          downloadFile "$secondarySshpassForUbuntu20x64" "$sshpassFile"
+        fi
+      fi
+    elif [ "$deployNetworkMode" == "intranet" ]; then
+      if [ "$osType" == "centos6_x64" ]; then
+        downloadFile "$localSshpassForCentos6x64" "$sshpassFile"
+      elif [ "$osType" == "centos7_x64" ]; then
+        downloadFile "$localSshpassForCentos7x64" "$sshpassFile"
+      elif [ "$osType" == "centos8_x64" ]; then
+        downloadFile "$localSshpassForCentos8x64" "$sshpassFile"
+      elif [ "$osType" == "ubuntu_x64" ]; then
+        downloadFile "$localSshpassForUbuntu20x64" "$sshpassFile"
+      fi
+    fi
+    export cmdSshpass="$sshpassFile" && sudo ln -snf $sshpassFile /bin/sshpass && sudo chmod +x /bin/sshpass
+  fi
+  # Check installization result.
+  [ $? -ne 0 ] && logErr "Failed to auto install sshpass! Please manual installation, refer to: https://gitee.com/wl4g/sshpass or https://github.com/wl4g/sshpass" && exit -1
+  log "Use installed sshpass command: /bin/sshpass -> $sshpassFile"
+
+  # [Check install git]
+  local gitHome="$gitInstallDir"
+  if [ -n "$(command -v git)" ]; then # Default installed git.
+    export cmdGit="git"
+  elif [ ! -d "$gitHome" ]; then # Need install tmp git.
+    log "No command git, auto installing git ..."
+    cd $workspaceDir
+    local tmpGitTarFile="$workspaceDir/git-current.tar.gz"
+    if [ "$deployNetworkMode" == "extranet" ]; then
+      if [ "$isChinaLANNetwork" == "N" ]; then
+        if [ "$osType" == "centos6_x64" ]; then
+          downloadFile "$gitDownloadUrlForCentos6x64" "$tmpGitTarFile"
+        elif [ "$osType" == "centos7_x64" ]; then
+          downloadFile "$gitDownloadUrlForCentos7x64" "$tmpGitTarFile"
+        elif [ "$osType" == "centos8_x64" ]; then
+          downloadFile "$gitDownloadUrlForCentos8x64" "$tmpGitTarFile"
+        elif [ "$osType" == "ubuntu_x64" ]; then
+          downloadFile "gitDownloadUrlForUbuntu20x64" "$tmpGitTarFile"
+        fi
+      else
+        if [ "$osType" == "centos6_x64" ]; then
+          downloadFile "$secondaryGitDownloadUrlForCentos6x64" "$tmpGitTarFile"
+        elif [ "$osType" == "centos7_x64" ]; then
+          downloadFile "$secondaryGitDownloadUrlForCentos7x64" "$tmpGitTarFile"
+        elif [ "$osType" == "centos8_x64" ]; then
+          downloadFile "$secondaryGitDownloadUrlForCentos8x64" "$tmpGitTarFile"
+        elif [ "$osType" == "ubuntu_x64" ]; then
+          downloadFile "$secondaryGitDownloadUrlForUbuntu20x64" "$tmpGitTarFile"
+        fi
+      fi
+    elif [ "$deployNetworkMode" == "intranet" ]; then
+      if [ "$osType" == "centos6_x64" ]; then
+        downloadFile "$localGitDownloadUrlForCentos6x64" "$tmpGitTarFile"
+      elif [ "$osType" == "centos7_x64" ]; then
+        downloadFile "$localGitDownloadUrlForCentos7x64" "$tmpGitTarFile"
+      elif [ "$osType" == "centos8_x64" ]; then
+        downloadFile "$localGitDownloadUrlForCentos8x64" "$tmpGitTarFile"
+      elif [ "$osType" == "ubuntu_x64" ]; then
+        downloadFile "$localGitDownloadUrlForUbuntu20x64" "$tmpGitTarFile"
+      fi
+    else
+      logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
+    fi
+    mkdir -p $gitHome
+    secDeleteLocal "$gitHome/*" # Rmove old files(if necessary)
+    tar -zxf "$tmpGitTarFile" --strip-components=1 -C "$gitHome"
+    secDeleteLocal "$tmpGitTarFile" # Cleanup
+    export cmdGit="$gitHome/bin/git" && sudo ln -snf "$gitHome/bin/git" /bin/git && sudo chmod +x /bin/git
+  else # Installed tmp git.
+    export cmdGit="$gitHome/bin/git"
+  fi
+  log "Use installed git command: $cmdGit"
+
+  # [Check install maven]
   local mvnHome="$apacheMvnInstallDir/apache-maven-current"
   if [ -n "$(command -v mvn)" ]; then # Default installed maven.
     export cmdMvn="mvn"
   elif [ ! -d "$mvnHome" ]; then # Need install tmp maven.
     log "No command mvn, auto installing maven ..."
     cd $workspaceDir
-    local tmpTarFile="$workspaceDir/apache-maven-current.tar"
-    log "Downloading for $apacheMvnDownloadTarUrl"
-    curl -o "$tmpTarFile" "$apacheMvnDownloadTarUrl"
-    if [ $? -ne 0 ]; then # Fallback
-      log "Downloading for $secondaryApacheMvnDownloadTarUrl"
-      curl -o "$tmpTarFile" "$secondaryApacheMvnDownloadTarUrl"
+    local tmpMvnTarFile="$workspaceDir/apache-maven-current.tar.gz"
+    if [ "$deployNetworkMode" == "extranet" ]; then
+      downloadFile "$apacheMvnDownloadTarUrl" "$tmpMvnTarFile" "" "false"
+      if [ $? -ne 0 ]; then # Fallback
+        downloadFile "$secondaryApacheMvnDownloadTarUrl" "$tmpMvnTarFile"
+      fi
+    elif [ "$deployNetworkMode" == "intranet" ]; then
+      downloadFile "$localApacheMvnDownloadTarUrl" "$tmpMvnTarFile"
+    else
+      logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
     fi
     # Check installization result.
     [ $? -ne 0 ] && logErr "Failed to auto install mvn! Please manual installation!" && exit -1
     mkdir -p $mvnHome
     secDeleteLocal "$mvnHome/*" # Rmove old files(if necessary)
-    tar -xf "$tmpTarFile" --strip-components=1 -C "$mvnHome"
-    secDeleteLocal "$tmpTarFile" # Cleanup
+    tar -zxf "$tmpMvnTarFile" --strip-components=1 -C "$mvnHome"
+    secDeleteLocal "$tmpMvnTarFile" # Cleanup
     # Use china fast maven mirror to settings.xml
     if [ "$isChinaLANNetwork" == "Y" ]; then # see: deploy-boot.sh
       log "Currently in china LAN network, configuring aliyun maven fast mirror ..."
@@ -115,33 +228,35 @@ cat<<EOF>$mvnHome/conf/settings.xml
 </settings>
 EOF
     fi
-    export cmdMvn="$mvnHome/bin/mvn"
+    export cmdMvn="$mvnHome/bin/mvn" && sudo ln -snf "$mvnHome/bin/mvn" /bin/mvn && sudo chmod +x /bin/mvn
   else # Installed tmp maven.
     export cmdMvn="$mvnHome/bin/mvn"
   fi
   log "Use installed maven command: $cmdMvn"
 
-  # Check nodejs
+  # [Check install nodejs]
   local nodeHome="$nodejsInstallDir/node-current"
   if [ -n "$(command -v npm)" ]; then # Default installed node.
     export cmdNpm="npm"
   elif [ ! -d "$nodeHome" ]; then # Need install tmp node.
     log "No command nodejs, auto installing nodejs ..."
     cd $workspaceDir
-    local tmpTarFile="$workspaceDir/node-current.tar"
-    log "Downloading for $nodejsDownloadTarUrl"
-    curl -o "$tmpTarFile" "$nodejsDownloadTarUrl"
-    if [ $? -ne 0 ]; then # Fallback
-      log "Downloading for $secondaryNodejsDownloadTarUrl"
-      curl -o "$tmpTarFile" "$secondaryNodejsDownloadTarUrl"
+    local tmpNodeTarFile="$workspaceDir/node-current.tar"
+    if [ "$deployNetworkMode" == "extranet" ]; then
+      downloadFile "$nodejsDownloadTarUrl" "$tmpNodeTarFile" "" "false"
+      if [ $? -ne 0 ]; then # Fallback
+        downloadFile "$secondaryNodejsDownloadTarUrl" "$tmpNodeTarFile"
+      fi
+    elif [ "$deployNetworkMode" == "intranet" ]; then
+      downloadFile "$localNodejsDownloadTarUrl" "$tmpNodeTarFile"
+    else
+      logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
     fi
-    # Check installization result.
-    [ $? -ne 0 ] && logErr "Failed to auto install nodejs! Please manual installation!" && exit -1
     mkdir -p $nodeHome
     secDeleteLocal "$nodeHome/*" # Rmove old files(if necessary)
-    tar -xf "$tmpTarFile" --strip-components=1 -C "$nodeHome"
-    secDeleteLocal "$tmpTarFile" # Cleanup
-    export cmdNpm="$nodeHome/bin/npm" && sudo ln -snf "$nodeHome/bin/node" /bin/node
+    tar -xf "$tmpNodeTarFile" --strip-components=1 -C "$nodeHome"
+    secDeleteLocal "$tmpNodeTarFile" # Cleanup
+    export cmdNpm="$nodeHome/bin/npm" && sudo ln -snf "$nodeHome/bin/node" /bin/node && sudo chmod +x /bin/node
   else # Installed tmp nodejs.
     export cmdNpm="$nodeHome/bin/npm"
   fi
@@ -151,46 +266,6 @@ EOF
     $cmdNpm config set registry https://registry.npm.taobao.org/
   fi
   log "Use installed node(npm) command: $cmdNpm"
-}
-
-function checkAndInstallSshpass() {
-  local errmsg="Failed to auto install sshpass! Please manual installation, refer to: https://gitee.com/wl4g/sshpass or https://github.com/wl4g/sshpass"
-  if [ -z "$(command -v /bin/sshpass)" ]; then
-    log "Online installzation sshpass ..."
-    if [ -n "$(command -v yum)" ]; then
-      sudo yum install -y sshpass
-    elif [ -n "$(command -v apt)" ]; then
-      sudo apt install -y sshpass
-    elif [ -n "$(command -v apt-get)" ]; then
-      sudo apt-get install -y sshpass
-    else
-      logErr "$errmsg"; exit -1
-    fi
-    # Fallback, online install failure?
-    if [ -z "$(command -v /bin/sshpass)" ]; then
-      local osType=$(getOsTypeAndCheck)
-      if [ "$isChinaLANNetwork" == "Y" ]; then
-        if [ "$osType" == "centos6_x64" ]; then
-          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://gitee.com/wl4g/sshpass/attach_files/690539/download/sshpass_centos6_x64_1.09"; [ $? -ne 0 ] && exit -1
-        elif [ "$osType" == "centos7_x64" ]; then
-          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://gitee.com/wl4g/sshpass/attach_files/690539/download/sshpass_centos7_x64_1.09"; [ $? -ne 0 ] && exit -1
-        elif [ "$osType" == "ubuntu_x64" ]; then
-          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://gitee.com/wl4g/sshpass/attach_files/690539/download/sshpass_ubuntu_x64_1.09"; [ $? -ne 0 ] && exit -1
-        fi
-      else
-        if [ "$osType" == "centos6_x64" ]; then
-          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://github.com/wl4g/sshpass/releases/download/1.09/sshpass_centos6_x64_1.09"; [ $? -ne 0 ] && exit -1
-        elif [ "$osType" == "centos7_x64" ]; then
-          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://github.com/wl4g/sshpass/releases/download/1.09/sshpass_centos7_x64_1.09"; [ $? -ne 0 ] && exit -1
-        elif [ "$osType" == "ubuntu_x64" ]; then
-          sudo curl -sLk --connect-timeout 10 -m 20 -o /bin/sshpass "https://github.com/wl4g/sshpass/releases/download/1.09/sshpass_ubuntu20_x64_1.09"; [ $? -ne 0 ] && exit -1
-        fi
-      fi
-      sudo chmod +x /bin/sshpass
-    fi
-    # Check installization result.
-    [ $? -ne 0 ] && logErr "$errmsg" && exit -1
-  fi
 }
 
 # Exec remote SSH command.
@@ -230,9 +305,8 @@ function doRemoteCmd() {
       logErr "Failed to exec remote, bacause not ssh-passwordless authorized!"; exit -1
     fi
   else # Exec remote by sshpass
-    checkAndInstallSshpass
     if [ "$isOutput" == "true" ]; then
-      local output=$(sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd")
+      local output=$(/bin/sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd")
       local exitStatus=$?
       [[ $exitStatus -ne 0 && "$exitOnFail" == "true" ]] && exit -1
       echo "$output"
@@ -277,8 +351,7 @@ function doScp() {
       logErr "Failed to scp \"$localPath\" to remote, bacause not ssh-passwordless authorized!"; exit -1
     fi
   else # Exec remote by sshpass
-    checkAndInstallSshpass
-    sshpass -p $password scp $localPath $user@$host:$remotePath
+    /bin/sshpass -p $password scp $localPath $user@$host:$remotePath
     [[ $? -ne 0 && "$exitOnFail" == "true" ]] && exit -1
   fi
 }
@@ -537,5 +610,27 @@ function loadi18n() {
     . $currDir/deploy-i18n-zh_CN.sh
   else
     . $currDir/deploy-i18n-en_US.sh
+  fi
+}
+
+# Downloading install package file.
+function downloadFile() {
+  local downloadUrl=$1
+  local filename=$2
+  local readTimeout=$3 # Default: 60s
+  local exitOnFail=$4 # Default: true
+  [[ -z "$downloadUrl" || -z "$filename" ]] && echo "Invalid 'downloadUrl'=arg1 and 'filename'=args2 is required!" && exit -1
+  [ -z "$readTimeout" ] && readTimeout=60
+  # Check local file is exists. (offline mode)
+  if [[ -n "$(echo $downloadUrl|grep '^file:')" && ! -f "$(echo $downloadUrl|sed 's/file://g')" ]]; then
+    log "Cannot download from '$downloadUrl', because it not found!"; exit -1
+  fi
+  log "Downloading package '$filename' from '$downloadUrl' ..."
+  sudo curl -sLk --connect-timeout 10 -m $readTimeout -o $filename $downloadUrl
+  local retval=$?
+  if [ "$exitOnFail" == "false" ]; then
+    return $retval
+  else
+    [ $retval -ne 0 ] && log "ERROR" "Failed to download package, exitCode=$retval, readTimeout=${readTimeout}s from '$downloadUrl' !" && exit -1
   fi
 }
