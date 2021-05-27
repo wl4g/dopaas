@@ -608,7 +608,6 @@ function main() {
   deployFrontendApps
   prepareDeployBackendApps
   deployBackendApps
-  wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   log "--------------------------------------------------------------------"
