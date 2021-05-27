@@ -48,19 +48,10 @@ Shardingsphere-Elasticjob:3.0.0 +
 - [Developments Guide](README_DEVEL_CN.md)
 
 
-### 2.1 One click automatic deployment(only spring main services are supported, not dependence services)
-> It is suitable for the rapid deployment of non container hosts. You need to install redis/redis-cluster, mysql and other dependent services in advance.
+### 2.1 OneStop auto deployment
+This method is applicable to the rapid deployment of regular hosts (non container). The deployment script will automatically detect the installation, including jdk/nginx/git/maven/node/eureka/zookeeper and all springboot apps, but not including redis/redis cluster(one of the options) and Mysql, which need to be manually installed.
 
 ```
-# First, you need to specify some self built dependent services (examples):
-export defaultGitBranch=master
-export runtimeMysqlUrl='jdbc:mysql://127.0.0.1:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true'
-export runtimeMysqlUser='root'
-export runtimeMysqlPassword='123456'
-export runtimeRedisNodes='127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381,127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381'
-export runtimeRedisPassword='123456'
-export runtimeAppSpringProfilesActive='pro' # dev|fat|uat|pro
-
 bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy/deploy-boot.sh)"
 # or
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
@@ -72,7 +63,7 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 
 | Runtime Mode | Min requirements | Description |
 | ---- | ---- | ---- |
-| cluster | CentOS7+ / Ubuntu18+ (4C+8G+) | Only pseudo clusters can be deployed when there is only one host |
+| cluster | CentOS7+ / Ubuntu18+ (4C+8G+) | Only pseudo distributed clusters can be deployed when there is only one host |
 | standalone | 2C+4G+ | Monomer application |
 
 
