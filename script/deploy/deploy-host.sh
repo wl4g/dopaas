@@ -419,7 +419,7 @@ function deployZookeeperServers() {
       log "[zookeeper/$host1] Deploy zookeeper by peer1 (Simple) ..."
       doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
       doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "cd $zkHome && cp conf/zoo_sample.cfg conf/zoo.cfg && bin/zkServer.sh restart" "true" "true"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "cd $zkHome/conf && cp zoo_sample.cfg zoo.cfg && echo 'admin.serverPort=18887' >> zoo.cfg && ../bin/zkServer.sh restart" "true" "true"
     else # Building a real cluster.
       # Make zoo.cfg template.
       local tmpZooCfgFile="$workspaceDir/zoo.cfg"
@@ -432,6 +432,7 @@ clientPort=2181
 maxClientCnxns=500
 autopurge.snapRetainCount=3
 autopurge.purgeInterval=1
+admin.serverPort=18887
 metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider
 metricsProvider.httpPort=7000
 metricsProvider.exportJvmInfo=true
