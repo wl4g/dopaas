@@ -49,35 +49,38 @@
 ##
 ## 3. The following domain is only called between the sub services, as long as the intranet is valid.
 #
-#192.168.1.201    redis.iam.wl4g.com           # [iam-facade/iam-web] depends on redis service.
-#192.168.1.202    rds.iam.wl4g.com             # [iam-data] depends on rds(mysql) service.
+#192.168.1.208    peer1                        # Using for eureka/zookeeper.
+#192.168.1.209    peer2                        # Using for eureka/zookeeper.
+#192.168.1.210    peer3                        # Using for eureka/zookeeper.
 #
-#192.168.1.203    redis.cmdb.wl4g.com          # [cmdb-facade/cmdb-manager] depends on redis service.
-#192.168.1.204    rds.cmdb.wl4g.com            # [cmdb-facade] depends on rds(mysql) service.
+#192.168.1.211    redis.iam.wl4g.com           # [iam-facade/iam-web] depends on redis service.
+#192.168.1.212    rds.iam.wl4g.com             # [iam-data] depends on rds(mysql) service.
 #
-#192.168.1.205    redis.home.wl4g.com          # [home-facade/home-manager] depends on redis service.
-#192.168.1.206    rds.home.wl4g.com            # [home-facade] depends on rds(mysql) service.
+#192.168.1.213    redis.cmdb.wl4g.com          # [cmdb-facade/cmdb-manager] depends on redis service.
+#192.168.1.214    rds.cmdb.wl4g.com            # [cmdb-facade] depends on rds(mysql) service.
 #
-#192.168.1.207    redis.lcdp.wl4g.com          # [lcdp-facade/lcdp-manager] depends on redis service.
-#192.168.1.208    rds.lcdp.wl4g.com            # [lcdp-facade] depends on rds(mysql) service.
+#192.168.1.215    redis.home.wl4g.com          # [home-facade/home-manager] depends on redis service.
+#192.168.1.216    rds.home.wl4g.com            # [home-facade] depends on rds(mysql) service.
 #
-#192.168.1.209    redis.uci.wl4g.com           # [uci-facade/uci-server] depends on redis service.
-#192.168.1.210    rds.uci.wl4g.com             # [uci-facade] depends on rds(mysql) service.
+#192.168.1.217    redis.lcdp.wl4g.com          # [lcdp-facade/lcdp-manager] depends on redis service.
+#192.168.1.218    rds.lcdp.wl4g.com            # [lcdp-facade] depends on rds(mysql) service.
 #
-#192.168.1.211    redis.ucm.wl4g.com           # [ucm-facade/uds-server] depends on redis service.
-#192.168.1.212    rds.ucm.wl4g.com             # [ucm-facade] depends on rds(mysql) service.
+#192.168.1.219    redis.uci.wl4g.com           # [uci-facade/uci-server] depends on redis service.
+#192.168.1.220    rds.uci.wl4g.com             # [uci-facade] depends on rds(mysql) service.
 #
-#192.168.1.213    redis.uds.wl4g.com           # [uds-facade/uds-manager] depends on redis service.
-#192.168.1.214    rds.uds.wl4g.com             # [uds-facade] depends on rds(mysql) service.
+#192.168.1.221    redis.ucm.wl4g.com           # [ucm-facade/uds-server] depends on redis service.
+#192.168.1.222    rds.ucm.wl4g.com             # [ucm-facade] depends on rds(mysql) service.
 #
-#192.168.1.215    redis.umc.wl4g.com           # [umc-facade/umc-manager] depends on redis service.
-#192.168.1.216    rds.umc.wl4g.com             # [umc-facade] depends on rds(mysql) service.
-#192.168.1.217    elasticsearch.umc.wl4g.com   # [umc-facade] depends on elasticsearch service.
+#192.168.1.223    redis.uds.wl4g.com           # [uds-facade/uds-manager] depends on redis service.
+#192.168.1.224    rds.uds.wl4g.com             # [uds-facade] depends on rds(mysql) service.
 #
-#192.168.1.218    redis.urm.wl4g.com           # [urm-facade/umc-manager] depends on redis service.
-#192.168.1.219    rds.urm.wl4g.com             # [urm-facade] depends on rds(mysql) service.
+#192.168.1.225    redis.umc.wl4g.com           # [umc-facade/umc-manager] depends on redis service.
+#192.168.1.226    rds.umc.wl4g.com             # [umc-facade] depends on rds(mysql) service.
+#192.168.1.227    elasticsearch.umc.wl4g.com   # [umc-facade] depends on elasticsearch service.
 #
-#192.168.1.220    redis.uos.wl4g.com           # [uos-facade/uos-manager] depends on redis service.
-#192.168.1.221    rds.uos.wl4g.com             # [uos-facade] depends on rds(mysql) service.
-#192.168.1.222    oss.uos.wl4g.com             # [uos-manager] depends on oss(minio) service.
-
+#192.168.1.228    redis.urm.wl4g.com           # [urm-facade/umc-manager] depends on redis service.
+#192.168.1.229    rds.urm.wl4g.com             # [urm-facade] depends on rds(mysql) service.
+#
+#192.168.1.230    redis.uos.wl4g.com           # [uos-facade/uos-manager] depends on redis service.
+#192.168.1.231    rds.uos.wl4g.com             # [uos-facade] depends on rds(mysql) service.
+#192.168.1.232    oss.uos.wl4g.com             # [uos-manager] depends on oss(minio) service.

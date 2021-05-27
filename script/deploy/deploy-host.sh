@@ -18,8 +18,7 @@
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
 [ -z "$currDir" ] && export currDir=$(echo "$(cd "`dirname "$0"`"/; pwd)")
-. $currDir/deploy-common.sh
-loadi18n
+. $currDir/deploy-common.sh && loadi18n
 
 # Global variables.
 globalAllNodes=()
@@ -86,7 +85,7 @@ function pullSources() {
   local projectDir="$currDir/$projectName"
   if [ ! -d "$projectDir" ]; then
     log "Git clone $projectName from [${branch}]:$cloneUrl ..."
-    cd $currDir && timeout --foreground 180 git clone $cloneUrl 2>&1 | tee -a $logFile
+    cd $currDir && timeout --foreground 300 git clone $cloneUrl 2>&1 | tee -a $logFile
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     cd $projectDir && git checkout $branch
     return 0
@@ -99,7 +98,7 @@ function pullSources() {
       cd $projectDir && git remote set-url origin $cloneUrl
     fi
     # Check and pull
-    local pullResult=$(cd $projectDir && git pull 2>&1 | tee -a $logFile)
+    local pullResult=$(cd $projectDir && timeout --foreground 90 git pull 2>&1 | tee -a $logFile)
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     cd $projectDir && git checkout $branch
     if [[ "$pullResult" != "Already up-to-date."* ]]; then
@@ -334,14 +333,15 @@ function prepareDeployBackendApps() {
   log "Pulling and compile backend project sources ..."
   pullAndMvnCompile "xcloud-component" "$gitXCloudComponentUrl" "$gitComponentBranch"
   deployEurekaServers
+  deployZookeeperServers
   pullAndMvnCompile "xcloud-iam" "$gitXCloudIamUrl" "$gitIamBranch"
   pullAndMvnCompile "xcloud-dopaas" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
 }
 
-# Check and deploy eureka servers.
+# Check deploy eureka servers.
 function deployEurekaServers() {
   if [ "$runtimeMode" == "cluster" ]; then
-    # Deploying eureka servers.
+    log "Deploying eureka servers ..."
     if [ ${#globalAllNodes[@]} -lt 3 ]; then # Building pseudo cluster.
       local appName=$(echo "$deployEurekaBuildModule"|awk -F ',' '{print $1}')
       local cmdRestart="/etc/init.d/${appName}.service restart"
@@ -360,34 +360,123 @@ function deployEurekaServers() {
       doRemoteCmd "$user1" "$passwd1" "$host1" "export SPRING_PROFILES_ACTIVE='ha,peer2' && $cmdRestart" "true" &
       log "[eureka/$host1] Deploy eureka by peer3 (Disguised) ..."
       doRemoteCmd "$user1" "$passwd1" "$host1" "export SPRING_PROFILES_ACTIVE='ha,peer3' && $cmdRestart" "true" &
-      # Check add dns resloving.
-      addDnsResolving "$host1" "$host1" "$host1"
+      # Configer dns.
+      configureRegCenterDns "$host1" "$host1" "$host1"
     else # Building a real cluster.
       # Node1:
       local node1=${globalAllNodes[0]}
       local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
+      local user1=$(echo $node1|awk -F 'ξ' '{print $2}')
+      local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
       log "[eureka/$host1] Deploy eureka by peer1 ..."
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
+      local user2=$(echo $node2|awk -F 'ξ' '{print $2}')
+      local passwd2=$(echo $node2|awk -F 'ξ' '{print $3}')
       log "[eureka/$host2] Deploy eureka by peer2 ..."
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer2" "$node2"
       # Node3:
       local node3=${globalAllNodes[2]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
+      local user3=$(echo $node3|awk -F 'ξ' '{print $2}')
+      local passwd3=$(echo $node3|awk -F 'ξ' '{print $3}')
       log "[eureka/$host3] Deploy eureka by peer3 ..."
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer3" "$node3"
-      # Check add dns resloving.
-      addDnsResolving "$host1" "$host2" "$host3"
+      # Configer dns.
+      configureRegCenterDns "$host1" "$host2" "$host3"
     fi
   else # In standalone mode, Eureka does not need to be deployed.
     log "Skip eureka servers deploy, because runtime mode is standalone."
   fi
 }
 
-# Check add resolving dns for peers.
-function addDnsResolving() {
+# Check deploy zookeeper servers.
+function deployZookeeperServers() {
+  if [ "$runtimeMode" == "cluster" ]; then
+    log "Deploying zookeeper servers ..."
+    # Download package.
+    local tmpZkTarFile="$workspaceDir/zookeeper.tar.gz"
+    if [ "$deployNetworkMode" == "extranet" ]; then
+      if [ "$isChinaLANNetwork" == "N" ]; then
+        downloadFile "$zkDownloadUrl" "$tmpZkTarFile"
+      else
+        downloadFile "$secondaryZkDownloadUrl" "$tmpZkTarFile"
+      fi
+    elif [ "$deployNetworkMode" == "intranet" ]; then
+      downloadFile "$localZkDownloadUrl" "$tmpZkTarFile"
+    else
+      logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
+    fi
+    # Deploying zookeeper servers.
+    if [ ${#globalAllNodes[@]} -lt 3 ]; then # Building pseudo cluster.
+      local node1=${globalAllNodes[0]}
+      local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
+      local user1=$(echo $node1|awk -F 'ξ' '{print $2}')
+      local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
+      # Node1:
+      log "[zookeeper/$host1] Deploy zookeeper by peer1 (Simple) ..."
+      doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "cd $zkHome && cp conf/zoo_sample.cfg conf/zoo.cfg && bin/zkServer.sh restart" "true" "true"
+    else # Building a real cluster.
+      # Make zoo.cfg template.
+      local tmpZooCfgFile="$workspaceDir/zoo.cfg"
+      cat<<EOF>$tmpZooCfgFile
+tickTime=2000
+initLimit=10
+syncLimit=5
+dataDir=/mnt/disk1/zookeeper/
+clientPort=2181
+maxClientCnxns=500
+autopurge.snapRetainCount=3
+autopurge.purgeInterval=1
+metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider
+metricsProvider.httpPort=7000
+metricsProvider.exportJvmInfo=true
+server.1=peer1:2888:3888
+server.2=peer2:2888:3888
+server.3=peer3:2888:3888
+EOF
+      # Node1:
+      local node1=${globalAllNodes[0]}
+      local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
+      local user1=$(echo $node3|awk -F 'ξ' '{print $2}')
+      local passwd1=$(echo $node3|awk -F 'ξ' '{print $3}')
+      log "[zookeeper/$host1] Deploy zookeeper by peer1 ..."
+      doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+      doScp "$user1" "$passwd1" "$host1" "$tmpZooCfgFile" "$zkHome/conf/" "true"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p /mnt/disk1/zookeeper && echo 1 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      # Node2:
+      local node2=${globalAllNodes[1]}
+      local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
+      local user2=$(echo $node3|awk -F 'ξ' '{print $2}')
+      local passwd2=$(echo $node3|awk -F 'ξ' '{print $3}')
+      log "[zookeeper/$host2] Deploy zookeeper by peer2 ..."
+      doScp "$user2" "$passwd2" "$host2" "$tmpZkTarFile" "/tmp/" "true"
+      doRemoteCmd "$user2" "$passwd2" "$host2" "mkdir -p $zkHome && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+      doScp "$user2" "$passwd2" "$host2" "$tmpZooCfgFile" "$zkHome/conf/" "true"
+      doRemoteCmd "$user2" "$passwd2" "$host2" "mkdir -p /mnt/disk1/zookeeper && echo 2 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      # Node3:
+      local node3=${globalAllNodes[2]}
+      local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
+      local user3=$(echo $node3|awk -F 'ξ' '{print $2}')
+      local passwd3=$(echo $node3|awk -F 'ξ' '{print $3}')
+      log "[zookeeper/$host3] Deploy zookeeper by peer3 ..."
+      doScp "$user3" "$passwd3" "$host3" "$tmpZkTarFile" "/tmp/" "true"
+      doRemoteCmd "$user3" "$passwd3" "$host3" "mkdir -p $zkHome && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+      doScp "$user3" "$passwd3" "$host3" "$tmpZooCfgFile" "$zkHome/conf/" "true"
+      doRemoteCmd "$user3" "$passwd3" "$host3" "mkdir -p /mnt/disk1/zookeeper && echo 3 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+    fi
+  else # In standalone mode, Eureka does not need to be deployed.
+    log "Skip zookeeper servers deploy, because runtime mode is standalone."
+  fi
+}
+
+# Check configure regcenter dns.
+function configureRegCenterDns() {
   local host1=$1
   local host2=$2
   local host3=$3
@@ -438,21 +527,40 @@ function deployFrontendApps() {
 \t        Deployed Hosts: $host"
 
   {
-    # Check install to remote nginx
+    # [Check install nginx]
     local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
     if [ -z "$checkRemoteNginxResult" ]; then
-      # Installing nginx.
-      local scriptFilename="install-nginx.sh"
-      doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
-      doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
+      local osType=$(getOsTypeAndCheck)
+      if [ "$deployNetworkMode" == "extranet" ]; then
+        log "Online installing nginx to $host ..."
+        local scriptFilename="install-nginx.sh"
+        doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
+        doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
+      elif [ "$deployNetworkMode" == "intranet" ]; then
+        log "Offline installing nginx to $host ..."
+        local tmpNgxTarFile="$workspaceDir/nginx-current-bin.tar.gz"
+        if [ "$osType" == "centos6_x64" ]; then
+          downloadFile "$localNgxDownloadUrlForCentos6x64" "$tmpNgxTarFile"
+        elif [ "$osType" == "centos7_x64" ]; then
+          downloadFile "$localNgxDownloadUrlForCentos7x64" "$tmpNgxTarFile"
+        elif [ "$osType" == "centos8_x64" ]; then
+          downloadFile "$localNgxDownloadUrlForCentos8x64" "$tmpNgxTarFile"
+        elif [ "$osType" == "ubuntu_x64" ]; then
+          downloadFile "$localNgxDownloadUrlForUbuntu20x64" "$tmpNgxTarFile"
+        fi
+        # Installing to remote.
+        doScp "$user" "$passwd" "$host" "$tmpNgxTarFile" "/tmp/nginx-current-bin.tar.gz" "true"
+        doRemoteCmd "$user" "$passwd" "$host" "cd /tmp && tar -zxf nginx-current-bin.tar.gz && cd nginx-* && chmod +x install.sh && ./install.sh" "true" "true"
+      else
+        logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
+      fi
     fi
     # Make nginx configuration and install.
     cd $workspaceDir && rm -rf nginx && cp -r $currDir/xcloud-dopaas/nginx .
-    cd nginx && sed -i "s/wl4g.com/wl4g.$springProfilesActive/g" conf.d/dopaas_http* && tar -cf nginx.tar *
-    doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginx.tar" "/etc/nginx" "true"
-    doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginx.tar && rm -rf nginx.tar" "true" "true"
-
-    ## Pull frontend.
+    cd nginx && sed -i "s/wl4g.com/wl4g.$springProfilesActive/g" conf.d/dopaas_http* && tar -cf nginxconf.tar *
+    doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginxconf.tar" "/etc/nginx/" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginxconf.tar && rm -rf nginxconf.tar && rm -rf conf.d/example*" "true" "true"
+    # Pull frontend.
     pullSources "xcloud-dopaas-view" "$gitXCloudDoPaaSFrontendUrl" "$gitDoPaaSFrontendBranch"
 
     # Compile frontend.
@@ -465,10 +573,10 @@ function deployFrontendApps() {
     # Deploy frontend.
     local deployFrontendDir="${appInstallDir}/${appName}-${buildPkgVersion}-bin"
     local fProjectDir="$currDir/xcloud-dopaas-view"
-    cd $fProjectDir && tar -cf dist.tar dist/
+    cd $fProjectDir && tar -zcf dist.tar.gz dist/
     doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendDir && \rm -rf $deployFrontendDir/*" "true" "true"
-    doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar" "$deployFrontendDir" "true"
-    doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -xf dist.tar --strip-components=1 && rm -rf dist.tar && chmod 755 -R $deployFrontendDir" "true" "true"
+    doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar.gz" "$deployFrontendDir" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -zxf dist.tar.gz --strip-components=1 && rm -rf dist.tar.gz && chmod 755 -R $deployFrontendDir" "true" "true"
     # Restart nginx(first install).
     doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(echo command -v systemctl)\" ] && sudo systemctl restart nginx || /etc/init.d/nginx.service restart" "true" "true"
     [ $? -ne 0 ] && exit -1 || return 0
@@ -477,6 +585,9 @@ function deployFrontendApps() {
 
 # ----- Main call. -----
 function main() {
+  if [ "$(getOsTypeAndCheck)" == "_" ]; then
+    echo "Unsupported current OS, only CentOS 6/CentOS 7/CentOS 8/Ubuntu is supported for the time being!"; exit -1
+  fi
   [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
   log ""
   log "「 Welcome to XCloud DoPaaS Deployer (Host) 」"
@@ -491,8 +602,8 @@ function main() {
   log ""
   [ "$deployAsync" == "true" ] && log "Using asynchronous deployment, you can usage: export deployAsync='false' to set it."
   beginTime=`date +%s`
-  initConfiguration
   checkInstallInfraSoftware
+  initConfiguration
   deployFrontendApps
   prepareDeployBackendApps
   deployBackendApps

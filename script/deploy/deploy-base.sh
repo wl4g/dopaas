@@ -17,69 +17,121 @@
 # */
 # @see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
 
-# ----------------------- Initialization. --------------------------------------------------------------------
 [ -z "$currDir" ] && export currDir=$(cd "`dirname $0`"/ ; pwd)
 . $currDir/deploy-env.sh
-. $currDir/deploy-logging.sh
 
-# ----------------------- Basic environment configuration. ---------------------------------------------------
+# --------------------------- Basic environment definition. ---------------------------------------------------
 
 [ -z "$workspaceDir" ] && export workspaceDir="${HOME}/.deploy-workspace" && mkdir -p $workspaceDir
+[ -z "$pkgRepoLocalDir" ] && export pkgRepoLocalDir="${workspaceDir}/pkg" && mkdir -p $pkgRepoLocalDir
 currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$logFile" ] && export logFile="${workspaceDir}/install_${currDate}.log" && touch $logFile
 [ -z "$deployDebug" ] && export deployDebug="false" # true|false
+[ -z "$deployNetworkMode" ] && export deployNetworkMode="extranet" # extranet|intranet
 [ -z "$deployAsync" ] && export deployAsync="true" # true|false
 
-# ----------------------- Sources(Git) environment configuration. --------------------------------------------
+# --------------------------- Jdk environment definition. -----------------------------------------------------
 
-# Git clone URLs definition.
+[ -z "$jdkInstallDir" ] && export jdkInstallDir="/usr/local/jdk/"
+[ -z "$jdk8YumX64PkgName" ] && export jdk8YumX64PkgName="java-1.8.0-openjdk-devel.x86_64"
+[ -z "$jdk8AptX64PkgName" ] && export jdk8AptX64PkgName="openjdk-8-jdk"
+# @see: http://jdk.java.net/archive/ or http://jdk.java.net/java-se-ri/8-MR3
+[ -z "$localJdk8DownloadUrl" ] && export localJdk8DownloadUrl="file://${pkgRepoLocalDir}/openjdk-8u41-b04-linux-x64-14_jan_2020.tar.gz"
+
+# --------------------------- Sshpass environment definition. -------------------------------------------------
+
+[ -z "$sshpassForCentos6x64" ] && export sshpassForCentos6x64="https://gitee.com/wl4g-collect/sshpass/attach_files/690539/download/sshpass_centos6_x64_1.09"
+[ -z "$sshpassForCentos7x64" ] && export sshpassForCentos7x64="https://gitee.com/wl4g-collect/sshpass/attach_files/690540/download/sshpass_centos7_x64_1.09"
+[ -z "$sshpassForCentos8x64" ] && export sshpassForCentos8x64="https://gitee.com/wl4g-collect/sshpass/attach_files/711793/download/sshpass_centos8_x64_1.09"
+[ -z "$sshpassForUbuntu20x64" ] && export sshpassForUbuntu20x64="https://gitee.com/wl4g-collect/sshpass/attach_files/690541/download/sshpass_ubuntu20_x64_1.09"
+[ -z "$secondarySshpassForCentos6x64" ] && export secondarySshpassForCentos6x64="https://github.com/wl4g-collect/sshpass/releases/download/1.09/sshpass_centos6_x64_1.09"
+[ -z "$secondarySshpassForCentos7x64" ] && export secondarySshpassForCentos7x64="https://github.com/wl4g-collect/sshpass/releases/download/1.09/sshpass_centos7_x64_1.09"
+[ -z "$secondarySshpassForCentos8x64" ] && export secondarySshpassForCentos8x64="https://github.com/wl4g-collect/sshpass/releases/download/1.09/sshpass_centos8_x64_1.09"
+[ -z "$secondarySshpassForUbuntu20x64" ] && export secondarySshpassForUbuntu20x64="https://github.com/wl4g-collect/sshpass/releases/download/1.09/sshpass_ubuntu20_x64_1.09"
+[ -z "$localSshpassForCentos6x64" ] && export localSshpassForCentos6x64="file://${pkgRepoLocalDir}/sshpass_centos6_x64_1.09"
+[ -z "$localSshpassForCentos7x64" ] && export localSshpassForCentos7x64="file://${pkgRepoLocalDir}/sshpass_centos7_x64_1.09"
+[ -z "$localSshpassForCentos8x64" ] && export localSshpassForCentos8x64="file://${pkgRepoLocalDir}/sshpass_centos8_x64_1.09"
+[ -z "$localSshpassForUbuntu20x64" ] && export localSshpassForUbuntu20x64="file://${pkgRepoLocalDir}/sshpass_ubuntu20_x64_1.09"
+
+# --------------------------- Git environment definition. -----------------------------------------------------
+
+# Git install
+[ -z "$gitInstallDir" ] && export gitInstallDir="/usr/local/git-2.27.0/"
+[ -z "$gitDownloadUrlForCentos6x64" ] && export gitDownloadUrlForCentos6x64="https://github.com/wl4g-collect/git-2.27.0/releases/download/2.27.0/git-2.27.0-centos6-x64-bin.tar.gz"
+[ -z "$gitDownloadUrlForCentos7x64" ] && export gitDownloadUrlForCentos7x64="https://github.com/wl4g-collect/git-2.27.0/releases/download/2.27.0/git-2.27.0-centos7-x64-bin.tar.gz"
+[ -z "$gitDownloadUrlForCentos8x64" ] && export gitDownloadUrlForCentos8x64="https://github.com/wl4g-collect/git-2.27.0/releases/download/2.27.0/git-2.27.0-centos8-x64-bin.tar.gz"
+[ -z "$gitDownloadUrlForUbuntu20x64" ] && export gitDownloadUrlForUbuntu20x64="https://github.com/wl4g-collect/git-2.27.0/releases/download/2.27.0/git-2.27.0-ubuntu20-x64-bin.tar.gz"
+[ -z "$secondaryGitDownloadUrlForCentos6x64" ] && export secondaryGitDownloadUrlForCentos6x64="https://gitee.com/wl4g-collect/git-2.27.0/attach_files/711189/download/git-2.27.0-centos6-x64-bin.tar.gz"
+[ -z "$secondaryGitDownloadUrlForCentos7x64" ] && export secondaryGitDownloadUrlForCentos7x64="https://gitee.com/wl4g-collect/git-2.27.0/attach_files/711194/download/git-2.27.0-centos7-x64-bin.tar.gz"
+[ -z "$secondaryGitDownloadUrlForCentos8x64" ] && export secondaryGitDownloadUrlForCentos8x64="https://gitee.com/wl4g-collect/git-2.27.0/attach_files/711195/download/git-2.27.0-centos8-x64-bin.tar.gz"
+[ -z "$secondaryGitDownloadUrlForUbuntu20x64" ] && export secondaryGitDownloadUrlForUbuntu20x64="https://gitee.com/wl4g-collect/git-2.27.0/attach_files/711196/download/git-2.27.0-ubuntu20-x64-bin.tar.gz"
+[ -z "$localGitDownloadUrlForCentos6x64" ] && export localGitDownloadUrlForCentos6x64="file://${pkgRepoLocalDir}/git-2.27.0-centos6-x64-bin.tar.gz"
+[ -z "$localGitDownloadUrlForCentos7x64" ] && export localGitDownloadUrlForCentos7x64="file://${pkgRepoLocalDir}/git-2.27.0-centos7-x64-bin.tar.gz"
+[ -z "$localGitDownloadUrlForCentos8x64" ] && export localGitDownloadUrlForCentos8x64="file://${pkgRepoLocalDir}/git-2.27.0-centos8-x64-bin.tar.gz"
+[ -z "$localGitDownloadUrlForUbuntu20x64" ] && export localGitDownloadUrlForUbuntu20x64="file://${pkgRepoLocalDir}/git-2.27.0-ubuntu20-x64-bin.tar.gz"
+# Clone URLs.
 [ -z "$gitBaseUri" ] && export gitBaseUri=$([ "$isChinaLANNetwork" == "Y" ] && echo "https://gitee.com/wl4g" || echo "https://github.com/wl4g") # For speed-up, fuck!
 [ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
 [ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
 [ -z "$gitXCloudDoPaaSUrl" ] && export gitXCloudDoPaaSUrl="${gitBaseUri}/xcloud-dopaas"
 [ -z "$gitXCloudDoPaaSFrontendUrl" ] && export gitXCloudDoPaaSFrontendUrl="${gitBaseUri}/xcloud-dopaas-view"
-# Git pull branchs definition.
+# pull branchs.
 [ -z "$gitDefaultBranch" ] && export gitDefaultBranch="master"
 [ -z "$gitComponentBranch" ] && export gitComponentBranch="${gitDefaultBranch}"
 [ -z "$gitIamBranch" ] && export gitIamBranch="${gitDefaultBranch}"
 [ -z "$gitDoPaaSBranch" ] && export gitDoPaaSBranch="${gitDefaultBranch}"
 [ -z "$gitDoPaaSFrontendBranch" ] && export gitDoPaaSFrontendBranch="${gitDefaultBranch}"
 
-# ----------------------- Deployment(common) environment configuration. --------------------------------------
+# ----------------------- Backend environment definition. -----------------------------------------
 
-# Common build definition.
 [ -z "$buildForcedOnPullUpToDate" ] && export buildForcedOnPullUpToDate="false"
-
-# ----------------------- Deployment(backend) environment configuration. -------------------------------------
-
-# Maven environment.
+# Maven install.
 [ -z "$apacheMvnDownloadTarUrl" ] && export apacheMvnDownloadTarUrl="https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
 [ -z "$secondaryApacheMvnDownloadTarUrl" ] && export secondaryApacheMvnDownloadTarUrl="https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz"
+[ -z "$localApacheMvnDownloadTarUrl" ] && export localApacheMvnDownloadTarUrl="file://${pkgRepoLocalDir}/apache-maven-3.6.3-bin.tar.gz"
 [ -z "$apacheMvnInstallDir" ] && export apacheMvnInstallDir="$workspaceDir"
 # You can customize the overlay. (e.g: mvn -Dmaven.repo.local=$HOME/.m2/repository/ -f $HOME/myproject_dir/pom.xml clean install)
 [ -z "$apacheMvnLocalRepoDir" ] && export apacheMvnLocalRepoDir="$HOME/.m2/repository/"
-
-# Maven build definition.
+# Maven build.
 [ -z "$buildPkgType" ] && export buildPkgType="mvnAssTar" # Options: mvnAssTar|springExecJar
 [ -z "$buildPkgVersion" ] && export buildPkgVersion="master"
-
-# Deploy backend common definition.
+# Deploy.
 [ -z "$runtimeMode" ] && export runtimeMode="cluster" # Options: standalone|cluster
 [ -z "$deployAppBaseDir" ] && export deployAppBaseDir="/opt/apps/acm"
 [ -z "$deployAppDataBaseDir" ] && export deployAppDataBaseDir="/mnt/disk1"
 [ -z "$deployAppLogBaseDir" ] && export deployAppLogBaseDir="${deployAppDataBaseDir}/log"
 [ -z "$deployForcedInstallMgtScript" ] && export deployForcedInstallMgtScript="true" # e.g: Forced installing to '/etc/init.d/iam-web.service'
 
-# Deploy(eureka) backend modules defintion.
+# Deploy(eureka).
 export deployEurekaBuildModule="eureka-server,${currDir}/xcloud-component/xcloud-component-integration/xcloud-component-integration-regcenter-eureka-server/target"
 
-# Delopy(standalone mode) backend modules definition.
+# Deploy(zookeeper).(https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz)
+[ -z "$zkHome" ] && export zkHome="/usr/local/zookeeper-current/"
+[ -z "$zkDownloadUrl" ] && export zkDownloadUrl="https://downloads.apache.org/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz"
+[ -z "$secondaryZkDownloadUrl" ] && export secondaryZkDownloadUrl="https://mirrors.sonic.net/apache/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz"
+[ -z "$localZkDownloadUrl" ] && export localZkDownloadUrl="file://${pkgRepoLocalDir}/apache-zookeeper-3.6.3-bin.tar.gz"
+
+# Deploy(nginx)
+[ -z "$nginxDownloadUrlForCentos6x64" ] && export nginxDownloadUrlForCentos6x64="https://gitee.com/wl4g-collect/nginx/attach_files/714124/download/nginx-1.18.0-centos6-x64-bin.tar.gz"
+[ -z "$nginxDownloadUrlForCentos7x64" ] && export nginxDownloadUrlForCentos7x64="https://gitee.com/wl4g-collect/nginx/attach_files/714122/download/nginx-1.20.0-centos7-x64-bin.tar.gz"
+[ -z "$nginxDownloadUrlForCentos8x64" ] && export nginxDownloadUrlForCentos8x64="https://gitee.com/wl4g-collect/nginx/attach_files/714121/download/nginx-1.21.0-centos8-x64-bin.tar.gz"
+[ -z "$nginxDownloadUrlForUbuntu20x64" ] && export nginxDownloadUrlForUbuntu20x64="https://gitee.com/wl4g-collect/nginx/attach_files/714125/download/nginx-1.18.0-ubuntu20-x64-bin.tar.gz"
+#[ -z "$secondaryNgxDownloadUrlForCentos6x64" ] && export secondaryNgxDownloadUrlForCentos6x64="https://github.com/wl4g-collect/nginx/releases/download/release-1.18.0/nginx-1.18.0-centos6-x64-bin.tar.gz"
+#[ -z "$secondaryNgxDownloadUrlForCentos7x64" ] && export secondaryNgxDownloadUrlForCentos7x64="https://github.com/wl4g-collect/nginx/releases/download/release-1.20.0/nginx-1.20.0-centos7-x64-bin.tar.gz"
+#[ -z "$secondaryNgxDownloadUrlForCentos8x64" ] && export secondaryNgxDownloadUrlForCentos8x64="https://github.com/wl4g-collect/nginx/releases/download/release-1.21.0/nginx-1.21.0-centos8-x64-bin.tar.gz"
+#[ -z "$secondaryNgxDownloadUrlForUbuntu20x64" ] && export secondaryNgxDownloadUrlForUbuntu20x64="https://github.com/wl4g-collect/nginx/releases/download/release-1.18.0/nginx-1.18.0-ubuntu20-x64-bin.tar.gz"
+[ -z "$localNgxDownloadUrlForCentos6x64" ] && export localNgxDownloadUrlForCentos6x64="file://${pkgRepoLocalDir}/nginx-1.18.0-centos6-x64-bin.tar"
+[ -z "$localNgxDownloadUrlForCentos7x64" ] && export localNgxDownloadUrlForCentos7x64="file://${pkgRepoLocalDir}/nginx-1.20.0-centos7-x64-bin.tar.gz"
+[ -z "$localNgxDownloadUrlForCentos8x64" ] && export localNgxDownloadUrlForCentos8x64="file://${pkgRepoLocalDir}/nginx-1.21.0-centos8-x64-bin.tar.gz"
+[ -z "$localNgxDownloadUrlForUbuntu20x64" ] && export localNgxDownloadUrlForUbuntu20x64="file://${pkgRepoLocalDir}/nginx-1.18.0-ubuntu20-x64-bin.tar.gz"
+
+# Delopy(standalone mode).
 export deployStandaloneBuildModules=(
   "standalone-iam,${currDir}/xcloud-iam/xcloud-iam-service-starter-all/target"
   "standalone-dopaas,${currDir}/xcloud-dopaas/xcloud-dopaas-all-starter/target"
 )
 
-# Deploy(cluster mode) backend modules definition.
+# Deploy(cluster mode).
 export deployClusterNodesConfigPath="$currDir/deploy-host.csv"
 # for example: "{appName},{buildAssetsDir}"
 export deployClusterBuildModules=(
@@ -108,21 +160,21 @@ export deployClusterBuildModules=(
   "urm-manager,${currDir}/xcloud-dopaas/xcloud-dopaas-urm/xcloud-dopaas-urm-service-starter-manager/target"
 )
 
-# ----------------------- Deployment(frontend) environment configuration. ------------------------------------
+# ----------------------- Frontend environment definition. ----------------------------------------
 
-# NodeJS environment definition.
+# NodeJS install.
 [ -z "$nodejsDownloadTarUrl" ] && export nodejsDownloadTarUrl="https://nodejs.org/dist/v14.16.1/node-v14.16.1-linux-x64.tar.xz"
 [ -z "$secondaryNodejsDownloadTarUrl" ] && export secondaryNodejsDownloadTarUrl="https://nodejs.org/dist/v14.16.1/node-v14.16.1-linux-x64.tar.xz"
+[ -z "$localNodejsDownloadTarUrl" ] && export localNodejsDownloadTarUrl="file://${pkgRepoLocalDir}/node-v14.16.1-linux-x64.tar.xz"
 [ -z "$nodejsInstallDir" ] && export nodejsInstallDir="$workspaceDir"
-
-# Deploy frontend definition.
+# Deploy frontend.
 [ -z "$deployFrontendSkip" ] && export deployFrontendSkip="false"
 [ -z "$deployFrontendAppBaseDir" ] && export deployFrontendAppBaseDir="/usr/share/nginx/html/"
 
-# ----------------------- Runtime environment configuration. ------------------------------------
+# ----------------------- APPs runtime environment definition. ------------------------------------------------
 
 globalExportedEnvStr=""
-# Initilization and merge the services configuration that the runtime depends. ---------------------------------
+# Init and merge the depends services configuration.
 function initRuntimeEnvConfig() {
   # Common environment configuration.
   [ -z "$springProfilesActive" ] && export springProfilesActive="pro"
@@ -210,4 +262,37 @@ function initRuntimeEnvConfig() {
     echo "Invalid runtime mode to $runtimeMode"; exit -1
   fi
 }
+
+# --------------------------------------- Utility definition. -------------------------------------------------
+
+function getCurrPid() {
+  local pid=$!
+  if [ "$pid" == "" ]; then
+    echo "main"
+    return 0
+  fi
+  echo "pid/$pid"
+  return 0
+}
+
+# Core logging.
+# e.g1: log "error" "Failed to xxx"
+# e.g2: log "xxx complete!"
+function log() {
+  local logLevel="INFO "
+  local logContent=$1
+  if [[ $# > 1 ]]; then
+    logLevel=$(echo -e "$1" | tr 'a-z' 'A-Z') # To UpperCase
+    logContent=$2
+  fi
+  local logMsg="[$logLevel] $(date '+%Y-%m-%d %H:%M:%S') - [$(getCurrPid)] $logContent"
+  echo -e $logMsg
+  echo -e $logMsg >> ${logFile}
+}
+
+# Error logging.
+function logErr() {
+  log "ERROR" "$@"
+}
+
 initRuntimeEnvConfig

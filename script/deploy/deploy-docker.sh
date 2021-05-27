@@ -18,7 +18,7 @@
 set -e
 
 echo ""
-echo " Welcome to XCloud DevSecOps Deploying (for Docker) ! "
+echo " Welcome to XCloud DevSecOps Deployer (for Docker) ! "
 echo ""
 echo " Wiki: https://github.com/wl4g/xcloud-devops/blob/master/README.md or https://gitee.com/wl4g/xcloud-devops/blob/master/README_CN.md"
 echo " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"

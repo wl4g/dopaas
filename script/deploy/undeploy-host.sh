@@ -33,12 +33,17 @@ log " Installation logs writing: $logFile"
 log " -----------------------------------------------------------------------"
 log ""
 
-# Removing tmp apache maven.
-function removeTmpApacheMaven() {
-  local tmpApacheMavenPath="$apacheMvnInstallDir/apache-maven*"
-  if [ -d $tmpApacheMavenPath ]; then
-    log "Removing directory $tmpApacheMavenPath"
-    secDeleteLocal "$tmpApacheMavenPath"
+# Removing infra softwares.
+function removeInfraSoftwares() {
+  # Remove workspace directory.
+  if [ -d $workspaceDir ]; then
+    log "Removing directory $workspaceDir"
+    secDeleteLocal "$workspaceDir"
+  fi
+  # Remove sshpass/git/nginx/zookeeper/...
+  if [ -d $gitInstallDir ]; then
+    log "Removing file $gitInstallDir"
+    secDeleteLocal "$gitInstallDir"
   fi
 }
 
@@ -132,7 +137,7 @@ Do you want to continue to uninstall? (yes|no) """ confirm
 done
 [ "$asyncDeploy" == "true" ] && log "Using asynchronous deployment, you can usage: export asyncDeploy=\"false\" to set it."
 beginTime=`date +%s`
-removeTmpApacheMaven
+removeInfraSoftwares
 removeAllAppsResources
 deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
 costTime=$[$(echo `date +%s`)-$beginTime]
