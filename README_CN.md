@@ -48,21 +48,12 @@ Shardingsphere-Elasticjob:3.0.0 +
 - [二次开发指南](README_DEVEL_CN.md)
 
 ## 2. 部署与搭建
-### 2.1 一键自动部署(暂仅支持spring主服务，不包括依赖服务)
-适用于非容器主机快速部署，需提前自行搭建好 redis/redis-cluster、mysql等依赖服务.
+### 2.1 一键自动部署
+此方式适用于常规主机快速部署(非容器)，部署脚本会自动探测安装包括：jdk、nginx、git、maven、node、eureka、zookeeper、及所有SpringBoot apps，但不包括 redis/redis cluster(选其一)、Mysql 需自行手动安装.
 
 ```
-# 首先，需指定自建的依赖服务(示例)：
-export defaultGitBranch=master
-export runtimeMysqlUrl='jdbc:mysql://127.0.0.1:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true'
-export runtimeMysqlUser='root'
-export runtimeMysqlPassword='123456'
-export runtimeRedisNodes='127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381,127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381'
-export runtimeRedisPassword='123456'
-export runtimeAppSpringProfilesActive='pro' # dev|fat|uat|pro
-
 bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy/deploy-boot.sh)"
-# 或者
+# 或
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
 ```
 > 请注意按脚本提示，修改 `deploy-env.sh` 自定义环境配置. 
