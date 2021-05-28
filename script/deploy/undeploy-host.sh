@@ -99,22 +99,26 @@ function removeAppFilesWithRemoteInstance() {
   local appDataBaseDir="${deployAppDataBaseDir}/${appName}"
   local appLogDir="${deployAppLogBaseDir}/${appName}"
   local appServiceFile="/etc/init.d/${appName}.service"
+  local appSystemdServiceFile="/lib/systemd/system/${appName}.service"
   # Stopping all running services.
   log "[$appName/$host] Checking if ${appName} has stopped ..."
   # Notes: for example, Eureka may deploy multiple instances on a single host (as shown below) spring.profiles.active When unloading,
   # Sets to "None" means no discrimination spring.profiles.active To ensure that multiple instance processes can be stopped.
-  doRemoteCmd "$user" "$passwd" "$host" "export SPRING_PROFILES_ACTIVE='None'; [ -f \"$appServiceFile\" ] && $appServiceFile stop" "false"
+  doRemoteCmd "$user" "$passwd" "$host" "\rm -rf $appDataBaseDir/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=None' >$appDataBaseDir/environment; systemctl stop ${appName}" "false"
+  doRemoteCmd "$user" "$passwd" "$host" "export SPRING_PROFILES_ACTIVE='None'; $appServiceFile stop" "false"
   # Remove installed all files.
   log "[$appName/$host] Removing directory /tmp/hsperfdata_$appName/"
-  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"/tmp/hsperfdata_$appName/\" ] && rm -rf /tmp/hsperfdata_$appName/" "false"
+  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"/tmp/hsperfdata_$appName/\" ] && \rm -rf /tmp/hsperfdata_$appName/" "false"
   log "[$appName/$host] Removing directory $appHomeParent"
-  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appHomeParent\" ] && rm -rf $appHomeParent" "false"
+  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appHomeParent\" ] && \rm -rf $appHomeParent" "false"
   log "[$appName/$host] Removing directory $appDataBaseDir"
-  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appDataBaseDir\" ] && rm -rf $appDataBaseDir" "false"
+  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appDataBaseDir\" ] && \rm -rf $appDataBaseDir" "false"
   log "[$appName/$host] Removing directory $appLogDir"
-  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appLogDir\" ] && rm -rf $appLogDir" "false"
+  doRemoteCmd "$user" "$passwd" "$host" "[ -d \"$appLogDir\" ] && \rm -rf $appLogDir" "false"
   log "[$appName/$host] Removing file $appServiceFile"
-  doRemoteCmd "$user" "$passwd" "$host" "[ -f \"$appServiceFile\" ] && rm -rf $appServiceFile" "false"
+  doRemoteCmd "$user" "$passwd" "$host" "[ -f \"$appServiceFile\" ] && \rm -rf $appServiceFile" "false"
+  log "[$appName/$host] Removing file $appSystemdServiceFile"
+  doRemoteCmd "$user" "$passwd" "$host" "[ -f \"$appSystemdServiceFile\" ] && \rm -rf $appSystemdServiceFile" "false"
   log "[$appName/$host] Removing app user to $appName"
   doRemoteCmd "$user" "$passwd" "$host" "[ -n \"\$(cat /etc/passwd|grep '^$appName:')\" ] && userdel -rfRZ $appName" "false"
 }
