@@ -296,13 +296,13 @@ function doRemoteCmd() {
   # Check whether it is login passwordless.(When the password is empty)
   if [ "$password" == "" ]; then
     # If need to enter a password, it will timeout.
-    hasPasswordless=$(timeout 3 ssh $user@$host echo "YES" || echo "NO")
+    local hasPasswordless=$(timeout 3 /bin/sshpass -p "$password" /bin/ssh $user@$host echo "YES" || echo "NO")
     # Direct exec remote cmd.
     if [ "$hasPasswordless" == "YES" ]; then
-      ssh -o StrictHostKeyChecking=no -p 22 -i $HOME/.ssh/id_rsa.pub $user@$host $cmd
+      /bin/sshpass -p "$password" /bin/ssh -o StrictHostKeyChecking=no -p 22 -i $HOME/.ssh/id_rsa.pub $user@$host $cmd
       [[ $? -ne 0 && "$exitOnFail" == "true" ]] && exit -1
     else
-      logErr "Failed to exec remote, bacause not ssh-passwordless authorized!"; exit -1
+      logErr "Failed to exec remote, bacause not ssh-passwordless authorized! $hasPasswordless"; exit -1
     fi
   else # Exec remote by sshpass
     if [ "$isOutput" == "true" ]; then
@@ -335,36 +335,35 @@ function doScp() {
   fi
   # Check host is locally? (direct exec local command)
   if [[ "$host" == "localhost" || "$host" == "127.0.0.1" ]]; then
-    unalias -a cp
+    unalias cp >/dev/null 2>&1
     cp -Rf "$localPath" "$remotePath"
     return $?
   fi
   # Check whether it is login passwordless.(When the password is empty)
   if [ "$password" == "" ]; then
     # If need to enter a password, it will timeout.
-    hasPasswordless=$(timeout 3 ssh $user@$host echo "YES" || echo "NO")
+    local hasPasswordless=$(timeout 3 /bin/sshpass -p "$password" /bin/ssh $user@$host echo "YES" || echo "NO")
     # Direct exec remote cmd.
     if [ "$hasPasswordless" == "YES" ]; then
-      scp $localPath $user@$host:$remotePath
+      /bin/sshpass -p "$password" /bin/scp $localPath $user@$host:$remotePath
       [[ $? -ne 0 && "$exitOnFail" == "true" ]] && exit -1
     else
-      logErr "Failed to scp \"$localPath\" to remote, bacause not ssh-passwordless authorized!"; exit -1
+      logErr "Failed to scp '$localPath' to remote, bacause not ssh-passwordless authorized!"; exit -1
     fi
   else # Exec remote by sshpass
-    /bin/sshpass -p $password scp $localPath $user@$host:$remotePath
+    /bin/sshpass -p "$password" scp $localPath $user@$host:$remotePath
     [[ $? -ne 0 && "$exitOnFail" == "true" ]] && exit -1
   fi
 }
 
 # Check and install remote services script.
-# for testing => checkInstallServiceScript "iam-web" "root" "123456" "10.0.0.160"
+# for testing => checkInstallServiceScript "iam-web" "root" "123456" "10.0.0.160" "fat"
 function checkInstallServiceScript() {
   local appName=$1
   local user=$2
   local password=$3
   local host=$4
   local springProfilesActive=$5
-  local isCheckInstalled=$6
   if [[ $# < 4 || "$appName" == "" || "$user" == "" || "$host" == "" ]]; then
     logErr "[$appName/$host] Cannot installization app services, args appName/user/host is required and args should be 4 !"; exit -1
   fi
@@ -373,7 +372,7 @@ function checkInstallServiceScript() {
     local hasServiceFile=$(doRemoteCmd "$user" "$password" "$host" "echo $([ -f /etc/init.d/$appName.service ] && echo Y || echo N)" "true")
     [ "$hasServiceFile" == "Y" ] && return 0 # Skip installed
   fi
-  log "[$appName/$host] Installing /etc/init.d/${appName}.service script ..."
+  log "[$appName/$host] Installing /etc/init.d/${appName}.service ..."
   local appVersion="master"
   local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: udm-manager => UdmManager
   local appInstallDir="${deployAppBaseDir}/${appName}-package"
@@ -418,18 +417,18 @@ function checkInstallServiceScript() {
   fi
   # Check make directory.
   if [ "$appGroup" != "root" ]; then
-    doRemoteCmd "$user" "$passwd" "$host" "[ -z \"\$(grep '^$appGroup:' /etc/group)\" ] && groupadd $appGroup || exit 0" "true"
+    doRemoteCmd "$user" "$password" "$host" "[ -z \"\$(grep '^$appGroup:' /etc/group)\" ] && groupadd $appGroup || exit 0" "true"
   fi
   if [ "$appUser" != "root" ]; then
-    doRemoteCmd "$user" "$passwd" "$host" "[ -z \"\$(grep '^$appUser:' /etc/passwd)\" ] && useradd -g $appGroup $appUser || exit 0" "true"
+    doRemoteCmd "$user" "$password" "$host" "[ -z \"\$(grep '^$appUser:' /etc/passwd)\" ] && useradd -g $appGroup $appUser || exit 0" "true"
   fi
-  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appInstallDir" "true"
-  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appHome" "true"
-  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appLogDir" "true"
-  doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $appDataDir" "true"
-  doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appInstallDir" "true"
-  doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appLogDir" "true"
-  doRemoteCmd "$user" "$passwd" "$host" "chown -R $appUser:$appGroup $appDataDir" "true"
+  doRemoteCmd "$user" "$password" "$host" "mkdir -p $appInstallDir" "true"
+  doRemoteCmd "$user" "$password" "$host" "mkdir -p $appHome" "true"
+  doRemoteCmd "$user" "$password" "$host" "mkdir -p $appLogDir" "true"
+  doRemoteCmd "$user" "$password" "$host" "mkdir -p $appDataDir" "true"
+  doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup $appInstallDir" "true"
+  doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup $appLogDir" "true"
+  doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup $appDataDir" "true"
   # Make app services script.
   local appShortNameUpper=$(echo $appName|tr '[a-z]' '[A-Z]'|awk -F '-' '{print $1}') # e.g cmdb-facade => CMDB
   local appShortNameLower=$(echo $appShortNameUpper|tr '[A-Z]' '[a-z]') # e.g cmdb-facade => cmdb
@@ -459,6 +458,7 @@ ${runtimeEnvStr}[ -z \"\$${appShortNameUpper}_DOPAAS_REDIS_PASSWD\" ] && export 
     fi
   fi
 
+  # Install init.d service.
   local tmpServiceFile="$workspaceDir/${appName}.service"
 cat<<EOF>$tmpServiceFile
 #!/bin/bash
@@ -589,13 +589,55 @@ case \$CMD in
   exit 2
 esac
 EOF
-
-  # Transfer services script to remote.
-  log "[$appName/$host] Transfer /etc/init.d/$appName.services to remote ..."
+  # Installing init.d service script to remote.
+  log "[$appName/$host] Installing init.d '/etc/init.d/${appName}.service' to remote ..."
   doScp "$user" "$password" "$host" "$tmpServiceFile" "/etc/init.d/${appName}.service" "true"
   doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup /etc/init.d/${appName}.service" "true"
   doRemoteCmd "$user" "$password" "$host" "chmod -R 750 /etc/init.d/${appName}.service" "true"
   secDeleteLocal $tmpServiceFile
+
+  # Install systemctl service.(if necessary)
+  if [ -n "$(command -v systemctl)" ]; then
+    local tmpServiceFile="$workspaceDir/${appName}.service"
+cat<<EOF>$tmpServiceFile
+# See:http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html
+[Unit]
+Description=${appName} - lightweight high availability service based on spring cloud
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=simple
+PIDFile=${appDataDir}/${appName}.pid
+ExecStartPre=/bin/rm -f ${appDataDir}/${appName}.pid
+ExecStart=/bin/bash -c "/etc/init.d/${appName}.service start"
+ExecStartPost=/bin/bash -c "/bin/mkdir -p ${appDataDir} && /bin/echo $MAINPID >${appDataDir}/${appName}.pid"
+ExecReload=/bin/kill -s HUP \$MAINPID
+
+# Will it cause 'Restart=on-abnormal' to be invalid?
+#ExecStop=/bin/kill -s TERM \$MAINPID
+#StandardOutput=null
+StandardError=journal
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+TimeoutStartSec=5
+Restart=on-abnormal
+KillMode=process
+#KillSignal=SIGQUIT
+#PrivateTmp=true # Will move the JVM default hsperfdata file
+User=${appName}
+Group=${appName}
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    # Installing systemd service script to remote.
+    log "[$appName/$host] Installing systemd '/lib/systemd/system/${appName}.service' to remote ..."
+    doScp "$user" "$password" "$host" "$tmpServiceFile" "/lib/systemd/system/${appName}.service" "true"
+    doRemoteCmd "$user" "$password" "$host" "sudo chmod -R 750 /lib/systemd/system/${appName}.service && sudo systemctl daemon-reload" "true"
+    secDeleteLocal $tmpServiceFile
+  fi
 }
 
 # Load i18n config scripts.
