@@ -268,7 +268,7 @@ function doDeployBackendApp() {
     logErr "Failed to deploy, buildFileName is required! all args: '$@'"; exit -1
   fi
   #local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
-  local cmdRestart="/etc/init.d/${appName}.service restart"
+  local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=$springProfilesActive' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
 
   # Add deployed dopaas primary services names.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
@@ -344,7 +344,6 @@ function deployEurekaServers() {
     log "Deploying eureka servers ..."
     if [ ${#globalAllNodes[@]} -lt 3 ]; then # Building pseudo cluster.
       local appName=$(echo "$deployEurekaBuildModule"|awk -F ',' '{print $1}')
-      local cmdRestart="/etc/init.d/${appName}.service restart"
       local node1=${globalAllNodes[0]}
       local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
       local user1=$(echo $node1|awk -F 'ξ' '{print $2}')
@@ -357,9 +356,11 @@ function deployEurekaServers() {
       wait
       # Node2 and Node3: (only start new instance)
       log "[eureka/$host1] Deploy eureka by peer2 (Disguised) ..."
-      doRemoteCmd "$user1" "$passwd1" "$host1" "export SPRING_PROFILES_ACTIVE='ha,peer2' && $cmdRestart" "true" &
+      local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=ha,peer2' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "$cmdRestart" "true" &
       log "[eureka/$host1] Deploy eureka by peer3 (Disguised) ..."
-      doRemoteCmd "$user1" "$passwd1" "$host1" "export SPRING_PROFILES_ACTIVE='ha,peer3' && $cmdRestart" "true" &
+      local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=ha,peer3' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "$cmdRestart" "true" &
       # Configer dns.
       configureRegCenterDns "$host1" "$host1" "$host1"
     else # Building a real cluster.

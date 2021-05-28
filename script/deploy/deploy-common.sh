@@ -429,6 +429,7 @@ function checkInstallServiceScript() {
   doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup $appInstallDir" "true"
   doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup $appLogDir" "true"
   doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup $appDataDir" "true"
+  doRemoteCmd "$user" "$password" "$host" "touch $appDataDir/environment" "true"
   # Make app services script.
   local appShortNameUpper=$(echo $appName|tr '[a-z]' '[A-Z]'|awk -F '-' '{print $1}') # e.g cmdb-facade => CMDB
   local appShortNameLower=$(echo $appShortNameUpper|tr '[A-Z]' '[a-z]') # e.g cmdb-facade => cmdb
@@ -495,14 +496,15 @@ if [ "\$USER" == "root" ]; then
   . "/root/.bashrc"
 fi
 
-# Ref external configuration, default settings.
+# Load external environment.
+[ -f "$appDataDir/environment" ] && source $appDataDir/environment
+
+# Sets '$appName' core environment default values.
 if [ -z "\$SPRING_PROFILES_ACTIVE" ]; then
   export SPRING_PROFILES_ACTIVE="$springProfilesActive" # Use default configuration.
 elif [ -n "\$(echo \$SPRING_PROFILES_ACTIVE|grep -i '^None\$')" ]; then
   export SPRING_PROFILES_ACTIVE="" # Use empty configuration.
 fi
-
-# '$appName' runtime environment configuration.
 $runtimeEnvStr
 
 function start() {
@@ -608,10 +610,13 @@ After=network.target remote-fs.target nss-lookup.target
 [Service]
 Type=simple
 PIDFile=${appDataDir}/${appName}.pid
+EnvironmentFile=${appDataDir}/${appName}/environment
 ExecStartPre=/bin/rm -f ${appDataDir}/${appName}.pid
 ExecStart=/bin/bash -c "/etc/init.d/${appName}.service start"
-ExecStartPost=/bin/bash -c "/bin/mkdir -p ${appDataDir} && /bin/echo $MAINPID >${appDataDir}/${appName}.pid"
-ExecReload=/bin/kill -s HUP \$MAINPID
+ExecStartPost=/bin/bash -c "/bin/mkdir -p ${appDataDir} && /bin/echo \$MAINPID >${appDataDir}/${appName}.pid"
+#ExecReload=/bin/kill -s HUP \$MAINPID
+ExecReload=/bin/bash -c "/etc/init.d/${appName}.service restart"
+ExecStop=/bin/bash -c "/etc/init.d/${appName}.service stop"
 
 # Will it cause 'Restart=on-abnormal' to be invalid?
 #ExecStop=/bin/kill -s TERM \$MAINPID
