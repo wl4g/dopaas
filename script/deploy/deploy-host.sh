@@ -352,9 +352,8 @@ function deployEurekaServers() {
       # Node1:
       log "[eureka/$host1] Deploy eureka by peer1 (Disguised) ..."
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
-      # Due to the asynchronous call of the previous function, we have to wait for 
-      # synchronous execution to ensure the integrity of the first build package.
-      wait
+      # Wait synchronously to ensure the integrity of the first build package.
+      wait $!
       # Node2 and Node3: (only start new instance)
       log "[eureka/$host1] Deploy eureka by peer2 (Disguised) ..."
       local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=ha,peer2' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
@@ -586,7 +585,7 @@ function deployFrontendApps() {
     doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -zxf dist.tar.gz --strip-components=1 && rm -rf dist.tar.gz && chmod 755 -R $deployFrontendDir" "true" "true"
     # Restart nginx(first install).
     doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(echo command -v systemctl)\" ] && sudo systemctl restart nginx || /etc/init.d/nginx.service restart" "true" "true"
-    [ $? -ne 0 ] && exit -1 || return 0
+    [ $? -ne 0 ] && exit -1
   } &
 }
 
