@@ -496,15 +496,17 @@ if [ "\$USER" == "root" ]; then
   . "/root/.bashrc"
 fi
 
-# Load external environment.
+# Load boot external environment.
 [ -f "$appDataDir/environment" ] && source $appDataDir/environment
 
-# Sets '$appName' core environment default values.
+# Export 'SPRING_PROFILES_ACTIVE'
 if [ -z "\$SPRING_PROFILES_ACTIVE" ]; then
   export SPRING_PROFILES_ACTIVE="$springProfilesActive" # Use default configuration.
 elif [ -n "\$(echo \$SPRING_PROFILES_ACTIVE|grep -i '^None\$')" ]; then
   export SPRING_PROFILES_ACTIVE="" # Use empty configuration.
 fi
+
+# Export runtime environment.
 $runtimeEnvStr
 
 function start() {
@@ -610,7 +612,8 @@ After=network.target remote-fs.target nss-lookup.target
 [Service]
 Type=simple
 PIDFile=${appDataDir}/${appName}.pid
-EnvironmentFile=${appDataDir}/environment
+#EnvironmentFile=${appDataDir}/environment
+#Environment=SPRING_PROFILES_ACTIVE=${springProfilesActive}
 ExecStartPre=/bin/rm -f ${appDataDir}/${appName}.pid
 ExecStart=/bin/bash -c "/etc/init.d/${appName}.service start"
 ExecStartPost=/bin/bash -c "/bin/mkdir -p ${appDataDir} && /bin/echo \$MAINPID >${appDataDir}/${appName}.pid"
