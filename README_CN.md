@@ -56,7 +56,7 @@ bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/s
 # 或
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
 ```
-> 请注意按脚本提示，修改 `deploy-env.sh` 自定义环境配置. 
+> 请注意按脚本提示，修改 [`deploy-env.sh`](script/deploy/deploy-env.sh) 自定义环境配置然后重新执行 [`./deploy-boot.sh`](script/deploy/deploy-boot.sh) , 请耐心等待大约 10min. 
 
 建议配置
 

@@ -57,7 +57,7 @@ bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/s
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
 ```
 
-> Please pay attention to modify the 'deploy-env.sh' custom environment configuration according to the script prompt.
+> Please pay attention to modify [`deploy-env.sh`](script/deploy/deploy-env.sh) custom environment configuration according to the script prompt, and then re execute [`./deploy-boot.sh`](script/deploy/deploy-boot.sh). Please wait patiently for about 10 minutes.
 
 - Server specs requirements
 
