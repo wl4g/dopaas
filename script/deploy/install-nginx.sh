@@ -67,6 +67,11 @@ EOF
   else
     echo "Failed to auto install nginx!(currently only the OS is supported: CentOS/Ubuntu/Alpine), Please manual installation!"
   fi
+  # Check disabling selinux.
+  if [[ -f /etc/selinux/config && -n "`cat /etc/selinux/config|grep -E '^SELINUX(\s*)=(\s*)enforcing'`" ]]; then
+    echo "Disabling selinux ..."
+    sed -i -r 's/^SELINUX(\s*)=(\s*)enforcing/SELINUX=disabled/g' /etc/selinux/config
+  fi
   [ $? -ne 0 ] && exit -1
 }
 installLocalNginx

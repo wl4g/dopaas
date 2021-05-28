@@ -86,8 +86,8 @@ elif [ "$runtimeMode" == "cluster" ]; then
 fi
 
 # Others deployer configuration.
-#export deployFrontendSkip=true # true | false
-#export gitBaseUri='https://gitee.com/wl4g' # https://gitee.com/wl4g | https://github.com/wl4g
-#export gitDefaultBranch=2.0.0-RC3-jobs # master | 2.0.0-RC3-jobs
-#export buildForcedOnPullUpToDate=true # true | false
-#export deployDebug=true # true | false
+#export deployFrontendSkip=true # options: true|false
+#export gitBaseUri='https://gitee.com/wl4g' # options: https://gitee.com/wl4g | https://github.com/wl4g
+#export gitDefaultBranch=master # e.g: master | 2.0.0-RC3-jobs
+#export buildForcedOnPullUpToDate=true # options: true|false
+#export deployDebug=true # options: true|false
