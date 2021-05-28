@@ -50,8 +50,8 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
       fi
       # Check deployer user of root group.
       local deployerUserGroups=$(doRemoteCmd "$user" "$passwd" "$host" "$(echo groups)" "true" "true")
-      if [ ! "$deployerUserGroups" = "root" ]; then
-        logErr "Please use the remote host user belonging to the root groups to perform the deployment !" && exit -1
+      if [ ! "$deployerUserGroups" =~ "root" ]; then
+        logErr "Host=$host, User=$user, Must use the remote host user belonging to the root groups to perform the deployment !"; exit -1
       fi
       # Storage deployer all nodes. 
       globalAllNodes[index]="${host}ξ${user}ξ${passwd}"
@@ -241,7 +241,8 @@ function doDeployToNodeOfCluster() {
   [ $? -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   # Restart app service.
   log "[$appName/cluster/$host] Restarting for $appName ..."
-  doRemoteCmd "$user" "$passwd" "$host" "su - $appName -c \"$cmdRestart\"" "true"
+  #doRemoteCmd "$user" "$passwd" "$host" "su - $appName -c \"$cmdRestart\"" "true" # init.d
+  doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true" # systemctl
   log "[$appName/cluster/$host] Deployed $appName completed."
 }
 
