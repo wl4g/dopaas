@@ -572,7 +572,7 @@ function deployFrontendApps() {
     if [ $? -eq 0 ]; then
       sudo $cmdNpm install 2>&1 | tee -a $logFile
       sudo $cmdNpm run build 2>&1 | tee -a $logFile
-      [ $? -ne 0 ] && exit -1 || return 0
+      [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 || return 0
     fi
 
     # Deploy frontend.
