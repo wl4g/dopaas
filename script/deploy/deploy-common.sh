@@ -610,7 +610,7 @@ After=network.target remote-fs.target nss-lookup.target
 [Service]
 Type=simple
 PIDFile=${appDataDir}/${appName}.pid
-EnvironmentFile=${appDataDir}/${appName}/environment
+EnvironmentFile=${appDataDir}/environment
 ExecStartPre=/bin/rm -f ${appDataDir}/${appName}.pid
 ExecStart=/bin/bash -c "/etc/init.d/${appName}.service start"
 ExecStartPost=/bin/bash -c "/bin/mkdir -p ${appDataDir} && /bin/echo \$MAINPID >${appDataDir}/${appName}.pid"
