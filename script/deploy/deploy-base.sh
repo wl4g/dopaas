@@ -74,13 +74,18 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
 [ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
 [ -z "$gitXCloudDoPaaSUrl" ] && export gitXCloudDoPaaSUrl="${gitBaseUri}/xcloud-dopaas"
-[ -z "$gitXCloudDoPaaSFrontendUrl" ] && export gitXCloudDoPaaSFrontendUrl="${gitBaseUri}/xcloud-dopaas-view"
+[ -z "$gitXCloudDoPaaSViewUrl" ] && export gitXCloudDoPaaSViewUrl="${gitBaseUri}/xcloud-dopaas-view"
+# Git project name of URLs.
+[ -z "$gitXCloudComponentProjectName" ] && export gitXCloudComponentProjectName="$(echo `basename $gitXCloudComponentUrl`|sed s/.git//g)"
+[ -z "$gitXCloudIamProjectName" ] && export gitXCloudIamProjectName="$(echo `basename $gitXCloudIamUrl`|sed s/.git//g)"
+[ -z "$gitXCloudDoPaaSProjectName" ] && export gitXCloudDoPaaSProjectName="$(echo `basename $gitXCloudDoPaaSUrl`|sed s/.git//g)"
+[ -z "$gitXCloudDoPaaSViewProjectName" ] && export gitXCloudDoPaaSViewProjectName="$(echo `basename $gitXCloudDoPaaSViewUrl`|sed s/.git//g)"
 # pull branchs.
 [ -z "$gitDefaultBranch" ] && export gitDefaultBranch="master"
 [ -z "$gitComponentBranch" ] && export gitComponentBranch="${gitDefaultBranch}"
 [ -z "$gitIamBranch" ] && export gitIamBranch="${gitDefaultBranch}"
 [ -z "$gitDoPaaSBranch" ] && export gitDoPaaSBranch="${gitDefaultBranch}"
-[ -z "$gitDoPaaSFrontendBranch" ] && export gitDoPaaSFrontendBranch="${gitDefaultBranch}"
+[ -z "$gitDoPaaSViewBranch" ] && export gitDoPaaSViewBranch="${gitDefaultBranch}"
 
 # ----------------------- Backend environment definition. -----------------------------------------
 

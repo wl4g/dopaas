@@ -79,7 +79,7 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
 
 # Pull project sources, return(0/1)
 function pullSources() {
-  local projectName=$1 # e.g xcloud-dopaas
+  local projectName=$1 # e.g: xcloud-dopaas
   local cloneUrl=$2
   local branch=$3
   local projectDir="$currDir/$projectName"
@@ -152,7 +152,7 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
   fi
   local appInstallDir=${deployAppBaseDir}/${appName}-package && mkdir -p $appInstallDir
 
-  # Add deployed xcloud-dopaas primary service host.
+  # Add deployed dopaas primary service host.
   globalDeployStatsMsg="${globalDeployStatsMsg}"$(echo -n " localhost")
 
   log "[$appName/standalone] Cleanup older install files: $appInstallDir/* ..."
@@ -270,7 +270,7 @@ function doDeployBackendApp() {
   #local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
   local cmdRestart="/etc/init.d/${appName}.service restart"
 
-  # Add deployed xcloud-dopaas primary services names.
+  # Add deployed dopaas primary services names.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
 \t          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
@@ -299,7 +299,7 @@ function doDeployBackendApp() {
     fi
     log "[$appName/cluster] Deployed to cluster nodes completed !"
 
-    # Add deployed xcloud-dopaas primary service host.
+    # Add deployed dopaas primary service host.
     globalDeployStatsMsg="${globalDeployStatsMsg} ${globalAllHostsString}"
     [ $? -ne 0 ] && exit -1
     log "[$appName/cluster] Deployed to remote all nodes !"
@@ -331,11 +331,11 @@ function deployBackendApps() {
 # Prepare deploy backend applications.
 function prepareDeployBackendApps() {
   log "Pulling and compile backend project sources ..."
-  pullAndMvnCompile "xcloud-component" "$gitXCloudComponentUrl" "$gitComponentBranch"
+  pullAndMvnCompile "$gitXCloudComponentProjectName" "$gitXCloudComponentUrl" "$gitComponentBranch"
   deployEurekaServers
   deployZookeeperServers
-  pullAndMvnCompile "xcloud-iam" "$gitXCloudIamUrl" "$gitIamBranch"
-  pullAndMvnCompile "xcloud-dopaas" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
+  pullAndMvnCompile "$gitXCloudIamProjectName" "$gitXCloudIamUrl" "$gitIamBranch"
+  pullAndMvnCompile "$gitXCloudDoPaaSProjectName" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
 }
 
 # Check deploy eureka servers.
@@ -504,10 +504,10 @@ function configureRegCenterDns() {
 function deployFrontendApps() {
   # Check is skiped.
   if [ "$deployFrontendSkip" == "true" ]; then
-    log "Skiped for deploy frontend application, you can set export deployFrontendSkip=false to turn off the skip deployment frontend!"
+    log "Skiped for deploy frontend application, you can set export deployFrontendSkip='false' to turn off the skip deployment frontend!"
     return 0
   fi
-  local appName="xcloud-dopaas-view"
+  local appName="$gitXCloudDoPaaSViewProjectName"
   local appInstallDir="${deployFrontendAppBaseDir}/${appName}-package"
   local node=${globalAllNodes[0]} # First node deploy the nginx by default.
   local host=$(echo $node|awk -F 'ξ' '{print $1}')
@@ -516,7 +516,8 @@ function deployFrontendApps() {
   if [[ "$host" == "" || "$user" == "" ]]; then
     logErr "[$appName] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
   fi
-  # Add deployed xcloud-dopaas primary service host.
+  log "Deploying of dopaas $appName ..."
+  # Add deployed dopaas primary service host.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
 \t          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/\n
@@ -528,7 +529,7 @@ function deployFrontendApps() {
 \t        Deployed Hosts: $host"
 
   {
-    # [Check install nginx]
+    # Check install nginx
     local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
     if [ -z "$checkRemoteNginxResult" ]; then
       local osType=$(getOsTypeAndCheck)
@@ -556,13 +557,16 @@ function deployFrontendApps() {
         logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
       fi
     fi
-    # Make nginx configuration and install.
-    cd $workspaceDir && rm -rf nginx && cp -r $currDir/xcloud-dopaas/nginx .
+
+    # Configure nginx configuration and install.
+    log "Configuring the nginx configuration file of dopaas services ..."
+    cd $workspaceDir && rm -rf nginx && cp -r $currDir/$gitXCloudDoPaaSProjectName/nginx .
     cd nginx && sed -i "s/wl4g.com/wl4g.$springProfilesActive/g" conf.d/dopaas_http* && tar -cf nginxconf.tar *
     doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginxconf.tar" "/etc/nginx/" "true"
     doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginxconf.tar && rm -rf nginxconf.tar && rm -rf conf.d/example*" "true" "true"
+
     # Pull frontend.
-    pullSources "xcloud-dopaas-view" "$gitXCloudDoPaaSFrontendUrl" "$gitDoPaaSFrontendBranch"
+    pullSources "$gitXCloudDoPaaSViewProjectName" "$gitXCloudDoPaaSViewUrl" "$gitDoPaaSViewBranch"
 
     # Compile frontend.
     if [ $? -eq 0 ]; then
@@ -573,7 +577,7 @@ function deployFrontendApps() {
 
     # Deploy frontend.
     local deployFrontendDir="${appInstallDir}/${appName}-${buildPkgVersion}-bin"
-    local fProjectDir="$currDir/xcloud-dopaas-view"
+    local fProjectDir="$currDir/$gitXCloudDoPaaSViewProjectName"
     cd $fProjectDir && tar -zcf dist.tar.gz dist/
     doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendDir && \rm -rf $deployFrontendDir/*" "true" "true"
     doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar.gz" "$deployFrontendDir" "true"
