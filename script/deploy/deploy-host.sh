@@ -50,7 +50,7 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
       fi
       # Check deployer user of root group.
       local deployerUserGroups=$(doRemoteCmd "$user" "$passwd" "$host" "$(echo groups)" "true" "true")
-      if [ ! "$deployerUserGroups" =~ "root" ]; then
+      if [[ ! "$deployerUserGroups" =~ "root" ]]; then
         logErr "Host=$host, User=$user, Must use the remote host user belonging to the root groups to perform the deployment !"; exit -1
       fi
       # Storage deployer all nodes. 
@@ -168,9 +168,11 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
     logErr "[$appName/standalone/local] Invalid config buildPkgType: $buildPkgType"; exit -1
   fi
   [ $? -ne 0 ] && exit -1
-  # Check install services script?
-  log "[$appName/standalone/local] Checking app services script installation ..."
+  # Check install service script
+  log "[$appName/standalone/local] Checking installation app service script ..."
   checkInstallServiceScript "$appName" "$USER" "$passwd" "localhost" "$springProfilesActive" "false"
+  # Restart.
+  log "[$appName/cluster/$host] Restarting for $appName($springProfilesActive) ..."
   $cmdRestart
 }
 
@@ -235,15 +237,15 @@ function doDeployToNodeOfCluster() {
   else
     logErr "[$appName/cluster/$host] Invalid config buildPkgType: $buildPkgType"; exit -1
   fi
-  # Check install services script?
-  log "[$appName/cluster/$host] Checking app services script installation ..."
+  # Check install service script.
+  log "[$appName/cluster/$host] Checking installation app service script ..."
   checkInstallServiceScript "$appName" "$user" "$passwd" "$host" "$springProfilesActive" "false"
   [ $? -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
-  # Restart app service.
-  log "[$appName/cluster/$host] Restarting for $appName ..."
+  # Restart.
+  log "[$appName/cluster/$host] Restarting for $appName($springProfilesActive) ..."
   #doRemoteCmd "$user" "$passwd" "$host" "su - $appName -c \"$cmdRestart\"" "true" # init.d
   doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true" # systemctl
-  log "[$appName/cluster/$host] Deployed $appName completed."
+  log "[$appName/cluster/$host] Deployed $appName($springProfilesActive) completed."
 }
 
 # Do deploy app.
@@ -278,7 +280,7 @@ function doDeployBackendApp() {
 \t            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/\n
 \t       Profiles Active: ${springProfilesActive}\n
 \t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
-\t       Restart Command: /etc/init.d/$appName.service restart\n
+\t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: /mnt/disk1/log/${appName}/${appName}_${springProfilesActive}.log\n
 \t        Deployed Hosts:"
 
@@ -345,21 +347,27 @@ function deployEurekaServers() {
     log "Deploying eureka servers ..."
     if [ ${#globalAllNodes[@]} -lt 3 ]; then # Building pseudo cluster.
       local appName=$(echo "$deployEurekaBuildModule"|awk -F ',' '{print $1}')
+      local springProfilesActive="ha,peer1"
       local node1=${globalAllNodes[0]}
       local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
       local user1=$(echo $node1|awk -F 'ξ' '{print $2}')
       local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
       # Node1:
-      log "[eureka/$host1] Deploy eureka by peer1 (Disguised) ..."
-      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
+      log "[eureka/$host1] Deploying eureka($springProfilesActive) (Disguised) ..."
+      doDeployBackendApp "$deployEurekaBuildModule" "$springProfilesActive" "$node1"
       # Wait synchronously to ensure the integrity of the first build package.
-      wait $!
-      # Node2 and Node3: (only start new instance)
-      log "[eureka/$host1] Deploy eureka by peer2 (Disguised) ..."
-      local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=ha,peer2' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
+      wait
+      # Node2:(only start new instance)
+      sleep 5
+      local springProfilesActive="ha,peer2"
+      log "[eureka/$host1] Deploying eureka($springProfilesActive) (Disguised) ..."
+      local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=$springProfilesActive' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
       doRemoteCmd "$user1" "$passwd1" "$host1" "$cmdRestart" "true" &
-      log "[eureka/$host1] Deploy eureka by peer3 (Disguised) ..."
-      local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=ha,peer3' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
+      # Node3:(only start new instance)
+      sleep 5
+      local springProfilesActive="ha,peer3"
+      log "[eureka/$host1] Deploying eureka($springProfilesActive) (Disguised) ..."
+      local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=$springProfilesActive' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
       doRemoteCmd "$user1" "$passwd1" "$host1" "$cmdRestart" "true" &
       # Configer dns.
       configureRegCenterDns "$host1" "$host1" "$host1"
@@ -525,7 +533,7 @@ function deployFrontendApps() {
 \t            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/\n
 \t       Profiles Active: ${springProfilesActive}\n
 \t              PID File: /run/nginx.pid\n
-\t       Restart Command: sudo systemctl restart nginx or sudo /etc/init.d/nginx.service restart\n
+\t       Restart Command: sudo systemctl restart nginx or /etc/init.d/nginx.service restart\n
 \t             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log\n
 \t        Deployed Hosts: $host"
 
