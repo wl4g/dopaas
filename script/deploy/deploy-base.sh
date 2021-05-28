@@ -117,10 +117,10 @@ export deployEurekaBuildModule="eureka-server,${currDir}/xcloud-component/xcloud
 [ -z "$localZkDownloadUrl" ] && export localZkDownloadUrl="file://${pkgRepoLocalDir}/apache-zookeeper-3.6.3-bin.tar.gz"
 
 # Deploy(nginx)
-[ -z "$nginxDownloadUrlForCentos6x64" ] && export nginxDownloadUrlForCentos6x64="https://gitee.com/wl4g-collect/nginx/attach_files/714124/download/nginx-1.18.0-centos6-x64-bin.tar.gz"
-[ -z "$nginxDownloadUrlForCentos7x64" ] && export nginxDownloadUrlForCentos7x64="https://gitee.com/wl4g-collect/nginx/attach_files/714122/download/nginx-1.20.0-centos7-x64-bin.tar.gz"
-[ -z "$nginxDownloadUrlForCentos8x64" ] && export nginxDownloadUrlForCentos8x64="https://gitee.com/wl4g-collect/nginx/attach_files/714121/download/nginx-1.21.0-centos8-x64-bin.tar.gz"
-[ -z "$nginxDownloadUrlForUbuntu20x64" ] && export nginxDownloadUrlForUbuntu20x64="https://gitee.com/wl4g-collect/nginx/attach_files/714125/download/nginx-1.18.0-ubuntu20-x64-bin.tar.gz"
+[ -z "$nginxDownloadUrlForCentos6x64" ] && export nginxDownloadUrlForCentos6x64="https://gitee.com/wl4g-collect/nginx/attach_files/714981/download/nginx-1.18.0-centos6-x64-bin.tar.gz"
+[ -z "$nginxDownloadUrlForCentos7x64" ] && export nginxDownloadUrlForCentos7x64="https://gitee.com/wl4g-collect/nginx/attach_files/714980/download/nginx-1.20.0-centos7-x64-bin.tar.gz"
+[ -z "$nginxDownloadUrlForCentos8x64" ] && export nginxDownloadUrlForCentos8x64="https://gitee.com/wl4g-collect/nginx/attach_files/714979/download/nginx-1.21.0-centos8-x64-bin.tar.gz"
+[ -z "$nginxDownloadUrlForUbuntu20x64" ] && export nginxDownloadUrlForUbuntu20x64="https://gitee.com/wl4g-collect/nginx/attach_files/714982/download/nginx-1.18.0-ubuntu20-x64-bin.tar.gz"
 #[ -z "$secondaryNgxDownloadUrlForCentos6x64" ] && export secondaryNgxDownloadUrlForCentos6x64="https://github.com/wl4g-collect/nginx/releases/download/release-1.18.0/nginx-1.18.0-centos6-x64-bin.tar.gz"
 #[ -z "$secondaryNgxDownloadUrlForCentos7x64" ] && export secondaryNgxDownloadUrlForCentos7x64="https://github.com/wl4g-collect/nginx/releases/download/release-1.20.0/nginx-1.20.0-centos7-x64-bin.tar.gz"
 #[ -z "$secondaryNgxDownloadUrlForCentos8x64" ] && export secondaryNgxDownloadUrlForCentos8x64="https://github.com/wl4g-collect/nginx/releases/download/release-1.21.0/nginx-1.21.0-centos8-x64-bin.tar.gz"
