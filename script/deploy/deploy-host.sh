@@ -294,18 +294,15 @@ function doDeployBackendApp() {
     else
       deployToLocalOfStandalone "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive"
     fi
-    [ $? -ne 0 ] && exit -1
-    log "[$appName/standalone] Deployed to local completed !"
+    log "[$appName/standalone] Deployed standalone to local completed!"
   elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
-    log "[$appName/cluster] Deploying to cluster nodes ..."
+    log "[$appName/cluster] Deploying to cluster remote nodes ..."
     if [ "$deployAsync" == "true" ]; then
       deployToNodesOfCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}" &
     else
       deployToNodesOfCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}"
     fi
-    log "[$appName/cluster] Deployed to cluster nodes completed !"
-    [ $? -ne 0 ] && exit -1
-    log "[$appName/cluster] Deployed to remote all nodes !"
+    log "[$appName/cluster] Deployed cluster to remote all nodes completed!"
   fi
 }
 
@@ -339,11 +336,11 @@ function deployBackendApps() {
       local buildModule=${deployBuildModules[i]}
       doDeployBackendApp "$buildModule" "${springProfilesActive}" "${globalAllNodes[*]}"
     done
-    [ "$deployAsync" == "true" ] && wait # Wait all apps async deploy complete.
   fi
 
   # Deploy nginx.
   deployNginxServers &
+  [ "$deployAsync" == "true" ] && wait # Wait all apps async deploy complete.
   return 0
 }
 
@@ -353,7 +350,7 @@ function deployNginxServers() {
   local host=$(echo $node|awk -F 'ξ' '{print $1}')
   local user=$(echo $node|awk -F 'ξ' '{print $2}')
   local passwd=$(echo $node|awk -F 'ξ' '{print $3}')
-  # Check install nginx
+  # Check install nginx.
   local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
   if [ -z "$checkRemoteNginxResult" ]; then
     local osType=$(getOsTypeAndCheck)

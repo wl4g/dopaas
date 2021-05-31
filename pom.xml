@@ -62,7 +62,7 @@
 		<module>xcloud-dopaas-umc</module>
 		<module>xcloud-dopaas-urm</module>
 		<module>xcloud-dopaas-lcdp</module>
-		<!-- <module>xcloud-dopaas-uds</module> -->
+		<module>xcloud-dopaas-uds</module>
 		<!-- <module>xcloud-dopaas-uos</module> -->
 		<module>xcloud-dopaas-all-dependencies</module>
 		<module>xcloud-dopaas-all-starter</module>
