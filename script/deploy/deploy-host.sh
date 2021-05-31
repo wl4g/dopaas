@@ -101,7 +101,8 @@ function pullSources() {
       cd $projectDir && git remote set-url origin $cloneUrl
     fi
     # Check and pull
-    local pullResult=$(cd $projectDir && git config pull.rebase false && timeout --foreground 90 git pull 2>&1 | tee -a $logFile)
+    cd $projectDir && git config pull.rebase false
+    local pullResult=$(timeout --foreground 90 git pull 2>&1 | tee -a $logFile)
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     cd $projectDir && git checkout $branch
     if [[ "$pullResult" =~ "Already up-to-date." ]]; then
@@ -165,7 +166,7 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
     tar -xf $buildFilePath -C $appInstallDir/
   elif [[ "$buildPkgType" == "springExecJar" ]]; then
     log "[$appName/standalone/local] Copying $buildFilePath to $appInstallDir/ ..."
-    unalias -a cp
+    unalias cp >/dev/null 2>&1
     cp -Rf ${appName}-${buildPkgVersion}-bin.jar $appInstallDir/
   else
     logErr "[$appName/standalone/local] Invalid config buildPkgType: $buildPkgType"; exit -1
@@ -207,7 +208,7 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
     else
       doDeployToNodeOfCluster "$appName" "$appInstallDir" "$buildFilePath" "$host" "$user" "$passwd" "$springProfilesActive"
     fi
-    [ $? -ne 0 ] && exit -1
+    [ $? -ne 0 ] && logErr "[$appName/cluster/$host] Failed to deploy cluster!" && exit -1
   done
   [ "$deployAsync" == "true" ] && wait # Wait all instances async deploy complete.
   return 0
@@ -315,9 +316,9 @@ function deployBackendApps() {
 
   # Deploy prepare services.
   log "Pulling and compile backend project sources ..."
-  deployZookeeperServers &
+  deployZookeeperServers
   pullAndMvnCompile "$gitXCloudComponentProjectName" "$gitXCloudComponentUrl" "$gitComponentBranch"
-  deployEurekaServers &
+  deployEurekaServers
   pullAndMvnCompile "$gitXCloudIamProjectName" "$gitXCloudIamUrl" "$gitIamBranch"
   pullAndMvnCompile "$gitXCloudDoPaaSProjectName" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
 
@@ -339,7 +340,7 @@ function deployBackendApps() {
   fi
 
   # Deploy nginx.
-  deployNginxServers &
+  deployNginxServers
   [ "$deployAsync" == "true" ] && wait # Wait all apps async deploy complete.
   return 0
 }
@@ -350,40 +351,53 @@ function deployNginxServers() {
   local host=$(echo $node|awk -F 'ξ' '{print $1}')
   local user=$(echo $node|awk -F 'ξ' '{print $2}')
   local passwd=$(echo $node|awk -F 'ξ' '{print $3}')
+  # Add DoPaaS view nginx service deployed info.
+  globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+\t          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/\n
+\t            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/\n
+\t       Profiles Active: ${springProfilesActive}\n
+\t              PID File: /run/nginx.pid\n
+\t       Restart Command: sudo systemctl restart nginx or /etc/init.d/nginx.service restart\n
+\t             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log\n
+\t        Deployed Hosts: $host"
+
   # Check install nginx.
-  local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
-  if [ -z "$checkRemoteNginxResult" ]; then
-    local osType=$(getOsTypeAndCheck)
-    if [ "$deployNetworkMode" == "extranet" ]; then
-      log "Online installing nginx to $host ..."
-      local scriptFilename="install-nginx.sh"
-      doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
-      doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
-    elif [ "$deployNetworkMode" == "intranet" ]; then
-      log "Offline installing nginx to $host ..."
-      local tmpNgxTarFile="$workspaceDir/nginx-current-bin.tar.gz"
-      if [ "$osType" == "centos6_x64" ]; then
-        downloadFile "$localNgxDownloadUrlForCentos6x64" "$tmpNgxTarFile"
-      elif [ "$osType" == "centos7_x64" ]; then
-        downloadFile "$localNgxDownloadUrlForCentos7x64" "$tmpNgxTarFile"
-      elif [ "$osType" == "centos8_x64" ]; then
-        downloadFile "$localNgxDownloadUrlForCentos8x64" "$tmpNgxTarFile"
-      elif [ "$osType" == "ubuntu_x64" ]; then
-        downloadFile "$localNgxDownloadUrlForUbuntu20x64" "$tmpNgxTarFile"
+  {
+    local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
+    if [ -z "$checkRemoteNginxResult" ]; then
+      local osType=$(getOsTypeAndCheck)
+      if [ "$deployNetworkMode" == "extranet" ]; then
+        log "Online installing nginx to $host ..."
+        local scriptFilename="install-nginx.sh"
+        doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
+        doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
+      elif [ "$deployNetworkMode" == "intranet" ]; then
+        log "Offline installing nginx to $host ..."
+        local tmpNgxTarFile="$workspaceDir/nginx-current-bin.tar.gz"
+        if [ "$osType" == "centos6_x64" ]; then
+          downloadFile "$localNgxDownloadUrlForCentos6x64" "$tmpNgxTarFile"
+        elif [ "$osType" == "centos7_x64" ]; then
+          downloadFile "$localNgxDownloadUrlForCentos7x64" "$tmpNgxTarFile"
+        elif [ "$osType" == "centos8_x64" ]; then
+          downloadFile "$localNgxDownloadUrlForCentos8x64" "$tmpNgxTarFile"
+        elif [ "$osType" == "ubuntu_x64" ]; then
+          downloadFile "$localNgxDownloadUrlForUbuntu20x64" "$tmpNgxTarFile"
+        fi
+        # Installing to remote.
+        doScp "$user" "$passwd" "$host" "$tmpNgxTarFile" "/tmp/nginx-current-bin.tar.gz" "true"
+        doRemoteCmd "$user" "$passwd" "$host" "cd /tmp && tar -zxf nginx-current-bin.tar.gz && cd nginx-* && chmod +x install.sh && ./install.sh" "true" "true"
+      else
+        logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
       fi
-      # Installing to remote.
-      doScp "$user" "$passwd" "$host" "$tmpNgxTarFile" "/tmp/nginx-current-bin.tar.gz" "true"
-      doRemoteCmd "$user" "$passwd" "$host" "cd /tmp && tar -zxf nginx-current-bin.tar.gz && cd nginx-* && chmod +x install.sh && ./install.sh" "true" "true"
-    else
-      logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
     fi
-  fi
-  # Configure nginx configuration and install.
-  log "Configuring the nginx configuration file of dopaas services ..."
-  cd $workspaceDir && rm -rf nginx && cp -r $currDir/$gitXCloudDoPaaSProjectName/nginx .
-  cd nginx && sed -i "s/wl4g.com/wl4g.$springProfilesActive/g" conf.d/dopaas_http* && tar -cf nginxconf.tar *
-  doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginxconf.tar" "/etc/nginx/" "true"
-  doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginxconf.tar && rm -rf nginxconf.tar && rm -rf conf.d/example*" "true" "true"
+    # Configure nginx configuration and install.
+    log "Configuring the nginx configuration file of dopaas services ..."
+    cd $workspaceDir && rm -rf nginx && cp -r $currDir/$gitXCloudDoPaaSProjectName/nginx .
+    cd nginx && sed -i "s/wl4g.com/wl4g.$springProfilesActive/g" conf.d/dopaas_http* && tar -cf nginxconf.tar *
+    doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginxconf.tar" "/etc/nginx/" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginxconf.tar && rm -rf nginxconf.tar && rm -rf conf.d/example*" "true" "true"
+  } &
 }
 
 # Check deploy eureka servers.
@@ -399,7 +413,6 @@ function deployEurekaServers() {
       local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
       # Node1:
       log "[eureka/$host1] Deploying eureka($springProfilesActive) (Disguised) ..."
-      doDeployBackendApp "$deployEurekaBuildModule" "$springProfilesActive" "$node1"
       # Add eureka server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
@@ -410,6 +423,7 @@ function deployEurekaServers() {
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
 \t        Deployed Hosts: $host1"
+      doDeployBackendApp "$deployEurekaBuildModule" "$springProfilesActive" "$node1" &
       # Configer dns.
       configureRegCenterDns "$host1" "$host1" "$host1"
     else # Building a real cluster.
@@ -419,7 +433,6 @@ function deployEurekaServers() {
       local user1=$(echo $node1|awk -F 'ξ' '{print $2}')
       local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
       log "[eureka/$host1] Deploy eureka by peer1 ..."
-      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
       # Add eureka server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
@@ -430,13 +443,13 @@ function deployEurekaServers() {
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
 \t        Deployed Hosts: $host1"
+      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer1" "$node1" &
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
       local user2=$(echo $node2|awk -F 'ξ' '{print $2}')
       local passwd2=$(echo $node2|awk -F 'ξ' '{print $3}')
       log "[eureka/$host2] Deploy eureka by peer2 ..."
-      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer2" "$node2"
       # Add eureka server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
@@ -447,13 +460,13 @@ function deployEurekaServers() {
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
 \t        Deployed Hosts: $host2"
+      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer2" "$node2" &
       # Node3:
       local node3=${globalAllNodes[2]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
       local user3=$(echo $node3|awk -F 'ξ' '{print $2}')
       local passwd3=$(echo $node3|awk -F 'ξ' '{print $3}')
       log "[eureka/$host3] Deploy eureka by peer3 ..."
-      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer3" "$node3"
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
 \t          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
@@ -463,6 +476,7 @@ function deployEurekaServers() {
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
 \t        Deployed Hosts: $host3"
+      doDeployBackendApp "$deployEurekaBuildModule" "ha,peer3" "$node3" &
       # Configer dns.
       configureRegCenterDns "$host1" "$host2" "$host3"
     fi
@@ -495,11 +509,8 @@ function deployZookeeperServers() {
       local user1=$(echo $node1|awk -F 'ξ' '{print $2}')
       local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
       # Node1:
-      log "[zookeeper/$host1] Deploy zookeeper by peer1 (Simple) ..."
-      doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && cd $zkHome/conf && cp zoo_sample.cfg zoo.cfg && echo 'admin.serverPort=18887' >> zoo.cfg && ../bin/zkServer.sh restart" "true" "true"
       # Add zookeeper server deployed info.
+      log "[zookeeper/$host1] Deploy zookeeper by peer1 (Simple) ..."
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
 \t          Install Home: ${zkHome}/\n
@@ -509,6 +520,11 @@ function deployZookeeperServers() {
 \t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
 \t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
 \t        Deployed Hosts: $host1"
+      {
+        doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
+        doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+        doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && cd $zkHome/conf && cp zoo_sample.cfg zoo.cfg && echo 'admin.serverPort=18887' >> zoo.cfg && ../bin/zkServer.sh restart" "true" "true"
+      } &
     else # Building a real cluster.
       # Make zoo.cfg template.
       local tmpZooCfgFile="$workspaceDir/zoo.cfg"
@@ -535,10 +551,6 @@ EOF
       local user1=$(echo $node3|awk -F 'ξ' '{print $2}')
       local passwd1=$(echo $node3|awk -F 'ξ' '{print $3}')
       log "[zookeeper/$host1] Deploy zookeeper by peer1 ..."
-      doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
-      doScp "$user1" "$passwd1" "$host1" "$tmpZooCfgFile" "$zkHome/conf/" "true"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 1 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
@@ -549,16 +561,18 @@ EOF
 \t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
 \t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
 \t        Deployed Hosts: $host1"
+      {
+        doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
+        doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+        doScp "$user1" "$passwd1" "$host1" "$tmpZooCfgFile" "$zkHome/conf/" "true"
+        doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 1 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      } &
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
       local user2=$(echo $node3|awk -F 'ξ' '{print $2}')
       local passwd2=$(echo $node3|awk -F 'ξ' '{print $3}')
       log "[zookeeper/$host2] Deploy zookeeper by peer2 ..."
-      doScp "$user2" "$passwd2" "$host2" "$tmpZkTarFile" "/tmp/" "true"
-      doRemoteCmd "$user2" "$passwd2" "$host2" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
-      doScp "$user2" "$passwd2" "$host2" "$tmpZooCfgFile" "$zkHome/conf/" "true"
-      doRemoteCmd "$user2" "$passwd2" "$host2" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 2 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
@@ -569,16 +583,18 @@ EOF
 \t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
 \t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
 \t        Deployed Hosts: $host2"
+      {
+        doScp "$user2" "$passwd2" "$host2" "$tmpZkTarFile" "/tmp/" "true"
+        doRemoteCmd "$user2" "$passwd2" "$host2" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+        doScp "$user2" "$passwd2" "$host2" "$tmpZooCfgFile" "$zkHome/conf/" "true"
+        doRemoteCmd "$user2" "$passwd2" "$host2" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 2 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      } &
       # Node3:
       local node3=${globalAllNodes[2]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
       local user3=$(echo $node3|awk -F 'ξ' '{print $2}')
       local passwd3=$(echo $node3|awk -F 'ξ' '{print $3}')
       log "[zookeeper/$host3] Deploy zookeeper by peer3 ..."
-      doScp "$user3" "$passwd3" "$host3" "$tmpZkTarFile" "/tmp/" "true"
-      doRemoteCmd "$user3" "$passwd3" "$host3" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
-      doScp "$user3" "$passwd3" "$host3" "$tmpZooCfgFile" "$zkHome/conf/" "true"
-      doRemoteCmd "$user3" "$passwd3" "$host3" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 3 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
@@ -589,6 +605,12 @@ EOF
 \t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
 \t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
 \t        Deployed Hosts: $host3"
+      {
+        doScp "$user3" "$passwd3" "$host3" "$tmpZkTarFile" "/tmp/" "true"
+        doRemoteCmd "$user3" "$passwd3" "$host3" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+        doScp "$user3" "$passwd3" "$host3" "$tmpZooCfgFile" "$zkHome/conf/" "true"
+        doRemoteCmd "$user3" "$passwd3" "$host3" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 3 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      } &
     fi
   else # In standalone mode, Eureka does not need to be deployed.
     log "Skip zookeeper servers deploy, because runtime mode is standalone."
@@ -634,19 +656,8 @@ function deployFrontendApps() {
   if [[ "$host" == "" || "$user" == "" ]]; then
     logErr "[$appName] Failed to deploy frontend, invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
   fi
-  log "Deploying of dopaas $appName ..."
-  # Add DoPaaS view nginx service deployed info.
-  globalDeployStatsMsg="${globalDeployStatsMsg}\n
-[${appName}]:\n
-\t          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/\n
-\t            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/\n
-\t       Profiles Active: ${springProfilesActive}\n
-\t              PID File: /run/nginx.pid\n
-\t       Restart Command: sudo systemctl restart nginx or /etc/init.d/nginx.service restart\n
-\t             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log\n
-\t        Deployed Hosts: $host"
-
   {
+    log "Deploying of dopaas $appName ..."
     # Pull frontend.
     pullSources "$gitXCloudDoPaaSViewProjectName" "$gitXCloudDoPaaSViewUrl" "$gitDoPaaSViewBranch"
 
@@ -693,7 +704,6 @@ function main() {
   initConfiguration
   deployFrontendApps
   deployBackendApps
-  wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   log "--------------------------------------------------------------------"
