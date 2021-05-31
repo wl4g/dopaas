@@ -46,7 +46,7 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
       local user=$(echo $node|awk -F ',' '{print $2}'|sed -e 's/^\s*//' -e 's/\s*$//')
       local passwd=$(echo $node|awk -F ',' '{print $3}'|sed -e 's/^\s*//' -e 's/\s*$//')
       if [[ "$host" == "" || "$user" == "" ]]; then
-        logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
+        logErr "[$appName/cluster] Failed to init, invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
       fi
       # Check deployer user of root group.
       local deployerUserGroups=$(doRemoteCmd "$user" "$passwd" "$host" "$(echo groups)" "true" "true")
@@ -65,6 +65,9 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
     if [ ${#globalAllNodes[@]} -le 0 ]; then
       logErr "Please reconfigure '$currDir/deploy-host.csv', deploy at least one cluster node !"
     fi
+  else
+    # Save default local deploy node. 
+    globalAllNodes[index]="localhostξrootξ"
   fi
   # 2. Maven local repo user.
   local localRepoPathPrefix="$(echo $apacheMvnLocalRepoDir|cut -c 1-6)"
@@ -98,10 +101,10 @@ function pullSources() {
       cd $projectDir && git remote set-url origin $cloneUrl
     fi
     # Check and pull
-    local pullResult=$(cd $projectDir && timeout --foreground 90 git pull 2>&1 | tee -a $logFile)
+    local pullResult=$(cd $projectDir && git config pull.rebase false && timeout --foreground 90 git pull 2>&1 | tee -a $logFile)
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     cd $projectDir && git checkout $branch
-    if [[ "$pullResult" != "Already up-to-date."* ]]; then
+    if [[ "$pullResult" =~ "Already up-to-date." ]]; then
       isBackendPullUpdated='true' # There are upstream dependencies and updates
       return 0
     else
@@ -196,7 +199,7 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
     local user=$(echo $node|awk -F 'ξ' '{print $2}')
     local passwd=$(echo $node|awk -F 'ξ' '{print $3}')
     if [[ "$host" == "" || "$user" == "" ]]; then
-      logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
+      logErr "[$appName/cluster] Failed to deploy backend, invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
     fi
     # Do deploy to instance.
     if [ "$deployAsync" == "true" ]; then
@@ -271,7 +274,7 @@ function doDeployBackendApp() {
     logErr "Failed to deploy, buildFileName is required! all args: '$@'"; exit -1
   fi
   #local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
-  local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=$springProfilesActive' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
+  local cmdRestart="sudo chmod -R 755 $deployAppBaseDir && sudo systemctl restart ${appName}"
 
   # Add DoPaaS backend services deployed info.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
@@ -281,7 +284,7 @@ function doDeployBackendApp() {
 \t       Profiles Active: ${springProfilesActive}\n
 \t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
-\t             Logs File: /mnt/disk1/log/${appName}/${appName}_${springProfilesActive}.log\n
+\t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}_${springProfilesActive}.log\n
 \t        Deployed Hosts:"
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
@@ -301,9 +304,6 @@ function doDeployBackendApp() {
       deployToNodesOfCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}"
     fi
     log "[$appName/cluster] Deployed to cluster nodes completed !"
-
-    # Add deployed dopaas primary service host.
-    globalDeployStatsMsg="${globalDeployStatsMsg} ${globalAllHostsString}"
     [ $? -ne 0 ] && exit -1
     log "[$appName/cluster] Deployed to remote all nodes !"
   fi
@@ -320,7 +320,7 @@ function deployBackendApps() {
   log "Pulling and compile backend project sources ..."
   deployZookeeperServers &
   pullAndMvnCompile "$gitXCloudComponentProjectName" "$gitXCloudComponentUrl" "$gitComponentBranch"
-  deployEurekaServers
+  deployEurekaServers &
   pullAndMvnCompile "$gitXCloudIamProjectName" "$gitXCloudIamUrl" "$gitIamBranch"
   pullAndMvnCompile "$gitXCloudDoPaaSProjectName" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
 
@@ -403,6 +403,16 @@ function deployEurekaServers() {
       # Node1:
       log "[eureka/$host1] Deploying eureka($springProfilesActive) (Disguised) ..."
       doDeployBackendApp "$deployEurekaBuildModule" "$springProfilesActive" "$node1"
+      # Add eureka server deployed info.
+      globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+\t          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
+\t            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/\n
+\t       Profiles Active: ${springProfilesActive}\n
+\t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
+\t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
+\t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
+\t        Deployed Hosts: $host1"
       # Configer dns.
       configureRegCenterDns "$host1" "$host1" "$host1"
     else # Building a real cluster.
@@ -413,6 +423,16 @@ function deployEurekaServers() {
       local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
       log "[eureka/$host1] Deploy eureka by peer1 ..."
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer1" "$node1"
+      # Add eureka server deployed info.
+      globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+\t          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
+\t            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/\n
+\t       Profiles Active: ${springProfilesActive}\n
+\t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
+\t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
+\t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
+\t        Deployed Hosts: $host1"
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
@@ -420,6 +440,16 @@ function deployEurekaServers() {
       local passwd2=$(echo $node2|awk -F 'ξ' '{print $3}')
       log "[eureka/$host2] Deploy eureka by peer2 ..."
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer2" "$node2"
+      # Add eureka server deployed info.
+      globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+\t          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
+\t            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/\n
+\t       Profiles Active: ${springProfilesActive}\n
+\t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
+\t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
+\t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
+\t        Deployed Hosts: $host2"
       # Node3:
       local node3=${globalAllNodes[2]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
@@ -427,6 +457,15 @@ function deployEurekaServers() {
       local passwd3=$(echo $node3|awk -F 'ξ' '{print $3}')
       log "[eureka/$host3] Deploy eureka by peer3 ..."
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer3" "$node3"
+      globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+\t          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
+\t            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/\n
+\t       Profiles Active: ${springProfilesActive}\n
+\t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
+\t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
+\t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
+\t        Deployed Hosts: $host3"
       # Configer dns.
       configureRegCenterDns "$host1" "$host2" "$host3"
     fi
@@ -461,8 +500,18 @@ function deployZookeeperServers() {
       # Node1:
       log "[zookeeper/$host1] Deploy zookeeper by peer1 (Simple) ..."
       doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "cd $zkHome/conf && cp zoo_sample.cfg zoo.cfg && echo 'admin.serverPort=18887' >> zoo.cfg && ../bin/zkServer.sh restart" "true" "true"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && cd $zkHome/conf && cp zoo_sample.cfg zoo.cfg && echo 'admin.serverPort=18887' >> zoo.cfg && ../bin/zkServer.sh restart" "true" "true"
+      # Add zookeeper server deployed info.
+      globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+\t          Install Home: ${zkHome}/\n
+\t            Config Dir: ${zkHome}/conf/\n
+\t       Profiles Active: \n
+\t              PID File: /tmp/zookeeper/zookeeper.pid\n
+\t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
+\t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
+\t        Deployed Hosts: $host1"
     else # Building a real cluster.
       # Make zoo.cfg template.
       local tmpZooCfgFile="$workspaceDir/zoo.cfg"
@@ -490,9 +539,19 @@ EOF
       local passwd1=$(echo $node3|awk -F 'ξ' '{print $3}')
       log "[zookeeper/$host1] Deploy zookeeper by peer1 ..."
       doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
       doScp "$user1" "$passwd1" "$host1" "$tmpZooCfgFile" "$zkHome/conf/" "true"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p /mnt/disk1/zookeeper && echo 1 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 1 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      # Add zookeeper server deployed info.
+      globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+\t          Install Home: ${zkHome}/\n
+\t            Config Dir: ${zkHome}/conf/\n
+\t       Profiles Active: \n
+\t              PID File: /mnt/disk1/zookeeper/data/zookeeper.pid\n
+\t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
+\t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
+\t        Deployed Hosts: $host1"
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
@@ -500,9 +559,19 @@ EOF
       local passwd2=$(echo $node3|awk -F 'ξ' '{print $3}')
       log "[zookeeper/$host2] Deploy zookeeper by peer2 ..."
       doScp "$user2" "$passwd2" "$host2" "$tmpZkTarFile" "/tmp/" "true"
-      doRemoteCmd "$user2" "$passwd2" "$host2" "mkdir -p $zkHome && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+      doRemoteCmd "$user2" "$passwd2" "$host2" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
       doScp "$user2" "$passwd2" "$host2" "$tmpZooCfgFile" "$zkHome/conf/" "true"
-      doRemoteCmd "$user2" "$passwd2" "$host2" "mkdir -p /mnt/disk1/zookeeper && echo 2 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      doRemoteCmd "$user2" "$passwd2" "$host2" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 2 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      # Add zookeeper server deployed info.
+      globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+\t          Install Home: ${zkHome}/\n
+\t            Config Dir: ${zkHome}/conf/\n
+\t       Profiles Active: \n
+\t              PID File: /mnt/disk1/zookeeper/data/zookeeper.pid\n
+\t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
+\t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
+\t        Deployed Hosts: $host2"
       # Node3:
       local node3=${globalAllNodes[2]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
@@ -510,9 +579,19 @@ EOF
       local passwd3=$(echo $node3|awk -F 'ξ' '{print $3}')
       log "[zookeeper/$host3] Deploy zookeeper by peer3 ..."
       doScp "$user3" "$passwd3" "$host3" "$tmpZkTarFile" "/tmp/" "true"
-      doRemoteCmd "$user3" "$passwd3" "$host3" "mkdir -p $zkHome && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+      doRemoteCmd "$user3" "$passwd3" "$host3" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
       doScp "$user3" "$passwd3" "$host3" "$tmpZooCfgFile" "$zkHome/conf/" "true"
-      doRemoteCmd "$user3" "$passwd3" "$host3" "mkdir -p /mnt/disk1/zookeeper && echo 3 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      doRemoteCmd "$user3" "$passwd3" "$host3" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 3 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+      # Add zookeeper server deployed info.
+      globalDeployStatsMsg="${globalDeployStatsMsg}\n
+[${appName}]:\n
+\t          Install Home: ${zkHome}/\n
+\t            Config Dir: ${zkHome}/conf/\n
+\t       Profiles Active: \n
+\t              PID File: /mnt/disk1/zookeeper/data/zookeeper.pid\n
+\t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
+\t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
+\t        Deployed Hosts: $host3"
     fi
   else # In standalone mode, Eureka does not need to be deployed.
     log "Skip zookeeper servers deploy, because runtime mode is standalone."
@@ -556,7 +635,7 @@ function deployFrontendApps() {
   local user=$(echo $node|awk -F 'ξ' '{print $2}')
   local passwd=$(echo $node|awk -F 'ξ' '{print $3}')
   if [[ "$host" == "" || "$user" == "" ]]; then
-    logErr "[$appName] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
+    logErr "[$appName] Failed to deploy frontend, invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
   fi
   log "Deploying of dopaas $appName ..."
   # Add DoPaaS view nginx service deployed info.
@@ -617,6 +696,7 @@ function main() {
   initConfiguration
   deployFrontendApps
   deployBackendApps
+  wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   log "--------------------------------------------------------------------"
