@@ -354,9 +354,9 @@ function deployNginxServers() {
   # Add DoPaaS view nginx service deployed info.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [nginx]:\n
-\t          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/\n
+\t          Install Home: /etc/nginx/\n
 \t            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/\n
-\t       Profiles Active: ${springProfilesActive}\n
+\t       Profiles Active: \n
 \t              PID File: /run/nginx.pid\n
 \t       Restart Command: sudo systemctl restart nginx or /etc/init.d/nginx.service restart\n
 \t             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log\n
@@ -513,7 +513,7 @@ function deployZookeeperServers() {
       log "[zookeeper/$host1] Deploy zookeeper by peer1 (Simple) ..."
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [zookeeper]:\n
-\t          Install Home: ${zkHome}/\n
+\t          Install Home: ${zkHome}\n
 \t            Config Dir: ${zkHome}/conf/\n
 \t       Profiles Active: \n
 \t              PID File: /tmp/zookeeper/zookeeper.pid\n
@@ -554,7 +554,7 @@ EOF
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [zookeeper]:\n
-\t          Install Home: ${zkHome}/\n
+\t          Install Home: ${zkHome}\n
 \t            Config Dir: ${zkHome}/conf/\n
 \t       Profiles Active: \n
 \t              PID File: /mnt/disk1/zookeeper/data/zookeeper.pid\n
@@ -576,7 +576,7 @@ EOF
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [zookeeper]:\n
-\t          Install Home: ${zkHome}/\n
+\t          Install Home: ${zkHome}\n
 \t            Config Dir: ${zkHome}/conf/\n
 \t       Profiles Active: \n
 \t              PID File: /mnt/disk1/zookeeper/data/zookeeper.pid\n
@@ -598,7 +598,7 @@ EOF
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [zookeeper]:\n
-\t          Install Home: ${zkHome}/\n
+\t          Install Home: ${zkHome}\n
 \t            Config Dir: ${zkHome}/conf/\n
 \t       Profiles Active: \n
 \t              PID File: /mnt/disk1/zookeeper/data/zookeeper.pid\n
@@ -641,7 +641,7 @@ function configureRegCenterDns() {
   fi
 }
 
-# Deploy frontend apps to nginx.
+# Deploy frontend apps to nginx html dir.
 function deployFrontendApps() {
   # Check is skiped frontend.
   if [ "$deployFrontendSkip" == "true" ]; then
@@ -704,6 +704,7 @@ function main() {
   initConfiguration
   deployFrontendApps
   deployBackendApps
+  wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
   log "--------------------------------------------------------------------"
