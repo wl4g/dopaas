@@ -40,8 +40,28 @@ function getOsTypeAndCheck() {
 function secDeleteLocal() {
   local targetPath=$1
   local result=""
-  if [[ "$targetPath" != "" && "$targetPath" != "/" && "$targetPath" != "/bin"* && "$targetPath" != "/sbin"* ]]; then
-    unalias -a rm
+  if [[ "$targetPath" != ""
+        && "$targetPath" != "/"
+        && "$targetPath" != "/*"
+        && "$targetPath" != "/bin"*
+        && "$targetPath" != "/sbin"*
+        && "$targetPath" != "/boot"*
+        && "$targetPath" != "/proc"*
+        && "$targetPath" != "/sys"*
+        && "$targetPath" != "/dev"*
+        && "$targetPath" != "/lib"*
+        && "$targetPath" != "/lib64"*
+        && "$targetPath" != "/var"
+        && "$targetPath" != "/var/"
+        && "$targetPath" != "/mnt"
+        && "$targetPath" != "/mnt/"
+        && "$targetPath" != "/etc"
+        && "$targetPath" != "/etc/"
+        && "$targetPath" != "/usr"
+        && "$targetPath" != "/usr/"
+        && "$targetPath" != "/root"
+        && "$targetPath" != "/root/" ]]; then
+    unalias rm >/dev/null 2>&1
     result=$(\rm -rf $targetPath)
   fi
   local delStatus="$?"
@@ -78,7 +98,7 @@ function checkInstallInfraSoftware() {
       fi
     elif [ "$deployNetworkMode" == "intranet" ]; then
       local tmpJdkTarFile="$workspaceDir/jdk8-linux-x64.tar.gz"
-      downloadFile "$localJdk8DownloadUrl" "$tmpJdkTarFile"
+      downloadFile "$localJdk8DownloadUrl" "$tmpJdkTarFile" "240"
       mkdir -p $javaHome
       secDeleteLocal "$javaHome/*" # Rmove old files(if necessary)
       tar -zxf "$tmpJdkTarFile" --strip-components=1 -C "$javaHome"
@@ -143,23 +163,23 @@ function checkInstallInfraSoftware() {
     if [ "$deployNetworkMode" == "extranet" ]; then
       if [ "$isChinaLANNetwork" == "N" ]; then
         if [ "$osType" == "centos6_x64" ]; then
-          downloadFile "$gitDownloadUrlForCentos6x64" "$tmpGitTarFile"
+          downloadFile "$gitDownloadUrlForCentos6x64" "$tmpGitTarFile" "240"
         elif [ "$osType" == "centos7_x64" ]; then
-          downloadFile "$gitDownloadUrlForCentos7x64" "$tmpGitTarFile"
+          downloadFile "$gitDownloadUrlForCentos7x64" "$tmpGitTarFile" "240"
         elif [ "$osType" == "centos8_x64" ]; then
-          downloadFile "$gitDownloadUrlForCentos8x64" "$tmpGitTarFile"
+          downloadFile "$gitDownloadUrlForCentos8x64" "$tmpGitTarFile" "240"
         elif [ "$osType" == "ubuntu_x64" ]; then
-          downloadFile "gitDownloadUrlForUbuntu20x64" "$tmpGitTarFile"
+          downloadFile "gitDownloadUrlForUbuntu20x64" "$tmpGitTarFile" "240"
         fi
       else
         if [ "$osType" == "centos6_x64" ]; then
-          downloadFile "$secondaryGitDownloadUrlForCentos6x64" "$tmpGitTarFile"
+          downloadFile "$secondaryGitDownloadUrlForCentos6x64" "$tmpGitTarFile" "240"
         elif [ "$osType" == "centos7_x64" ]; then
-          downloadFile "$secondaryGitDownloadUrlForCentos7x64" "$tmpGitTarFile"
+          downloadFile "$secondaryGitDownloadUrlForCentos7x64" "$tmpGitTarFile" "240"
         elif [ "$osType" == "centos8_x64" ]; then
-          downloadFile "$secondaryGitDownloadUrlForCentos8x64" "$tmpGitTarFile"
+          downloadFile "$secondaryGitDownloadUrlForCentos8x64" "$tmpGitTarFile" "240"
         elif [ "$osType" == "ubuntu_x64" ]; then
-          downloadFile "$secondaryGitDownloadUrlForUbuntu20x64" "$tmpGitTarFile"
+          downloadFile "$secondaryGitDownloadUrlForUbuntu20x64" "$tmpGitTarFile" "240"
         fi
       fi
     elif [ "$deployNetworkMode" == "intranet" ]; then

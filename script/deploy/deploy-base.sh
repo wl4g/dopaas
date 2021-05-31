@@ -106,12 +106,13 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$deployAppDataBaseDir" ] && export deployAppDataBaseDir="/mnt/disk1"
 [ -z "$deployAppLogBaseDir" ] && export deployAppLogBaseDir="${deployAppDataBaseDir}/log"
 [ -z "$deployForcedInstallMgtScript" ] && export deployForcedInstallMgtScript="true" # e.g: Forced installing to '/etc/init.d/iam-web.service'
+[ -z "$deployBackendSkip" ] && export deployBackendSkip="false"
 
 # Deploy(eureka).
 export deployEurekaBuildModule="eureka-server,${currDir}/xcloud-component/xcloud-component-integration/xcloud-component-integration-regcenter-eureka-server/target"
 
 # Deploy(zookeeper).(https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz)
-[ -z "$zkHome" ] && export zkHome="/usr/local/zookeeper-current/"
+[ -z "$zkHome" ] && export zkHome="/opt/apps/zookeeper-current/"
 [ -z "$zkDownloadUrl" ] && export zkDownloadUrl="https://downloads.apache.org/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz"
 [ -z "$secondaryZkDownloadUrl" ] && export secondaryZkDownloadUrl="https://mirrors.sonic.net/apache/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz"
 [ -z "$localZkDownloadUrl" ] && export localZkDownloadUrl="file://${pkgRepoLocalDir}/apache-zookeeper-3.6.3-bin.tar.gz"

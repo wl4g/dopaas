@@ -273,7 +273,7 @@ function doDeployBackendApp() {
   #local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
   local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=$springProfilesActive' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
 
-  # Add deployed dopaas primary services names.
+  # Add DoPaaS backend services deployed info.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
 \t          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/\n
@@ -311,6 +311,19 @@ function doDeployBackendApp() {
 
 # Deploy DoPaaS all apps and startup.
 function deployBackendApps() {
+  # Check is skiped backend.
+  if [ "$deployBackendSkip" == "true" ]; then
+    log "Skiped for deploy backend application, You can set export deployBackendSkip='true' to skip deploying the backend!"; return 0
+  fi
+
+  # Deploy prepare services.
+  log "Pulling and compile backend project sources ..."
+  deployZookeeperServers &
+  pullAndMvnCompile "$gitXCloudComponentProjectName" "$gitXCloudComponentUrl" "$gitComponentBranch"
+  deployEurekaServers
+  pullAndMvnCompile "$gitXCloudIamProjectName" "$gitXCloudIamUrl" "$gitIamBranch"
+  pullAndMvnCompile "$gitXCloudDoPaaSProjectName" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
+
   # Deploy DoPaaS apps.
   local deployBuildModulesSize=0
   if [ "$runtimeMode" == "standalone" ]; then
@@ -328,17 +341,52 @@ function deployBackendApps() {
     done
     [ "$deployAsync" == "true" ] && wait # Wait all apps async deploy complete.
   fi
+
+  # Deploy nginx.
+  deployNginxServers &
   return 0
 }
 
-# Prepare deploy backend applications.
-function prepareDeployBackendApps() {
-  log "Pulling and compile backend project sources ..."
-  pullAndMvnCompile "$gitXCloudComponentProjectName" "$gitXCloudComponentUrl" "$gitComponentBranch"
-  deployEurekaServers
-  deployZookeeperServers
-  pullAndMvnCompile "$gitXCloudIamProjectName" "$gitXCloudIamUrl" "$gitIamBranch"
-  pullAndMvnCompile "$gitXCloudDoPaaSProjectName" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
+# Check deploy nginx servers.
+function deployNginxServers() {
+  local node=${globalAllNodes[0]} # First node deploy the nginx by default.
+  local host=$(echo $node|awk -F 'ξ' '{print $1}')
+  local user=$(echo $node|awk -F 'ξ' '{print $2}')
+  local passwd=$(echo $node|awk -F 'ξ' '{print $3}')
+  # Check install nginx
+  local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
+  if [ -z "$checkRemoteNginxResult" ]; then
+    local osType=$(getOsTypeAndCheck)
+    if [ "$deployNetworkMode" == "extranet" ]; then
+      log "Online installing nginx to $host ..."
+      local scriptFilename="install-nginx.sh"
+      doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
+      doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
+    elif [ "$deployNetworkMode" == "intranet" ]; then
+      log "Offline installing nginx to $host ..."
+      local tmpNgxTarFile="$workspaceDir/nginx-current-bin.tar.gz"
+      if [ "$osType" == "centos6_x64" ]; then
+        downloadFile "$localNgxDownloadUrlForCentos6x64" "$tmpNgxTarFile"
+      elif [ "$osType" == "centos7_x64" ]; then
+        downloadFile "$localNgxDownloadUrlForCentos7x64" "$tmpNgxTarFile"
+      elif [ "$osType" == "centos8_x64" ]; then
+        downloadFile "$localNgxDownloadUrlForCentos8x64" "$tmpNgxTarFile"
+      elif [ "$osType" == "ubuntu_x64" ]; then
+        downloadFile "$localNgxDownloadUrlForUbuntu20x64" "$tmpNgxTarFile"
+      fi
+      # Installing to remote.
+      doScp "$user" "$passwd" "$host" "$tmpNgxTarFile" "/tmp/nginx-current-bin.tar.gz" "true"
+      doRemoteCmd "$user" "$passwd" "$host" "cd /tmp && tar -zxf nginx-current-bin.tar.gz && cd nginx-* && chmod +x install.sh && ./install.sh" "true" "true"
+    else
+      logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
+    fi
+  fi
+  # Configure nginx configuration and install.
+  log "Configuring the nginx configuration file of dopaas services ..."
+  cd $workspaceDir && rm -rf nginx && cp -r $currDir/$gitXCloudDoPaaSProjectName/nginx .
+  cd nginx && sed -i "s/wl4g.com/wl4g.$springProfilesActive/g" conf.d/dopaas_http* && tar -cf nginxconf.tar *
+  doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginxconf.tar" "/etc/nginx/" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginxconf.tar && rm -rf nginxconf.tar && rm -rf conf.d/example*" "true" "true"
 }
 
 # Check deploy eureka servers.
@@ -355,20 +403,6 @@ function deployEurekaServers() {
       # Node1:
       log "[eureka/$host1] Deploying eureka($springProfilesActive) (Disguised) ..."
       doDeployBackendApp "$deployEurekaBuildModule" "$springProfilesActive" "$node1"
-      # Wait synchronously to ensure the integrity of the first build package.
-      wait
-      # Node2:(only start new instance)
-      sleep 5
-      local springProfilesActive="ha,peer2"
-      log "[eureka/$host1] Deploying eureka($springProfilesActive) (Disguised) ..."
-      local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=$springProfilesActive' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "$cmdRestart" "true" &
-      # Node3:(only start new instance)
-      sleep 5
-      local springProfilesActive="ha,peer3"
-      log "[eureka/$host1] Deploying eureka($springProfilesActive) (Disguised) ..."
-      local cmdRestart="\rm -rf /mnt/disk1/${appName}/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=$springProfilesActive' >/mnt/disk1/${appName}/environment; systemctl restart ${appName}"
-      doRemoteCmd "$user1" "$passwd1" "$host1" "$cmdRestart" "true" &
       # Configer dns.
       configureRegCenterDns "$host1" "$host1" "$host1"
     else # Building a real cluster.
@@ -511,10 +545,9 @@ function configureRegCenterDns() {
 
 # Deploy frontend apps to nginx.
 function deployFrontendApps() {
-  # Check is skiped.
+  # Check is skiped frontend.
   if [ "$deployFrontendSkip" == "true" ]; then
-    log "Skiped for deploy frontend application, you can set export deployFrontendSkip='false' to turn off the skip deployment frontend!"
-    return 0
+    log "Skiped for deploy frontend application, You can set export deployFrontendSkip='true' to skip deploying the frontend!"; return 0
   fi
   local appName="$gitXCloudDoPaaSViewProjectName"
   local appInstallDir="${deployFrontendAppBaseDir}/${appName}-package"
@@ -526,7 +559,7 @@ function deployFrontendApps() {
     logErr "[$appName] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
   fi
   log "Deploying of dopaas $appName ..."
-  # Add deployed dopaas primary service host.
+  # Add DoPaaS view nginx service deployed info.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:\n
 \t          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/\n
@@ -538,42 +571,6 @@ function deployFrontendApps() {
 \t        Deployed Hosts: $host"
 
   {
-    # Check install nginx
-    local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
-    if [ -z "$checkRemoteNginxResult" ]; then
-      local osType=$(getOsTypeAndCheck)
-      if [ "$deployNetworkMode" == "extranet" ]; then
-        log "Online installing nginx to $host ..."
-        local scriptFilename="install-nginx.sh"
-        doScp "$user" "$passwd" "$host" "$currDir/$scriptFilename" "/tmp/$scriptFilename" "true"
-        doRemoteCmd "$user" "$passwd" "$host" "chmod +x /tmp/$scriptFilename && bash /tmp/$scriptFilename" "true" "true"
-      elif [ "$deployNetworkMode" == "intranet" ]; then
-        log "Offline installing nginx to $host ..."
-        local tmpNgxTarFile="$workspaceDir/nginx-current-bin.tar.gz"
-        if [ "$osType" == "centos6_x64" ]; then
-          downloadFile "$localNgxDownloadUrlForCentos6x64" "$tmpNgxTarFile"
-        elif [ "$osType" == "centos7_x64" ]; then
-          downloadFile "$localNgxDownloadUrlForCentos7x64" "$tmpNgxTarFile"
-        elif [ "$osType" == "centos8_x64" ]; then
-          downloadFile "$localNgxDownloadUrlForCentos8x64" "$tmpNgxTarFile"
-        elif [ "$osType" == "ubuntu_x64" ]; then
-          downloadFile "$localNgxDownloadUrlForUbuntu20x64" "$tmpNgxTarFile"
-        fi
-        # Installing to remote.
-        doScp "$user" "$passwd" "$host" "$tmpNgxTarFile" "/tmp/nginx-current-bin.tar.gz" "true"
-        doRemoteCmd "$user" "$passwd" "$host" "cd /tmp && tar -zxf nginx-current-bin.tar.gz && cd nginx-* && chmod +x install.sh && ./install.sh" "true" "true"
-      else
-        logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
-      fi
-    fi
-
-    # Configure nginx configuration and install.
-    log "Configuring the nginx configuration file of dopaas services ..."
-    cd $workspaceDir && rm -rf nginx && cp -r $currDir/$gitXCloudDoPaaSProjectName/nginx .
-    cd nginx && sed -i "s/wl4g.com/wl4g.$springProfilesActive/g" conf.d/dopaas_http* && tar -cf nginxconf.tar *
-    doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginxconf.tar" "/etc/nginx/" "true"
-    doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginxconf.tar && rm -rf nginxconf.tar && rm -rf conf.d/example*" "true" "true"
-
     # Pull frontend.
     pullSources "$gitXCloudDoPaaSViewProjectName" "$gitXCloudDoPaaSViewUrl" "$gitDoPaaSViewBranch"
 
@@ -619,7 +616,6 @@ function main() {
   checkInstallInfraSoftware
   initConfiguration
   deployFrontendApps
-  prepareDeployBackendApps
   deployBackendApps
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
