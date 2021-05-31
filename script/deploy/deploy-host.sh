@@ -353,7 +353,7 @@ function deployNginxServers() {
   local passwd=$(echo $node|awk -F 'ξ' '{print $3}')
   # Add DoPaaS view nginx service deployed info.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
-[${appName}]:\n
+[nginx]:\n
 \t          Install Home: ${appInstallDir}/${appName}-${buildPkgVersion}-bin/\n
 \t            Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/\n
 \t       Profiles Active: ${springProfilesActive}\n
@@ -512,7 +512,7 @@ function deployZookeeperServers() {
       # Add zookeeper server deployed info.
       log "[zookeeper/$host1] Deploy zookeeper by peer1 (Simple) ..."
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
-[${appName}]:\n
+[zookeeper]:\n
 \t          Install Home: ${zkHome}/\n
 \t            Config Dir: ${zkHome}/conf/\n
 \t       Profiles Active: \n
@@ -553,7 +553,7 @@ EOF
       log "[zookeeper/$host1] Deploy zookeeper by peer1 ..."
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
-[${appName}]:\n
+[zookeeper]:\n
 \t          Install Home: ${zkHome}/\n
 \t            Config Dir: ${zkHome}/conf/\n
 \t       Profiles Active: \n
@@ -575,7 +575,7 @@ EOF
       log "[zookeeper/$host2] Deploy zookeeper by peer2 ..."
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
-[${appName}]:\n
+[zookeeper]:\n
 \t          Install Home: ${zkHome}/\n
 \t            Config Dir: ${zkHome}/conf/\n
 \t       Profiles Active: \n
@@ -597,7 +597,7 @@ EOF
       log "[zookeeper/$host3] Deploy zookeeper by peer3 ..."
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
-[${appName}]:\n
+[zookeeper]:\n
 \t          Install Home: ${zkHome}/\n
 \t            Config Dir: ${zkHome}/conf/\n
 \t       Profiles Active: \n
