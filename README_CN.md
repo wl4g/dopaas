@@ -49,7 +49,7 @@ Shardingsphere-Elasticjob:3.0.0 +
 
 ## 2. 部署与搭建
 ### 2.1 一键自动部署
-此方式适用于常规主机快速部署(非容器)，部署脚本会自动探测安装包括：jdk、nginx、git、maven、node、eureka、zookeeper、及所有SpringBoot apps，但不包括 redis/redis cluster(选其一)、Mysql 需自行手动安装.
+适用于主机快速部署，部署脚本会自动探测安装包括：jdk、nginx、git、maven、node、eureka、zookeeper、及所有SpringBoot apps，但不包括 redis/redis cluster(选其一)、Mysql服务，这些需要您自行手动安装.
 
 ```
 bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy/deploy-boot.sh)"
@@ -67,7 +67,7 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 
 
 ### 2.2 手动编译部署
-适用于本地二次开发环境搭建
+适用于本地二次开发环境的搭建
 
 #### 2.2.1 修改 .m2/settings.xml
 ```xml
