@@ -36,16 +36,19 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
       exit -1
     fi
     # Init nodes info.
-    local k=0
-    local index=0
+    local count=-1
+    local index=-1
     for node in `cat $deployClusterNodesConfigPath`; do
-      ((k+=1))
-      [ $k == 1 ] && continue # Skip title row(first)
+      ((count+=1))
+      if [[ $count == 0 || -n "$(echo $node|grep -E '^#')" ]]; then
+        continue # Skip head or annotation rows.
+      fi
+      ((index+=1))
       # Extract node info & trim
       local host=$(echo $node|awk -F ',' '{print $1}'|sed -e 's/^\s*//' -e 's/\s*$//')
       local user=$(echo $node|awk -F ',' '{print $2}'|sed -e 's/^\s*//' -e 's/\s*$//')
       local passwd=$(echo $node|awk -F ',' '{print $3}'|sed -e 's/^\s*//' -e 's/\s*$//')
-      if [[ "$host" == "" || "$user" == "" ]]; then
+      if [[ -z "$host" || -z "$user" ]]; then
         logErr "[$appName/cluster] Failed to init, invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
       fi
       # Check deployer user of root group.
@@ -69,6 +72,7 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
     # Save default local deploy node. 
     globalAllNodes[index]="localhostξrootξ"
   fi
+
   # 2. Maven local repo user.
   local localRepoPathPrefix="$(echo $apacheMvnLocalRepoDir|cut -c 1-6)"
   if [ "$localRepoPathPrefix" == "/root/" ]; then
@@ -286,7 +290,7 @@ function doDeployBackendApp() {
 \t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}_${springProfilesActive}.log\n
-\t        Deployed Hosts:"
+\t         Instance Host:"
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
     log "[$appName/standalone] deploying to local ..."
@@ -360,7 +364,7 @@ function deployNginxServers() {
 \t              PID File: /run/nginx.pid\n
 \t       Restart Command: sudo systemctl restart nginx or /etc/init.d/nginx.service restart\n
 \t             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log\n
-\t        Deployed Hosts: $host"
+\t         Instance Host: $host"
 
   # Check install nginx.
   {
@@ -404,8 +408,8 @@ function deployNginxServers() {
 function deployEurekaServers() {
   if [ "$runtimeMode" == "cluster" ]; then
     log "Deploying eureka servers ..."
+    local appName=$(echo "$deployEurekaBuildModule"|awk -F ',' '{print $1}')
     if [ ${#globalAllNodes[@]} -lt 3 ]; then # Building pseudo cluster.
-      local appName=$(echo "$deployEurekaBuildModule"|awk -F ',' '{print $1}')
       local springProfilesActive="ha,peer1"
       local node1=${globalAllNodes[0]}
       local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
@@ -422,10 +426,10 @@ function deployEurekaServers() {
 \t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
-\t        Deployed Hosts: $host1"
+\t         Instance Host: $host1"
       doDeployBackendApp "$deployEurekaBuildModule" "$springProfilesActive" "$node1" &
-      # Configer dns.
-      configureRegCenterDns "$host1" "$host1" "$host1"
+      # Adding DNS to nodes.
+      addPeersHosts "$host1" "$user1" "$passwd1" "$host1" "$host1" "$host1" &
     else # Building a real cluster.
       # Node1:
       local node1=${globalAllNodes[0]}
@@ -442,7 +446,7 @@ function deployEurekaServers() {
 \t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
-\t        Deployed Hosts: $host1"
+\t         Instance Host: $host1"
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer1" "$node1" &
       # Node2:
       local node2=${globalAllNodes[1]}
@@ -459,7 +463,7 @@ function deployEurekaServers() {
 \t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
-\t        Deployed Hosts: $host2"
+\t         Instance Host: $host2"
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer2" "$node2" &
       # Node3:
       local node3=${globalAllNodes[2]}
@@ -475,10 +479,14 @@ function deployEurekaServers() {
 \t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}.log\n
-\t        Deployed Hosts: $host3"
+\t         Instance Host: $host3"
       doDeployBackendApp "$deployEurekaBuildModule" "ha,peer3" "$node3" &
-      # Configer dns.
-      configureRegCenterDns "$host1" "$host2" "$host3"
+      # Adding DNS to nodes.
+      {
+        addPeersHosts "$host1" "$user1" "$passwd1" "$host1" "$host2" "$host3"
+        addPeersHosts "$host2" "$user2" "$passwd2" "$host1" "$host2" "$host3"
+        addPeersHosts "$host3" "$user3" "$passwd3" "$host1" "$host2" "$host3"
+      } &
     fi
   else # In standalone mode, Eureka does not need to be deployed.
     log "Skip eureka servers deploy, because runtime mode is standalone."
@@ -491,16 +499,18 @@ function deployZookeeperServers() {
     log "Deploying zookeeper servers ..."
     # Download package.
     local tmpZkTarFile="$workspaceDir/zookeeper.tar.gz"
-    if [ "$deployNetworkMode" == "extranet" ]; then
-      if [ "$isChinaLANNetwork" == "N" ]; then
-        downloadFile "$zkDownloadUrl" "$tmpZkTarFile"
+    if [ ! -f "$tmpZkTarFile" ]; then
+      if [ "$deployNetworkMode" == "extranet" ]; then
+        if [ "$isChinaLANNetwork" == "N" ]; then
+          downloadFile "$zkDownloadUrl" "$tmpZkTarFile"
+        else
+          downloadFile "$secondaryZkDownloadUrl" "$tmpZkTarFile"
+        fi
+      elif [ "$deployNetworkMode" == "intranet" ]; then
+        downloadFile "$localZkDownloadUrl" "$tmpZkTarFile"
       else
-        downloadFile "$secondaryZkDownloadUrl" "$tmpZkTarFile"
+        logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
       fi
-    elif [ "$deployNetworkMode" == "intranet" ]; then
-      downloadFile "$localZkDownloadUrl" "$tmpZkTarFile"
-    else
-      logErr "Invalid deployNetworkMode is '$deployNetworkMode' !"; exit -1
     fi
     # Deploying zookeeper servers.
     if [ ${#globalAllNodes[@]} -lt 3 ]; then # Building pseudo cluster.
@@ -510,20 +520,22 @@ function deployZookeeperServers() {
       local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
       # Node1:
       # Add zookeeper server deployed info.
-      log "[zookeeper/$host1] Deploy zookeeper by peer1 (Simple) ..."
+      log "[zookeeper/$host1] Deploying zookeeper for peer1 (Single) ..."
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [zookeeper]:\n
 \t          Install Home: ${zkHome}\n
 \t            Config Dir: ${zkHome}/conf/\n
-\t       Profiles Active: \n
 \t              PID File: /tmp/zookeeper/zookeeper.pid\n
 \t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
 \t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
-\t        Deployed Hosts: $host1"
+\t         Instance Host: $host1"
       {
         doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
-        doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
-        doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && cd $zkHome/conf && cp zoo_sample.cfg zoo.cfg && echo 'admin.serverPort=18887' >> zoo.cfg && ../bin/zkServer.sh restart" "true" "true"
+        doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "false" "true"
+        # fixed example: bin/zkServer.sh: line 213: kill: (3913)
+        doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && cd $zkHome/conf && cp zoo_sample.cfg zoo.cfg && echo 'admin.serverPort=18887' >> zoo.cfg && ../bin/zkServer.sh restart" "false" "true"
+        # Adding DNS to nodes.
+        addPeersHosts "$host1" "$user1" "$passwd1" "$host1" "$host1" "$host1"
       } &
     else # Building a real cluster.
       # Make zoo.cfg template.
@@ -548,68 +560,74 @@ EOF
       # Node1:
       local node1=${globalAllNodes[0]}
       local host1=$(echo $node1|awk -F 'ξ' '{print $1}')
-      local user1=$(echo $node3|awk -F 'ξ' '{print $2}')
-      local passwd1=$(echo $node3|awk -F 'ξ' '{print $3}')
-      log "[zookeeper/$host1] Deploy zookeeper by peer1 ..."
+      local user1=$(echo $node1|awk -F 'ξ' '{print $2}')
+      local passwd1=$(echo $node1|awk -F 'ξ' '{print $3}')
+      log "[zookeeper/$host1] Deploying zookeeper for peer1 ..."
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [zookeeper]:\n
 \t          Install Home: ${zkHome}\n
 \t            Config Dir: ${zkHome}/conf/\n
-\t       Profiles Active: \n
 \t              PID File: /mnt/disk1/zookeeper/data/zookeeper.pid\n
 \t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
 \t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
-\t        Deployed Hosts: $host1"
+\t         Instance Host: $host1"
       {
         doScp "$user1" "$passwd1" "$host1" "$tmpZkTarFile" "/tmp/" "true"
-        doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+        doRemoteCmd "$user1" "$passwd1" "$host1" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "false" "true"
         doScp "$user1" "$passwd1" "$host1" "$tmpZooCfgFile" "$zkHome/conf/" "true"
-        doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 1 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+        # fixed example: bin/zkServer.sh: line 213: kill: (3913)
+        doRemoteCmd "$user1" "$passwd1" "$host1" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 1 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "false" "true"
       } &
       # Node2:
       local node2=${globalAllNodes[1]}
       local host2=$(echo $node2|awk -F 'ξ' '{print $1}')
-      local user2=$(echo $node3|awk -F 'ξ' '{print $2}')
-      local passwd2=$(echo $node3|awk -F 'ξ' '{print $3}')
-      log "[zookeeper/$host2] Deploy zookeeper by peer2 ..."
+      local user2=$(echo $node2|awk -F 'ξ' '{print $2}')
+      local passwd2=$(echo $node2|awk -F 'ξ' '{print $3}')
+      log "[zookeeper/$host2] Deploying zookeeper for peer2 ..."
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [zookeeper]:\n
 \t          Install Home: ${zkHome}\n
 \t            Config Dir: ${zkHome}/conf/\n
-\t       Profiles Active: \n
 \t              PID File: /mnt/disk1/zookeeper/data/zookeeper.pid\n
 \t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
 \t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
-\t        Deployed Hosts: $host2"
+\t         Instance Host: $host2"
       {
         doScp "$user2" "$passwd2" "$host2" "$tmpZkTarFile" "/tmp/" "true"
-        doRemoteCmd "$user2" "$passwd2" "$host2" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+        doRemoteCmd "$user2" "$passwd2" "$host2" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "false" "true"
         doScp "$user2" "$passwd2" "$host2" "$tmpZooCfgFile" "$zkHome/conf/" "true"
-        doRemoteCmd "$user2" "$passwd2" "$host2" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 2 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+        # fixed example: bin/zkServer.sh: line 213: kill: (3913)
+        doRemoteCmd "$user2" "$passwd2" "$host2" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 2 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "false" "true"
       } &
       # Node3:
       local node3=${globalAllNodes[2]}
       local host3=$(echo $node3|awk -F 'ξ' '{print $1}')
       local user3=$(echo $node3|awk -F 'ξ' '{print $2}')
       local passwd3=$(echo $node3|awk -F 'ξ' '{print $3}')
-      log "[zookeeper/$host3] Deploy zookeeper by peer3 ..."
+      log "[zookeeper/$host3] Deploying zookeeper for peer3 ..."
       # Add zookeeper server deployed info.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [zookeeper]:\n
 \t          Install Home: ${zkHome}\n
 \t            Config Dir: ${zkHome}/conf/\n
-\t       Profiles Active: \n
 \t              PID File: /mnt/disk1/zookeeper/data/zookeeper.pid\n
 \t       Restart Command: sudo ${zkHome}/bin/zkServer.sh restart\n
 \t              Logs Dir: ${deployAppLogBaseDir}/zookeeper/\n
-\t        Deployed Hosts: $host3"
+\t         Instance Host: $host3"
       {
         doScp "$user3" "$passwd3" "$host3" "$tmpZkTarFile" "/tmp/" "true"
-        doRemoteCmd "$user3" "$passwd3" "$host3" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "true" "true"
+        doRemoteCmd "$user3" "$passwd3" "$host3" "mkdir -p $zkHome && rm -rf $zkHome/* && cd /tmp && tar -xf zookeeper.tar.gz --strip-components=1 -C $zkHome" "false" "true"
         doScp "$user3" "$passwd3" "$host3" "$tmpZooCfgFile" "$zkHome/conf/" "true"
-        doRemoteCmd "$user3" "$passwd3" "$host3" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 3 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "true" "true"
+        # fixed example: bin/zkServer.sh: line 213: kill: (3913)
+        doRemoteCmd "$user3" "$passwd3" "$host3" "export ZOO_LOG_DIR=${deployAppLogBaseDir}/zookeeper && mkdir -p $ZOO_LOG_DIR && mkdir -p /mnt/disk1/zookeeper && echo 3 >/mnt/disk1/zookeeper/myid && $zkHome/bin/zkServer.sh restart" "false" "true"
+      } &
+      # Adding DNS to nodes.
+      {
+        addPeersHosts "$host1" "$user1" "$passwd1" "$host1" "$host2" "$host3"
+        addPeersHosts "$host2" "$user2" "$passwd2" "$host1" "$host2" "$host3"
+        addPeersHosts "$host3" "$user3" "$passwd3" "$host1" "$host2" "$host3"
       } &
     fi
   else # In standalone mode, Eureka does not need to be deployed.
@@ -618,27 +636,46 @@ EOF
 }
 
 # Check configure regcenter dns.
-function configureRegCenterDns() {
-  local host1=$1
-  local host2=$2
-  local host3=$3
-  # Transform to ip(if host is not ip).
-  [ -z "$(echo $host1|egrep '(^[0-9]+)\.')" ] && host1=$(ping $host1 -c 1 -w 3 2>/dev/null|sed '1{s/[^(]*(//;s/).*//;q}')
-  [ -z "$(echo $host2|egrep '(^[0-9]+)\.')" ] && host2=$(ping $host2 -c 1 -w 3 2>/dev/null|sed '1{s/[^(]*(//;s/).*//;q}')
-  [ -z "$(echo $host3|egrep '(^[0-9]+)\.')" ] && host3=$(ping $host3 -c 1 -w 3 2>/dev/null|sed '1{s/[^(]*(//;s/).*//;q}')
-  # Check mapping dns?
-  local resolvingPeer1=$(ping -c 1 -w 3 peer1 >/dev/null 2>&1; echo "$?")
-  local resolvingPeer2=$(ping -c 1 -w 3 peer2 >/dev/null 2>&1; echo "$?")
-  local resolvingPeer3=$(ping -c 1 -w 3 peer3 >/dev/null 2>&1; echo "$?")
-  if [[ $resolvingPeer1 != 0 || $resolvingPeer2 != 0 || $resolvingPeer3 != 0 ]]; then
-    echo "# Auto generated by DoPaaS Deployer(host)" >> /etc/hosts
-    echo "$host1 peer1" >> /etc/hosts
-    log "Added dns resoling peer1 to $host1"
-    echo "$host2 peer2" >> /etc/hosts
-    log "Added dns resoling peer2 to $host2"
-    echo "$host3 peer3" >> /etc/hosts
-    log "Added dns resoling peer3 to $host3"
+# for example: addPeersHosts "10.0.0.162" "root" "123456" "127.0.0.1" "127.0.0.1" "127.0.0.1"
+function addPeersHosts() {
+  local host=$1
+  local user=$2
+  local passwd=$3
+  local h1=$4
+  local h2=$5
+  local h3=$6
+  if [[ -z "$host" || -z "$user" || -z "$passwd" || -z "$h1" || -z "$h2" || -z "$h3" ]]; then
+    logErr "Adding peers args host/user/passwd/h1/h2/h3 is requires !"; exit -1
   fi
+  cd $workspaceDir
+  local tmpBashFilename="tmp-add-peers-hosts.sh"
+cat<<EOF>$tmpBashFilename
+#!/bin/bash
+host1=$h1
+host2=$h2
+host3=$h3
+# Exchage host to IP (if necessary).
+[ -z "\$(echo \$host1|egrep '(^[0-9]+)\.')" ] && host1=\$(ping \$host1 -c 1 -w 3 2>/dev/null|sed '1{s/[^(]*(//;s/).*//;q}')
+[ -z "\$(echo \$host2|egrep '(^[0-9]+)\.')" ] && host2=\$(ping \$host2 -c 1 -w 3 2>/dev/null|sed '1{s/[^(]*(//;s/).*//;q}')
+[ -z "\$(echo \$host3|egrep '(^[0-9]+)\.')" ] && host3=\$(ping \$host3 -c 1 -w 3 2>/dev/null|sed '1{s/[^(]*(//;s/).*//;q}')
+# Check mapped?
+resolvingPeer1=\$(ping -c 1 -w 3 peer1 >/dev/null 2>&1; echo "\$?")
+resolvingPeer2=\$(ping -c 1 -w 3 peer2 >/dev/null 2>&1; echo "\$?")
+resolvingPeer3=\$(ping -c 1 -w 3 peer3 >/dev/null 2>&1; echo "\$?")
+if [[ \$resolvingPeer1 != 0 || \$resolvingPeer2 != 0 || \$resolvingPeer3 != 0 ]]; then
+  echo "# Auto generated by DoPaaS Deployer(host)" >> /etc/hosts
+  echo "\$host1 peer1" >> /etc/hosts
+  echo "\$host2 peer2" >> /etc/hosts
+  echo "\$host3 peer3" >> /etc/hosts
+  echo "Added dns resolution for: peer1 -> $host1, peer2 -> $host2, peer3 -> $host3"
+else
+  echo "Already DNS resolution for peer1,peer2,peer3 !"
+fi
+EOF
+  sudo chmod +x $workspaceDir/$tmpBashFilename
+  doScp "$user" "$passwd" "$host" "$workspaceDir/$tmpBashFilename" "/tmp/" "true"
+  doRemoteCmd "$user" "$passwd" "$host" "sudo chmod +x /tmp/$tmpBashFilename && sudo /tmp/$tmpBashFilename" "true" "true"
+  log "Finished dns resolution for: peer1 -> $h1, peer2 -> $h2, peer3 -> $h3"
 }
 
 # Deploy frontend apps to nginx html dir.
