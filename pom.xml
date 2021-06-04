@@ -85,7 +85,7 @@
 		<eclipse.jgit.version>5.5.1.201910021850-r</eclipse.jgit.version>
 		<!-- Web tool's. -->
 		<user-agent.version>1.2.4</user-agent.version>
-		<httpclient.version>4.5.5</httpclient.version>
+		<httpclient.version>4.5.13</httpclient.version>
 		<httpcore.version>4.4.9</httpcore.version>
 		<!-- Bigdata(Hadoop). -->
 		<hadoop-client.version>2.6.0</hadoop-client.version>
