@@ -24,11 +24,22 @@
 globalAllNodes=()
 globalAllNodesString=""
 globalDeployStatsMsg="" # Deployed stats message.
-isBackendPullUpdated="false" # Backend project analysis from dependency, whether git submits updates
+isBackendPullHasUpdate='false' # Backend project pull has update? includes dependent project.
 
 # Init configuration.
 function initConfiguration() {
-  # 1. Load cluster nodes information.
+  # 1. Make concurrent fifo fd.
+  if [ "$deployAsync" == "true" ]; then
+    local fifoFile="${workspaceDir}/deploy-host.fifo"
+    [ ! -p $fifoFile ] && mkfifo $fifoFile
+    exec 45678<>$fifoFile
+    \rm -f $fifoFile
+    for ((i=0;i<deployAsyncConcurrent;i++)); do
+      echo ;
+    done >&45678
+  fi
+
+  # 2. Load cluster nodes information.
   if [ "$runtimeMode" == "cluster" ]; then # Only cluster mode need a hosts csv file.
     if [ ! -f "$deployClusterNodesConfigPath" ]; then
       logErr "No found configuration file: '$currDir/deploy-host.csv', because you have selected the runtime mode is 'cluster',
@@ -63,6 +74,8 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
       else
         globalAllHostsString="${globalAllHostsString}, $host"
       fi
+      # Configure remote sshd_config.
+      configureRemoteSshd "$host" "$user" "$passwd"
     done
     # Check nodes must > 0
     if [ ${#globalAllNodes[@]} -le 0 ]; then
@@ -73,7 +86,7 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
     globalAllNodes[index]="localhostξrootξ"
   fi
 
-  # 2. Maven local repo user.
+  # 3. Maven local repo user.
   local localRepoPathPrefix="$(echo $apacheMvnLocalRepoDir|cut -c 1-6)"
   if [ "$localRepoPathPrefix" == "/root/" ]; then
     export apacheMvnLocalRepoDirOfUser="root"
@@ -82,6 +95,21 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
   else
     logErr "Invalid maven local repository path. for example: $USER/.m2/repository"; exit -1
   fi
+}
+
+# Enlarge remote sshd_config 'MaxSessions'. (FIXED: ssh_exchange_identification: Connection closed by remote host)
+function configureRemoteSshd() {
+  local host=$1
+  local user=$2
+  local passwd=$3
+  if [[ -z "$host" || -z "$user" || -z "$passwd" ]]; then
+    logErr "Configure remote sshd_config, host/user/passwd is requires!"; exit -1
+  fi
+  local cmd1="cd /etc/ssh/ && [[ -z \"\$(cat sshd_config|grep -E '^MaxSessions(\s*[0-9]+)')\" ]] && echo 'MaxSessions 30' >>sshd_config || sed -i -r 's/^MaxSessions(\s*[0-9]+)/MaxSessions 30/g' sshd_config"
+  local cmd2="cd /etc/ssh/ && [[ -z \"\$(cat sshd_config|grep -E '^MaxStartups(\s+)(\S+)')\" ]] && echo 'MaxStartups 30:30:100' >>sshd_config || sed -i -r 's/^MaxStartups(\s+)(\S+)/MaxStartups 30:30:100/g' sshd_config"
+  local cmd="$cmd1; $cmd2; [ -n \"$(command -v systemctl)\" ] && systemctl restart sshd || service sshd restart"
+  log "[$host] Configure remote sshd_config cmd: $cmd"
+  doRemoteCmd "$user" "$passwd" "$host" "$cmd" "true"
 }
 
 # Pull project sources, return(0/1)
@@ -95,7 +123,7 @@ function pullSources() {
     cd $currDir && timeout --foreground 300 git clone $cloneUrl 2>&1 | tee -a $logFile
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     cd $projectDir && git checkout $branch
-    return 0
+    return 1
   else
     log "Git pull $projectName from [${branch}]:$cloneUrl ..."
     # Check and set remote url.
@@ -106,14 +134,14 @@ function pullSources() {
     fi
     # Check and pull
     cd $projectDir && git config pull.rebase false
-    local pullResult=$(timeout --foreground 90 git pull 2>&1 | tee -a $logFile)
+    local pullResult=$(timeout --foreground 90 git pull -f 2>&1 | tee -a $logFile)
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     cd $projectDir && git checkout $branch
-    if [[ "$pullResult" =~ "Already up-to-date." ]]; then
-      isBackendPullUpdated='true' # There are upstream dependencies and updates
-      return 0
+    if [[ "$pullResult" != 'Already up to date.' ]]; then
+      isBackendPullHasUpdate='true' # There are upstream dependencies and updates
+      return 1 # Has new commits, need compile.
     else
-      return 1
+      return 0 # Not new commits, no need compile. 
     fi
   fi
 }
@@ -126,8 +154,8 @@ function pullAndMvnCompile() {
   local projectDir="$currDir/$projectName"
   # Pulling project sources.
   pullSources "$projectName" "$cloneUrl" "$branch"
-  if [[ $? -eq 0 || "$buildForcedOnPullUpToDate" == 'true' || "$isBackendPullUpdated" == 'true' ]]; then
-    log "Compiling $projectName ..."
+  if [[ $? == 1 || "$buildForcedOnPullUpToDate" == 'true' || "$isBackendPullHasUpdate" == 'true' ]]; then
+    log "Compiling $cmdMvn $projectName ..."
     cd $projectDir
     $cmdMvn -Dmaven.repo.local=$apacheMvnLocalRepoDir clean install -DskipTests -T 2C -U -P $buildPkgType 2>&1 | tee -a $logFile
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
@@ -145,8 +173,8 @@ function pullAndMvnCompile() {
   fi
 }
 
-# Deploy app to local. (standalone)
-function deployToLocalOfStandalone() {
+# Deploy app(standalone) to local.
+function deployStandaloneToLocal() {
   local buildFilePath=$1
   local buildFileName=$2
   local cmdRestart=$3
@@ -184,8 +212,8 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
   $cmdRestart
 }
 
-# Deploy app to all nodes. (cluster)
-function deployToNodesOfCluster() {
+# Deploy app to (cluster) nodes.
+function deployClusterToNodes() {
   local buildFilePath=$1
   local buildFileName=$2
   local cmdRestart=$3
@@ -208,25 +236,29 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
     fi
     # Do deploy to instance.
     if [ "$deployAsync" == "true" ]; then
-      doDeployToNodeOfCluster "$appName" "$appInstallDir" "$buildFilePath" "$host" "$user" "$passwd" "$springProfilesActive" &
+      doDeployClusterToNode "$appName" "$appInstallDir" "$buildFilePath" "$host" "$user" "$passwd" "$cmdRestart" "$springProfilesActive" &
     else
-      doDeployToNodeOfCluster "$appName" "$appInstallDir" "$buildFilePath" "$host" "$user" "$passwd" "$springProfilesActive"
+      doDeployClusterToNode "$appName" "$appInstallDir" "$buildFilePath" "$host" "$user" "$passwd" "$cmdRestart" "$springProfilesActive"
     fi
     [ $? -ne 0 ] && logErr "[$appName/cluster/$host] Failed to deploy cluster!" && exit -1
   done
-  [ "$deployAsync" == "true" ] && wait # Wait all instances async deploy complete.
+  if [ "$deployAsync" == "true" ]; then
+    wait # Wait all instances async deploy complete.
+    echo >&45678 # 每执行完一个task, 继续又添加一个换行符, 目的是为了永远保持fd里有concurrent个标识, 直到任务执行完.
+  fi
   return 0
 }
 
 # Deploy to cluster remote instance.
-function doDeployToNodeOfCluster() {
+function doDeployClusterToNode() {
   local appName=$1
   local appInstallDir=$2
   local buildFilePath=$3
   local host=$4
   local user=$5
   local passwd=$6
-  local springProfilesActive=$7
+  local cmdRestart=$7
+  local springProfilesActive=$8
   # Deployement to remote.
   log "[$appName/cluster/$host] Cleanup older install files: '$appInstallDir/*' ..."
   [[ "$appInstallDir" != "" && "$appInstallDir" != "/" ]] && doRemoteCmd "$user" "$passwd" "$host" "rm -rf $appInstallDir/*" "true"
@@ -251,12 +283,11 @@ function doDeployToNodeOfCluster() {
   [ $? -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   # Restart.
   log "[$appName/cluster/$host] Restarting for $appName($springProfilesActive) ..."
-  #doRemoteCmd "$user" "$passwd" "$host" "su - $appName -c \"$cmdRestart\"" "true" # init.d
-  doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true" # systemctl
+  doRemoteCmd "$user" "$passwd" "$host" "$cmdRestart" "true"
   log "[$appName/cluster/$host] Deployed $appName($springProfilesActive) completed."
 }
 
-# Do deploy app.
+# Do deploy backend app.
 function doDeployBackendApp() {
   local buildModule=$1
   local springProfilesActive=$2 # Priority custom active.
@@ -278,8 +309,7 @@ function doDeployBackendApp() {
   if [ -z "$buildFileName" ]; then
     logErr "Failed to deploy, buildFileName is required! all args: '$@'"; exit -1
   fi
-  #local appName=$(echo "$(basename $buildFileName)"|awk -F "-${buildPkgVersion}-bin.tar|-${buildPkgVersion}-bin.jar" '{print $1}')
-  local cmdRestart="sudo chmod -R 755 $deployAppBaseDir && sudo systemctl restart ${appName}"
+  local cmdRestart="sudo chmod -R 755 $deployAppBaseDir && [ -n $(command -v systemctl) ] && sudo systemctl restart ${appName} || su - $appName -c \"/etc/init.d/${appName}.service restart\""
 
   # Add DoPaaS backend services deployed info.
   globalDeployStatsMsg="${globalDeployStatsMsg}\n
@@ -293,26 +323,28 @@ function doDeployBackendApp() {
 \t         Instance Host:"
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
-    log "[$appName/standalone] deploying to local ..."
+    log "[$appName/standalone] <<<<< Deploying standalone to local ..."
     if [ "$deployAsync" == "true" ]; then
-      deployToLocalOfStandalone "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" &
+      deployStandaloneToLocal "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" &
+      log "[$appName/standalone] >>>>> Deployer standalone to local started!"
     else
-      deployToLocalOfStandalone "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive"
+      deployStandaloneToLocal "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive"
+      log "[$appName/standalone] >>>>> Deployed standalone to local completed!"
     fi
-    log "[$appName/standalone] Deployed standalone to local completed!"
   elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
-    log "[$appName/cluster] Deploying to cluster remote nodes ..."
+    log "[$appName/cluster] <<<<< Deploying to cluster remote nodes ..."
     if [ "$deployAsync" == "true" ]; then
-      deployToNodesOfCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}" &
+      deployClusterToNodes "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}" &
+      log "[$appName/cluster] >>>>> Deployer cluster to remote nodes started!"
     else
-      deployToNodesOfCluster "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}"
+      deployClusterToNodes "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}"
+      log "[$appName/cluster] >>>>> Deployed cluster to remote nodes completed!"
     fi
-    log "[$appName/cluster] Deployed cluster to remote all nodes completed!"
   fi
 }
 
-# Deploy DoPaaS all apps and startup.
-function deployBackendApps() {
+# Deploy DoPaaS backend apps all.
+function deployBackendAll() {
   # Check is skiped backend.
   if [ "$deployBackendSkip" == "true" ]; then
     log "Skiped for deploy backend application, You can set export deployBackendSkip='true' to skip deploying the backend!"; return 0
@@ -325,6 +357,7 @@ function deployBackendApps() {
   deployEurekaServers
   pullAndMvnCompile "$gitXCloudIamProjectName" "$gitXCloudIamUrl" "$gitIamBranch"
   pullAndMvnCompile "$gitXCloudDoPaaSProjectName" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
+  deployNginxServers
 
   # Deploy DoPaaS apps.
   local deployBuildModulesSize=0
@@ -335,17 +368,21 @@ function deployBackendApps() {
   else
     logErr "Invalid config runtime mode: $runtimeMode"; exit -1
   fi
-  deployBuildModulesSize=${#deployBuildModules[@]}
+
+  local deployBuildModulesSize=${#deployBuildModules[@]}
   if [ $deployBuildModulesSize -gt 0 ]; then
-    for ((i=0;i<${#deployBuildModules[@]};i++)) do
+    for ((i=0;i<${#deployBuildModules[@]};i++)); do
       local buildModule=${deployBuildModules[i]}
+      if [ "$deployAsync" == "true" ]; then
+        read -u45678 # 每次读一个, 读完一个就少一个(fifo队列)
+      fi
       doDeployBackendApp "$buildModule" "${springProfilesActive}" "${globalAllNodes[*]}"
     done
+    if [ "$deployAsync" == "true" ]; then
+      wait # Wait all apps async deploy complete.
+      exec 45678>&- # 关闭fd
+    fi
   fi
-
-  # Deploy nginx.
-  deployNginxServers
-  [ "$deployAsync" == "true" ] && wait # Wait all apps async deploy complete.
   return 0
 }
 
@@ -502,9 +539,9 @@ function deployZookeeperServers() {
     if [ ! -f "$tmpZkTarFile" ]; then
       if [ "$deployNetworkMode" == "extranet" ]; then
         if [ "$isChinaLANNetwork" == "N" ]; then
-          downloadFile "$zkDownloadUrl" "$tmpZkTarFile"
+          downloadFile "$zkDownloadUrl" "$tmpZkTarFile" "180"
         else
-          downloadFile "$secondaryZkDownloadUrl" "$tmpZkTarFile"
+          downloadFile "$secondaryZkDownloadUrl" "$tmpZkTarFile" "180"
         fi
       elif [ "$deployNetworkMode" == "intranet" ]; then
         downloadFile "$localZkDownloadUrl" "$tmpZkTarFile"
@@ -679,7 +716,7 @@ EOF
 }
 
 # Deploy frontend apps to nginx html dir.
-function deployFrontendApps() {
+function deployFrontendAll() {
   # Check is skiped frontend.
   if [ "$deployFrontendSkip" == "true" ]; then
     log "Skiped for deploy frontend application, You can set export deployFrontendSkip='true' to skip deploying the frontend!"; return 0
@@ -697,9 +734,9 @@ function deployFrontendApps() {
     log "Deploying of dopaas $appName ..."
     # Pull frontend.
     pullSources "$gitXCloudDoPaaSViewProjectName" "$gitXCloudDoPaaSViewUrl" "$gitDoPaaSViewBranch"
-
     # Compile frontend.
-    if [ $? -eq 0 ]; then
+    if [[ $? == 1 || "$buildForcedOnPullUpToDate" == 'true' ]]; then
+      log "Compiling $cmdNpm $gitXCloudDoPaaSViewProjectName ..."
       sudo $cmdNpm install 2>&1 | tee -a $logFile
       sudo $cmdNpm run build 2>&1 | tee -a $logFile
       [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
@@ -708,6 +745,10 @@ function deployFrontendApps() {
     # Deploy frontend.
     local deployFrontendDir="${appInstallDir}/${appName}-${buildPkgVersion}-bin"
     local fProjectDir="$currDir/$gitXCloudDoPaaSViewProjectName"
+    # Check build dist files.
+    if [[ ! -d "$fProjectDir" || -z "$(ls $fProjectDir/dist/* >/dev/null 2>&1)" ]]; then
+      logErr "Cannot reading frontend build assets, because dist directory not exists!"; exit -1 
+    fi
     cd $fProjectDir && tar -zcf dist.tar.gz dist/
     doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendDir && \rm -rf $deployFrontendDir/*" "true" "true"
     doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar.gz" "$deployFrontendDir" "true"
@@ -739,8 +780,8 @@ function main() {
   beginTime=`date +%s`
   checkInstallInfraSoftware
   initConfiguration
-  deployFrontendApps
-  deployBackendApps
+  #deployFrontendAll
+  deployBackendAll
   wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]

@@ -22,13 +22,16 @@
 
 # --------------------------- Basic environment definition. ---------------------------------------------------
 
-[ -z "$workspaceDir" ] && export workspaceDir="${HOME}/.deploy-workspace" && mkdir -p $workspaceDir
-[ -z "$pkgRepoLocalDir" ] && export pkgRepoLocalDir="${workspaceDir}/pkg" && mkdir -p $pkgRepoLocalDir
+[ -z "$workspaceDir" ] && export workspaceDir="${HOME}/.deploy-workspace"; mkdir -p $workspaceDir
+[ -z "$pkgRepoLocalDir" ] && export pkgRepoLocalDir="${workspaceDir}/pkg"; mkdir -p $pkgRepoLocalDir
 currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
-[ -z "$logFile" ] && export logFile="${workspaceDir}/install_${currDate}.log" && touch $logFile
+[ -z "$logFile" ] && export logFile="${workspaceDir}/install_${currDate}.log"; touch $logFile
 [ -z "$deployDebug" ] && export deployDebug="false" # true|false
 [ -z "$deployNetworkMode" ] && export deployNetworkMode="extranet" # extranet|intranet
 [ -z "$deployAsync" ] && export deployAsync="true" # true|false
+# 部署并发数,用于限制并行将多个应用分别异步部署到多个实例的进程数(注:若设置过大会引发大量ssh频繁建立连接导致被sshd拒绝:ssh_exchange_identification: read: Connection reset by peer)
+# 好在deploy-host.sh#configureRemoteSshd函数已经对远端sshd配置修改, 此处还限制并发数是为了防止某些系统下修改未生效.
+[ -z "$deployAsyncConcurrent" ] && export deployAsyncConcurrent=5
 
 # --------------------------- Jdk environment definition. -----------------------------------------------------
 
@@ -112,7 +115,7 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 export deployEurekaBuildModule="eureka-server,${currDir}/xcloud-component/xcloud-component-integration/xcloud-component-integration-regcenter-eureka-server/target"
 
 # Deploy(zookeeper).(https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz)
-[ -z "$zkHome" ] && export zkHome="/opt/apps/zookeeper-current/"
+[ -z "$zkHome" ] && export zkHome="$deployAppBaseDir/zookeeper-current/"
 [ -z "$zkDownloadUrl" ] && export zkDownloadUrl="https://downloads.apache.org/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz"
 [ -z "$secondaryZkDownloadUrl" ] && export secondaryZkDownloadUrl="https://mirrors.sonic.net/apache/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz"
 [ -z "$localZkDownloadUrl" ] && export localZkDownloadUrl="file://${pkgRepoLocalDir}/apache-zookeeper-3.6.3-bin.tar.gz"

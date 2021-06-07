@@ -40,11 +40,18 @@ function getOsTypeAndCheck() {
 function secDeleteLocal() {
   local targetPath=$1
   local result=""
+  # Simple filtered sys's file or directory.
   if [[ "$targetPath" != ""
         && "$targetPath" != "/"
         && "$targetPath" != "/*"
         && "$targetPath" != "/bin"*
+        && "$targetPath" != "/bin/"*
         && "$targetPath" != "/sbin"*
+        && "$targetPath" != "/usr/bin/"*
+        && "$targetPath" != "/usr/sbin"*
+        && "$targetPath" != "/usr/lib"*
+        && "$targetPath" != "/usr/lib64"*
+        && "$targetPath" != "/usr/libexec"*
         && "$targetPath" != "/boot"*
         && "$targetPath" != "/proc"*
         && "$targetPath" != "/sys"*
@@ -59,10 +66,14 @@ function secDeleteLocal() {
         && "$targetPath" != "/etc/"
         && "$targetPath" != "/usr"
         && "$targetPath" != "/usr/"
+        && "$targetPath" != "/usr/local"
+        && "$targetPath" != "/usr/local/"
         && "$targetPath" != "/root"
         && "$targetPath" != "/root/" ]]; then
     unalias rm >/dev/null 2>&1
     result=$(\rm -rf $targetPath)
+  else
+    logErr "Cannot remove sys's file or directory. targetPath: $targetPath"; exit -1
   fi
   local delStatus="$?"
   [ "$delStatus" -ne 0 ] && echo "Deletion can't seem to success. target: $targetPath, causeBy: $result"
@@ -288,8 +299,10 @@ EOF
   log "Use installed node(npm) command: $cmdNpm"
 }
 
-# Exec remote SSH command.
-# for testing => doRemoteCmd "root" "mypassword" "localhost" "echo 11" "true"
+# Exec to remote SSH commands.
+# for example: doRemoteCmd "root" "mypassword" "localhost" "echo 123" "true"
+# Notes: Multiple consecutive commands should be combined and executed at one time to prevent 
+#  requent concurrent connects result in 'ssh_ exchange_ identification: Connection closed by remote host'
 function doRemoteCmd() {
   local user=$1
   local password=$2
@@ -435,21 +448,6 @@ function checkInstallServiceScript() {
   else
     log "Invalid buildPkgType: $buildPkgType" && exit -1
   fi
-  # Check make directory.
-  if [ "$appGroup" != "root" ]; then
-    doRemoteCmd "$user" "$password" "$host" "[ -z \"\$(grep '^$appGroup:' /etc/group)\" ] && groupadd $appGroup || exit 0" "true"
-  fi
-  if [ "$appUser" != "root" ]; then
-    doRemoteCmd "$user" "$password" "$host" "[ -z \"\$(grep '^$appUser:' /etc/passwd)\" ] && useradd -g $appGroup $appUser || exit 0" "true"
-  fi
-  doRemoteCmd "$user" "$password" "$host" "mkdir -p $appInstallDir" "true"
-  doRemoteCmd "$user" "$password" "$host" "mkdir -p $appHome" "true"
-  doRemoteCmd "$user" "$password" "$host" "mkdir -p $appLogDir" "true"
-  doRemoteCmd "$user" "$password" "$host" "mkdir -p $appDataDir" "true"
-  doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup $appInstallDir" "true"
-  doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup $appLogDir" "true"
-  doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup $appDataDir" "true"
-  doRemoteCmd "$user" "$password" "$host" "touch $appDataDir/environment" "true"
   # Make app services script.
   local appShortNameUpper=$(echo $appName|tr '[a-z]' '[A-Z]'|awk -F '-' '{print $1}') # e.g cmdb-facade => CMDB
   local appShortNameLower=$(echo $appShortNameUpper|tr '[A-Z]' '[a-z]') # e.g cmdb-facade => cmdb
@@ -616,14 +614,28 @@ EOF
   # Installing init.d service script to remote.
   log "[$appName/$host] Installing init.d '/etc/init.d/${appName}.service' to remote ..."
   doScp "$user" "$password" "$host" "$tmpServiceFile" "/etc/init.d/${appName}.service" "true"
-  doRemoteCmd "$user" "$password" "$host" "chown -R $appUser:$appGroup /etc/init.d/${appName}.service" "true"
-  doRemoteCmd "$user" "$password" "$host" "chmod -R 750 /etc/init.d/${appName}.service" "true"
+  # Generate app user/group/directory/scripts.
+  [ "$appGroup" != "root" ] && local addUserScript="[ -z \"\$(grep '^$appGroup:' /etc/group)\" ] && groupadd $appGroup"
+  [ "$appUser" != "root" ] && local addGroupScript="[ -z \"\$(grep '^$appUser:' /etc/passwd)\" ] && useradd -g $appGroup $appUser"
+  doRemoteCmd "$user" "$password" "$host" "
+$addUserScript
+$addGroupScript
+mkdir -p $appInstallDir
+mkdir -p $appHome
+mkdir -p $appLogDir
+mkdir -p $appDataDir
+chown -R $appUser:$appGroup $appInstallDir
+chown -R $appUser:$appGroup $appLogDir
+chown -R $appUser:$appGroup $appDataDir
+touch $appDataDir/environment
+chown -R $appUser:$appGroup /etc/init.d/${appName}.service
+chmod -R 750 /etc/init.d/${appName}.service" "true"
   secDeleteLocal $tmpServiceFile
 
   # Install systemctl service.(if necessary)
   if [ -n "$(command -v systemctl)" ]; then
-    local tmpServiceFile="$workspaceDir/${appName}.service"
-cat<<EOF>$tmpServiceFile
+    local tmpCtlServiceFile="$workspaceDir/${appName}.service"
+cat<<EOF>$tmpCtlServiceFile
 # See:http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html
 [Unit]
 Description=${appName} - lightweight high availability service based on spring cloud
@@ -663,8 +675,8 @@ EOF
     # Installing systemd service script to remote.
     log "[$appName/$host] Installing systemd '/lib/systemd/system/${appName}.service' to remote ..."
     doScp "$user" "$password" "$host" "$tmpServiceFile" "/lib/systemd/system/${appName}.service" "true"
-    doRemoteCmd "$user" "$password" "$host" "sudo chmod -R 750 /lib/systemd/system/${appName}.service && sudo systemctl daemon-reload" "true"
-    secDeleteLocal $tmpServiceFile
+    doRemoteCmd "$user" "$password" "$host" "sudo chmod -R 750 /lib/systemd/system/${appName}.service && sudo systemctl daemon-reload && systemctl enable ${appName}.service" "true"
+    secDeleteLocal $tmpCtlServiceFile
   fi
 }
 
