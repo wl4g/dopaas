@@ -35,15 +35,37 @@ log ""
 
 # Removing infra softwares.
 function removeInfraSoftwares() {
-  # Remove workspace directory.
+  # Remove workspace directory(sshpass).
   if [ -d $workspaceDir ]; then
     log "Removing directory $workspaceDir"
     secDeleteLocal "$workspaceDir"
   fi
-  # Remove sshpass/git/nginx/zookeeper/...
+  # Remove git.
   if [ -d $gitInstallDir ]; then
-    log "Removing file $gitInstallDir"
+    log "Removing directory $gitInstallDir"
     secDeleteLocal "$gitInstallDir"
+  fi
+  # Remove zookeeper.
+  if [ -d $zkHome ]; then
+    log "Removing directory $zkHome"
+    secDeleteLocal "$zkHome"
+  fi
+  # Remove nginx.
+  if [[ -d /etc/nginx/conf.d/ ]]; then
+    if [ -f /etc/nginx/conf.d/dopaas_http.conf ]; then
+      log "Removing directory /etc/nginx/conf.d/dopaas_http.conf"
+      secDeleteLocal "/etc/nginx/conf.d/dopaas_http.conf"
+    fi
+    if [ -f /etc/nginx/conf.d/dopaas_https.conf ]; then
+      log "Removing directory /etc/nginx/conf.d/dopaas_https.conf"
+      secDeleteLocal "/etc/nginx/conf.d/dopaas_https.conf"
+    fi
+    local appName="$gitXCloudDoPaaSViewProjectName"
+    local appInstallDir="${deployFrontendAppBaseDir}/${appName}-package"
+    if [ -f $appInstallDir ]; then
+      log "Removing directory $appInstallDir"
+      secDeleteLocal "$appInstallDir"
+    fi
   fi
 }
 
@@ -65,25 +87,29 @@ function removeAllAppsResources() {
     for ((i=0;i<${#deployBuildModules[@]};i++)) do
       local buildModule=${deployBuildModules[i]}
       local appName=$(echo "$buildModule"|awk -F ',' '{print $1}')
-      # Uninstall app all nodes.
-      local k=0
-      for node in `cat $deployClusterNodesConfigPath`; do
-        ((k+=1))
-        [ $k == 1 ] && continue # Skip title row(first)
-        # Extract node info & trim
-        local host=$(echo $node|awk -F ',' '{print $1}'|sed -e 's/^\s*//' -e 's/\s*$//')
-        local user=$(echo $node|awk -F ',' '{print $2}'|sed -e 's/^\s*//' -e 's/\s*$//')
-        local passwd=$(echo $node|awk -F ',' '{print $3}'|sed -e 's/^\s*//' -e 's/\s*$//')
-        if [[ "$host" == "" || "$user" == "" ]]; then
-          logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
-        fi
-        log "[$appName/$host] Removing resources on $host ..." 
-        if [ "$asyncDeploy" == "true" ]; then
-          removeAppFilesWithRemoteInstance "$appName" "$user" "$passwd" "$host" &
-        else
-          removeAppFilesWithRemoteInstance "$appName" "$user" "$passwd" "$host"
-        fi
-      done
+      #{
+        # Uninstall app all nodes.
+        local count=-1
+        for node in `cat $deployClusterNodesConfigPath`; do
+          ((count+=1))
+          if [[ $count == 0 || -n "$(echo $node|grep -E '^#')" ]]; then
+            continue # Skip head or annotation rows.
+          fi
+          # Extract node info & trim
+          local host=$(echo $node|awk -F ',' '{print $1}'|sed -e 's/^\s*//' -e 's/\s*$//')
+          local user=$(echo $node|awk -F ',' '{print $2}'|sed -e 's/^\s*//' -e 's/\s*$//')
+          local passwd=$(echo $node|awk -F ',' '{print $3}'|sed -e 's/^\s*//' -e 's/\s*$//')
+          if [[ "$host" == "" || "$user" == "" ]]; then
+            logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
+          fi
+          log "[$appName/$host] Removing resources on $host ..." 
+          if [ "$asyncDeploy" == "true" ]; then
+            removeAppFilesWithRemoteInstance "$appName" "$user" "$passwd" "$host" &
+          else
+            removeAppFilesWithRemoteInstance "$appName" "$user" "$passwd" "$host"
+          fi
+        done
+      #} &
     done
     [ "$asyncDeploy" == "true" ] && wait
   fi
@@ -141,8 +167,8 @@ Do you want to continue to uninstall? (yes|no) """ confirm
 done
 [ "$asyncDeploy" == "true" ] && log "Using asynchronous deployment, you can usage: export asyncDeploy=\"false\" to set it."
 beginTime=`date +%s`
-removeInfraSoftwares
 removeAllAppsResources
+removeInfraSoftwares
 deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
 costTime=$[$(echo `date +%s`)-$beginTime]
 log "-------------------------------------------------------------------"
