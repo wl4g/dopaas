@@ -21,38 +21,4 @@ spring:
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
           nodes: ${LCDP_DOPAAS_REDIS_NODES:redis.lcdp.wl4g.debug:6379,redis.lcdp.wl4g.debug:6380,redis.lcdp.wl4g.debug:6381,redis.lcdp.wl4g.debug:7379,redis.lcdp.wl4g.debug:7380,redis.lcdp.wl4g.debug:7381}
-  # Datasource configuration.
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
-    driverClassName: com.mysql.cj.jdbc.Driver
-    hikari:
-      jdbcUrl: ${LCDP_DOPAAS_DB_URL:jdbc:mysql://rds.uci.wl4g.debug:3306/dopaas_uci?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
-      username: ${LCDP_DOPAAS_DB_USER:dopaas_uci}
-      password: ${LCDP_DOPAAS_DB_PASSWD:123456}
-      connectionTimeout: 30000
-      idleTimeout: 600000
-      initializationFailTimeout: 1
-      minimumIdle: 10
-      maxLifetime: 1800000
-      maximumPoolSize: 100
-      validationTimeout: 5000
-      leakDetectionThreshold: 0
-#    druid:
-#      url: ${LCDP_DOPAAS_DB_URL:jdbc:mysql://rds.uci.wl4g.debug:3306/dopaas_uci?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
-#      username: ${LCDP_DOPAAS_DB_USER:dopaas_uci}
-#      password: ${LCDP_DOPAAS_DB_PASSWD:123456}
-#      initial-size: 10
-#      max-active: 100
-#      min-idle: 10
-#      max-wait: 60000
-#      pool-prepared-statements: true
-#      max-pool-prepared-statement-per-connection-size: 20
-#      time-between-eviction-runs-millis: 60000
-#      min-evictable-idle-time-millis: 300000
-#      validation-query: SELECT 1
-#      test-while-idle: true
-#      test-on-borrow: false
-#      test-on-return: false
-#      filters: stat,wall
-#      log-slow-sql: true
 
