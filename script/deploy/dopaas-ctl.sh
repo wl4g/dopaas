@@ -122,7 +122,7 @@ function waitForComplete() {
 
 function usage() {
   echo "
-Usage: {start-all|stop-all|restart-all|status-all|restart-zookeeper-all|<appName> <start|stop|restart|status>}
+Usage: {start-all|stop-all|restart-all|status-all|<appName> <start|stop|restart|status>}
   start-all        Start all remote nodes apps.
   stop-all         stop all remote nodes apps.
   restart-all      Restart all remote nodes apps.
