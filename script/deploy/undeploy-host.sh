@@ -103,7 +103,7 @@ function removeAllAppsResources() {
             logErr "[$appName/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
           fi
           log "[$appName/$host] Removing resources on $host ..." 
-          if [ "$asyncDeploy" == "true" ]; then
+          if [ "$deployAsync" == "true" ]; then
             removeAppFilesWithRemoteInstance "$appName" "$user" "$passwd" "$host" &
           else
             removeAppFilesWithRemoteInstance "$appName" "$user" "$passwd" "$host"
@@ -111,7 +111,7 @@ function removeAllAppsResources() {
         done
       #} &
     done
-    [ "$asyncDeploy" == "true" ] && wait
+    [ "$deployAsync" == "true" ] && wait
   fi
 }
 
@@ -165,7 +165,7 @@ Do you want to continue to uninstall? (yes|no) """ confirm
     continue
   fi
 done
-[ "$asyncDeploy" == "true" ] && log "Using asynchronous deployment, you can usage: export asyncDeploy=\"false\" to set it."
+[ "$deployAsync" == "true" ] && log "Using asynchronous deployment, you can usage: export deployAsync=\"false\" to set it."
 beginTime=`date +%s`
 removeAllAppsResources
 removeInfraSoftwares

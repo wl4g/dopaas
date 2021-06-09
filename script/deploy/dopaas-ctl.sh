@@ -74,12 +74,13 @@ function doCommandApps() {
             logErr "[$appName:$appPort/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
           fi
           log "[$appName:$appPort/$host] Manage ($cmd) on $host ..." 
-          if [ "$asyncDeploy" == "true" ]; then
+          if [ "$deployAsync" == "true" ]; then
             doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(command -v systemctl)\" ] && systemctl ${cmd} ${appName} || /etc/init.d/${appName}.service ${cmd}" "false" "true" &
           else
             doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(command -v systemctl)\" ] && systemctl ${cmd} ${appName} || /etc/init.d/${appName}.service ${cmd}" "false" "true"
           fi
         done
+        [ "$deployAsync" == "true" ] && wait
       } &
     done
   fi
@@ -103,17 +104,18 @@ function doCommandZookeeper() {
       logErr "[zookeeper/$host] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
     fi
     log "[zookeeper/$host] Manage ($cmd) on $host ..." 
-    if [ "$asyncDeploy" == "true" ]; then
+    if [ "$deployAsync" == "true" ]; then
       doRemoteCmd "$user" "$passwd" "$host" "sudo ${zkHome}/bin/zkServer.sh ${cmd}" "false" "true" &
     else
       doRemoteCmd "$user" "$passwd" "$host" "sudo ${zkHome}/bin/zkServer.sh ${cmd}" "false" "true"
     fi
   done
+  [ "$deployAsync" == "true" ] && wait
 }
 
 function waitForComplete() {
-  [ "$asyncDeploy" == "true" ] && wait
-  log ""
+  [ "$deployAsync" == "true" ] && wait
+  log "--------------------------------------------------------------------"
   log "Execution $1 to all nodes finished !"
   exit 0
 }
@@ -160,13 +162,12 @@ case $arg1 in
     ;;
   *)
     if [[ -z "$arg1" || -z "$arg2" ]]; then
-      usage
-      exit -1
+      usage; exit -1
     fi
     if [ "$arg1" == "zookeeper" ]; then
       doCommandZookeeper "$arg2"
     else
-      doCommandApps "$arg1" "arg2"
+      doCommandApps "$arg2" "$arg1"
     fi
     waitForComplete "$arg1 $arg2"
     ;;
