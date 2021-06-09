@@ -297,7 +297,7 @@ function doDeployBackendApp() {
   if [ -z "$appName" ]; then
     logErr "Failed to deploy, appName is required! all args: '$@'"; exit -1
   fi
-  local buildTargetDir=$(echo "$buildModule"|awk -F ',' '{print $2}')
+  local buildTargetDir=$(echo "$buildModule"|awk -F ',' '{print $4}')
   if [ -z "$buildTargetDir" ]; then
     logErr "Failed to deploy, buildTargetDir is required! all args: '$@'"; exit -1
   fi
@@ -323,25 +323,25 @@ function doDeployBackendApp() {
 \t         Instance Host:"
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
-    log "[$appName/standalone] <<<<< Deploying standalone to local ..."
+    log "[$appName/standalone] >>>>> Deploying standalone to local ..."
     if [ "$deployAsync" == "true" ]; then
       deployStandaloneToLocal "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" &
-      log "[$appName/standalone] >>>>> Deployer standalone to local started!"
+      log "[$appName/standalone] <<<<< Deployer standalone to local started!"
     else
       deployStandaloneToLocal "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive"
-      log "[$appName/standalone] >>>>> Deployed standalone to local completed!"
+      log "[$appName/standalone] <<<<< Deployed standalone to local completed!"
     fi
   elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
-    log "[$appName/cluster] <<<<< Deploying to cluster remote nodes ..."
+    log "[$appName/cluster] >>>>> Deploying to cluster remote nodes ..."
     if [ "$deployAsync" == "true" ]; then
       deployClusterToNodes "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}" &
-      log "[$appName/cluster] >>>>> Deployer cluster to remote nodes started!"
+      log "[$appName/cluster] <<<<< Deployer cluster to remote nodes started!"
     else
       deployClusterToNodes "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}"
-      log "[$appName/cluster] >>>>> Deployed cluster to remote nodes completed!"
+      log "[$appName/cluster] <<<<< Deployed cluster to remote nodes completed!"
     fi
   fi
-}
+} 
 
 # Deploy DoPaaS backend apps all.
 function deployBackendAll() {
@@ -434,10 +434,8 @@ function deployNginxServers() {
     fi
     # Configure nginx configuration and install.
     log "Configuring the nginx configuration file of dopaas services ..."
-    cd $workspaceDir && rm -rf nginx && cp -r $currDir/$gitXCloudDoPaaSProjectName/nginx .
-    cd nginx && sed -i "s/wl4g.com/wl4g.$springProfilesActive/g" conf.d/dopaas_http* && tar -cf nginxconf.tar *
-    doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginxconf.tar" "/etc/nginx/" "true"
-    doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginxconf.tar && rm -rf nginxconf.tar && rm -rf conf.d/example*" "true" "true"
+    makeNginxConf "$workspaceDir/dopaas.conf" "$springProfilesActive" "${globalAllNodes[*]}"
+    doScp "$user" "$passwd" "$host" "$workspaceDir/dopaas.conf" "/etc/nginx/conf.d/" "true"
   } &
 }
 
