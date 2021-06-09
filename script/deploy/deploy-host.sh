@@ -22,7 +22,7 @@
 
 # Global variables.
 globalAllNodes=()
-globalAllNodesString=""
+globalAllHostsString=""
 globalDeployStatsMsg="" # Deployed stats message.
 isBackendPullHasUpdate='false' # Backend project pull has update? includes dependent project.
 
@@ -321,7 +321,7 @@ function doDeployBackendApp() {
 \t              PID File: /mnt/disk1/${appName}/${appName}.pid\n
 \t       Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart\n
 \t             Logs File: ${deployAppLogBaseDir}/${appName}/${appName}_${springProfilesActive}.log\n
-\t         Instance Host:"
+\t         Instance Host: ${globalAllNodesString}"
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
     log "[$appName:$appPort/standalone] >>>>> Deploying standalone to local ..."
