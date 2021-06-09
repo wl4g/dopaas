@@ -404,8 +404,8 @@ function deployNginxServers() {
 \t             Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log\n
 \t         Instance Host: $host"
 
-  # Check install nginx.
   {
+    # Check install nginx.
     local checkRemoteNginxResult=$(doRemoteCmd "$user" "$passwd" "$host" "command -v nginx" "true" "true")
     if [ -z "$checkRemoteNginxResult" ]; then
       local osType=$(getOsTypeAndCheck)
@@ -435,8 +435,11 @@ function deployNginxServers() {
     fi
     # Configure nginx configuration and install.
     log "Configuring the nginx configuration file of dopaas services ..."
-    makeNginxConf "$workspaceDir/dopaas.conf" "$springProfilesActive" "${globalAllNodes[*]}"
-    doScp "$user" "$passwd" "$host" "$workspaceDir/dopaas.conf" "/etc/nginx/conf.d/" "true"
+    cd $workspaceDir && rm -rf nginx && cp -r $currDir/$gitXCloudDoPaaSProjectName/nginx .
+    makeNginxConf "$workspaceDir/nginx/conf.d/dopaas.conf" "$springProfilesActive" "${globalAllNodes[*]}" 
+    cd nginx && tar -cf nginxconf.tar *
+    doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginxconf.tar" "/etc/nginx/" "true"
+    doRemoteCmd "$user" "$passwd" "$host" "cd /etc/nginx/ && tar --overwrite-dir --overwrite -xf nginxconf.tar && rm -rf nginxconf.tar && rm -rf conf.d/example*" "true" "true"
   } &
 }
 
