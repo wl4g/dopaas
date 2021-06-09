@@ -45,6 +45,6 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "\
-        http://eureka:wl4g.com@peer1:9001/eureka/,\
-        http://eureka:wl4g.com@peer2:9002/eureka/,\
-        http://eureka:wl4g.com@peer3:9003/eureka/"
+        http://eureka:wl4g.com@peer1:9000/eureka/,\
+        http://eureka:wl4g.com@peer2:9000/eureka/,\
+        http://eureka:wl4g.com@peer3:9000/eureka/"
