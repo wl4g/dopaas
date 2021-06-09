@@ -63,7 +63,14 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 ```
 ./dopaas-ctl.sh
 
-Usage: {start-all|stop-all|restart-all|status-all}
+Usage: {start-all|stop-all|restart-all|status-all|<appName> <start|stop|restart|status>}
+  start-all        Start all remote nodes apps.
+  stop-all         stop all remote nodes apps.
+  restart-all      Restart all remote nodes apps.
+  status-all       Query status all remote nodes apps.
+  <appName> <start|stop|restart|status>  For example: $ cmdb-facade restart
+    Restart only the cmdb-facade application of all remote nodes,
+    The optionals are: zookeeper/eureka-server/iam-web/iam-facade/iam-data/cmdb-facade/cmdb-manager/... etc.
 ```
 
 建议配置
