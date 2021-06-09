@@ -130,7 +130,7 @@ function removeAppFilesWithRemoteInstance() {
   log "[$appName/$host] Checking if ${appName} has stopped ..."
   # Notes: for example, Eureka may deploy multiple instances on a single host (as shown below) spring.profiles.active When unloading,
   # Sets to "None" means no discrimination spring.profiles.active To ensure that multiple instance processes can be stopped.
-  doRemoteCmd "$user" "$passwd" "$host" "\rm -rf $appDataBaseDir/environment; mkdir -p /mnt/disk1/${appName}; echo 'SPRING_PROFILES_ACTIVE=None' >$appDataBaseDir/environment; systemctl stop ${appName}" "false"
+  doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(command -v systemctl)\" ] && systemctl stop ${appName} || /etc/init.d/${appName}.service stop" "false"
   doRemoteCmd "$user" "$passwd" "$host" "export SPRING_PROFILES_ACTIVE='None'; $appServiceFile stop" "false"
   # Remove installed all files.
   log "[$appName/$host] Removing directory /tmp/hsperfdata_$appName/"

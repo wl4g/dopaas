@@ -294,6 +294,7 @@ function doDeployBackendApp() {
   local nodeArr=$3
   # Gets build info.
   local appName=$(echo "$buildModule"|awk -F ',' '{print $1}')
+  local appPort=$(echo "$buildModule"|awk -F ',' '{print $2}')
   if [ -z "$appName" ]; then
     logErr "Failed to deploy, appName is required! all args: '$@'"; exit -1
   fi
@@ -323,22 +324,22 @@ function doDeployBackendApp() {
 \t         Instance Host:"
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
-    log "[$appName/standalone] >>>>> Deploying standalone to local ..."
+    log "[$appName:$appPort/standalone] >>>>> Deploying standalone to local ..."
     if [ "$deployAsync" == "true" ]; then
       deployStandaloneToLocal "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" &
-      log "[$appName/standalone] <<<<< Deployer standalone to local started!"
+      log "[$appName:$appPort/standalone] <<<<< Deployer standalone to local started!"
     else
       deployStandaloneToLocal "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive"
-      log "[$appName/standalone] <<<<< Deployed standalone to local completed!"
+      log "[$appName:$appPort/standalone] <<<<< Deployed standalone to local completed!"
     fi
   elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
-    log "[$appName/cluster] >>>>> Deploying to cluster remote nodes ..."
+    log "[$appName:$appPort/cluster] >>>>> Deploying to cluster remote nodes ..."
     if [ "$deployAsync" == "true" ]; then
       deployClusterToNodes "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}" &
-      log "[$appName/cluster] <<<<< Deployer cluster to remote nodes started!"
+      log "[$appName:$appPort/cluster] <<<<< Deployer cluster to remote nodes started!"
     else
       deployClusterToNodes "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${nodeArr[*]}"
-      log "[$appName/cluster] <<<<< Deployed cluster to remote nodes completed!"
+      log "[$appName:$appPort/cluster] <<<<< Deployed cluster to remote nodes completed!"
     fi
   fi
 } 

@@ -112,7 +112,7 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$deployBackendSkip" ] && export deployBackendSkip="false"
 
 # Deploy(eureka).
-export deployEurekaBuildModule="eureka-server:8761,internal,${currDir}/xcloud-component/xcloud-component-integration/xcloud-component-integration-regcenter-eureka-server/target"
+export deployEurekaBuildModule="eureka-server,8761,internal,${currDir}/xcloud-component/xcloud-component-integration/xcloud-component-integration-regcenter-eureka-server/target"
 
 # Deploy(zookeeper).(https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz)
 [ -z "$zkHome" ] && export zkHome="$deployAppBaseDir/zookeeper-current/"
