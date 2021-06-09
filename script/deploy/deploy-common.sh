@@ -478,7 +478,7 @@ ${runtimeEnvStr}[ -z \"\$${appShortNameUpper}_DOPAAS_REDIS_PASSWD\" ] && export 
   fi
 
   # Install init.d service.
-  local tmpServiceFile="$workspaceDir/${appName}.service"
+  local tmpServiceFile="$workspaceDir/init.d/${appName}.service" && mkdir -p "$workspaceDir/init.d/"
 cat<<EOF>$tmpServiceFile
 #!/bin/bash
 # chkconfig: - 85 15
@@ -634,7 +634,7 @@ chmod -R 750 /etc/init.d/${appName}.service" "true"
 
   # Install systemctl service.(if necessary)
   if [ -n "$(command -v systemctl)" ]; then
-    local tmpCtlServiceFile="$workspaceDir/${appName}.service"
+    local tmpCtlServiceFile="$workspaceDir/systemd/${appName}.service" && mkdir -p "$workspaceDir/systemd/"
 cat<<EOF>$tmpCtlServiceFile
 # See:http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html
 [Unit]
@@ -674,7 +674,7 @@ WantedBy=multi-user.target
 EOF
     # Installing systemd service script to remote.
     log "[$appName/$host] Installing systemd '/lib/systemd/system/${appName}.service' to remote ..."
-    doScp "$user" "$password" "$host" "$tmpServiceFile" "/lib/systemd/system/${appName}.service" "true"
+    doScp "$user" "$password" "$host" "$tmpCtlServiceFile" "/lib/systemd/system/${appName}.service" "true"
     doRemoteCmd "$user" "$password" "$host" "sudo chmod -R 750 /lib/systemd/system/${appName}.service && sudo systemctl daemon-reload && systemctl enable ${appName}.service" "true"
     secDeleteLocal $tmpCtlServiceFile
   fi
@@ -792,7 +792,7 @@ server {
         local appUpstreamStr="upstream ${appNameUnderline}_nodes {" # upstream conf.
         for node in ${nodeArr[@]}; do
           local host=$(echo $node|awk -F 'ξ' '{print $1}')
-          appUpstreamStr="${appUpstreamStr}\n\tserver $host:$appPort weight=50;"
+          appUpstreamStr="${appUpstreamStr}\n\tserver $host:$appPort max_fails=5 fail_timeout=60s weight=50;"
         done
         appUpstreamStr="$appUpstreamStr\n}"
         configStr="$configStr\n$appUpstreamStr"
