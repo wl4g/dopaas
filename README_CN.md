@@ -59,18 +59,17 @@ bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy
 - 请注意按脚本提示，修改 [`deploy-env.sh`](script/deploy/deploy-env.sh) 自定义环境配置然后重新执行 [`./deploy-boot.sh`](script/deploy/deploy-boot.sh) , 请耐心等待大约 10min.  
 - 部署前先检查目标主机上是否已安装 nginx/zookeeper/eureka 等, 若有则建议先停止, 因为自动部署也会部署避免冲突.
 
-集群管理工具:
+集群管理工具:  
+[`./dopaas-ctl.sh`](script/deploy/dopaas-ctl.sh)
 ```
-./dopaas-ctl.sh
-
 Usage: {start-all|stop-all|restart-all|status-all|<appName> <start|stop|restart|status>}
-  start-all        Start all remote nodes apps.
-  stop-all         stop all remote nodes apps.
-  restart-all      Restart all remote nodes apps.
-  status-all       Query status all remote nodes apps.
-  <appName> <start|stop|restart|status>  For example: $ cmdb-facade restart
-    Restart only the cmdb-facade application of all remote nodes,
-    The optionals are: zookeeper/eureka-server/iam-web/iam-facade/iam-data/cmdb-facade/cmdb-manager/... etc.
+    start-all    Start all remote nodes apps.
+     stop-all    Stop all remote nodes apps.
+  restart-all    Restart all remote nodes apps.
+   status-all    Query status all remote nodes apps.
+    <appName> <start|stop|restart|status>   for example: {cmdb-facade restart}
+        Restart only the cmdb-facade application of all remote nodes,
+        The optionals are: zookeeper/eureka-server/iam-web/iam-facade/iam-data/cmdb-facade/cmdb-manager/... etc.
 ```
 
 建议配置

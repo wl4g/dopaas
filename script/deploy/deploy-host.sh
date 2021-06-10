@@ -769,6 +769,10 @@ function main() {
   [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
   log ""
   log "「 Welcome to XCloud DoPaaS Deployer (Host) 」"
+  log "  ___       ___            ___ "
+  log " | . \ ___ | . \ ___  ___ / __>"
+  log " | | |/ . \|  _/<_> |<_> |\__ \\"
+  log " |___/\___/|_|  <___|<___|<___/"
   log ""
   log " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
   log " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"

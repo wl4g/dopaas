@@ -297,8 +297,8 @@ function log() {
     logContent=$2
   fi
   local logMsg="[$logLevel] $(date '+%Y-%m-%d %H:%M:%S') - [$(getCurrPid)] $logContent"
-  echo -e $logMsg
-  echo -e $logMsg >> ${logFile}
+  echo -e "$logMsg"
+  echo -e "$logMsg" >> ${logFile}
 }
 
 # Error logging.

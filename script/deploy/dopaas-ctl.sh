@@ -23,6 +23,10 @@
 
 log ""
 log "「 Welcome to XCloud DoPaaS Ctl (Host) 」"
+log "  ___       ___            ___ "
+log " | . \ ___ | . \ ___  ___ / __>"
+log " | | |/ . \|  _/<_> |<_> |\__ \\"
+log " |___/\___/|_|  <___|<___|<___/"
 log ""
 log " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
 log " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
@@ -123,13 +127,13 @@ function waitForComplete() {
 function usage() {
   echo "
 Usage: {start-all|stop-all|restart-all|status-all|<appName> <start|stop|restart|status>}
-  start-all        Start all remote nodes apps.
-  stop-all         stop all remote nodes apps.
-  restart-all      Restart all remote nodes apps.
-  status-all       Query status all remote nodes apps.
-  <appName> <start|stop|restart|status>  For example: \$ cmdb-facade restart
-    Restart only the cmdb-facade application of all remote nodes,
-    The optionals are: zookeeper/eureka-server/iam-web/iam-facade/iam-data/cmdb-facade/cmdb-manager/... etc.
+    start-all    Start all remote nodes apps.
+     stop-all    Stop all remote nodes apps.
+  restart-all    Restart all remote nodes apps.
+   status-all    Query status all remote nodes apps.
+    <appName> <start|stop|restart|status>   for example: {cmdb-facade restart}
+        Restart only the cmdb-facade application of all remote nodes,
+        The optionals are: zookeeper/eureka-server/iam-web/iam-facade/iam-data/cmdb-facade/cmdb-manager/... etc.
     "
 }
 
