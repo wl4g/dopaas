@@ -698,7 +698,7 @@ function deployFrontendAll() {
     local deployFrontendDir="${appInstallDir}/${appName}-${buildPkgVersion}-bin"
     local fProjectDir="$currDir/$gitXCloudDoPaaSViewProjectName"
     # Check build dist files.
-    if [[ ! -d "$fProjectDir" || -z "$(ls $fProjectDir/dist/* >/dev/null 2>&1)" ]]; then
+    if [[ ! -d "$fProjectDir" || "$(ls $fProjectDir/dist/* >/dev/null 2>&1|wc -l)" -le 0 ]]; then
       logErr "Cannot reading frontend build assets, because dist directory not exists!"; exit -1 
     fi
     cd $fProjectDir && tar -zcf dist.tar.gz dist/
