@@ -263,6 +263,10 @@ function main() {
   [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
   echo ""
   echo "「 Welcome to XCloud DoPaaS Deployer (Boot) 」"
+  echo "  ___       ___            ___ "
+  echo " | . \ ___ | . \ ___  ___ / __>"
+  echo " | | |/ . \|  _/<_> |<_> |\__ \\"
+  echo " |___/\___/|_|  <___|<___|<___/"
   echo ""
   echo " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
   echo " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
