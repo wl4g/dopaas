@@ -28,10 +28,9 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$logFile" ] && export logFile="${workspaceDir}/install_${currDate}.log"; touch $logFile
 [ -z "$deployDebug" ] && export deployDebug="false" # true|false
 [ -z "$deployNetworkMode" ] && export deployNetworkMode="extranet" # extranet|intranet
-[ -z "$deployAsync" ] && export deployAsync="true" # true|false
 # 部署并发数,用于限制并行将多个应用分别异步部署到多个实例的进程数(注:若设置过大会引发大量ssh频繁建立连接导致被sshd拒绝:ssh_exchange_identification: read: Connection reset by peer)
 # 好在deploy-host.sh#configureRemoteSshd函数已经对远端sshd配置修改, 此处还限制并发数是为了防止某些系统下修改未生效.
-[ -z "$deployAsyncConcurrent" ] && export deployAsyncConcurrent=5
+[ -z "$deployConcurrent" ] && export deployConcurrent=5
 
 # --------------------------- Jdk environment definition. -----------------------------------------------------
 
