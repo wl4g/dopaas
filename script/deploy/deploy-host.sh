@@ -698,11 +698,12 @@ function deployFrontendAll() {
     local deployFrontendDir="${appInstallDir}/${appName}-${buildPkgVersion}-bin"
     local fProjectDir="$currDir/$gitXCloudDoPaaSViewProjectName"
     # Check build dist files.
-    if [[ ! -d "$fProjectDir" || "$(ls $fProjectDir/dist/* >/dev/null 2>&1|wc -l)" -le 0 ]]; then
+    if [[ ! -d "$fProjectDir" || "$(ls $fProjectDir/dist/*|wc -l)" -le 0 ]]; then
       logErr "Cannot reading frontend build assets, because dist directory not exists!"; exit -1 
     fi
     cd $fProjectDir && tar -zcf dist.tar.gz dist/
     doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendDir && \rm -rf $deployFrontendDir/*" "true" "true"
+    log "[$gitXCloudDoPaaSViewProjectName/$host] Transfer frontend assets to $deployFrontendDir ..."
     doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar.gz" "$deployFrontendDir" "true"
     doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -zxf dist.tar.gz --strip-components=1 && rm -rf dist.tar.gz && chmod 755 -R $deployFrontendDir" "true" "true"
     # Restart nginx(first install).
@@ -736,7 +737,7 @@ function main() {
   checkInstallInfraSoftware
   initConfiguration
   deployFrontendAll
-  deployBackendAll
+  #deployBackendAll
   wait
   deployStatus=$([ $? -eq 0 ] && echo "SUCCESS" || echo "FAILURE")
   costTime=$[$(echo `date +%s`)-$beginTime]
