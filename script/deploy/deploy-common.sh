@@ -630,7 +630,7 @@ chown -R $appUser:$appGroup $appDataDir
 touch $appDataDir/environment
 chown -R $appUser:$appGroup /etc/init.d/${appName}.service
 chmod -R 750 /etc/init.d/${appName}.service" "true"
-  secDeleteLocal $tmpServiceFile
+  #secDeleteLocal $tmpServiceFile
 
   # Install systemctl service.(if necessary)
   if [ -n "$(command -v systemctl)" ]; then
@@ -676,7 +676,7 @@ EOF
     log "[$appName/$host] Installing systemd '/lib/systemd/system/${appName}.service' to remote ..."
     doScp "$user" "$password" "$host" "$tmpCtlServiceFile" "/lib/systemd/system/${appName}.service" "true"
     doRemoteCmd "$user" "$password" "$host" "sudo chmod -R 750 /lib/systemd/system/${appName}.service && sudo systemctl daemon-reload && systemctl enable ${appName}.service" "true"
-    secDeleteLocal $tmpCtlServiceFile
+    #secDeleteLocal $tmpCtlServiceFile
   fi
 }
 
