@@ -122,7 +122,7 @@ function pullSources() {
       cd $projectDir && git remote set-url origin $cloneUrl
     fi
     # Check and pull
-    cd $projectDir && git config pull.rebase false
+    cd $projectDir && git config pull.rebase false && git reset --hard
     local pullResult=$(timeout --foreground 90 git pull -f 2>&1 | tee -a $logFile)
     [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     cd $projectDir && git checkout $branch
@@ -348,7 +348,7 @@ function deployBackendAll() {
       # Define.
       local concurrent="$deployConcurrent"
       local pfileFD="$RANDOM" # 需多次调用, 使用shell内置random函数, 范围:[0-32767)
-      local pfile="${workspaceDir}/$pfileFD.fifo"
+      local pfile="${workspaceDir}/${pfileFD}.fifo"
       # Make FIFO FD.
       [ ! -p "$pfile" ] && mkfifo $pfile
       eval "exec $pfileFD<>$pfile"
