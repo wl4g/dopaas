@@ -509,9 +509,9 @@ function deployZookeeperServers() {
     if [ ! -f "$tmpZkTarFile" ]; then
       if [ "$deployNetworkMode" == "extranet" ]; then
         if [ "$isChinaLANNetwork" == "N" ]; then
-          downloadFile "$zkDownloadUrl" "$tmpZkTarFile" "180"
+          downloadFile "$zkDownloadUrl" "$tmpZkTarFile" "300"
         else
-          downloadFile "$secondaryZkDownloadUrl" "$tmpZkTarFile" "180"
+          downloadFile "$secondaryZkDownloadUrl" "$tmpZkTarFile" "300"
         fi
       elif [ "$deployNetworkMode" == "intranet" ]; then
         downloadFile "$localZkDownloadUrl" "$tmpZkTarFile"
