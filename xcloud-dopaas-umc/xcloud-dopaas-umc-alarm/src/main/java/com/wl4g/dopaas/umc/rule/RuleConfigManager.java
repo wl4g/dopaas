@@ -43,66 +43,64 @@ import com.wl4g.dopaas.umc.handler.AlarmConfigurer;
  */
 public class RuleConfigManager implements ApplicationRunner {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+    final protected Logger log = LoggerFactory.getLogger(getClass());
 
-private @Autowired  JedisService jedisService;
+    private @Autowired JedisService jedisService;
 
-private @Autowired  AlarmConfigurer ruleConfigurer;
+    private @Autowired AlarmConfigurer ruleConfigurer;
 
-	@Override
-	public void run(ApplicationArguments args) {
-	}
+    @Override
+    public void run(ApplicationArguments args) {
+    }
 
-	/**
-	 * Clean rule to cache.
-	 * 
-	 * @param clearBatch
-	 */
-	public void clearAll(int clearBatch) {
-		if (clearBatch <= 0) {
-			clearBatch = 200;
-		}
-		String pattern = KEY_CACHE_ALARM_TPLS + "*";
-		ScanCursor<?> cursor = jedisService.scan(pattern, clearBatch, null);
-		int count = 0;
-		for (String key : cursor.keysAsString()) {
-			try {
-				jedisService.del(key);
-				++count;
-			} catch (Exception e) {
-				log.error(String.format("Failed to cleaning alarm tpls of '%s'", key), e);
-			}
-		}
+    /**
+     * Clean rule to cache.
+     * 
+     * @param clearBatch
+     */
+    public void clearAll(int clearBatch) {
+        if (clearBatch <= 0) {
+            clearBatch = 200;
+        }
+        String pattern = KEY_CACHE_ALARM_TPLS + "*";
+        ScanCursor<?> cursor = jedisService.scan(pattern, clearBatch, null);
+        int count = 0;
+        for (String key : cursor.toStringkeys()) {
+            try {
+                jedisService.del(key);
+                ++count;
+            } catch (Exception e) {
+                log.error(String.format("Failed to cleaning alarm tpls of '%s'", key), e);
+            }
+        }
 
-		if (log.isInfoEnabled()) {
-			log.info("Cleaned alarm templates: {}", count);
-		}
-	}
+        log.info("Cleaned alarm templates: {}", count);
+    }
 
-	/**
-	 * Find alarm rule template by collectId.
-	 * 
-	 * @param clusterId
-	 * @return
-	 */
-	public List<AlarmConfig> loadAlarmRuleTpls(String host, String endpoint) {
-		String key = getCollectIdAlarmRulesCacheKey(host + ":" + endpoint);
-		// First get the cache
-		List<AlarmConfig> alarmTpls = jedisService.getObjectList(key, AlarmConfig.class);
-		if (isEmpty(alarmTpls)) {
-			alarmTpls = ruleConfigurer.findAlarmConfigByEndpoint(host, endpoint);
-			if (!isEmpty(alarmTpls)) {
-				jedisService.setObjectList(key, alarmTpls, 5);
-			}
-		}
-		return safeList(alarmTpls);
-	}
+    /**
+     * Find alarm rule template by collectId.
+     * 
+     * @param clusterId
+     * @return
+     */
+    public List<AlarmConfig> loadAlarmRuleTpls(String host, String endpoint) {
+        String key = getCollectIdAlarmRulesCacheKey(host + ":" + endpoint);
+        // First get the cache
+        List<AlarmConfig> alarmTpls = jedisService.getObjectList(key, AlarmConfig.class);
+        if (isEmpty(alarmTpls)) {
+            alarmTpls = ruleConfigurer.findAlarmConfigByEndpoint(host, endpoint);
+            if (!isEmpty(alarmTpls)) {
+                jedisService.setObjectList(key, alarmTpls, 5);
+            }
+        }
+        return safeList(alarmTpls);
+    }
 
-	// --- Cache key ---
+    // --- Cache key ---
 
-	private static String getCollectIdAlarmRulesCacheKey(String collectAddr) {
-		Assert.hasText(collectAddr, "'collectAddr' must not be empty");
-		return KEY_CACHE_ALARM_TPLS + collectAddr;
-	}
+    private static String getCollectIdAlarmRulesCacheKey(String collectAddr) {
+        Assert.hasText(collectAddr, "'collectAddr' must not be empty");
+        return KEY_CACHE_ALARM_TPLS + collectAddr;
+    }
 
 }
