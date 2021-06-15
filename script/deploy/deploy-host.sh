@@ -386,7 +386,7 @@ function deployNginxServers() {
           Install Home: /etc/nginx/
             Config Dir: /etc/nginx/nginx.conf or /etc/nginx/conf.d/
        Profiles Active: 
-              PID File: /run/nginx.pid\
+              PID File: /run/nginx.pid
        Restart Command: sudo systemctl restart nginx or /etc/init.d/nginx.service restart
              Logs File: /var/log/nginx/access.log or /var/log/nginx/error.log
         Instance Hosts: $host"
