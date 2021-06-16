@@ -56,7 +56,7 @@ bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/s
 # 或
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
 ```
-- 请注意按脚本提示，修改 [`deploy-env.sh`](script/deploy/deploy-env.sh) 自定义环境配置然后重新执行 [`./deploy-boot.sh`](script/deploy/deploy-boot.sh) , 请耐心等待大约 10min.  
+- 请注意按脚本提示，修改 [`deploy-env.sh`](script/deploy/deploy-env.sh) 自定义环境配置然后重新执行 [`./deploy-boot.sh`](script/deploy/deploy-boot.sh) , 由于是从源码编译部署, 请耐心等待大约 8~20min (第一次因需下载代码和依赖库会比较慢, 后续如需重新部署可根据实际情况设置 `export buildForcedOnPullUpToDate=true` 或 `export deployFrontendSkip=true` 来跳过后端编译和前端等来加速).  
 - 部署前先检查目标主机上是否已安装 nginx/zookeeper/eureka 等, 若有则建议先停止, 因为自动部署也会部署避免冲突.
 
 集群管理工具:  

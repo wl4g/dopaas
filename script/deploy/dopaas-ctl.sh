@@ -54,6 +54,20 @@ function doCommandApps() {
   deployBuildModules[${#deployBuildModules[@]}]="$deployEurekaBuildModule"
   deployBuildModulesSize=${#deployBuildModules[@]}
   if [ $deployBuildModulesSize -gt 0 ]; then
+    # Check target appName is invalid. (if necessary)
+    if [ -n "$targetAppName" ]; then
+      local found="false"
+      for ((i=0;i<${#deployBuildModules[@]};i++)) do
+        local buildModule=${deployBuildModules[i]}
+        local appName=$(echo "$buildModule"|awk -F ',' '{print $1}')
+        if [ "$targetAppName" == "$appName" ]; then
+          found="true"
+          break
+        fi
+      done
+      [ "$found" == "false" ] && logErr "Unknown appName '$targetAppName' !" && exit -1
+    fi
+    # Execution commands to remote.
     for ((i=0;i<${#deployBuildModules[@]};i++)) do
       local buildModule=${deployBuildModules[i]}
       local appName=$(echo "$buildModule"|awk -F ',' '{print $1}')
@@ -78,13 +92,9 @@ function doCommandApps() {
             logErr "[$appName:$appPort/cluster] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
           fi
           log "[$appName:$appPort/$host] Manage ($cmd) on $host ..." 
-          if [ "$deployAsync" == "true" ]; then
-            doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(command -v systemctl)\" ] && systemctl ${cmd} ${appName} || /etc/init.d/${appName}.service ${cmd}" "false" "true" &
-          else
-            doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(command -v systemctl)\" ] && systemctl ${cmd} ${appName} || /etc/init.d/${appName}.service ${cmd}" "false" "true"
-          fi
+          doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(command -v systemctl)\" ] && systemctl ${cmd} ${appName} || /etc/init.d/${appName}.service ${cmd}" "false" "true" &
         done
-        [ "$deployAsync" == "true" ] && wait
+        wait
       } &
     done
   fi
@@ -108,19 +118,17 @@ function doCommandZookeeper() {
       logErr "[zookeeper/$host] Invalid cluster node info, host/user is required! host: $host, user: $user, password: $passwd"; exit -1
     fi
     log "[zookeeper/$host] Manage ($cmd) on $host ..." 
-    if [ "$deployAsync" == "true" ]; then
-      doRemoteCmd "$user" "$passwd" "$host" "sudo ${zkHome}/bin/zkServer.sh ${cmd}" "false" "true" &
-    else
-      doRemoteCmd "$user" "$passwd" "$host" "sudo ${zkHome}/bin/zkServer.sh ${cmd}" "false" "true"
-    fi
+    doRemoteCmd "$user" "$passwd" "$host" "sudo ${zkHome}/bin/zkServer.sh ${cmd}" "false" "true" &
   done
-  [ "$deployAsync" == "true" ] && wait
+  wait
 }
 
 function waitForComplete() {
-  [ "$deployAsync" == "true" ] && wait
+  local arg1=$1
+  local arg2=$2
+  wait
   log "--------------------------------------------------------------------"
-  log "Execution $1 to all nodes finished !"
+  log "Execution $arg1 $arg2 to all nodes finished !"
   exit 0
 }
 
