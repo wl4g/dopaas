@@ -341,13 +341,15 @@ function deployBackendAll() {
   # a. 对n个节点并发执行部署, n节点就fork n个进程并行执行; 
   # b. 对于每个节点每次只并行部署concurrent个app, 这是因为远程频繁新建ssh连接时会触发sshd拒绝连接限制的错误:ssh_exchange_identification: read: Connection reset by peer
   # c. 暂时不对n个节点并发执行做限制, 通常4C/16G/100Mbps并行执行上几百个任务问题不大, 若上千节点部署可能出现性能问题, 可使用saltstack/chenf等工具.
+  local generateNewFD=1000
   for node in ${globalAllNodes[@]}; do # issue: https://blog.csdn.net/mdx20072419/article/details/103901329
     local host=$(echo $node|awk -F 'ξ' '{print $1}')
+    ((generateNewFD+=1)) # 不使用系统的随机函数'$RANDOM'是因为当CPU使用高时, 可能由于随机源不足而生成重复值, 这将引发一系列异步问题.(如,执行过程中意外挂起永不退出)
     {
       log "[$host] ** Deploying backend apps on $host ..."
       # Define.
       local concurrent="$deployConcurrent"
-      local pfileFD="$RANDOM" # 需多次调用, 使用shell内置random函数, 范围:[0-32767)
+      local pfileFD="$generateNewFD" # 并发多次调用, 每次必须使用新值
       local pfile="${workspaceDir}/${pfileFD}.fifo"
       # Make FIFO FD.
       [ ! -p "$pfile" ] && mkfifo $pfile
@@ -371,6 +373,7 @@ function deployBackendAll() {
   done
   wait
   log "* Deployed backend all apps completed."
+  return 0
 }
 
 # Check deploy nginx servers.
