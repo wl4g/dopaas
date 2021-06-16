@@ -56,7 +56,7 @@ bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/s
 # or
 bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
 ```
-- Please pay attention to modify [`deploy-env.sh`](script/deploy/deploy-env.sh) custom environment configuration according to the script prompt, and then re execute [`./deploy-boot.sh`](script/deploy/deploy-boot.sh). Please wait patiently for about 10 minutes.
+- Please pay attention to modify [`deploy-env.sh`](script/deploy/deploy-env.sh) custom environment configuration according to the script prompt, and then re execute [`./deploy-boot.sh`](script/deploy/deploy-boot.sh). Please wait about 8-20 minutes patiently for the deployment from source code compilation (because the first time the code and dependency library will be slow to download. If you need to redeploy, you can set the `export buildForcedOnPullUpToDate=true` or `export deployFrontendSkip=true` to skip backend compilation and frontend compilation to accelerate)
 
 - Before deployment, check whether nginx / zookeeper / Eureka has been installed on the target host. If so, it is recommended to stop first, because automatic deployment will also avoid conflicts
 
