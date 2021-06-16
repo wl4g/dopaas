@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-dopaas-udm-service-starter-manager</artifactId>
@@ -21,8 +22,13 @@
 			<artifactId>xcloud-dopaas-udm-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!--<dependency> <groupId>com.wl4g</groupId> <artifactId>xcloud-dopaas-udm-template</artifactId> <version>${project.parent.version}</version> 
-			</dependency> -->
+		<!--<dependency> <groupId>com.wl4g</groupId> <artifactId>xcloud-dopaas-udm-template</artifactId> 
+			<version>${project.parent.version}</version> </dependency> -->
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-dopaas-uci-client-springboot</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>io.swagger.parser.v3</groupId>
 			<artifactId>swagger-parser</artifactId>
@@ -138,9 +144,9 @@
 							<mainClass>com.wl4g.UdmManager</mainClass>
 							<finalName>${final.name}-${project.version}-bin</finalName>
 							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
-                            <!-- @see:https://www.baeldung.com/spring-boot-main-class -->
-                            <!-- @see:https://www.jianshu.com/p/66a101c85485 -->
-                            <layout>ZIP</layout>
+							<!-- @see:https://www.baeldung.com/spring-boot-main-class -->
+							<!-- @see:https://www.jianshu.com/p/66a101c85485 -->
+							<layout>ZIP</layout>
 						</configuration>
 						<executions>
 							<execution>

@@ -20,7 +20,7 @@
 package com.wl4g.dopaas.uci.client.springboot.config;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_HEADER_NAME;
+import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_HEADER_PREFIX;
 import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_NAME;
 import static java.lang.String.format;
 
@@ -45,13 +45,44 @@ import lombok.Setter;
 @Setter
 public class UciClientProperties {
 
-	private String metaInfoHeaderName = DEFAULT_META_HEADER_NAME;
-	private File defaultMetaFile;
+    private String metaHeaderName; // e.g: X-Api-Meta-CmdbFacade
 
-	public UciClientProperties(@NotNull final ApplicationContext actx) {
-		notNullOf(actx, "applicationContext");
-		String appName = actx.getEnvironment().getRequiredProperty("spring.application.name");
-		this.defaultMetaFile = new File(format("/opt/apps/acm/%s-package/%s-master-bin/%s", appName, DEFAULT_META_NAME));
-	}
+    private File defaultMetaFile;
+
+    public UciClientProperties(@NotNull final ApplicationContext actx) {
+        notNullOf(actx, "applicationContext");
+        String appName = actx.getEnvironment().getRequiredProperty("spring.application.name");
+        applyMetaInfoHeadName(appName);
+        applyDefaultMetaFile(appName);
+    }
+
+    private void applyMetaInfoHeadName(String appName) {
+        setMetaHeaderName(DEFAULT_META_HEADER_PREFIX + toHump(appName));
+    }
+
+    private void applyDefaultMetaFile(String appName) {
+        setDefaultMetaFile(new File(format("/opt/apps/acm/%s-package/%s-master-bin/%s", appName, appName, DEFAULT_META_NAME)));
+    }
+
+    /**
+     * <pre>
+     *  System.out.println(toCanonical("cmdb-facade")) => CmdbFacade
+     * </pre>
+     */
+    private static String toHump(String appName) {
+        StringBuilder buf = new StringBuilder(appName.length());
+        boolean lastFound = false;
+        for (char ch : appName.substring(1).toCharArray()) {
+            if (ch == '_' || ch == '-') {
+                lastFound = true;
+            } else if (lastFound) {
+                buf.append(String.valueOf(ch).toUpperCase());
+                lastFound = false;
+            } else {
+                buf.append(ch);
+            }
+        }
+        return appName.substring(0, 1).toUpperCase().concat(buf.toString());
+    }
 
 }
