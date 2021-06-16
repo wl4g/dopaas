@@ -15,9 +15,10 @@
  */
 package com.wl4g.dopaas.udm.plugin.swagger.springfox;
 
-import com.wl4g.component.core.boot.DefaultBootstrapAutoConfiguration;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.wl4g.component.core.boot.DefaultBootstrapAutoConfiguration;
 import com.wl4g.component.core.web.error.reactive.ReactiveErrorAutoConfiguration;
 import com.wl4g.component.core.web.error.servlet.ServletErrorAutoConfiguration;
 import com.wl4g.component.core.web.mapping.annotation.WebFluxSmartHandlerMappingConfigurer;
@@ -37,7 +38,10 @@ import com.wl4g.dopaas.udm.plugin.swagger.EnableDocumentionAutoConfiguration;
 @EnableDocumentionAutoConfiguration
 @EnableApiVersionManagement // Supported multi version api docs
 @SpringBootApplication(scanBasePackages = "none", scanBasePackageClasses = { WebMvcSmartHandlerMappingConfigurer.class,
-		WebFluxSmartHandlerMappingConfigurer.class }, exclude = { DefaultBootstrapAutoConfiguration.class,
-				ReactiveErrorAutoConfiguration.class, ServletErrorAutoConfiguration.class })
+        WebFluxSmartHandlerMappingConfigurer.class }, exclude = { DefaultBootstrapAutoConfiguration.class,
+                ReactiveErrorAutoConfiguration.class, ServletErrorAutoConfiguration.class })
 public class EmbeddedSpringfoxBootstrap {
+
+    public static final int EMBEDDED_PORT = RandomUtils.nextInt(55535, 65535);
+
 }

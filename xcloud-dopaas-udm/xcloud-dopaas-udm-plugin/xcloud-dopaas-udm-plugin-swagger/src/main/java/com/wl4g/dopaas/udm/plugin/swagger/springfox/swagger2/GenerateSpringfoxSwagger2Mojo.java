@@ -15,6 +15,9 @@
  */
 package com.wl4g.dopaas.udm.plugin.swagger.springfox.swagger2;
 
+import static com.wl4g.dopaas.udm.plugin.swagger.springfox.EmbeddedSpringfoxBootstrap.EMBEDDED_PORT;
+import static java.lang.String.format;
+
 import java.net.URI;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -45,40 +48,42 @@ import io.swagger.parser.SwaggerParser;
 @Mojo(name = "gendoc-springfox-swagger2", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class GenerateSpringfoxSwagger2Mojo extends AbstractGenDocMojo<Swagger2Properties, Swagger> {
 
-	@Parameter
-	private Swagger2Properties swaggerConfig;
+    @Parameter
+    private Swagger2Properties swaggerConfig;
 
-	@Override
-	protected DocumentionProvider provider() {
-		return DocumentionProvider.SPRINGFOX_SWAGGER2;
-	}
+    @Override
+    protected DocumentionProvider provider() {
+        return DocumentionProvider.SPRINGFOX_SWAGGER2;
+    }
 
-	@Override
-	protected Swagger2Properties loadSwaggerConfig() {
-		return swaggerConfig;
-	}
+    @Override
+    protected Swagger2Properties loadSwaggerConfig() {
+        return swaggerConfig;
+    }
 
-	@Override
-	protected Swagger doGenerateDocumentInternal() throws Exception {
-		return resolveSwagger2Documention();
-	}
+    @Override
+    protected Swagger doGenerateDocumentInternal() throws Exception {
+        return resolveSwagger2Documention();
+    }
 
-	private Swagger resolveSwagger2Documention() {
-		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedSpringfoxBootstrap.class)
-				/* .web(SERVLET) // auto-detection */
-				.bannerMode(Mode.OFF).headless(true).run();) {
+    private Swagger resolveSwagger2Documention() {
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(EmbeddedSpringfoxBootstrap.class);
+        builder.addCommandLineProperties(true);
+        builder.properties("server.port=" + EMBEDDED_PORT);
+        try (ConfigurableApplicationContext context = builder
+                /* .web(SERVLET) // auto-detection */
+                .bannerMode(Mode.OFF).headless(true).run();) {
+            RestClient rest = new RestClient();
+            URI apiDocUri = URI.create(DEFAULT_SWAGGER2_API_URI + DocumentionHolder.get().getConfig().getSwaggerGroup());
+            String swagger = rest.getForObject(apiDocUri, String.class);
+            return new SwaggerParser().parse(swagger);
+        }
+    }
 
-			RestClient rest = new RestClient();
-			URI apiDocUri = URI.create(DEFAULT_SWAGGER2_API_URI + DocumentionHolder.get().getConfig().getSwaggerGroup());
-			String swagger = rest.getForObject(apiDocUri, String.class);
-			return new SwaggerParser().parse(swagger);
-		}
-	}
-
-	/**
-	 * Refer to:
-	 * {@link springfox.documentation.swagger2.web.Swagger2ControllerWebMvc#getDocumentation()}
-	 */
-	public static final String DEFAULT_SWAGGER2_API_URI = "http://localhost:8080/v2/api-docs?group=";
+    /**
+     * Refer to:
+     * {@link springfox.documentation.swagger2.web.Swagger2ControllerWebMvc#getDocumentation()}
+     */
+    public static final String DEFAULT_SWAGGER2_API_URI = format("http://localhost:%s/v2/api-docs?group=", EMBEDDED_PORT);
 
 }
