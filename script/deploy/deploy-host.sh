@@ -371,7 +371,6 @@ function deployBackendAll() {
   done
   wait
   log "* Deployed backend all apps completed."
-  return 0
 }
 
 # Check deploy nginx servers.
@@ -707,8 +706,8 @@ function deployFrontendAll() {
     doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar.gz" "$deployFrontendDir" "true"
     doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -zxf dist.tar.gz --strip-components=1 && rm -rf dist.tar.gz && chmod 755 -R $deployFrontendDir" "true" "true"
     # Restart nginx(first install).
-    doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(echo command -v systemctl)\" ] && sudo systemctl restart nginx || /etc/init.d/nginx.service restart" "true" "true"
-    [ $? -ne 0 ] && exit -1
+    doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(echo command -v systemctl)\" ] && sudo systemctl restart nginx || /etc/init.d/nginx.service restart" "false" "true"
+    log "[$gitXCloudDoPaaSViewProjectName/$host] Deployed frontend to remote '${deployFrontendDir}' completed."
   } &
 }
 

@@ -179,7 +179,7 @@ export deployClusterBuildModules=(
 [ -z "$nodejsInstallDir" ] && export nodejsInstallDir="$workspaceDir"
 # Deploy frontend.
 [ -z "$deployFrontendSkip" ] && export deployFrontendSkip="false"
-[ -z "$deployFrontendAppBaseDir" ] && export deployFrontendAppBaseDir="/usr/share/nginx/html/"
+[ -z "$deployFrontendAppBaseDir" ] && export deployFrontendAppBaseDir="/usr/share/nginx/html"
 
 # ----------------------- APPs runtime environment definition. ------------------------------------------------
 

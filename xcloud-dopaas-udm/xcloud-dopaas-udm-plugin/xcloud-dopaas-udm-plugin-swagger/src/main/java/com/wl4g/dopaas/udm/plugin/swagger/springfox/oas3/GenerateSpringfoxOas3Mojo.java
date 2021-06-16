@@ -15,6 +15,9 @@
  */
 package com.wl4g.dopaas.udm.plugin.swagger.springfox.oas3;
 
+import static com.wl4g.dopaas.udm.plugin.swagger.springfox.EmbeddedSpringfoxBootstrap.EMBEDDED_PORT;
+import static java.lang.String.format;
+
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -42,34 +45,37 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
 @Mojo(name = "gendoc-springfox-oas3", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class GenerateSpringfoxOas3Mojo extends AbstractGenDocMojo<Oas3Properties, OpenAPI> {
 
-	@Parameter
-	private Oas3Properties swaggerConfig;
+    @Parameter
+    private Oas3Properties swaggerConfig;
 
-	@Override
-	protected DocumentionProvider provider() {
-		return DocumentionProvider.SPRINGFOX_OAS3;
-	}
+    @Override
+    protected DocumentionProvider provider() {
+        return DocumentionProvider.SPRINGFOX_OAS3;
+    }
 
-	@Override
-	protected Oas3Properties loadSwaggerConfig() {
-		return swaggerConfig;
-	}
+    @Override
+    protected Oas3Properties loadSwaggerConfig() {
+        return swaggerConfig;
+    }
 
-	@Override
-	protected OpenAPI doGenerateDocumentInternal() throws Exception {
-		return resolveOAS3Documention();
-	}
+    @Override
+    protected OpenAPI doGenerateDocumentInternal() throws Exception {
+        return resolveOAS3Documention();
+    }
 
-	private OpenAPI resolveOAS3Documention() {
-		try (ConfigurableApplicationContext context = new SpringApplicationBuilder(EmbeddedSpringfoxBootstrap.class)
-				/* .web(SERVLET) // auto-detection */
-				.bannerMode(Mode.OFF).headless(true).run();) {
+    private OpenAPI resolveOAS3Documention() {
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(EmbeddedSpringfoxBootstrap.class);
+        builder.addCommandLineProperties(true);
+        builder.properties("server.port=" + EMBEDDED_PORT);
+        try (ConfigurableApplicationContext context = builder
+                /* .web(SERVLET) // auto-detection */
+                .bannerMode(Mode.OFF).headless(true).run();) {
 
-			String apiDocUri = DEFAULT_SWAGGER3_API_URI + DocumentionHolder.get().getConfig().getSwaggerGroup();
-			return new OpenAPIV3Parser().read(apiDocUri);
-		}
-	}
+            String apiDocUri = DEFAULT_SWAGGER3_API_URI + DocumentionHolder.get().getConfig().getSwaggerGroup();
+            return new OpenAPIV3Parser().read(apiDocUri);
+        }
+    }
 
-	public static final String DEFAULT_SWAGGER3_API_URI = "http://localhost:8080/v3/api-docs?group=";
+    public static final String DEFAULT_SWAGGER3_API_URI = format("http://localhost:%s/v3/api-docs?group=", EMBEDDED_PORT);
 
 }
