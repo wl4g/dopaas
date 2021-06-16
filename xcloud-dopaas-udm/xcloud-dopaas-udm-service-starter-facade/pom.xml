@@ -28,6 +28,11 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>xcloud-dopaas-uci-client-springboot</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-data</artifactId>
 		</dependency>
@@ -35,7 +40,6 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-support</artifactId>
 		</dependency>
-
 		<!-- Swagger(OAS3) documention parser. -->
 		<dependency>
 			<groupId>io.swagger.parser.v3</groupId>

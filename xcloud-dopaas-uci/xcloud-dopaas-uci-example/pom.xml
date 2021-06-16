@@ -21,6 +21,11 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-dopaas-uci-client-springboot</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>

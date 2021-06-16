@@ -36,6 +36,11 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>com.wl4g</groupId>
+            <artifactId>xcloud-dopaas-uci-client-springboot</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-dopaas-umc-alarm</artifactId>
 			<version>${project.parent.version}</version>
