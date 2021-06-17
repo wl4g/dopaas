@@ -104,7 +104,7 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$buildPkgVersion" ] && export buildPkgVersion="master"
 # Deploy.
 [ -z "$runtimeMode" ] && export runtimeMode="cluster" # Options: standalone|cluster
-[ -z "$deployAppBaseDir" ] && export deployAppBaseDir="/opt/apps/acm"
+[ -z "$deployAppBaseDir" ] && export deployAppBaseDir="/opt/apps/ecm"
 [ -z "$deployAppDataBaseDir" ] && export deployAppDataBaseDir="/mnt/disk1"
 [ -z "$deployAppLogBaseDir" ] && export deployAppLogBaseDir="${deployAppDataBaseDir}/log"
 [ -z "$deployForcedInstallMgtScript" ] && export deployForcedInstallMgtScript="true" # e.g: Forced installing to '/etc/init.d/iam-web.service'
