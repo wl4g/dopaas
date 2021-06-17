@@ -289,7 +289,7 @@ EOF
     secDeleteLocal "$tmpNodeTarFile" # Cleanup
     export cmdNpm="$nodeHome/bin/npm"
     sudo ln -snf "$nodeHome/bin/node" /bin/node && sudo chmod +x /bin/node
-    sudo ln -snf "$nodeHome/bin/npm" /bin/node && sudo chmod +x /bin/npm
+    sudo ln -snf "$nodeHome/bin/npm" /bin/npm && sudo chmod +x /bin/npm
   else # Installed tmp nodejs.
     export cmdNpm="$nodeHome/bin/npm"
   fi
