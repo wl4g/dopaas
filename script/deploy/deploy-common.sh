@@ -770,7 +770,7 @@ function makeNginxConf() {
 server {
     listen 80;
     #listen 443 ssl;
-    server_name dopaas.wl4g.com;
+    server_name dopaas.wl4g.${springProfilesActive};
     include /etc/nginx/default.d/*.conf;
     location / {
        root /usr/share/nginx/html/xcloud-dopaas-view-package/xcloud-dopaas-view-master-bin;

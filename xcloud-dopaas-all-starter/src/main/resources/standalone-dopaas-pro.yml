@@ -25,18 +25,18 @@ spring:
         rules:
           '[/**]':
             allows-origins:
-              - https://${DOPAAS_SERVICE_ZONE:wl4g.com}
-              - http://${DOPAAS_SERVICE_ZONE:wl4g.com}
-              - https://*.${DOPAAS_SERVICE_ZONE:wl4g.com}
-              - http://*.${DOPAAS_SERVICE_ZONE:wl4g.com}
+              - https://${DOPAAS_ZONE:wl4g.com}
+              - http://${DOPAAS_ZONE:wl4g.com}
+              - https://*.${DOPAAS_ZONE:wl4g.com}
+              - http://*.${DOPAAS_ZONE:wl4g.com}
       acl:
         secure: false # Turn off protection will trust any same intranet IP.
         allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
         denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
-        server-uri: ${DOPAAS_SERVICE_SCHEMA:https}://iam.${DOPAAS_SERVICE_ZONE:wl4g.com}/iam-web
+        server-uri: ${DOPAAS_SCHEMA:https}://iam.${DOPAAS_ZONE:wl4g.com}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: ${DOPAAS_SERVICE_SCHEMA:https}://dopaas.${DOPAAS_SERVICE_ZONE:wl4g.com}/#/ci/taskhis
+        success-uri: ${DOPAAS_SCHEMA:https}://dopaas.${DOPAAS_ZONE:wl4g.com}/#/ci/taskhis
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver

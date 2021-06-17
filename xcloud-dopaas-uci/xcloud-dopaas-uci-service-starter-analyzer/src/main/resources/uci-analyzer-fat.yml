@@ -17,10 +17,10 @@ spring:
         rules:
           '[/**]':
             allows-origins:
-              #- http://${DOPAAS_SERVICE_ZONE:wl4g.debug}
-              #- http://${DOPAAS_SERVICE_ZONE:wl4g.debug:${server.port}}
-              #- http://*.${DOPAAS_SERVICE_ZONE:wl4g.debug}
-              #- http://*.${DOPAAS_SERVICE_ZONE:wl4g.debug:${server.port}}
+              #- http://${DOPAAS_ZONE:wl4g.debug}
+              #- http://${DOPAAS_ZONE:wl4g.debug:${server.port}}
+              #- http://*.${DOPAAS_ZONE:wl4g.debug}
+              #- http://*.${DOPAAS_ZONE:wl4g.debug:${server.port}}
               #- http://localhost:8080
               #- http://localhost:18080
               #- http://127.0.0.1:8080
@@ -31,9 +31,9 @@ spring:
         allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
         denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
-        server-uri: http://iam.${DOPAAS_SERVICE_ZONE:wl4g.fat}/iam-web
+        server-uri: http://iam.${DOPAAS_ZONE:wl4g.fat}/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: http://dopaas.${DOPAAS_SERVICE_ZONE:wl4g.fat}/#/ci/taskhis
+        success-uri: http://dopaas.${DOPAAS_ZONE:wl4g.fat}/#/ci/taskhis
     tool:
       devel:
         mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
