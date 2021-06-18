@@ -261,18 +261,18 @@ function execWithConfirmingEnvironment() {
 # ----- Main call. -----
 function main() {
   [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
-  echo ""
-  echo "「 Welcome to XCloud DoPaaS Deployer (Boot) 」"
-  echo "  ___       ___            ___ "
-  echo " | . \ ___ | . \ ___  ___ / __>"
-  echo " | | |/ . \|  _/<_> |<_> |\__ \\"
-  echo " |___/\___/|_|  <___|<___|<___/"
-  echo ""
-  echo " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
-  echo " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
-  echo " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
-  echo " Version: 2.0.0"
-  echo " Time: $(date '+%Y-%m-%d %H:%M:%S')"
+  echo -e ""
+  echo -e "「 Welcome to XCloud DoPaaS Deployer (Boot) 」"
+  echo -e " \033[32m ___       ___            ___\033[0m"
+  echo -e " \033[32m| . \ ___ | . \ ___  ___ / __>\033[0m"
+  echo -e " \033[32m| | |/ . \|  _/<_> |<_> |\__ \\\\\033[0m"
+  echo -e " \033[32m|___/\___/|_|  <___|<___|<___/\033[0m"
+  echo -e ""
+  echo -e " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
+  echo -e " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
+  echo -e " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
+  echo -e " Version: 2.0.0"
+  echo -e " Time: $(date '+%Y-%m-%d %H:%M:%S')"
   detectingNetwork
   downloadDeployerDependencies
   execWithConfirmingEnvironment
