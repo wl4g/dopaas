@@ -192,19 +192,19 @@ function initRuntimeEnvConfig() {
 
   # (IAM) environment configuration.
   [ -z "$IAM_DB_URL" ] && export IAM_DB_URL="jdbc:mysql://localhost:3306/iam?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true"
-  [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: IAM_DB_URL='$(eval echo $IAM_DB_URL)'"
+  [ "$deployDebug" == "true" ] && logDebug "Exported env: IAM_DB_URL='$(eval echo $IAM_DB_URL)'"
 
   [ -z "$IAM_DB_USER" ] && export IAM_DB_USER="iam"
-  [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: IAM_DB_USER='$(eval echo $IAM_DB_USER)'"
+  [ "$deployDebug" == "true" ] && logDebug "Exported env: IAM_DB_USER='$(eval echo $IAM_DB_USER)'"
 
   [ -z "$IAM_DB_PASSWD" ] && export IAM_DB_PASSWD="123456"
-  [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: IAM_DB_PASSWD='$(eval echo $IAM_DB_PASSWD)'"
+  [ "$deployDebug" == "true" ] && logDebug "Exported env: IAM_DB_PASSWD='$(eval echo $IAM_DB_PASSWD)'"
 
   [ -z "$IAM_REDIS_PASSWD" ] && export IAM_REDIS_PASSWD="123456"
-  [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: IAM_REDIS_PASSWD='$(eval echo $IAM_REDIS_PASSWD)'"
+  [ "$deployDebug" == "true" ] && logDebug "Exported env: IAM_REDIS_PASSWD='$(eval echo $IAM_REDIS_PASSWD)'"
 
   [ -z "$IAM_REDIS_NODES" ] && export IAM_REDIS_NODES="localhost:6379"
-  [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: IAM_REDIS_NODES='$(eval echo $IAM_REDIS_NODES)'"
+  [ "$deployDebug" == "true" ] && logDebug "Exported env: IAM_REDIS_NODES='$(eval echo $IAM_REDIS_NODES)'"
 
   globalExportedEnvStr="${globalExportedEnvStr}\nexport IAM_DB_URL='${IAM_DB_URL}'"
   globalExportedEnvStr="${globalExportedEnvStr}\nexport IAM_DB_USER='${IAM_DB_USER}'"
@@ -220,19 +220,19 @@ function initRuntimeEnvConfig() {
     [ -z "$STANDALONE_DOPAAS_REDIS_PASSWD" ] && export STANDALONE_DOPAAS_REDIS_PASSWD='123456'
     [ -z "$STANDALONE_DOPAAS_REDIS_NODES" ] && export STANDALONE_DOPAAS_REDIS_NODES='localhost:6379'
     globalExportedEnvStr="${globalExportedEnvStr}\nexport STANDALONE_DOPAAS_DB_URL='${STANDALONE_DOPAAS_DB_URL}'"
-    [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: STANDALONE_DOPAAS_DB_URL='$(eval echo $STANDALONE_DOPAAS_DB_URL)'"
+    [ "$deployDebug" == "true" ] && logDebug "Exported env: STANDALONE_DOPAAS_DB_URL='$(eval echo $STANDALONE_DOPAAS_DB_URL)'"
 
     globalExportedEnvStr="${globalExportedEnvStr}\nexport STANDALONE_DOPAAS_DB_USER='${STANDALONE_DOPAAS_DB_USER}'"
-    [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: STANDALONE_DOPAAS_DB_USER='$(eval echo $STANDALONE_DOPAAS_DB_USER)'"
+    [ "$deployDebug" == "true" ] && logDebug "Exported env: STANDALONE_DOPAAS_DB_USER='$(eval echo $STANDALONE_DOPAAS_DB_USER)'"
 
     globalExportedEnvStr="${globalExportedEnvStr}\nexport STANDALONE_DOPAAS_DB_PASSWD='${STANDALONE_DOPAAS_DB_PASSWD}'"
-    [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: STANDALONE_DOPAAS_DB_PASSWD='$(eval echo $STANDALONE_DOPAAS_DB_PASSWD)'"
+    [ "$deployDebug" == "true" ] && logDebug "Exported env: STANDALONE_DOPAAS_DB_PASSWD='$(eval echo $STANDALONE_DOPAAS_DB_PASSWD)'"
 
     globalExportedEnvStr="${globalExportedEnvStr}\nexport STANDALONE_DOPAAS_REDIS_PASSWD='${STANDALONE_DOPAAS_REDIS_PASSWD}'"
-    [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: STANDALONE_DOPAAS_REDIS_PASSWD='$(eval echo $STANDALONE_DOPAAS_REDIS_PASSWD)'"
+    [ "$deployDebug" == "true" ] && logDebug "Exported env: STANDALONE_DOPAAS_REDIS_PASSWD='$(eval echo $STANDALONE_DOPAAS_REDIS_PASSWD)'"
 
     globalExportedEnvStr="${globalExportedEnvStr}\nexport STANDALONE_DOPAAS_REDIS_NODES='${STANDALONE_DOPAAS_REDIS_NODES}'"
-    [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: STANDALONE_DOPAAS_REDIS_NODES='$(eval echo $STANDALONE_DOPAAS_REDIS_NODES)'"
+    [ "$deployDebug" == "true" ] && logDebug "Exported env: STANDALONE_DOPAAS_REDIS_NODES='$(eval echo $STANDALONE_DOPAAS_REDIS_NODES)'"
   elif [ "$runtimeMode" == "cluster" ]; then
     local knownModuleNames=()
     for ((i=0;i<${#deployClusterBuildModules[@]};i++)) do
@@ -256,11 +256,11 @@ function initRuntimeEnvConfig() {
       local key5="${appShortNameUpper}_DOPAAS_REDIS_NODES"
       [ -z "$(eval echo '$'$key5)" ] && export "$key5"='localhost:6379'
 
-      [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: $key1='$(eval echo '$'$key1)'"
-      [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: $key2='$(eval echo '$'$key2)'"
-      [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: $key3='$(eval echo '$'$key3)'"
-      [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: $key4='$(eval echo '$'$key4)'"
-      [ "$deployDebug" == "true" ] && log "DEBUG" "Exported env: $key5='$(eval echo '$'$key5)'"
+      [ "$deployDebug" == "true" ] && logDebug "Exported env: $key1='$(eval echo '$'$key1)'"
+      [ "$deployDebug" == "true" ] && logDebug "Exported env: $key2='$(eval echo '$'$key2)'"
+      [ "$deployDebug" == "true" ] && logDebug "Exported env: $key3='$(eval echo '$'$key3)'"
+      [ "$deployDebug" == "true" ] && logDebug "Exported env: $key4='$(eval echo '$'$key4)'"
+      [ "$deployDebug" == "true" ] && logDebug "Exported env: $key5='$(eval echo '$'$key5)'"
 
       globalExportedEnvStr="${globalExportedEnvStr}\nexport $key1='$(eval echo '$'$key1)'"
       globalExportedEnvStr="${globalExportedEnvStr}\nexport $key2='$(eval echo '$'$key2)'"
@@ -289,10 +289,10 @@ function getCurrPid() {
 # e.g1: log "error" "Failed to xxx"
 # e.g2: log "xxx complete!"
 function log() {
-  local logLevel="INFO "
+  local logLevel="\033[33mINFO\033[0m "
   local logContent=$1
   if [[ $# > 1 ]]; then
-    logLevel=$(echo -e "$1" | tr 'a-z' 'A-Z') # To UpperCase
+    logLevel=$1
     logContent=$2
   fi
   local logMsg="[$logLevel] $(date '+%Y-%m-%d %H:%M:%S') - [$(getCurrPid)] $logContent"
@@ -300,9 +300,14 @@ function log() {
   echo -e "$logMsg" >> ${logFile}
 }
 
+# Debug logging.
+function logDebug() {
+  log "\033[38mDEBUG\033[0m" "$@"
+}
+
 # Error logging.
 function logErr() {
-  log "ERROR" "$@"
+  log "\033[31mERROR\033[0m" "$@"
 }
 
 initRuntimeEnvConfig
