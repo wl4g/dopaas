@@ -64,7 +64,7 @@
 		<module>xcloud-dopaas-lcdp</module>
 		<module>xcloud-dopaas-uds</module>
 		<!-- <module>xcloud-dopaas-uos</module> -->
-		<module>xcloud-dopaas-all-dependencies</module>
+		<module>xcloud-dopaas-all-bom</module>
 		<module>xcloud-dopaas-all-starter</module>
 	</modules>
 	<properties>

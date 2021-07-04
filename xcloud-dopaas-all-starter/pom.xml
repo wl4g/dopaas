@@ -19,7 +19,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-dopaas-all-dependencies</artifactId>
+			<artifactId>xcloud-dopaas-all-bom</artifactId>
 			<version>${project.parent.version}</version>
 			<exclusions>
 				<exclusion>
