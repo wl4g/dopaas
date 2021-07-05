@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
 	<artifactId>xcloud-dopaas</artifactId>
-	<version>master</version>
+	<version>2.0.0</version>
 	<packaging>pom</packaging>
 	<name>XCloud DoPaaS</name>
 	<url>https://xcloud.wl4g.com</url>
@@ -158,27 +158,27 @@
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-iam-client</artifactId>
-				<version>master</version>
+				<version>2.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-iam-core</artifactId>
-				<version>master</version>
+				<version>2.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-iam-common</artifactId>
-				<version>master</version>
+				<version>2.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-iam-service-facade</artifactId>
-				<version>master</version>
+				<version>2.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>xcloud-iam-client-test</artifactId>
-				<version>master</version>
+				<version>2.0.0</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- Spring Boot. -->

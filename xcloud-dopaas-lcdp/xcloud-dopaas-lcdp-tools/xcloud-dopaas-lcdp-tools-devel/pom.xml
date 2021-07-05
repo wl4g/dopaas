@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-dopaas-lcdp-tools</artifactId>
-		<version>master</version>
+		<version>2.0.0</version>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
