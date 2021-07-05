@@ -101,7 +101,6 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$apacheMvnLocalRepoDir" ] && export apacheMvnLocalRepoDir="$HOME/.m2/repository/"
 # Maven build.
 [ -z "$buildPkgType" ] && export buildPkgType="mvnAssTar" # Options: mvnAssTar|springExecJar
-[ -z "$buildPkgVersion" ] && export buildPkgVersion="master"
 # Deploy.
 [ -z "$runtimeMode" ] && export runtimeMode="cluster" # Options: standalone|cluster
 [ -z "$deployAppBaseDir" ] && export deployAppBaseDir="/opt/apps/ecm"

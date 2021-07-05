@@ -188,7 +188,7 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
   elif [[ "$buildPkgType" == "springExecJar" ]]; then
     log "[$appName/standalone/local] Copying $buildFilePath to $appInstallDir/ ..."
     unalias cp >/dev/null 2>&1
-    cp -Rf ${appName}-${buildPkgVersion}-bin.jar $appInstallDir/
+    cp -Rf ${appName}-*-bin.jar $appInstallDir/
   else
     logErr "[$appName/standalone/local] Invalid config buildPkgType: $buildPkgType"; exit -1
   fi
@@ -272,12 +272,14 @@ function doDeployBackendApp() {
     logErr "Failed to deploy, buildTargetDir is required! all args: '$@'"; exit -1
   fi
   if [ "$buildPkgType" == "mvnAssTar" ]; then
-    local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.tar")
+    local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-*-bin.tar")
+    local buildVersion=$(ls -a "$buildTargetDir"|grep -E "*-*-bin.tar"|awk -F '-' '{print $3}')
   elif [ "$buildPkgType" == "springExecJar" ]; then
-    local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-${buildPkgVersion}-bin.jar")
+    local buildFileName=$(ls -a "$buildTargetDir"|grep -E "*-*-bin.jar")
+    local buildVersion=$(ls -a "$buildTargetDir"|grep -E "*-*-bin.jar"|awk -F '-' '{print $3}')
   fi
-  if [ -z "$buildFileName" ]; then
-    logErr "Failed to deploy, buildFileName is required! all args: '$@'"; exit -1
+  if [[ -z "$buildFileName" || -z "$buildVersion" ]]; then
+    logErr "Failed to deploy, buildFileName/buildVersion is required! all args: '$@'"; exit -1
   fi
   local cmdRestart="sudo chmod -R 755 $deployAppBaseDir && [ -n $(command -v systemctl) ] && sudo systemctl restart ${appName} || su - $appName -c \"/etc/init.d/${appName}.service restart\""
 
@@ -328,8 +330,8 @@ function deployBackendAll() {
     local appName=$(echo "$buildModule"|awk -F ',' '{print $1}')
     globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:
-          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/
-            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/
+          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-*-bin/
+            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-*-bin/conf/
        Profiles Active: ${springProfilesActive}
               PID File: /mnt/disk1/${appName}/${appName}.pid
        Restart Command: sudo systemctl restart ${appName}    or   su - ${appName} -c \"/etc/init.d/${appName}.service restart\"
@@ -448,8 +450,8 @@ function deployEurekaServers() {
       # Add eureka-server deployed summary.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:
-          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/
-            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/
+          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-*-bin/
+            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-*-bin/conf/
        Profiles Active: ${springProfilesActive}
               PID File: /mnt/disk1/${appName}/${appName}.pid
        Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart
@@ -483,8 +485,8 @@ function deployEurekaServers() {
       # Add eureka-server deployed summary.
       globalDeployStatsMsg="${globalDeployStatsMsg}\n
 [${appName}]:
-          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/
-            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-${buildPkgVersion}-bin/conf/
+          Install Home: ${deployAppBaseDir}/${appName}-package/${appName}-*-bin/
+            Config Dir: ${deployAppBaseDir}/${appName}-package/${appName}-*-bin/conf/
        Profiles Active: ${springProfilesActive}
               PID File: /mnt/disk1/${appName}/${appName}.pid
        Restart Command: sudo systemctl restart $appName or /etc/init.d/$appName.service restart
@@ -697,8 +699,10 @@ function deployFrontendAll() {
     fi
 
     # Deploy frontend.
-    local deployFrontendDir="${appInstallDir}/${appName}-${buildPkgVersion}-bin"
     local fProjectDir="$currDir/$gitXCloudDoPaaSViewProjectName"
+    # Extract npm project version from package.json
+    local fBuildVersion=$(getFrontendBuildVersion)
+    local deployFrontendDir="${appInstallDir}/${appName}-${fBuildVersion}-bin"
     # Check build dist files.
     if [[ ! -d "$fProjectDir" || "$(ls $fProjectDir/dist/*|wc -l)" -le 0 ]]; then
       logErr "Cannot reading frontend build assets, because dist directory not exists!"; exit -1 
