@@ -84,7 +84,8 @@ export URM_DOPAAS_REDIS_NODES='localhost:6379,localhost:6380,localhost:6381,loca
 
 # Others deployer configuration.
 #export deployFrontendSkip=true # options: true|false
+#export deployDebug=true # options: true|false
 #export gitBaseUri='https://gitee.com/wl4g' # options: https://gitee.com/wl4g | https://github.com/wl4g
 #export gitDefaultBranch=master # e.g: master | 2.0.0-RC3-jobs
 #export buildForcedOnPullUpToDate=true # options: true|false
-#export deployDebug=true # options: true|false
+#export buildPkgVersion="master"
