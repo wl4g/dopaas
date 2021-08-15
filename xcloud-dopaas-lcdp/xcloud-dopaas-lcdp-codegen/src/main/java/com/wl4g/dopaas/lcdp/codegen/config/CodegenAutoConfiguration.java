@@ -62,103 +62,103 @@ import com.wl4g.dopaas.lcdp.codegen.i18n.CodegenResourceMessageBundler;
 @Configuration
 public class CodegenAutoConfiguration {
 
-	@Bean(BEAN_CODEGEN_MSG_SOURCE)
-	@ConditionalOnMissingBean
-	public CodegenResourceMessageBundler codegenResourceMessageBundler() {
-		return new CodegenResourceMessageBundler();
-	}
+    @Bean(BEAN_CODEGEN_MSG_SOURCE)
+    @ConditionalOnMissingBean
+    public CodegenResourceMessageBundler codegenResourceMessageBundler() {
+        return new CodegenResourceMessageBundler();
+    }
 
-	@Bean
-	@ConfigurationProperties(prefix = LcdpConstants.KEY_CODEGEN_PREFIX)
-	public CodegenProperties codegenProperties() {
-		return new CodegenProperties();
-	}
+    @Bean
+    @ConfigurationProperties(prefix = LcdpConstants.KEY_CODEGEN_PREFIX)
+    public CodegenProperties codegenProperties() {
+        return new CodegenProperties();
+    }
 
-	// --- Console. ---
+    // --- Console. ---
 
-	@Bean
-	public CodegenConsole codegenConsole() {
-		return new CodegenConsole();
-	}
+    @Bean
+    public CodegenConsole codegenConsole() {
+        return new CodegenConsole();
+    }
 
-	// --- Generator Engine. ---
+    // --- Generator Engine. ---
 
-	@Bean
-	public DefaultGenerateEngineImpl defaultGenerateEngineImpl() {
-		return new DefaultGenerateEngineImpl();
-	}
+    @Bean
+    public DefaultGenerateEngineImpl defaultGenerateEngineImpl() {
+        return new DefaultGenerateEngineImpl();
+    }
 
-	// --- Metadata Resolver's. ---
+    // --- DB Meta-data Resolvers. ---
 
-	@Bean
-	@NamingPrototype({ MYSQLV5 })
-	public MetadataResolver mySQLV5xMetadataResolver(GenDataSource genDS) {
-		return new MySQLV5MetadataResolver(genDS);
-	}
+    @Bean
+    @NamingPrototype({ MYSQLV5 })
+    public MetadataResolver mySQLV5xMetadataResolver(GenDataSource ds) {
+        return new MySQLV5MetadataResolver(ds);
+    }
 
-	@Bean
-	@NamingPrototype({ ORACLEV11G })
-	public MetadataResolver oracleV11gMetadataResolver(GenDataSource genDS) {
-		return new OracleV11gMetadataResolver(genDS);
-	}
+    @Bean
+    @NamingPrototype({ ORACLEV11G })
+    public MetadataResolver oracleV11gMetadataResolver(GenDataSource ds) {
+        return new OracleV11gMetadataResolver(ds);
+    }
 
-	@Bean
-	@NamingPrototype({ POSTGRESQLV10 })
-	public MetadataResolver postgreSQLV10MetadataResolver(GenDataSource genDS) {
-		return new PostgreSQLV10MetadataResolver(genDS);
-	}
+    @Bean
+    @NamingPrototype({ POSTGRESQLV10 })
+    public MetadataResolver postgreSQLV10MetadataResolver(GenDataSource ds) {
+        return new PostgreSQLV10MetadataResolver(ds);
+    }
 
-	// --- Generator Template Locator. ---
+    // --- Generator Template Locator. ---
 
-	@Bean
-	public GenTemplateLocator classPathGenTemplateLocator() {
-		return new ClassPathGenTemplateLocator();
-	}
+    @Bean
+    public GenTemplateLocator classPathGenTemplateLocator() {
+        return new ClassPathGenTemplateLocator();
+    }
 
-	// --- Generator Provider's. ---
+    // --- Generator Providers. ---
 
-	@Bean
-	@NamingPrototype({ GO_GONICWEB })
-	public GoGonicWebGeneratorProvider goStandardGeneratorProvider(GenerateContext context) {
-		return new GoGonicWebGeneratorProvider(context);
-	}
+    @Bean
+    @NamingPrototype({ GO_GONICWEB })
+    public GoGonicWebGeneratorProvider goStandardGeneratorProvider(GenerateContext context) {
+        return new GoGonicWebGeneratorProvider(context);
+    }
 
-	@Bean
-	@NamingPrototype({ PYTHON_STANDARD })
-	public PythonStandardGeneratorProvider pythonStandardGeneratorProvider(GenerateContext context) {
-		return new PythonStandardGeneratorProvider(context);
-	}
+    @Bean
+    @NamingPrototype({ PYTHON_STANDARD })
+    public PythonStandardGeneratorProvider pythonStandardGeneratorProvider(GenerateContext context) {
+        return new PythonStandardGeneratorProvider(context);
+    }
 
-	@Bean
-	@NamingPrototype({ CSHARP_STANDARD })
-	public CsharpStandardGeneratorProvider csharpStandardGeneratorProvider(GenerateContext context) {
-		return new CsharpStandardGeneratorProvider(context);
-	}
+    @Bean
+    @NamingPrototype({ CSHARP_STANDARD })
+    public CsharpStandardGeneratorProvider csharpStandardGeneratorProvider(GenerateContext context) {
+        return new CsharpStandardGeneratorProvider(context);
+    }
 
-	@Bean
-	@NamingPrototype({ IAM_SPINGCLOUD_MVN })
-	public IamSpringCloudMvnGeneratorProvider iamSpringMvcGeneratorProvider(GenerateContext context) {
-		return new IamSpringCloudMvnGeneratorProvider(context);
-	}
+    @Bean
+    @NamingPrototype({ IAM_SPINGCLOUD_MVN })
+    public IamSpringCloudMvnGeneratorProvider iamSpringMvcGeneratorProvider(GenerateContext context) {
+        return new IamSpringCloudMvnGeneratorProvider(context);
+    }
 
-	@Bean
-	@NamingPrototype({ SPINGDUBBO_MVN })
-	public SpringDubboMvnGeneratorProvider springDubboMvnGeneratorProvider(GenerateContext context) {
-		return new SpringDubboMvnGeneratorProvider(context);
-	}
+    @Bean
+    @NamingPrototype({ SPINGDUBBO_MVN })
+    public SpringDubboMvnGeneratorProvider springDubboMvnGeneratorProvider(GenerateContext context) {
+        return new SpringDubboMvnGeneratorProvider(context);
+    }
 
-	@Bean
-	@NamingPrototype({ IAM_VUEJS })
-	public IamVueGeneratorProvider iamVueGeneratorProvider(GenerateContext context) {
-		return new IamVueGeneratorProvider(context);
-	}
+    @Bean
+    @NamingPrototype({ IAM_VUEJS })
+    public IamVueGeneratorProvider iamVueGeneratorProvider(GenerateContext context) {
+        return new IamVueGeneratorProvider(context);
+    }
 
-	@Bean
-	@NamingPrototype({ NGJS })
-	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context) {
-		return new AngularJSGeneratorProvider(context);
-	}
+    @Bean
+    @NamingPrototype({ NGJS })
+    public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context) {
+        return new AngularJSGeneratorProvider(context);
+    }
 
-	public static final String BEAN_CODEGEN_MSG_SOURCE = "codegenResourceMessageBundler";
+    public static final String BEAN_CODEGEN_MSG_SOURCE = "codegenResourceMessageBundler";
 
 }

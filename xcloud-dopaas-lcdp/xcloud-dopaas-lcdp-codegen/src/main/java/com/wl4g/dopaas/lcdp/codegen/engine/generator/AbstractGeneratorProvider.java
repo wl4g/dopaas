@@ -99,7 +99,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 	@Override
 	public void close() throws IOException {
-		context.getMetadataResolver().close();
+		context.getMetaResolver().close();
 	}
 
 	/**

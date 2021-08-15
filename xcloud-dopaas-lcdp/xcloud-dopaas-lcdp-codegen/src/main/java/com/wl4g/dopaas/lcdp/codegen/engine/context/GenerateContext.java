@@ -59,7 +59,7 @@ public interface GenerateContext {
 	 */
 	@Reserved
 	@NotNull
-	MetadataResolver getMetadataResolver();
+	MetadataResolver getMetaResolver();
 
 	/**
 	 * Gets generate job ID.

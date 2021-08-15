@@ -88,7 +88,7 @@ public class DefaultGenerateContext implements GenerateContext {
 	}
 
 	@Override
-	public final MetadataResolver getMetadataResolver() {
+	public final MetadataResolver getMetaResolver() {
 		return resolver;
 	}
 
