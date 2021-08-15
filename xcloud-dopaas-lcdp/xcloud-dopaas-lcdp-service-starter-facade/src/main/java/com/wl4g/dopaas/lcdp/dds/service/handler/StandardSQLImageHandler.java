@@ -1,0 +1,105 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.wl4g.dopaas.lcdp.dds.service.handler;
+
+import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.insert.Insert;
+import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.update.Update;
+
+/**
+ * {@link StandardSQLImageHandler}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2021-08-15 v1.0.0
+ * @since v1.0.0
+ */
+public class StandardSQLImageHandler extends AbstractSQLImageHandler {
+
+    public StandardSQLImageHandler(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
+    }
+
+    @Override
+    public void recognize(String sql) throws Exception {
+        Statement stmt = CCJSqlParserUtil.parse(sql);
+        if (stmt instanceof Insert) {
+            Insert insert = (Insert) stmt;
+            log.info("Original insert SQL: {}", insert);
+
+            // TODO
+            // Deleted due of insertion.
+            generateUndoDeleteSql(insert);
+
+        } else if (stmt instanceof Delete) {
+            Delete delete = (Delete) stmt;
+            log.info("Original delete SQL: {}", delete);
+
+            StringBuilder undoSelectSql = new StringBuilder("SELECT * FROM ");
+            undoSelectSql.append(delete.getTable());
+            undoSelectSql.append(" ");
+            for (Join join : safeList(delete.getJoins())) {
+                undoSelectSql.append(join);
+            }
+            Expression where = delete.getWhere();
+            if (nonNull(where) && !isBlank(where.toString())) {
+                undoSelectSql.append(" WHERE ");
+                undoSelectSql.append(where);
+            }
+            if (nonNull(delete.getLimit())) {
+                undoSelectSql.append(" ");
+                undoSelectSql.append(delete.getLimit());
+            }
+
+            // Insert due to deletion.
+            log.info("Generated undo select SQL: {}", undoSelectSql);
+            generateUndoInsertSql(delete, findOperationRecords(undoSelectSql.toString()));
+
+        } else if (stmt instanceof Update) {
+            Update update = (Update) stmt;
+            log.info("Original update SQL: {}", update);
+
+            StringBuilder undoSelectSql = new StringBuilder("SELECT * FROM ");
+            undoSelectSql.append(update.getTable());
+            undoSelectSql.append(" ");
+            for (Join join : safeList(update.getJoins())) {
+                undoSelectSql.append(join);
+            }
+            Expression where = update.getWhere();
+            if (nonNull(where) && !isBlank(where.toString())) {
+                undoSelectSql.append(" WHERE ");
+                undoSelectSql.append(where);
+            }
+            undoSelectSql.append(" ");
+            undoSelectSql.append(update.getLimit());
+
+            // TODO
+            // Update due to updation.
+            log.info("Generated undo select SQL: {}", undoSelectSql);
+            generateUndoUpdateSql(findOperationRecords(undoSelectSql.toString()));
+        }
+    }
+
+}

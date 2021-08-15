@@ -48,9 +48,9 @@ import com.wl4g.dopaas.lcdp.codegen.engine.context.GenericParameter;
 import com.wl4g.dopaas.lcdp.codegen.engine.generator.GeneratorProvider;
 import com.wl4g.dopaas.lcdp.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.dopaas.lcdp.codegen.engine.template.GenTemplateLocator;
-import com.wl4g.dopaas.lcdp.service.GenDataSourceService;
-import com.wl4g.dopaas.lcdp.service.GenProjectService;
-import com.wl4g.dopaas.lcdp.service.GenTableService;
+import com.wl4g.dopaas.lcdp.codegen.service.GenDataSourceService;
+import com.wl4g.dopaas.lcdp.codegen.service.GenProjectService;
+import com.wl4g.dopaas.lcdp.codegen.service.GenTableService;
 
 /**
  * {@link DefaultGenerateEngineImpl}

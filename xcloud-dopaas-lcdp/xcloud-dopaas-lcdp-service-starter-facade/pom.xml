@@ -27,10 +27,10 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>com.wl4g</groupId>
-            <artifactId>xcloud-dopaas-uci-client-springboot</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-dopaas-uci-client-springboot</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-support</artifactId>
@@ -40,12 +40,26 @@
 			<artifactId>xcloud-component-data</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>com.wl4g</groupId>
-            <artifactId>xcloud-iam-client</artifactId>
-        </dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jsqlparser</groupId>
+			<artifactId>jsqlparser</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -116,9 +130,9 @@
 							<mainClass>com.wl4g.LcdpManager</mainClass>
 							<finalName>${final.name}-${project.version}-bin</finalName>
 							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
-                            <!-- @see:https://www.baeldung.com/spring-boot-main-class -->
-                            <!-- @see:https://www.jianshu.com/p/66a101c85485 -->
-                            <layout>ZIP</layout>
+							<!-- @see:https://www.baeldung.com/spring-boot-main-class -->
+							<!-- @see:https://www.jianshu.com/p/66a101c85485 -->
+							<layout>ZIP</layout>
 						</configuration>
 						<executions>
 							<execution>

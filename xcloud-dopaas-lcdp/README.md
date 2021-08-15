@@ -1,2 +1,2 @@
 ### LCDP (Low Code Development Platform)
-> Integrated automatic generate of multi language/architecture complete projects (e.g springcloud/dubbo/golang/python/vue/angularjs, etc), WebIDE, and various developer tools chains, etc
+> Low code development center, including business development and data development, with built-in complete project automatic generator with multiple languages and architectures (e.g springcloud/dubbo/golang/python/vue/angularjs, etc), WebIDE, and various developer tools chains, etc
