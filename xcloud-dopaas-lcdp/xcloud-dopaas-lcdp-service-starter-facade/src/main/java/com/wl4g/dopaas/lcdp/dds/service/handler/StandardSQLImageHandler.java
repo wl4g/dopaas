@@ -16,6 +16,7 @@
 package com.wl4g.dopaas.lcdp.dds.service.handler;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -23,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
@@ -49,7 +51,6 @@ public class StandardSQLImageHandler extends AbstractSQLImageHandler {
             Insert insert = (Insert) stmt;
             log.info("Original insert SQL: {}", insert);
 
-            // TODO
             // Deleted due of insertion.
             generateUndoDeleteSql(insert);
 
@@ -81,8 +82,22 @@ public class StandardSQLImageHandler extends AbstractSQLImageHandler {
             Update update = (Update) stmt;
             log.info("Original update SQL: {}", update);
 
-            StringBuilder undoSelectSql = new StringBuilder("SELECT * FROM ");
+            // No columns were modified.
+            if (isNull(update.getColumns())) {
+                return;
+            }
+
+            StringBuilder undoSelectSql = new StringBuilder("SELECT ");
+            for (int i = 0, size = update.getColumns().size(); i < size; i++) {
+                Column col = update.getColumns().get(i);
+                undoSelectSql.append(col.getColumnName());
+                if (i < (size - 1)) {
+                    undoSelectSql.append(",");
+                }
+            }
+            undoSelectSql.append(" FROM ");
             undoSelectSql.append(update.getTable());
+
             undoSelectSql.append(" ");
             for (Join join : safeList(update.getJoins())) {
                 undoSelectSql.append(join);
@@ -92,13 +107,14 @@ public class StandardSQLImageHandler extends AbstractSQLImageHandler {
                 undoSelectSql.append(" WHERE ");
                 undoSelectSql.append(where);
             }
-            undoSelectSql.append(" ");
-            undoSelectSql.append(update.getLimit());
+            if (nonNull(update.getLimit())) {
+                undoSelectSql.append(" ");
+                undoSelectSql.append(update.getLimit());
+            }
 
-            // TODO
             // Update due to updation.
             log.info("Generated undo select SQL: {}", undoSelectSql);
-            generateUndoUpdateSql(findOperationRecords(undoSelectSql.toString()));
+            generateUndoUpdateSql(update, findOperationRecords(undoSelectSql.toString()));
         }
     }
 

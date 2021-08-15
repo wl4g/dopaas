@@ -44,40 +44,78 @@ public class SQLImageHandlerFactoryTests {
     }
 
     @Test
-    public void testSQLImageHandlerForDeleteSQL() throws Exception {
-        try (HikariDataSource ds = new HikariDataSource();) {
-            ds.setDriverClassName("org.h2.Driver");
-            ds.setJdbcUrl("jdbc:h2:/tmp/h2test;FORBID_CREATION=FALSE");
-            // ds.setUsername("");
-            // ds.setPassword("");
-
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-
-            // Initial testing data.
-            jdbcTemplate.execute("DROP TABLE IF EXISTS `test_db`.`t_user`");
-            jdbcTemplate.execute("DROP SCHEMA IF EXISTS `test_db`");
-            jdbcTemplate.execute("CREATE SCHEMA `test_db`");
-            jdbcTemplate.execute(
-                    "CREATE TABLE IF NOT EXISTS `test_db`.`t_user`(`id` bigint(25) PRIMARY KEY NOT NULL,`name` varchar(32) NOT NULL)");
-
-            jdbcTemplate.execute("INSERT INTO `test_db`.`t_user` (`id`,`name`) VALUES (100, 'jack100')");
-            jdbcTemplate.execute("INSERT INTO `test_db`.`t_user` (`id`,`name`) VALUES (110, 'jack110')");
-            jdbcTemplate.execute("INSERT INTO `test_db`.`t_user` (`id`,`name`) VALUES (200, 'tom200')");
-
-            // Print all records.
-            List<Map<String, Object>> list = jdbcTemplate.queryForList("select * from `test_db`.`t_user`");
-            System.out.println("------------------------ Print all data ------------------------------");
-            safeList(list).forEach(r -> System.out.println(r));
-            System.out.println("----------------------------------------------------------------------");
-
+    public void testSQLImageHandlerForInsertSQL() throws Exception {
+        JdbcTemplate jdbcTemplate = initTestingDatabase();
+        try {
             SQLImageHandler sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
+            // Execution
+            sqlImageHandler
+                    .recognize("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000')");
+            System.out.println("------------------- Generated all undo SQLs --------------------------");
+            safeList(sqlImageHandler.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            System.out.println("----------------------------------------------------------------------");
+        } finally {
+            ((HikariDataSource) jdbcTemplate.getDataSource()).close();
+        }
+    }
 
+    @Test
+    public void testSQLImageHandlerForDeleteSQL() throws Exception {
+        JdbcTemplate jdbcTemplate = initTestingDatabase();
+        try {
+            SQLImageHandler sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
             // Execution
             sqlImageHandler.recognize("delete from `test_db`.`t_user` where id >= 100 and id < 200 or `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
             safeList(sqlImageHandler.getAllUndoSQLs()).forEach(s -> System.out.println(s));
             System.out.println("----------------------------------------------------------------------");
+        } finally {
+            ((HikariDataSource) jdbcTemplate.getDataSource()).close();
         }
+    }
+
+    @Test
+    public void testSQLImageHandlerForUpdateSQL() throws Exception {
+        JdbcTemplate jdbcTemplate = initTestingDatabase();
+        try {
+            SQLImageHandler sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
+            // Execution
+            sqlImageHandler.recognize("update `test_db`.`t_user` set `name`='mary' where `name` like '%jack%'");
+            System.out.println("------------------- Generated all undo SQLs --------------------------");
+            safeList(sqlImageHandler.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            System.out.println("----------------------------------------------------------------------");
+        } finally {
+            ((HikariDataSource) jdbcTemplate.getDataSource()).close();
+        }
+    }
+
+    private JdbcTemplate initTestingDatabase() {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setDriverClassName("org.h2.Driver");
+        ds.setJdbcUrl("jdbc:h2:/tmp/h2test;FORBID_CREATION=FALSE");
+        // ds.setUsername("");
+        // ds.setPassword("");
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+
+        // Initial testing data.
+        jdbcTemplate.execute("DROP TABLE IF EXISTS `test_db`.`t_user`");
+        jdbcTemplate.execute("DROP SCHEMA IF EXISTS `test_db`");
+        jdbcTemplate.execute("CREATE SCHEMA `test_db`");
+        jdbcTemplate.execute(
+                "CREATE TABLE IF NOT EXISTS `test_db`.`t_user`(`id` bigint(25) PRIMARY KEY NOT NULL,`name` varchar(32) NOT NULL)");
+
+        jdbcTemplate.execute("INSERT INTO `test_db`.`t_user` (`id`,`name`) VALUES (100, 'jack100')");
+        jdbcTemplate.execute("INSERT INTO `test_db`.`t_user` (`id`,`name`) VALUES (110, 'jack110')");
+        jdbcTemplate.execute("INSERT INTO `test_db`.`t_user` (`id`,`name`) VALUES (200, 'tom200')");
+
+        // Print all records.
+        List<Map<String, Object>> list = jdbcTemplate.queryForList("select * from `test_db`.`t_user`");
+        System.out.println("------------------------ Print all data ------------------------------");
+        safeList(list).forEach(r -> System.out.println(r));
+        System.out.println("----------------------------------------------------------------------");
+
+        return jdbcTemplate;
     }
 
 }
