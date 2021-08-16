@@ -38,13 +38,13 @@ import com.wl4g.component.common.lang.StringUtils2;
 import com.wl4g.dopaas.lcdp.dds.service.util.JdbcDefinition;
 
 /**
- * {@link SQLImageHandlerFactory}
+ * {@link SQLImageEvaluatorFactory}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class SQLImageHandlerFactory {
+public class SQLImageEvaluatorFactory {
 
     private static final Map<String, Class<? extends SQLImageEvaluator>> REGISTRY = new HashMap<>(4);
 
@@ -69,7 +69,7 @@ public class SQLImageHandlerFactory {
         REGISTRY.put(JdbcDefinition.ALI_ELASTICSEARCH_DRIVER, Log4jdbcImageEvaluator.class);
     }
 
-    public static SQLImageEvaluator getSQLImageHandler(JdbcTemplate jdbcTemplate) {
+    public static SQLImageEvaluator getEvaluator(JdbcTemplate jdbcTemplate) {
         String driverClassName = null;
         DataSource dataSource = jdbcTemplate.getDataSource();
         notNull(dataSource, IllegalStateException.class, "Unable get JdbcTemplate.dataSource is null.");

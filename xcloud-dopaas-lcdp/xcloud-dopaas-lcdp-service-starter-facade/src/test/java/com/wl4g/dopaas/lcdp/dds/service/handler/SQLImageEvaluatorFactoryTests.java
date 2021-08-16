@@ -26,23 +26,23 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
- * {@link SQLImageHandlerFactoryTests}
+ * {@link SQLImageEvaluatorFactoryTests}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class SQLImageHandlerFactoryTests {
+public class SQLImageEvaluatorFactoryTests {
 
     @Test
-    public void testSQLImageHandlerForInsertSQL() throws Exception {
+    public void testSQLImageEvaluateForInsertSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(jdbcTemplate);
             // Execution
-            sqlImageHandler.evaluate("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000')");
+            evaluator.evaluate("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000')");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
-            safeList(sqlImageHandler.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
             System.out.println("----------------------------------------------------------------------");
         } finally {
             ((HikariDataSource) jdbcTemplate.getDataSource()).close();
@@ -50,14 +50,14 @@ public class SQLImageHandlerFactoryTests {
     }
 
     @Test
-    public void testSQLImageHandlerForDeleteSQL() throws Exception {
+    public void testSQLImageEvaluateForDeleteSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(jdbcTemplate);
             // Execution
-            sqlImageHandler.evaluate("delete from `test_db`.`t_user` where id >= 100 and id < 200 or `name` like '%jack%'");
+            evaluator.evaluate("delete from `test_db`.`t_user` where id >= 100 and id < 200 or `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
-            safeList(sqlImageHandler.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
             System.out.println("----------------------------------------------------------------------");
         } finally {
             ((HikariDataSource) jdbcTemplate.getDataSource()).close();
@@ -65,14 +65,14 @@ public class SQLImageHandlerFactoryTests {
     }
 
     @Test
-    public void testSQLImageHandlerForUpdateSQL() throws Exception {
+    public void testSQLImageEvaluateForUpdateSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(jdbcTemplate);
             // Execution
-            sqlImageHandler.evaluate("update `test_db`.`t_user` set `name`='mary' where `name` like '%jack%'");
+            evaluator.evaluate("update `test_db`.`t_user` set `name`='mary' where `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
-            safeList(sqlImageHandler.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
             System.out.println("----------------------------------------------------------------------");
         } finally {
             ((HikariDataSource) jdbcTemplate.getDataSource()).close();
@@ -80,7 +80,7 @@ public class SQLImageHandlerFactoryTests {
     }
 
     private JdbcTemplate initTestingDatabase() {
-        HikariDataSource ds = new HikariDataSource();
+        final HikariDataSource ds = new HikariDataSource();
         ds.setDriverClassName("org.h2.Driver");
         ds.setJdbcUrl("jdbc:h2:/tmp/h2test;FORBID_CREATION=FALSE");
         // ds.setUsername("");
@@ -89,9 +89,9 @@ public class SQLImageHandlerFactoryTests {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
         // Initial testing data.
-        jdbcTemplate.execute("DROP TABLE IF EXISTS `test_db`.`t_user`");
-        jdbcTemplate.execute("DROP SCHEMA IF EXISTS `test_db`");
+        jdbcTemplate.execute("DROP SCHEMA IF EXISTS `test_db` CASCADE");
         jdbcTemplate.execute("CREATE SCHEMA `test_db`");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS `test_db`.`t_user`");
         jdbcTemplate.execute(
                 "CREATE TABLE IF NOT EXISTS `test_db`.`t_user`(`id` bigint(25) PRIMARY KEY NOT NULL,`name` varchar(32) NOT NULL)");
 
