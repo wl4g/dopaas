@@ -32,20 +32,20 @@ import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.update.Update;
 
 /**
- * {@link StandardSQLImageHandler}
+ * {@link StandardImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class StandardSQLImageHandler extends AbstractSQLImageHandler {
+public class StandardImageEvaluator extends AbstractImageEvaluator {
 
-    public StandardSQLImageHandler(JdbcTemplate jdbcTemplate) {
+    public StandardImageEvaluator(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
     }
 
     @Override
-    public void recognize(String sql) throws Exception {
+    public void evaluate(String sql) throws Exception {
         Statement stmt = CCJSqlParserUtil.parse(sql);
         if (stmt instanceof Insert) {
             Insert insert = (Insert) stmt;

@@ -43,7 +43,7 @@ import net.sf.jsqlparser.util.TablesNamesFinder;
 public class JsqlparserTests {
 
     @Test
-    public void extractTableNamesFromSQL() throws Exception {
+    public void testExtractTableNamesFromSQL() throws Exception {
         Select select = (Select) CCJSqlParserUtil.parse("SELECT * FROM tab1");
         TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
         List<String> tableList = tablesNamesFinder.getTableList(select);
@@ -51,14 +51,14 @@ public class JsqlparserTests {
     }
 
     @Test
-    public void addColumnOrExpressionToASelect() throws Exception {
+    public void testAddColumnOrExpressionToASelect() throws Exception {
         Select select = (Select) CCJSqlParserUtil.parse("SELECT a FROM tab1");
         SelectUtils.addExpression(select, new Column("b"));
         System.out.println(select);
     }
 
     @Test
-    public void replaceWhereColumns() throws Exception {
+    public void testReplaceWhereColumns() throws Exception {
         Select select = (Select) CCJSqlParserUtil.parse("SELECT * FROM tab1 where _id = 100 or _name like '%jack%'");
         System.out.println("before " + select.toString());
 
@@ -73,13 +73,13 @@ public class JsqlparserTests {
     }
 
     @Test
-    public void extractWhereColumns() throws Exception {
+    public void testExtractWhereColumns() throws Exception {
         Select select = (Select) CCJSqlParserUtil.parse("SELECT * FROM tab1 where _id = 100 or _name like '%jack%'");
         System.out.println(((PlainSelect) select.getSelectBody()).getWhere());
     }
 
     @Test
-    public void generateSelectFormDelete() throws Exception {
+    public void testGenerateSelectFormDelete() throws Exception {
         String delete1 = "delete from tab1 a left join tab2 b on a.bid=b.id where b.id >= 100 and b.id <= 1000 limit 100";
         Statement stmt1 = CCJSqlParserUtil.parse(delete1);
 

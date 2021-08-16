@@ -18,15 +18,15 @@ package com.wl4g.dopaas.lcdp.dds.service.handler;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * {@link OracleSQLImageHandler}
+ * {@link KylinImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class OracleSQLImageHandler extends StandardSQLImageHandler {
+public class KylinImageEvaluator extends StandardImageEvaluator {
 
-    public OracleSQLImageHandler(JdbcTemplate jdbcTemplate) {
+    public KylinImageEvaluator(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
     }
 

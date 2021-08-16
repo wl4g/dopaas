@@ -18,15 +18,15 @@ package com.wl4g.dopaas.lcdp.dds.service.handler;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * {@link SqliteSQLImageHandler}
+ * {@link PostgresqlImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class SqliteSQLImageHandler extends StandardSQLImageHandler {
+public class PostgresqlImageEvaluator extends StandardImageEvaluator {
 
-    public SqliteSQLImageHandler(JdbcTemplate jdbcTemplate) {
+    public PostgresqlImageEvaluator(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
     }
 

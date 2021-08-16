@@ -18,15 +18,15 @@ package com.wl4g.dopaas.lcdp.dds.service.handler;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * {@link PhoenixSQLImageHandler}
+ * {@link PhoenixImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class PhoenixSQLImageHandler extends StandardSQLImageHandler {
+public class PhoenixImageEvaluator extends StandardImageEvaluator {
 
-    public PhoenixSQLImageHandler(JdbcTemplate jdbcTemplate) {
+    public PhoenixImageEvaluator(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
     }
 

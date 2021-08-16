@@ -19,11 +19,13 @@ import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -45,14 +47,14 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.update.Update;
 
 /**
- * {@link AbstractSQLImageHandler}
+ * {@link AbstractImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
 
-public abstract class AbstractSQLImageHandler implements SQLImageHandler {
+public abstract class AbstractImageEvaluator implements SQLImageEvaluator {
     protected final SmartLogger log = getLogger(getClass());
 
     protected final JdbcTemplate jdbcTemplate;
@@ -64,8 +66,14 @@ public abstract class AbstractSQLImageHandler implements SQLImageHandler {
     @Getter
     private List<String> undoUpdateSqls; // due update SQL.
 
-    public AbstractSQLImageHandler(JdbcTemplate jdbcTemplate) {
+    public AbstractImageEvaluator(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = notNullOf(jdbcTemplate, "jdbcTemplate");
+    }
+
+    @Override
+    public List<String> getAllUndoSQLs() {
+        // Each handling will only be one of them.
+        return nonNull(undoDeleteSqls) ? undoDeleteSqls : (nonNull(undoInsertSqls) ? undoInsertSqls : undoUpdateSqls);
     }
 
     protected List<OperationRecord> findOperationRecords(String selectSQL) {
@@ -96,7 +104,7 @@ public abstract class AbstractSQLImageHandler implements SQLImageHandler {
                 Expression value = exprs.get(i);
                 deleteSql.append(col.getColumnName());
                 deleteSql.append("=");
-                boolean mark = isNeedQuotationMark(value);
+                boolean mark = needQuotationMark(value);
                 if (mark) {
                     deleteSql.append("'");
                 }
@@ -146,7 +154,7 @@ public abstract class AbstractSQLImageHandler implements SQLImageHandler {
             insertSql.append(") VALUES (");
             for (int j = 0, size = values.size(); j < size; j++) {
                 Object value = values.get(j);
-                boolean mark = isNeedQuotationMark(value);
+                boolean mark = needQuotationMark(value);
                 if (mark) {
                     insertSql.append("'");
                 }
@@ -203,7 +211,7 @@ public abstract class AbstractSQLImageHandler implements SQLImageHandler {
 
                 updateSql.append(origColumnName);
                 updateSql.append("=");
-                boolean mark = isNeedQuotationMark(value);
+                boolean mark = needQuotationMark(value);
                 if (mark) {
                     updateSql.append("'");
                 }
@@ -235,14 +243,45 @@ public abstract class AbstractSQLImageHandler implements SQLImageHandler {
         return "UPDATE";
     }
 
-    protected boolean isNeedQuotationMark(Object value) {
+    protected boolean needQuotationMark(Object value) {
         return value instanceof String || value instanceof Date || value instanceof java.sql.Date;
     }
 
-    @Override
-    public List<String> getAllUndoSQLs() {
-        // Each handling will only be one of them.
-        return nonNull(undoDeleteSqls) ? undoDeleteSqls : (nonNull(undoInsertSqls) ? undoInsertSqls : undoUpdateSqls);
+    static class OperationRecord extends HashMap<String, Object> {
+        private static final long serialVersionUID = -3736621942100254300L;
+
+        public OperationRecord() {
+        }
+
+        public OperationRecord(Map<String, Object> record) {
+            putAll(record);
+        }
+
+        public String getString(String column) {
+            Object value = get(column);
+            return isNull(value) ? null : value.toString();
+        }
+
+        public Integer getInteger(String column) {
+            Object value = get(column);
+            return isNull(value) ? null : new Integer(value.toString());
+        }
+
+        public Long getLong(String column) {
+            Object value = get(column);
+            return isNull(value) ? null : new Long(value.toString());
+        }
+
+        public Float getFloat(String column) {
+            Object value = get(column);
+            return isNull(value) ? null : new Float(value.toString());
+        }
+
+        public Double getDouble(String column) {
+            Object value = get(column);
+            return isNull(value) ? null : new Double(value.toString());
+        }
+
     }
 
 }

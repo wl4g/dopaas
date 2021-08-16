@@ -35,22 +35,12 @@ import com.zaxxer.hikari.HikariDataSource;
 public class SQLImageHandlerFactoryTests {
 
     @Test
-    public void testGetMySQLImageHandler() {
-        try (HikariDataSource ds = new HikariDataSource();) {
-            ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-            SQLImageHandler sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(new JdbcTemplate(ds));
-            System.out.println(sqlImageHandler);
-        }
-    }
-
-    @Test
     public void testSQLImageHandlerForInsertSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageHandler sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
+            SQLImageEvaluator sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
             // Execution
-            sqlImageHandler
-                    .recognize("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000')");
+            sqlImageHandler.evaluate("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000')");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
             safeList(sqlImageHandler.getAllUndoSQLs()).forEach(s -> System.out.println(s));
             System.out.println("----------------------------------------------------------------------");
@@ -63,9 +53,9 @@ public class SQLImageHandlerFactoryTests {
     public void testSQLImageHandlerForDeleteSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageHandler sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
+            SQLImageEvaluator sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
             // Execution
-            sqlImageHandler.recognize("delete from `test_db`.`t_user` where id >= 100 and id < 200 or `name` like '%jack%'");
+            sqlImageHandler.evaluate("delete from `test_db`.`t_user` where id >= 100 and id < 200 or `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
             safeList(sqlImageHandler.getAllUndoSQLs()).forEach(s -> System.out.println(s));
             System.out.println("----------------------------------------------------------------------");
@@ -78,9 +68,9 @@ public class SQLImageHandlerFactoryTests {
     public void testSQLImageHandlerForUpdateSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageHandler sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
+            SQLImageEvaluator sqlImageHandler = SQLImageHandlerFactory.getSQLImageHandler(jdbcTemplate);
             // Execution
-            sqlImageHandler.recognize("update `test_db`.`t_user` set `name`='mary' where `name` like '%jack%'");
+            sqlImageHandler.evaluate("update `test_db`.`t_user` set `name`='mary' where `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
             safeList(sqlImageHandler.getAllUndoSQLs()).forEach(s -> System.out.println(s));
             System.out.println("----------------------------------------------------------------------");

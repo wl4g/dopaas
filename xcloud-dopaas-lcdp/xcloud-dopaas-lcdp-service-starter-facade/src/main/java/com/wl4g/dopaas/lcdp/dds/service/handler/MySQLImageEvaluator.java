@@ -15,19 +15,19 @@
  */
 package com.wl4g.dopaas.lcdp.dds.service.handler;
 
-import java.util.List;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * {@link SQLImageHandler}
+ * {@link MySQLImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public interface SQLImageHandler {
+public class MySQLImageEvaluator extends StandardImageEvaluator {
 
-    void recognize(String sql) throws Exception;
-
-    List<String> getAllUndoSQLs();
+    public MySQLImageEvaluator(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
+    }
 
 }

@@ -18,15 +18,15 @@ package com.wl4g.dopaas.lcdp.dds.service.handler;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * {@link PostgreSQLImageHandler}
+ * {@link DerbyImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class PostgreSQLImageHandler extends StandardSQLImageHandler {
+public class DerbyImageEvaluator extends StandardImageEvaluator {
 
-    public PostgreSQLImageHandler(JdbcTemplate jdbcTemplate) {
+    public DerbyImageEvaluator(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
     }
 
