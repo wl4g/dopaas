@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class KylinImageEvaluator extends StandardImageEvaluator {
 
-    public KylinImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public KylinImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

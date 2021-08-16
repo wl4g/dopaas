@@ -23,6 +23,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.wl4g.dopaas.lcdp.dds.service.handler.AbstractImageEvaluator.EvaluatorProperties;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
@@ -38,9 +39,56 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForInsertSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
             // Execution
             evaluator.evaluate("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000')");
+            System.out.println("------------------- Generated all undo SQLs --------------------------");
+            safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            System.out.println("----------------------------------------------------------------------");
+        } finally {
+            ((HikariDataSource) jdbcTemplate.getDataSource()).close();
+        }
+    }
+
+    @Test
+    public void testSQLImageEvaluateForInsertMultiValuesSQL() throws Exception {
+        JdbcTemplate jdbcTemplate = initTestingDatabase();
+        try {
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            // Execution
+            evaluator.evaluate("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000'), (2000, 'jack2000')");
+            System.out.println("------------------- Generated all undo SQLs --------------------------");
+            safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            System.out.println("----------------------------------------------------------------------");
+        } finally {
+            ((HikariDataSource) jdbcTemplate.getDataSource()).close();
+        }
+    }
+
+    @Test
+    public void testSQLImageEvaluateForInsertValuesSelectSQL() throws Exception {
+        JdbcTemplate jdbcTemplate = initTestingDatabase();
+        try {
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            // Execution
+            evaluator.evaluate(
+                    "insert into `test_db`.`t_user2` (`id`,`name`) select * from (select * from `test_db`.`t_user` where `id`>=100) as tab");
+            System.out.println("------------------- Generated all undo SQLs --------------------------");
+            safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            System.out.println("----------------------------------------------------------------------");
+        } finally {
+            ((HikariDataSource) jdbcTemplate.getDataSource()).close();
+        }
+    }
+
+    @Test
+    public void testSQLImageEvaluateForInsertSelectSQL() throws Exception {
+        JdbcTemplate jdbcTemplate = initTestingDatabase();
+        try {
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            // Execution
+            evaluator.evaluate(
+                    "insert into `test_db`.`t_user2` select * from (select * from `test_db`.`t_user` where `id`>=100) as tab");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
             safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
             System.out.println("----------------------------------------------------------------------");
@@ -53,7 +101,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForDeleteSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
             // Execution
             evaluator.evaluate("delete from `test_db`.`t_user` where id >= 100 and id < 200 or `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
@@ -68,7 +116,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForUpdateSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
             // Execution
             evaluator.evaluate("update `test_db`.`t_user` set `name`='mary' where `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
@@ -88,20 +136,27 @@ public class SQLImageEvaluatorFactoryTests {
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 
-        // Initial testing data.
+        // Create database.
         jdbcTemplate.execute("DROP SCHEMA IF EXISTS `test_db` CASCADE");
         jdbcTemplate.execute("CREATE SCHEMA `test_db`");
+
+        // Create tables.
         jdbcTemplate.execute("DROP TABLE IF EXISTS `test_db`.`t_user`");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS `test_db`.`t_user2`");
+
         jdbcTemplate.execute(
                 "CREATE TABLE IF NOT EXISTS `test_db`.`t_user`(`id` bigint(25) PRIMARY KEY NOT NULL,`name` varchar(32) NOT NULL)");
+        jdbcTemplate.execute(
+                "CREATE TABLE IF NOT EXISTS `test_db`.`t_user2`(`id` bigint(25) PRIMARY KEY NOT NULL,`name` varchar(32) NOT NULL)");
 
+        // Initial tables data.
         jdbcTemplate.execute("INSERT INTO `test_db`.`t_user` (`id`,`name`) VALUES (100, 'jack100')");
         jdbcTemplate.execute("INSERT INTO `test_db`.`t_user` (`id`,`name`) VALUES (110, 'jack110')");
         jdbcTemplate.execute("INSERT INTO `test_db`.`t_user` (`id`,`name`) VALUES (200, 'tom200')");
 
         // Print all records.
         List<Map<String, Object>> list = jdbcTemplate.queryForList("select * from `test_db`.`t_user`");
-        System.out.println("------------------------ Print all data ------------------------------");
+        System.out.println("---------------- Print all data (`test_db`.`t_user`) -----------------");
         safeList(list).forEach(r -> System.out.println(r));
         System.out.println("----------------------------------------------------------------------");
 

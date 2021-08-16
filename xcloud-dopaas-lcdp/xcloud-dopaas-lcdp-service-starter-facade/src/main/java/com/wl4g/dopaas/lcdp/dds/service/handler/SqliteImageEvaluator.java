@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class SqliteImageEvaluator extends StandardImageEvaluator {
 
-    public SqliteImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public SqliteImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

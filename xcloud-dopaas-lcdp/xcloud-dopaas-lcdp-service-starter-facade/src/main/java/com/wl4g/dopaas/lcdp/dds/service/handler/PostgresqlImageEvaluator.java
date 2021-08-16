@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class PostgresqlImageEvaluator extends StandardImageEvaluator {
 
-    public PostgresqlImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public PostgresqlImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

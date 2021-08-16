@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class Log4jdbcImageEvaluator extends StandardImageEvaluator {
 
-    public Log4jdbcImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public Log4jdbcImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

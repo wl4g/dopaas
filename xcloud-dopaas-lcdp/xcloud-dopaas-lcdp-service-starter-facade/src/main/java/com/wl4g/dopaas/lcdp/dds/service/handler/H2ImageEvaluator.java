@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class H2ImageEvaluator extends StandardImageEvaluator {
 
-    public H2ImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public H2ImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

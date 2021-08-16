@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class PhoenixImageEvaluator extends StandardImageEvaluator {
 
-    public PhoenixImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public PhoenixImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
     @Override

@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class ClickhouseImageEvaluator extends StandardImageEvaluator {
 
-    public ClickhouseImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public ClickhouseImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

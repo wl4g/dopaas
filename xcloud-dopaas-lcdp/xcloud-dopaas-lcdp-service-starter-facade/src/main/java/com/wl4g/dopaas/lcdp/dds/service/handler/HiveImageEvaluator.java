@@ -18,15 +18,15 @@ package com.wl4g.dopaas.lcdp.dds.service.handler;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * {@link Db2ImageEvaluator}
+ * {@link HiveImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class Db2ImageEvaluator extends StandardImageEvaluator {
+public class HiveImageEvaluator extends StandardImageEvaluator {
 
-    public Db2ImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+    public HiveImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
         super(config, jdbcTemplate);
     }
 

@@ -59,9 +59,6 @@ public interface JdbcDefinition {
     String DERBY = "derby";
     String DERBY_DRIVER = "org.apache.derby.jdbc.ClientDriver";
 
-    String HIVE = "hive";
-    String HIVE_DRIVER = "org.apache.hive.jdbc.HiveDriver";
-
     String H2 = "h2";
     String H2_DRIVER = "org.h2.Driver";
 
@@ -89,6 +86,10 @@ public interface JdbcDefinition {
 
     String LOG4JDBC = "log4jdbc";
     String LOG4JDBC_DRIVER = "net.sf.log4jdbc.DriverSpy";
+
+    String HIVE = "hive";
+    String HIVE_DRIVER = "org.apache.hadoop.hive.jdbc.HiveDriver";
+    String HIVE_DRIVER2 = "org.apache.hive.jdbc.HiveDriver";
 
     String PHOENIX = "phoenix";
     String PHOENIX_DRIVER = "org.apache.phoenix.jdbc.PhoenixDriver";

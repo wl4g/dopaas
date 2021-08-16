@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class MariadbImageEvaluator extends StandardImageEvaluator {
 
-    public MariadbImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public MariadbImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

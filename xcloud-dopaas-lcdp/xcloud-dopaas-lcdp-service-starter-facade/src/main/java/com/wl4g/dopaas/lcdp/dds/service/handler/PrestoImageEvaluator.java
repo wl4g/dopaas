@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class PrestoImageEvaluator extends StandardImageEvaluator {
 
-    public PrestoImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public PrestoImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

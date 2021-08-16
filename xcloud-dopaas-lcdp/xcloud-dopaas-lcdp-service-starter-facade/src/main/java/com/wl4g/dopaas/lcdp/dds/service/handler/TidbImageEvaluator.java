@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class TidbImageEvaluator extends StandardImageEvaluator {
 
-    public TidbImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public TidbImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

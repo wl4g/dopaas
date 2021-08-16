@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class DerbyImageEvaluator extends StandardImageEvaluator {
 
-    public DerbyImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public DerbyImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

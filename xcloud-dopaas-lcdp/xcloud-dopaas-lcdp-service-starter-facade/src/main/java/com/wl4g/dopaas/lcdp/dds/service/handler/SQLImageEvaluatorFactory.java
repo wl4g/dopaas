@@ -35,6 +35,7 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.wl4g.component.common.lang.StringUtils2;
+import com.wl4g.dopaas.lcdp.dds.service.handler.AbstractImageEvaluator.EvaluatorProperties;
 import com.wl4g.dopaas.lcdp.dds.service.util.JdbcDefinition;
 
 /**
@@ -51,16 +52,22 @@ public class SQLImageEvaluatorFactory {
     static {
         REGISTRY.put("default", StandardImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.MYSQL_DRIVER, MySQLImageEvaluator.class);
+        REGISTRY.put(JdbcDefinition.MYSQL_DRIVER_6, MySQLImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.MARIADB_DRIVER, MariadbImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.POSTGRESQL_DRIVER, PostgresqlImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.ORACLE_DRIVER, OracleImageEvaluator.class);
+        REGISTRY.put(JdbcDefinition.ORACLE_DRIVER2, OracleImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.SQL_SERVER_DRIVER, SqlServerImageEvaluator.class);
+        REGISTRY.put(JdbcDefinition.SQL_SERVER_DRIVER_SQLJDBC4, SqlServerImageEvaluator.class);
+        REGISTRY.put(JdbcDefinition.SQL_SERVER_DRIVER_JTDS, SqlServerImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.DB2_DRIVER, Db2ImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.H2_DRIVER, H2ImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.SQLITE_DRIVER, SqliteImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.DERBY_DRIVER, DerbyImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.SYBASE_DRIVER, SybaseImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.TIDB_DRIVER, TidbImageEvaluator.class);
+        REGISTRY.put(JdbcDefinition.HIVE_DRIVER, HiveImageEvaluator.class);
+        REGISTRY.put(JdbcDefinition.HIVE_DRIVER2, HiveImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.PHOENIX_DRIVER, PhoenixImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.KYLIN_DRIVER, KylinImageEvaluator.class);
         REGISTRY.put(JdbcDefinition.PRESTO_DRIVER, PrestoImageEvaluator.class);
@@ -69,7 +76,7 @@ public class SQLImageEvaluatorFactory {
         REGISTRY.put(JdbcDefinition.ALI_ELASTICSEARCH_DRIVER, Log4jdbcImageEvaluator.class);
     }
 
-    public static SQLImageEvaluator getEvaluator(JdbcTemplate jdbcTemplate) {
+    public static SQLImageEvaluator getEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
         String driverClassName = null;
         DataSource dataSource = jdbcTemplate.getDataSource();
         notNull(dataSource, IllegalStateException.class, "Unable get JdbcTemplate.dataSource is null.");
@@ -90,7 +97,8 @@ public class SQLImageEvaluatorFactory {
         for (Entry<String, Class<? extends SQLImageEvaluator>> ent : REGISTRY.entrySet()) {
             if (StringUtils2.equals(driverClassName, ent.getKey())) {
                 try {
-                    return ent.getValue().getConstructor(JdbcTemplate.class).newInstance(jdbcTemplate);
+                    return ent.getValue().getConstructor(EvaluatorProperties.class, JdbcTemplate.class).newInstance(config,
+                            jdbcTemplate);
                 } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                         | NoSuchMethodException | SecurityException e) {
                     throw new IllegalStateException(e);

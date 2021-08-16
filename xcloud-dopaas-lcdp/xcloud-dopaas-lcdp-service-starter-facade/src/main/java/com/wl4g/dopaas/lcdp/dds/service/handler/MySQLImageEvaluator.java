@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class MySQLImageEvaluator extends StandardImageEvaluator {
 
-    public MySQLImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public MySQLImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

@@ -16,19 +16,32 @@
 package com.wl4g.dopaas.lcdp.dds.service.handler;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.wl4g.component.common.collection.CollectionUtils2;
+import com.wl4g.component.common.lang.StringUtils2;
+
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.update.Update;
 
 /**
@@ -40,8 +53,8 @@ import net.sf.jsqlparser.statement.update.Update;
  */
 public class StandardImageEvaluator extends AbstractImageEvaluator {
 
-    public StandardImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public StandardImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
     @Override
@@ -52,7 +65,7 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
             log.info("Original insert SQL: {}", insert);
 
             // Deleted due of insertion.
-            generateUndoDeleteSql(insert);
+            setUndoDeleteSqls(generateUndoDeleteSql(insert));
 
         } else if (stmt instanceof Delete) {
             Delete delete = (Delete) stmt;
@@ -76,7 +89,7 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
 
             // Insert due to deletion.
             log.info("Generated undo select SQL: {}", undoSelectSql);
-            generateUndoInsertSql(delete, findOperationRecords(undoSelectSql.toString()));
+            setUndoInsertSqls(generateUndoInsertSql(delete, findOperationRecords(undoSelectSql.toString())));
 
         } else if (stmt instanceof Update) {
             Update update = (Update) stmt;
@@ -114,8 +127,246 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
 
             // Update due to updation.
             log.info("Generated undo select SQL: {}", undoSelectSql);
-            generateUndoUpdateSql(update, findOperationRecords(undoSelectSql.toString()));
+            setUndoUpdateSqls(generateUndoUpdateSql(update, findOperationRecords(undoSelectSql.toString())));
         }
+    }
+
+    protected List<String> generateUndoDeleteSql(Insert insert) {
+        List<String> undoDeleteSqls = new ArrayList<>(1);
+
+        // e.g: insert into tab1 (id,name) values (1,'jack')
+        if (insert.getItemsList() instanceof ExpressionList) {
+            ExpressionList items = (ExpressionList) insert.getItemsList();
+            undoDeleteSqls.addAll(doGenerateUndoDeleteSqlForItemList(insert, items));
+        }
+        // e.g: insert into tab1 (id,name) values (1,'jack'), (2, 'jack2')
+        else if (insert.getItemsList() instanceof MultiExpressionList) {
+            MultiExpressionList itemsList = (MultiExpressionList) insert.getItemsList();
+            safeList(itemsList.getExpressionLists())
+                    .forEach(items -> undoDeleteSqls.addAll(doGenerateUndoDeleteSqlForItemList(insert, items)));
+        }
+        // e.g:
+        else if (insert.getItemsList() instanceof SubSelect) {
+            // SubSelect subSelect = (SubSelect) insert.getItemsList();
+            throw new UnsupportedOperationException(format("No supported insert select SQL. - %s", insert.toString()));
+        }
+        // e.g: insert into tab1 select ...
+        else if (nonNull(insert.getSelect())) {
+            Select select = insert.getSelect();
+            List<OperationRecord> records = findOperationRecords(select.toString());
+            if (CollectionUtils2.isEmpty(records)) {
+                return null;
+            }
+            // Each insert-select result.
+            for (OperationRecord record : records) {
+                StringBuilder deleteSql = new StringBuilder("DELETE FROM ");
+                deleteSql.append(insert.getTable());
+                deleteSql.append(" ");
+                if (!record.isEmpty()) {
+                    deleteSql.append("WHERE ");
+                }
+
+                // e.g: insert into tab1 select * from (select id,name
+                // from tab2 a inner join tab3 b on a.bid=b.id where id>1) as
+                // tab
+                if (CollectionUtils2.isEmpty(insert.getColumns())) {
+                    Iterator<Entry<String, Object>> it = record.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Entry<String, Object> ent = it.next();
+                        deleteSql.append(ent.getKey());
+                        deleteSql.append("=");
+                        boolean mark = needQuotationMark(ent.getValue());
+                        if (mark) {
+                            deleteSql.append("'");
+                        }
+                        deleteSql.append(ent.getValue());
+                        if (mark) {
+                            deleteSql.append("'");
+                        }
+                        if (it.hasNext()) {
+                            deleteSql.append(" AND ");
+                        }
+                    }
+                    undoDeleteSqls.add(deleteSql.toString());
+                }
+                // e.g: insert into tab1 (id,name) select * from (select id,name
+                // from tab2 a inner join tab3 b on a.bid=b.id where id>1) as
+                // tab
+                else {
+                    int columnCount = insert.getColumns().size();
+                    if (columnCount != record.size()) { // MARK1
+                        throw new IllegalStateException(
+                                format("Insert select SQL: %s, column count: %s, select record column count: %s", insert,
+                                        columnCount, record.size()));
+                    }
+                    Iterator<Entry<String, Object>> it = record.entrySet().iterator();
+                    for (int i = 0, size = insert.getColumns().size(); i < size; i++) {
+                        Object value = null;
+                        if (it.hasNext()) {
+                            value = it.next().getValue();
+                        } else {
+                            throw new Error("Shouldn't be here."); // @see:MARK1
+                        }
+                        Column col = insert.getColumns().get(i);
+                        deleteSql.append(col.getColumnName());
+                        deleteSql.append("=");
+                        boolean mark = needQuotationMark(value);
+                        if (mark) {
+                            deleteSql.append("'");
+                        }
+                        deleteSql.append(value);
+                        if (mark) {
+                            deleteSql.append("'");
+                        }
+                        if (i < (size - 1)) {
+                            deleteSql.append(" AND ");
+                        }
+                    }
+                    undoDeleteSqls.add(deleteSql.toString());
+                }
+            }
+        }
+
+        return undoDeleteSqls;
+    }
+
+    protected List<String> doGenerateUndoDeleteSqlForItemList(Insert insert, ExpressionList items) {
+        List<String> undoDeleteSqls = new ArrayList<>(items.getExpressions().size());
+
+        StringBuilder deleteSql = new StringBuilder("DELETE FROM ");
+        deleteSql.append(insert.getTable());
+        deleteSql.append(" ");
+
+        List<Column> columns = safeList(insert.getColumns());
+        List<Expression> exprs = safeList(items.getExpressions());
+        if (columns.size() != exprs.size()) {
+            throw new IllegalStateException(
+                    format("Insert SQL: %s, columns: %s, values: %s", insert, columns.size(), exprs.size()));
+        }
+        if (!exprs.isEmpty()) {
+            deleteSql.append("WHERE ");
+        }
+        for (int i = 0, size = exprs.size(); i < size; i++) {
+            Column col = columns.get(i);
+            Expression value = exprs.get(i);
+            deleteSql.append(col.getColumnName());
+            deleteSql.append("=");
+            boolean mark = needQuotationMark(value);
+            if (mark) {
+                deleteSql.append("'");
+            }
+            deleteSql.append(value);
+            if (mark) {
+                deleteSql.append("'");
+            }
+            if (i < (size - 1)) {
+                deleteSql.append(" AND ");
+            }
+        }
+        undoDeleteSqls.add(deleteSql.toString());
+
+        return undoDeleteSqls;
+    }
+
+    protected List<String> generateUndoInsertSql(Delete delete, List<OperationRecord> records) {
+        if (CollectionUtils2.isEmpty(records)) {
+            return null;
+        }
+        List<String> undoInsertSqls = new ArrayList<>(records.size());
+
+        for (OperationRecord record : records) {
+            StringBuilder insertSql = new StringBuilder(getInsertKeyword());
+            insertSql.append(" ");
+            insertSql.append(delete.getTable().toString());
+            insertSql.append(" INTO (");
+
+            List<Object> values = new ArrayList<>(record.size());
+            // Build insert sql columns.
+            Iterator<Entry<String, Object>> it = record.entrySet().iterator();
+            for (;;) {
+                Entry<String, Object> ent = it.next();
+                insertSql.append(ent.getKey());
+                values.add(ent.getValue()); // Column name.
+                if (it.hasNext()) {
+                    insertSql.append(",");
+                } else {
+                    break;
+                }
+            }
+            // Build insert SQL values.
+            insertSql.append(") VALUES (");
+            for (int j = 0, size = values.size(); j < size; j++) {
+                Object value = values.get(j);
+                boolean mark = needQuotationMark(value);
+                if (mark) {
+                    insertSql.append("'");
+                }
+                insertSql.append(value);
+                if (mark) {
+                    insertSql.append("'");
+                }
+                if (j < (size - 1)) {
+                    insertSql.append(",");
+                }
+            }
+            insertSql.append(")");
+
+            // Add insert SQL.
+            undoInsertSqls.add(insertSql.toString());
+        }
+
+        return undoInsertSqls;
+    }
+
+    protected List<String> generateUndoUpdateSql(Update update, List<OperationRecord> records) {
+        if (records.isEmpty()) {
+            return null;
+        }
+
+        List<String> undoUpdateSqls = new ArrayList<>(records.size());
+        for (OperationRecord record : records) {
+            StringBuilder updateSql = new StringBuilder(getUpdateKeyword());
+            updateSql.append(" ");
+            updateSql.append(update.getTable().toString());
+            updateSql.append(" SET ");
+
+            Iterator<Entry<String, Object>> it = record.entrySet().iterator();
+            for (;;) {
+                Entry<String, Object> ent = it.next();
+                String columnName = ent.getKey();
+                Object value = ent.getValue();
+
+                // Use origin columnName. e.g: update set `name`='jack'
+                // NAME => `name`
+                Column origColumnName = safeList(update.getColumns()).stream()
+                        .filter(c -> StringUtils2.eqIgnCase(StringUtils2.replace(c.getColumnName(), "`", ""), columnName))
+                        .findFirst().orElse(new Column(columnName));
+
+                updateSql.append(origColumnName);
+                updateSql.append("=");
+                boolean mark = needQuotationMark(value);
+                if (mark) {
+                    updateSql.append("'");
+                }
+                updateSql.append(value);
+                if (mark) {
+                    updateSql.append("'");
+                }
+                if (it.hasNext()) {
+                    updateSql.append(",");
+                } else {
+                    break;
+                }
+            }
+            if (nonNull(update.getWhere())) {
+                updateSql.append(" WHERE ");
+                updateSql.append(update.getWhere());
+            }
+
+            // Add update SQL.
+            undoUpdateSqls.add(updateSql.toString());
+        }
+        return undoUpdateSqls;
     }
 
 }

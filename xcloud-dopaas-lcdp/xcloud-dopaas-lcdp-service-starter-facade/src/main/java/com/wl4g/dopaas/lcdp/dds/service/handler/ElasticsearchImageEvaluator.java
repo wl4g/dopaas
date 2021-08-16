@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class ElasticsearchImageEvaluator extends StandardImageEvaluator {
 
-    public ElasticsearchImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public ElasticsearchImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class OracleImageEvaluator extends StandardImageEvaluator {
 
-    public OracleImageEvaluator(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public OracleImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+        super(config, jdbcTemplate);
     }
 
 }

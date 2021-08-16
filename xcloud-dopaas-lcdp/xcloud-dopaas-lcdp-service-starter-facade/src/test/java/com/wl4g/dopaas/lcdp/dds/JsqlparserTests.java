@@ -43,6 +43,20 @@ import net.sf.jsqlparser.util.TablesNamesFinder;
 public class JsqlparserTests {
 
     @Test
+    public void testParserInsertSelectSQL() throws Exception {
+        Statement stmt = CCJSqlParserUtil.parse(
+                "insert into tab1 (id,name) select * from (select a.id,a.name from tab2 a inner join tab3 b on a.bid=b.id where a.id>1) as tab");
+        System.out.println(stmt);
+    }
+
+    @Test
+    public void testParserDeleteSelectSQL() throws Exception {
+        Statement stmt = CCJSqlParserUtil
+                .parse("delete from tab1 where id=(select a.id from tab2 a inner join tab3 b on a.bid=b.id where id>1)");
+        System.out.println(stmt);
+    }
+
+    @Test
     public void testExtractTableNamesFromSQL() throws Exception {
         Select select = (Select) CCJSqlParserUtil.parse("SELECT * FROM tab1");
         TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
