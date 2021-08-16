@@ -113,12 +113,44 @@ public class SQLImageEvaluatorFactoryTests {
     }
 
     @Test
+    public void testSQLImageEvaluateForDeleteSelectSQL() throws Exception {
+        JdbcTemplate jdbcTemplate = initTestingDatabase();
+        try {
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            // Execution
+            evaluator.evaluate("delete from `test_db`.`t_user` where id in (select id from `test_db`.`t_user` where id>= 100)");
+            System.out.println("------------------- Generated all undo SQLs --------------------------");
+            safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            System.out.println("----------------------------------------------------------------------");
+        } finally {
+            ((HikariDataSource) jdbcTemplate.getDataSource()).close();
+        }
+    }
+
+    @Test
     public void testSQLImageEvaluateForUpdateSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
             SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
             // Execution
             evaluator.evaluate("update `test_db`.`t_user` set `name`='mary' where `name` like '%jack%'");
+            System.out.println("------------------- Generated all undo SQLs --------------------------");
+            safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
+            System.out.println("----------------------------------------------------------------------");
+        } finally {
+            ((HikariDataSource) jdbcTemplate.getDataSource()).close();
+        }
+    }
+
+    // [BUG]: Two undo SQL should not be generated !!!
+    @Test
+    public void testSQLImageEvaluateForUpdateSelectSQL() throws Exception {
+        JdbcTemplate jdbcTemplate = initTestingDatabase();
+        try {
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            // Execution
+            evaluator.evaluate(
+                    "update `test_db`.`t_user` set `name`=(select `name` from `test_db`.`t_user` where id = 100) where `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
             safeList(evaluator.getAllUndoSQLs()).forEach(s -> System.out.println(s));
             System.out.println("----------------------------------------------------------------------");

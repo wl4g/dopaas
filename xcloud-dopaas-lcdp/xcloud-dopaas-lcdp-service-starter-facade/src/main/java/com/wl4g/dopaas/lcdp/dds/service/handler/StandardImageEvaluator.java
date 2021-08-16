@@ -71,13 +71,18 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
             Delete delete = (Delete) stmt;
             log.info("Original delete SQL: {}", delete);
 
+            // Notice: for example, [delete from tab1 where id>=100]
+            // Only need to treat the conditions after delete where as a whole.
+            // When generating undo insert SQL, only need the overall result
+            // sets.
+
             StringBuilder undoSelectSql = new StringBuilder("SELECT * FROM ");
             undoSelectSql.append(delete.getTable());
             undoSelectSql.append(" ");
             for (Join join : safeList(delete.getJoins())) {
                 undoSelectSql.append(join);
             }
-            Expression where = delete.getWhere();
+            Expression where = delete.getWhere(); // EqualsTo/GreaterThan/GreaterThanEquals/MinorThan/MinorThanEquals/InExpression/LikeExpression/...
             if (nonNull(where) && !isBlank(where.toString())) {
                 undoSelectSql.append(" WHERE ");
                 undoSelectSql.append(where);
@@ -131,6 +136,12 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
         }
     }
 
+    /**
+     * Generate undo delete SQL.
+     * 
+     * @param insert
+     * @return
+     */
     protected List<String> generateUndoDeleteSql(Insert insert) {
         List<String> undoDeleteSqls = new ArrayList<>(1);
 
@@ -230,6 +241,13 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
         return undoDeleteSqls;
     }
 
+    /**
+     * Generate undo delete SQL.
+     * 
+     * @param insert
+     * @param items
+     * @return
+     */
     protected List<String> doGenerateUndoDeleteSqlForItemList(Insert insert, ExpressionList items) {
         List<String> undoDeleteSqls = new ArrayList<>(items.getExpressions().size());
 
@@ -268,6 +286,13 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
         return undoDeleteSqls;
     }
 
+    /**
+     * Generate undo insert SQL.
+     * 
+     * @param delete
+     * @param records
+     * @return
+     */
     protected List<String> generateUndoInsertSql(Delete delete, List<OperationRecord> records) {
         if (CollectionUtils2.isEmpty(records)) {
             return null;
@@ -318,6 +343,14 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
         return undoInsertSqls;
     }
 
+    /**
+     * [BUG]: refer to
+     * {@link SQLImageEvaluatorFactoryTests#testSQLImageEvaluateForUpdateSelectSQL}
+     * 
+     * @param update
+     * @param records
+     * @return
+     */
     protected List<String> generateUndoUpdateSql(Update update, List<OperationRecord> records) {
         if (records.isEmpty()) {
             return null;
