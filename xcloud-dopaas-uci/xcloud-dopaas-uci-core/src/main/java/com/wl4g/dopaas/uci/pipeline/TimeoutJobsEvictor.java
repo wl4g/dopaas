@@ -32,6 +32,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.component.common.task.RunnerProperties.StartupMode;
 import com.wl4g.component.support.cache.jedis.JedisService;
 import com.wl4g.component.support.cache.locks.JedisLockManager;
 import com.wl4g.component.support.task.ApplicationTaskRunner;
@@ -64,7 +65,7 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
     protected ScheduledFuture<?> future;
 
     public TimeoutJobsEvictor() {
-        super(new RunnerProperties(false, 1));
+        super(new RunnerProperties(StartupMode.NOSTARTUP, 1));
     }
 
     @Override

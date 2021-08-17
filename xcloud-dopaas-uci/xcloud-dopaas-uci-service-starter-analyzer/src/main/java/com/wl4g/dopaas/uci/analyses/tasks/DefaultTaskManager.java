@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.component.common.task.RunnerProperties.StartupMode;
 import com.wl4g.component.support.task.ApplicationTaskRunner;
 
 /**
@@ -37,30 +38,30 @@ import com.wl4g.component.support.task.ApplicationTaskRunner;
  * @since
  */
 public final class DefaultTaskManager extends ApplicationTaskRunner<RunnerProperties> implements TaskManager {
-	final private Logger log = LoggerFactory.getLogger(getClass());
+    final private Logger log = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * Codes task repository.
-	 */
-	final private ConcurrentMap<String, Future<File>> taskRepository;
+    /**
+     * Codes task repository.
+     */
+    final private ConcurrentMap<String, Future<File>> taskRepository;
 
-	public DefaultTaskManager(int initCapacity) {
-		super(new RunnerProperties(true));
-		isTrue(initCapacity > 0, "initCapacity must >0");
-		this.taskRepository = new ConcurrentHashMap<>(initCapacity);
-	}
+    public DefaultTaskManager(int initCapacity) {
+        super(new RunnerProperties(StartupMode.ASYNC));
+        isTrue(initCapacity > 0, "initCapacity must >0");
+        this.taskRepository = new ConcurrentHashMap<>(initCapacity);
+    }
 
-	@Override
-	public boolean registerFuture(String taskId, Future<File> future) {
-		if (log.isInfoEnabled()) {
-			log.info("Add codesAnalyzing task future for: {}", future);
-		}
-		return isNull(taskRepository.putIfAbsent(taskId, future));
-	}
+    @Override
+    public boolean registerFuture(String taskId, Future<File> future) {
+        if (log.isInfoEnabled()) {
+            log.info("Add codesAnalyzing task future for: {}", future);
+        }
+        return isNull(taskRepository.putIfAbsent(taskId, future));
+    }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
 
-	}
+    }
 
 }

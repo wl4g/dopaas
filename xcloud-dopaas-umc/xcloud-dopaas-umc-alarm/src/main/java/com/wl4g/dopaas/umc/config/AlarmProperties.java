@@ -25,12 +25,12 @@ import com.wl4g.component.common.task.RunnerProperties;
  * @since
  */
 public class AlarmProperties extends RunnerProperties {
-	private static final long serialVersionUID = -3690593536229115411L;
+    private static final long serialVersionUID = -3690593536229115411L;
 
-	public AlarmProperties() {
-		// No need to start the asynchronous running of the boss.
-		setAsyncStartup(false);
-		setConcurrency(1); // By default
-	}
+    public AlarmProperties() {
+        // No need to start the asynchronous running of the boss.
+        setStartupMode(StartupMode.NOSTARTUP);
+        setConcurrency(1); // By default
+    }
 
 }

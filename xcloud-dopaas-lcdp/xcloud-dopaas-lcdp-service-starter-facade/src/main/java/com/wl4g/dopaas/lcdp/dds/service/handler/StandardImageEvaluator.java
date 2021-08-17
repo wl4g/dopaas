@@ -32,7 +32,14 @@ import com.wl4g.component.common.collection.CollectionUtils2;
 import com.wl4g.component.common.lang.StringUtils2;
 
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
+import net.sf.jsqlparser.expression.operators.relational.MinorThan;
+import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
@@ -63,77 +70,123 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
         if (stmt instanceof Insert) {
             Insert insert = (Insert) stmt;
             log.info("Original insert SQL: {}", insert);
-
-            // Deleted due of insertion.
-            setUndoDeleteSqls(generateUndoDeleteSql(insert));
-
+            processInsertSQL(insert);
         } else if (stmt instanceof Delete) {
             Delete delete = (Delete) stmt;
             log.info("Original delete SQL: {}", delete);
-
-            // Notice: for example, [delete from tab1 where id>=100]
-            // Only need to treat the conditions after delete where as a whole.
-            // When generating undo insert SQL, only need the overall result
-            // sets.
-
-            StringBuilder undoSelectSql = new StringBuilder("SELECT * FROM ");
-            undoSelectSql.append(delete.getTable());
-            undoSelectSql.append(" ");
-            for (Join join : safeList(delete.getJoins())) {
-                undoSelectSql.append(join);
-            }
-            Expression where = delete.getWhere(); // EqualsTo/GreaterThan/GreaterThanEquals/MinorThan/MinorThanEquals/InExpression/LikeExpression/...
-            if (nonNull(where) && !isBlank(where.toString())) {
-                undoSelectSql.append(" WHERE ");
-                undoSelectSql.append(where);
-            }
-            if (nonNull(delete.getLimit())) {
-                undoSelectSql.append(" ");
-                undoSelectSql.append(delete.getLimit());
-            }
-
-            // Insert due to deletion.
-            log.info("Generated undo select SQL: {}", undoSelectSql);
-            setUndoInsertSqls(generateUndoInsertSql(delete, findOperationRecords(undoSelectSql.toString())));
-
+            processDeleteSQL(delete);
         } else if (stmt instanceof Update) {
             Update update = (Update) stmt;
             log.info("Original update SQL: {}", update);
-
-            // No columns were modified.
-            if (isNull(update.getColumns())) {
-                return;
-            }
-
-            StringBuilder undoSelectSql = new StringBuilder("SELECT ");
-            for (int i = 0, size = update.getColumns().size(); i < size; i++) {
-                Column col = update.getColumns().get(i);
-                undoSelectSql.append(col.getColumnName());
-                if (i < (size - 1)) {
-                    undoSelectSql.append(",");
-                }
-            }
-            undoSelectSql.append(" FROM ");
-            undoSelectSql.append(update.getTable());
-
-            undoSelectSql.append(" ");
-            for (Join join : safeList(update.getJoins())) {
-                undoSelectSql.append(join);
-            }
-            Expression where = update.getWhere();
-            if (nonNull(where) && !isBlank(where.toString())) {
-                undoSelectSql.append(" WHERE ");
-                undoSelectSql.append(where);
-            }
-            if (nonNull(update.getLimit())) {
-                undoSelectSql.append(" ");
-                undoSelectSql.append(update.getLimit());
-            }
-
-            // Update due to updation.
-            log.info("Generated undo select SQL: {}", undoSelectSql);
-            setUndoUpdateSqls(generateUndoUpdateSql(update, findOperationRecords(undoSelectSql.toString())));
+            processUpdateSQL(update);
         }
+    }
+
+    /**
+     * Processing for insert SQL.
+     * 
+     * @param insert
+     */
+    protected void processInsertSQL(Insert insert) {
+        // Deleted due of insertion.
+        setUndoDeleteSqls(generateUndoDeleteSql(insert));
+    }
+
+    /**
+     * Processing for delete SQL.
+     * 
+     * @param delete
+     */
+    protected void processDeleteSQL(Delete delete) {
+        // Notice: for example, [delete from tab1 where id>=100]
+        // Only need to treat the conditions after delete where as a whole.
+        // When generating undo insert SQL, only need the overall result
+        // sets.
+
+        StringBuilder undoSelectSql = new StringBuilder("SELECT * FROM ");
+        undoSelectSql.append(delete.getTable());
+        undoSelectSql.append(" ");
+        for (Join join : safeList(delete.getJoins())) {
+            undoSelectSql.append(join);
+        }
+
+        Expression where = delete.getWhere(); // EqualsTo/GreaterThan/GreaterThanEquals/MinorThan/MinorThanEquals/InExpression/LikeExpression/...
+        if (nonNull(where) && !isBlank(where.toString())) {
+            undoSelectSql.append(" WHERE ");
+            undoSelectSql.append(where);
+        }
+
+        if (nonNull(delete.getLimit())) {
+            undoSelectSql.append(" ");
+            undoSelectSql.append(delete.getLimit());
+        }
+
+        log.info("Generated undo select SQL: {}", undoSelectSql);
+
+        // Insert due to deletion.
+        setUndoInsertSqls(generateUndoInsertSql(delete, findOperationRecords(undoSelectSql.toString())));
+    }
+
+    /**
+     * Processing for update SQL.
+     * 
+     * @param update
+     */
+    protected void processUpdateSQL(Update update) {
+        // No columns were modified.
+        if (isNull(update.getColumns())) {
+            return;
+        }
+
+        StringBuilder undoSelectSql = new StringBuilder("SELECT ");
+        for (int i = 0, size = update.getColumns().size(); i < size; i++) {
+            Column col = update.getColumns().get(i);
+            undoSelectSql.append(col.getColumnName());
+            if (i < (size - 1)) {
+                undoSelectSql.append(",");
+            }
+        }
+        undoSelectSql.append(" FROM ");
+        undoSelectSql.append(update.getTable());
+
+        undoSelectSql.append(" ");
+        for (Join join : safeList(update.getJoins())) {
+            undoSelectSql.append(join);
+        }
+
+        Expression where = update.getWhere(); // EqualsTo/GreaterThan/GreaterThanEquals/MinorThan/MinorThanEquals/InExpression/LikeExpression/...
+        if (nonNull(where) && !isBlank(where.toString())) {
+            undoSelectSql.append(" WHERE ");
+            if (where instanceof EqualsTo) {
+
+            } else if (where instanceof GreaterThan) {
+
+            } else if (where instanceof GreaterThanEquals) {
+
+            } else if (where instanceof MinorThan) {
+
+            } else if (where instanceof MinorThanEquals) {
+
+            } else if (where instanceof InExpression) {
+
+            } else if (where instanceof LikeExpression) {
+
+            } else {
+                throw new UnsupportedOperationException(
+                        format("No supported update SQL where expression. - %s", where.toString()));
+            }
+            undoSelectSql.append(where);
+        }
+
+        if (nonNull(update.getLimit())) {
+            undoSelectSql.append(" ");
+            undoSelectSql.append(update.getLimit());
+        }
+
+        log.info("Generated undo select SQL: {}", undoSelectSql);
+
+        // Update due to updation.
+        setUndoUpdateSqls(generateUndoUpdateSql(update, findOperationRecords(undoSelectSql.toString())));
     }
 
     /**
