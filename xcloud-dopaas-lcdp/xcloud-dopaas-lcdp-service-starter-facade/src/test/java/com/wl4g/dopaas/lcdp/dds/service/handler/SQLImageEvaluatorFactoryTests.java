@@ -40,6 +40,7 @@ public class SQLImageEvaluatorFactoryTests {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
             SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+
             // Execution
             evaluator.evaluate("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000')");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
@@ -162,7 +163,7 @@ public class SQLImageEvaluatorFactoryTests {
     private JdbcTemplate initTestingDatabase() {
         final HikariDataSource ds = new HikariDataSource();
         ds.setDriverClassName("org.h2.Driver");
-        ds.setJdbcUrl("jdbc:h2:/tmp/h2test;FORBID_CREATION=FALSE");
+        ds.setJdbcUrl("jdbc:h2:/tmp/h2testdb1;FORBID_CREATION=FALSE");
         // ds.setUsername("");
         // ds.setPassword("");
 

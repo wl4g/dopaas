@@ -28,9 +28,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.MetadataResolver;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +55,7 @@ public abstract class AbstractImageEvaluator implements SQLImageEvaluator {
 
     protected final EvaluatorProperties config;
     protected final JdbcTemplate jdbcTemplate;
+    protected final MetadataResolver resolver;
 
     @Getter
     @Setter(lombok.AccessLevel.PROTECTED)
@@ -63,9 +67,10 @@ public abstract class AbstractImageEvaluator implements SQLImageEvaluator {
     @Setter(lombok.AccessLevel.PROTECTED)
     private List<String> undoUpdateSqls; // due update SQL.
 
-    public AbstractImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
+    public AbstractImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
         this.config = notNullOf(config, "config");
         this.jdbcTemplate = notNullOf(jdbcTemplate, "jdbcTemplate");
+        this.resolver = notNullOf(resolver, "resolver");
     }
 
     @Override
@@ -77,6 +82,20 @@ public abstract class AbstractImageEvaluator implements SQLImageEvaluator {
     protected List<OperationRecord> findOperationRecords(String selectSQL) {
         List<Map<String, Object>> result = jdbcTemplate.queryForList(selectSQL);
         return safeList(result).stream().map(r -> new OperationRecord(r)).collect(toList());
+    }
+
+    @NotNull
+    protected List<String> getTablePrimaryKeys(String tableName) {
+        try {
+            // return asList("id"); // for testing
+            return safeList(resolver.getTablePrimaryKeys(jdbcTemplate.getDataSource(), tableName));
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    protected String getColumnSymbol() {
+        return "`";
     }
 
     protected String getInsertKeyword() {

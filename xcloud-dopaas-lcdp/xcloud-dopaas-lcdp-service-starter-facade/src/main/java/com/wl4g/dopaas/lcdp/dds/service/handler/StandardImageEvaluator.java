@@ -17,6 +17,7 @@ package com.wl4g.dopaas.lcdp.dds.service.handler;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -25,21 +26,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.wl4g.component.common.collection.CollectionUtils2;
 import com.wl4g.component.common.lang.StringUtils2;
+import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.MetadataResolver;
 
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
-import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
-import net.sf.jsqlparser.expression.operators.relational.InExpression;
-import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
-import net.sf.jsqlparser.expression.operators.relational.MinorThan;
-import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
@@ -60,8 +56,8 @@ import net.sf.jsqlparser.statement.update.Update;
  */
 public class StandardImageEvaluator extends AbstractImageEvaluator {
 
-    public StandardImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
-        super(config, jdbcTemplate);
+    public StandardImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
+        super(config, jdbcTemplate, resolver);
     }
 
     @Override
@@ -139,12 +135,21 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
         }
 
         StringBuilder undoSelectSql = new StringBuilder("SELECT ");
+        // Update set fields.
         for (int i = 0, size = update.getColumns().size(); i < size; i++) {
             Column col = update.getColumns().get(i);
             undoSelectSql.append(col.getColumnName());
             if (i < (size - 1)) {
                 undoSelectSql.append(",");
             }
+        }
+        // Update table primary key fields.
+        List<String> primaryKeys = getTablePrimaryKeys(update.getTable().toString());
+        for (String key : primaryKeys) {
+            undoSelectSql.append(",");
+            undoSelectSql.append(getColumnSymbol());
+            undoSelectSql.append(key);
+            undoSelectSql.append(getColumnSymbol());
         }
         undoSelectSql.append(" FROM ");
         undoSelectSql.append(update.getTable());
@@ -157,24 +162,6 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
         Expression where = update.getWhere(); // EqualsTo/GreaterThan/GreaterThanEquals/MinorThan/MinorThanEquals/InExpression/LikeExpression/...
         if (nonNull(where) && !isBlank(where.toString())) {
             undoSelectSql.append(" WHERE ");
-            if (where instanceof EqualsTo) {
-
-            } else if (where instanceof GreaterThan) {
-
-            } else if (where instanceof GreaterThanEquals) {
-
-            } else if (where instanceof MinorThan) {
-
-            } else if (where instanceof MinorThanEquals) {
-
-            } else if (where instanceof InExpression) {
-
-            } else if (where instanceof LikeExpression) {
-
-            } else {
-                throw new UnsupportedOperationException(
-                        format("No supported update SQL where expression. - %s", where.toString()));
-            }
             undoSelectSql.append(where);
         }
 
@@ -186,7 +173,7 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
         log.info("Generated undo select SQL: {}", undoSelectSql);
 
         // Update due to updation.
-        setUndoUpdateSqls(generateUndoUpdateSql(update, findOperationRecords(undoSelectSql.toString())));
+        setUndoUpdateSqls(generateUndoUpdateSql(update, primaryKeys, findOperationRecords(undoSelectSql.toString())));
     }
 
     /**
@@ -344,6 +331,7 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
      * 
      * @param delete
      * @param records
+     *            The result of executing delete SQL, affected row records.
      * @return
      */
     protected List<String> generateUndoInsertSql(Delete delete, List<OperationRecord> records) {
@@ -397,56 +385,82 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
     }
 
     /**
-     * [BUG]: refer to
+     * Testing for
      * {@link SQLImageEvaluatorFactoryTests#testSQLImageEvaluateForUpdateSelectSQL}
      * 
      * @param update
+     * @param primaryKeys
      * @param records
+     *            The result of executing update SQL, affected row records.
      * @return
      */
-    protected List<String> generateUndoUpdateSql(Update update, List<OperationRecord> records) {
+    protected List<String> generateUndoUpdateSql(Update update, List<String> primaryKeys, List<OperationRecord> records) {
         if (records.isEmpty()) {
             return null;
         }
 
         List<String> undoUpdateSqls = new ArrayList<>(records.size());
         for (OperationRecord record : records) {
+
+            // Conditions for generating undo update SQL. (The update affected
+            // row primary keys to generate undo SQL condition.)
+            StringBuilder undoUpdateSqlWhere = new StringBuilder();
+            for (int i = 0, size = primaryKeys.size(); i < size; i++) {
+                String key = primaryKeys.get(i);
+                Object value = record.get(valueOf(key).toUpperCase());
+                value = isNull(value) ? record.get(key) : value;
+
+                undoUpdateSqlWhere.append(key);
+                undoUpdateSqlWhere.append("=");
+                boolean mark = needQuotationMark(value);
+                if (mark) {
+                    undoUpdateSqlWhere.append("'");
+                }
+                undoUpdateSqlWhere.append(value);
+                if (mark) {
+                    undoUpdateSqlWhere.append("'");
+                }
+                if (i < (size - 1)) {
+                    undoUpdateSqlWhere.append(" AND");
+                }
+            }
+
+            // Generate update SQL set fields.
             StringBuilder updateSql = new StringBuilder(getUpdateKeyword());
             updateSql.append(" ");
             updateSql.append(update.getTable().toString());
             updateSql.append(" SET ");
 
             Iterator<Entry<String, Object>> it = record.entrySet().iterator();
-            for (;;) {
+            while (it.hasNext()) {
                 Entry<String, Object> ent = it.next();
                 String columnName = ent.getKey();
                 Object value = ent.getValue();
 
-                // Use origin columnName. e.g: update set `name`='jack'
-                // NAME => `name`
-                Column origColumnName = safeList(update.getColumns()).stream()
-                        .filter(c -> StringUtils2.eqIgnCase(StringUtils2.replace(c.getColumnName(), "`", ""), columnName))
-                        .findFirst().orElse(new Column(columnName));
-
-                updateSql.append(origColumnName);
-                updateSql.append("=");
-                boolean mark = needQuotationMark(value);
-                if (mark) {
-                    updateSql.append("'");
-                }
-                updateSql.append(value);
-                if (mark) {
-                    updateSql.append("'");
-                }
-                if (it.hasNext()) {
+                // e.g: [update set `name`='jack'] The record column NAME
+                // mapping to origin column `name`
+                Optional<Column> origColumnOp = safeList(update.getColumns()).stream().filter(
+                        c -> StringUtils2.eqIgnCase(StringUtils2.replace(c.getColumnName(), getColumnSymbol(), ""), columnName))
+                        .findFirst();
+                if (origColumnOp.isPresent()) {
+                    updateSql.append(origColumnOp.get());
+                    updateSql.append("=");
+                    boolean mark = needQuotationMark(value);
+                    if (mark) {
+                        updateSql.append("'");
+                    }
+                    updateSql.append(value);
+                    if (mark) {
+                        updateSql.append("'");
+                    }
                     updateSql.append(",");
-                } else {
-                    break;
                 }
             }
+            updateSql.delete(updateSql.length() - 1, updateSql.length());
+
             if (nonNull(update.getWhere())) {
                 updateSql.append(" WHERE ");
-                updateSql.append(update.getWhere());
+                updateSql.append(undoUpdateSqlWhere);
             }
 
             // Add update SQL.

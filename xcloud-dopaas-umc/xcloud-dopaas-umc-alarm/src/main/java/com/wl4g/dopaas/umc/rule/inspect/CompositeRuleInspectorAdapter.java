@@ -26,7 +26,7 @@ import java.util.Optional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.common.collection.RegisteredUnmodifiableMap;
+import com.wl4g.component.common.collection.OnceUnmodifiableMap;
 import com.wl4g.dopaas.umc.rule.Aggregator;
 
 /**
@@ -38,48 +38,48 @@ import com.wl4g.dopaas.umc.rule.Aggregator;
  */
 public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 
-	/**
-	 * Rule inspectors.
-	 */
-	final protected Map<Aggregator, RuleInspector> ruleInspectors = new RegisteredUnmodifiableMap<>(new HashMap<>());
+    /**
+     * Rule inspectors.
+     */
+    final protected Map<Aggregator, RuleInspector> ruleInspectors = new OnceUnmodifiableMap<>(new HashMap<>());
 
-	public CompositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
-		Assert.state(!CollectionUtils.isEmpty(inspectors), "Rule inspectors has at least one.");
-		this.ruleInspectors.putAll(inspectors.stream().collect(toMap(RuleInspector::aggregateType, inspector -> inspector)));
-	}
+    public CompositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
+        Assert.state(!CollectionUtils.isEmpty(inspectors), "Rule inspectors has at least one.");
+        this.ruleInspectors.putAll(inspectors.stream().collect(toMap(RuleInspector::aggregateType, inspector -> inspector)));
+    }
 
-	@Override
-	public boolean verify(InspectWrapper wrap) {
-		Optional<RuleInspector> opt = determineRuleInspector(wrap.getAggregator());
-		return opt.isPresent() ? opt.get().verify(wrap) : false;
-	}
+    @Override
+    public boolean verify(InspectWrapper wrap) {
+        Optional<RuleInspector> opt = determineRuleInspector(wrap.getAggregator());
+        return opt.isPresent() ? opt.get().verify(wrap) : false;
+    }
 
-	@Override
-	public Aggregator aggregateType() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Aggregator aggregateType() {
+        throw new UnsupportedOperationException();
+    }
 
-	/**
-	 * Determine rule inspector.
-	 * 
-	 * @param aggregator
-	 * @return
-	 */
-	protected Optional<RuleInspector> determineRuleInspector(String aggregator) {
-		if (isBlank(aggregator)) {
-			log.warn("Unsupported this rule aggregator: {}", aggregator);
-			return Optional.empty();
-		}
-		for (String aggre : aggregator.split(",")) {
-			Aggregator type = Aggregator.safeOf(aggre);
-			if (null != type) {
-				RuleInspector inspector = ruleInspectors.get(type);
-				if (inspector != null) {
-					return Optional.of(inspector);
-				}
-			}
-		}
-		return Optional.empty();
-	}
+    /**
+     * Determine rule inspector.
+     * 
+     * @param aggregator
+     * @return
+     */
+    protected Optional<RuleInspector> determineRuleInspector(String aggregator) {
+        if (isBlank(aggregator)) {
+            log.warn("Unsupported this rule aggregator: {}", aggregator);
+            return Optional.empty();
+        }
+        for (String aggre : aggregator.split(",")) {
+            Aggregator type = Aggregator.safeOf(aggre);
+            if (null != type) {
+                RuleInspector inspector = ruleInspectors.get(type);
+                if (inspector != null) {
+                    return Optional.of(inspector);
+                }
+            }
+        }
+        return Optional.empty();
+    }
 
 }

@@ -17,6 +17,8 @@ package com.wl4g.dopaas.lcdp.dds.service.handler;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.MetadataResolver;
+
 /**
  * {@link PhoenixImageEvaluator}
  * 
@@ -26,8 +28,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class PhoenixImageEvaluator extends StandardImageEvaluator {
 
-    public PhoenixImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
-        super(config, jdbcTemplate);
+    public PhoenixImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
+        super(config, jdbcTemplate, resolver);
+    }
+
+    @Override
+    protected String getColumnSymbol() {
+        return "\"";
     }
 
     @Override

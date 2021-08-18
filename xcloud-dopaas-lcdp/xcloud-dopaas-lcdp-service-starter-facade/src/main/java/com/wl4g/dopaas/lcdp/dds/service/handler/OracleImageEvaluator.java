@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.lcdp.dds.service.handler;
 
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.MetadataResolver;
 
 /**
  * {@link OracleImageEvaluator}
@@ -26,8 +26,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class OracleImageEvaluator extends StandardImageEvaluator {
 
-    public OracleImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
-        super(config, jdbcTemplate);
+    public OracleImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
+        super(config, jdbcTemplate, resolver);
     }
 
 }
