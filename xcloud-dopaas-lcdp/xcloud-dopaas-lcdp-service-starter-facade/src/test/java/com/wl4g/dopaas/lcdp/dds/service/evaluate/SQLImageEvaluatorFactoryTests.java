@@ -23,9 +23,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.wl4g.dopaas.lcdp.dds.service.evaluate.SQLImageEvaluator;
-import com.wl4g.dopaas.lcdp.dds.service.evaluate.SQLImageEvaluatorFactory;
-import com.wl4g.dopaas.lcdp.dds.service.evaluate.AbstractImageEvaluator.EvaluatorProperties;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
