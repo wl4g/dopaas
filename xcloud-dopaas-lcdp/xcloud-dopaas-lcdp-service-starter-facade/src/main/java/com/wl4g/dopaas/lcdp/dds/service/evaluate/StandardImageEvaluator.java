@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.dds.service.handler;
+package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static java.lang.String.format;
@@ -32,7 +32,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.wl4g.component.common.collection.CollectionUtils2;
 import com.wl4g.component.common.lang.StringUtils2;
-import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.MetadataResolver;
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.metadata.MetadataResolver;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -56,7 +56,7 @@ import net.sf.jsqlparser.statement.update.Update;
  */
 public class StandardImageEvaluator extends AbstractImageEvaluator {
 
-    public StandardImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
+    public StandardImageEvaluator(EvaluatorSpec config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
         super(config, jdbcTemplate, resolver);
     }
 
@@ -228,11 +228,11 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
                         deleteSql.append("=");
                         boolean mark = needQuotationMark(ent.getValue());
                         if (mark) {
-                            deleteSql.append("'");
+                            deleteSql.append(getStringValueSymbol());
                         }
                         deleteSql.append(ent.getValue());
                         if (mark) {
-                            deleteSql.append("'");
+                            deleteSql.append(getStringValueSymbol());
                         }
                         if (it.hasNext()) {
                             deleteSql.append(" AND ");
@@ -263,11 +263,11 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
                         deleteSql.append("=");
                         boolean mark = needQuotationMark(value);
                         if (mark) {
-                            deleteSql.append("'");
+                            deleteSql.append(getStringValueSymbol());
                         }
                         deleteSql.append(value);
                         if (mark) {
-                            deleteSql.append("'");
+                            deleteSql.append(getStringValueSymbol());
                         }
                         if (i < (size - 1)) {
                             deleteSql.append(" AND ");
@@ -311,11 +311,11 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
             deleteSql.append("=");
             boolean mark = needQuotationMark(value);
             if (mark) {
-                deleteSql.append("'");
+                deleteSql.append(getStringValueSymbol());
             }
             deleteSql.append(value);
             if (mark) {
-                deleteSql.append("'");
+                deleteSql.append(getStringValueSymbol());
             }
             if (i < (size - 1)) {
                 deleteSql.append(" AND ");
@@ -365,11 +365,11 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
                 Object value = values.get(j);
                 boolean mark = needQuotationMark(value);
                 if (mark) {
-                    insertSql.append("'");
+                    insertSql.append(getStringValueSymbol());
                 }
                 insertSql.append(value);
                 if (mark) {
-                    insertSql.append("'");
+                    insertSql.append(getStringValueSymbol());
                 }
                 if (j < (size - 1)) {
                     insertSql.append(",");
@@ -414,11 +414,11 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
                 undoUpdateSqlWhere.append("=");
                 boolean mark = needQuotationMark(value);
                 if (mark) {
-                    undoUpdateSqlWhere.append("'");
+                    undoUpdateSqlWhere.append(getStringValueSymbol());
                 }
                 undoUpdateSqlWhere.append(value);
                 if (mark) {
-                    undoUpdateSqlWhere.append("'");
+                    undoUpdateSqlWhere.append(getStringValueSymbol());
                 }
                 if (i < (size - 1)) {
                     undoUpdateSqlWhere.append(" AND");
@@ -447,11 +447,11 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
                     updateSql.append("=");
                     boolean mark = needQuotationMark(value);
                     if (mark) {
-                        updateSql.append("'");
+                        updateSql.append(getStringValueSymbol());
                     }
                     updateSql.append(value);
                     if (mark) {
-                        updateSql.append("'");
+                        updateSql.append(getStringValueSymbol());
                     }
                     updateSql.append(",");
                 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.dds.service.handler;
+package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 
@@ -23,7 +23,9 @@ import java.util.Map;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.wl4g.dopaas.lcdp.dds.service.handler.AbstractImageEvaluator.EvaluatorProperties;
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.SQLImageEvaluator;
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.SQLImageEvaluatorFactory;
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.AbstractImageEvaluator.EvaluatorProperties;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
@@ -39,7 +41,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForInsertSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorSpec(), jdbcTemplate);
 
             // Execution
             evaluator.evaluate("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000')");
@@ -55,7 +57,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForInsertMultiValuesSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorSpec(), jdbcTemplate);
             // Execution
             evaluator.evaluate("insert into `test_db`.`t_user` (`id`,`name`) VALUES (1000, 'jack1000'), (2000, 'jack2000')");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
@@ -70,7 +72,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForInsertValuesSelectSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorSpec(), jdbcTemplate);
             // Execution
             evaluator.evaluate(
                     "insert into `test_db`.`t_user2` (`id`,`name`) select * from (select * from `test_db`.`t_user` where `id`>=100) as tab");
@@ -86,7 +88,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForInsertSelectSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorSpec(), jdbcTemplate);
             // Execution
             evaluator.evaluate(
                     "insert into `test_db`.`t_user2` select * from (select * from `test_db`.`t_user` where `id`>=100) as tab");
@@ -102,7 +104,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForDeleteSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorSpec(), jdbcTemplate);
             // Execution
             evaluator.evaluate("delete from `test_db`.`t_user` where id >= 100 and id < 200 or `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
@@ -117,7 +119,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForDeleteSelectSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorSpec(), jdbcTemplate);
             // Execution
             evaluator.evaluate("delete from `test_db`.`t_user` where id in (select id from `test_db`.`t_user` where id>= 100)");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
@@ -132,7 +134,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForUpdateSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorSpec(), jdbcTemplate);
             // Execution
             evaluator.evaluate("update `test_db`.`t_user` set `name`='mary' where `name` like '%jack%'");
             System.out.println("------------------- Generated all undo SQLs --------------------------");
@@ -148,7 +150,7 @@ public class SQLImageEvaluatorFactoryTests {
     public void testSQLImageEvaluateForUpdateSelectSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();
         try {
-            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorProperties(), jdbcTemplate);
+            SQLImageEvaluator evaluator = SQLImageEvaluatorFactory.getEvaluator(new EvaluatorSpec(), jdbcTemplate);
             // Execution
             evaluator.evaluate(
                     "update `test_db`.`t_user` set `name`=(select `name` from `test_db`.`t_user` where id = 100) where `name` like '%jack%'");

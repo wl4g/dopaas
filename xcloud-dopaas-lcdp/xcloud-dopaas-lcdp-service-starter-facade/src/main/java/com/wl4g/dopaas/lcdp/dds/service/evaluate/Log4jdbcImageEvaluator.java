@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.dds.service.handler;
+package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
-import org.springframework.jdbc.core.JdbcTemplate;import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.MetadataResolver;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.metadata.MetadataResolver;
 
 /**
- * {@link TidbImageEvaluator}
+ * {@link Log4jdbcImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class TidbImageEvaluator extends StandardImageEvaluator {
+public class Log4jdbcImageEvaluator extends StandardImageEvaluator {
 
-    public TidbImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
+    public Log4jdbcImageEvaluator(EvaluatorSpec config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
         super(config, jdbcTemplate, resolver);
     }
 

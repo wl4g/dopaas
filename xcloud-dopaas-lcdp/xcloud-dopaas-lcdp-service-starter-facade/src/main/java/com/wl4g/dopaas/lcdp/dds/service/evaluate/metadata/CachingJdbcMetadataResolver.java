@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.dds.service.handler.metadata;
+package com.wl4g.dopaas.lcdp.dds.service.evaluate.metadata;
 
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -26,6 +26,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.EvaluatorSpec;
 import com.wl4g.dopaas.lcdp.dds.service.util.JdbcUtil;
 
 /**
@@ -39,8 +40,9 @@ public class CachingJdbcMetadataResolver implements MetadataResolver {
 
     private final Cache<String, List<String>> primaryKeysCaching;
 
-    public CachingJdbcMetadataResolver() {
-        this.primaryKeysCaching = CacheBuilder.newBuilder().initialCapacity(16).expireAfterAccess(30_000L, MILLISECONDS).build();
+    public CachingJdbcMetadataResolver(EvaluatorSpec config) {
+        this.primaryKeysCaching = CacheBuilder.newBuilder().initialCapacity(16)
+                .expireAfterAccess(config.getMetadataExpireMs(), MILLISECONDS).build();
     }
 
     @Override

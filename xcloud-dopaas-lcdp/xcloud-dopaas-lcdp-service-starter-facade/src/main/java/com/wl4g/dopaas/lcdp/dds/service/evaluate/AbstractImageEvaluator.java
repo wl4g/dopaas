@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.dds.service.handler;
+package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
@@ -22,7 +22,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,12 +32,10 @@ import javax.validation.constraints.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.MetadataResolver;
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.metadata.MetadataResolver;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import net.sf.jsqlparser.expression.DateValue;
 import net.sf.jsqlparser.expression.StringValue;
 
@@ -53,7 +50,7 @@ import net.sf.jsqlparser.expression.StringValue;
 public abstract class AbstractImageEvaluator implements SQLImageEvaluator {
     protected final SmartLogger log = getLogger(getClass());
 
-    protected final EvaluatorProperties config;
+    protected final EvaluatorSpec config;
     protected final JdbcTemplate jdbcTemplate;
     protected final MetadataResolver resolver;
 
@@ -67,7 +64,7 @@ public abstract class AbstractImageEvaluator implements SQLImageEvaluator {
     @Setter(lombok.AccessLevel.PROTECTED)
     private List<String> undoUpdateSqls; // due update SQL.
 
-    public AbstractImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
+    public AbstractImageEvaluator(EvaluatorSpec config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
         this.config = notNullOf(config, "config");
         this.jdbcTemplate = notNullOf(jdbcTemplate, "jdbcTemplate");
         this.resolver = notNullOf(resolver, "resolver");
@@ -96,6 +93,10 @@ public abstract class AbstractImageEvaluator implements SQLImageEvaluator {
 
     protected String getColumnSymbol() {
         return "`";
+    }
+
+    protected String getStringValueSymbol() {
+        return "'";
     }
 
     protected String getInsertKeyword() {
@@ -146,18 +147,6 @@ public abstract class AbstractImageEvaluator implements SQLImageEvaluator {
             return isNull(value) ? null : new Double(value.toString());
         }
 
-    }
-
-    @Getter
-    @Setter
-    @RequiredArgsConstructor
-    @ToString
-    static class EvaluatorProperties implements Serializable {
-        private static final long serialVersionUID = 4320766245447481229L;
-
-        private int limitOperationRecords = DEFAULT_LIMIT_OPERATION_RECORDS;
-
-        public static final int DEFAULT_LIMIT_OPERATION_RECORDS = 5000;
     }
 
 }

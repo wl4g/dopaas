@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.dds.service.handler;
+package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
-import org.springframework.jdbc.core.JdbcTemplate;import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.MetadataResolver;
+import java.util.List;
 
 /**
- * {@link PrestoImageEvaluator}
+ * {@link SQLImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public class PrestoImageEvaluator extends StandardImageEvaluator {
+public interface SQLImageEvaluator {
 
-    public PrestoImageEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
-        super(config, jdbcTemplate, resolver);
-    }
+    void evaluate(String sql) throws Exception;
+
+    List<String> getAllUndoSQLs();
 
 }

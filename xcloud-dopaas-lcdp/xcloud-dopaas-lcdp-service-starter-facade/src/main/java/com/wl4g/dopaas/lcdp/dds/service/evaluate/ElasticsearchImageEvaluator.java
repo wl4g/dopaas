@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.dds.service.handler;
+package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
-import java.util.List;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.metadata.MetadataResolver;
 
 /**
- * {@link SQLImageEvaluator}
+ * {@link ElasticsearchImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public interface SQLImageEvaluator {
+public class ElasticsearchImageEvaluator extends StandardImageEvaluator {
 
-    void evaluate(String sql) throws Exception;
-
-    List<String> getAllUndoSQLs();
+    public ElasticsearchImageEvaluator(EvaluatorSpec config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
+        super(config, jdbcTemplate, resolver);
+    }
 
 }

@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.dds.service.handler.metadata;
+package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
-import java.util.List;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.metadata.MetadataResolver;
 
 /**
- * {@link MetadataResolver}
+ * {@link Db2ImageEvaluator}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2021-08-18 v1.0.0
+ * @version 2021-08-15 v1.0.0
  * @since v1.0.0
  */
-public interface MetadataResolver {
+public class Db2ImageEvaluator extends StandardImageEvaluator {
 
-    List<String> getTablePrimaryKeys(DataSource dataSource, String tableName) throws Exception;
+    public Db2ImageEvaluator(EvaluatorSpec config, JdbcTemplate jdbcTemplate, MetadataResolver resolver) {
+        super(config, jdbcTemplate, resolver);
+    }
 
 }

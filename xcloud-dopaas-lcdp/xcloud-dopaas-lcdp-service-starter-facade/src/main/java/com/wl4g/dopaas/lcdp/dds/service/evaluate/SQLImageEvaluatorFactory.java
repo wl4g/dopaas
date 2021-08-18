@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.dds.service.handler;
+package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
 import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.component.common.lang.ClassUtils2.resolveClassNameNullable;
@@ -35,9 +35,8 @@ import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.wl4g.component.common.lang.StringUtils2;
-import com.wl4g.dopaas.lcdp.dds.service.handler.AbstractImageEvaluator.EvaluatorProperties;
-import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.CachingJdbcMetadataResolver;
-import com.wl4g.dopaas.lcdp.dds.service.handler.metadata.MetadataResolver;
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.metadata.CachingJdbcMetadataResolver;
+import com.wl4g.dopaas.lcdp.dds.service.evaluate.metadata.MetadataResolver;
 import com.wl4g.dopaas.lcdp.dds.service.util.JdbcDefinition;
 
 /**
@@ -78,11 +77,11 @@ public class SQLImageEvaluatorFactory {
         REGISTRY.put(JdbcDefinition.ALI_ELASTICSEARCH_DRIVER, Log4jdbcImageEvaluator.class);
     }
 
-    public static SQLImageEvaluator getEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate) {
-        return getEvaluator(config, jdbcTemplate, new CachingJdbcMetadataResolver());
+    public static SQLImageEvaluator getEvaluator(EvaluatorSpec config, JdbcTemplate jdbcTemplate) {
+        return getEvaluator(config, jdbcTemplate, new CachingJdbcMetadataResolver(config));
     }
 
-    public static SQLImageEvaluator getEvaluator(EvaluatorProperties config, JdbcTemplate jdbcTemplate,
+    public static SQLImageEvaluator getEvaluator(EvaluatorSpec config, JdbcTemplate jdbcTemplate,
             MetadataResolver resolver) {
         String driverClassName = null;
         DataSource dataSource = jdbcTemplate.getDataSource();
@@ -104,7 +103,7 @@ public class SQLImageEvaluatorFactory {
         for (Entry<String, Class<? extends SQLImageEvaluator>> ent : REGISTRY.entrySet()) {
             if (StringUtils2.equals(driverClassName, ent.getKey())) {
                 try {
-                    return ent.getValue().getConstructor(EvaluatorProperties.class, JdbcTemplate.class, MetadataResolver.class)
+                    return ent.getValue().getConstructor(EvaluatorSpec.class, JdbcTemplate.class, MetadataResolver.class)
                             .newInstance(config, jdbcTemplate, resolver);
                 } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                         | NoSuchMethodException | SecurityException e) {
