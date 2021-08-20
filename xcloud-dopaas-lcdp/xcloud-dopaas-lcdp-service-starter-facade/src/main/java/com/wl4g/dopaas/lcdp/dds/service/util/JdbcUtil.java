@@ -15,6 +15,10 @@
  */
 package com.wl4g.dopaas.lcdp.dds.service.util;
 
+import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static org.apache.commons.lang3.StringUtils.split;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.wl4g.component.common.collection.UniqueList;
 
@@ -34,14 +40,41 @@ import com.wl4g.component.common.collection.UniqueList;
  */
 public abstract class JdbcUtil {
 
-    public static List<String> getTablePrimaryKeys(DataSource dataSource, String tableName) throws SQLException {
+    public static List<String> getTablePrimaryKeys(@NotNull DataSource dataSource, @NotBlank String tableName)
+            throws SQLException {
+        notNullOf(dataSource, "dataSource");
+        hasTextOf(tableName, "tableName");
+        // Transform table name to schema.
+        String schema = null, simpleTableName = tableName;
+        if (tableName.contains(".")) {
+            String[] parts = split(tableName, ".");
+            if (parts.length >= 2) {
+                schema = parts[0];
+                simpleTableName = parts[1];
+            }
+        }
         try (Connection conn = dataSource.getConnection();) {
             List<String> keys = new UniqueList<>(new ArrayList<>(2), false);
-            ResultSet rs = conn.getMetaData().getPrimaryKeys(null, null, tableName);
-            while (rs.next()) {
-                keys.add(rs.getString("COLUMN_NAME"));
+            // e.g: `test_db`.`t_user` => TEST_DB.T_USER
+            addPrimaryKeys(conn, keys, schema.replaceAll("`", "").toUpperCase(),
+                    simpleTableName.replaceAll("`", "").toUpperCase());
+            if (keys.isEmpty()) {
+                // e.g: `test_db`.`t_user` => test_db.t_user
+                addPrimaryKeys(conn, keys, schema.replaceAll("`", ""), simpleTableName.replaceAll("`", ""));
+            }
+            if (keys.isEmpty()) {
+                // e.g: `test_db`.`t_user`
+                addPrimaryKeys(conn, keys, schema, simpleTableName);
             }
             return keys;
+        }
+    }
+
+    private static void addPrimaryKeys(Connection conn, List<String> keys, String schema, String simpleTableName)
+            throws SQLException {
+        ResultSet rs = conn.getMetaData().getPrimaryKeys(null, schema, simpleTableName);
+        while (rs.next()) {
+            keys.add(rs.getString("COLUMN_NAME"));
         }
     }
 

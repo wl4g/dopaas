@@ -142,7 +142,6 @@ public class SQLImageEvaluatorFactoryTests {
         }
     }
 
-    // [BUG]: Two undo SQL should not be generated !!!
     @Test
     public void testSQLImageEvaluateForUpdateSelectSQL() throws Exception {
         JdbcTemplate jdbcTemplate = initTestingDatabase();

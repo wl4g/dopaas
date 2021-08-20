@@ -16,6 +16,7 @@
 package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.component.common.lang.Assert2.notEmpty;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
@@ -144,7 +145,9 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
             }
         }
         // Update table primary key fields.
-        List<String> primaryKeys = getTablePrimaryKeys(update.getTable().toString());
+        String tableName = update.getTable().toString();
+        List<String> primaryKeys = getTablePrimaryKeys(tableName);
+        notEmpty(primaryKeys, IllegalStateException.class, "Unable get primaryKeys for tableName: %s", tableName);
         for (String key : primaryKeys) {
             undoSelectSql.append(",");
             undoSelectSql.append(getColumnSymbol());
