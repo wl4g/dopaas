@@ -20,6 +20,7 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.wl4g.dopaas.common.utils.JdbcUtil;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
