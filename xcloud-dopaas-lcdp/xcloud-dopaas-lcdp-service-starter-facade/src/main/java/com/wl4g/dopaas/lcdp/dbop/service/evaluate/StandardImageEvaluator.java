@@ -34,7 +34,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.wl4g.component.common.collection.CollectionUtils2;
 import com.wl4g.component.common.lang.StringUtils2;
 import com.wl4g.dopaas.lcdp.dbop.service.evaluate.metadata.MetadataResolver;
-import com.wl4g.dopaas.lcdp.dds.service.evaluate.SQLImageEvaluatorFactoryTests;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -389,8 +388,7 @@ public class StandardImageEvaluator extends AbstractImageEvaluator {
     }
 
     /**
-     * Testing for
-     * {@link SQLImageEvaluatorFactoryTests#testSQLImageEvaluateForUpdateSelectSQL}
+     * Generate undo update SQL.
      * 
      * @param update
      * @param primaryKeys

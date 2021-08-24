@@ -59,7 +59,7 @@ spring:
 #      filters: stat,wall
 #      log-slow-sql: true
     hikari:
-      jdbcUrl: ${STANDALONE_DOPAAS_DB_URL:jdbc:mysql://rds.STANDALONE.wl4g.uat:3306/dopaas_standalone?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+      jdbcUrl: ${STANDALONE_DOPAAS_DB_URL:jdbc:mysql://rds.standalone.wl4g.uat:3306/dopaas_standalone?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${STANDALONE_DOPAAS_DB_USER:dopaas_standalone}
       password: ${STANDALONE_DOPAAS_DB_PASSWD:123456}
       connectionTimeout: 30000
