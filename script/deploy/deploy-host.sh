@@ -169,8 +169,9 @@ function deployStandaloneToLocal() {
   local cmdRestart=$3
   local appName=$4
   local springProfilesActive=$5
+  local buildVersion=$6
   # Check args.
-  if [[ "$buildFilePath" == "" || "$buildFileName" == "" || "$cmdRestart" == "" || "$appName" == "" ]]; then
+  if [[ "$buildFilePath" == "" || "$buildFileName" == "" || "$cmdRestart" == "" || "$appName" == "" || "$springProfilesActive" == "" || "$buildVersion" == "" ]]; then
     logErr "Failed to deploy to local, because buildFilePath/buildFileName/cmdRestart/appName is required!
 buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdRestart, appName=$appName"
     exit -1
@@ -195,7 +196,7 @@ buildFilePath=$buildFilePath, buildFileName=$buildFileName, cmdRestart=$cmdResta
   [ $? -ne 0 ] && exit -1
   # Check install service script
   log "[$appName/standalone/local] Checking installation app service script ..."
-  checkInstallServiceScript "$appName" "$USER" "$passwd" "localhost" "$springProfilesActive" "false"
+  checkInstallServiceScript "$appName" "$USER" "$passwd" "localhost" "$springProfilesActive" "${buildVersion}"
   # Restart.
   log "[$appName/cluster/$host] Restarting for $appName($springProfilesActive) ..."
   $cmdRestart
@@ -208,9 +209,10 @@ function doDeployClusterToNode() {
   local cmdRestart=$3
   local appName=$4
   local springProfilesActive=$5
-  local host=$6
-  local user=$7
-  local passwd=$8
+  local buildVersion=$6
+  local host=$7
+  local user=$8
+  local passwd=$9
   # Check args.
   if [[ "$buildFilePath" == "" || "$buildFileName" == "" || "$cmdRestart" == "" || "$appName" == "" || "$springProfilesActive" == "" || "$host" == "" || "$user" == "" ]]; then
     logErr "Failed to deploy to nodes, because buildFilePath/buildFileName/cmdRestart/appName/nodeArr is required!
@@ -241,7 +243,7 @@ springProfilesActive=$springProfilesActive, host=$host, user=$user"
 
   # Check install service script.
   log "[$appName/cluster/$host] Checking installation app service script ..."
-  checkInstallServiceScript "$appName" "$user" "$passwd" "$host" "$springProfilesActive" "false"
+  checkInstallServiceScript "$appName" "$user" "$passwd" "$host" "$springProfilesActive" "${buildVersion}"
   [ $? -ne 0 ] && exit -1 # or use 'set -o pipefail', see: http://www.huati365.com/answer/j6BxQYLqYVeWe4k
   # Restart.
   log "[$appName/cluster/$host] Restarting for $appName($springProfilesActive) ..."
@@ -285,11 +287,11 @@ function doDeployBackendApp() {
 
   if [ "$runtimeMode" == "standalone" ]; then # The 'standalone' mode is only deployed to the local host
     log "[$appName:$appPort/standalone] >>> Deploying standalone to local ..."
-    deployStandaloneToLocal "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive"
+    deployStandaloneToLocal "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${buildVersion}"
     log "[$appName:$appPort/standalone] <<< Deployed standalone to local completed."
   elif [ "$runtimeMode" == "cluster" ]; then # The 'cluster' mode is deployed to the remote hosts
     log "[$appName:$appPort/cluster/$host] >>> Deploying to cluster remote nodes ..."
-    doDeployClusterToNode "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${host}" "${user}" "${passwd}"
+    doDeployClusterToNode "$buildTargetDir/$buildFileName" "$buildFileName" "$cmdRestart" "$appName" "$springProfilesActive" "${buildVersion}" "${host}" "${user}" "${passwd}"
     log "[$appName:$appPort/cluster/$host] <<< Deployed cluster to remote nodes completed."
   fi
 }

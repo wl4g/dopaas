@@ -399,8 +399,9 @@ function checkInstallServiceScript() {
   local password=$3
   local host=$4
   local springProfilesActive=$5
-  if [[ $# < 4 || "$appName" == "" || "$user" == "" || "$host" == "" ]]; then
-    logErr "[$appName/$host] Cannot installization app services, args appName/user/host is required and args should be 4 !"; exit -1
+  local buildVersion=$6
+  if [[ $# < 6 || "$appName" == "" || "$user" == "" || "$host" == "" ]]; then
+    logErr "[$appName/$host] Cannot installization app services, args appName/user/host is required and args should be 6 !"; exit -1
   fi
   # Check installed service script?
   if [ "$deployForcedInstallMgtScript" == "false" ]; then
@@ -408,7 +409,7 @@ function checkInstallServiceScript() {
     [ "$hasServiceFile" == "Y" ] && return 0 # Skip installed
   fi
   log "[$appName/$host] Installing /etc/init.d/${appName}.service ..."
-  local appVersion="master"
+  local appVersion="${buildVersion}"
   local appMainClass="com.wl4g."$(echo $appName|awk -F '-' '{print toupper(substr($1,1,1))substr($1,2)toupper(substr($2,1,1))substr($2,2)toupper(substr($3,1,1))substr($3,2)}') #eg: udm-manager => UdmManager
   local appInstallDir="${deployAppBaseDir}/${appName}-package"
   local appHome="${appInstallDir}/${appName}-${appVersion}-bin"
