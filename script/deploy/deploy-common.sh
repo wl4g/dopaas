@@ -321,7 +321,7 @@ function doRemoteCmd() {
     if [ "$isOutput" == "true" ]; then
       local output=$(bash -c "$cmd")
       local exitStatus=$?
-      echo "$output"
+      [ -n "$output" ] && echo "$output"
       return $exitStatus
     else
       bash -c "$cmd"
@@ -344,7 +344,7 @@ function doRemoteCmd() {
       local output=$(/bin/sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd")
       local exitStatus=$?
       [[ $exitStatus -ne 0 && "$exitOnFail" == "true" ]] && exit -1
-      echo "$output"
+      [ -n "$output" ] && echo "$output"
       return $exitStatus
     else
       /bin/sshpass -p "$password" ssh -o StrictHostKeyChecking=no -p 22 "$user"@"$host" "$cmd"
