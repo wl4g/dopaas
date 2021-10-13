@@ -142,9 +142,9 @@ export deployStandaloneBuildModules=(
 export deployClusterNodesConfigPath="$currDir/deploy-host.csv"
 # Format: {appName},{appPort},{appType},{buildAssetsDir}
 export deployClusterBuildModules=(
-  "iam-data,18082,internal,${currDir}/xcloud-iam/xcloud-iam-service-starter-data/target"
-  "iam-facade,18081,internal,${currDir}/xcloud-iam/xcloud-iam-service-starter-facade/target"
-  "iam-web,18080,external,${currDir}/xcloud-iam/xcloud-iam-service-starter-web/target"
+  "iam-data,18082,internal,${currDir}/xcloud-iam/service-starter-data/target"
+  "iam-facade,18081,internal,${currDir}/xcloud-iam/service-starter-facade/target"
+  "iam-web,18080,external,${currDir}/xcloud-iam/service-starter-web/target"
   "home-facade,17001,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-home/xcloud-dopaas-home-service-starter-facade/target"
   "home-manager,17000,external,${currDir}/xcloud-dopaas/xcloud-dopaas-home/xcloud-dopaas-home-service-starter-manager/target"
   "cmdb-facade,17011,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-cmdb/xcloud-dopaas-cmdb-service-starter-facade/target"
