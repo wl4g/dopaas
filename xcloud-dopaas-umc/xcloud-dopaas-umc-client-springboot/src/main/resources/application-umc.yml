@@ -29,5 +29,8 @@ management:
       exposure:
         #exclude: /myapi
         include: '*'
-    health:
+    health: # see:org.springframework.boot.actuate.autoconfigure.health.HealthEndpointProperties
       showDetails: always
+      mongo.enabled: false
+      solr.enabled: false
+      db.enabled: true
