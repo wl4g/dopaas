@@ -1,0 +1,33 @@
+# Copyright (c) 2017 ~ 2025, the original author wanglsir individual Inc,
+# All rights reserved. Contact us <wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# see:org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
+management:
+  server:
+    address: 0.0.0.0
+    port: 8081
+    ssl:
+      enabled: false
+    servlet.contextPath: /
+  security.enabled: false
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+      jmx:
+        enabled: true
+  endpoints:
+    web:
+      basePath: /metrics
+      exposure:
+        #exclude: /myapi
+        include: '*'
+    health:
+      showDetails: always

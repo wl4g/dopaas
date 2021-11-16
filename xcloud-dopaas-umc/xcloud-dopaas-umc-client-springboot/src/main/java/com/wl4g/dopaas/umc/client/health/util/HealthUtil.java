@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.umc.client.utils;
+package com.wl4g.dopaas.umc.client.health.util;
 
 import org.springframework.boot.actuate.health.Health.Builder;
 import org.springframework.boot.actuate.health.Status;
@@ -27,16 +27,24 @@ import org.springframework.boot.actuate.health.Status;
  */
 public class HealthUtil {
 
-	public static Builder up(Builder builder, String desc) {
-		return build(builder, Status.UP.getCode(), desc);
-	}
+    public static Builder up(Builder builder, String desc) {
+        return build(builder, Status.UP.getCode(), desc);
+    }
 
-	public static Builder down(Builder builder, String desc) {
-		return build(builder, Status.DOWN.getCode(), desc);
-	}
+    public static Builder down(Builder builder, String desc) {
+        return build(builder, Status.DOWN.getCode(), desc);
+    }
 
-	public static Builder build(Builder builder, String statusCode, String desc) {
-		return builder.status(new Status(statusCode, desc));
-	}
+    public static Builder unknown(Builder builder, String desc) {
+        return build(builder, Status.UNKNOWN.getCode(), desc);
+    }
+
+    public static Builder outOfService(Builder builder, String desc) {
+        return build(builder, Status.OUT_OF_SERVICE.getCode(), desc);
+    }
+
+    public static Builder build(Builder builder, String statusCode, String desc) {
+        return builder.status(new Status(statusCode, desc));
+    }
 
 }

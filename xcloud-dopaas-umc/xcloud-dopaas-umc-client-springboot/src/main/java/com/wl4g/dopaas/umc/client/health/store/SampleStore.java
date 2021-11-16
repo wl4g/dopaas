@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.umc.client.store;
+package com.wl4g.dopaas.umc.client.health.store;
 
 /**
  * Event store
@@ -23,7 +23,7 @@ package com.wl4g.dopaas.umc.client.store;
  * @date 2018年6月7日
  * @since
  */
-public interface EventStore<T> {
+public interface SampleStore<T> {
 
 	void save(T t);
 

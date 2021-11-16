@@ -24,20 +24,47 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-core</artifactId>
 		</dependency>
-		<!-- Admin metrics -->
+		<!-- Spring boot actuator -->
 		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-client</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<!-- Using metrics package, spring-actual will use DropwizardMetricServices implementation. -->
 		<dependency>
-			<groupId>com.codahale.metrics</groupId>
-			<artifactId>metrics-core</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
-		<!-- Tracking -->
+		<!-- Metric registry -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-jmx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+		<!-- Spring boot admin -->
+		<!-- <dependency> -->
+		<!-- <groupId>de.codecentric</groupId> -->
+		<!-- <artifactId>spring-boot-admin-starter-client</artifactId> -->
+		<!-- </dependency> -->
+		<!-- Tracking APM -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-zipkin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>io.zipkin.reporter2</groupId>
+					<artifactId>zipkin-sender-activemq-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.zipkin.reporter2</groupId>
+					<artifactId>zipkin-sender-amqp-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.zipkin.brave</groupId>
+					<artifactId>brave-instrumentation-spring-rabbit</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	<build>
