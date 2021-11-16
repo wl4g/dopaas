@@ -49,7 +49,7 @@ import lombok.Setter;
  * @date 2018年6月1日
  * @since
  */
-public abstract class AdvancedHealthIndicator extends AbstractHealthIndicator implements ApplicationRunner, Comparator<Long> {
+public abstract class BaseHealthIndicator extends AbstractHealthIndicator implements ApplicationRunner, Comparator<Long> {
 
     protected final SmartLogger log = getLogger(getClass());
     private final Map<String, SampleStore<Partition>> sampleStores = new ConcurrentHashMap<>();
@@ -57,7 +57,7 @@ public abstract class AdvancedHealthIndicator extends AbstractHealthIndicator im
     private final AdvancedHealthProperties<? extends Partition> props;
     private @Autowired ExtensionHealthApplicationRunner processor;
 
-    public AdvancedHealthIndicator(AdvancedHealthProperties<? extends Partition> props) {
+    public BaseHealthIndicator(AdvancedHealthProperties<? extends Partition> props) {
         this.props = notNullOf(props, "props");
         log.info("Initializing health properties: {}", props);
     }

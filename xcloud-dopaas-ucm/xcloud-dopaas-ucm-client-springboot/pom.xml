@@ -32,7 +32,7 @@
 		<!-- Optional(Iam with SCM configuration will not be loaded by default) -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client</artifactId>
+			<artifactId>xcloud-iam-client-springboot</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

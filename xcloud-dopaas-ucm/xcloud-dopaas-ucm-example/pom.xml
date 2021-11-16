@@ -24,7 +24,7 @@
 			and the IamWithScmClientConfiguration will be started automatically) -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>xcloud-iam-client</artifactId> -->
+		<!-- <artifactId>xcloud-iam-client-springboot</artifactId> -->
 		<!-- </dependency> -->
 	</dependencies>
 	<build>

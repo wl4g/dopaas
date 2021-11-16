@@ -15,23 +15,22 @@
  */
 package com.wl4g.dopaas.umc.client.health.advice;
 
+import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+
 import org.aopalliance.intercept.MethodInvocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.Assert;
 
+import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.common.exception.umc.UmcException;
 
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 
 /**
  * It can be used to monitor the execution time of any method it is called.<br/>
@@ -42,9 +41,6 @@ import io.micrometer.core.instrument.MeterRegistry;
  * @since
  */
 public class CounterMetricsAdvice extends BaseMetricsAdvice {
-    final private static Logger log = LoggerFactory.getLogger(CounterMetricsAdvice.class);
-
-    private @Autowired MeterRegistry registry;
 
     /**
      * Number of times the AOP statistical method is called.
@@ -69,7 +65,7 @@ public class CounterMetricsAdvice extends BaseMetricsAdvice {
      * @since
      */
     @Configuration
-    @ConditionalOnProperty(name = CounterMetricsProperties.CONF_P + ".enable", matchIfMissing = false)
+    @ConditionalOnProperty(name = CounterMetricsProperties.CONF_P + ".enabled", matchIfMissing = false)
     @ConfigurationProperties(prefix = CounterMetricsProperties.CONF_P)
     public static class CounterMetricsProperties {
         final public static String CONF_P = UmcConstants.KEY_UMC_METRIC_PREFIX + ".counter";
@@ -108,18 +104,16 @@ public class CounterMetricsAdvice extends BaseMetricsAdvice {
      */
     @Configuration
     @ConditionalOnBean(CounterMetricsProperties.class)
-    public static class CounterPerformanceAdviceConfiguration {
+    public static class CounterAdviceAutoConfiguration {
+        protected final SmartLogger log = getLogger(getClass());
 
         @Bean
-        public AspectJExpressionPointcutAdvisor counterAspectJExpressionPointcutAdvisor(CounterMetricsProperties conf,
+        public AspectJExpressionPointcutAdvisor counterAspectJExpressionPointcutAdvisor(CounterMetricsProperties props,
                 CounterMetricsAdvice advice) {
-            Assert.notNull(conf.getExpression(), "Expression of the counter AOP pointcut is null.");
-            if (log.isInfoEnabled()) {
-                log.info("Initial counterAspectJExpressionPointcutAdvisor. {}", conf);
-            }
-
+            notNull(props.getExpression(), "Expression of the counter AOP pointcut is null.");
+            log.info("Initial counterAspectJExpressionPointcutAdvisor. {}", props);
             AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
-            advisor.setExpression(conf.getExpression());
+            advisor.setExpression(props.getExpression());
             advisor.setAdvice(advice);
             return advisor;
         }

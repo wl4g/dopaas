@@ -32,7 +32,7 @@
         </dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client</artifactId>
+			<artifactId>xcloud-iam-client-springboot</artifactId>
 		</dependency>
 		<!-- Spring Boot -->
 		<dependency>

@@ -8,6 +8,20 @@
 # limitations under the License.
 #
 
+spring:
+  xcloud:
+    dopaas:
+      umc:
+        metrics:
+          timing:
+            enabled: false
+            expression: execution(* com.wl4g.component.support.cache.jedis.JedisService.*(..))
+            samples: 32
+            timeoutThresholdMs: 5_000
+          counter:
+            enabled: false
+            expression: execution(* com.wl4g.component.support.cache.jedis.JedisService.*(..))
+
 # see:org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 management:
   server:

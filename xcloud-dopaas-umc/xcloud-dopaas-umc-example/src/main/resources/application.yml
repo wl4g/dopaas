@@ -15,8 +15,7 @@ spring:
   application.name: umc-example
   resources.static-locations: classpath:/static/
   profiles:
-    include: common,util
-    active: admin,zipkin
+    include: common,util,zipkin,umc-default
 
 # Logging configuration.
 logging:
@@ -40,7 +39,7 @@ logging:
 
 # #### Server configuration. ####
 server:
-  port: 14045
+  port: 17064
   contextPath: /${spring.application.name}
   tomcat:
     uri-encoding: UTF-8

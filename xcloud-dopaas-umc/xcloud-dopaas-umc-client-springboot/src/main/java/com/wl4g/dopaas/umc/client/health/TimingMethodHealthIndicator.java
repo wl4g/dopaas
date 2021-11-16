@@ -73,24 +73,24 @@ public class TimingMethodHealthIndicator extends AbstractHealthIndicator {
         try {
             // Gets the statistical (MAX/MIN/AVG/LATEST/..).
             TimesStat stat = getLargestStat();
-            log.debug("TimeoutsHealth message={}", toJSONString(stat));
+            log.debug("Times stat: {}", toJSONString(stat));
             if (isNull(stat)) {
                 HealthUtil.up(builder, "Healthy");
                 return;
-            } else if (stat.getMax() < config.getTimeoutsThreshold()) {
+            } else if (stat.getMax() < config.getTimeoutThresholdMs()) {
                 HealthUtil.up(builder, "Healthy");
             } else {
                 HealthUtil.down(builder,
                         new StringBuilder("Method ").append(stat.getMetricsName()).append(" executes ").append(stat.getLatest())
                                 .append("ms with a response exceeding the threshold value of ")
-                                .append(config.getTimeoutsThreshold()).append("ms.").toString());
+                                .append(config.getTimeoutThresholdMs()).append("ms.").toString());
                 // When the timeout exception is detected, the exception record
                 // is cleared.
                 this.postPropertiesReset(stat);
             }
             builder.withDetail("Method", stat.getMetricsName()).withDetail("Least", stat.getMin())
                     .withDetail("Largest", stat.getMax()).withDetail("Avg", stat.getAvg()).withDetail("Latest", stat.getLatest())
-                    .withDetail("Samples", stat.getSamples()).withDetail("Threshold", config.getTimeoutsThreshold() + "ms");
+                    .withDetail("Samples", stat.getSamples()).withDetail("Threshold", config.getTimeoutThresholdMs() + "ms");
 
         } catch (Exception e) {
             builder.down(e);
