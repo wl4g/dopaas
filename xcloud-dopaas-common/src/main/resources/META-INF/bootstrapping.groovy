@@ -18,29 +18,24 @@
  * Reference to website: http://wl4g.com
  */
 
-import static com.wl4g.component.common.lang.ClassUtils2.isPresent
-import static org.springframework.boot.context.config.ConfigFileApplicationListener.*
-
 import org.springframework.boot.Banner
 
-import com.wl4g.component.core.boot.listener.ISpringLauncherConfigurer
-
 /**
- * IAM web implementation of {@link ISpringLauncherConfigurer}
+ * DoPaaS common implementation of {@link IBootstrappingConfigurer}
  */
-class DevOpsSpringLauncherConfigurer implements ISpringLauncherConfigurer {
+class DoPaaSCommonBootstrappingConfigurer implements IBootstrappingConfigurer {
 
 	@Override
 	def int getOrder() {
 		return -100
 	}
 
-	def Banner.Mode bannerMode() {
+	def Banner.Mode bannerMode(Banner.Mode prevMode) {
 		return Banner.Mode.LOG;
 	}
 
 	@Override
-	def Properties defaultProperties() {
+	def Properties defaultProperties(Properties prevDefaultProperties) {
 		def defaultProperties = new Properties()
 		// Preset spring.config.name
 		// for example: spring auto load for 'application-dev.yml/application-data-dev.yml'

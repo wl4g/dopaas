@@ -12,6 +12,10 @@
 #
 spring:
   xcloud:
+    component:
+      data:
+        mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
+          enabled: true  # Default by false
     iam:
       cors:
         rules:
@@ -34,10 +38,6 @@ spring:
         server-uri: http://wl4g.debug:18080/iam-web
         unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
         success-uri: http://wl4g.debug/#/home/overview
-    tool:
-      devel:
-        mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
-          enabled: true  # Default by false
     dopaas.ci:
       analyzers: # CI analyses configuration.
         executor:
