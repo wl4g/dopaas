@@ -34,7 +34,7 @@ import io.micrometer.prometheus.PrometheusTimer;
 import lombok.Getter;
 
 /**
- * {@link UmcMetricsFacade}
+ * {@link UmcMetricsFacade}, Tends to use Prometheus standards.
  * 
  * Counter, Timer, Gauge, DistributionSummary
  * 
