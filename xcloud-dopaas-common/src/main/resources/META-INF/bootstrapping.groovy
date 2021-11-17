@@ -18,7 +18,12 @@
  * Reference to website: http://wl4g.com
  */
 
+import static com.wl4g.component.common.lang.ClassUtils2.isPresent
+import static org.springframework.boot.context.config.ConfigFileApplicationListener.*
+
 import org.springframework.boot.Banner
+
+import com.wl4g.component.core.boot.listener.IBootstrappingConfigurer
 
 /**
  * DoPaaS common implementation of {@link IBootstrappingConfigurer}
