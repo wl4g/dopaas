@@ -30,7 +30,9 @@ management:
     ssl:
       enabled: false
     servlet.contextPath: /
-  security.enabled: false
+  security:
+    enabled: false
+    sensitive: true
   metrics:
     export:
       prometheus:

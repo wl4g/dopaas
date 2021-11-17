@@ -16,13 +16,13 @@ spring:
     active: dev
   xcloud:
     component:
-      support:
-        cli.enable: true
-      web:
+      core.web:
         embedded-webapps:
           enabled: true # Default false
           base-uri: /view
           webapp-location: classpath*:/default-webapps
+      support:
+        cli.enabled: true
     iam: # IAM client configuration.
       cors:
         enabled: true # Default: true

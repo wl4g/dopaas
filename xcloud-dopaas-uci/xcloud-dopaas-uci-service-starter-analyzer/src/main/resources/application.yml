@@ -16,7 +16,7 @@ spring:
   xcloud:
     component:
       support:
-        cli.enable: true
+        cli.enabled: true
     iam: # IAM client configuration.
       cors:
         enabled: true # Default: true

@@ -18,10 +18,10 @@ spring:
   xcloud:
     component:
       support:
-        cli.enable: true
+        cli.enabled: true
       notification:
         mail:
-          enable: true # Default[false]
+          enabled: true # Default by false
           properties:
             mail.smtp.auth: true
             mail.smtp.ssl.enable: true
@@ -33,7 +33,7 @@ spring:
             tpl2: Your verification code is：${code} valid for 5 minutes. You can't tell anyone if you're dead. Thank you for using!
             tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}, projectName is ${projectName}, createDate is ${createDate}, costTime is ${costTime}
         sms:
-          enable: false # Default[false]
+          enabled: false # Default by false
           aliyun:
             regionId: cn-hangzhou
             signName: Super Devops\u7edf\u4e00\u76d1\u63a7\u5e73\u53f0
@@ -42,7 +42,7 @@ spring:
               tpl2: SMS_109490228 # VerificationCode notice template.
               tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}, projectName is ${projectName}, createDate is ${createDate}, costTime is ${costTime}
         vms:
-          enable: false # Default[false]
+          enabled: false # Default by false
           aliyun:
             regionId: cn-hangzhou
             templates:

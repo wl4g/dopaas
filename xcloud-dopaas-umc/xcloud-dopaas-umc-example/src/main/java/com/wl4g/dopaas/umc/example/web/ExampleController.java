@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/example/")
 public class ExampleController {
-	final private static Logger log = LoggerFactory.getLogger(ExampleController.class);
+    final private static Logger log = LoggerFactory.getLogger(ExampleController.class);
 
-	@RequestMapping("call")
-	public String start() {
-		log.info("Request calling... ");
-		return "ok";
-	}
+    @RequestMapping("call")
+    public String start() {
+        log.info("Request calling... ");
+        return "ok";
+    }
 
 }

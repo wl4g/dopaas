@@ -17,14 +17,14 @@ spring:
     active: dev
   xcloud:
     component:
-      support:
-        cli.enable: true
-      rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
-      web:
+      core.web:
         embedded-webapps:
           enabled: true # Default false
           base-uri: /view
           webapp-location: classpath*:/default-webapps
+      support:
+        cli.enabled: true
+      rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
     iam: # IAM client configuration.
       cors:
         enabled: true # Default: true

@@ -37,7 +37,7 @@ spring:
     tool:
       devel:
         mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
-          enable: true  # Default by: false
+          enabled: true  # Default by false
     dopaas.ci:
       analyzers: # CI analyses configuration.
         executor:

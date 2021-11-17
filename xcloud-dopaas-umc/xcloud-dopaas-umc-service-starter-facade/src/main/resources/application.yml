@@ -19,7 +19,7 @@ spring:
       support:
         notification:
           mail:
-            enable: true # Default[false]
+            enabled: true # Default by false
             properties:
               mail.smtp.auth: true
               mail.smtp.ssl.enable: true
@@ -30,7 +30,7 @@ spring:
               tpl1: Application health notification：${appInfo} status changed from ${fromStatus} to ${toStatus}, details：${msg}
               tpl2: Your verification code is：${code} valid for 5 minutes. You can't tell anyone if you're dead. Thank you for using!
           sms:
-            enable: true # Default[false]
+            enabled: true # Default by false
             aliyun:
               regionId: cn-hangzhou
               accessKeyId: ${ALIYUN_KEY}
@@ -40,7 +40,7 @@ spring:
                 tpl1: SMS_140726862 # Alarm notice template.
                 tpl2: SMS_109490228 # VerificationCode notice template.
           vms:
-            enable: true # Default[false]
+            enabled: true # Default by false
             aliyun:
               regionId: cn-hangzhou
               accessKeyId: ${ALIYUN_KEY}

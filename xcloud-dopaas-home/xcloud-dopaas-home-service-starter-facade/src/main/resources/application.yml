@@ -16,7 +16,7 @@ spring:
   xcloud:
     component:
       support:
-        cli.enable: true
+        cli.enabled: true
 
 # Logging configuration.
 logging:
