@@ -22,6 +22,7 @@ spring:
             enabled: false
             expression: execution(* com.wl4g.component.support.cache.jedis.JedisService.*(..))
 
+# see:https://docs.spring.io/spring-boot/docs/2.3.2.RELEASE/actuator-api/html/#overview
 # see:org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties
 management:
   server:
@@ -50,3 +51,11 @@ management:
       mongo.enabled: false
       solr.enabled: false
       db.enabled: true
+
+info:
+  app:
+    name: "@project.name@"
+    description: "@project.description@"
+    version: "@project.version@"
+    encoding: "@project.build.sourceEncoding@"
+    java: "version: @java.version@"
