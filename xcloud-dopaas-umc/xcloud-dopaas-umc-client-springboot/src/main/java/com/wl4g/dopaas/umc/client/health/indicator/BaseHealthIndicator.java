@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.umc.client.health;
+package com.wl4g.dopaas.umc.client.health.indicator;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
@@ -33,6 +33,7 @@ import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health.Builder;
 
 import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.dopaas.umc.client.health.ExtensionHealthApplicationRunner;
 import com.wl4g.dopaas.umc.client.health.store.MemorySampleStore;
 import com.wl4g.dopaas.umc.client.health.store.SampleStore;
 import com.wl4g.dopaas.umc.client.health.util.HealthUtil;

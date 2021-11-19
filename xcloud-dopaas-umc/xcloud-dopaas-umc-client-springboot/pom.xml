@@ -19,6 +19,12 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-dopaas-common</artifactId>
 			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>xcloud-iam-common</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

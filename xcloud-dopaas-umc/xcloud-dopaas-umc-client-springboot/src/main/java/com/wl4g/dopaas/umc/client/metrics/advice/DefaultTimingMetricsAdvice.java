@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.umc.client.health.advice;
+package com.wl4g.dopaas.umc.client.metrics.advice;
 
 import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
@@ -34,30 +34,33 @@ import com.wl4g.component.common.lang.FastTimeClock;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.common.exception.umc.UmcException;
-import com.wl4g.dopaas.umc.client.health.TimingMethodHealthIndicator;
+import com.wl4g.dopaas.umc.client.health.indicator.SimpleTimeoutMethodHealthIndicator;
 
 import io.micrometer.core.instrument.Timer;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * It can be used to monitor the number of times it is called. </br>
- * Thank you for the references: https://www.jianshu.com/p/e20a5f42a395
+ * A simple statistical method to perform time-consuming aspects. If you want a
+ * more comprehensive APM analysis, please use frameworks such as
+ * skywalking/elasticAPM/zipkin</br>
  * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2018年5月26日
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2021-11-19 v1.0.0
+ * @since v1.0
+ * @see notices-to: https://github.com/apache/skywalking/pull/1118
  */
-public class TimingMetricsAdvice extends BaseMetricsAdvice {
+public class DefaultTimingMetricsAdvice extends BaseMetricsAdvice {
 
     @Autowired(required = false)
-    private TimingMethodHealthIndicator timingIndicator; // Non-required
+    private SimpleTimeoutMethodHealthIndicator timingIndicator; // Non-required
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         try {
             // Gets metric name by method.
             final String metricName = getMetricName(invocation);
+
             final long start = FastTimeClock.currentTimeMillis();
             Object res = invocation.proceed();
             final long deltaMs = FastTimeClock.currentTimeMillis() - start;
@@ -66,7 +69,7 @@ public class TimingMetricsAdvice extends BaseMetricsAdvice {
             Timer timer = registry.timer(transformTimerName(metricName));
             timer.record(deltaMs, TimeUnit.MILLISECONDS);
 
-            saveHealthIndicator(metricName, deltaMs);
+            postProperties(metricName, deltaMs);
             return res;
         } catch (Throwable e) {
             throw new UmcException(e);
@@ -74,14 +77,14 @@ public class TimingMetricsAdvice extends BaseMetricsAdvice {
     }
 
     /**
-     * Save health indicator.
+     * Post properties.
      * 
      * @param metricName
      * @param deltaMs
      */
-    private void saveHealthIndicator(String metricName, long deltaMs) {
+    protected void postProperties(String metricName, long deltaMs) {
         if (isNull(timingIndicator)) {
-            timingIndicator.addTimes(metricName, deltaMs);
+            timingIndicator.record(metricName, deltaMs);
         }
     }
 
@@ -108,28 +111,15 @@ public class TimingMetricsAdvice extends BaseMetricsAdvice {
     @Getter
     @Setter
     @Configuration
-    @ConditionalOnProperty(name = TimingMetricsProperties.CONF_P + ".enabled", matchIfMissing = false)
-    @ConfigurationProperties(prefix = TimingMetricsProperties.CONF_P)
-    public static class TimingMetricsProperties {
-        public static final String CONF_P = UmcConstants.KEY_UMC_METRIC_PREFIX + ".timing";
-        public static final int DEFAULT_SAMPLES = 32;
-        public static final long DEFAULT_TIMEOUT_THRESHOLD = 5_000L;
+    @ConditionalOnProperty(name = DefaultTimingMetricsProperties.CONF_P + ".enabled", matchIfMissing = false)
+    @ConfigurationProperties(prefix = DefaultTimingMetricsProperties.CONF_P)
+    public static class DefaultTimingMetricsProperties {
+        public static final String CONF_P = UmcConstants.KEY_UMC_CLIENT_PREFIX + ".timing";
 
         /**
          * Call time consuming AOP point cut surface expression.
          */
         private String expression;
-
-        /**
-         * AOP intercepts the number of historical records saved by statistical
-         * calls.
-         */
-        private int samples = DEFAULT_SAMPLES;
-
-        /**
-         * AOP intercept call time consuming timeout alarm threshold.
-         */
-        private long timeoutThresholdMs = DEFAULT_TIMEOUT_THRESHOLD;
 
         public void setExpression(String pointcutExpression) {
             if (pointcutExpression == null || pointcutExpression.trim().length() == 0)
@@ -139,24 +129,24 @@ public class TimingMetricsAdvice extends BaseMetricsAdvice {
     }
 
     @Configuration
-    @ConditionalOnBean(TimingMetricsProperties.class)
-    public static class TimingAdviceAutoConfiguration {
+    @ConditionalOnBean(DefaultTimingMetricsProperties.class)
+    public static class DefaultTimingAdviceAutoConfiguration {
         protected final SmartLogger log = getLogger(getClass());
 
         @Bean
-        public AspectJExpressionPointcutAdvisor timingAspectJExpressionPointcutAdvisor(TimingMetricsProperties props,
-                TimingMetricsAdvice advice) {
-            notNull(props.getExpression(), "Expression of the timeouts AOP pointcut is null.");
-            log.info("Intializing timing aspectJExpressionPointcutAdvisor. {}", props);
+        public AspectJExpressionPointcutAdvisor defaultTimingAspectJExpressionPointcutAdvisor(
+                DefaultTimingMetricsProperties config, DefaultTimingMetricsAdvice advice) {
+            notNull(config.getExpression(), "Expression of the timeouts AOP pointcut is null.");
+            log.info("Intializing timing aspectJExpressionPointcutAdvisor. {}", config);
             AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
-            advisor.setExpression(props.getExpression());
+            advisor.setExpression(config.getExpression());
             advisor.setAdvice(advice);
             return advisor;
         }
 
         @Bean
-        public TimingMetricsAdvice timingMetricsAdvice() {
-            return new TimingMetricsAdvice();
+        public DefaultTimingMetricsAdvice defaultTimingMetricsAdvice() {
+            return new DefaultTimingMetricsAdvice();
         }
 
     }

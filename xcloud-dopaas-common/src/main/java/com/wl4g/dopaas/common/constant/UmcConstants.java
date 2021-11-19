@@ -25,154 +25,155 @@ package com.wl4g.dopaas.common.constant;
  */
 public abstract class UmcConstants extends DoPaaSConstants {
 
-	public static final String KEY_UMC_CONFIG_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".umc";
-	public static final String KEY_UMC_METRIC_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".umc.metrics";
-	public static final String INFO_PREFIX = "sba_event_";
+    public static final String KEY_UMC_CONFIG_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".umc";
+    public static final String KEY_UMC_CLIENT_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".umc.client";
 
-	//
-	// UMC admin definition.
-	//
+    public static final String INFO_PREFIX = "sba_event_";
 
-	/** Administrator dashboard's base URI. */
-	public static final String URI_ADMIN_HOME = "/dashboard";
+    //
+    // UMC admin definition.
+    //
 
-	//
-	// UMC receiver definition.(corresponding to agent collector)
-	//
+    /** Administrator dashboard's base URI. */
+    public static final String URI_ADMIN_HOME = "/dashboard";
 
-	/** Receiver end-point based URI */
-	public static final String URI_HTTP_RECEIVER_BASE = "/receiver";
+    //
+    // UMC receiver definition.(corresponding to agent collector)
+    //
 
-	/** HTTP receiver metric end-point URI.(corresponding to agent collector) */
-	public static final String URI_HTTP_RECEIVER_ENDPOINT = "metric";
+    /** Receiver end-point based URI */
+    public static final String URI_HTTP_RECEIVER_BASE = "/receiver";
 
-	//
-	// UMC alarm definition.
-	//
+    /** HTTP receiver metric end-point URI.(corresponding to agent collector) */
+    public static final String URI_HTTP_RECEIVER_ENDPOINT = "metric";
 
-	/**
-	 * UMC Alarm template prefix key corresponding to a collector.
-	 */
-	public static final String KEY_CACHE_ALARM_TPLS = "umc_alarm_tpls_";
+    //
+    // UMC alarm definition.
+    //
 
-	/**
-	 * UMC alarm metric value in time window queue key prefix.
-	 */
-	public static final String KEY_CACHE_ALARM_METRIC_QUEUE = "umc_alarm_queue_";
+    /**
+     * UMC Alarm template prefix key corresponding to a collector.
+     */
+    public static final String KEY_CACHE_ALARM_TPLS = "umc_alarm_tpls_";
 
-	/**
-	 * Simulation UMC alarm metric value in time window queue key prefix.
-	 */
-	public static final String KEY_CACHE_ALARM_METRIC_QUEUE_SIMULATE = "umc_alarm_queue_simulate_";
+    /**
+     * UMC alarm metric value in time window queue key prefix.
+     */
+    public static final String KEY_CACHE_ALARM_METRIC_QUEUE = "umc_alarm_queue_";
 
-	/**
-	 * KAFKA receiver metric topic pattern.(corresponding to agent collector)
-	 */
-	public static final String TOPIC_KAFKA_RECEIVE_PATTERN = "umc_agent_metrics";
+    /**
+     * Simulation UMC alarm metric value in time window queue key prefix.
+     */
+    public static final String KEY_CACHE_ALARM_METRIC_QUEUE_SIMULATE = "umc_alarm_queue_simulate_";
 
-	//
-	// UMC watch definition.
-	//
+    /**
+     * KAFKA receiver metric topic pattern.(corresponding to agent collector)
+     */
+    public static final String TOPIC_KAFKA_RECEIVE_PATTERN = "umc_agent_metrics";
 
-	/** Watch fetch sharding cache key. */
-	public static final String KEY_CACHE_FETCH_META = "umc_fetch_meta_sharding_";
+    //
+    // UMC watch definition.
+    //
 
-	//
-	// UMC serial store definition.(corresponding to agent collector)
-	//
+    /** Watch fetch sharding cache key. */
+    public static final String KEY_CACHE_FETCH_META = "umc_fetch_meta_sharding_";
 
-	/** tag -- id */
-	public static final String TAG_ID = "id";
-	/** tag -- disk : mount */
-	// public static final String TAG_DISK_MOUNT_POINT="mountPoint";
-	/** tag -- disk : device */
-	public static final String TAG_DISK_DEVICE = "device";
-	/** tag -- net : port */
-	public static final String TAG_DISK_NET_PORT = "port";
+    //
+    // UMC serial store definition.(corresponding to agent collector)
+    //
 
-	/** tag -- docker : containerId */
-	public static final String TAG_DOCKER_CONTAINER_ID = "containerId";
-	/** tag -- docker : name */
-	public static final String TAG_DOCKER_NAME = "name";
+    /** tag -- id */
+    public static final String TAG_ID = "id";
+    /** tag -- disk : mount */
+    // public static final String TAG_DISK_MOUNT_POINT="mountPoint";
+    /** tag -- disk : device */
+    public static final String TAG_DISK_DEVICE = "device";
+    /** tag -- net : port */
+    public static final String TAG_DISK_NET_PORT = "port";
 
-	/** metric -- cpu */
-	public static final String METRIC_CPU = "basic.cpu";
+    /** tag -- docker : containerId */
+    public static final String TAG_DOCKER_CONTAINER_ID = "containerId";
+    /** tag -- docker : name */
+    public static final String TAG_DOCKER_NAME = "name";
 
-	/** metric -- mem : total */
-	public static final String METRIC_MEM_TOTAL = "basic.mem.total";
-	/** metric -- mem : free */
-	public static final String METRIC_MEM_FREE = "basic.mem.free";
-	/** metric -- mem : used percent */
-	public static final String METRIC_MEM_USED_PERCENT = "basic.mem.usedPercent";
-	/** metric -- mem : used */
-	public static final String METRIC_MEM_USED = "basic.mem.used";
-	/** metric -- mem cached */
-	public static final String METRIC_MEM_CACHE = "basic.mem.cached";
-	/** metric -- mem buffers */
-	public static final String METRIC_MEM_BUFFERS = "basic.mem.buffers";
+    /** metric -- cpu */
+    public static final String METRIC_CPU = "basic.cpu";
 
-	/** metric -- disk : total */
-	public static final String METRIC_DISK_TOTAL = "basic.disk.total";
-	/** metric -- disk : free */
-	public static final String METRIC_DISK_FREE = "basic.disk.free";
-	/** metric -- disk : used */
-	public static final String METRIC_DISK_USED = "basic.disk.used";
-	/** metric -- disk : used Percent */
-	public static final String METRIC_DISK_USED_PERCENT = "basic.disk.usedPercent";
-	/** metric -- disk : inodes Physical */
-	public static final String METRIC_DISK_INODES_TOTAL = "basic.disk.inodesTotal";
-	/** metric -- disk : inodes Used */
-	public static final String METRIC_DISK_INODES_USED = "basic.disk.inodesUsed";
-	/** metric -- disk : inodes Free */
-	public static final String METRIC_DISK_INODES_FREE = "basic.disk.inodesFree";
-	/** metric -- disk : inodes Used Percent */
-	public static final String METRIC_DISK_INODES_USED_PERCENT = "basic.disk.inodesUsedPercent";
+    /** metric -- mem : total */
+    public static final String METRIC_MEM_TOTAL = "basic.mem.total";
+    /** metric -- mem : free */
+    public static final String METRIC_MEM_FREE = "basic.mem.free";
+    /** metric -- mem : used percent */
+    public static final String METRIC_MEM_USED_PERCENT = "basic.mem.usedPercent";
+    /** metric -- mem : used */
+    public static final String METRIC_MEM_USED = "basic.mem.used";
+    /** metric -- mem cached */
+    public static final String METRIC_MEM_CACHE = "basic.mem.cached";
+    /** metric -- mem buffers */
+    public static final String METRIC_MEM_BUFFERS = "basic.mem.buffers";
 
-	/** metric -- net : up */
-	public static final String METRIC_NET_UP = "basic.net.up";
-	/** metric -- net : down */
-	public static final String METRIC_NET_DOWN = "basic.net.down";
-	/** metric -- net : count */
-	public static final String METRIC_NET_COUNT = "basic.net.count";
-	/** metric -- net : estab */
-	public static final String METRIC_NET_ESTAB = "basic.net.estab";
-	/** metric -- net : closeWait */
-	public static final String METRIC_NET_CLOSE_WAIT = "basic.net.closeWait";
-	/** metric -- net : timeWait */
-	public static final String METRIC_NET_TIME_WAIT = "basic.net.timeWait";
-	/** metric -- net : close */
-	public static final String METRIC_NET_CLOSE = "basic.net.close";
-	/** metric -- net : listen */
-	public static final String METRIC_NET_LISTEN = "basic.net.listen";
-	/** metric -- net : closing */
-	public static final String METRIC_NET_CLOSING = "basic.net.closing";
+    /** metric -- disk : total */
+    public static final String METRIC_DISK_TOTAL = "basic.disk.total";
+    /** metric -- disk : free */
+    public static final String METRIC_DISK_FREE = "basic.disk.free";
+    /** metric -- disk : used */
+    public static final String METRIC_DISK_USED = "basic.disk.used";
+    /** metric -- disk : used Percent */
+    public static final String METRIC_DISK_USED_PERCENT = "basic.disk.usedPercent";
+    /** metric -- disk : inodes Physical */
+    public static final String METRIC_DISK_INODES_TOTAL = "basic.disk.inodesTotal";
+    /** metric -- disk : inodes Used */
+    public static final String METRIC_DISK_INODES_USED = "basic.disk.inodesUsed";
+    /** metric -- disk : inodes Free */
+    public static final String METRIC_DISK_INODES_FREE = "basic.disk.inodesFree";
+    /** metric -- disk : inodes Used Percent */
+    public static final String METRIC_DISK_INODES_USED_PERCENT = "basic.disk.inodesUsedPercent";
 
-	/** metric -- docker : cpu.perc */
-	public static final String METRIC_DOCKER_CPU = "docker.cpu.perc";
-	/** metric -- docker : mem.usage */
-	public static final String METRIC_DOCKER_MEM_USAGE = "docker.mem.usage";
-	/** metric -- docker : mem.perc */
-	public static final String METRIC_DOCKER_MEM_PERC = "docker.mem.perc";
-	/** metric -- docker : net.in */
-	public static final String METRIC_DOCKER_NET_IN = "docker.net.in";
-	/** metric -- docker : net.out */
-	public static final String METRIC_DOCKER_NET_OUT = "docker.net.out";
-	/** metric -- docker : block.in */
-	public static final String METRIC_DOCKER_BLOCK_IN = "docker.block.in";
-	/** metric -- docker : block.out */
-	public static final String METRIC_DOCKER_BLOCK_OUT = "docker.block.out";
+    /** metric -- net : up */
+    public static final String METRIC_NET_UP = "basic.net.up";
+    /** metric -- net : down */
+    public static final String METRIC_NET_DOWN = "basic.net.down";
+    /** metric -- net : count */
+    public static final String METRIC_NET_COUNT = "basic.net.count";
+    /** metric -- net : estab */
+    public static final String METRIC_NET_ESTAB = "basic.net.estab";
+    /** metric -- net : closeWait */
+    public static final String METRIC_NET_CLOSE_WAIT = "basic.net.closeWait";
+    /** metric -- net : timeWait */
+    public static final String METRIC_NET_TIME_WAIT = "basic.net.timeWait";
+    /** metric -- net : close */
+    public static final String METRIC_NET_CLOSE = "basic.net.close";
+    /** metric -- net : listen */
+    public static final String METRIC_NET_LISTEN = "basic.net.listen";
+    /** metric -- net : closing */
+    public static final String METRIC_NET_CLOSING = "basic.net.closing";
 
-	/* alarm limit */
-	public static final String ALARM_LIMIT_PHONE = "alarm_limit_phone";
-	public static final String ALARM_LIMIT_DINGTALK = "alarm_limit_dingtalk";
-	public static final String ALARM_LIMIT_FACEBOOK = "alarm_limit_facebook";
-	public static final String ALARM_LIMIT_TWITTER = "alarm_limit_twitter";
-	public static final String ALARM_LIMIT_WECHAT = "alarm_limit_wechat";
+    /** metric -- docker : cpu.perc */
+    public static final String METRIC_DOCKER_CPU = "docker.cpu.perc";
+    /** metric -- docker : mem.usage */
+    public static final String METRIC_DOCKER_MEM_USAGE = "docker.mem.usage";
+    /** metric -- docker : mem.perc */
+    public static final String METRIC_DOCKER_MEM_PERC = "docker.mem.perc";
+    /** metric -- docker : net.in */
+    public static final String METRIC_DOCKER_NET_IN = "docker.net.in";
+    /** metric -- docker : net.out */
+    public static final String METRIC_DOCKER_NET_OUT = "docker.net.out";
+    /** metric -- docker : block.in */
+    public static final String METRIC_DOCKER_BLOCK_IN = "docker.block.in";
+    /** metric -- docker : block.out */
+    public static final String METRIC_DOCKER_BLOCK_OUT = "docker.block.out";
 
-	/* alarm notification contact status */
-	public static final String ALARM_SATUS_SEND = "1";
-	public static final String ALARM_SATUS_UNSEND = "2";
-	public static final String ALARM_SATUS_ACCEPTED = "3";
-	public static final String ALARM_SATUS_UNACCEPTED = "4";
+    /* alarm limit */
+    public static final String ALARM_LIMIT_PHONE = "alarm_limit_phone";
+    public static final String ALARM_LIMIT_DINGTALK = "alarm_limit_dingtalk";
+    public static final String ALARM_LIMIT_FACEBOOK = "alarm_limit_facebook";
+    public static final String ALARM_LIMIT_TWITTER = "alarm_limit_twitter";
+    public static final String ALARM_LIMIT_WECHAT = "alarm_limit_wechat";
+
+    /* alarm notification contact status */
+    public static final String ALARM_SATUS_SEND = "1";
+    public static final String ALARM_SATUS_UNSEND = "2";
+    public static final String ALARM_SATUS_ACCEPTED = "3";
+    public static final String ALARM_SATUS_UNACCEPTED = "4";
 
 }

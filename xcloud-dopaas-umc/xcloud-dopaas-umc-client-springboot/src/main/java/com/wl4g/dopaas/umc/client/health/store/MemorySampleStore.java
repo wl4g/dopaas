@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wl4g.dopaas.umc.client.health.BaseHealthIndicator.Partition;
+import com.wl4g.dopaas.umc.client.health.indicator.BaseHealthIndicator.Partition;
 
 /**
  * Memory event store

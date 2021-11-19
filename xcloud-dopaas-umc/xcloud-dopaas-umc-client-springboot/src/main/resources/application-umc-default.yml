@@ -12,15 +12,17 @@ spring:
   xcloud:
     dopaas:
       umc:
-        metrics:
-          timing:
-            enabled: false
-            expression: execution(* com.wl4g.component.support.cache.jedis.JedisService.*(..))
-            samples: 32
-            timeoutThresholdMs: 5_000
+        client:
           counter:
-            enabled: false
-            expression: execution(* com.wl4g.component.support.cache.jedis.JedisService.*(..))
+            enabled: true
+            expression: execution(* com.wl4g.dopaas.umc.example.web.ExampleController.*(..))
+          timing:
+            enabled: true
+            expression: execution(* com.wl4g.dopaas.umc.example.web.ExampleController.*(..))
+            addon-to-health:
+              enabled: true
+              samples: 32
+              timeoutThresholdMs: 5_000
 
 # see:https://docs.spring.io/spring-boot/docs/2.3.2.RELEASE/actuator-api/html/#overview
 # see:org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties

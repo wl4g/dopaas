@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.umc.client.health.advice;
+package com.wl4g.dopaas.umc.client.metrics.advice;
 
 import static com.wl4g.component.common.lang.Assert2.notNull;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
@@ -68,7 +68,7 @@ public class CounterMetricsAdvice extends BaseMetricsAdvice {
     @ConditionalOnProperty(name = CounterMetricsProperties.CONF_P + ".enabled", matchIfMissing = false)
     @ConfigurationProperties(prefix = CounterMetricsProperties.CONF_P)
     public static class CounterMetricsProperties {
-        final public static String CONF_P = UmcConstants.KEY_UMC_METRIC_PREFIX + ".counter";
+        final public static String CONF_P = UmcConstants.KEY_UMC_CLIENT_PREFIX + ".counter";
 
         /**
          * An expression of the statistical AOP point cut for the number of

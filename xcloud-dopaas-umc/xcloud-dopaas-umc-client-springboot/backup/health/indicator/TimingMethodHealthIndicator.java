@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.umc.client.health;
+package com.wl4g.dopaas.umc.client.health.indicator;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.dopaas.umc.client.health.advice.TimingMetricsAdvice.TimingMetricsProperties;
+import com.wl4g.dopaas.umc.client.advice.TimingMetricsAdvice.TimingMetricsProperties;
 import com.wl4g.dopaas.umc.client.health.util.HealthUtil;
 
 import lombok.Getter;
@@ -86,20 +86,18 @@ public class TimingMethodHealthIndicator extends AbstractHealthIndicator {
                                 .append(config.getTimeoutThresholdMs()).append("ms.").toString());
                 // When the timeout exception is detected, the exception record
                 // is cleared.
-                this.postPropertiesReset(stat);
+                resetIfNecessary(stat);
             }
             builder.withDetail("Method", stat.getMetricsName()).withDetail("Least", stat.getMin())
                     .withDetail("Largest", stat.getMax()).withDetail("Avg", stat.getAvg()).withDetail("Latest", stat.getLatest())
                     .withDetail("Samples", stat.getSamples()).withDetail("Threshold", config.getTimeoutThresholdMs() + "ms");
-
         } catch (Exception e) {
             builder.down(e);
             log.error("Analysis timeouts message failed.", e);
         }
-
     }
 
-    public void addTimes(String metricName, long time) {
+    public void record(String metricName, long time) {
         int latestCount = config.getSamples();
         log.debug("Add times metric: {}, latestCount: {}, time={}", metricName, latestCount, time);
 
@@ -119,7 +117,7 @@ public class TimingMethodHealthIndicator extends AbstractHealthIndicator {
      * 
      * @return
      */
-    private TimesStat getLargestStat() {
+    protected TimesStat getLargestStat() {
         List<TimesStat> stats = new ArrayList<>();
         // Calculate the maximum value of each execution record queue.
         for (Entry<String, Deque<Long>> ent : records.entrySet()) {
@@ -152,7 +150,7 @@ public class TimingMethodHealthIndicator extends AbstractHealthIndicator {
         return statMax;
     }
 
-    private void postPropertiesReset(TimesStat stat) {
+    protected void resetIfNecessary(TimesStat stat) {
         Deque<Long> deque = records.get(stat.getMetricsName());
         if (deque != null && !deque.isEmpty()) {
             deque.remove(stat.getMax());
@@ -162,16 +160,16 @@ public class TimingMethodHealthIndicator extends AbstractHealthIndicator {
     @Configuration
     @ConditionalOnBean(TimingMetricsProperties.class)
     @AutoConfigureBefore({ TimingMetricsProperties.class })
-    public static class TimeoutMethodHealthIndicatorAutoConfiguration {
+    public static class TimingMethodHealthIndicatorAutoConfiguration {
         private final SmartLogger log = getLogger(getClass());
 
         @Bean
-        public HealthIndicator timeoutMethodHealthIndicator(TimingMetricsProperties props) {
-            log.info("Initializing timeout-methods healthIndicator. {}", props);
-            if (props.getSamples() == 0) {
+        public HealthIndicator timingMethodHealthIndicator(TimingMetricsProperties config) {
+            log.info("Initializing timingMethodsHealthIndicator. - {}", config);
+            if (config.getSamples() == 0) {
                 throw new IllegalArgumentException("Latest measure count is 0.");
             }
-            TimingMethodHealthIndicator indicator = new TimingMethodHealthIndicator(props);
+            TimingMethodHealthIndicator indicator = new TimingMethodHealthIndicator(config);
             Map<String, Health> healths = new LinkedHashMap<String, Health>();
             healths.put(TimingMethodHealthIndicator.class.getSimpleName(), indicator.health());
             return indicator;
