@@ -20,6 +20,21 @@
 			<artifactId>xcloud-dopaas-umc-client-springboot</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<!-- for testing -->
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.mqttv5.client</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-mqtt</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>

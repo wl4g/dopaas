@@ -34,7 +34,7 @@ import com.wl4g.component.common.lang.FastTimeClock;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.common.exception.umc.UmcException;
-import com.wl4g.dopaas.umc.client.health.indicator.SimpleTimeoutMethodHealthIndicator;
+import com.wl4g.dopaas.umc.client.health.timeout.DefaultTimeoutMethodHealthIndicator;
 
 import io.micrometer.core.instrument.Timer;
 import lombok.Getter;
@@ -53,7 +53,7 @@ import lombok.Setter;
 public class DefaultTimingMetricsAdvice extends BaseMetricsAdvice {
 
     @Autowired(required = false)
-    private SimpleTimeoutMethodHealthIndicator timingIndicator; // Non-required
+    private DefaultTimeoutMethodHealthIndicator timingIndicator; // Non-required
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {

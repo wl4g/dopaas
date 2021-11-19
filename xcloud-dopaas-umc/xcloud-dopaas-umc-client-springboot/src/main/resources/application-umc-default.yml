@@ -14,13 +14,13 @@ spring:
       umc:
         client:
           counter:
-            enabled: true
+            enabled: false
             expression: execution(* com.wl4g.dopaas.umc.example.web.ExampleController.*(..))
           timing:
-            enabled: true
+            enabled: false
             expression: execution(* com.wl4g.dopaas.umc.example.web.ExampleController.*(..))
             addon-to-health:
-              enabled: true
+              enabled: false
               samples: 32
               timeoutThresholdMs: 5_000
 

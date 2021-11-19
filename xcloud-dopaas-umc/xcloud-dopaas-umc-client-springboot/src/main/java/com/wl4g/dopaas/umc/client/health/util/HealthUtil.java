@@ -35,6 +35,10 @@ public class HealthUtil {
         return build(builder, Status.DOWN.getCode(), desc);
     }
 
+    public static Builder down(Builder builder, String desc, Exception ex) {
+        return build(builder, Status.DOWN.getCode(), desc).withException(ex);
+    }
+
     public static Builder unknown(Builder builder, String desc) {
         return build(builder, Status.UNKNOWN.getCode(), desc);
     }

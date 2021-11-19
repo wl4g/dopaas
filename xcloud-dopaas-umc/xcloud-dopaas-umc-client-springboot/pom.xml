@@ -48,11 +48,6 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
-		<!-- Spring boot admin -->
-		<!-- <dependency> -->
-		<!-- <groupId>de.codecentric</groupId> -->
-		<!-- <artifactId>spring-boot-admin-starter-client</artifactId> -->
-		<!-- </dependency> -->
 		<!-- Tracking APM -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -71,6 +66,29 @@
 					<artifactId>brave-instrumentation-spring-rabbit</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<!-- Spring boot admin -->
+		<!-- <dependency> -->
+		<!-- <groupId>de.codecentric</groupId> -->
+		<!-- <artifactId>spring-boot-admin-starter-client</artifactId> -->
+		<!-- </dependency> -->
+		<!-- Extension health and metrics depends -->
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.5</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.mqttv5.client</artifactId>
+			<version>1.2.5</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-mqtt</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
