@@ -15,25 +15,24 @@
  */
 package com.wl4g.dopaas.umc.example.health;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.springframework.context.annotation.Bean;
+import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.common.MqttException;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.common.lang.SystemUtils2;
 
 /**
- * {@link MyMqttv3AutoConfiguration}
+ * {@link MyMqttv5AutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-11-19 v1.0.0
  * @since v1.0.0
  */
 @Configuration
-public class MyMqttv3AutoConfiguration {
+public class MyMqttv5AutoConfiguration {
 
-    @Bean
-    public MqttClient consumerMqttv3Client() {
+    // @Bean
+    public MqttClient consumerMqttv5Client() {
         try {
             MqttClient client = new MqttClient("tcp://10.0.0.163:1883", "mqtt.consumer." + SystemUtils2.GLOBAL_PROCESS_SERIAL);
             // If the connect() is not called here, the health check is down.
