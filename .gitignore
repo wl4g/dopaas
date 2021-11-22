@@ -12,13 +12,14 @@ pom.properties
 
 /captures
 .classpath
+.gradle/
 bin/
 logs/
-*.log
-.gradle/
-
 out/
+*.log
+
 *.ipr
+.lck
 *.iws
 *.ids
 .DS_Store

@@ -16,6 +16,7 @@
 package com.wl4g.dopaas.umc.example.health;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,16 +33,28 @@ import com.wl4g.component.common.lang.SystemUtils2;
 @Configuration
 public class MyMqttv3AutoConfiguration {
 
+    // [Note]: MQTT server must enabled mqtt.v3, otherwise the connect and
+    // subscription will fail.
     @Bean
     public MqttClient consumerMqttv3Client() {
         try {
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setAutomaticReconnect(true);
+            options.setCleanSession(true);
+            options.setConnectionTimeout(3);
+            options.setKeepAliveInterval(3);
+            options.setUserName("admin");
+            options.setPassword("public".toCharArray());
             MqttClient client = new MqttClient("tcp://10.0.0.163:1883", "mqtt.consumer." + SystemUtils2.GLOBAL_PROCESS_SERIAL);
+
             // If the connect() is not called here, the health check is down.
-            client.connect();
+            client.connect(options);
             return client;
         } catch (MqttException e) {
-            throw new IllegalStateException(e);
+            // When an error occurs, the service continues to running.
+            e.printStackTrace();
         }
+        return null;
     }
 
 }
