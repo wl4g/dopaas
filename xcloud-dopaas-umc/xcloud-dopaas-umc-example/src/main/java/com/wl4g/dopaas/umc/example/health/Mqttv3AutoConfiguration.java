@@ -24,14 +24,14 @@ import org.springframework.context.annotation.Configuration;
 import com.wl4g.component.common.lang.SystemUtils2;
 
 /**
- * {@link MyMqttv3AutoConfiguration}
+ * {@link Mqttv3AutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-11-19 v1.0.0
  * @since v1.0.0
  */
 @Configuration
-public class MyMqttv3AutoConfiguration {
+public class Mqttv3AutoConfiguration {
 
     // [Note]: MQTT server must enabled mqtt.v3, otherwise the connect and
     // subscription will fail.
@@ -45,7 +45,7 @@ public class MyMqttv3AutoConfiguration {
             options.setKeepAliveInterval(3);
             options.setUserName("admin");
             options.setPassword("public".toCharArray());
-            MqttClient client = new MqttClient("tcp://10.0.0.163:1883", "mqtt.consumer." + SystemUtils2.GLOBAL_PROCESS_SERIAL);
+            MqttClient client = new MqttClient("tcp://10.0.0.163:1883", "mqttv3.consumer." + SystemUtils2.GLOBAL_PROCESS_SERIAL);
 
             // If the connect() is not called here, the health check is down.
             client.connect(options);

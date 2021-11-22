@@ -52,12 +52,11 @@ public class PahoMqttv3HealthIndicator extends AbstractHealthIndicator {
             Map<String, MqttClient> beans = SpringContextHolder.getBeans(MqttClient.class);
             List<Entry<String, MqttClient>> unhealthys = safeMap(beans).entrySet().stream()
                     .filter(e -> !e.getValue().isConnected()).collect(toList());
-
             if (unhealthys.isEmpty()) {
                 HealthUtil.up(builder, "Healthy");
             } else {
                 List<String> clientIds = unhealthys.stream().map(e -> e.getValue().getClientId()).collect(toList());
-                HealthUtil.down(builder, "UnHealthy, for mqttv3.clientIds ".concat(clientIds.toString()));
+                HealthUtil.down(builder, "UnHealthy for mqttv3.clientIds ".concat(clientIds.toString()));
             }
         } catch (Exception ex) {
             HealthUtil.down(builder, "UnHealthy", ex);

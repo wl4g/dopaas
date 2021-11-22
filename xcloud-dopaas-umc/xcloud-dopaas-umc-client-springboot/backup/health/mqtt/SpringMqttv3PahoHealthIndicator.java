@@ -17,13 +17,16 @@ package com.wl4g.dopaas.umc.client.health.mqtt;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.findFieldNullable;
+import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
 import static java.util.stream.Collectors.toList;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health.Builder;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -31,52 +34,59 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
+import org.springframework.messaging.MessageHandler;
 
+import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.utils.context.SpringContextHolder;
-import com.wl4g.dopaas.umc.client.health.util.HealthUtil;
 
 /**
- * Eclipse PAHO client(v5) health indicator.
+ * Spring integration with PAHO mqttv3 client health indicator.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-11-19 v1.0.0
  * @since v1.0.0
  */
-public class PahoMqttv5HealthIndicator extends AbstractHealthIndicator {
+public class SpringMqttv3PahoHealthIndicator extends AbstractHealthIndicator {
     private final SmartLogger log = getLogger(getClass());
 
     @Override
     protected void doHealthCheck(Builder builder) throws Exception {
         try {
-            Map<String, MqttClient> beans = SpringContextHolder.getBeans(MqttClient.class);
-            List<Entry<String, MqttClient>> unhealthys = safeMap(beans).entrySet().stream()
-                    .filter(e -> !e.getValue().isConnected()).collect(toList());
+            Map<String, MqttPahoMessageHandler> beans = SpringContextHolder.getBeans(MqttPahoMessageHandler.class);
+            List<Entry<String, MqttPahoMessageHandler>> unhealthys = safeMap(beans).entrySet().stream().filter(e -> {
+                Object mqttClient = getField(MQTTPAHOMESSAGEHANDLER_CLIENTFIELD, e.getValue(), true);
+                return !((IMqttAsyncClient) mqttClient).isConnected();
+            }).collect(toList());
 
             if (unhealthys.isEmpty()) {
-                HealthUtil.up(builder, "Healthy");
+                builder.up().withDetail("desc", "Healthy");
             } else {
                 List<String> clientIds = unhealthys.stream().map(e -> e.getValue().getClientId()).collect(toList());
-                HealthUtil.down(builder, "UnHealthy for mqttv5.clientIds ".concat(clientIds.toString()));
+                builder.down().withDetail("spring.mqttv3.clientIds", clientIds.toString()).withDetail("desc", "UnHealthy");
             }
         } catch (Exception ex) {
-            HealthUtil.down(builder, "UnHealthy", ex);
-            log.error("Failed to detected paho.mqttv5.client", ex);
+            builder.down().withDetail("desc", "UnHealthy");
+            log.error("Failed to detected spring.mqtt.paho.client", ex);
         }
     }
 
     @Configuration
-    @ConditionalOnClass(org.eclipse.paho.mqttv5.client.MqttClient.class)
-    @ConditionalOnBean(org.eclipse.paho.mqttv5.client.MqttClient.class)
-    public static class PahoMqttv5HealthIndicatorAutoConfiguration {
+    @ConditionalOnClass({ MqttPahoMessageHandler.class, org.eclipse.paho.client.mqttv3.MqttClient.class })
+    @ConditionalOnBean({ MessageHandler.class })
+    public static class SpringMqttPahoHealthIndicatorAutoConfiguration {
         private final SmartLogger log = getLogger(getClass());
 
         @Bean
-        public HealthIndicator pahoMqttv5HealthIndicator() {
-            log.info("Initializing pahoMqttHealthIndicator. - {}");
-            return new PahoMqttv5HealthIndicator();
+        public HealthIndicator springMqttPahoHealthIndicator() {
+            log.info("Initializing springMqttPahoHealthIndicator. - {}");
+            Assert2.notNull(MQTTPAHOMESSAGEHANDLER_CLIENTFIELD, "Load MqttPahoMessageHandler#client field should not be null");
+            return new SpringMqttv3PahoHealthIndicator();
         }
-
     }
+
+    private static final Field MQTTPAHOMESSAGEHANDLER_CLIENTFIELD = findFieldNullable(MqttPahoMessageHandler.class, "client",
+            IMqttAsyncClient.class);
 
 }

@@ -24,14 +24,14 @@ import org.springframework.context.annotation.Configuration;
 import com.wl4g.component.common.lang.SystemUtils2;
 
 /**
- * {@link MyMqttv5AutoConfiguration}
+ * {@link Mqttv5AutoConfiguration}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-11-19 v1.0.0
  * @since v1.0.0
  */
 @Configuration
-public class MyMqttv5AutoConfiguration {
+public class Mqttv5AutoConfiguration {
 
     // [Note]: MQTT server must enabled mqtt.v5, otherwise the connect and
     // subscription will fail.
@@ -45,7 +45,7 @@ public class MyMqttv5AutoConfiguration {
             options.setKeepAliveInterval(3);
             options.setUserName("admin");
             options.setPassword("public".getBytes());
-            MqttClient client = new MqttClient("tcp://127.0.0.1:1883", "mqtt.consumer." + SystemUtils2.GLOBAL_PROCESS_SERIAL);
+            MqttClient client = new MqttClient("tcp://127.0.0.1:1883", "mqttv5.consumer." + SystemUtils2.GLOBAL_PROCESS_SERIAL);
 
             // If the connect() is not called here, the health check is down.
             client.connect(options);

@@ -34,7 +34,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.core.utils.context.SpringContextHolder;
-import com.wl4g.dopaas.umc.client.health.util.HealthUtil;
 
 /**
  * Eclipse PAHO client(v5) health indicator.
@@ -54,13 +53,13 @@ public class PahoMqttv5HealthIndicator extends AbstractHealthIndicator {
                     .filter(e -> !e.getValue().isConnected()).collect(toList());
 
             if (unhealthys.isEmpty()) {
-                HealthUtil.up(builder, "Healthy");
+                builder.up().withDetail("desc", "Healthy");
             } else {
                 List<String> clientIds = unhealthys.stream().map(e -> e.getValue().getClientId()).collect(toList());
-                HealthUtil.down(builder, "UnHealthy for mqttv5.clientIds ".concat(clientIds.toString()));
+                builder.down().withDetail("mqttv5.clientIds", clientIds.toString()).withDetail("desc", "UnHealthy");
             }
         } catch (Exception ex) {
-            HealthUtil.down(builder, "UnHealthy", ex);
+            builder.down().withDetail("desc", "UnHealthy");
             log.error("Failed to detected paho.mqttv5.client", ex);
         }
     }
