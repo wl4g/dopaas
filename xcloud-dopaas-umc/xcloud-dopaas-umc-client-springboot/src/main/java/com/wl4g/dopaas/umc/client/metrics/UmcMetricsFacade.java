@@ -63,7 +63,15 @@ public class UmcMetricsFacade {
         return registry.timer(name, asList(tags));
     }
 
-    public Number gauge(String name, Number number, Tag... tags) {
+    public double gauge(String name, double number, Tag... tags) {
+        return registry.gauge(name, asList(tags), number);
+    }
+
+    public long gauge(String name, long number, Tag... tags) {
+        return registry.gauge(name, asList(tags), number);
+    }
+
+    public int gauge(String name, int number, Tag... tags) {
         return registry.gauge(name, asList(tags), number);
     }
 
