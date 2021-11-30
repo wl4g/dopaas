@@ -71,15 +71,15 @@ public class ExampleMetricsAutoConfiguration {
 
                         // ADD example counter metrics
                         Counter counter1 = metricsFacade.counter("example.mymetrics1.mycounter1",
-                                Tag.of("instance", getLocalhost()));
+                                Tag.of("instance", getHostname()));
                         counter1.increment(1);
 
                         // ADD example gauge metrics
-                        metricsFacade.gauge("example.mymetrics2.mygauge1", 381.51d, Tag.of("instance", getLocalhost()));
+                        metricsFacade.gauge("example.mymetrics2.mygauge1", 381.51d, Tag.of("instance", getHostname()));
 
                         // ADD example gauge metrics
                         DistributionSummary summary = metricsFacade.summary("example.mymetrics2.mysummary1",
-                                new ImmutableTag("instance", getLocalhost()));
+                                new ImmutableTag("instance", getHostname()));
                         summary.record(101);
 
                     } catch (Exception e) {
@@ -92,13 +92,15 @@ public class ExampleMetricsAutoConfiguration {
             }).start();
         }
 
-        private static String getLocalhost() {
+        private String getHostname() {
             try {
-                return InetAddress.getLocalHost().toString();
+                return InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException e) {
-                return "localhost";
+                log.warn("Unaable get hostname.", e.getMessage());
+                return "Unknown host";
             }
         }
 
     }
+
 }
