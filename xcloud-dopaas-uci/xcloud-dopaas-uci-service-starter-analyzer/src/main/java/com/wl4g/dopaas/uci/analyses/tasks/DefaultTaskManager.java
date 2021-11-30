@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.wl4g.component.common.task.RunnerProperties;
 import com.wl4g.component.common.task.RunnerProperties.StartupMode;
-import com.wl4g.component.support.task.ApplicationTaskRunner;
+import com.wl4g.component.core.task.ApplicationTaskRunner;
 
 /**
  * Default Codes analyzing task manager.

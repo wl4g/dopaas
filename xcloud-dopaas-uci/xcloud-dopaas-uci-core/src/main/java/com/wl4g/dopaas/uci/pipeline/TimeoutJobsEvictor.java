@@ -35,7 +35,7 @@ import com.wl4g.component.common.task.RunnerProperties;
 import com.wl4g.component.common.task.RunnerProperties.StartupMode;
 import com.wl4g.component.support.cache.jedis.JedisService;
 import com.wl4g.component.support.cache.locks.JedisLockManager;
-import com.wl4g.component.support.task.ApplicationTaskRunner;
+import com.wl4g.component.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.uci.config.CiProperties;
 import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
 

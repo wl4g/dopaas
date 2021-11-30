@@ -49,7 +49,7 @@ import com.wl4g.component.common.task.RunnerProperties;
 import com.wl4g.component.common.task.RunnerProperties.StartupMode;
 import com.wl4g.component.support.cache.jedis.JedisService;
 import com.wl4g.component.support.cache.jedis.ScanCursor;
-import com.wl4g.component.support.task.ApplicationTaskRunner;
+import com.wl4g.component.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.common.bean.uci.Orchestration;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationHistory;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationPipeline;

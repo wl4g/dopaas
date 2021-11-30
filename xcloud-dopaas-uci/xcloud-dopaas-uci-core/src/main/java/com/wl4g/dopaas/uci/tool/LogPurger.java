@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.uci.tool;
 
 import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.support.task.ApplicationTaskRunner;
+import com.wl4g.component.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.uci.config.CiProperties;
 import com.wl4g.dopaas.uci.service.LogCleanService;
 
