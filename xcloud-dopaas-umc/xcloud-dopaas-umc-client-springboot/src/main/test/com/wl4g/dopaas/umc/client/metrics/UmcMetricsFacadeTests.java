@@ -47,7 +47,7 @@ public class UmcMetricsFacadeTests {
 
     // Simulate spring to instantiated bean, the production environment should
     // use spring injection.
-    private final UmcMetricsFacade facade = new UmcMetricsFacade(new PrometheusMeterRegistry(PrometheusConfig.DEFAULT));
+    private final UmcMetricsFacade metricsFacade = new UmcMetricsFacade(new PrometheusMeterRegistry(PrometheusConfig.DEFAULT));
 
     @Test
     public void testNewConstructor() {
@@ -59,7 +59,7 @@ public class UmcMetricsFacadeTests {
     @Test
     public void testUseCounter() {
         // Gets or create counter by metrics name and tags.
-        Counter counter = facade.counter("test_metric2", new ImmutableTag("key1", "value1"));
+        Counter counter = metricsFacade.counter("test_metric2", new ImmutableTag("key1", "value1"));
 
         // increment by 1
         counter.increment(1);
@@ -71,7 +71,7 @@ public class UmcMetricsFacadeTests {
     @Test
     public void testUseTimer() {
         // Gets or create timer by metrics name and tags.
-        Timer timer = facade.timer("test_metric3", new ImmutableTag("key1", "value1"));
+        Timer timer = metricsFacade.timer("test_metric3", new ImmutableTag("key1", "value1"));
 
         // statistics cost time
         long begin = FastTimeClock.currentTimeMillis();
@@ -91,7 +91,7 @@ public class UmcMetricsFacadeTests {
     public void testUseGauge() {
         // Gets or create gauge by metrics name and tags, and record statistics
         // value.
-        Number gauge = facade.gauge("test_metric4", 100.123d, new ImmutableTag("key1", "value1"));
+        Number gauge = metricsFacade.gauge("test_metric4", 100.123d, new ImmutableTag("key1", "value1"));
 
         System.out.println(gauge);
     }
@@ -99,7 +99,7 @@ public class UmcMetricsFacadeTests {
     @Test
     public void testUseSummary() {
         // Gets or create distribution summary by metrics name and tags.
-        DistributionSummary summary = facade.summary("test_metric5", new ImmutableTag("key1", "value1"));
+        DistributionSummary summary = metricsFacade.summary("test_metric5", new ImmutableTag("key1", "value1"));
 
         // statistics cost time
         summary.record(200.123d);
@@ -114,7 +114,7 @@ public class UmcMetricsFacadeTests {
     public void testUseSummary2() {
         // Gets or create distribution summary by configuration.
         Meter.Id id = new Meter.Id("test_metric6", Tags.empty(), "", "Nothing", Type.DISTRIBUTION_SUMMARY);
-        DistributionSummary summary = facade.summary(id, DistributionStatisticConfig.DEFAULT, 0.01d);
+        DistributionSummary summary = metricsFacade.summary(id, DistributionStatisticConfig.DEFAULT, 0.01d);
 
         // statistics cost time
         summary.record(300.123d);
