@@ -35,20 +35,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health.Builder;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.dopaas.umc.client.health.util.HealthUtil;
-import com.wl4g.dopaas.umc.client.metrics.advice.DefaultTimingMetricsAdvice.DefaultTimingMetricsProperties;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Analysis and statistical call time dimension related health messages
@@ -58,13 +47,13 @@ import lombok.Setter;
  * @date 2018年6月1日
  * @since
  */
-public class DefaultTimeoutMethodHealthIndicator extends AbstractHealthIndicator {
+public class TimeoutMethodHealthIndicator extends AbstractHealthIndicator {
     private final SmartLogger log = getLogger(getClass());
 
     private final Map<String, Deque<Long>> records = new ConcurrentHashMap<>(64);
-    private DefaultTimeoutMethodProperties config;
+    private TimeoutMethodProperties config;
 
-    public DefaultTimeoutMethodHealthIndicator(DefaultTimeoutMethodProperties config) {
+    public TimeoutMethodHealthIndicator(TimeoutMethodProperties config) {
         this.config = notNullOf(config, "simpleTimingMetricsConfig");
     }
 
@@ -154,77 +143,6 @@ public class DefaultTimeoutMethodHealthIndicator extends AbstractHealthIndicator
         Deque<Long> deque = records.get(stat.getMetricsName());
         if (deque != null && !deque.isEmpty()) {
             deque.remove(stat.getMax());
-        }
-    }
-
-    @Getter
-    @Setter
-    public static class TimeStat {
-        private String metricsName;
-        private long max;
-        private long min;
-        private long avg;
-        private int samples;
-        private long latest;
-
-        public TimeStat() {
-            super();
-        }
-
-        public TimeStat(int samples, String metricsName, long max, long min, long avg, long latest) {
-            super();
-            this.samples = samples;
-            this.metricsName = metricsName;
-            this.max = max;
-            this.min = min;
-            this.avg = avg;
-            this.latest = latest;
-        }
-
-        public TimeStat(String metricsName, long max) {
-            super();
-            this.metricsName = metricsName;
-            this.max = max;
-        }
-    }
-
-    @Getter
-    @Setter
-    @Configuration
-    @ConditionalOnBean(DefaultTimingMetricsProperties.class)
-    @ConditionalOnProperty(name = DefaultTimeoutMethodProperties.CONF_P + ".enabled", matchIfMissing = false)
-    @ConfigurationProperties(prefix = DefaultTimeoutMethodProperties.CONF_P)
-    public static class DefaultTimeoutMethodProperties {
-        public static final String CONF_P = DefaultTimingMetricsProperties.CONF_P + ".addon-to-health";
-        public static final int DEFAULT_SAMPLES = 32;
-        public static final long DEFAULT_TIMEOUT_THRESHOLD = 5_000L;
-
-        /**
-         * AOP intercepts the number of historical records saved by statistical
-         * calls.
-         */
-        private int samples = DEFAULT_SAMPLES;
-
-        /**
-         * AOP intercept call time consuming timeout alarm threshold.
-         */
-        private long timeoutThresholdMs = DEFAULT_TIMEOUT_THRESHOLD;
-
-    }
-
-    @Configuration
-    @ConditionalOnBean(DefaultTimeoutMethodProperties.class)
-    @AutoConfigureBefore({ DefaultTimeoutMethodProperties.class })
-    public static class DefaultTimeoutMethodHealthIndicatorAutoConfiguration {
-        private final SmartLogger log = getLogger(getClass());
-
-        @Bean
-        public HealthIndicator defaultTimeoutMethodHealthIndicator(DefaultTimeoutMethodProperties config) {
-            log.info("Initializing timingMethodsHealthIndicator. - {}", config);
-            if (config.getSamples() == 0) {
-                throw new IllegalArgumentException("Latest measure count is 0.");
-            }
-            return new DefaultTimeoutMethodHealthIndicator(config);
         }
     }
 

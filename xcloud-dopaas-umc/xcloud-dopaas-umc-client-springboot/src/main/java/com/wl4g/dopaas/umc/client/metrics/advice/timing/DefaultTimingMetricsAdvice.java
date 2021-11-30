@@ -13,32 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.umc.client.metrics.advice;
+package com.wl4g.dopaas.umc.client.metrics.advice.timing;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 
 import java.util.concurrent.TimeUnit;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.common.lang.FastTimeClock;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.common.exception.umc.UmcException;
-import com.wl4g.dopaas.umc.client.health.timeout.DefaultTimeoutMethodHealthIndicator;
+import com.wl4g.dopaas.umc.client.health.timeout.TimeoutMethodHealthIndicator;
+import com.wl4g.dopaas.umc.client.metrics.advice.BaseMetricsAdvice;
 
 import io.micrometer.core.instrument.Timer;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * A simple statistical method to perform time-consuming aspects. If you want a
@@ -53,7 +42,7 @@ import lombok.Setter;
 public class DefaultTimingMetricsAdvice extends BaseMetricsAdvice {
 
     @Autowired(required = false)
-    private DefaultTimeoutMethodHealthIndicator timingIndicator; // Non-required
+    private TimeoutMethodHealthIndicator timingIndicator; // Non-required
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -106,49 +95,6 @@ public class DefaultTimingMetricsAdvice extends BaseMetricsAdvice {
         // It corresponds to a special timer type meter(Automatically calculate
         // the maximum and minimum mean value.).
         return "timer." + name;
-    }
-
-    @Getter
-    @Setter
-    @Configuration
-    @ConditionalOnProperty(name = DefaultTimingMetricsProperties.CONF_P + ".enabled", matchIfMissing = false)
-    @ConfigurationProperties(prefix = DefaultTimingMetricsProperties.CONF_P)
-    public static class DefaultTimingMetricsProperties {
-        public static final String CONF_P = UmcConstants.KEY_UMC_CLIENT_PREFIX + ".timing";
-
-        /**
-         * Call time consuming AOP point cut surface expression.
-         */
-        private String expression;
-
-        public void setExpression(String pointcutExpression) {
-            if (pointcutExpression == null || pointcutExpression.trim().length() == 0)
-                throw new IllegalArgumentException("Timer metrics pointcut expression is null.");
-            this.expression = pointcutExpression;
-        }
-    }
-
-    @Configuration
-    @ConditionalOnBean(DefaultTimingMetricsProperties.class)
-    public static class DefaultTimingAdviceAutoConfiguration {
-        protected final SmartLogger log = getLogger(getClass());
-
-        @Bean
-        public AspectJExpressionPointcutAdvisor defaultTimingAspectJExpressionPointcutAdvisor(
-                DefaultTimingMetricsProperties config, DefaultTimingMetricsAdvice advice) {
-            notNull(config.getExpression(), "Expression of the timeouts AOP pointcut is null.");
-            log.info("Intializing timing aspectJExpressionPointcutAdvisor. {}", config);
-            AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
-            advisor.setExpression(config.getExpression());
-            advisor.setAdvice(advice);
-            return advisor;
-        }
-
-        @Bean
-        public DefaultTimingMetricsAdvice defaultTimingMetricsAdvice() {
-            return new DefaultTimingMetricsAdvice();
-        }
-
     }
 
 }
