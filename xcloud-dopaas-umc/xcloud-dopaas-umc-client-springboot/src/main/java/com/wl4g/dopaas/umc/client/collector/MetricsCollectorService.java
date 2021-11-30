@@ -29,18 +29,18 @@ import com.wl4g.component.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.umc.client.collector.ScrapeCollectorAutoConfiguration.ScrapeCollectorProperties;
 
 /**
- * {@link MetricsCollectorEngine}
+ * {@link MetricsCollectorService}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-11-30 v1.0.0
  * @since v1.0.0
  */
-public class MetricsCollectorEngine extends ApplicationTaskRunner<ScrapeCollectorProperties> {
+public class MetricsCollectorService extends ApplicationTaskRunner<ScrapeCollectorProperties> {
     protected final SmartLogger log = getLogger(getClass());
 
     private final List<MetricsCollector> collectors;
 
-    public MetricsCollectorEngine(ScrapeCollectorProperties config, List<MetricsCollector> collectors) {
+    public MetricsCollectorService(ScrapeCollectorProperties config, List<MetricsCollector> collectors) {
         super(config);
         this.collectors = notNullOf(collectors, "collectors");
     }

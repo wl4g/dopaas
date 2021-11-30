@@ -56,8 +56,8 @@ public class ScrapeCollectorAutoConfiguration {
     }
 
     @Bean
-    public MetricsCollectorEngine metricsCollectorEngine(ScrapeCollectorProperties config, List<MetricsCollector> collectors) {
-        return new MetricsCollectorEngine(config, collectors);
+    public MetricsCollectorService metricsCollectorService(ScrapeCollectorProperties config, List<MetricsCollector> collectors) {
+        return new MetricsCollectorService(config, collectors);
     }
 
     @Getter
