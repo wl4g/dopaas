@@ -67,7 +67,7 @@ public class ExampleMetricsAutoConfiguration {
                 while (true) {
                     try {
                         log.info("Collection custom example metrics, Please visit to an example of indicators based on "
-                                + "prometheus format, such as: curl http://localhost:8081 ...");
+                                + "prometheus format, such as: curl http://localhost:8081/metrics/prometheus ...");
 
                         // ADD example counter metrics
                         Counter counter1 = metricsFacade.counter("example.mymetrics1.mycounter1",
