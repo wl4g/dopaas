@@ -18,22 +18,17 @@ package com.wl4g.dopaas.umc.example.metrics;
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.common.lang.ThreadUtils2;
 import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.dopaas.umc.client.collector.MetricsCollector;
 import com.wl4g.dopaas.umc.client.metrics.UmcMetricsFacade;
+import com.wl4g.dopaas.umc.client.util.MetricsUtil;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
-import io.micrometer.core.instrument.ImmutableTag;
-import io.micrometer.core.instrument.Tag;
 
 /**
  * {@link ExampleMetricsAutoConfiguration}
@@ -50,9 +45,12 @@ public class ExampleMetricsAutoConfiguration {
         return new ExampleMetricsCollector(metricsFacade);
     }
 
-    public static class ExampleMetricsCollector implements ApplicationRunner {
-
+    /**
+     * @see {@link org.springframework.integration.support.management.metrics.MetricsCaptor}
+     */
+    public static class ExampleMetricsCollector implements MetricsCollector {
         protected final SmartLogger log = getLogger(getClass());
+
         protected final UmcMetricsFacade metricsFacade;
 
         public ExampleMetricsCollector(UmcMetricsFacade metricsFacade) {
@@ -60,44 +58,30 @@ public class ExampleMetricsAutoConfiguration {
         }
 
         @Override
-        public void run(ApplicationArguments args) throws Exception {
+        public void collect() throws Exception {
             log.info("Custom example metrics collector starting ...");
 
-            new Thread(() -> {
-                while (true) {
-                    try {
-                        log.info("Collection custom example metrics, Please visit to an example of indicators based on "
-                                + "prometheus format, such as: curl http://localhost:8081/metrics/prometheus ...");
-
-                        // ADD example counter metrics
-                        Counter counter1 = metricsFacade.counter("example.mymetrics1.mycounter1",
-                                Tag.of("instance", getHostname()));
-                        counter1.increment(1);
-
-                        // ADD example gauge metrics
-                        metricsFacade.gauge("example.mymetrics2.mygauge1", 381.51d, Tag.of("instance", getHostname()));
-
-                        // ADD example gauge metrics
-                        DistributionSummary summary = metricsFacade.summary("example.mymetrics2.mysummary1",
-                                new ImmutableTag("instance", getHostname()));
-                        summary.record(101);
-
-                    } catch (Exception e) {
-                        log.error("", e);
-                    } finally {
-                        // sleep to next
-                        ThreadUtils2.sleep(5000L);
-                    }
-                }
-            }).start();
-        }
-
-        private String getHostname() {
             try {
-                return InetAddress.getLocalHost().getHostName();
-            } catch (UnknownHostException e) {
-                log.warn("Unaable get hostname.", e.getMessage());
-                return "Unknown host";
+                log.info("Collection custom example metrics, Please visit to an example of indicators based on "
+                        + "prometheus format, such as: curl http://localhost:8081/metrics/prometheus ...");
+
+                // ADD example counter metrics
+                Counter counter1 = metricsFacade.counter("example.mymetrics1.mycounter1", MetricsUtil.hostnameTag("instance"));
+                counter1.increment(1);
+
+                // ADD example gauge metrics
+                metricsFacade.gauge("example.mymetrics2.mygauge1", 381.51d, MetricsUtil.hostnameTag("instance"));
+
+                // ADD example gauge metrics
+                DistributionSummary summary = metricsFacade.summary("example.mymetrics2.mysummary1",
+                        MetricsUtil.hostnameTag("instance"));
+                summary.record(101);
+
+            } catch (Exception e) {
+                log.error("", e);
+            } finally {
+                // sleep to next
+                ThreadUtils2.sleep(5000L);
             }
         }
 

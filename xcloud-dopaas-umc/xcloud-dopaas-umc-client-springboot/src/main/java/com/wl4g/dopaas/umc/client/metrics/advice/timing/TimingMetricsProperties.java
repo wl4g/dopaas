@@ -8,16 +8,16 @@ import com.wl4g.dopaas.common.constant.UmcConstants;
 
 /**
  * 
- * {@link DefaultTimingMetricsProperties}
+ * {@link TimingMetricsProperties}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-11-19 v1.0.0
  * @since v1.0
  */
 @Configuration
-@ConditionalOnProperty(name = DefaultTimingMetricsProperties.CONF_P + ".enabled", matchIfMissing = false)
-@ConfigurationProperties(prefix = DefaultTimingMetricsProperties.CONF_P)
-public class DefaultTimingMetricsProperties {
+@ConditionalOnProperty(name = TimingMetricsProperties.CONF_P + ".enabled", matchIfMissing = false)
+@ConfigurationProperties(prefix = TimingMetricsProperties.CONF_P)
+public class TimingMetricsProperties {
     public static final String CONF_P = UmcConstants.KEY_UMC_CLIENT_PREFIX + ".timing";
 
     /**

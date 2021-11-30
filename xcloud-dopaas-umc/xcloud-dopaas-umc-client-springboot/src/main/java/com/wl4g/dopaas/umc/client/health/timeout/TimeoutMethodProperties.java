@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.dopaas.umc.client.metrics.advice.timing.DefaultTimingMetricsProperties;
+import com.wl4g.dopaas.umc.client.metrics.advice.timing.TimingMetricsProperties;
 
 /**
  * {@link TimeoutMethodProperties}
@@ -30,11 +30,11 @@ import com.wl4g.dopaas.umc.client.metrics.advice.timing.DefaultTimingMetricsProp
  * @since v1.0.0
  */
 @Configuration
-@ConditionalOnBean(DefaultTimingMetricsProperties.class)
+@ConditionalOnBean(TimingMetricsProperties.class)
 @ConditionalOnProperty(name = TimeoutMethodProperties.CONF_P + ".enabled", matchIfMissing = false)
 @ConfigurationProperties(prefix = TimeoutMethodProperties.CONF_P)
 public class TimeoutMethodProperties {
-    public static final String CONF_P = DefaultTimingMetricsProperties.CONF_P + ".addon-to-health";
+    public static final String CONF_P = TimingMetricsProperties.CONF_P + ".addon-to-health";
     public static final int DEFAULT_SAMPLES = 32;
     public static final long DEFAULT_TIMEOUT_THRESHOLD = 5_000L;
 

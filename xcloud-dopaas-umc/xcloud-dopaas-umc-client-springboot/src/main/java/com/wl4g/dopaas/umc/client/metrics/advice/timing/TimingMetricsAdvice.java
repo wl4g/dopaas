@@ -37,9 +37,10 @@ import io.micrometer.core.instrument.Timer;
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2021-11-19 v1.0.0
  * @since v1.0
- * @see notices-to: https://github.com/apache/skywalking/pull/1118
+ * @see https://github.com/apache/skywalking/pull/1118
+ * @see {@link io.micrometer.core.aop.TimedAspect}
  */
-public class DefaultTimingMetricsAdvice extends BaseMetricsAdvice {
+public class TimingMetricsAdvice extends BaseMetricsAdvice {
 
     @Autowired(required = false)
     private TimeoutMethodHealthIndicator timingIndicator; // Non-required
