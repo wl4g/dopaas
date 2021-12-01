@@ -48,8 +48,8 @@ public class MetricsCollectorService extends ApplicationTaskRunner<ScrapeCollect
     @Override
     public void onApplicationStarted(ApplicationArguments args) throws Exception {
         log.info("Initializating metrics collectors ... ", collectors);
-        safeList(collectors).forEach(c -> getWorker().scheduleWithFixedDelay(c, config.getInitialDelayMs(), config.getDelayMs(),
-                TimeUnit.MILLISECONDS));
+        safeList(collectors).forEach(c -> getWorker().scheduleWithFixedDelay(c, getConfig().getInitialDelayMs(),
+                getConfig().getDelayMs(), TimeUnit.MILLISECONDS));
     }
 
 }
