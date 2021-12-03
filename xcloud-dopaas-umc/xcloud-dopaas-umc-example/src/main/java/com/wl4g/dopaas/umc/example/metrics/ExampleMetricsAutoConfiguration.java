@@ -20,7 +20,6 @@ import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.component.common.lang.ThreadUtils2;
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.dopaas.umc.client.collector.MetricsCollector;
 import com.wl4g.dopaas.umc.client.metrics.UmcMetricsFacade;
@@ -72,9 +71,6 @@ public class ExampleMetricsAutoConfiguration {
 
             } catch (Exception e) {
                 log.error("", e);
-            } finally {
-                // sleep to next
-                ThreadUtils2.sleep(5000L);
             }
         }
 
