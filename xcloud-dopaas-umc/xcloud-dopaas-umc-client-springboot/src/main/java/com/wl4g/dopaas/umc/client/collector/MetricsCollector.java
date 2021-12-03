@@ -16,9 +16,10 @@
 package com.wl4g.dopaas.umc.client.collector;
 
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static java.lang.String.format;
 
 import org.slf4j.Logger;
+
+import com.wl4g.dopaas.umc.client.metrics.UmcMetricsFacade;
 
 /**
  * {@link MetricsCollector}
@@ -27,21 +28,12 @@ import org.slf4j.Logger;
  * @version 2021-11-30 v1.0.0
  * @since v1.0.0
  */
-public interface MetricsCollector extends Runnable {
+public interface MetricsCollector {
 
     default Logger logger() {
         return getLogger(getClass());
     }
 
-    @Override
-    default void run() {
-        try {
-            collect();
-        } catch (Exception e) {
-            logger().warn(format("Failed to collect metrics for - %", this), e);
-        }
-    }
-
-    void collect() throws Exception;
+    void collect(UmcMetricsFacade metricsFacade) throws Exception;
 
 }

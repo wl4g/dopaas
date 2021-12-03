@@ -15,7 +15,6 @@
  */
 package com.wl4g.dopaas.umc.example.metrics;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 import org.springframework.context.annotation.Bean;
@@ -41,8 +40,8 @@ import io.micrometer.core.instrument.DistributionSummary;
 public class ExampleMetricsAutoConfiguration {
 
     @Bean
-    public ExampleMetricsCollector exampleMetricsCollector(UmcMetricsFacade metricsFacade) {
-        return new ExampleMetricsCollector(metricsFacade);
+    public ExampleMetricsCollector exampleMetricsCollector() {
+        return new ExampleMetricsCollector();
     }
 
     /**
@@ -51,14 +50,8 @@ public class ExampleMetricsAutoConfiguration {
     public static class ExampleMetricsCollector implements MetricsCollector {
         protected final SmartLogger log = getLogger(getClass());
 
-        protected final UmcMetricsFacade metricsFacade;
-
-        public ExampleMetricsCollector(UmcMetricsFacade metricsFacade) {
-            this.metricsFacade = notNullOf(metricsFacade, "metricsFacade");
-        }
-
         @Override
-        public void collect() throws Exception {
+        public void collect(UmcMetricsFacade metricsFacade) throws Exception {
             log.info("Custom example metrics collector starting ...");
 
             try {

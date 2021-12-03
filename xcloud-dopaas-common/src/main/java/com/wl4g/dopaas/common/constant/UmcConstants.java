@@ -26,7 +26,18 @@ package com.wl4g.dopaas.common.constant;
 public abstract class UmcConstants extends DoPaaSConstants {
 
     public static final String KEY_UMC_CONFIG_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".umc";
-    public static final String KEY_UMC_CLIENT_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".umc.client";
+    public static final String KEY_UMC_CLIENT_PREFIX = KEY_UMC_CONFIG_PREFIX + ".client";
+
+    //
+    // UMC client metrics constants definition.
+    //
+
+    /** Administrator dashboard's base URI. */
+    public static final String SCRAPE_COLLECTOR_PREFIX = KEY_UMC_CLIENT_PREFIX + ".scrape";
+
+    //
+    // ----------------------------------------------------------------------
+    //
 
     public static final String INFO_PREFIX = "sba_event_";
 

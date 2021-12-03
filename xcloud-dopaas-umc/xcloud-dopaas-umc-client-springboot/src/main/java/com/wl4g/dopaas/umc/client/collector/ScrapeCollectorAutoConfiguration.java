@@ -19,11 +19,14 @@ import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.List;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.component.common.log.SmartLogger;
 import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.dopaas.common.constant.UmcConstants;
+import com.wl4g.dopaas.umc.client.metrics.UmcMetricsFacade;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +43,7 @@ public class ScrapeCollectorAutoConfiguration {
     protected final SmartLogger log = getLogger(getClass());
 
     @Bean
+    @ConfigurationProperties(prefix = UmcConstants.SCRAPE_COLLECTOR_PREFIX)
     public ScrapeCollectorProperties scrapeCollectorProperties() {
         return new ScrapeCollectorProperties();
     }
@@ -47,17 +51,16 @@ public class ScrapeCollectorAutoConfiguration {
     @Bean
     public MetricsCollector emptyMetricsCollector() {
         return new MetricsCollector() {
-
             @Override
-            public void collect() {
+            public void collect(UmcMetricsFacade metricsFacade) {
             }
-
         };
     }
 
     @Bean
-    public MetricsCollectorService metricsCollectorService(ScrapeCollectorProperties config, List<MetricsCollector> collectors) {
-        return new MetricsCollectorService(config, collectors);
+    public MetricsCollectorRunner metricsCollectorService(ScrapeCollectorProperties config, List<MetricsCollector> collectors,
+            UmcMetricsFacade metricsFacade) {
+        return new MetricsCollectorRunner(config, collectors, metricsFacade);
     }
 
     @Getter
