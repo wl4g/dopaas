@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.tools.hbase.mapred;
+package com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred;
 
 /**
  * Nothing HBASE HFile prefix transform.
@@ -23,5 +23,4 @@ package com.wl4g.dopaas.lcdp.tools.hbase.mapred;
  * @since
  */
 public class NoOpTransformMapper extends AbstractTransformMapper {
-
 }

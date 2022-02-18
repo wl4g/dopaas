@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.lcdp.tools.hbase;
+package com.wl4g.dopaas.lcdp.tools.hbase.bulk;
 
-public class HfileBulkExporterTests {
+public class HfileBulkToHdfsExporterTests {
 
 	public static void main(String[] args) {
 
