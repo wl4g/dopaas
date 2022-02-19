@@ -21,7 +21,7 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Counter;
 
-import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.AbstractTransformMapper;
+import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.BaseTransformMapper;
 import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.SimpleHfileToRdbmsExporter;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil;
 
@@ -39,7 +39,7 @@ import java.util.LinkedHashMap;
  * @version v1.0 2019年9月6日
  * @since
  */
-public class SimpleHfileToRdbmsMapper extends AbstractTransformMapper {
+public class SimpleHfileToRdbmsMapper extends BaseTransformMapper {
 
     @Override
     public void map(ImmutableBytesWritable key, Result result, Context context) throws IOException, InterruptedException {

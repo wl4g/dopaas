@@ -31,9 +31,9 @@ import java.util.List;
  * @version v1.0 2019年9月6日
  * @since
  */
-public class ExamplePrefixTransformMapper extends AbstractTransformMapper {
+public class ExamplePrefixTransformMapper extends BaseTransformMapper {
 
-    final static List<String> ROW_PREFIX = unmodifiableList(new ArrayList<String>() {
+    private static final List<String> ROW_PREFIX = unmodifiableList(new ArrayList<String>() {
         private static final long serialVersionUID = 8767166856581107226L;
         {
             add("11111112");
@@ -101,7 +101,7 @@ public class ExamplePrefixTransformMapper extends AbstractTransformMapper {
      * </pre>
      */
     @Override
-    protected boolean isFilter(String row, Result result) {
+    protected boolean doFilter(String row, Result result) {
         return ROW_PREFIX.contains(row.substring(0, 8));
     }
 
@@ -113,7 +113,7 @@ public class ExamplePrefixTransformMapper extends AbstractTransformMapper {
      * </pre>
      */
     @Override
-    protected Put newPut(String row) {
+    protected Put doCreatePut(String row) {
         return new Put(Bytes.toBytes("3" + row.substring(1, row.length())));
     }
 

@@ -13,15 +13,18 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<!-- Dependency by Hbase-1.2.5 -->
+		<scala.version>2.11</scala.version>
+		<!-- HBase-1.2.5 dependencies -->
 		<protobuf.version>2.5.0</protobuf.version>
 		<guava.version>12.0.1</guava.version>
 		<hadoop.version>2.7.2</hadoop.version>
 		<hbase-hadoop2.version>1.4.14</hbase-hadoop2.version>
+		<spark.version>2.4.8</spark.version>
+		<spark-logging.version>1.5.2</spark-logging.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
-			<!-- For conflict dependency -->
+			<!-- HBase conflict dependency -->
 			<dependency>
 				<groupId>com.google.protobuf</groupId>
 				<artifactId>protobuf-java</artifactId>
@@ -62,6 +65,32 @@
 				<artifactId>hbase-hadoop2-compat</artifactId>
 				<version>${hbase-hadoop2.version}</version>
 			</dependency>
+			<!-- Spark dependency -->
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-core_${scala.version}</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.spark</groupId> -->
+			<!-- <artifactId>spark-sql_${scala.version}</artifactId> -->
+			<!-- <version>${spark.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.spark</groupId> -->
+			<!-- <artifactId>spark-streaming_${scala.version}</artifactId> -->
+			<!-- <version>${spark.version}</version> -->
+			<!-- </dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.spark</groupId> -->
+			<!-- <artifactId>spark-streaming-kafka-0-10_${scala.version}</artifactId> -->
+			<!-- <version>${spark.version}</version> -->
+			<!-- </dependency> -->
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-core-logging</artifactId>
+				<version>${spark-logging.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -69,6 +98,15 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-component-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>commons-dbutils</groupId>
+			<artifactId>commons-dbutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<!-- HBase dependencies -->
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase-client</artifactId>
@@ -82,24 +120,41 @@
 			<artifactId>protobuf-java</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-dbutils</groupId>
-			<artifactId>commons-dbutils</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
 		</dependency>
+		<!-- Spark dependencies -->
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_${scala.version}</artifactId>
+			<version>${spark.version}</version>
+		</dependency>
 		<!-- <dependency> -->
-		<!-- <groupId>jdk.tools</groupId> -->
-		<!-- <artifactId>jdk.tools</artifactId> -->
-		<!-- <version>${java.version}</version> -->
-		<!-- <scope>system</scope> -->
-		<!-- <systemPath>${JAVA_HOME}/lib/tools.jar</systemPath> -->
+		<!-- <groupId>org.apache.spark</groupId> -->
+		<!-- <artifactId>spark-sql_${scala.version}</artifactId> -->
+		<!-- <version>${spark.version}</version> -->
 		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.spark</groupId> -->
+		<!-- <artifactId>spark-streaming_${scala.version}</artifactId> -->
+		<!-- <version>${spark.version}</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.spark</groupId> -->
+		<!-- <artifactId>spark-streaming-kafka-0-10_${scala.version}</artifactId> -->
+		<!-- <version>${spark.version}</version> -->
+		<!-- </dependency> -->
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core-logging</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jdk.tools</groupId>
+			<artifactId>jdk.tools</artifactId>
+			<version>${java.version}</version>
+			<scope>system</scope>
+			<systemPath>${JAVA_HOME}/lib/tools.jar</systemPath>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

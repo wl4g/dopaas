@@ -60,7 +60,8 @@ public class HfileBulkFromHdfsImporter {
         CommandLine line = new Builder().option("z", "zkaddr", null, "Zookeeper address.")
                 .option("t", "tabname", null, "Hbase table name.")
                 .option("p", "path", null, "Data hdfs path to be import. eg. hdfs://localhost:9000/bak/mydb.tb_example1")
-                .option("L", "mapLimit", DEFAULT_MAP_LIMIT, "Mapred tasks limit.").build(args);
+                .option("L", "mapLimit", DEFAULT_MAP_LIMIT, "Mapred tasks limit.")
+                .build(args);
 
         Configuration conf = HBaseConfiguration.create();
         conf.set(HConstants.ZOOKEEPER_QUORUM, line.getOptionValue("z"));

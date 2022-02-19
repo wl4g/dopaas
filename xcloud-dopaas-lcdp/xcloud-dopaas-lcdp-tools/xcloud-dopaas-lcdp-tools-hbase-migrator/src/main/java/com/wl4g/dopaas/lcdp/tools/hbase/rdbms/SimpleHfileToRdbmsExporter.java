@@ -17,7 +17,7 @@ package com.wl4g.dopaas.lcdp.tools.hbase.rdbms;
 
 import static com.wl4g.component.common.lang.Assert2.state;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_HBASE_MR_TMPDIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_HFILE_OUTPUT_DIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_OUTPUT_DIR;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_SCAN_BATCH_SIZE;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_USER;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_GROUP;
@@ -104,7 +104,7 @@ public class SimpleHfileToRdbmsExporter {
         builder.option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.");
         builder.option("z", "zkaddr", null, "Zookeeper address.");
         builder.option("t", "tabname", null, "Hbase table name.");
-        builder.option("o", "outputDir", DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}", "Hfile export output hdfs directory.");
+        builder.option("o", "outputDir", DEFAULT_OUTPUT_DIR + "/{tableName}", "Hfile export output hdfs directory.");
         builder.option("b", "batchSize", DEFAULT_SCAN_BATCH_SIZE, "Scan batch size.");
         builder.option("s", "startRow", EMPTY, "Scan start rowkey.");
         builder.option("e", "endRow", EMPTY, "Scan end rowkey.");
@@ -140,7 +140,7 @@ public class SimpleHfileToRdbmsExporter {
         String tabname = line.getOptionValue("tabname");
         String user = line.getOptionValue("user", DEFAULT_USER);
         String tmpdir = line.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR);
-        String outputdir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
+        String outputdir = line.getOptionValue("output", DEFAULT_OUTPUT_DIR) + "/" + tabname;
         String zkaddr = line.getOptionValue("zkaddr");
         String batchSize = line.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE);
         String mapLimit = line.getOptionValue("mapLimit", "0");

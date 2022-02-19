@@ -22,5 +22,5 @@ package com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred;
  * @version v1.0 2019年9月6日
  * @since
  */
-public class NoOpTransformMapper extends AbstractTransformMapper {
+public class NoOpTransformMapper extends BaseTransformMapper {
 }

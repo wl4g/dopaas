@@ -39,8 +39,7 @@ import java.util.Optional;
  * @version v1.0 2019年9月5日
  * @since
  */
-public abstract class AbstractTransformMapper extends TableMapper<ImmutableBytesWritable, Put> {
-
+public abstract class BaseTransformMapper extends TableMapper<ImmutableBytesWritable, Put> {
     protected final Log log = LogFactory.getLog(getClass());
 
     @Override
@@ -65,9 +64,8 @@ public abstract class AbstractTransformMapper extends TableMapper<ImmutableBytes
      */
     protected Optional<Put> transform(ImmutableBytesWritable key, Result result) throws IOException {
         String row = Bytes.toString(key.get());
-        if (isFilter(row, result)) {
-            Put put = newPut(row);
-            notNullOf(put, "HfileMapperPut");
+        if (doFilter(row, result)) {
+            Put put = notNullOf(doCreatePut(row), "newPut");
             Iterator<Cell> it = result.listCells().iterator();
             while (it.hasNext()) {
                 Cell cell = it.next();
@@ -75,7 +73,7 @@ public abstract class AbstractTransformMapper extends TableMapper<ImmutableBytes
                 byte[] qualifier = getCellFieldBytes(cell.getQualifierArray(), cell.getQualifierOffset(),
                         cell.getQualifierLength());
                 byte[] value = getCellFieldBytes(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
-                addPut(put, family, qualifier, value, cell.getTimestamp(), cell.getTypeByte(), it.hasNext());
+                appendCell(put, family, qualifier, value, cell.getTimestamp(), cell.getTypeByte(), it.hasNext());
             }
             return Optional.of(put);
         }
@@ -89,7 +87,7 @@ public abstract class AbstractTransformMapper extends TableMapper<ImmutableBytes
      * @param result
      * @return
      */
-    protected boolean isFilter(String row, Result result) {
+    protected boolean doFilter(String row, Result result) {
         return true;
     }
 
@@ -99,12 +97,12 @@ public abstract class AbstractTransformMapper extends TableMapper<ImmutableBytes
      * @param row
      * @return
      */
-    protected Put newPut(String row) {
+    protected Put doCreatePut(String row) {
         return new Put(Bytes.toBytes(row));
     }
 
     /**
-     * Add data to put.
+     * Append column data to put.
      * 
      * @param put
      * @param family
@@ -114,7 +112,7 @@ public abstract class AbstractTransformMapper extends TableMapper<ImmutableBytes
      * @param type
      * @param hasNextQualifier
      */
-    protected void addPut(Put put, byte[] family, byte[] qualifier, byte[] value, long timestamp, byte type,
+    private void appendCell(Put put, byte[] family, byte[] qualifier, byte[] value, long timestamp, byte type,
             boolean hasNextQualifier) throws IOException {
         Cell newCell = CellUtil.createCell(put.getRow(), family, qualifier, timestamp, type, value);
         put.add(newCell);

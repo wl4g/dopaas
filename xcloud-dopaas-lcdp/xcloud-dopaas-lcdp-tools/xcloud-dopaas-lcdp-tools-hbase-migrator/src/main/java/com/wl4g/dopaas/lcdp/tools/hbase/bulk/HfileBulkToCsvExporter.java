@@ -17,7 +17,7 @@ package com.wl4g.dopaas.lcdp.tools.hbase.bulk;
 
 import static com.wl4g.component.common.lang.Assert2.state;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_HBASE_MR_TMPDIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_HFILE_OUTPUT_DIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_OUTPUT_DIR;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_MAP_LIMIT;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_SCAN_BATCH_SIZE;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_USER;
@@ -49,6 +49,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import com.wl4g.component.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.HfileToCsvMapper;
+import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.HfileToCsvReducer;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil;
 
 /**
@@ -82,26 +83,23 @@ public class HfileBulkToCsvExporter {
      *  -t safeclound.tb_elec_power \
      *  -o /dopaas/safeclound.tb_elec_power
      * </pre>
-     * 
-     * @param args
-     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         HBaseUtil.showBanner();
-        Builder builder = new Builder();
-        builder.option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.");
-        builder.option("z", "zkaddr", null, "Zookeeper address.");
-        builder.option("t", "tabname", null, "Hbase table name.");
-        builder.option("o", "outputDir", DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}", "Hfile export output hdfs directory.");
-        builder.option("b", "batchSize", DEFAULT_SCAN_BATCH_SIZE, "Scan batch size.");
-        builder.option("L", "mapLimit", DEFAULT_MAP_LIMIT, "Mapred tasks limit.");
-        builder.option("s", "startRow", EMPTY, "Scan start rowkey.");
-        builder.option("e", "endRow", EMPTY, "Scan end rowkey.");
-        builder.option("S", "startTime", EMPTY, "Scan start timestamp.");
-        builder.option("E", "endTime", EMPTY, "Scan end timestamp.");
-        builder.option("U", "user", DEFAULT_USER, "User name used for scan check.");
-        builder.option("M", "mapperClass", DEFAULT_MAPPER_CLASS, "Transfrom mapper class name.");
-        doExporting(builder.build(args));
+        CommandLine cli = new Builder().option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.")
+                .option("z", "zkaddr", null, "Zookeeper address.")
+                .option("t", "tabname", null, "Hbase table name.")
+                .option("o", "outputDir", DEFAULT_OUTPUT_DIR + "/{tabname}", "Hfile export output hdfs directory.")
+                .option("b", "batchSize", DEFAULT_SCAN_BATCH_SIZE, "Scan batch size.")
+                .option("L", "mapLimit", DEFAULT_MAP_LIMIT, "Mapred tasks limit.")
+                .option("s", "startRow", EMPTY, "Scan start rowkey.")
+                .option("e", "endRow", EMPTY, "Scan end rowkey.")
+                .option("S", "startTime", EMPTY, "Scan start timestamp.")
+                .option("E", "endTime", EMPTY, "Scan end timestamp.")
+                .option("U", "user", DEFAULT_USER, "User name used for scan check.")
+                .option("M", "mapperClass", DEFAULT_MAPPER_CLASS, "Transfrom mapper class name.")
+                .build(args);
+        doExporting(cli);
     }
 
     /**
@@ -111,17 +109,17 @@ public class HfileBulkToCsvExporter {
      * @throws Exception
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void doExporting(CommandLine line) throws Exception {
+    public static void doExporting(CommandLine cli) throws Exception {
         // Gets arguments.
-        String tabname = line.getOptionValue("tabname");
-        String user = line.getOptionValue("user", DEFAULT_USER);
-        String tmpdir = line.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR);
-        String outputdir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
-        String zkaddr = line.getOptionValue("zkaddr");
-        String batchSize = line.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE);
-        String mapLimit = line.getOptionValue("mapLimit", "8");
+        String tabname = cli.getOptionValue("tabname");
+        String user = cli.getOptionValue("user", DEFAULT_USER);
+        String tmpdir = cli.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR);
+        String outputdir = cli.getOptionValue("output", DEFAULT_OUTPUT_DIR) + "/" + tabname;
+        String zkaddr = cli.getOptionValue("zkaddr");
+        String batchSize = cli.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE);
+        String mapLimit = cli.getOptionValue("mapLimit", DEFAULT_MAP_LIMIT);
         Class<TableMapper> mapperClass = (Class<TableMapper>) ClassUtils
-                .getClass(line.getOptionValue("mapperClass", DEFAULT_MAPPER_CLASS));
+                .getClass(cli.getOptionValue("mapperClass", DEFAULT_MAPPER_CLASS));
 
         // Configuration.
         Configuration conf = HBaseConfiguration.create();
@@ -141,17 +139,22 @@ public class HfileBulkToCsvExporter {
         state(!fs2.exists(new Path(outputdir)), format("HDFS output directory already has data. '%s'", outputdir));
 
         // Sets scan filters.
-        HBaseUtil.setScanIfNecessary(conf, line);
+        HBaseUtil.setScanIfNecessary(conf, cli);
 
         // Job configuration.
         TableName tab = TableName.valueOf(tabname);
         Job job = Job.getInstance(conf);
         job.setJobName(HfileBulkToHdfsExporter.class.getSimpleName() + "@" + tab.getNameAsString());
         job.setJarByClass(HfileBulkToHdfsExporter.class);
+        job.setMapperClass(mapperClass);
+        job.setReducerClass(HfileToCsvReducer.class);
         job.setInputFormatClass(TableInputFormat.class);
         job.setMapOutputKeyClass(ImmutableBytesWritable.class);
         job.setMapOutputValueClass(Text.class);
-        job.setMapperClass(mapperClass);
+
+        // job.setOutputFormatClass(cls);
+        // job.setOutputKeyClass(Text.class);
+        // job.setOutputValueClass(Text.class);
 
         FileOutputFormat.setOutputPath(job, new Path(outputdir));
         if (job.waitForCompletion(true)) {

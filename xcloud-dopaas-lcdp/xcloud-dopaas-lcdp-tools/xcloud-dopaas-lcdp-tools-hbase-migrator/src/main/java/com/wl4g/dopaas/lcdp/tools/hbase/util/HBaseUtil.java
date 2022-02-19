@@ -56,9 +56,9 @@ public abstract class HBaseUtil {
     public static final String DEFUALT_COUNTER_PROCESSED = "Processed@Counter";
     public static final String DEFAULT_SCAN_BATCH_SIZE = "1000";
     public static final String DEFAULT_MAP_LIMIT = "8";
-    public static final String DEFAULT_FS = "hdfs://127.0.0.1:8020";
+    public static final String DEFAULT_FS = "/tmp";
     public static final String DEFAULT_HBASE_MR_TMPDIR = DEFAULT_FS + "/dopaas/tmp";
-    public static final String DEFAULT_HFILE_OUTPUT_DIR = DEFAULT_FS + "/dopaas/output";
+    public static final String DEFAULT_OUTPUT_DIR = DEFAULT_FS + "/dopaas/output";
 
     /**
      * Extract byte array without changing the original array.
@@ -124,14 +124,14 @@ public abstract class HBaseUtil {
      * Setup scan condition if necessary.
      * 
      * @param conf
-     * @param line
+     * @param cli
      * @throws IOException
      */
-    public static void setScanIfNecessary(Configuration conf, CommandLine line) throws IOException {
-        String startRow = line.getOptionValue("startRow");
-        String endRow = line.getOptionValue("endRow");
-        String startTime = line.getOptionValue("startTime");
-        String endTime = line.getOptionValue("endTime");
+    public static void setScanIfNecessary(Configuration conf, CommandLine cli) throws IOException {
+        String startRow = cli.getOptionValue("startRow");
+        String endRow = cli.getOptionValue("endRow");
+        String startTime = cli.getOptionValue("startTime");
+        String endTime = cli.getOptionValue("endTime");
 
         boolean enabledScan = false;
         Scan scan = new Scan();
