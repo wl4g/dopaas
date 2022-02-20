@@ -84,7 +84,7 @@ public class SparkHBaseToHdfsExporter implements Serializable {
      *  -e 11111112,ELE_R_P,134,01,20180921124050540 \
      *  -z emr-header-1:2181 \
      *  -t safeclound.tb_ammeter \
-     *  -o /dopaas/output
+     *  -o hdfs://emr-cluster/dopaas/output
      * </pre>
      */
     public static void main(String[] args) throws Exception {

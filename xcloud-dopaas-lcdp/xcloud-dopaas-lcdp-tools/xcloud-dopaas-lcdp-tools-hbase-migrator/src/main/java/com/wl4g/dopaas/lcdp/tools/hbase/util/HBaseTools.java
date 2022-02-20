@@ -56,7 +56,7 @@ public abstract class HBaseTools {
     public static final String DEFUALT_COUNTER_PROCESSED = "Progressed";
     public static final String DEFAULT_SCAN_BATCH_SIZE = "1000";
     public static final String DEFAULT_MAP_LIMIT = "8";
-    public static final String DEFAULT_FS = "hdfs://127.0.0.1:8020";
+    public static final String DEFAULT_FS = "hdfs:///"; // hdfs://127.0.0.1:8020
     public static final String DEFAULT_HBASE_MR_TMPDIR = DEFAULT_FS + "/dopaas/tmp";
     public static final String DEFAULT_OUTPUT_DIR = DEFAULT_FS + "/dopaas/output";
 
