@@ -49,17 +49,18 @@ import org.apache.spark.api.java.function.Function;
 
 import com.wl4g.component.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.HfileBulkToHdfsExporter;
+import com.wl4g.dopaas.lcdp.tools.hbase.util.CsvUtil;
 
 import scala.Tuple2;
 
 /**
- * {@link HBaseSparkToHdfsExporter}
+ * {@link SparkHBaseToHdfsExporter}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2022-02-19 v1.0.0
  * @since v1.0.0
  */
-public class HBaseSparkToHdfsExporter implements Serializable {
+public class SparkHBaseToHdfsExporter implements Serializable {
     private static final long serialVersionUID = -5277212061036639902L;
     private static final Log log = LogFactory.getLog(HfileBulkToHdfsExporter.class);
 
@@ -75,7 +76,7 @@ public class HBaseSparkToHdfsExporter implements Serializable {
      *  --executor-cores 4 \
      *  --executor-memory 2g \
      *  --jars ossref://my-oss-bucket/sparklib/xcloud-dopaas-lcdp-tools-hbase-migrator-2.0.0-jar-with-dependencies.jar \
-     *  --class com.wl4g.dataworks.spark.streaming.GenericKafka2HbaseStreaming ossref://my-oss-bucket/sparklib/xcloud-dopaas-lcdp-tools-hbase-migrator-2.0.0.jar \
+     *  --class com.wl4g.dopaas.lcdp.tools.hbase.spark.SparkHBaseToHdfsExporter ossref://my-oss-bucket/sparklib/xcloud-dopaas-lcdp-tools-hbase-migrator-2.0.0.jar \
      *  com.wl4g.dopaas.lcdp.tools.hbase.bulk.HBaseSparkToHdfsExporter \
      *  -s 11111112,ELE_R_P,134,01,20180919110850989 \
      *  -e 11111112,ELE_R_P,134,01,20180921124050540 \
@@ -100,7 +101,7 @@ public class HBaseSparkToHdfsExporter implements Serializable {
         String outputdir = cli.getOptionValue("output", DEFAULT_OUTPUT_DIR) + "/" + tabname;
         int repartition = Integer.parseInt(cli.getOptionValue("repartition", "0"));
 
-        SparkConf conf = new SparkConf().setAppName(HBaseSparkToHdfsExporter.class.getSimpleName())
+        SparkConf conf = new SparkConf().setAppName(SparkHBaseToHdfsExporter.class.getSimpleName())
                 .setMaster("local[*]")
                 .set("spark.akka.frameSize", "1024")
                 // .set("spark.kryoserializer.buffer.mb", "512")
@@ -127,10 +128,9 @@ public class HBaseSparkToHdfsExporter implements Serializable {
             hadoopConf.set(TableInputFormat.SCAN_ROW_STOP, endRow);
         }
 
-        // Check arguments & configuration.
+        // Check output directory.
         FileSystem fs = FileSystem.get(hadoopConf);
-        Path path = new Path(outputdir);
-        Path parent = path.getParent();
+        Path parent = new Path(outputdir).getParent();
         if (fs.exists(parent)) {
             fs.rename(parent, Path.getPathWithoutSchemeAndAuthority(parent)
                     .suffix("_bak".concat(DateFormatUtils.format(new Date(), "YYYYMMddHHmmss"))));
@@ -152,8 +152,9 @@ public class HBaseSparkToHdfsExporter implements Serializable {
                     header = new StringBuilder(128);
                     header.append("rowkey,");
                 }
+
                 StringBuilder body = new StringBuilder(128);
-                body.append(rowkey).append(",");
+                body.append(CsvUtil.escapeCsv(rowkey)).append(",");
                 Cell[] cells = tuple._2.rawCells();
                 for (int i = 0; i < cells.length; i++) {
                     Cell cell = cells[i];
@@ -161,9 +162,9 @@ public class HBaseSparkToHdfsExporter implements Serializable {
                     String qualifier = new String(CellUtil.cloneQualifier(cell), UTF_8);
                     String value = new String(CellUtil.cloneValue(cell), UTF_8);
                     if (nonNull(header)) {
-                        header.append(family).append(":").append(qualifier).append(",");
+                        header.append(CsvUtil.escapeCsv(family)).append(":").append(CsvUtil.escapeCsv(qualifier)).append(",");
                     }
-                    body.append(value).append(",");
+                    body.append(CsvUtil.escapeCsv(value)).append(",");
                 }
                 if (nonNull(header)) {
                     return header.append("\r\n").append(body).toString();

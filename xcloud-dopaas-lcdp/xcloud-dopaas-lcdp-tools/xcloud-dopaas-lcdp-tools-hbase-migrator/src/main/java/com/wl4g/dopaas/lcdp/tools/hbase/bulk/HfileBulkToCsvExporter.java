@@ -17,8 +17,8 @@ package com.wl4g.dopaas.lcdp.tools.hbase.bulk;
 
 import static com.wl4g.component.common.lang.Assert2.state;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_HBASE_MR_TMPDIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_OUTPUT_DIR;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_MAP_LIMIT;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_OUTPUT_DIR;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_SCAN_BATCH_SIZE;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_USER;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_GROUP;
@@ -28,9 +28,11 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.net.URI;
+import java.util.Date;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -39,7 +41,6 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.io.Text;
@@ -49,7 +50,6 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import com.wl4g.component.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.HfileToCsvMapper;
-import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.HfileToCsvReducer;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil;
 
 /**
@@ -128,6 +128,9 @@ public class HfileBulkToCsvExporter {
         conf.set(TableInputFormat.INPUT_TABLE, tabname);
         conf.set(TableInputFormat.SCAN_BATCHSIZE, batchSize);
         conf.set(MRJobConfig.JOB_RUNNING_MAP_LIMIT, mapLimit);
+        conf.set("mapred.textoutputformat.ignoreseparator", "true");
+        // see:https://github.com/apache/hadoop/blob/rel/release-2.7.2/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapreduce/util/ConfigUtil.java#L488-L489
+        conf.set("mapred.textoutputformat.separator", ",");
         // conf.set(FileSystem.FS_DEFAULT_NAME_KEY, DEFAULT_FS);
 
         // Check TMP directory.
@@ -135,8 +138,12 @@ public class HfileBulkToCsvExporter {
         state(fs1.mkdirs(new Path(tmpdir)), format("Failed to mkdirs HDFS temporary directory. '%s'", tmpdir));
 
         // Check output directory.
-        FileSystem fs2 = FileSystem.get(new URI(outputdir), conf, user);
-        state(!fs2.exists(new Path(outputdir)), format("HDFS output directory already has data. '%s'", outputdir));
+        FileSystem fs2 = FileSystem.get(conf);
+        Path parent = new Path(outputdir).getParent();
+        if (fs2.exists(parent)) {
+            fs2.rename(parent, Path.getPathWithoutSchemeAndAuthority(parent)
+                    .suffix("_bak".concat(DateFormatUtils.format(new Date(), "YYYYMMddHHmmss"))));
+        }
 
         // Sets scan filters.
         HBaseUtil.setScanIfNecessary(conf, cli);
@@ -147,9 +154,8 @@ public class HfileBulkToCsvExporter {
         job.setJobName(HfileBulkToHdfsExporter.class.getSimpleName() + "@" + tab.getNameAsString());
         job.setJarByClass(HfileBulkToHdfsExporter.class);
         job.setMapperClass(mapperClass);
-        job.setReducerClass(HfileToCsvReducer.class);
         job.setInputFormatClass(TableInputFormat.class);
-        job.setMapOutputKeyClass(ImmutableBytesWritable.class);
+        job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
 
         // job.setOutputFormatClass(cls);
