@@ -22,7 +22,6 @@ import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_USER;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -52,6 +51,7 @@ import org.apache.spark.api.java.function.Function;
 import com.wl4g.component.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.HfileBulkToHdfsExporter;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.CsvUtil;
+import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
 
 import scala.Tuple2;
 
@@ -95,14 +95,14 @@ public class SparkHBaseToHdfsExporter implements Serializable {
                 .option("U", "user", DEFAULT_USER, "User name used for scan check.")
                 .option("s", "startRow", EMPTY, "Scan start rowkey.")
                 .option("e", "endRow", EMPTY, "Scan end rowkey.")
+                .option("S", "startTime", EMPTY, "Scan start timestamp.")
+                .option("E", "endTime", EMPTY, "Scan end timestamp.")
                 .option("R", "repartition", EMPTY, "Repartition number.")
                 .build(args);
         String zkaddr = cli.getOptionValue("zkaddr");
         String tabname = cli.getOptionValue("tabname");
-        String user = cli.getOptionValue("user", DEFAULT_USER);
-        String startRow = cli.getOptionValue("startRow");
-        String endRow = cli.getOptionValue("endRow");
         String outputdir = cli.getOptionValue("output", DEFAULT_OUTPUT_DIR) + "/" + tabname;
+        String user = cli.getOptionValue("user", DEFAULT_USER);
         int repartition = Integer.parseInt(cli.getOptionValue("repartition", "0"));
 
         SparkConf conf = new SparkConf().setAppName(SparkHBaseToHdfsExporter.class.getSimpleName())
@@ -125,12 +125,8 @@ public class SparkHBaseToHdfsExporter implements Serializable {
         hadoopConf.set(HConstants.ZOOKEEPER_QUORUM, zkaddr);
         hadoopConf.set(HConstants.HBASE_DIR, HConstants.DEFAULT_ZOOKEEPER_ZNODE_PARENT);
         hadoopConf.set(TableInputFormat.INPUT_TABLE, tabname);
-        if (!isBlank(startRow)) {
-            hadoopConf.set(TableInputFormat.SCAN_ROW_START, startRow);
-        }
-        if (!isBlank(endRow)) {
-            hadoopConf.set(TableInputFormat.SCAN_ROW_STOP, endRow);
-        }
+        // Sets scan filters.
+        HBaseTools.setScanIfNecessary(hadoopConf, cli);
 
         // Check output directory.
         FileSystem fs = FileSystem.get(new URI(outputdir), hadoopConf, user);

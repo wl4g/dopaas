@@ -146,7 +146,6 @@ public class HfileBulkToCsvExporter {
             fs2.rename(parent, Path.getPathWithoutSchemeAndAuthority(parent)
                     .suffix("_bak".concat(DateFormatUtils.format(new Date(), "YYYYMMddHHmmss"))));
         }
-
         // Sets scan filters.
         HBaseTools.setScanIfNecessary(conf, cli);
 
