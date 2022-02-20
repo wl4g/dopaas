@@ -16,14 +16,14 @@
 package com.wl4g.dopaas.lcdp.tools.hbase.bulk;
 
 import static com.wl4g.component.common.lang.Assert2.state;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_HBASE_MR_TMPDIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_MAP_LIMIT;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_OUTPUT_DIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_SCAN_BATCH_SIZE;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_USER;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_GROUP;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_PROCESSED;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_TOTAL;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_HBASE_MR_TMPDIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_MAP_LIMIT;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_OUTPUT_DIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_SCAN_BATCH_SIZE;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_USER;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_GROUP;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_PROCESSED;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_TOTAL;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -50,7 +50,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import com.wl4g.component.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.HfileToCsvMapper;
-import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil;
+import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
 
 /**
  * Simple HBase hfile to CSV files exporter. </br>
@@ -75,7 +75,7 @@ public class HfileBulkToCsvExporter {
      * e.g. </br>
      * 
      * <pre>
-     *  yarn jar xcloud-dopaas-lcdp-tools-hbase-migrator-master.jar \
+     *  yarn jar xcloud-dopaas-lcdp-tools-hbase-migrator-2.0.0.jar \
      *  com.wl4g.dopaas.lcdp.tools.hbase.bulk.HfileBulkToCsvExporter \
      *  -s 11111112,ELE_R_P,134,01,20180919110850989 \
      *  -e 11111112,ELE_R_P,134,01,20180921124050540 \
@@ -85,11 +85,11 @@ public class HfileBulkToCsvExporter {
      * </pre>
      */
     public static void main(String[] args) throws Exception {
-        HBaseUtil.showBanner();
+        HBaseTools.showBanner();
         CommandLine cli = new Builder().option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.")
                 .option("z", "zkaddr", null, "Zookeeper address.")
                 .option("t", "tabname", null, "Hbase table name.")
-                .option("o", "outputDir", DEFAULT_OUTPUT_DIR + "/{tabname}", "Hfile export output hdfs directory.")
+                .option("o", "output", DEFAULT_OUTPUT_DIR + "/{tabname}", "Hfile export output hdfs directory.")
                 .option("b", "batchSize", DEFAULT_SCAN_BATCH_SIZE, "Scan batch size.")
                 .option("L", "mapLimit", DEFAULT_MAP_LIMIT, "Mapred tasks limit.")
                 .option("s", "startRow", EMPTY, "Scan start rowkey.")
@@ -111,11 +111,11 @@ public class HfileBulkToCsvExporter {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void doExporting(CommandLine cli) throws Exception {
         // Gets arguments.
+        String zkaddr = cli.getOptionValue("zkaddr");
         String tabname = cli.getOptionValue("tabname");
         String user = cli.getOptionValue("user", DEFAULT_USER);
         String tmpdir = cli.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR);
         String outputdir = cli.getOptionValue("output", DEFAULT_OUTPUT_DIR) + "/" + tabname;
-        String zkaddr = cli.getOptionValue("zkaddr");
         String batchSize = cli.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE);
         String mapLimit = cli.getOptionValue("mapLimit", DEFAULT_MAP_LIMIT);
         Class<TableMapper> mapperClass = (Class<TableMapper>) ClassUtils
@@ -129,16 +129,18 @@ public class HfileBulkToCsvExporter {
         conf.set(TableInputFormat.SCAN_BATCHSIZE, batchSize);
         conf.set(MRJobConfig.JOB_RUNNING_MAP_LIMIT, mapLimit);
         conf.set("mapred.textoutputformat.ignoreseparator", "true");
-        // see:https://github.com/apache/hadoop/blob/rel/release-2.7.2/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapreduce/util/ConfigUtil.java#L488-L489
+        // (deprecated)see:https://github.com/apache/hadoop/blob/rel/release-2.7.2/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapreduce/util/ConfigUtil.java#L488-L489
         conf.set("mapred.textoutputformat.separator", ",");
-        // conf.set(FileSystem.FS_DEFAULT_NAME_KEY, DEFAULT_FS);
+        // see:https://github.com/apache/hadoop/blob/rel/release-2.7.2/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core/src/main/java/org/apache/hadoop/mapreduce/lib/output/TextOutputFormat.java
+        conf.set("mapreduce.output.textoutputformat.separator", ",");
+        // conf.set(FileSystem.FS_DEFAULT_NAME_KEY, FileSystem.DEFAULT_FS);
 
         // Check TMP directory.
         FileSystem fs1 = FileSystem.get(new URI(tmpdir), conf, user);
         state(fs1.mkdirs(new Path(tmpdir)), format("Failed to mkdirs HDFS temporary directory. '%s'", tmpdir));
 
         // Check output directory.
-        FileSystem fs2 = FileSystem.get(conf);
+        FileSystem fs2 = FileSystem.get(new URI(outputdir), conf, user);
         Path parent = new Path(outputdir).getParent();
         if (fs2.exists(parent)) {
             fs2.rename(parent, Path.getPathWithoutSchemeAndAuthority(parent)
@@ -146,7 +148,7 @@ public class HfileBulkToCsvExporter {
         }
 
         // Sets scan filters.
-        HBaseUtil.setScanIfNecessary(conf, cli);
+        HBaseTools.setScanIfNecessary(conf, cli);
 
         // Job configuration.
         TableName tab = TableName.valueOf(tabname);

@@ -16,14 +16,14 @@
 package com.wl4g.dopaas.lcdp.tools.hbase.bulk;
 
 import static com.wl4g.component.common.lang.Assert2.state;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_HBASE_MR_TMPDIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_OUTPUT_DIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_MAP_LIMIT;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_SCAN_BATCH_SIZE;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_USER;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_GROUP;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_PROCESSED;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_TOTAL;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_HBASE_MR_TMPDIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_OUTPUT_DIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_MAP_LIMIT;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_SCAN_BATCH_SIZE;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_USER;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_GROUP;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_PROCESSED;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_TOTAL;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -52,7 +52,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import com.wl4g.component.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.NoOpTransformMapper;
-import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil;
+import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
 
 /**
  * HASE hfile bulk exporter.
@@ -69,7 +69,7 @@ public class HfileBulkToHdfsExporter {
      * e.g. </br>
      * 
      * <pre>
-     *  yarn jar xcloud-dopaas-lcdp-tools-hbase-migrator-master.jar \
+     *  yarn jar xcloud-dopaas-lcdp-tools-hbase-migrator-2.0.0.jar \
      *  com.wl4g.dopaas.lcdp.tools.hbase.bulk.HfileBulkToHdfsExporter \
      *  -s 11111112,ELE_R_P,134,01,20180919110850989 \
      *  -e 11111112,ELE_R_P,134,01,20180921124050540 \
@@ -82,13 +82,13 @@ public class HfileBulkToHdfsExporter {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        HBaseUtil.showBanner();
+        HBaseTools.showBanner();
 
         Builder builder = new Builder();
         builder.option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.");
         builder.option("z", "zkaddr", null, "Zookeeper address.");
         builder.option("t", "tabname", null, "Hbase table name.");
-        builder.option("o", "outputDir", DEFAULT_OUTPUT_DIR + "/{tableName}", "Hfile export output hdfs directory.");
+        builder.option("o", "output", DEFAULT_OUTPUT_DIR + "/{tableName}", "Hfile export output hdfs directory.");
         builder.option("b", "batchSize", DEFAULT_SCAN_BATCH_SIZE, "Scan batch size.");
         builder.option("L", "mapLimit", DEFAULT_MAP_LIMIT, "Mapred tasks limit.");
         builder.option("s", "startRow", EMPTY, "Scan start rowkey.");
@@ -137,7 +137,7 @@ public class HfileBulkToHdfsExporter {
         state(!fs2.exists(new Path(outputdir)), format("HDFS output directory already has data. '%s'", outputdir));
 
         // Sets scan filters.
-        HBaseUtil.setScanIfNecessary(conf, line);
+        HBaseTools.setScanIfNecessary(conf, line);
 
         // Job.
         TableName tab = TableName.valueOf(tabname);

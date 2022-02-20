@@ -41,22 +41,22 @@ import com.wl4g.component.common.lang.Assert2;
 import com.wl4g.component.common.resource.resolver.ClassPathResourcePatternResolver;
 
 /**
- * {@link HBaseUtil}
+ * {@link HBaseTools}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年5月17日 v1.0.0
  * @see
  */
-public abstract class HBaseUtil {
-    private static final Log log = LogFactory.getLog(HBaseUtil.class);
+public abstract class HBaseTools {
+    private static final Log log = LogFactory.getLog(HBaseTools.class);
 
     public static final String DEFAULT_USER = "hbase";
-    public static final String DEFUALT_COUNTER_GROUP = HBaseUtil.class.getSimpleName() + "@CounterGroup";
-    public static final String DEFUALT_COUNTER_TOTAL = "Total@Counter";
-    public static final String DEFUALT_COUNTER_PROCESSED = "Processed@Counter";
+    public static final String DEFUALT_COUNTER_GROUP = HBaseTools.class.getSimpleName().concat(" Counters");
+    public static final String DEFUALT_COUNTER_TOTAL = "Total";
+    public static final String DEFUALT_COUNTER_PROCESSED = "Progressed";
     public static final String DEFAULT_SCAN_BATCH_SIZE = "1000";
     public static final String DEFAULT_MAP_LIMIT = "8";
-    public static final String DEFAULT_FS = "/tmp";
+    public static final String DEFAULT_FS = "hdfs://127.0.0.1:8020";
     public static final String DEFAULT_HBASE_MR_TMPDIR = DEFAULT_FS + "/dopaas/tmp";
     public static final String DEFAULT_OUTPUT_DIR = DEFAULT_FS + "/dopaas/output";
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.lcdp.tools.hbase.bulk;
 
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_MAP_LIMIT;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_MAP_LIMIT;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.hadoop.conf.Configuration;
@@ -30,7 +30,7 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 
 import com.wl4g.component.common.cli.CommandUtils.Builder;
-import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil;
+import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
 
 /**
  * HASE hfile bulk importer.
@@ -45,7 +45,7 @@ public class HfileBulkFromHdfsImporter {
      * e.g.</br>
      * 
      * <pre>
-     *  yarn jar xcloud-dopaas-lcdp-tools-hbase-migrator-master.jar \
+     *  yarn jar xcloud-dopaas-lcdp-tools-hbase-migrator-2.0.0.jar \
      *  com.wl4g.dopaas.lcdp.tools.hbase.bulk.HfileBulkFromHdfsImporter \
      *  -z emr-header-1:2181 \
      *  -t safeclound.tb_elec_power \
@@ -56,7 +56,7 @@ public class HfileBulkFromHdfsImporter {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        HBaseUtil.showBanner();
+        HBaseTools.showBanner();
         CommandLine line = new Builder().option("z", "zkaddr", null, "Zookeeper address.")
                 .option("t", "tabname", null, "Hbase table name.")
                 .option("p", "path", null, "Data hdfs path to be import. eg. hdfs://localhost:9000/bak/mydb.tb_example1")

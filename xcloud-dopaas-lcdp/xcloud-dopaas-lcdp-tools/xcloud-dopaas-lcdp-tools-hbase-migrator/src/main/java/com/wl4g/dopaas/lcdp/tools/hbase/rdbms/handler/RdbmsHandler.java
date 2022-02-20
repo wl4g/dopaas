@@ -28,7 +28,7 @@ import org.apache.commons.cli.CommandLine;
 
 import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.RdbmsRepository;
 import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.SimpleHfileToRdbmsExporter;
-import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil;
+import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
 
 /**
  * {@link RdbmsHandler}
@@ -63,7 +63,7 @@ public abstract class RdbmsHandler {
     private final RdbmsRepository repository;
 
     public RdbmsHandler(CommandLine line) {
-        this.tableName = HBaseUtil.getShortTableName(line.getOptionValue("tabname"));
+        this.tableName = HBaseTools.getShortTableName(line.getOptionValue("tabname"));
         this.repository = createRepository0(line);
     }
 

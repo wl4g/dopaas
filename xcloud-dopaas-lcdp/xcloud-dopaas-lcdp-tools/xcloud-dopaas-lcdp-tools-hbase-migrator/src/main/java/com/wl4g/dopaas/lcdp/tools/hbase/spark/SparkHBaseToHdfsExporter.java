@@ -16,14 +16,16 @@
 package com.wl4g.dopaas.lcdp.tools.hbase.spark;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_HBASE_MR_TMPDIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_OUTPUT_DIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_HBASE_MR_TMPDIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_OUTPUT_DIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_USER;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -89,13 +91,15 @@ public class SparkHBaseToHdfsExporter implements Serializable {
         CommandLine cli = new Builder().option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.")
                 .option("z", "zkaddr", null, "Zookeeper address.")
                 .option("t", "tabname", null, "Hbase table name.")
-                .option("o", "outputDir", DEFAULT_OUTPUT_DIR + "/{tabname}", "Hfile export output hdfs directory.")
+                .option("o", "output", DEFAULT_OUTPUT_DIR + "/{tabname}", "Hfile export output hdfs directory.")
+                .option("U", "user", DEFAULT_USER, "User name used for scan check.")
                 .option("s", "startRow", EMPTY, "Scan start rowkey.")
                 .option("e", "endRow", EMPTY, "Scan end rowkey.")
                 .option("R", "repartition", EMPTY, "Repartition number.")
                 .build(args);
         String zkaddr = cli.getOptionValue("zkaddr");
         String tabname = cli.getOptionValue("tabname");
+        String user = cli.getOptionValue("user", DEFAULT_USER);
         String startRow = cli.getOptionValue("startRow");
         String endRow = cli.getOptionValue("endRow");
         String outputdir = cli.getOptionValue("output", DEFAULT_OUTPUT_DIR) + "/" + tabname;
@@ -129,7 +133,7 @@ public class SparkHBaseToHdfsExporter implements Serializable {
         }
 
         // Check output directory.
-        FileSystem fs = FileSystem.get(hadoopConf);
+        FileSystem fs = FileSystem.get(new URI(outputdir), hadoopConf, user);
         Path parent = new Path(outputdir).getParent();
         if (fs.exists(parent)) {
             fs.rename(parent, Path.getPathWithoutSchemeAndAuthority(parent)

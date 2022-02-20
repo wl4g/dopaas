@@ -26,7 +26,7 @@ import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.*;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.*;
 
 import java.io.IOException;
 import java.util.Iterator;

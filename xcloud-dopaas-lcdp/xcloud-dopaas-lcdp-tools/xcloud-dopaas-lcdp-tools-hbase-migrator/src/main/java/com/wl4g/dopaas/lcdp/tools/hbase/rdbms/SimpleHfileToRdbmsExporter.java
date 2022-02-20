@@ -16,13 +16,13 @@
 package com.wl4g.dopaas.lcdp.tools.hbase.rdbms;
 
 import static com.wl4g.component.common.lang.Assert2.state;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_HBASE_MR_TMPDIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_OUTPUT_DIR;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_SCAN_BATCH_SIZE;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFAULT_USER;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_GROUP;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_PROCESSED;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_TOTAL;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_HBASE_MR_TMPDIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_OUTPUT_DIR;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_SCAN_BATCH_SIZE;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_USER;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_GROUP;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_PROCESSED;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_TOTAL;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -51,7 +51,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import com.wl4g.component.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.handler.RdbmsHandler;
 import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.mapred.SimpleHfileToRdbmsMapper;
-import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil;
+import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
 
 /**
  * Simple HBase HFile to RDBMS exporter. </br>
@@ -97,7 +97,7 @@ public class SimpleHfileToRdbmsExporter {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        HBaseUtil.showBanner();
+        HBaseTools.showBanner();
 
         Builder builder = new Builder();
         builder.option("V", "verbose", "false", "Set to true to show messages about what the migrator(MR) is doing.");
@@ -167,7 +167,7 @@ public class SimpleHfileToRdbmsExporter {
         }
 
         // Sets scan filters.
-        HBaseUtil.setScanIfNecessary(conf, line);
+        HBaseTools.setScanIfNecessary(conf, line);
 
         // Job.
         TableName tab = TableName.valueOf(tabname);

@@ -23,9 +23,9 @@ import org.apache.hadoop.mapreduce.Counter;
 
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.BaseTransformMapper;
 import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.SimpleHfileToRdbmsExporter;
-import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil;
+import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
 
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.*;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.*;
 import static java.lang.String.format;
 
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class SimpleHfileToRdbmsMapper extends BaseTransformMapper {
                     cell.getQualifierLength());
             byte[] value = getCellFieldBytes(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
             String _qualifier = Bytes.toString(qualifier);
-            if (!HBaseUtil.isIgnoreHbaseQualifier(_qualifier)) {
+            if (!HBaseTools.isIgnoreHbaseQualifier(_qualifier)) {
                 rowdata.put(_qualifier, Bytes.toString(value));
             }
         }

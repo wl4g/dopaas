@@ -17,9 +17,9 @@ package com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred;
 
 import static com.wl4g.component.common.collection.CollectionUtils2.safeArray;
 import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_GROUP;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_PROCESSED;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseUtil.DEFUALT_COUNTER_TOTAL;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_GROUP;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_PROCESSED;
+import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_TOTAL;
 import static java.lang.String.format;
 
 import java.io.IOException;
