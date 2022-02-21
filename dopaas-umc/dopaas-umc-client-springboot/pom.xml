@@ -1,0 +1,124 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>dopaas-umc-client-springboot</artifactId>
+	<packaging>jar</packaging>
+	<name>DoPaaS UMC Client for Springboot</name>
+	<url>http://xcloud.wl4g.com</url>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>dopaas-umc</artifactId>
+		<version>3.0.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-common</artifactId>
+			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.wl4g</groupId>
+					<artifactId>dopaas-iam-common</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-infra-core</artifactId>
+		</dependency>
+		<!-- Spring boot actuator -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+		<!-- Metric registry -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-jmx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+		<!-- Tracking APM -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-zipkin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>io.zipkin.reporter2</groupId>
+					<artifactId>zipkin-sender-activemq-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.zipkin.reporter2</groupId>
+					<artifactId>zipkin-sender-amqp-client</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.zipkin.brave</groupId>
+					<artifactId>brave-instrumentation-spring-rabbit</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Spring boot admin -->
+		<!-- <dependency> -->
+		<!-- <groupId>de.codecentric</groupId> -->
+		<!-- <artifactId>spring-boot-admin-starter-client</artifactId> -->
+		<!-- </dependency> -->
+		<!-- Extension health and metrics depends -->
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.5</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.mqttv5.client</artifactId>
+			<version>1.2.5</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-mqtt</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

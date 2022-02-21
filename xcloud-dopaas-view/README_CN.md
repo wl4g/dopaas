@@ -1,1 +1,0 @@
-已迁移至 [xcloud-dopaas-view](../../../../xcloud-dopaas-view)

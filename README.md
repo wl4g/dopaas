@@ -1,5 +1,5 @@
-# XCloud DoPaaS
-![XCloud DoPaaS](shots/logo.jpg)
+# DoPaaS
+![DoPaaS](shots/logo.jpg)
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
 
@@ -9,20 +9,20 @@
 ## One stop solution of PaaS platform based on DevSecOps
 > Based on SpringCloud/Docker/ServiceMesh(istio), the main modules are: unified asset management center (Cmdb), unified continuous delivery center (distributed compilation CI/CD), Iam Certification Center(Rbac/Oidc/[Saml2])), unified monitoring center (SBA/Zipkin/Promethous), unified configuration center, unified operation center (Elasticjob/Spark/Flink/MR), unified Document Center (Swagger/Rap), unified development center (Lcdp/Autogen), unified private object storage management, unified library management (Git/Nexus(Maven/Image)), Shell-Cli, multiple tool chains (Hdfs/HBase/Phoenix/OSS), instant messaging, lightweight risk control, etc
 
-[![Build Status](https://travis-ci.org/wl4g/xcloud-dopaas.svg)](https://travis-ci.org/wl4g/xcloud-dopaas)
+[![Build Status](https://travis-ci.org/wl4g/dopaas.svg)](https://travis-ci.org/wl4g/dopaas)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
-[![Maven](https://img.shields.io/badge/Maven-3.5+-green.svg)](https://github.com/wl4g/xcloud-dopaas)
-[![JDK](https://img.shields.io/badge/JDK-1.8+-green.svg)](https://github.com/wl4g/xcloud-dopaas)
-[![MySQL](https://img.shields.io/badge/MySQL-5.6+-green.svg)](https://github.com/wl4g/xcloud-dopaas)
-[![Redis](https://img.shields.io/badge/RedisCluster-3+-green.svg)](https://github.com/wl4g/xcloud-dopaas)
-[![Kafka](https://img.shields.io/badge/Kafka-0.10.0+-green.svg)](https://github.com/wl4g/xcloud-dopaas)
-[![Zookeeper](https://img.shields.io/badge/Zookeeper-3.4.6+-green.svg)](https://github.com/wl4g/xcloud-dopaas)
-[![Docker-ce](https://img.shields.io/badge/DockerCE-18.06+-green.svg)](https://github.com/wl4g/xcloud-dopaas)
+[![Maven](https://img.shields.io/badge/Maven-3.5+-green.svg)](https://github.com/wl4g/dopaas)
+[![JDK](https://img.shields.io/badge/JDK-1.8+-green.svg)](https://github.com/wl4g/dopaas)
+[![MySQL](https://img.shields.io/badge/MySQL-5.6+-green.svg)](https://github.com/wl4g/dopaas)
+[![Redis](https://img.shields.io/badge/RedisCluster-3+-green.svg)](https://github.com/wl4g/dopaas)
+[![Kafka](https://img.shields.io/badge/Kafka-0.10.0+-green.svg)](https://github.com/wl4g/dopaas)
+[![Zookeeper](https://img.shields.io/badge/Zookeeper-3.4.6+-green.svg)](https://github.com/wl4g/dopaas)
+[![Docker-ce](https://img.shields.io/badge/DockerCE-18.06+-green.svg)](https://github.com/wl4g/dopaas)
 [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)
-[![GithubStars](https://img.shields.io/github/stars/wl4g/xcloud-dopaas)](https://github.com/wl4g/xcloud-dopaas)
-[![GiteeStars](https://gitee.com/wl4g/xcloud-dopaas/badge/star.svg)](https://gitee.com/wl4g/xcloud-dopaas)
-[![Ubuntu](https://img.shields.io/badge/Ubuntu-16+-green.svg)](https://gitee.com/wl4g/xcloud-dopaas)
-[![CentOS](https://img.shields.io/badge/CentOS-6.5+-green.svg)](https://gitee.com/wl4g/xcloud-dopaas)
+[![GithubStars](https://img.shields.io/github/stars/wl4g/dopaas)](https://github.com/wl4g/dopaas)
+[![GiteeStars](https://gitee.com/wl4g/dopaas/badge/star.svg)](https://gitee.com/wl4g/dopaas)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-16+-green.svg)](https://gitee.com/wl4g/dopaas)
+[![CentOS](https://img.shields.io/badge/CentOS-6.5+-green.svg)](https://gitee.com/wl4g/dopaas)
 
 
 ## 1. Development and runtime on technology stack(primary)
@@ -52,9 +52,9 @@ Shardingsphere-Elasticjob:3.0.0 +
 This method is applicable to the rapid deployment of regular hosts (non container). The deployment script will automatically detect the installation, including jdk/nginx/git/maven/node/eureka/zookeeper and all springboot apps, but not including redis/redis cluster(one of the options) and Mysql, which need to be manually installed.
 
 ```
-bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy/deploy-boot.sh)"
+bash -c "$(curl -L https://raw.githubusercontent.com/wl4g/dopaas/master/script/deploy/deploy-boot.sh)"
 # or
-bash -c "$(curl -L https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy/deploy-boot.sh)"
+bash -c "$(curl -L https://gitee.com/wl4g/dopaas/raw/master/script/deploy/deploy-boot.sh)"
 ```
 - Please pay attention to modify [`deploy-env.sh`](script/deploy/deploy-env.sh) custom environment configuration according to the script prompt, and then re execute [`./deploy-boot.sh`](script/deploy/deploy-boot.sh). Please wait about 8-20 minutes patiently for the deployment from source code compilation (because the first time the code and dependency library will be slow to download. If you need to redeploy, you can set the `export buildForcedOnPullUpToDate=true` or `export deployFrontendSkip=true` to skip backend compilation and frontend compilation to accelerate)
 
@@ -99,28 +99,28 @@ It is suitable for build secondary development environment
 > Compile according to the order of project dependency. The `mvn -P` options are: `springExecJar` (packaged as a single executable jar) and `mvnAssTar` (packaged as a general software release package), default. 
 
 ```
-git clone https://github.com/wl4g/xcloud-component.git # Relatively new upstream (recommended)
-# git clone https://gitee.com/wl4g/xcloud-component.git # or
-mvn -f xcloud-component -U clean install -DskipTests -T 2C
+git clone https://github.com/wl4g/component.git # Relatively new upstream (recommended)
+# git clone https://gitee.com/wl4g/component.git # or
+mvn -f component -U clean install -DskipTests -T 2C
 
-git clone https://github.com/wl4g/xcloud-iam.git # Relatively new upstream (recommended)
-# git clone https://gitee.com/wl4g/xcloud-iam.git # or
-mvn -f xcloud-iam -U clean install -DskipTests -T 2C
+git clone https://github.com/wl4g/iam.git # Relatively new upstream (recommended)
+# git clone https://gitee.com/wl4g/iam.git # or
+mvn -f iam -U clean install -DskipTests -T 2C
 
-git clone https://github.com/wl4g/xcloud-dopaas.git # Relatively new upstream (recommended)
-# git clone https://gitee.com/wl4g/xcloud-dopaas.git # or
-mvn -f xcloud-dopaas -U clean install -DskipTests -T 2C
+git clone https://github.com/wl4g/dopaas.git # Relatively new upstream (recommended)
+# git clone https://gitee.com/wl4g/dopaas.git # or
+mvn -f dopaas -U clean install -DskipTests -T 2C
 ```
 
 #### 2.2.3 Frontend compiling
 ```
-git clone https://github.com/wl4g/xcloud-dopaas-view.git # Relatively new upstream (recommended)
-or git clone https://gitee.com/wl4g/xcloud-dopaas-view.git
+git clone https://github.com/wl4g/dopaas-view.git # Relatively new upstream (recommended)
+or git clone https://gitee.com/wl4g/dopaas-view.git
 npm run dev # Development debugging
 npm run build # Production building
 ```
 
-### 2.3 Init DB: first, prepare a MySQL5.6+ instance and create a database named `dopaas`(utf8/utf8)_bin), and then [Init DB sql](../../../xcloud-dopaas-db).  
+### 2.3 Init DB: first, prepare a MySQL5.6+ instance and create a database named `dopaas`(utf8/utf8)_bin), and then [Init DB sql](../../../dopaas-db).  
 > Notes: the SQL script should correspond to the source code version. We will update it regularly. It is recommended to use the latest version
 
 ### 2.4 Configure DNS resolutio(C:\Windows\System32\drivers\etc or vim /etc/hosts)  
@@ -186,29 +186,29 @@ com.wl4g.UrmManager
 
 
 ## 3. Submodule documents
-- [UCI](../../blob/master/xcloud-dopaas-uci/README.md)  Unified Continuous Integration Service(CI/CD)
-- [UMC](../../blob/master/xcloud-dopaas-umc/README.md)  Unified Monitoring and Operation Center(applications healthing, tracking, alarming, ELK log analysis, etc)
-- [URM](../../blob/master/xcloud-dopaas-urm/README.md)  Unified Repository Management(source repo/build repo/image repo)
-- [UCM](../../blob/master/xcloud-dopaas-ucm/README.md)  Unified Config Management(Online configuration of hot updates such as dataSource, redisClient, etc)
-- [CMDB](../../blob/master/xcloud-dopaas-cmdb/README.md)  Configuration Management Database(hosts, applications, secretKeys, auditing, DNS zone resoluting, etc)
-- [UDM](../../blob/master/xcloud-dopaas-udm/README.md)  Unified Document Management(Online APIs/swagger documents, etc)
-- [LCDP](../../blob/master/xcloud-dopaas-lcdp/README_CN.md) Low Code Development Platform(Automatic generate of multi language/architecture complete projects (e.g springcloud/dubbo/golang/python/vue/angularjs, etc), WebIDE, and various developer tool chains, etc)
-- [UDS](../../blob/master/xcloud-dopaas-uds/README.md)  Unified distributed scheduling control center, such as elasticjob/spark/flink task, etc.
-- [UOS](../../blob/master/xcloud-dopaas-uos/README.md)  Unified object storage services, based on springcloud development support NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
-- [UIM](../../blob/master/xcloud-dopaas-uim/README.md)  Unified instant messaging service, convenient for project personnel to communicate in time, safe distribution of internal data.
+- [UCI](../../blob/master/dopaas-uci/README.md)  Unified Continuous Integration Service(CI/CD)
+- [UMC](../../blob/master/dopaas-umc/README.md)  Unified Monitoring and Operation Center(applications healthing, tracking, alarming, ELK log analysis, etc)
+- [URM](../../blob/master/dopaas-urm/README.md)  Unified Repository Management(source repo/build repo/image repo)
+- [UCM](../../blob/master/dopaas-ucm/README.md)  Unified Config Management(Online configuration of hot updates such as dataSource, redisClient, etc)
+- [CMDB](../../blob/master/dopaas-cmdb/README.md)  Configuration Management Database(hosts, applications, secretKeys, auditing, DNS zone resoluting, etc)
+- [UDM](../../blob/master/dopaas-udm/README.md)  Unified Document Management(Online APIs/swagger documents, etc)
+- [LCDP](../../blob/master/dopaas-lcdp/README_CN.md) Low Code Development Platform(Automatic generate of multi language/architecture complete projects (e.g springcloud/dubbo/golang/python/vue/angularjs, etc), WebIDE, and various developer tool chains, etc)
+- [UDS](../../blob/master/dopaas-uds/README.md)  Unified distributed scheduling control center, such as elasticjob/spark/flink task, etc.
+- [UOS](../../blob/master/dopaas-uos/README.md)  Unified object storage services, based on springcloud development support NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
+- [UIM](../../blob/master/dopaas-uim/README.md)  Unified instant messaging service, convenient for project personnel to communicate in time, safe distribution of internal data.
 
 
 ## 4. Other related apps and components documents
-- [SHELL](xcloud-shell/README.md)            Shell Cli, adding a hbase-shell-like console to your app
-- [IAM](xcloud-iam/README.md)                Unified identity and access management services, support SSO/CAS/oauth2/opensaml etc, It also supports multiple deployment modes(local/cluster/gateway)
-- [Gateway](xcloud-gateway/README.md)        Enterprise microservice gateway based on spring cloud gateway, Can integrate with CI to realize Canary deployment.
+- [SHELL](shell/README.md)            Shell Cli, adding a hbase-shell-like console to your app
+- [IAM](iam/README.md)                Unified identity and access management services, support SSO/CAS/oauth2/opensaml etc, It also supports multiple deployment modes(local/cluster/gateway)
+- [Gateway](gateway/README.md)        Enterprise microservice gateway based on spring cloud gateway, Can integrate with CI to realize Canary deployment.
 
 
 ## 5. Communicate, feedback and contribute?
 - Click add to group [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)
 - ![q855349515](shots/q855349515.jpg)
-- GitHub: https://github.com/wl4g/xcloud-dopaas
-- OS China: https://gitee.com/wl4g/xcloud-dopaas
+- GitHub: https://github.com/wl4g/dopaas
+- OS China: https://gitee.com/wl4g/dopaas
 - No matter how strong a person's personal ability is, he can't defeat a team. He hopes that his brothers and sisters can support him and contribute some of his own code to improve it together (^_^).
 
 [Share Code?](https://www.cnblogs.com/wenber/p/3630921.html)

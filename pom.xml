@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
-	<artifactId>xcloud-dopaas</artifactId>
-	<version>2.0.0</version>
+	<artifactId>dopaas</artifactId>
+	<version>3.0.0</version>
 	<packaging>pom</packaging>
-	<name>XCloud DoPaaS</name>
+	<name>DoPaaS</name>
 	<url>https://xcloud.wl4g.com</url>
-	<description>One stop Devops solution PaaS  platform.</description>
+	<description>One stop DevOps solution PaaS  platform.</description>
 	<organization>
 		<name>Wanglsir</name>
 		<url>http://xcloud.wl4g.com</url>
@@ -20,9 +20,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git@github.com:wl4g/xcloud-dopaas.git</connection>
-		<developerConnection>scm:git:git@github.com:wl4g/xcloud-dopaas.git</developerConnection>
-		<url>https://github.com/wl4g/xcloud-dopaas</url>
+		<connection>scm:git:git@github.com:wl4g/dopaas.git</connection>
+		<developerConnection>scm:git:git@github.com:wl4g/dopaas.git</developerConnection>
+		<url>https://github.com/wl4g/dopaas</url>
 		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
@@ -53,19 +53,19 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>xcloud-dopaas-common</module>
-		<module>xcloud-dopaas-home</module>
-		<module>xcloud-dopaas-uci</module>
-		<module>xcloud-dopaas-udm</module>
-		<module>xcloud-dopaas-cmdb</module>
-		<!-- <module>xcloud-dopaas-ucm</module> -->
-		<module>xcloud-dopaas-umc</module>
-		<module>xcloud-dopaas-urm</module>
-		<module>xcloud-dopaas-lcdp</module>
-		<module>xcloud-dopaas-uds</module>
-		<!-- <module>xcloud-dopaas-uos</module> -->
-		<module>xcloud-dopaas-all-dependencies</module>
-		<module>xcloud-dopaas-all-starter</module>
+		<module>dopaas-common</module>
+		<module>dopaas-home</module>
+		<module>dopaas-uci</module>
+		<module>dopaas-udm</module>
+		<module>dopaas-cmdb</module>
+		<!-- <module>dopaas-ucm</module> -->
+		<module>dopaas-umc</module>
+		<module>dopaas-urm</module>
+		<module>dopaas-lcdp</module>
+		<module>dopaas-uds</module>
+		<!-- <module>dopaas-uos</module> -->
+		<module>dopaas-all-dependencies</module>
+		<module>dopaas-all-starter</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -143,43 +143,43 @@
 		<dependencies>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-component-bom</artifactId>
+				<artifactId>dopaas-infra-bom</artifactId>
 				<version>2.0.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- XCloud shell dependentcie's -->
+			<!-- shell dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-shell-bom</artifactId>
+				<artifactId>dopaas-shell-bom</artifactId>
 				<version>3.1.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- XCloud IAM dependentcie's -->
+			<!-- IAM dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-client-springboot</artifactId>
+				<artifactId>dopaas-iam-client-springboot</artifactId>
 				<version>2.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-core</artifactId>
+				<artifactId>dopaas-iam-core</artifactId>
 				<version>2.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-common</artifactId>
+				<artifactId>dopaas-iam-common</artifactId>
 				<version>2.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-service-facade</artifactId>
+				<artifactId>dopaas-iam-service-facade</artifactId>
 				<version>2.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>xcloud-iam-client-test</artifactId>
+				<artifactId>dopaas-iam-client-springboot-mock</artifactId>
 				<version>2.0.0</version>
 				<scope>test</scope>
 			</dependency>

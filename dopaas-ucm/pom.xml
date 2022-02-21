@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>dopaas-ucm</artifactId>
+	<packaging>pom</packaging>
+	<name>DoPaaS UCM(Unified Config Management)</name>
+	<url>http://xcloud.wl4g.com</url>
+	<description>A Open Source Distributed Independent Configuration Center based on Spring Cloud.</description>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>dopaas</artifactId>
+		<version>2.0.0</version>
+	</parent>
+	<modules>
+		<!-- <module>dopaas-ucm-common</module> -->
+		<!-- <module>dopaas-ucm-config</module> -->
+		<!-- <module>dopaas-ucm-core</module> -->
+		<!-- <module>dopaas-ucm-client-java</module> -->
+		<!-- <module>dopaas-ucm-client-springboot</module> -->
+		<!-- <module>dopaas-ucm-example</module> -->
+		<!-- <module>dopaas-ucm-server</module> -->
+	</modules>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<final.name>ucm-server</final.name>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>mvnAssTar</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<finalName>${final.name}-${project.version}-bin</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/package.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>springExecJar</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<mainClass>com.wl4g.UcmServer</mainClass>
+							<finalName>${final.name}-${project.version}-bin</finalName>
+							<!-- for using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher -->
+							<!-- @see:https://www.baeldung.com/spring-boot-main-class -->
+							<!-- @see:https://www.jianshu.com/p/66a101c85485 -->
+							<layout>ZIP</layout>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>repackage</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

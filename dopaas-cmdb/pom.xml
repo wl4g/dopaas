@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>dopaas-cmdb</artifactId>
+	<packaging>pom</packaging>
+	<name>DoPaaS CMDB(Configuration Management DB)</name>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>dopaas</artifactId>
+		<version>3.0.0</version>
+	</parent>
+	<modules>
+		<module>dopaas-cmdb-service-data</module>
+		<module>dopaas-cmdb-service-facade</module>
+		<module>dopaas-cmdb-extension-shardingsphere-v4</module>
+		<!--<module>dopaas-cmdb-extension-shardingsphere-v5</module>-->
+		<module>dopaas-cmdb-service-starter-facade</module>
+		<module>dopaas-cmdb-service-starter-manager</module>
+		<!-- <module>dopaas-cmdb-initializer</module> -->
+	</modules>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
