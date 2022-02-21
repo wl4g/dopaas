@@ -103,7 +103,7 @@ please refer to the template file: '$currDir/deploy-host.csv.tpl'"
 
 # Pull project sources, return(0/1)
 function pullSources() {
-  local projectName=$1 # e.g: xcloud-dopaas
+  local projectName=$1 # e.g: dopaas
   local cloneUrl=$2
   local branch=$3
   local projectDir="$currDir/$projectName"
@@ -137,7 +137,7 @@ function pullSources() {
 
 # Pull and maven compile.
 function pullAndMvnCompile() {
-  local projectName=$1 # e.g xcloud-dopaas
+  local projectName=$1 # e.g dopaas
   local cloneUrl=$2
   local branch=$3
   local projectDir="$currDir/$projectName"
@@ -306,10 +306,10 @@ function deployBackendAll() {
   # Deploying prepare services.
   log "Pulling and compile backend project sources ..."
   deployZookeeperServers
-  pullAndMvnCompile "$gitXCloudComponentProjectName" "$gitXCloudComponentUrl" "$gitComponentBranch"
+  pullAndMvnCompile "$gitDoPaaSInfraProjectName" "$gitDoPaaSInfraUrl" "$gitComponentBranch"
   deployEurekaServers
-  pullAndMvnCompile "$gitXCloudIamProjectName" "$gitXCloudIamUrl" "$gitIamBranch"
-  pullAndMvnCompile "$gitXCloudDoPaaSProjectName" "$gitXCloudDoPaaSUrl" "$gitDoPaaSBranch"
+  pullAndMvnCompile "$gitDoPaaSIamProjectName" "$gitDoPaaSIamUrl" "$gitIamBranch"
+  pullAndMvnCompile "$gitDoPaaSProjectName" "$gitDoPaaSUrl" "$gitDoPaaSBranch"
   deployNginxServers
 
   # Gets apps modules.
@@ -428,7 +428,7 @@ function deployNginxServers() {
     fi
     # Configure nginx configuration and install.
     log "Configuring the nginx configuration file of dopaas services ..."
-    cd $workspaceDir && rm -rf nginx && cp -r $currDir/$gitXCloudDoPaaSProjectName/nginx .
+    cd $workspaceDir && rm -rf nginx && cp -r $currDir/$gitDoPaaSProjectName/nginx .
     makeNginxConf "$workspaceDir/nginx/conf.d/dopaas.conf" "$springProfilesActive" "${globalAllNodes[*]}" 
     cd nginx && tar -cf nginxconf.tar *
     doScp "$user" "$passwd" "$host" "$workspaceDir/nginx/nginxconf.tar" "/etc/nginx/" "true"
@@ -679,7 +679,7 @@ function deployFrontendAll() {
   if [ "$deployFrontendSkip" == "true" ]; then
     log "Skiped for deploy frontend application, You can set export deployFrontendSkip='true' to skip deploying the frontend!"; return 0
   fi
-  local appName="$gitXCloudDoPaaSViewProjectName"
+  local appName="$gitDoPaaSViewProjectName"
   local appInstallDir="${deployFrontendAppBaseDir}/${appName}-package"
   local node=${globalAllNodes[0]} # First node deploy the nginx by default.
   local host=$(echo $node|awk -F 'ξ' '{print $1}')
@@ -691,17 +691,17 @@ function deployFrontendAll() {
   {
     log "Deploying of dopaas $appName ..."
     # Pull frontend.
-    pullSources "$gitXCloudDoPaaSViewProjectName" "$gitXCloudDoPaaSViewUrl" "$gitDoPaaSViewBranch"
+    pullSources "$gitDoPaaSViewProjectName" "$gitDoPaaSViewUrl" "$gitDoPaaSViewBranch"
     # Compile frontend.
     if [[ $? == 1 || "$buildForcedOnPullUpToDate" == 'true' ]]; then
-      log "Compiling $cmdNpm $gitXCloudDoPaaSViewProjectName ..."
+      log "Compiling $cmdNpm $gitDoPaaSViewProjectName ..."
       sudo $cmdNpm install 2>&1 | tee -a $logFile
       sudo $cmdNpm run build 2>&1 | tee -a $logFile
       [ ${PIPESTATUS[0]} -ne 0 ] && exit -1
     fi
 
     # Deploy frontend.
-    local fProjectDir="$currDir/$gitXCloudDoPaaSViewProjectName"
+    local fProjectDir="$currDir/$gitDoPaaSViewProjectName"
     # Extract npm project version from package.json
     local fBuildVersion=$(getFrontendBuildVersion)
     local deployFrontendDir="${appInstallDir}/${appName}-${fBuildVersion}-bin"
@@ -711,12 +711,12 @@ function deployFrontendAll() {
     fi
     cd $fProjectDir && tar -zcf dist.tar.gz dist/
     doRemoteCmd "$user" "$passwd" "$host" "mkdir -p $deployFrontendDir && \rm -rf $deployFrontendDir/*" "true" "true"
-    log "[$gitXCloudDoPaaSViewProjectName/$host] Transfer frontend assets to $deployFrontendDir ..."
+    log "[$gitDoPaaSViewProjectName/$host] Transfer frontend assets to $deployFrontendDir ..."
     doScp "$user" "$passwd" "$host" "$fProjectDir/dist.tar.gz" "$deployFrontendDir" "true"
     doRemoteCmd "$user" "$passwd" "$host" "cd $deployFrontendDir && tar -zxf dist.tar.gz --strip-components=1 && rm -rf dist.tar.gz && chmod 755 -R $deployFrontendDir" "true" "true"
     # Restart nginx(first install).
     doRemoteCmd "$user" "$passwd" "$host" "[ -n \"$(echo command -v systemctl)\" ] && sudo systemctl restart nginx || /etc/init.d/nginx.service restart" "false" "true"
-    log "[$gitXCloudDoPaaSViewProjectName/$host] Deployed frontend to remote '${deployFrontendDir}' completed."
+    log "[$gitDoPaaSViewProjectName/$host] Deployed frontend to remote '${deployFrontendDir}' completed."
   } &
 }
 
@@ -727,14 +727,14 @@ function main() {
   fi
   [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
   log ""
-  log "「 Welcome to XCloud DoPaaS Deployer (Host) 」"
+  log "「 Welcome to DoPaaS Deployer (Host) 」"
   log " \033[32m ___       ___            ___\033[0m"
   log " \033[32m| . \ ___ | . \ ___  ___ / __>\033[0m"
   log " \033[32m| | |/ . \|  _/<_> |<_> |\__ \\\\\033[0m"
   log " \033[32m|___/\___/|_|  <___|<___|<___/\033[0m"
   log ""
-  log " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
-  log " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
+  log " Wiki: https://github.com/wl4g/dopaas/blob/master/README.md"
+  log " Wiki(CN): https://gitee.com/wl4g/dopaas/blob/master/README_CN.md"
   log " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
   log " Version: 2.0.0"
   log " Time: $(date '+%Y-%m-%d %H:%M:%S')"

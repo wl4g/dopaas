@@ -26,8 +26,8 @@ export currDir=$(cd "`dirname $0`"/ ; pwd)
 # Basic deploy environment variables.
 [ -z "$workspaceDir" ] && export workspaceDir="${HOME}/.deploy-workspace" && mkdir -p $workspaceDir
 [ -z "$deployDebug" ] && export deployDebug="false"
-[ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/xcloud-dopaas/master/script/deploy"
-[ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/xcloud-dopaas/raw/master/script/deploy"
+[ -z "$scriptsBaseUrl" ] && export scriptsBaseUrl="https://raw.githubusercontent.com/wl4g/dopaas/master/script/deploy"
+[ -z "$scriptsBaseUrlBackup1" ] && export scriptsBaseUrlBackup1="https://gitee.com/wl4g/dopaas/raw/master/script/deploy"
 
 # Detecting network environment.
 function detectingNetwork() {
@@ -262,14 +262,14 @@ function execWithConfirmingEnvironment() {
 function main() {
   [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
   echo -e ""
-  echo -e "「 Welcome to XCloud DoPaaS Deployer (Boot) 」"
+  echo -e "「 Welcome to DoPaaS Deployer (Boot) 」"
   echo -e " \033[32m ___       ___            ___\033[0m"
   echo -e " \033[32m| . \ ___ | . \ ___  ___ / __>\033[0m"
   echo -e " \033[32m| | |/ . \|  _/<_> |<_> |\__ \\\\\033[0m"
   echo -e " \033[32m|___/\___/|_|  <___|<___|<___/\033[0m"
   echo -e ""
-  echo -e " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
-  echo -e " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
+  echo -e " Wiki: https://github.com/wl4g/dopaas/blob/master/README.md"
+  echo -e " Wiki(CN): https://gitee.com/wl4g/dopaas/blob/master/README_CN.md"
   echo -e " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
   echo -e " Version: 2.0.0"
   echo -e " Time: $(date '+%Y-%m-%d %H:%M:%S')"

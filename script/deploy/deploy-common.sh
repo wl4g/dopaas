@@ -445,7 +445,7 @@ function checkInstallServiceScript() {
   elif [ "$buildPkgType" == "springExecJar" ]; then
     local appRunCmd="$javaExec -server $jvmDebugOpts $jvmHeapOpts $jvmPerformanceOpts $jvmGcLogOpts $jvmJmxOpts $jvmJavaOpts -jar ${appHome}/${appName}-${appVersion}-bin.jar $appOpts"
     # for example using: java -cp myapp.jar -Dloader.main=com.MyApp org.springframework.boot.loader.PropertiesLauncher
-    # for example: xcloud-dopaas/xcloud-dopaas-ci/xcloud-dopaas-ci-service-starter-facade/pom.xml#profile.id=springExecJar
+    # for example: dopaas/dopaas-ci/dopaas-ci-service-starter-facade/pom.xml#profile.id=springExecJar
     # refer to: https://www.baeldung.com/spring-boot-main-class, https://www.jianshu.com/p/66a101c85485
     local appShellRunCmd="$javaExec -client -Dloader.main=com.wl4g.ShellBootstrap -Dprompt=$appName -Dservname=$appName $shellPort -jar .:$appHome/${appName}-${appVersion}-bin.jar"
   else
@@ -722,7 +722,7 @@ function downloadFile() {
 
 # Gets frontend project build version.
 function getFrontendBuildVersion() {
-  local fProjectDir="$currDir/$gitXCloudDoPaaSViewProjectName"
+  local fProjectDir="$currDir/$gitDoPaaSViewProjectName"
   # Extract npm project version from package.json
   local fBuildVersion=$(cat "$fProjectDir/package.json"|grep -E "\"version\":(\s)*"|awk -F ':' '{print $2}'|sed -r "s/\"//g"|sed 's/,//g'|sed 's/ //g')
   echo "$fBuildVersion"
@@ -760,7 +760,7 @@ function makeNginxConf() {
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# XCloud DoPaaS Servers Forward configuration.
+# DoPaaS Servers Forward configuration.
 #   (Notes: this deployment structure is only for routine deployment, It is
 #    recommended to modify the production environment, for example: ELB/SLB/HAProxy/LVS)
 
@@ -783,7 +783,7 @@ server {
     server_name dopaas.wl4g.${springProfilesActive};
     include /etc/nginx/default.d/*.conf;
     location / {
-       root /usr/share/nginx/html/xcloud-dopaas-view-package/xcloud-dopaas-view-${fBuildVersion}-bin;
+       root /usr/share/nginx/html/dopaas-view-package/dopaas-view-${fBuildVersion}-bin;
        index index.html;
     }
 }

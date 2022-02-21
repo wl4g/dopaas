@@ -73,15 +73,15 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$localGitDownloadUrlForUbuntu20x64" ] && export localGitDownloadUrlForUbuntu20x64="file://${pkgRepoLocalDir}/git-2.27.0-ubuntu20-x64-bin.tar.gz"
 # Clone URLs.
 [ -z "$gitBaseUri" ] && export gitBaseUri=$([ "$isChinaLANNetwork" == "Y" ] && echo "https://gitee.com/wl4g" || echo "https://github.com/wl4g") # For speed-up, fuck!
-[ -z "$gitXCloudComponentUrl" ] && export gitXCloudComponentUrl="${gitBaseUri}/xcloud-component"
-[ -z "$gitXCloudIamUrl" ] && export gitXCloudIamUrl="${gitBaseUri}/xcloud-iam"
-[ -z "$gitXCloudDoPaaSUrl" ] && export gitXCloudDoPaaSUrl="${gitBaseUri}/xcloud-dopaas"
-[ -z "$gitXCloudDoPaaSViewUrl" ] && export gitXCloudDoPaaSViewUrl="${gitBaseUri}/xcloud-dopaas-view"
+[ -z "$gitDoPaaSInfraUrl" ] && export gitDoPaaSInfraUrl="${gitBaseUri}/dopaas-infra"
+[ -z "$gitDoPaaSIamUrl" ] && export gitDoPaaSIamUrl="${gitBaseUri}/dopaas-iam"
+[ -z "$gitDoPaaSUrl" ] && export gitDoPaaSUrl="${gitBaseUri}/dopaas"
+[ -z "$gitDoPaaSViewUrl" ] && export gitDoPaaSViewUrl="${gitBaseUri}/dopaas-view"
 # Git project name of URLs.
-[ -z "$gitXCloudComponentProjectName" ] && export gitXCloudComponentProjectName="$(echo `basename $gitXCloudComponentUrl`|sed s/.git//g)"
-[ -z "$gitXCloudIamProjectName" ] && export gitXCloudIamProjectName="$(echo `basename $gitXCloudIamUrl`|sed s/.git//g)"
-[ -z "$gitXCloudDoPaaSProjectName" ] && export gitXCloudDoPaaSProjectName="$(echo `basename $gitXCloudDoPaaSUrl`|sed s/.git//g)"
-[ -z "$gitXCloudDoPaaSViewProjectName" ] && export gitXCloudDoPaaSViewProjectName="$(echo `basename $gitXCloudDoPaaSViewUrl`|sed s/.git//g)"
+[ -z "$gitDoPaaSInfraProjectName" ] && export gitDoPaaSInfraProjectName="$(echo `basename $gitDoPaaSInfraUrl`|sed s/.git//g)"
+[ -z "$gitDoPaaSIamProjectName" ] && export gitDoPaaSIamProjectName="$(echo `basename $gitDoPaaSIamUrl`|sed s/.git//g)"
+[ -z "$gitDoPaaSProjectName" ] && export gitDoPaaSProjectName="$(echo `basename $gitDoPaaSUrl`|sed s/.git//g)"
+[ -z "$gitDoPaaSViewProjectName" ] && export gitDoPaaSViewProjectName="$(echo `basename $gitDoPaaSViewUrl`|sed s/.git//g)"
 # pull branchs.
 [ -z "$gitDefaultBranch" ] && export gitDefaultBranch="master"
 [ -z "$gitComponentBranch" ] && export gitComponentBranch="${gitDefaultBranch}"
@@ -110,7 +110,7 @@ currDate=$(date -d today +"%Y-%m-%d_%H%M%S")
 [ -z "$deployBackendSkip" ] && export deployBackendSkip="false"
 
 # Deploy(eureka).
-export deployEurekaBuildModule="eureka-server,8761,internal,${currDir}/xcloud-component/xcloud-component-integration/xcloud-component-integration-eureka/target"
+export deployEurekaBuildModule="eureka-server,8761,internal,${currDir}/dopaas-infra/dopaas-infra-integration/dopaas-infra-integration-eureka/target"
 
 # Deploy(zookeeper).(https://www.apache.org/dyn/closer.lua/zookeeper/zookeeper-3.6.3/apache-zookeeper-3.6.3-bin.tar.gz)
 [ -z "$zkHome" ] && export zkHome="$deployAppBaseDir/zookeeper-current/"
@@ -134,39 +134,39 @@ export deployEurekaBuildModule="eureka-server,8761,internal,${currDir}/xcloud-co
 
 # Delopy(standalone mode).
 export deployStandaloneBuildModules=(
-  "standalone-iam,18080,external,${currDir}/xcloud-iam/xcloud-iam-service-starter-all/target"
-  "standalone-dopaas,20000,external,${currDir}/xcloud-dopaas/xcloud-dopaas-all-starter/target"
+  "standalone-iam,18080,external,${currDir}/dopaas-iam/dopaas-iam-service-starter-all/target"
+  "standalone-dopaas,20000,external,${currDir}/dopaas/dopaas-all-starter/target"
 )
 
 # Deploy(cluster mode).
 export deployClusterNodesConfigPath="$currDir/deploy-host.csv"
 # Format: {appName},{appPort},{appType},{buildAssetsDir}
 export deployClusterBuildModules=(
-  "iam-data,18082,internal,${currDir}/xcloud-iam/service-starter-data/target"
-  "iam-facade,18081,internal,${currDir}/xcloud-iam/service-starter-facade/target"
-  "iam-web,18080,external,${currDir}/xcloud-iam/service-starter-web/target"
-  "home-facade,17001,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-home/xcloud-dopaas-home-service-starter-facade/target"
-  "home-manager,17000,external,${currDir}/xcloud-dopaas/xcloud-dopaas-home/xcloud-dopaas-home-service-starter-manager/target"
-  "cmdb-facade,17011,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-cmdb/xcloud-dopaas-cmdb-service-starter-facade/target"
-  "cmdb-manager,17010,external,${currDir}/xcloud-dopaas/xcloud-dopaas-cmdb/xcloud-dopaas-cmdb-service-starter-manager/target"
-  "uci-facade,17021,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-uci/xcloud-dopaas-uci-service-starter-facade/target"
-  "uci-server,17020,external,${currDir}/xcloud-dopaas/xcloud-dopaas-uci/xcloud-dopaas-uci-service-starter-server/target"
-  #"ucm-facade,17031,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-ucm/xcloud-dopaas-ucm-service-starter-facade/target"
-  #"ucm-server,17030,external,${currDir}/xcloud-dopaas/xcloud-dopaas-ucm/xcloud-dopaas-ucm-service-starter-server/target"
-  "lcdp-facade,17041,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-lcdp/xcloud-dopaas-lcdp-service-starter-facade/target"
-  "lcdp-manager,17040,external,${currDir}/xcloud-dopaas/xcloud-dopaas-lcdp/xcloud-dopaas-lcdp-service-starter-manager/target"
-  "udm-facade,17051,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-udm/xcloud-dopaas-udm-service-starter-facade/target"
-  "udm-manager,17050,external,${currDir}/xcloud-dopaas/xcloud-dopaas-udm/xcloud-dopaas-udm-service-starter-manager/target"
-  "umc-collector,17063,external,${currDir}/xcloud-dopaas/xcloud-dopaas-umc/xcloud-dopaas-umc-service-starter-collector/target"
-  "umc-tracker,17062,external,${currDir}/xcloud-dopaas/xcloud-dopaas-umc/xcloud-dopaas-umc-service-starter-tracker/target"
-  "umc-facade,17061,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-umc/xcloud-dopaas-umc-service-starter-facade/target"
-  "umc-manager,17060,external,${currDir}/xcloud-dopaas/xcloud-dopaas-umc/xcloud-dopaas-umc-service-starter-manager/target"
-  "urm-facade,17071,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-urm/xcloud-dopaas-urm-service-starter-facade/target"
-  "urm-manager,17070,external,${currDir}/xcloud-dopaas/xcloud-dopaas-urm/xcloud-dopaas-urm-service-starter-manager/target"
-  "uds-facade,17081,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-uds/xcloud-dopaas-uds-service-starter-facade/target"
-  "uds-manager,17080,external,${currDir}/xcloud-dopaas/xcloud-dopaas-uds/xcloud-dopaas-uds-service-starter-manager/target"
-  #"uos-facade,17091,internal,${currDir}/xcloud-dopaas/xcloud-dopaas-uos/xcloud-dopaas-uos-service-starter-facade/target"
-  #"uos-manager,17090,external,${currDir}/xcloud-dopaas/xcloud-dopaas-uos/xcloud-dopaas-uos-service-starter-manager/target"
+  "iam-data,18082,internal,${currDir}/dopaas-iam/service-starter-data/target"
+  "iam-facade,18081,internal,${currDir}/dopaas-iam/service-starter-facade/target"
+  "iam-web,18080,external,${currDir}/dopaas-iam/service-starter-web/target"
+  "home-facade,17001,internal,${currDir}/dopaas/dopaas-home/dopaas-home-service-starter-facade/target"
+  "home-manager,17000,external,${currDir}/dopaas/dopaas-home/dopaas-home-service-starter-manager/target"
+  "cmdb-facade,17011,internal,${currDir}/dopaas/dopaas-cmdb/dopaas-cmdb-service-starter-facade/target"
+  "cmdb-manager,17010,external,${currDir}/dopaas/dopaas-cmdb/dopaas-cmdb-service-starter-manager/target"
+  "uci-facade,17021,internal,${currDir}/dopaas/dopaas-uci/dopaas-uci-service-starter-facade/target"
+  "uci-server,17020,external,${currDir}/dopaas/dopaas-uci/dopaas-uci-service-starter-server/target"
+  #"ucm-facade,17031,internal,${currDir}/dopaas/dopaas-ucm/dopaas-ucm-service-starter-facade/target"
+  #"ucm-server,17030,external,${currDir}/dopaas/dopaas-ucm/dopaas-ucm-service-starter-server/target"
+  "lcdp-facade,17041,internal,${currDir}/dopaas/dopaas-lcdp/dopaas-lcdp-service-starter-facade/target"
+  "lcdp-manager,17040,external,${currDir}/dopaas/dopaas-lcdp/dopaas-lcdp-service-starter-manager/target"
+  "udm-facade,17051,internal,${currDir}/dopaas/dopaas-udm/dopaas-udm-service-starter-facade/target"
+  "udm-manager,17050,external,${currDir}/dopaas/dopaas-udm/dopaas-udm-service-starter-manager/target"
+  "umc-collector,17063,external,${currDir}/dopaas/dopaas-umc/dopaas-umc-service-starter-collector/target"
+  "umc-tracker,17062,external,${currDir}/dopaas/dopaas-umc/dopaas-umc-service-starter-tracker/target"
+  "umc-facade,17061,internal,${currDir}/dopaas/dopaas-umc/dopaas-umc-service-starter-facade/target"
+  "umc-manager,17060,external,${currDir}/dopaas/dopaas-umc/dopaas-umc-service-starter-manager/target"
+  "urm-facade,17071,internal,${currDir}/dopaas/dopaas-urm/dopaas-urm-service-starter-facade/target"
+  "urm-manager,17070,external,${currDir}/dopaas/dopaas-urm/dopaas-urm-service-starter-manager/target"
+  "uds-facade,17081,internal,${currDir}/dopaas/dopaas-uds/dopaas-uds-service-starter-facade/target"
+  "uds-manager,17080,external,${currDir}/dopaas/dopaas-uds/dopaas-uds-service-starter-manager/target"
+  #"uos-facade,17091,internal,${currDir}/dopaas/dopaas-uos/dopaas-uos-service-starter-facade/target"
+  #"uos-manager,17090,external,${currDir}/dopaas/dopaas-uos/dopaas-uos-service-starter-manager/target"
 )
 
 # ----------------------- Frontend environment definition. ----------------------------------------

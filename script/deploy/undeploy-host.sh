@@ -23,10 +23,10 @@ export logFile="$currDir/undeploy-host.log"; rm -rf $logFile
 [ -n "$(command -v clear)" ] && clear # e.g centos8+ not clear
 
 log ""
-log "「 Welcome to XCloud DoPaaS Uninstaller(Host) 」"
+log "「 Welcome to DoPaaS Uninstaller(Host) 」"
 log ""
-log " Wiki: https://github.com/wl4g/xcloud-dopaas/blob/master/README.md"
-log " Wiki(CN): https://gitee.com/wl4g/xcloud-dopaas/blob/master/README_CN.md"
+log " Wiki: https://github.com/wl4g/dopaas/blob/master/README.md"
+log " Wiki(CN): https://gitee.com/wl4g/dopaas/blob/master/README_CN.md"
 log " Authors: <Wanglsir@gmail.com, 983708408@qq.com>"
 log " Version: 2.0.0"
 log " Time: $(date '+%Y-%m-%d %H:%M:%S')"
@@ -103,7 +103,7 @@ function removeNginxAll() {
   local host=$(echo $node|awk -F 'ξ' '{print $1}')
   local user=$(echo $node|awk -F 'ξ' '{print $2}')
   local passwd=$(echo $node|awk -F 'ξ' '{print $3}')
-  local appName="$gitXCloudDoPaaSViewProjectName"
+  local appName="$gitDoPaaSViewProjectName"
   local appInstallDir="${deployFrontendAppBaseDir}/${appName}-package"
   log "[nginx/$host] Removing nginx for /etc/nginx/conf.d/dopaas.conf ..."
   doRemoteCmd "$user" "$passwd" "$host" "[ -f /etc/nginx/conf.d/dopaas.conf ] && rm -rf /etc/nginx/conf.d/dopaas.conf" "false" "true"
