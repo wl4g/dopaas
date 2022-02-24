@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.service.impl;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -29,8 +29,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.lcdp.GenProject;
 import com.wl4g.dopaas.common.bean.lcdp.extra.ExtraOptionDefinition.GenExtraOption;
 import com.wl4g.dopaas.lcdp.codegen.data.GenProjectDao;

@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.scm.client.repository;
 
-import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import java.util.List;
 

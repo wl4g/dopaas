@@ -29,7 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.CmdbManagerTests;
-import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.jedis.JedisService;
 
 /**
  * {@link JedisDnsZoneStoreTests}

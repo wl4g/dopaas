@@ -27,10 +27,10 @@ import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notEmpty;
-import static com.wl4g.component.common.lang.StringUtils2.eqIgnCase;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notEmpty;
+import static com.wl4g.infra.common.lang.StringUtils2.eqIgnCase;
 import static com.wl4g.dopaas.lcdp.codegen.engine.resolver.MetadataResolver.ResolverAlias.MYSQLV5;
 import static java.util.stream.Collectors.toList;
 

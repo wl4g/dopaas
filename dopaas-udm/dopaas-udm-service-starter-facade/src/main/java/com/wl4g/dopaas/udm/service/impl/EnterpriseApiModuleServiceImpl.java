@@ -18,7 +18,7 @@
 
 package com.wl4g.dopaas.udm.service.impl;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiModule;
 import com.wl4g.dopaas.udm.data.EnterpriseApiDao;
 import com.wl4g.dopaas.udm.data.EnterpriseApiModuleDao;

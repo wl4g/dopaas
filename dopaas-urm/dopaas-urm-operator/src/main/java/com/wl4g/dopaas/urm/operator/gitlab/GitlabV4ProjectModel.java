@@ -18,7 +18,7 @@ package com.wl4g.dopaas.urm.operator.gitlab;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.component.common.annotation.Reserved;
+import com.wl4g.infra.common.annotation.Reserved;
 
 import lombok.Getter;
 import lombok.Setter;

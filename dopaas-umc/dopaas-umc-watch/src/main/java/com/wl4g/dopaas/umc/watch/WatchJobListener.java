@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.watch;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import org.apache.shardingsphere.elasticjob.infra.listener.ElasticJobListener;
 import org.apache.shardingsphere.elasticjob.infra.listener.ShardingContexts;

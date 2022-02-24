@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.engine.resolver.db;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 
 import com.wl4g.dopaas.common.bean.lcdp.GenDataSource;
 

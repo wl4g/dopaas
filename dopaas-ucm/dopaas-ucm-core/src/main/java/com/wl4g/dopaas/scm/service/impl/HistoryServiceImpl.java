@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.scm.service.impl;
 
 
-import com.wl4g.component.core.bean.erm.AppCluster;
-import com.wl4g.component.core.bean.erm.AppInstance;
+import com.wl4g.infra.core.bean.erm.AppCluster;
+import com.wl4g.infra.core.bean.erm.AppInstance;
 import com.wl4g.dopaas.scm.bean.*;
 import com.wl4g.dopaas.scm.common.model.*;
 import com.wl4g.dopaas.scm.common.model.AbstractConfigInfo.ConfigMeta;

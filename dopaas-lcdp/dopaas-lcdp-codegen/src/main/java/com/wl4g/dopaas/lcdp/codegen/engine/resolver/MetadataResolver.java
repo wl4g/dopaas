@@ -17,7 +17,7 @@ package com.wl4g.dopaas.lcdp.codegen.engine.resolver;
 
 import javax.annotation.Nullable;
 
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getFieldValues;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getFieldValues;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.io.Closeable;

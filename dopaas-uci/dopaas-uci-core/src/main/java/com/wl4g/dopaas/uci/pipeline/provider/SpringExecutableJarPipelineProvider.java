@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.uci.pipeline.provider;
 
-import com.wl4g.component.support.cli.command.DestroableCommand;
-import com.wl4g.component.support.cli.command.LocalDestroableCommand;
+import com.wl4g.infra.support.cli.command.DestroableCommand;
+import com.wl4g.infra.support.cli.command.LocalDestroableCommand;
 import com.wl4g.dopaas.uci.core.context.PipelineContext;
 import com.wl4g.dopaas.uci.pipeline.deploy.SpringExecutableJarPipeDeployer;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistory;

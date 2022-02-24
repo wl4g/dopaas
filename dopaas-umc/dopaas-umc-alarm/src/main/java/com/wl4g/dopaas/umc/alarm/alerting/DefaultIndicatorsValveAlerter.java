@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.umc.alarm.alerting;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.dopaas.common.constant.UmcConstants.ALARM_SATUS_SEND;
 import static java.lang.Math.abs;
 import static java.lang.System.currentTimeMillis;
@@ -38,13 +38,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.support.notification.GenericNotifyMessage;
-import com.wl4g.component.support.notification.MessageNotifier;
-import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.component.support.notification.mail.MailMessageNotifier;
-import com.wl4g.component.support.cache.jedis.JedisService;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.support.notification.GenericNotifyMessage;
+import com.wl4g.infra.support.notification.MessageNotifier;
+import com.wl4g.infra.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.infra.support.notification.mail.MailMessageNotifier;
+import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.dopaas.common.bean.umc.AlarmConfig;
 import com.wl4g.dopaas.common.bean.umc.AlarmRecord;
 import com.wl4g.dopaas.common.bean.umc.AlarmRule;

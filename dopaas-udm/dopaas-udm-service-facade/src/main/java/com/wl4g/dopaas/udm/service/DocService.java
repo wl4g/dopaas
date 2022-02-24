@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.udm.service;
 
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.udm.FileChanges;
 import com.wl4g.dopaas.common.bean.udm.Share;
 import org.springframework.web.bind.annotation.RequestBody;

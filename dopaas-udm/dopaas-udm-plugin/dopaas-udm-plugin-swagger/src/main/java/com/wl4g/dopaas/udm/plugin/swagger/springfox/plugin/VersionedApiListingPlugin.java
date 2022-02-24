@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.udm.plugin.swagger.springfox.plugin;
 
-import static com.wl4g.component.common.web.WebUtils2.toQueryParams;
+import static com.wl4g.infra.common.web.WebUtils2.toQueryParams;
 
 import java.util.Set;
 

@@ -31,7 +31,7 @@ import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.infra.common.lang.Exceptions.getStackTraceAsString;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 

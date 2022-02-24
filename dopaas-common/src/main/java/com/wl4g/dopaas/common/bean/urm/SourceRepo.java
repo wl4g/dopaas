@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.common.bean.urm;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

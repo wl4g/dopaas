@@ -22,7 +22,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationHistory;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistory;
 import com.wl4g.dopaas.uci.data.OrchestrationHistoryDao;

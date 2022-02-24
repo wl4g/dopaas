@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.console;
 
-import com.wl4g.component.common.io.FileDeletionUtils;
+import com.wl4g.infra.common.io.FileDeletionUtils;
 import com.wl4g.dopaas.lcdp.codegen.config.CodegenProperties;
 import com.wl4g.dopaas.lcdp.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.shell.common.annotation.ShellMethod;

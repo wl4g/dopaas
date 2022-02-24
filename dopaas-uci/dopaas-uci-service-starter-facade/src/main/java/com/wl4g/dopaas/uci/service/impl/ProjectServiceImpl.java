@@ -15,10 +15,10 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.serialize.JacksonUtils;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.cmdb.service.AppClusterService;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
 import com.wl4g.dopaas.common.bean.uci.Dependency;
@@ -44,8 +44,8 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.component.core.bean.BaseBean.ENABLED;
+import static com.wl4g.infra.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.infra.core.bean.BaseBean.ENABLED;
 import static com.wl4g.dopaas.common.constant.UciConstants.TASK_LOCK_STATUS_UNLOCK;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;

@@ -19,7 +19,7 @@
  */
 package com.wl4g.dopaas.uci.client.springboot.config;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;

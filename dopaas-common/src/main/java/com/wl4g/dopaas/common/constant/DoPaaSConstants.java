@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.common.constant;
 
-import com.wl4g.component.core.constant.BaseConstant;
+import com.wl4g.infra.core.constant.BaseConstant;
 
 /**
  * DevOps PaaS constants.

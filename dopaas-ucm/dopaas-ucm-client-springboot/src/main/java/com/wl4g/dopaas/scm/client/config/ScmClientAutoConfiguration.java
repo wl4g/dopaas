@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.client.config;
 
-import com.wl4g.component.core.web.method.PrefixHandlerMappingSupport;
+import com.wl4g.infra.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.dopaas.scm.client.refresh.ScmContextRefresher;
 import com.wl4g.dopaas.scm.client.refresh.ScmLoggingRebinder;
 

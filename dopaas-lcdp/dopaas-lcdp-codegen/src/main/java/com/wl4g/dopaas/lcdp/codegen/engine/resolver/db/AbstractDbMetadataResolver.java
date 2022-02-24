@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.lcdp.codegen.engine.resolver.db;
 
 import javax.annotation.Nullable;
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.lcdp.codegen.engine.resolver.MetadataResolver;
 
 import static java.lang.String.format;
@@ -33,10 +33,10 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static com.wl4g.dopaas.lcdp.codegen.utils.ResourceBundleUtil.readResource;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.findMethod;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.invokeMethod;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findMethod;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.invokeMethod;
 
 /**
  * {@link AbstractDbMetadataResolver}

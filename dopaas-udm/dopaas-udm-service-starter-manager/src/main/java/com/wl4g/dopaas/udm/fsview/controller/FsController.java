@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.udm.fsview.controller;
 
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.dopaas.udm.fsview.service.FsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;

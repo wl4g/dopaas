@@ -25,8 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-import com.wl4g.component.core.framework.beans.NamingPrototype;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.framework.beans.NamingPrototype;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import com.wl4g.dopaas.common.bean.uci.Pipeline;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;

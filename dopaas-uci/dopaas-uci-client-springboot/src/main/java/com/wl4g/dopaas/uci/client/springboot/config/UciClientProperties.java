@@ -19,7 +19,7 @@
  */
 package com.wl4g.dopaas.uci.client.springboot.config;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_HEADER_PREFIX;
 import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_NAME;
 import static java.lang.String.format;

@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.lcdp.codegen.engine.context;
 
 import javax.annotation.Nullable;
-import com.wl4g.component.common.annotation.Reserved;
+import com.wl4g.infra.common.annotation.Reserved;
 import com.wl4g.dopaas.common.bean.lcdp.GenDataSource;
 import com.wl4g.dopaas.common.bean.lcdp.GenProject;
 import com.wl4g.dopaas.common.bean.lcdp.GenTable;

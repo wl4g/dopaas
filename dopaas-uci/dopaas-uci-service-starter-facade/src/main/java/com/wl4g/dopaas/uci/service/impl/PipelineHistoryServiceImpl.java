@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_CREATE;
 import static com.wl4g.dopaas.common.constant.UciConstants.TASK_STATUS_STOPING;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
@@ -29,10 +29,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.support.cli.DestroableProcessManager;
-import com.wl4g.component.support.cli.destroy.DestroySignal;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.support.cli.DestroableProcessManager;
+import com.wl4g.infra.support.cli.destroy.DestroySignal;
 import com.wl4g.dopaas.cmdb.service.AppClusterService;
 import com.wl4g.dopaas.cmdb.service.AppInstanceService;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;

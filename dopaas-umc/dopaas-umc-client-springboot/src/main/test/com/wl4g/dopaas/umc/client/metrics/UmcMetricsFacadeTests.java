@@ -15,14 +15,14 @@
  */
 package com.wl4g.dopaas.umc.client.metrics;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
-import com.wl4g.component.common.lang.FastTimeClock;
-import com.wl4g.component.common.lang.ThreadUtils2;
+import com.wl4g.infra.common.lang.FastTimeClock;
+import com.wl4g.infra.common.lang.ThreadUtils2;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;

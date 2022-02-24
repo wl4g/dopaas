@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.watch.config;
 
-import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.infra.common.task.RunnerProperties;
 
 /**
  * Watch properties .

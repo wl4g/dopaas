@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.client;
 
-import com.wl4g.component.common.annotation.Reserved;
+import com.wl4g.infra.common.annotation.Reserved;
 import com.wl4g.dopaas.scm.client.config.ScmClientProperties;
 import com.wl4g.dopaas.scm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.scm.client.repository.RefreshRecordsRepository;

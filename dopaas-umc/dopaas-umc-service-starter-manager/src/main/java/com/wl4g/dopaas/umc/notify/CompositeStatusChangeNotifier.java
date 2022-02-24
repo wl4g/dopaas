@@ -17,11 +17,11 @@ package com.wl4g.dopaas.umc.notify;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.support.notification.GenericNotifyMessage;
-import com.wl4g.component.support.notification.MessageNotifier;
-import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.component.support.notification.mail.MailMessageNotifier;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.support.notification.GenericNotifyMessage;
+import com.wl4g.infra.support.notification.MessageNotifier;
+import com.wl4g.infra.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.infra.support.notification.mail.MailMessageNotifier;
 import com.wl4g.dopaas.umc.model.StatusMessage;
 
 import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;

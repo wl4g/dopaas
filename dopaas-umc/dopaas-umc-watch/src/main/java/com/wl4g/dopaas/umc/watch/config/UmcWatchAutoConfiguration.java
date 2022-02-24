@@ -29,7 +29,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.component.common.annotation.Reserved;
+import com.wl4g.infra.common.annotation.Reserved;
 import com.wl4g.dopaas.umc.watch.ServiceIndicatorsStateWatcher;
 import com.wl4g.dopaas.umc.watch.WatchJobListener;
 import com.wl4g.dopaas.umc.watch.WatchScheduler;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.common.exception.ci;
 
-import com.wl4g.component.common.web.rest.LockStateException;
+import com.wl4g.infra.common.web.rest.LockStateException;
 
 public class NotFoundBackupAssetsFileException extends CiException implements LockStateException {
 	static final long serialVersionUID = -7034833390745766939L;

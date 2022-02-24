@@ -15,12 +15,12 @@
  */
 package com.wl4g.dopaas.scm.example.service;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 
 public class ExampleService {
 	final protected SmartLogger log = getLogger(getClass());

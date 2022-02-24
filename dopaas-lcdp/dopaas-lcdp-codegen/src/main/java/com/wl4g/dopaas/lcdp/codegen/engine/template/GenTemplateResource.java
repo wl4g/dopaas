@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.lcdp.codegen.engine.template;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
 import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_MODULE_NAME;
 import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_TABLE_ENTITY_NAME;
 import static java.lang.String.valueOf;
@@ -30,7 +30,7 @@ import java.io.Serializable;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.component.common.lang.StringUtils2;
+import com.wl4g.infra.common.lang.StringUtils2;
 
 /**
  * Rendering template resource wrapper.

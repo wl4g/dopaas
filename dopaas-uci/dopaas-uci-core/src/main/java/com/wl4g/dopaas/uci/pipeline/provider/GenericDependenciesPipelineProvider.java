@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.uci.pipeline.provider;
 
 import com.wl4g.dopaas.common.exception.ci.DependencyCurrentlyInBuildingException;
-import com.wl4g.component.support.cli.command.DestroableCommand;
-import com.wl4g.component.support.cli.command.LocalDestroableCommand;
+import com.wl4g.infra.support.cli.command.DestroableCommand;
+import com.wl4g.infra.support.cli.command.LocalDestroableCommand;
 import com.wl4g.dopaas.uci.core.context.PipelineContext;
 import com.wl4g.dopaas.common.bean.uci.PipeStageBuilding;
 import com.wl4g.dopaas.common.bean.uci.PipeStageBuildingProject;
@@ -36,7 +36,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.RUNNING_BUILD;
 import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.RUNNING_DEPLOY;
 import static com.wl4g.dopaas.common.bean.uci.model.RunModel.Pipeline.ModulesPorject;

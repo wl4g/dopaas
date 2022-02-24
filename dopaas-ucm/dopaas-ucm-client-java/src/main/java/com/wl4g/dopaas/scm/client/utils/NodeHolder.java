@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.scm.client.utils;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.scm.client.config.ScmClientProperties;
 import com.wl4g.dopaas.scm.common.model.AbstractConfigInfo.ConfigNode;
 

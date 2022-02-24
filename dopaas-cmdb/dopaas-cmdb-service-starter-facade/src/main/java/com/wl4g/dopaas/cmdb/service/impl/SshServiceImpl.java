@@ -15,10 +15,10 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.support.cli.DestroableProcessManager;
-import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.support.cli.DestroableProcessManager;
+import com.wl4g.infra.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.dopaas.common.bean.cmdb.Host;
 import com.wl4g.dopaas.common.bean.cmdb.SshBean;
 import com.wl4g.dopaas.cmdb.data.HostDao;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.rule.inspect;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
+import static com.wl4g.infra.common.collection.CollectionUtils2.isEmptyArray;
 
 import com.wl4g.dopaas.umc.rule.Aggregator;
 import com.wl4g.dopaas.umc.rule.LogicalOperator;

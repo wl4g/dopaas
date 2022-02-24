@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.umc.client.health.mqtt;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -32,8 +32,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.utils.context.SpringContextHolder;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.utils.context.SpringContextHolder;
 import com.wl4g.dopaas.umc.client.health.util.HealthUtil;
 
 /**

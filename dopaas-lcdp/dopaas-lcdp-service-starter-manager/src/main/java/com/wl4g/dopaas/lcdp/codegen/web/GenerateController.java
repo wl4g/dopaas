@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.web;
 
-import static com.wl4g.component.common.io.FileIOUtils.readFullyResourceString;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.io.FileIOUtils.readFullyResourceString;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
 import java.io.File;
@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.io.FileIOUtils;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.dopaas.common.bean.lcdp.GenTable;
 import com.wl4g.dopaas.common.bean.lcdp.GenTableColumn;
 import com.wl4g.dopaas.common.bean.lcdp.extra.TableExtraOptionDefinition;

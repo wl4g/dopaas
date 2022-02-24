@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.serialize.JacksonUtils;
 
 import de.codecentric.boot.admin.server.domain.values.StatusInfo;
 

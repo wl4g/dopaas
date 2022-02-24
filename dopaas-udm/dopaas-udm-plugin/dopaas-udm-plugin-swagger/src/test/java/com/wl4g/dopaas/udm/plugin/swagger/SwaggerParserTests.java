@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;

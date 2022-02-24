@@ -19,11 +19,11 @@ import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_ALARM_METRI
 
 import org.springframework.util.Assert;
 
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.support.notification.MessageNotifier;
-import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.component.support.cache.jedis.JedisService;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.support.notification.MessageNotifier;
+import com.wl4g.infra.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.dopaas.umc.config.AlarmProperties;
 import com.wl4g.dopaas.umc.handler.AlarmConfigurer;
 import com.wl4g.dopaas.umc.rule.RuleConfigManager;

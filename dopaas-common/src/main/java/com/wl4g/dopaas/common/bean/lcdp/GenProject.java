@@ -29,7 +29,7 @@ import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConsta
 
 import java.util.List;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 import com.wl4g.dopaas.common.bean.lcdp.extra.ExtraOptionDefinition.GenExtraOption;
 
 import lombok.Getter;

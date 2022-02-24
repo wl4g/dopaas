@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.dopaas.cmdb.shardingspherev4.common.model.ShardingSchemaModel;
 import com.wl4g.dopaas.cmdb.shardingspherev4.servcie.ShardingSchemaService;
 

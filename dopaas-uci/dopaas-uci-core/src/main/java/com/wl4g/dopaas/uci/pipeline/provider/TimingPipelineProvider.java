@@ -29,8 +29,8 @@ import com.wl4g.dopaas.urm.operator.VcsOperator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.component.common.lang.Assert2.hasText;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 
 /**
  * Timing pipeline jobs provider.

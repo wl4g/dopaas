@@ -28,10 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.support.cli.DestroableProcessManager;
-import com.wl4g.component.support.cache.jedis.JedisService;
-import com.wl4g.component.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.support.cli.DestroableProcessManager;
+import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.uci.analyses.config.CiAnalyzerProperties;
 import com.wl4g.dopaas.uci.analyses.config.ExecutorProperties;
 import com.wl4g.dopaas.uci.analyses.model.AnalysingModel;

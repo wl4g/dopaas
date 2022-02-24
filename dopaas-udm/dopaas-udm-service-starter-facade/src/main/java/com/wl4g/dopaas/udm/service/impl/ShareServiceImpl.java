@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.udm.service.impl;
 
-import static com.wl4g.component.common.web.rest.RespBase.RetCode.NOT_FOUND_ERR;
-import static com.wl4g.component.common.web.rest.RespBase.RetCode.UNAUTHC;
+import static com.wl4g.infra.common.web.rest.RespBase.RetCode.NOT_FOUND_ERR;
+import static com.wl4g.infra.common.web.rest.RespBase.RetCode.UNAUTHC;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
@@ -25,8 +25,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.FileChanges;
 import com.wl4g.dopaas.common.bean.udm.Share;
 import com.wl4g.dopaas.common.constant.UdmConstants;

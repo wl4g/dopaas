@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.uci.utils;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.component.common.annotation.Reserved;
+import com.wl4g.infra.common.annotation.Reserved;
 
 import java.util.HashMap;
 import java.util.Map;

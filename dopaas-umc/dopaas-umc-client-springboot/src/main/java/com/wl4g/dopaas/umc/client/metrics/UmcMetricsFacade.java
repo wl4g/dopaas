@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.client.metrics;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 

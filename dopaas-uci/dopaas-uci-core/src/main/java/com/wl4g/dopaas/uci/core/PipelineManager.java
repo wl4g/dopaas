@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.core;
 
-import com.wl4g.component.common.io.FileIOUtils.ReadTailFrame;
+import com.wl4g.infra.common.io.FileIOUtils.ReadTailFrame;
 import com.wl4g.dopaas.uci.utils.HookCommandHolder.HookCommand;
 import com.wl4g.dopaas.common.bean.uci.param.RollbackParameter;
 import com.wl4g.dopaas.common.bean.uci.param.RunParameter;

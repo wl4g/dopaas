@@ -20,8 +20,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.Label;
 import com.wl4g.dopaas.udm.data.LabelDao;
 import com.wl4g.dopaas.udm.service.LabelService;

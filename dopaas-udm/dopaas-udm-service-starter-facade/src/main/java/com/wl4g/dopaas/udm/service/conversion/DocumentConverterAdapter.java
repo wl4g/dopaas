@@ -21,7 +21,7 @@ package com.wl4g.dopaas.udm.service.conversion;
 
 import java.util.List;
 
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.dopaas.udm.service.conversion.DocumentConverter.ConverterProviderKind;
 
 /**

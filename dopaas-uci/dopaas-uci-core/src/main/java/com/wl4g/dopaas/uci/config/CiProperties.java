@@ -15,10 +15,10 @@
  */
 package com.wl4g.dopaas.uci.config;
 
-import static com.wl4g.component.common.lang.Assert2.hasText;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.SystemUtils2.cleanSystemPath;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.hasText;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.SystemUtils2.cleanSystemPath;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_NAME;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -30,7 +30,7 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 
 /**
  * CI configuration properties.

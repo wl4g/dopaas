@@ -1,7 +1,7 @@
 package com.wl4g.dopaas.udm.service.formater;
 
-import static com.wl4g.component.common.view.Freemarkers.createDefault;
-import static com.wl4g.component.common.view.Freemarkers.renderingTemplateToString;
+import static com.wl4g.infra.common.view.Freemarkers.createDefault;
+import static com.wl4g.infra.common.view.Freemarkers.renderingTemplateToString;
 import static com.wl4g.dopaas.udm.util.PathUtils.splicePath;
 import static java.util.Collections.singletonList;
 
@@ -18,8 +18,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.common.md.FlexmarkUtil;
+import com.wl4g.infra.common.io.FileIOUtils;
+import com.wl4g.infra.common.md.FlexmarkUtil;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
 import com.wl4g.dopaas.udm.config.DocProperties;

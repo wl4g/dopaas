@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.common.config;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import java.util.List;
 import java.util.Map;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.client.metrics.advice;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 
 import java.lang.reflect.Method;
@@ -28,7 +28,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.codahale.metrics.MetricRegistry;
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 
 import io.micrometer.core.instrument.MeterRegistry;
 

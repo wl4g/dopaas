@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.urm.operator;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.common.bean.urm.SourceRepo;
 
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -43,8 +43,8 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * Abstract VCS API operator.

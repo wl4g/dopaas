@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.web;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static com.wl4g.dopaas.common.bean.umc.model.DataSourceProvide.MYSQL;
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
@@ -24,10 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.dopaas.common.bean.umc.CustomDataSource;
 import com.wl4g.dopaas.common.bean.umc.datasource.MysqlDataSource;
 import com.wl4g.dopaas.common.bean.umc.model.DataSourceProvide;

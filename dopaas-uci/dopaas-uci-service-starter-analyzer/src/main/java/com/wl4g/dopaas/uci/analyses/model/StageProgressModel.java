@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.analyses.model;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
 

@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.common.bean.cmdb;
 
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.common.serialize.JacksonUtils;
+import com.wl4g.infra.core.bean.BaseBean;
 
 import org.apache.commons.lang3.StringUtils;
 

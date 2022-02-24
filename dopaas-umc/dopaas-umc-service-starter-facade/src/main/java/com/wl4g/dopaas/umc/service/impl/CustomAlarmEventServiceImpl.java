@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.umc.service.impl;
 
 
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.CustomAlarmEvent;
 import com.wl4g.dopaas.umc.data.CustomAlarmEventDao;
 import com.wl4g.dopaas.umc.service.CustomAlarmEventService;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.lcdp.dds.service.evaluate;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 
 import java.util.List;
 import java.util.Map;

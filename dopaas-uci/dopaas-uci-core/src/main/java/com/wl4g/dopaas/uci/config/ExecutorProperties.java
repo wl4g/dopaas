@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.config;
 
-import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.infra.common.task.RunnerProperties;
 
 /**
  * Task executor configuration such as CICD pipeline process

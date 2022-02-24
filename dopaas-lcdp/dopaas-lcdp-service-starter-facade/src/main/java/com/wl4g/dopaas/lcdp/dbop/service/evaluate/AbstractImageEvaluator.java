@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.lcdp.dbop.service.evaluate;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.lcdp.dbop.service.evaluate.metadata.MetadataResolver;
 
 import lombok.Getter;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.common.bean.cmdb;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 public class SshBean extends BaseBean {
 

@@ -19,7 +19,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import com.wl4g.component.integration.feign.core.annotation.EnableFeignConsumers;
+import com.wl4g.infra.integration.feign.core.annotation.EnableFeignConsumers;
 
 import zipkin2.server.internal.EnableZipkinServer;
 import zipkin2.server.internal.ZipkinActuatorImporter;

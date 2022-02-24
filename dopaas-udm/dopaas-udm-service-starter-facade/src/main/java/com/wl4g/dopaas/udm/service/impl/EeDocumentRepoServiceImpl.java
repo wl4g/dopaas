@@ -18,15 +18,15 @@
 
 package com.wl4g.dopaas.udm.service.impl;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.integration.feign.core.context.RpcContextHolder;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.integration.feign.core.context.RpcContextHolder;
 import com.wl4g.dopaas.common.bean.udm.EeDocumentRepo;
 import com.wl4g.dopaas.udm.data.EeDocumentRepoDao;
 import com.wl4g.dopaas.udm.service.EeDocumentRepoService;

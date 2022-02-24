@@ -15,13 +15,13 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.engine;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.component.core.bean.BaseBean.DISABLED;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.core.bean.BaseBean.DISABLED;
 import static com.wl4g.dopaas.lcdp.codegen.engine.GenProviderSetDefinition.getProviders;
 import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -32,9 +32,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.common.lang.StringUtils2;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.infra.common.lang.StringUtils2;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.dopaas.common.bean.lcdp.GenDataSource;
 import com.wl4g.dopaas.common.bean.lcdp.GenProject;
 import com.wl4g.dopaas.common.bean.lcdp.GenTable;

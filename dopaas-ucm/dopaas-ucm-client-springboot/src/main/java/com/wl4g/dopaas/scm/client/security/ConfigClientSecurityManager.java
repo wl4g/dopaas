@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.scm.client.security;
 //
-//import com.wl4g.component.common.crypto.asymmetric.AsymmetricCryptor;
-//import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
-//import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
+//import com.wl4g.infra.common.crypto.asymmetric.AsymmetricCryptor;
+//import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
+//import com.wl4g.infra.common.crypto.symmetric.AES128ECBPKCS5;
 //import com.wl4g.dopaas.scm.session.ConfigSecurityManagerSupport;
 //
 ///**

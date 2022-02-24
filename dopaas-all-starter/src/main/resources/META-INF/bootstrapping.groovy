@@ -18,12 +18,12 @@
  * Reference to website: http://wl4g.com
  */
 
-import static com.wl4g.component.common.lang.ClassUtils2.isPresent
+import static com.wl4g.infra.common.lang.ClassUtils2.isPresent
 import static org.springframework.boot.context.config.ConfigFileApplicationListener.*
 
 import org.springframework.boot.Banner
 
-import com.wl4g.component.core.boot.listener.IBootstrappingConfigurer
+import com.wl4g.infra.core.boot.listener.IBootstrappingConfigurer
 
 /**
  * DoPaaS standalone implementation of {@link IBootstrappingConfigurer}
@@ -92,7 +92,7 @@ class DoPaaSStandaloneBootstrappingConfigurer implements IBootstrappingConfigure
 		if (isPresent("org.springframework.cloud.openfeign.FeignClient") && isPresent("org.springframework.cloud.openfeign.FeignAutoConfiguration")) {
 			location.append(",classpath:/scf/")
 			archConfigSuffix = "scf"
-		} else if (isPresent("com.wl4g.component.rpc.feign.core.annotation.FeignConsumer")) {
+		} else if (isPresent("com.wl4g.infra.rpc.feign.core.annotation.FeignConsumer")) {
 			location.append(",classpath:/sbf/")
 			archConfigSuffix = "sbf"
 		}

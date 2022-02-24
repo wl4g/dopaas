@@ -18,7 +18,7 @@ package com.wl4g.dopaas.home.web;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.core.web.BaseController;
 
 /**
  * {@link OverviewController}

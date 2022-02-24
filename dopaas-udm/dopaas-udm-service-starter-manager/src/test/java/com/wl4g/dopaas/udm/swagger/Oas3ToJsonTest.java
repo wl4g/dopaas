@@ -1,7 +1,7 @@
 package com.wl4g.dopaas.udm.swagger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wl4g.component.common.resource.ResourceUtils2;
+import com.wl4g.infra.common.resource.ResourceUtils2;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;

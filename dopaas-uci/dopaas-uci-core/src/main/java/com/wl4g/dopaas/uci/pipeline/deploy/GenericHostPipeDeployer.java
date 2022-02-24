@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.pipeline.deploy;
 
-import com.wl4g.component.common.cli.ssh2.SSH2Holders;
+import com.wl4g.infra.common.cli.ssh2.SSH2Holders;
 import com.wl4g.dopaas.uci.pipeline.provider.PipelineProvider;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistoryInstance;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
@@ -23,7 +23,7 @@ import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import java.io.File;
 import java.util.List;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static org.springframework.util.Assert.hasText;
 
 /**

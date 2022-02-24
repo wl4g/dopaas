@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.cmdb.data.DnsPrivateResolutionDao;
 import com.wl4g.dopaas.cmdb.data.DnsPrivateZoneDao;
 import com.wl4g.dopaas.cmdb.handler.DnsZoneHandler;

@@ -15,14 +15,14 @@
  */
 package com.wl4g.dopaas.uci.core;
 
-import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.io.FileIOUtils.*;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.support.notification.MessageNotifier;
-import com.wl4g.component.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.infra.common.collection.CollectionUtils2;
+import com.wl4g.infra.common.io.FileIOUtils.*;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.support.notification.MessageNotifier;
+import com.wl4g.infra.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.dopaas.cmdb.service.AppClusterService;
 import com.wl4g.dopaas.cmdb.service.AppInstanceService;
 import com.wl4g.dopaas.cmdb.service.DockerRepositoryService;
@@ -55,14 +55,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.util.*;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.io.FileIOUtils.*;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.Exceptions.getStackTraceAsString;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.collection.CollectionUtils2.isEmptyArray;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.io.FileIOUtils.*;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.dopaas.common.constant.UciConstants.*;
 import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.*;
 import static java.lang.String.format;

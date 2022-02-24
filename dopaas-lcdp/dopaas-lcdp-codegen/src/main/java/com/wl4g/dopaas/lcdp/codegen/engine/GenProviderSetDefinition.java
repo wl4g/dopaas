@@ -27,8 +27,8 @@ import javax.validation.constraints.NotNull;
 
 import java.util.List;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.*;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.*;
 import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;

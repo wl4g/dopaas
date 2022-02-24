@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.umc.timing;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.log.SmartLoggerFactory;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLoggerFactory;
 import com.wl4g.dopaas.common.bean.umc.CustomEngine;
 import com.wl4g.dopaas.umc.data.CustomEngineDao;
 

@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.uci.pcm.redmine;
 
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.bean.model.SelectionModel;
+import com.wl4g.infra.common.serialize.JacksonUtils;
+import com.wl4g.infra.core.bean.model.SelectionModel;
 import com.wl4g.dopaas.uci.pcm.AbstractPcmOperator;
 import com.wl4g.dopaas.uci.pcm.redmine.model.*;
 import com.wl4g.dopaas.uci.pcm.redmine.model.RedmineIssues.RedmineIssue;

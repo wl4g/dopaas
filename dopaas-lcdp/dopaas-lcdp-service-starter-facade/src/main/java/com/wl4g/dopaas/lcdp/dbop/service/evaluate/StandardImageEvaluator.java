@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.lcdp.dbop.service.evaluate;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notEmpty;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notEmpty;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
@@ -31,8 +31,8 @@ import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.lang.StringUtils2;
+import com.wl4g.infra.common.collection.CollectionUtils2;
+import com.wl4g.infra.common.lang.StringUtils2;
 import com.wl4g.dopaas.lcdp.dbop.service.evaluate.metadata.MetadataResolver;
 
 import net.sf.jsqlparser.expression.Expression;

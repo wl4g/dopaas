@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.uci.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.dopaas.common.bean.uci.Project;
 import com.wl4g.dopaas.uci.service.ProjectService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.page.PageHolder;
 import java.util.List;
 
 import static com.wl4g.dopaas.common.constant.UciConstants.TASK_LOCK_STATUS_UNLOCK;

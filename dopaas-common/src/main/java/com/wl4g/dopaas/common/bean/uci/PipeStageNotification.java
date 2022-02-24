@@ -15,11 +15,11 @@
  */
 package com.wl4g.dopaas.common.bean.uci;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
+import static com.wl4g.infra.common.collection.CollectionUtils2.isEmptyArray;
 
 import java.util.ArrayList;
 import java.util.List;

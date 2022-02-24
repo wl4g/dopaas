@@ -18,7 +18,7 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.integration.feign.core.annotation.EnableFeignConsumers;
+import com.wl4g.infra.integration.feign.core.annotation.EnableFeignConsumers;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
 /**

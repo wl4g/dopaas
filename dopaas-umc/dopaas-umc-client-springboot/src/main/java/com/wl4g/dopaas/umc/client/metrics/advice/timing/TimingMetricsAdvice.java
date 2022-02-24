@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.lang.FastTimeClock;
+import com.wl4g.infra.common.lang.FastTimeClock;
 import com.wl4g.dopaas.common.exception.umc.UmcException;
 import com.wl4g.dopaas.umc.client.health.timeout.TimeoutMethodHealthIndicator;
 import com.wl4g.dopaas.umc.client.metrics.advice.BaseMetricsAdvice;

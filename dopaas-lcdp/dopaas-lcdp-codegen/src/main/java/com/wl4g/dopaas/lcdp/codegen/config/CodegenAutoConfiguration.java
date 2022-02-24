@@ -31,7 +31,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.component.core.framework.beans.NamingPrototype;
+import com.wl4g.infra.core.framework.beans.NamingPrototype;
 import com.wl4g.dopaas.common.bean.lcdp.GenDataSource;
 import com.wl4g.dopaas.common.constant.LcdpConstants;
 import com.wl4g.dopaas.lcdp.codegen.console.CodegenConsole;

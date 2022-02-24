@@ -17,8 +17,8 @@ package com.wl4g.dopaas.scm.service.impl;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
-import com.wl4g.component.core.bean.erm.AppCluster;
-import com.wl4g.component.core.bean.erm.AppInstance;
+import com.wl4g.infra.core.bean.erm.AppCluster;
+import com.wl4g.infra.core.bean.erm.AppInstance;
 import com.wl4g.dopaas.scm.bean.*;
 import com.wl4g.dopaas.scm.common.exception.TooManyRefreshException;
 import com.wl4g.dopaas.scm.common.model.*;

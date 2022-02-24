@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.dopaas.common.bean.uds.elasticjoblite.JobExecutionEvent;
 import com.wl4g.dopaas.common.bean.uds.elasticjoblite.JobStatusTraceEvent;
 import com.wl4g.dopaas.uds.service.elasticjoblite.EventTraceHistoryService;

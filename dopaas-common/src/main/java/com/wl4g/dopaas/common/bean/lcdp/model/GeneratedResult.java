@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.common.bean.lcdp.model;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

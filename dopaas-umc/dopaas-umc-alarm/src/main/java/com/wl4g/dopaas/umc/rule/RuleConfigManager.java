@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.rule;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_ALARM_TPLS;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -28,8 +28,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
 
-import com.wl4g.component.support.cache.jedis.JedisService;
-import com.wl4g.component.support.cache.jedis.ScanCursor;
+import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.jedis.ScanCursor;
 import com.wl4g.dopaas.common.bean.umc.AlarmConfig;
 import com.wl4g.dopaas.umc.handler.AlarmConfigurer;
 

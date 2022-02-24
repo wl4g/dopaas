@@ -19,7 +19,7 @@ package com.wl4g.dopaas.common.bean.uds.elasticjoblite;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

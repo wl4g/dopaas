@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.client.collector;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
 

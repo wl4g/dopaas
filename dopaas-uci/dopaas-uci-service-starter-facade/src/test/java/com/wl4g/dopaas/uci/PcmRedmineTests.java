@@ -16,9 +16,9 @@
 package com.wl4g.dopaas.uci;
 
 import com.wl4g.UciFacade;
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.bean.model.SelectionModel;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.bean.model.SelectionModel;
 import com.wl4g.dopaas.uci.data.PcmDao;
 import com.wl4g.dopaas.uci.pcm.PcmOperator;
 import com.wl4g.dopaas.uci.service.PcmService;

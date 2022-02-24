@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.scm.endpoint;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.dopaas.scm.annotation.ScmEndpoint;
 import com.wl4g.dopaas.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.dopaas.scm.common.model.ReleaseConfigInfo;

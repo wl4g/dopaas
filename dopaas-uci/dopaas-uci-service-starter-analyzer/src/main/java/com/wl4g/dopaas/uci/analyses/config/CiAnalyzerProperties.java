@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.uci.analyses.config;
 
-import static com.wl4g.component.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 

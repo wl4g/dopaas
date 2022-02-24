@@ -16,7 +16,7 @@
 package com.wl4g.dopaas.lcdp.tools.devel.replace;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Collections.emptyList;
 
 import java.io.File;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
-import com.wl4g.component.common.annotation.Reserved;
+import com.wl4g.infra.common.annotation.Reserved;
 
 /**
  * {@link SmartFileContentReplacer}

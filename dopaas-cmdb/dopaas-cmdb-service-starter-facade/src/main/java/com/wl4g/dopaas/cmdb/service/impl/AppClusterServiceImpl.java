@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.core.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 
@@ -32,10 +32,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.serialize.JacksonUtils;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.cmdb.data.AppClusterDao;
 import com.wl4g.dopaas.cmdb.data.AppEnvironmentDao;
 import com.wl4g.dopaas.cmdb.data.AppInstanceDao;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.pipeline.provider;
 
-import com.wl4g.component.common.annotation.Stable;
+import com.wl4g.infra.common.annotation.Stable;
 import com.wl4g.dopaas.uci.core.context.PipelineContext;
 
 /**

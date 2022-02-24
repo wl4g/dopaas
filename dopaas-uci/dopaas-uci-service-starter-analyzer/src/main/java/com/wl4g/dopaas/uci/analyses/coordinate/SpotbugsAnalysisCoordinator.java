@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.uci.analyses.coordinate;
 
-import com.wl4g.component.support.cli.DestroableProcessManager.ProcessCallback;
-import com.wl4g.component.support.cli.command.DestroableCommand;
-import com.wl4g.component.support.cli.command.LocalDestroableCommand;
+import com.wl4g.infra.support.cli.DestroableProcessManager.ProcessCallback;
+import com.wl4g.infra.support.cli.command.DestroableCommand;
+import com.wl4g.infra.support.cli.command.LocalDestroableCommand;
 import com.wl4g.dopaas.uci.analyses.config.ExecutorProperties;
 import com.wl4g.dopaas.uci.analyses.model.AnalysisQueryModel;
 import com.wl4g.dopaas.uci.analyses.model.AnalysisResultModel;

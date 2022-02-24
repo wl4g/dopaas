@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.umc.client.health.timeout;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
 
 import java.math.BigDecimal;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health.Builder;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.umc.client.health.util.HealthUtil;
 
 /**

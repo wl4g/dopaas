@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.uci.pipeline.provider.container;
 
 import com.github.dockerjava.api.DockerClient;
-import com.wl4g.component.support.cli.command.DestroableCommand;
-import com.wl4g.component.support.cli.command.LocalDestroableCommand;
+import com.wl4g.infra.support.cli.command.DestroableCommand;
+import com.wl4g.infra.support.cli.command.LocalDestroableCommand;
 import com.wl4g.dopaas.uci.core.context.PipelineContext;
 import com.wl4g.dopaas.uci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.dopaas.uci.pipeline.provider.AbstractPipelineProvider;

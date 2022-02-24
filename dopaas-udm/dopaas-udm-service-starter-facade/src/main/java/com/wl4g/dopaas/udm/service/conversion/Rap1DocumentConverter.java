@@ -19,8 +19,8 @@
  */
 package com.wl4g.dopaas.udm.service.conversion;
 
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.serialize.JacksonUtils;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;
 import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;

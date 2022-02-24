@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.common.bean.uci;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 public class OrchestrationPipeline extends BaseBean {
 

@@ -21,8 +21,8 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.log.SmartLoggerFactory;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLoggerFactory;
 import com.wl4g.dopaas.common.bean.umc.CustomAlarmEvent;
 import com.wl4g.dopaas.common.bean.umc.CustomDataSource;
 import com.wl4g.dopaas.common.bean.umc.CustomEngine;

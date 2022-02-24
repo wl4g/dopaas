@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.wl4g.component.common.view.Freemarkers;
-import com.wl4g.component.core.utils.expression.SpelExpressions;
+import com.wl4g.infra.common.view.Freemarkers;
+import com.wl4g.infra.core.utils.expression.SpelExpressions;
 
 /**
  * {@link RenderingTests}

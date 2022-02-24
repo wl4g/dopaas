@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.common.constant;
 
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getFieldValues;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getFieldValues;
 
 /**
  * LCDP(Low Code Development Platform Center) constants

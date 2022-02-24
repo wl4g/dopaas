@@ -48,7 +48,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 
-import com.wl4g.component.common.cli.CommandUtils.Builder;
+import com.wl4g.infra.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.HfileBulkToHdfsExporter;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.CsvUtil;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;

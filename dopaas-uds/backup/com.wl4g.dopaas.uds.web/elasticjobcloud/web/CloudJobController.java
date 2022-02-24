@@ -18,8 +18,8 @@
 package com.wl4g.dopaas.uds.elasticjobcloud.web;
 
 import com.google.common.base.Strings;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.*;
 import org.apache.shardingsphere.elasticjob.cloud.config.CloudJobExecutionType;
 import org.apache.shardingsphere.elasticjob.cloud.config.pojo.CloudJobConfigurationPOJO;

@@ -31,17 +31,17 @@ package com.wl4g.dopaas.scm.common.session;
 // */
 //package com.wl4g.dopaas.scm.session;
 //
-//import static com.wl4g.component.common.codec.CodecSource.*;
-//import static com.wl4g.component.common.lang.Assert2.notNullOf;
-//import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+//import static com.wl4g.infra.common.codec.CodecSource.*;
+//import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+//import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 //
 //import java.security.spec.KeySpec;
 //
-//import com.wl4g.component.common.codec.CodecSource;
-//import com.wl4g.component.common.crypto.asymmetric.AsymmetricCryptor;
-//import com.wl4g.component.common.crypto.asymmetric.spec.KeyPairSpec;
-//import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
-//import com.wl4g.component.common.log.SmartLogger;
+//import com.wl4g.infra.common.codec.CodecSource;
+//import com.wl4g.infra.common.crypto.asymmetric.AsymmetricCryptor;
+//import com.wl4g.infra.common.crypto.asymmetric.spec.KeyPairSpec;
+//import com.wl4g.infra.common.crypto.symmetric.AES128ECBPKCS5;
+//import com.wl4g.infra.common.log.SmartLogger;
 //
 ///**
 // * Abstract scm asymmetric security manager support.

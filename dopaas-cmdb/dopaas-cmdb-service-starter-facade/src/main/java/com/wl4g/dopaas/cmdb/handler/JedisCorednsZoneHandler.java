@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.cmdb.handler;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.isEmpty;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.collection.CollectionUtils2.isEmpty;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -31,10 +31,10 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.infra.common.collection.CollectionUtils2;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.serialize.JacksonUtils;
+import com.wl4g.infra.support.cache.jedis.JedisService;
 import com.wl4g.dopaas.cmdb.config.DnsProperties;
 import com.wl4g.dopaas.cmdb.handler.standard.DNSResolveType;
 import com.wl4g.dopaas.common.bean.cmdb.DnsPrivateResolution;

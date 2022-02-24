@@ -29,7 +29,7 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 
-import com.wl4g.component.common.cli.CommandUtils.Builder;
+import com.wl4g.infra.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
 
 /**

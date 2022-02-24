@@ -30,7 +30,7 @@ import org.apache.shardingsphere.elasticjob.infra.context.TaskContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 
 /**
  * Mesos facade service.

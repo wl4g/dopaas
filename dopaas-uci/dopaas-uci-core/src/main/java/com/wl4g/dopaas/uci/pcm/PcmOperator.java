@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.uci.pcm;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.component.core.framework.operator.Operator;
-import com.wl4g.component.core.bean.model.SelectionModel;
+import com.wl4g.infra.core.framework.operator.Operator;
+import com.wl4g.infra.core.bean.model.SelectionModel;
 import com.wl4g.dopaas.common.bean.uci.Pcm;
 import com.wl4g.dopaas.common.bean.uci.PipeHistoryPcm;
 

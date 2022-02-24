@@ -18,12 +18,12 @@ package com.wl4g.dopaas.udm.plugin.swagger.springfox;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.core.boot.BootstrappingAutoConfiguration;
-import com.wl4g.component.core.web.error.reactive.ReactiveErrorAutoConfiguration;
-import com.wl4g.component.core.web.error.servlet.ServletErrorAutoConfiguration;
-import com.wl4g.component.core.web.mapping.annotation.WebFluxSmartHandlerMappingConfigurer;
-import com.wl4g.component.core.web.mapping.annotation.WebMvcSmartHandlerMappingConfigurer;
-import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
+import com.wl4g.infra.core.boot.BootstrappingAutoConfiguration;
+import com.wl4g.infra.core.web.error.reactive.ReactiveErrorAutoConfiguration;
+import com.wl4g.infra.core.web.error.servlet.ServletErrorAutoConfiguration;
+import com.wl4g.infra.core.web.mapping.annotation.WebFluxSmartHandlerMappingConfigurer;
+import com.wl4g.infra.core.web.mapping.annotation.WebMvcSmartHandlerMappingConfigurer;
+import com.wl4g.infra.core.web.versions.annotation.EnableApiVersionManagement;
 import com.wl4g.dopaas.udm.plugin.swagger.DocumentionAutoConfigurationRegistrar;
 import com.wl4g.dopaas.udm.plugin.swagger.EnableDocumentionAutoConfiguration;
 

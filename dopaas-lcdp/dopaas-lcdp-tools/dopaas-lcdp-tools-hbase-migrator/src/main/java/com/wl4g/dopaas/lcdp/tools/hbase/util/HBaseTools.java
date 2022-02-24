@@ -37,8 +37,8 @@ import org.apache.hadoop.hbase.util.Base64;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import com.google.common.io.Resources;
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.resource.resolver.ClassPathResourcePatternResolver;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
 
 /**
  * {@link HBaseTools}

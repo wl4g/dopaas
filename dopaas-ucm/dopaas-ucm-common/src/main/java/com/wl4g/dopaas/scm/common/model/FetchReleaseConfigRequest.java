@@ -21,9 +21,9 @@ import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -15,10 +15,10 @@
  */
 package com.wl4g.dopaas.scm.client.watch;
 
-import com.wl4g.component.common.annotation.Nullable;
-import com.wl4g.component.common.eventbus.EventBusSupport;
-import com.wl4g.component.common.task.GenericTaskRunner;
-import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.infra.common.annotation.Nullable;
+import com.wl4g.infra.common.eventbus.EventBusSupport;
+import com.wl4g.infra.common.task.GenericTaskRunner;
+import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.dopaas.scm.client.config.ScmClientProperties;
 import com.wl4g.dopaas.scm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.scm.client.event.ScmEventPublisher;
@@ -34,10 +34,10 @@ import com.wl4g.dopaas.scm.common.model.FetchReleaseConfigRequest;
 import com.wl4g.dopaas.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.dopaas.scm.common.model.ReleaseConfigInfo.ReleaseContent;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.ThreadUtils2.sleep;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.ThreadUtils2.sleep;
 import static com.wl4g.dopaas.scm.common.SCMConstants.*;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;

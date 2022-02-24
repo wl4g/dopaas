@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.client.locator;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.scm.client.GenericScmClient;
 import com.wl4g.dopaas.scm.client.ScmClient;
 import com.wl4g.dopaas.scm.client.config.ScmClientProperties;
@@ -33,9 +33,9 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.dopaas.scm.client.refresh.ScmContextRefresher.SCM_REFRESH_PROPERTY_SOURCE;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 

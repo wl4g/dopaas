@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.uci.core;
 
-import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.uci.config.CiProperties;
 
 /**

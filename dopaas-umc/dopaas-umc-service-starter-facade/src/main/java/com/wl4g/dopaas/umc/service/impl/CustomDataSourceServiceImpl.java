@@ -15,10 +15,10 @@
  */
 package com.wl4g.dopaas.umc.service.impl;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.common.serialize.JacksonUtils;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.CustomDataSource;
 import com.wl4g.dopaas.common.bean.umc.CustomDataSourceProperties;
 import com.wl4g.dopaas.common.bean.umc.datasource.BaseDataSource;

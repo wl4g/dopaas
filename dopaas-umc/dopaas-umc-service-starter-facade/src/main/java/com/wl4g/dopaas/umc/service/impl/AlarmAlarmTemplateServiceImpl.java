@@ -15,11 +15,11 @@
  */
 package com.wl4g.dopaas.umc.service.impl;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_NORMAL;
-import static com.wl4g.component.core.bean.BaseBean.ENABLED;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.core.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.infra.core.bean.BaseBean.DEL_FLAG_NORMAL;
+import static com.wl4g.infra.core.bean.BaseBean.ENABLED;
 import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_ALARM_TPLS;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -35,8 +35,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.support.cache.jedis.JedisService;
 import com.wl4g.dopaas.cmdb.service.AppInstanceService;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import com.wl4g.dopaas.common.bean.umc.AlarmConfig;

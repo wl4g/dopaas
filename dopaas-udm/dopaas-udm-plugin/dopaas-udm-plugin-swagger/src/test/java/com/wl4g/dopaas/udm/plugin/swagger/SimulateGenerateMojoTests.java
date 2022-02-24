@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.udm.plugin.swagger;
 
-import static com.wl4g.component.common.reflect.ReflectionUtils2.findField;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.setField;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findField;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.setField;
 import static com.wl4g.dopaas.udm.plugin.swagger.util.OutputFormater.JSON;
 import static com.wl4g.dopaas.udm.plugin.swagger.util.OutputFormater.YAML;
 import static java.lang.String.format;

@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.scm.client.config;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.StringUtils2.eqIgnCase;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.StringUtils2.eqIgnCase;
 
 /**
  * {@link CommType}

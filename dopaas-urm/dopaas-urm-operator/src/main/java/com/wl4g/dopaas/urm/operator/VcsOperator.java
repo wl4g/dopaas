@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.urm.operator;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.framework.operator.Operator;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.framework.operator.Operator;
 import com.wl4g.dopaas.common.bean.urm.SourceRepo;
 import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.model.VcsBranchModel;
@@ -35,7 +35,7 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.dopaas.urm.operator.VcsOperator.VcsProviderKind;
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.*;

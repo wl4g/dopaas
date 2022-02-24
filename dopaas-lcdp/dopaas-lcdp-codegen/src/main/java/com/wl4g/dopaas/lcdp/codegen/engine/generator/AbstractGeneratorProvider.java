@@ -16,16 +16,16 @@
 package com.wl4g.dopaas.lcdp.codegen.engine.generator;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.collection.CollectionUtils2.ensureMap;
-import static com.wl4g.component.common.io.FileIOUtils.writeFile;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.view.Freemarkers.createDefault;
-import static com.wl4g.component.common.view.Freemarkers.renderingTemplateToString;
-import static com.wl4g.component.core.bean.BaseBean.DISABLED;
-import static com.wl4g.component.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
+import static com.wl4g.infra.common.collection.CollectionUtils2.ensureMap;
+import static com.wl4g.infra.common.io.FileIOUtils.writeFile;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.view.Freemarkers.createDefault;
+import static com.wl4g.infra.common.view.Freemarkers.renderingTemplateToString;
+import static com.wl4g.infra.core.bean.BaseBean.DISABLED;
+import static com.wl4g.infra.core.utils.expression.SpelExpressions.hasSpelTemplateExpr;
 import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COMMON_BASESPECS;
 import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COMMON_WATERMARK;
 import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_DB;
@@ -55,8 +55,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.utils.expression.SpelExpressions;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.utils.expression.SpelExpressions;
 import com.wl4g.dopaas.common.bean.lcdp.GenProject;
 import com.wl4g.dopaas.common.bean.lcdp.GenTable;
 import com.wl4g.dopaas.lcdp.codegen.config.CodegenProperties;

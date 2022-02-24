@@ -22,7 +22,7 @@ package com.wl4g.dopaas.uci.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.component.common.io.FileIOUtils.ReadTailFrame;
+import com.wl4g.infra.common.io.FileIOUtils.ReadTailFrame;
 import com.wl4g.dopaas.uci.core.PipelineManager;
 import com.wl4g.dopaas.uci.service.PipelineManagerAdapter;
 import com.wl4g.dopaas.uci.utils.HookCommandHolder.HookCommand;

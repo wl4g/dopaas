@@ -20,11 +20,11 @@
 package com.wl4g.dopaas.uci.client.springboot.web;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.codec.Encodes.urlDecode;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.lang.ClassUtils2.getDefaultClassLoader;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.codec.Encodes.urlDecode;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.ClassUtils2.getDefaultClassLoader;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.dopaas.common.constant.UciConstants.DEFAULT_META_NAME;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.common.bean.uci.model.BuildMetaInfo;
 import com.wl4g.dopaas.common.bean.uci.model.BuildMetaInfo.SourceInfo;
 import com.wl4g.dopaas.uci.client.springboot.config.UciClientProperties;

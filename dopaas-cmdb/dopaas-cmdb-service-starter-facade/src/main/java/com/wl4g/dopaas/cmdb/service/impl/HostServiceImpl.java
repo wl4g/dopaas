@@ -16,16 +16,16 @@
 package com.wl4g.dopaas.cmdb.service.impl;
 
 import com.google.common.base.Charsets;
-import com.wl4g.component.common.cli.ssh2.JschHolder;
-import com.wl4g.component.common.cli.ssh2.SSH2Holders;
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.support.cli.DestroableProcessManager;
-import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
+import com.wl4g.infra.common.cli.ssh2.JschHolder;
+import com.wl4g.infra.common.cli.ssh2.SSH2Holders;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.common.io.FileIOUtils;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.support.cli.DestroableProcessManager;
+import com.wl4g.infra.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.dopaas.cmdb.config.FsProperties;
 import com.wl4g.dopaas.cmdb.data.HostDao;
 import com.wl4g.dopaas.cmdb.data.HostSshDao;
@@ -51,7 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.dopaas.cmdb.util.SshkeyUtils.encryptSshkeyToHex;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;

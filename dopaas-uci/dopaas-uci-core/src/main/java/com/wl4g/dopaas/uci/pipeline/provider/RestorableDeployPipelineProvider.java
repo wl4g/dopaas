@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.uci.pipeline.provider;
 
-import static com.wl4g.component.common.codec.FingerprintUtils.getMd5Fingerprint;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.codec.FingerprintUtils.getMd5Fingerprint;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.dopaas.uci.pipeline.provider.PipelineProvider.PipelineKind.DOCKER_NATIVE;
 import static com.wl4g.dopaas.uci.utils.PipelineUtils.ensureDirectory;
 import static java.lang.String.format;
@@ -29,10 +29,10 @@ import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 
-import com.wl4g.component.common.io.CompressUtils;
-import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.support.cli.command.DestroableCommand;
-import com.wl4g.component.support.cli.command.LocalDestroableCommand;
+import com.wl4g.infra.common.io.CompressUtils;
+import com.wl4g.infra.common.io.FileIOUtils;
+import com.wl4g.infra.support.cli.command.DestroableCommand;
+import com.wl4g.infra.support.cli.command.LocalDestroableCommand;
 import com.wl4g.dopaas.common.bean.uci.PipeStepApi;
 import com.wl4g.dopaas.common.bean.uci.Project;
 import com.wl4g.dopaas.common.bean.uci.model.ActionControl;

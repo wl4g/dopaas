@@ -17,7 +17,7 @@ package com.wl4g.dopaas.common.bean.uci;
 
 import java.util.Date;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 import lombok.Getter;
 import lombok.Setter;

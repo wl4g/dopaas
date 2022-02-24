@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.udm.plugin.swagger;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
@@ -45,7 +45,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.springframework.core.ResolvableType;
 
-import com.wl4g.component.common.collection.CollectionUtils2;
+import com.wl4g.infra.common.collection.CollectionUtils2;
 import com.wl4g.dopaas.udm.plugin.swagger.config.DocumentionHolder;
 import com.wl4g.dopaas.udm.plugin.swagger.config.SwaggerConfig;
 import com.wl4g.dopaas.udm.plugin.swagger.config.DocumentionHolder.DocumentionProvider;

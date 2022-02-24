@@ -15,11 +15,11 @@
  */
 package com.wl4g.dopaas.lcdp.dbop.service.evaluate;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.lang.ClassUtils2.resolveClassNameNullable;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.findFieldNullable;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.makeAccessible;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.ClassUtils2.resolveClassNameNullable;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findFieldNullable;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.makeAccessible;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -34,7 +34,7 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.wl4g.component.common.lang.StringUtils2;
+import com.wl4g.infra.common.lang.StringUtils2;
 import com.wl4g.dopaas.common.utils.JdbcDefinition;
 import com.wl4g.dopaas.lcdp.dbop.service.evaluate.metadata.CachingJdbcMetadataResolver;
 import com.wl4g.dopaas.lcdp.dbop.service.evaluate.metadata.MetadataResolver;

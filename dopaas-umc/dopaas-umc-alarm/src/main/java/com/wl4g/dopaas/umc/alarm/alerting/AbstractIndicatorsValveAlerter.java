@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.umc.alarm.alerting;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.ensureList;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.collection.CollectionUtils2.ensureList;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
 import static java.lang.Math.abs;
 import static java.util.Collections.emptyList;
@@ -28,11 +28,11 @@ import java.util.concurrent.locks.Lock;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.support.cache.jedis.JedisService;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
-import com.wl4g.component.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.common.bean.umc.model.MetricValue;
 import com.wl4g.dopaas.umc.alarm.metric.MetricAggregateWrapper;
 import com.wl4g.dopaas.umc.config.AlarmProperties;

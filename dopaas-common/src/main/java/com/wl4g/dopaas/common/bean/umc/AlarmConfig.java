@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.common.bean.umc;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 import com.wl4g.iam.common.bean.Contact;
 
 import java.io.Serializable;

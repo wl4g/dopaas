@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.uci.pipeline.deploy;
 
 import com.github.dockerjava.api.DockerClient;
-import com.wl4g.component.common.cli.ssh2.SSH2Holders;
-import com.wl4g.component.common.io.FileIOUtils;
+import com.wl4g.infra.common.cli.ssh2.SSH2Holders;
+import com.wl4g.infra.common.io.FileIOUtils;
 import com.wl4g.dopaas.uci.pipeline.provider.PipelineProvider;
 import com.wl4g.dopaas.uci.utils.DockerJavaUtil;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistory;

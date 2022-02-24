@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.lcdp.tools.hbase.bulk;
 
-import static com.wl4g.component.common.lang.Assert2.state;
+import static com.wl4g.infra.common.lang.Assert2.state;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_HBASE_MR_TMPDIR;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_MAP_LIMIT;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_OUTPUT_DIR;
@@ -48,7 +48,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import com.wl4g.component.common.cli.CommandUtils.Builder;
+import com.wl4g.infra.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.HfileToCsvMapper;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
 

@@ -35,7 +35,7 @@ import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConsta
 import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_TYPE;
 import static com.wl4g.dopaas.common.constant.LcdpConstants.ModelAttributeConstants.GEN_COLUMN_VALIDRULE;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 import lombok.Getter;
 import lombok.Setter;

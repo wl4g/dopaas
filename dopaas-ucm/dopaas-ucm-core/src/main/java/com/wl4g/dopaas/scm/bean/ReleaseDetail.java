@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.bean;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 /**
  * 对应表：scm_release_detail

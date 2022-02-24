@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.uci.data.AnalysisHistoryDao;
 import com.wl4g.dopaas.uci.service.AnalysisHistoryService;
 import com.wl4g.dopaas.common.bean.uci.AnalysisHistory;

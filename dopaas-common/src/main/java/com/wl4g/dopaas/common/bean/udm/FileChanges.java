@@ -17,7 +17,7 @@ package com.wl4g.dopaas.common.bean.udm;
 
 import java.util.List;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 public class FileChanges extends BaseBean {
 	private static final long serialVersionUID = -3425763977484915010L;

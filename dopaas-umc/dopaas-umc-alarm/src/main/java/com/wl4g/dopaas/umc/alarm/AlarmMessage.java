@@ -22,7 +22,7 @@ import com.wl4g.dopaas.umc.alarm.metric.MetricAggregateWrapper;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.springframework.util.CollectionUtils.isEmpty;

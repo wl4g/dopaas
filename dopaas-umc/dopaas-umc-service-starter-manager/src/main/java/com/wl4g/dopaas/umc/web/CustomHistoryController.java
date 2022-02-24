@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.umc.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.CustomHistory;
 import com.wl4g.dopaas.umc.service.CustomHistoryService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**

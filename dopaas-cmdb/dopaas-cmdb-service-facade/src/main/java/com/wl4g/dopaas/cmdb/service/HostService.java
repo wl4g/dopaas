@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.cmdb.Host;
 
 /**

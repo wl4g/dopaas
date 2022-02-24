@@ -21,7 +21,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.component.common.lang.SystemUtils2;
+import com.wl4g.infra.common.lang.SystemUtils2;
 
 /**
  * {@link Mqttv3AutoConfiguration}

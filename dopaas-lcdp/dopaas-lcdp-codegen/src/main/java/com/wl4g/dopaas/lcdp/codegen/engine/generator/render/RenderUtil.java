@@ -15,12 +15,12 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.engine.generator.render;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.StringUtils2.isTrue;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.doFullWithFields;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.doWithMethods;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.isGenericModifier;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.StringUtils2.isTrue;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.doFullWithFields;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.doWithMethods;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.isGenericModifier;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -34,9 +34,9 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.component.common.reflect.ReflectionUtils2.FieldFilter;
-import com.wl4g.component.common.reflect.ReflectionUtils2.MethodCallback;
-import com.wl4g.component.common.reflect.TypeUtils2;
+import com.wl4g.infra.common.reflect.ReflectionUtils2.FieldFilter;
+import com.wl4g.infra.common.reflect.ReflectionUtils2.MethodCallback;
+import com.wl4g.infra.common.reflect.TypeUtils2;
 import com.wl4g.dopaas.common.bean.lcdp.RenderProperty;
 
 /**

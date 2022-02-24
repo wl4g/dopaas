@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.uci.tool;
 
-import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.uci.config.CiProperties;
 import com.wl4g.dopaas.uci.service.LogCleanService;
 
@@ -27,7 +27,7 @@ import java.util.Calendar;
 
 import javax.annotation.Nullable;
 
-import static com.wl4g.component.common.lang.TypeConverts.safeLongToInt;
+import static com.wl4g.infra.common.lang.TypeConverts.safeLongToInt;
 import static java.util.Objects.isNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
 

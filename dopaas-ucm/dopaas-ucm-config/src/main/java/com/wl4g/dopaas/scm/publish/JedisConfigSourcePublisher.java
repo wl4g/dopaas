@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.publish;
 
-import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.jedis.JedisService;
 import com.wl4g.dopaas.scm.config.ScmProperties;
 
 import org.apache.commons.codec.binary.Hex;

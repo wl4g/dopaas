@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.CloudRegistryCenterConfigService;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.domain.RegistryCenterConfig;
 

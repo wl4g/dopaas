@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
 import static java.lang.ThreadLocal.withInitial;
 import static java.util.regex.Pattern.compile;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;

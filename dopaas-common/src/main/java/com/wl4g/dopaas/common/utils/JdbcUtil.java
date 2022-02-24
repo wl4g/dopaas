@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.common.utils;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static org.apache.commons.lang3.StringUtils.split;
 
 import java.sql.Connection;
@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.component.common.collection.UniqueList;
+import com.wl4g.infra.common.collection.UniqueList;
 
 /**
  * {@link JdbcUtil}

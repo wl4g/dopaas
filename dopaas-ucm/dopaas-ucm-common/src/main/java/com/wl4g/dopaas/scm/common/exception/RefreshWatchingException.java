@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.common.exception;
 
-import com.wl4g.component.common.web.rest.FunctionalRuleRestrictException;
+import com.wl4g.infra.common.web.rest.FunctionalRuleRestrictException;
 
 /**
  * {@link RefreshWatchingException}

@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.AlarmRecord;
 import com.wl4g.dopaas.common.bean.umc.AlarmRule;
 import com.wl4g.dopaas.common.bean.umc.AlarmTemplate;

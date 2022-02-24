@@ -33,7 +33,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.ContainerProperties.AckMode;
 
-import com.wl4g.component.core.web.mapping.PrefixHandlerMappingSupport;
+import com.wl4g.infra.core.web.mapping.PrefixHandlerMappingSupport;
 import com.wl4g.dopaas.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.dopaas.umc.annotation.EnableHttpCollectReceiver;
 import com.wl4g.dopaas.umc.annotation.EnableKafkaCollectReceiver;

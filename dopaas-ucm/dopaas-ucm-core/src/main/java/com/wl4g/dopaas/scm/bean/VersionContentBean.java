@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.bean;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 public class VersionContentBean extends BaseBean {
 	private static final long serialVersionUID = 7654969446638218612L;

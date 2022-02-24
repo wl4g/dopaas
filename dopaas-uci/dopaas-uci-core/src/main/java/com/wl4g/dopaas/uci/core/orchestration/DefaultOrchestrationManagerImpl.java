@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.core.orchestration;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.dopaas.common.constant.UciConstants.REDIS_CI_RUN_PRE;
 import static com.wl4g.dopaas.common.constant.UciConstants.REDIS_CI_RUN_SCAN_BATCH;
 import static com.wl4g.dopaas.common.constant.UciConstants.REDIS_SAVE_TIME_S;
@@ -43,13 +43,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.serialize.JacksonUtils;
-import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.common.task.RunnerProperties.StartupMode;
-import com.wl4g.component.support.cache.jedis.JedisService;
-import com.wl4g.component.support.cache.jedis.ScanCursor;
-import com.wl4g.component.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
+import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.jedis.ScanCursor;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.common.bean.uci.Orchestration;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationHistory;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationPipeline;

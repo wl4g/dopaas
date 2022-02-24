@@ -21,10 +21,10 @@ import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import java.util.ArrayList;
 import java.util.List;

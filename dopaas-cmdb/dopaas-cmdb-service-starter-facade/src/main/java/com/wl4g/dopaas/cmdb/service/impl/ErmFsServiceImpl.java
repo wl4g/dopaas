@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.lang.DateUtils2;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.lang.DateUtils2;
 import com.wl4g.dopaas.cmdb.config.FsProperties;
 import com.wl4g.dopaas.cmdb.service.FsService;
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.common.bean.umc;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 public class CustomEngineModel extends BaseBean {
 	private static final long serialVersionUID = 381411777614066880L;

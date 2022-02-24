@@ -15,11 +15,11 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.core.bean.model.SelectionModel;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.core.bean.model.SelectionModel;
 import com.wl4g.dopaas.uci.data.PcmDao;
 import com.wl4g.dopaas.uci.pcm.PcmOperator;
 import com.wl4g.dopaas.uci.pcm.PcmOperator.PcmKind;

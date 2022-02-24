@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.example.health;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -36,9 +36,9 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.stereotype.Component;
 
-import com.wl4g.component.common.lang.SystemUtils2;
-import com.wl4g.component.common.lang.ThreadUtils2;
-import com.wl4g.component.core.utils.context.SpringContextHolder;
+import com.wl4g.infra.common.lang.SystemUtils2;
+import com.wl4g.infra.common.lang.ThreadUtils2;
+import com.wl4g.infra.core.utils.context.SpringContextHolder;
 
 /**
  * {@link SpringMqttv3AutoConfiguration}

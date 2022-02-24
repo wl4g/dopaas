@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.utils;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeArrayToList;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeArrayToList;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 

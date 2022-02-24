@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.client.collector;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.List;
 
@@ -23,8 +23,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.dopaas.common.constant.UmcConstants;
 import com.wl4g.dopaas.umc.client.metrics.UmcMetricsFacade;
 

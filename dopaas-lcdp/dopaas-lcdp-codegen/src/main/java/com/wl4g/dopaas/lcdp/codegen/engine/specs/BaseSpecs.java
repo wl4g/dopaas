@@ -15,13 +15,13 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.engine.specs;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.disDupCollection;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.doWithLocalFields;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.makeAccessible;
+import static com.wl4g.infra.common.collection.CollectionUtils2.disDupCollection;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.doWithLocalFields;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.makeAccessible;
 import static com.wl4g.dopaas.lcdp.codegen.engine.specs.BaseSpecs.CommentExtractor.ofExtractor;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -51,10 +51,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.google.common.collect.Lists;
-import com.wl4g.component.common.bean.ConfigOption;
-import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.lang.StringUtils2;
+import com.wl4g.infra.common.bean.ConfigOption;
+import com.wl4g.infra.common.collection.CollectionUtils2;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.common.lang.StringUtils2;
 import com.wl4g.dopaas.common.bean.lcdp.GenTableColumn;
 import com.wl4g.dopaas.common.bean.lcdp.extra.ExtraOptionDefinition.GenExtraOption;
 import com.wl4g.dopaas.common.bean.lcdp.extra.TableExtraOptionDefinition.GenTableExtraOption;

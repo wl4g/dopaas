@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.component.common.lang.Assert2;
+import com.wl4g.infra.common.lang.Assert2;
 
 import java.io.Closeable;
 import java.io.IOException;

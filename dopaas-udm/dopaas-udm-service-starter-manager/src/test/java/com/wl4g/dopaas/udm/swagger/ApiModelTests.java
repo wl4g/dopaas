@@ -15,14 +15,14 @@
  */
 package com.wl4g.dopaas.udm.swagger;
 
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.System.out;
 
 import java.io.IOException;
 
 import org.junit.Test;
 
-import com.wl4g.component.common.resource.ResourceUtils2;
+import com.wl4g.infra.common.resource.ResourceUtils2;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.Swagger20Parser;

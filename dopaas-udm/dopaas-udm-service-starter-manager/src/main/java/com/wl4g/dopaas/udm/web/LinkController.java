@@ -15,10 +15,10 @@
  */
 package com.wl4g.dopaas.udm.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.dopaas.udm.service.ShareService;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

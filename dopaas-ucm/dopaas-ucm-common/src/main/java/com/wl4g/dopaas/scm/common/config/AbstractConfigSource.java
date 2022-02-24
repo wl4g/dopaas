@@ -15,14 +15,14 @@
  */
 package com.wl4g.dopaas.scm.common.config;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.component.common.codec.CodecSource;
-import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.codec.CodecSource;
+import com.wl4g.infra.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.scm.common.exception.ScmException;
 import com.wl4g.dopaas.scm.common.model.AbstractConfigInfo.ConfigProfile;
 import static com.wl4g.dopaas.scm.common.SCMConstants.KEY_CIPHER_PREFIX;

@@ -15,12 +15,12 @@
  */
 package com.wl4g.dopaas.umc.example.metrics;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.umc.client.collector.MetricsCollector;
 import com.wl4g.dopaas.umc.client.metrics.UmcMetricsFacade;
 import com.wl4g.dopaas.umc.client.util.MetricsUtil;

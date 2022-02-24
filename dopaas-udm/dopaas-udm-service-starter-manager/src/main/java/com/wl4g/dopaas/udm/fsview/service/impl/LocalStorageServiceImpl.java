@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.udm.fsview.service.impl;
 
-import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.common.lang.DateUtils2;
+import com.wl4g.infra.common.io.FileIOUtils;
+import com.wl4g.infra.common.lang.DateUtils2;
 import com.wl4g.dopaas.udm.fsview.bean.FileInfo;
 import com.wl4g.dopaas.udm.fsview.config.FsViewerProperties;
 import com.wl4g.dopaas.udm.fsview.service.FsService;

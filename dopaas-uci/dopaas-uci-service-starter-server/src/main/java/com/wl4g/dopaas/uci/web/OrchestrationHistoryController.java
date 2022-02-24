@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.uci.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.web.BaseController;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.web.BaseController;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.uci.service.OrchestrationHistoryService;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationHistory;
 

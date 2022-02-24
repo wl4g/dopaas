@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.urm.operator.github;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.nonNull;
@@ -39,8 +39,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.support.cache.jedis.JedisService;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
 import com.wl4g.dopaas.common.bean.urm.SourceRepo;
 import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.GenericBasedGitVcsOperator;

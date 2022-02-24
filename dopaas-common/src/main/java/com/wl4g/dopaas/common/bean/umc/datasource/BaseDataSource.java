@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.common.bean.umc.datasource;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 /**
  * @author vjay

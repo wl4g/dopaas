@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.uci.service.impl;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
@@ -33,10 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.cmdb.service.AppClusterService;
 import com.wl4g.dopaas.cmdb.service.AppInstanceService;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;

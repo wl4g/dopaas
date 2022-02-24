@@ -19,13 +19,13 @@
  */
 package com.wl4g.dopaas.udm.plugin.swagger.springfox.plugin;
 
-import com.wl4g.component.common.collection.CollectionUtils2;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.web.versions.VersionConditionSupport;
-import com.wl4g.component.core.web.versions.annotation.ApiVersionManagementWrapper;
-import com.wl4g.component.core.web.versions.annotation.ApiVersionMapping;
-import com.wl4g.component.core.web.versions.annotation.ApiVersionMappingWrapper.ApiVersionWrapper;
-import com.wl4g.component.core.web.versions.annotation.EnableApiVersionManagement;
+import com.wl4g.infra.common.collection.CollectionUtils2;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.web.versions.VersionConditionSupport;
+import com.wl4g.infra.core.web.versions.annotation.ApiVersionManagementWrapper;
+import com.wl4g.infra.core.web.versions.annotation.ApiVersionMapping;
+import com.wl4g.infra.core.web.versions.annotation.ApiVersionMappingWrapper.ApiVersionWrapper;
+import com.wl4g.infra.core.web.versions.annotation.EnableApiVersionManagement;
 import com.wl4g.dopaas.udm.plugin.swagger.config.DocumentionHolder;
 import com.wl4g.dopaas.udm.plugin.swagger.util.ScanReflections;
 import org.reflections.Reflections;
@@ -47,12 +47,12 @@ import springfox.documentation.spring.web.readers.operation.HandlerMethodResolve
 import java.util.*;
 import java.util.function.BiPredicate;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.isEmptyArray;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeArrayToList;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.reflect.ObjectInstantiators.newInstance;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.findField;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.infra.common.collection.CollectionUtils2.isEmptyArray;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeArrayToList;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.reflect.ObjectInstantiators.newInstance;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findField;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.*;

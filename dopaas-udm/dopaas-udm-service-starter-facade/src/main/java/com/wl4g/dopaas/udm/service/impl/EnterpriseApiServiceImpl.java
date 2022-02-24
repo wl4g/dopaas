@@ -18,7 +18,7 @@
 
 package com.wl4g.dopaas.udm.service.impl;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 import java.io.IOException;
@@ -32,10 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiModule;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApiProperties;

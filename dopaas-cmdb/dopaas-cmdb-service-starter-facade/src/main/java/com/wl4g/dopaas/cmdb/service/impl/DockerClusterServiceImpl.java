@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.cmdb.DockerCluster;
 import com.wl4g.dopaas.common.bean.cmdb.DockerInstance;
 import com.wl4g.dopaas.cmdb.data.DockerClusterDao;

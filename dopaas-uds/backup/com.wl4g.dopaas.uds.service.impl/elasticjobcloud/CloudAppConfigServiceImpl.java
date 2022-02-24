@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
-import com.wl4g.component.core.framework.proxy.SmartProxyFor;
+import com.wl4g.infra.core.framework.proxy.SmartProxyFor;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.model.CloudAppConfigurationPOJO;
 
 import lombok.AccessLevel;

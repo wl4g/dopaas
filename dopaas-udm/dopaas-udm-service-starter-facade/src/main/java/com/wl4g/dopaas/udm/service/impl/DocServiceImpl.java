@@ -15,16 +15,16 @@
  */
 package com.wl4g.dopaas.udm.service.impl;
 
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.lang.DateUtils2;
-import com.wl4g.component.common.lang.TypeConverts;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.support.cli.DestroableProcessManager;
-import com.wl4g.component.support.cli.command.DestroableCommand;
-import com.wl4g.component.support.cli.command.LocalDestroableCommand;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.common.io.FileIOUtils;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.lang.DateUtils2;
+import com.wl4g.infra.common.lang.TypeConverts;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.support.cli.DestroableProcessManager;
+import com.wl4g.infra.support.cli.command.DestroableCommand;
+import com.wl4g.infra.support.cli.command.LocalDestroableCommand;
 import com.wl4g.dopaas.common.bean.udm.FileChanges;
 import com.wl4g.dopaas.common.bean.udm.FileLabel;
 import com.wl4g.dopaas.common.bean.udm.Share;
@@ -48,7 +48,7 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * @author vjay

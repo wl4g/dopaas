@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.urm.operator.bitbucket;
 
-import com.wl4g.component.common.annotation.Reserved;
+import com.wl4g.infra.common.annotation.Reserved;
 import com.wl4g.dopaas.common.bean.urm.SourceRepo;
 import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.operator.GenericBasedGitVcsOperator;

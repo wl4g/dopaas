@@ -1,14 +1,14 @@
 package com.wl4g.dopaas.umc.client.metrics.advice.counter;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 
 /**
  * Starts bootstrap configuration <br/>

@@ -20,9 +20,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.udm.Share;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;

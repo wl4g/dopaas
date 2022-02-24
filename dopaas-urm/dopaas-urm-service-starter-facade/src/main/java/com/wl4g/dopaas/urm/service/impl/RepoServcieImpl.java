@@ -15,10 +15,10 @@
  */
 package com.wl4g.dopaas.urm.service.impl;
 
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.urm.SourceRepo;
 import com.wl4g.dopaas.common.bean.urm.model.CompositeBasicVcsProjectModel;
 import com.wl4g.dopaas.urm.config.RepoProperties;
@@ -38,8 +38,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 import static java.util.stream.Collectors.toList;

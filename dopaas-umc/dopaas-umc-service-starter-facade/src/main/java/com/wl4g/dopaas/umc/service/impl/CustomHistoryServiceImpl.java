@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.umc.service.impl;
 
 
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.CustomHistory;
 import com.wl4g.dopaas.umc.data.CustomHistoryDao;
 import com.wl4g.dopaas.umc.service.CustomHistoryService;

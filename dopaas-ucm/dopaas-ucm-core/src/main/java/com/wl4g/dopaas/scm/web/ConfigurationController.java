@@ -18,10 +18,10 @@ package com.wl4g.dopaas.scm.web;
 import com.github.pagehelper.Page;
 
 import com.wl4g.dopaas.scm.bean.*;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.common.web.rest.RespBase.RetCode;
-import com.wl4g.component.core.utils.PropertySources;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase.RetCode;
+import com.wl4g.infra.core.utils.PropertySources;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.dopaas.page.PageHolder;
 import com.wl4g.dopaas.scm.service.ConfigurationService;
 import org.apache.commons.lang3.exception.ExceptionUtils;

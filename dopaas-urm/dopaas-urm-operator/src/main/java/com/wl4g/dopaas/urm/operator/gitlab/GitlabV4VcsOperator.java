@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.TypeConverts.parseIntOrDefault;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.TypeConverts.parseIntOrDefault;
 import static com.wl4g.dopaas.urm.operator.VcsOperator.SearchMeta.MAX_LIMIT;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;

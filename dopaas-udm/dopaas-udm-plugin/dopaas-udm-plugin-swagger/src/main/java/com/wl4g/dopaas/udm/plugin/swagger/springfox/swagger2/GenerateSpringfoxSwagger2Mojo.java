@@ -27,7 +27,7 @@ import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.wl4g.component.common.remoting.RestClient;
+import com.wl4g.infra.common.remoting.RestClient;
 import com.wl4g.dopaas.udm.plugin.swagger.AbstractGenDocMojo;
 import com.wl4g.dopaas.udm.plugin.swagger.config.DocumentionHolder;
 import com.wl4g.dopaas.udm.plugin.swagger.config.DocumentionHolder.DocumentionProvider;

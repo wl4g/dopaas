@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.umc.client.collector;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 
 import java.util.List;
@@ -25,9 +25,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.ApplicationArguments;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.task.SafeScheduledTaskPoolExecutor;
-import com.wl4g.component.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.task.SafeScheduledTaskPoolExecutor;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.umc.client.collector.ScrapeCollectorAutoConfiguration.ScrapeCollectorProperties;
 import com.wl4g.dopaas.umc.client.metrics.UmcMetricsFacade;
 

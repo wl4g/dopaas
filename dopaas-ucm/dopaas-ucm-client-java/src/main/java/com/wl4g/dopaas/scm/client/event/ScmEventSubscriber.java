@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.client.event;
 
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ import javax.validation.constraints.NotNull;
 
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
-import com.wl4g.component.common.annotation.Nullable;
-import com.wl4g.component.common.eventbus.EventBusSupport;
+import com.wl4g.infra.common.annotation.Nullable;
+import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.dopaas.scm.client.watch.GenericRefreshWatcher;
 import com.wl4g.dopaas.scm.client.watch.RefreshWatcher;
 import com.wl4g.dopaas.scm.client.watch.internal.ReportingConfigListener;

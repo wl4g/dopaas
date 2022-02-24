@@ -19,7 +19,7 @@
  */
 package com.wl4g.dopaas.udm.service.conversion;
 
-import com.wl4g.component.core.framework.operator.Operator;
+import com.wl4g.infra.core.framework.operator.Operator;
 import com.wl4g.dopaas.common.bean.udm.model.XCloudDocumentModel;
 import com.wl4g.dopaas.udm.service.conversion.DocumentConverter.ConverterProviderKind;
 

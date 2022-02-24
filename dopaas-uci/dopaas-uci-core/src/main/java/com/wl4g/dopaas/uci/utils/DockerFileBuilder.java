@@ -17,7 +17,7 @@ package com.wl4g.dopaas.uci.utils;
 
 import java.io.File;
 
-import com.wl4g.component.common.io.FileIOUtils;
+import com.wl4g.infra.common.io.FileIOUtils;
 
 /**
  * @author vjay

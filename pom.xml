@@ -108,6 +108,10 @@
 		<zookeeper.version>3.6.0</zookeeper.version>
 		<elastic-job.version>3.0.0-RC1</elastic-job.version>
 		<curator.version>5.1.0</curator.version>
+		<!-- DoPaaS depends -->
+		<dopaas-infra.version>3.0.0</dopaas-infra.version>
+		<dopaas-shell.version>3.5.0</dopaas-shell.version>
+		<dopaas-iam.version>3.0.0</dopaas-iam.version>
 		<!-- Maven plugins -->
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven-versions-plugin.version>2.8.1</maven-versions-plugin.version>
@@ -144,7 +148,7 @@
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>dopaas-infra-bom</artifactId>
-				<version>2.0.0</version>
+				<version>${dopaas-infra.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -152,7 +156,7 @@
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>dopaas-shell-bom</artifactId>
-				<version>3.1.0</version>
+				<version>${dopaas-shell.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -160,27 +164,27 @@
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>dopaas-iam-client-springboot</artifactId>
-				<version>2.0.0</version>
+				<version>${dopaas-iam.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>dopaas-iam-core</artifactId>
-				<version>2.0.0</version>
+				<version>${dopaas-iam.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>dopaas-iam-common</artifactId>
-				<version>2.0.0</version>
+				<version>${dopaas-iam.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>dopaas-iam-service-facade</artifactId>
-				<version>2.0.0</version>
+				<version>${dopaas-iam.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>dopaas-iam-client-springboot-mock</artifactId>
-				<version>2.0.0</version>
+				<version>${dopaas-iam.version}</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- Spring Boot. -->

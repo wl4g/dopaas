@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.es.handler;
 
-import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.serialize.JacksonUtils;
 import com.wl4g.dopaas.umc.es.EnhancedRestHighLevelClient;
 import com.wl4g.dopaas.umc.es.listener.Listener;
 

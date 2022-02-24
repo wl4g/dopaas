@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.cmdb.service.impl;
 
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.support.cli.DestroableProcessManager;
-import com.wl4g.component.support.cli.command.RemoteDestroableCommand;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.support.cli.DestroableProcessManager;
+import com.wl4g.infra.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import com.wl4g.dopaas.common.bean.cmdb.Host;
 import com.wl4g.dopaas.cmdb.data.AppInstanceDao;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.wl4g.component.core.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.infra.core.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCodes;
 

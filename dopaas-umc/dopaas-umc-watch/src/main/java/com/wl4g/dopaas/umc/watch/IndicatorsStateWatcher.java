@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.umc.watch;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.dopaas.common.constant.UmcConstants.KEY_CACHE_FETCH_META;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -27,8 +27,8 @@ import org.apache.shardingsphere.elasticjob.api.ShardingContext;
 import org.apache.shardingsphere.elasticjob.dataflow.job.DataflowJob;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.support.cache.jedis.JedisService;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.support.cache.jedis.JedisService;
 import com.wl4g.dopaas.umc.watch.config.WatchProperties;
 import com.wl4g.dopaas.umc.watch.fetch.IndicatorsMetaFetcher;
 import com.wl4g.dopaas.umc.watch.fetch.IndicatorsMetaInfo;

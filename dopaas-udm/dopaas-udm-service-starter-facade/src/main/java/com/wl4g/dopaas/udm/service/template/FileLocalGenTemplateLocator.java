@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.udm.service.template;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,8 +24,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.io.FileIOUtils;
+import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.udm.config.DocProperties;
 import com.wl4g.dopaas.udm.util.PathUtils;
 

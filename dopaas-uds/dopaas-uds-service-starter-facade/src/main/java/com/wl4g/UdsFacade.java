@@ -22,7 +22,7 @@ package com.wl4g;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.wl4g.component.data.annotation.EnableComponentDataConfiguration;
+import com.wl4g.infra.data.annotation.EnableComponentDataConfiguration;
 
 /**
  * {@link UdsFacade}

@@ -15,8 +15,8 @@
  */
 package com.wl4g.dopaas.cmdb.service;
 
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.cmdb.AppCluster;
 import com.wl4g.dopaas.common.bean.cmdb.AppEnvironment;
 import com.wl4g.dopaas.common.bean.cmdb.AppInstance;

@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.uci.pipeline;
 
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.support.cache.jedis.util.RedisSpecUtil.safeFormat;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.support.cache.jedis.util.RedisSpecUtil.safeFormat;
 import static com.wl4g.dopaas.common.constant.UciConstants.KEY_FINALIZER_INTERVALMS;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
@@ -30,12 +30,12 @@ import java.util.concurrent.locks.Lock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.common.task.RunnerProperties.StartupMode;
-import com.wl4g.component.support.cache.jedis.JedisService;
-import com.wl4g.component.support.cache.locks.JedisLockManager;
-import com.wl4g.component.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
+import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.locks.JedisLockManager;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.uci.config.CiProperties;
 import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
 

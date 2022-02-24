@@ -26,7 +26,7 @@ import java.util.Optional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.component.common.collection.OnceUnmodifiableMap;
+import com.wl4g.infra.common.collection.OnceUnmodifiableMap;
 import com.wl4g.dopaas.umc.rule.Aggregator;
 
 /**

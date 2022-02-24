@@ -16,8 +16,8 @@
 package com.wl4g.dopaas.udm.util;
 
 import com.google.common.io.Resources;
-import com.wl4g.component.common.resource.StreamResource;
-import com.wl4g.component.common.resource.resolver.ClassPathResourcePatternResolver;
+import com.wl4g.infra.common.resource.StreamResource;
+import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
@@ -27,9 +27,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeSet;
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeSet;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 

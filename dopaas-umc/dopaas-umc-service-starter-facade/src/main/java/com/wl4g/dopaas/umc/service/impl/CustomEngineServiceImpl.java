@@ -18,8 +18,8 @@ package com.wl4g.dopaas.umc.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.page.PageHolder;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.umc.CustomEngine;
 import com.wl4g.dopaas.umc.data.CustomEngineDao;
 import com.wl4g.dopaas.umc.service.CustomEngineService;

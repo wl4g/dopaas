@@ -15,18 +15,18 @@
  */
 package com.wl4g.dopaas.cmdb.initializer.installer;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.lang.Assert2.notNullOf;
-import static com.wl4g.component.common.lang.TypeConverts.parseIntOrNull;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.Assert2.notNullOf;
+import static com.wl4g.infra.common.lang.TypeConverts.parseIntOrNull;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.StringUtils.split;
 
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.common.task.GenericTaskRunner;
-import com.wl4g.component.common.task.RunnerProperties;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.common.task.GenericTaskRunner;
+import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.dopaas.cmdb.initializer.exception.InvalidPkgVersionException;
 import com.wl4g.dopaas.cmdb.initializer.exception.UnsupportedInstallPkgVersionException;
 

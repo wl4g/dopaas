@@ -21,12 +21,12 @@ package com.wl4g.dopaas.scm.session;
 //
 //import org.springframework.beans.factory.annotation.Autowired;
 //
-//import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-//import static com.wl4g.component.core.constants.SCMDevOpsConstants.*;
+//import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+//import static com.wl4g.infra.core.constants.SCMDevOpsConstants.*;
 //
-//import com.wl4g.component.common.crypto.asymmetric.AsymmetricCryptor;
-//import com.wl4g.component.common.crypto.symmetric.AES128ECBPKCS5;
-//import com.wl4g.component.support.cache.jedis.JedisService;
+//import com.wl4g.infra.common.crypto.asymmetric.AsymmetricCryptor;
+//import com.wl4g.infra.common.crypto.symmetric.AES128ECBPKCS5;
+//import com.wl4g.infra.support.cache.jedis.JedisService;
 //import com.wl4g.dopaas.scm.session.HandshakeResult;
 //
 ///**

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.scm.client.repository;
 
-import static com.wl4g.component.common.lang.Assert2.isTrueOf;
+import static com.wl4g.infra.common.lang.Assert2.isTrueOf;
 import static java.util.Collections.synchronizedList;
 
 import java.util.Collection;

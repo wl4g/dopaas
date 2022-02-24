@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.umc.client.health;
 
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
-import com.wl4g.component.common.log.SmartLogger;
+import com.wl4g.infra.common.log.SmartLogger;
 
 /**
  * Compound health monitoring processor.<br/>

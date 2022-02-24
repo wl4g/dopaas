@@ -15,10 +15,10 @@
  */
 package com.wl4g.dopaas.umc.client.health.mqtt;
 
-import static com.wl4g.component.common.collection.CollectionUtils2.safeMap;
-import static com.wl4g.component.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.findFieldNullable;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeMap;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findFieldNullable;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.getField;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
@@ -38,9 +38,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.messaging.MessageHandler;
 
-import com.wl4g.component.common.lang.Assert2;
-import com.wl4g.component.common.log.SmartLogger;
-import com.wl4g.component.core.utils.context.SpringContextHolder;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.log.SmartLogger;
+import com.wl4g.infra.core.utils.context.SpringContextHolder;
 import com.wl4g.dopaas.umc.client.health.util.HealthUtil;
 
 /**

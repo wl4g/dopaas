@@ -15,18 +15,18 @@
  */
 package com.wl4g.dopaas.scm.client.watch;
 
-import com.wl4g.component.common.reflect.ParameterizedTypeReference;
-import com.wl4g.component.common.remoting.ClientHttpRequestInterceptor;
-import com.wl4g.component.common.remoting.ClientHttpResponse;
-import com.wl4g.component.common.remoting.HttpEntity;
-import com.wl4g.component.common.remoting.HttpRequest;
-import com.wl4g.component.common.remoting.HttpResponseEntity;
-import com.wl4g.component.common.remoting.Netty4ClientHttpRequestFactory;
-import com.wl4g.component.common.remoting.RestClient;
-import com.wl4g.component.common.remoting.exception.ClientHttpRequestExecution;
-import com.wl4g.component.common.remoting.standard.HttpHeaders;
-import com.wl4g.component.common.task.RunnerProperties;
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.reflect.ParameterizedTypeReference;
+import com.wl4g.infra.common.remoting.ClientHttpRequestInterceptor;
+import com.wl4g.infra.common.remoting.ClientHttpResponse;
+import com.wl4g.infra.common.remoting.HttpEntity;
+import com.wl4g.infra.common.remoting.HttpRequest;
+import com.wl4g.infra.common.remoting.HttpResponseEntity;
+import com.wl4g.infra.common.remoting.Netty4ClientHttpRequestFactory;
+import com.wl4g.infra.common.remoting.RestClient;
+import com.wl4g.infra.common.remoting.exception.ClientHttpRequestExecution;
+import com.wl4g.infra.common.remoting.standard.HttpHeaders;
+import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.dopaas.scm.client.config.ScmClientProperties;
 import com.wl4g.dopaas.scm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.scm.client.repository.RefreshRecordsRepository;
@@ -43,9 +43,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.wl4g.component.common.lang.TypeConverts.safeLongToInt;
-import static com.wl4g.component.common.remoting.standard.HttpMediaType.APPLICATION_JSON;
-import static com.wl4g.component.common.web.rest.RespBase.isSuccess;
+import static com.wl4g.infra.common.lang.TypeConverts.safeLongToInt;
+import static com.wl4g.infra.common.remoting.standard.HttpMediaType.APPLICATION_JSON;
+import static com.wl4g.infra.common.web.rest.RespBase.isSuccess;
 import static com.wl4g.dopaas.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.dopaas.scm.common.SCMConstants.URI_S_BASE;
 import static com.wl4g.dopaas.scm.common.SCMConstants.URI_S_REFRESHED_REPORT;

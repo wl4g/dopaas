@@ -16,11 +16,11 @@
 package com.wl4g.dopaas.lcdp.codegen.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.component.common.bean.BeanUtils2;
-import com.wl4g.component.common.id.SnowflakeIdGenerator;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.bean.BaseBean;
-import com.wl4g.component.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.infra.common.bean.BeanUtils2;
+import com.wl4g.infra.common.id.SnowflakeIdGenerator;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.bean.BaseBean;
+import com.wl4g.infra.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.dopaas.common.bean.lcdp.GenDataSource;
 import com.wl4g.dopaas.common.bean.lcdp.GenProject;
 import com.wl4g.dopaas.common.bean.lcdp.GenTable;
@@ -57,11 +57,11 @@ import java.util.Set;
 
 import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.wl4g.component.common.collection.CollectionUtils2.safeList;
-import static com.wl4g.component.common.lang.Assert2.isTrue;
-import static com.wl4g.component.common.lang.Assert2.*;
-import static com.wl4g.component.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.component.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
+import static com.wl4g.infra.common.lang.Assert2.isTrue;
+import static com.wl4g.infra.common.lang.Assert2.*;
+import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.dopaas.common.constant.LcdpConstants.GenProviderAlias.IAM_SPINGCLOUD_MVN;
 import static com.wl4g.dopaas.lcdp.codegen.config.CodegenAutoConfiguration.BEAN_CODEGEN_MSG_SOURCE;
 import static com.wl4g.dopaas.lcdp.codegen.engine.GenProviderSetDefinition.getProviders;

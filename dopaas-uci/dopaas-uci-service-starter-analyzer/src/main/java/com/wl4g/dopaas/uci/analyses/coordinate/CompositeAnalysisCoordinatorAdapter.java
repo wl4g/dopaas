@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.component.common.collection.OnceUnmodifiableMap;
+import com.wl4g.infra.common.collection.OnceUnmodifiableMap;
 import com.wl4g.dopaas.uci.analyses.model.AnalysingModel;
 import com.wl4g.dopaas.uci.analyses.model.AnalysisQueryModel;
 import com.wl4g.dopaas.uci.analyses.model.AnalysisResultModel;

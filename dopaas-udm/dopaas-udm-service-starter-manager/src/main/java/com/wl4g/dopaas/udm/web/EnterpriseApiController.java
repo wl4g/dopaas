@@ -17,10 +17,10 @@
  */
 package com.wl4g.dopaas.udm.web;
 
-import com.wl4g.component.common.io.FileIOUtils;
-import com.wl4g.component.common.web.rest.RespBase;
-import com.wl4g.component.core.page.PageHolder;
-import com.wl4g.component.core.web.BaseController;
+import com.wl4g.infra.common.io.FileIOUtils;
+import com.wl4g.infra.common.web.rest.RespBase;
+import com.wl4g.infra.core.page.PageHolder;
+import com.wl4g.infra.core.web.BaseController;
 import com.wl4g.dopaas.common.bean.udm.EnterpriseApi;
 import com.wl4g.dopaas.udm.fsview.config.FsViewerProperties;
 import com.wl4g.dopaas.udm.service.EnterpriseApiService;

@@ -76,7 +76,7 @@ spring:
 # Logging configuration.
 logging:
   file:
-    # see:com.wl4g.component.core.logging.logback.EnhancedLogbackConfigurer#apply
+    # see:com.wl4g.infra.core.logging.logback.EnhancedLogbackConfigurer#apply
     # see:org.springframework.boot.logging.LogFile#toString
     name: ${server.tomcat.basedir}/../log/${spring.application.name}/${spring.application.name}.log
     clean-history-on-start: false

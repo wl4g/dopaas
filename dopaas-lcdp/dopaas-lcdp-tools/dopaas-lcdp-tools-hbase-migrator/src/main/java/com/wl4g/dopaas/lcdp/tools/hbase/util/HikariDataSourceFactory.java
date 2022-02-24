@@ -15,9 +15,9 @@
  */
 package com.wl4g.dopaas.lcdp.tools.hbase.util;
 
-import static com.wl4g.component.common.lang.Assert2.hasTextOf;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.findMethodNullable;
-import static com.wl4g.component.common.reflect.ReflectionUtils2.invokeMethod;
+import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.findMethodNullable;
+import static com.wl4g.infra.common.reflect.ReflectionUtils2.invokeMethod;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 

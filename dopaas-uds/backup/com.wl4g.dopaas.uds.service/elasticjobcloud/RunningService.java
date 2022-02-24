@@ -27,7 +27,7 @@ import java.util.Set;
 import org.apache.shardingsphere.elasticjob.infra.context.TaskContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 
 /**
  * {@link RunningService}

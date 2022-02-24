@@ -17,7 +17,7 @@ package com.wl4g.dopaas.common.bean.uci;
 
 import java.util.Date;
 
-import com.wl4g.component.core.bean.BaseBean;
+import com.wl4g.infra.core.bean.BaseBean;
 
 public class PipelineHistoryInstance extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;

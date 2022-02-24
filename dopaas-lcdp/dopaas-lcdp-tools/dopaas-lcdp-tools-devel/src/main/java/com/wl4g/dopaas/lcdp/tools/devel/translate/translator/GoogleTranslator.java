@@ -22,7 +22,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.wl4g.component.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.serialize.JacksonUtils;
 
 /**
  * {@link GoogleTranslator}

@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.urm.config;
 
-import com.wl4g.component.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.infra.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.dopaas.urm.operator.VcsOperator;
 import com.wl4g.dopaas.urm.operator.alicode.AlicodeVcsOperator;
 import com.wl4g.dopaas.urm.operator.bitbucket.BitbucketVcsOperator;

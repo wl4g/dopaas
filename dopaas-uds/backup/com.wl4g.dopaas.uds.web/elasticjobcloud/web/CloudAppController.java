@@ -17,7 +17,7 @@
 
 package com.wl4g.dopaas.uds.elasticjobcloud.web;
 
-import com.wl4g.component.common.web.rest.RespBase;
+import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.dopaas.uds.elasticjobcloud.web.model.CloudAppConfigModel;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.CloudAppConfigService;
 import com.wl4g.dopaas.uds.service.elasticjobcloud.CloudJobConfigService;

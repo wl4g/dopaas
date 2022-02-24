@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.uci.pcm.jira;
 
-import com.wl4g.component.core.bean.model.SelectionModel;
+import com.wl4g.infra.core.bean.model.SelectionModel;
 import com.wl4g.dopaas.uci.pcm.AbstractPcmOperator;
 import com.wl4g.dopaas.common.bean.uci.Pcm;
 import com.wl4g.dopaas.common.bean.uci.PipeHistoryPcm;

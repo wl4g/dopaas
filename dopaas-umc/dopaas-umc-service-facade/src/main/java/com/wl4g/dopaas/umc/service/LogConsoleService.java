@@ -22,7 +22,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.cmdb.Log;
 import com.wl4g.dopaas.common.bean.cmdb.QueryLogModel;
 

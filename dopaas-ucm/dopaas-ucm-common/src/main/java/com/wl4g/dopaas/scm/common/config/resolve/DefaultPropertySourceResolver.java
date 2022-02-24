@@ -15,14 +15,14 @@
  */
 package com.wl4g.dopaas.scm.common.config.resolve;
 
-import static com.wl4g.component.common.lang.Assert2.notNull;
+import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static java.util.Arrays.asList;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.wl4g.component.common.reflect.ObjectInstantiators;
+import com.wl4g.infra.common.reflect.ObjectInstantiators;
 import com.wl4g.dopaas.scm.common.config.HoconConfigSource;
 import com.wl4g.dopaas.scm.common.config.TomlConfigSource;
 import com.wl4g.dopaas.scm.common.config.JsonConfigSource;

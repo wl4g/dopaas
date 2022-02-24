@@ -31,7 +31,7 @@ import org.apache.shardingsphere.elasticjob.cloud.statistics.type.task.TaskResul
 import org.apache.shardingsphere.elasticjob.cloud.statistics.type.task.TaskRunningStatistics;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.wl4g.component.integration.feign.core.annotation.FeignConsumer;
+import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 
 /**
  * {@link StatisticService}
