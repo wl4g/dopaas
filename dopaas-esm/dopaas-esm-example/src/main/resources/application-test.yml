@@ -17,8 +17,7 @@ example:
   lastName: jack
 
 spring:
-  xcloud:
-    iam:
+  iam:
       client:
         base-uri: http://localhost:17030/scm
   

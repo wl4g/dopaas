@@ -11,8 +11,7 @@
 # #### Environment(PRO) configuration. ####
 #
 spring:
-  xcloud:
-    iam:
+  iam:
       cors:
         rules:
           '[/**]':

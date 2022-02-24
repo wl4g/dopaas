@@ -11,8 +11,7 @@
 # #### Configuration of specical on which DoPaaS(udm-manager) service(uat). ####
 #
 spring:
-  xcloud:
-    iam:
+  iam:
       cors:
         rules:
           '[/**]':

@@ -11,9 +11,8 @@
 # #### Configuration of middleware on which DoPaaS(urm-facade) service(pro) depends. ####
 #
 spring:
-  xcloud:
-    component:
-      support:
+  infra:
+    support:
         # Redis configuration.
         jedis:
           passwd: ${URM_DOPAAS_REDIS_PASSWD:123456}

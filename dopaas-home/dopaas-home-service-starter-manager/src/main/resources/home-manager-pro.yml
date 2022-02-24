@@ -11,8 +11,7 @@
 # #### Configuration of specical on which DoPaaS(home-manager) service(pro). ####
 #
 spring:
-  xcloud:
-    iam:
+  iam:
       cors:
         rules:
           '[/**]':

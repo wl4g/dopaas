@@ -11,9 +11,8 @@
 # #### Configuration of specical on which DoPaaS(uci-server) service(fat). ####
 #
 spring:
-  xcloud:
-    component:
-      support:
+  infra:
+    support:
         jedis:
           passwd: ${UCI_DOPAAS_REDIS_PASSWD:123456}
           connect-timeout: 10000

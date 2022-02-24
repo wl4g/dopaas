@@ -11,41 +11,40 @@
 # #### Configuration of general on which DoPaaS(standalone) service(dev). ####
 #
 spring:
-  xcloud:
-    component:
-      support:
-        # Redis configuration.
-        jedis:
-          passwd: ${STANDALONE_DOPAAS_REDIS_PASSWD:123456}
-          connect-timeout: 10000
-          max-attempts: 10
-          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${STANDALONE_DOPAAS_REDIS_NODES:redis.standalone.wl4g.debug:6379,redis.standalone.wl4g.debug:6380,redis.standalone.wl4g.debug:6381,redis.standalone.wl4g.debug:7379,redis.standalone.wl4g.debug:7380,redis.standalone.wl4g.debug:7381}
-    iam:
-      cors:
-        rules:
-          '[/**]':
-            allows-origins:
-              #- http://${DOPAAS_ZONE:wl4g.debug}
-              #- http://${DOPAAS_ZONE:wl4g.debug:${server.port}}
-              #- http://*.${DOPAAS_ZONE:wl4g.debug}
-              #- http://*.${DOPAAS_ZONE:wl4g.debug:${server.port}}
-              #- http://localhost:8080
-              #- http://localhost:18080
-              #- http://127.0.0.1:8080
-              #- http://127.0.0.1:18080
-              - '*'
-      acl:
-        secure: false # Turn off protection will trust any same intranet IP.
-        allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
-        denyIpRange: ${DOPAAS_IAM_ACL_DENY}
-      client:
-        # To facilitate debugging, it is recommended to configure local hosts, wl4g.debug/wl4g.local/wl4g.dev
-        # resolve to 127.0.0.1 (consistent with the server deployment structure), and the relevant front-end
-        # logic is in global_variable.js:55, related database table: sys_cluster_config
-        server-uri: http://wl4g.debug:18080/iam-web
-        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: http://wl4g.debug/#/home/overview
+  infra:
+    support:
+      # Redis configuration.
+      jedis:
+        passwd: ${STANDALONE_DOPAAS_REDIS_PASSWD:123456}
+        connect-timeout: 10000
+        max-attempts: 10
+        # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+        nodes: ${STANDALONE_DOPAAS_REDIS_NODES:redis.standalone.wl4g.debug:6379,redis.standalone.wl4g.debug:6380,redis.standalone.wl4g.debug:6381,redis.standalone.wl4g.debug:7379,redis.standalone.wl4g.debug:7380,redis.standalone.wl4g.debug:7381}
+  iam:
+    cors:
+      rules:
+        '[/**]':
+          allows-origins:
+            #- http://${DOPAAS_ZONE:wl4g.debug}
+            #- http://${DOPAAS_ZONE:wl4g.debug:${server.port}}
+            #- http://*.${DOPAAS_ZONE:wl4g.debug}
+            #- http://*.${DOPAAS_ZONE:wl4g.debug:${server.port}}
+            #- http://localhost:8080
+            #- http://localhost:18080
+            #- http://127.0.0.1:8080
+            #- http://127.0.0.1:18080
+            - '*'
+    acl:
+      secure: false # Turn off protection will trust any same intranet IP.
+      allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
+      denyIpRange: ${DOPAAS_IAM_ACL_DENY}
+    client:
+      # To facilitate debugging, it is recommended to configure local hosts, wl4g.debug/wl4g.local/wl4g.dev
+      # resolve to 127.0.0.1 (consistent with the server deployment structure), and the relevant front-end
+      # logic is in global_variable.js:55, related database table: sys_cluster_config
+      server-uri: http://wl4g.debug:18080/iam-web
+      unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
+      success-uri: http://wl4g.debug/#/home/overview
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver

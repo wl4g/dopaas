@@ -15,40 +15,39 @@ spring:
   profiles:
     include: common,support,util
     active: dev
-  xcloud:
-    component:
-      core.web:
-        embedded-webapps:
-          enabled: true # Default false
-          base-uri: /view
-          webapp-location: classpath*:/default-webapps
-      support:
-        cli.enabled: true
-      rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
-    iam: # IAM client configuration.
-      cors:
-        enabled: true # Default: true
-        rules:
-          '[/**]':
-            allows-methods: [GET,HEAD,POST,OPTIONS]
-            allows-headers: [X-Iam-*]
-            allow-credentials: true
-            ##allows-origins:
-              #- '*'
-      xsrf:
-        enabled: true
-      replay:
-        enabled: true
-      xss:
-        enabled: true # Default: true
-      client: # IAM client configuration.
-        filter-chain:
-          '[/public/**]': anon # Public rule release
-          '[/hook/**]': anon # Public rule release
-        cipher:
-          enable-data-cipher: true # Default by true
-        session:
-          enable-access-token-validity: true # Default by true
+  infra:
+    core.web:
+      embedded-webapps:
+        enabled: true # Default false
+        base-uri: /view
+        webapp-location: classpath*:/default-webapps
+    support:
+      cli.enabled: true
+    rpc.feign.enabled: false # Default by true, If want to run in standalone mode, should set false
+  iam: # IAM client configuration.
+    cors:
+      enabled: true # Default: true
+      rules:
+        '[/**]':
+          allows-methods: [GET,HEAD,POST,OPTIONS]
+          allows-headers: [X-Iam-*]
+          allow-credentials: true
+          ##allows-origins:
+            #- '*'
+    xsrf:
+      enabled: true
+    replay:
+      enabled: true
+    xss:
+      enabled: true # Default: true
+    client: # IAM client configuration.
+      filter-chain:
+        '[/public/**]': anon # Public rule release
+        '[/hook/**]': anon # Public rule release
+      cipher:
+        enable-data-cipher: true # Default by true
+      session:
+        enable-access-token-validity: true # Default by true
   servlet:
     http: # Upload file limit
       multipart:

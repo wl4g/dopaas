@@ -11,9 +11,8 @@
 # #### Configuration of specical on which DoPaaS(umc-manager) service(dev). ####
 #
 spring:
-  xcloud:
-    component:
-      support:
+  infra:
+    support:
         notification:
           mail:
             host: smtp.163.com

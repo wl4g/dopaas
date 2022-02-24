@@ -8,11 +8,10 @@
 # limitations under the License.
 #
 
-# #### Environment(PRO) configuration. ####
+# #### Configuration of specical on which DoPaaS(cmdb-manager) service(pro). ####
 #
 spring:
-  xcloud:
-    iam:
+  iam:
       cors:
         rules:
           '[/**]':

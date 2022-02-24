@@ -8,11 +8,10 @@
 # limitations under the License.
 #
 
-# #### Environment(UAT Test) configuration. ####
+# #### Configuration of specical on which DoPaaS(cmdb-manager) service(uat). ####
 #
 spring:
-  xcloud:
-    iam:
+  iam:
       cors:
         rules:
           '[/**]':

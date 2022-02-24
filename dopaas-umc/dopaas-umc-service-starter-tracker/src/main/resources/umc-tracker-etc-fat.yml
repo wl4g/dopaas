@@ -12,9 +12,8 @@
 #
 
 spring:
-  xcloud:
-    component:
-      support:
+  infra:
+    support:
         # Redis configuration.
         jedis:
           passwd: ${UMC_DOPAAS_REDIS_PASSWD:123456}
