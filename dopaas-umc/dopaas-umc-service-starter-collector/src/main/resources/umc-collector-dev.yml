@@ -11,8 +11,7 @@
 # #### Environment(Dev) configuration. ####
 #
 spring:
-  xcloud:
-    dopaas:
+  dopaas:
       umc:
         store:
           derby:

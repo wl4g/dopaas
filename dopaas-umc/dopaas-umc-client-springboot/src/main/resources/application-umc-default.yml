@@ -9,8 +9,7 @@
 #
 
 spring:
-  xcloud:
-    dopaas:
+  dopaas:
       umc:
         client:
           scrape:

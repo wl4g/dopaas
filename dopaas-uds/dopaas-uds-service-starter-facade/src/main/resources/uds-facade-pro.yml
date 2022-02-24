@@ -10,8 +10,7 @@
 # #### Configuration of specical on which DoPaaS(uds-facade) service(pro). ####
 #
 spring:
-  xcloud:
-    dopaas:
+  dopaas:
       uds:
         elasticjoblite:
           zookeeper:

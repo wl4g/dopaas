@@ -13,10 +13,10 @@
 spring:
   infra:
     support:
-        # Redis configuration.
-        jedis:
-          passwd: ${URM_DOPAAS_REDIS_PASSWD:123456}
-          connect-timeout: 10000
-          max-attempts: 10
-          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${URM_DOPAAS_REDIS_NODES:redis.urm.wl4g.fat:6379,redis.urm.wl4g.fat:6380,redis.urm.wl4g.fat:6381,redis.urm.wl4g.fat:7379,redis.urm.wl4g.fat:7380,redis.urm.wl4g.fat:7381}
+      # Redis configuration.
+      jedis:
+        passwd: (.+)
+        connect-timeout: 10000
+        max-attempts: 10
+        # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+        nodes: (.+)

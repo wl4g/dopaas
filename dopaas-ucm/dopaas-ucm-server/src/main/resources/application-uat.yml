@@ -31,24 +31,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
-#    druid:
-#      url: ${DOPAAS_DB_URL:jdbc:mysql://owner-node5:3306/dopaas?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false}
-#      username: ${DOPAAS_DB_USER:dopaas}
-#      password: ${DOPAAS_DB_PASSWD:123456}
-#      initial-size: 10
-#      max-active: 100
-#      min-idle: 10
-#      max-wait: 60000
-#      pool-prepared-statements: true
-#      max-pool-prepared-statement-per-connection-size: 20
-#      time-between-eviction-runs-millis: 60000
-#      min-evictable-idle-time-millis: 300000
-#      validation-query: SELECT 1
-#      test-while-idle: true
-#      test-on-borrow: false
-#      test-on-return: false
-#      filters: stat,wall
-#      log-slow-sql: true
+
 
 # Redis configuration.
 redis:

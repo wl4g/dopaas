@@ -12,19 +12,19 @@
 #
 spring:
   iam:
-      cors:
-        rules:
-          '[/**]':
-            allows-origins:
-              #- http://${DOPAAS_ZONE:wl4g.debug}
-              #- http://${DOPAAS_ZONE:wl4g.debug:${server.port}}
-              #- http://*.${DOPAAS_ZONE:wl4g.debug}
-              #- http://*.${DOPAAS_ZONE:wl4g.debug:${server.port}}
-              #- http://localhost:8080
-              #- http://localhost:18080
-              #- http://127.0.0.1:8080
-              #- http://127.0.0.1:18080
-              - '*'
+    cors:
+      rules:
+        '[/**]':
+          allows-origins:
+            #- http://${DOPAAS_ZONE:wl4g.debug}
+            #- http://${DOPAAS_ZONE:wl4g.debug:${server.port}}
+            #- http://*.${DOPAAS_ZONE:wl4g.debug}
+            #- http://*.${DOPAAS_ZONE:wl4g.debug:${server.port}}
+            #- http://localhost:8080
+            #- http://localhost:18080
+            #- http://127.0.0.1:8080
+            #- http://127.0.0.1:18080
+            - '*'
       acl:
         secure: false # Turn off protection will trust any same intranet IP.
         allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}

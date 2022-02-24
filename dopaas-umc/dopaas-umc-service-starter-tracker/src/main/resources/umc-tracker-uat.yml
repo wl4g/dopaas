@@ -11,8 +11,7 @@
 # #### Environment(UAT Test) configuration. ####
 #
 spring:
-  xcloud:
-    dopaas:
+  dopaas:
       umc:
         store:
           derby:

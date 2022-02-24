@@ -13,13 +13,13 @@
 spring:
   infra:
     support:
-        # Redis configuration.
-        jedis:
-          passwd: ${UDM_DOPAAS_REDIS_PASSWD:123456}
-          connect-timeout: 10000
-          max-attempts: 10
-          # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${UDM_DOPAAS_REDIS_NODES:redis.udm.wl4g.com:6379,redis.udm.wl4g.com:6380,redis.udm.wl4g.com:6381,redis.udm.wl4g.com:7379,redis.udm.wl4g.com:7380,redis.udm.wl4g.com:7381}
+      # Redis configuration.
+      jedis:
+        passwd: (.+)
+        connect-timeout: 10000
+        max-attempts: 10
+        # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
+        nodes: (.+)
   # Datasource configuration.
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
@@ -36,21 +36,3 @@ spring:
       maximumPoolSize: 100
       validationTimeout: 5000
       leakDetectionThreshold: 0
-#    druid:
-#      url: ${UDM_DOPAAS_DB_URL:jdbc:mysql://rds.udm.wl4g.com:3306/dopaas_udm?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
-#      username: ${UDM_DOPAAS_DB_USER:dopaas_udm}
-#      password: ${UDM_DOPAAS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
-#      initial-size: 10
-#      max-active: 100
-#      min-idle: 10
-#      max-wait: 60000
-#      pool-prepared-statements: true
-#      max-pool-prepared-statement-per-connection-size: 20
-#      time-between-eviction-runs-millis: 60000
-#      min-evictable-idle-time-millis: 300000
-#      validation-query: SELECT 1
-#      test-while-idle: true
-#      test-on-borrow: false
-#      test-on-return: false
-#      filters: stat,wall
-#      log-slow-sql: true
