@@ -15,7 +15,7 @@
  */
 package com.wl4g.dopaas.lcdp.codegen.console;
 
-import com.wl4g.infra.common.io.FileDeletionUtils;
+import com.wl4g.infra.common.io.FileDeleteUtil;
 import com.wl4g.dopaas.lcdp.codegen.config.CodegenProperties;
 import com.wl4g.dopaas.lcdp.codegen.engine.template.GenTemplateLocator;
 import com.wl4g.shell.common.annotation.ShellMethod;
@@ -34,35 +34,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ShellComponent
 public class CodegenConsole {
 
-	/**
-	 * {@link CodegenProperties}
-	 */
-	@Autowired
-	protected CodegenProperties config;
+    /**
+     * {@link CodegenProperties}
+     */
+    @Autowired
+    protected CodegenProperties config;
 
-	/**
-	 * {@link GenTemplateLocator}
-	 */
-	@Autowired
-	protected GenTemplateLocator locator;
+    /**
+     * {@link GenTemplateLocator}
+     */
+    @Autowired
+    protected GenTemplateLocator locator;
 
-	@ShellMethod(keys = { "refreshTplCache" }, group = DEF_CONSOLE_GROUP, help = "Refresh generators templates cache.")
-	public void refreshTemplateCache(SimpleShellContext context) {
-		context.printf("Cleaning generate templates cache...");
-		locator.cleanAll();
+    @ShellMethod(keys = { "refreshTplCache" }, group = DEF_CONSOLE_GROUP, help = "Refresh generators templates cache.")
+    public void refreshTemplateCache(SimpleShellContext context) {
+        context.printf("Cleaning generate templates cache...");
+        locator.cleanAll();
 
-		context.printf("Cleaned generate templates cache.");
-		context.completed();
-	}
+        context.printf("Cleaned generate templates cache.");
+        context.completed();
+    }
 
-	@ShellMethod(keys = { "cleanGeneratedJobs" }, group = DEF_CONSOLE_GROUP, help = "Clean Generated Job temp Files.")
-	public void cleanGeneratedJobs(SimpleShellContext context) {
-		context.printf("Cleaning generate templates cache...");
-		FileDeletionUtils.delete(config.getWorkspace().concat("/**"));
-		context.printf("Cleaned generate templates cache.");
-	}
+    @ShellMethod(keys = { "cleanGeneratedJobs" }, group = DEF_CONSOLE_GROUP, help = "Clean Generated Job temp Files.")
+    public void cleanGeneratedJobs(SimpleShellContext context) {
+        context.printf("Cleaning generate templates cache...");
+        FileDeleteUtil.delete(config.getWorkspace().concat("/**"));
+        context.printf("Cleaned generate templates cache.");
+    }
 
-	/** Codegen shell console group default name. */
-	public static final String DEF_CONSOLE_GROUP = "Codegen command-line console";
+    /** Codegen shell console group default name. */
+    public static final String DEF_CONSOLE_GROUP = "Codegen command-line console";
 
 }

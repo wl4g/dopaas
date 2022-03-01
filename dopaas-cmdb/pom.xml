@@ -10,7 +10,6 @@
 		<version>3.0.0</version>
 	</parent>
 	<modules>
-		<module>dopaas-cmdb-service-data</module>
 		<module>dopaas-cmdb-service-facade</module>
 		<module>dopaas-cmdb-extension-shardingsphere-v4</module>
 		<!--<module>dopaas-cmdb-extension-shardingsphere-v5</module>-->

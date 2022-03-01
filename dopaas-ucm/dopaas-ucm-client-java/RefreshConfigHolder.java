@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.client;
+package com.wl4g.dopaas.ucm.client;
 
 import static com.wl4g.infra.common.lang.Assert2.notNull;
 import static java.util.Objects.isNull;
@@ -23,8 +23,8 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.google.common.collect.Queues;
-import com.wl4g.dopaas.scm.common.command.WatchCommandResult;
-import com.wl4g.dopaas.scm.common.command.ReportCommand.ChangedRecord;
+import com.wl4g.dopaas.ucm.common.command.WatchCommandResult;
+import com.wl4g.dopaas.ucm.common.command.ReportCommand.ChangedRecord;
 
 /**
  * Refresh configuration holder.

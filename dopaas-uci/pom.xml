@@ -14,7 +14,6 @@
 	<modules>
 		<module>dopaas-uci-client-springboot</module>
 		<module>dopaas-uci-core</module>
-		<module>dopaas-uci-service-data</module>
 		<module>dopaas-uci-service-facade</module>
 		<module>dopaas-uci-service-starter-facade</module>
 		<module>dopaas-uci-service-starter-server</module>

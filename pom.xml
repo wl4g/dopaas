@@ -58,7 +58,7 @@
 		<module>dopaas-uci</module>
 		<module>dopaas-udm</module>
 		<module>dopaas-cmdb</module>
-		<!-- <module>dopaas-ucm</module> -->
+		<module>dopaas-ucm</module>
 		<module>dopaas-umc</module>
 		<module>dopaas-urm</module>
 		<module>dopaas-lcdp</module>

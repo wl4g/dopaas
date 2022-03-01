@@ -3,22 +3,21 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dopaas-ucm-client-springboot</artifactId>
 	<packaging>jar</packaging>
-	<name>DoPaaS SCM Client for Springboot</name>
+	<name>DoPaaS UCM Client for Springboot</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>dopaas-ucm</artifactId>
-		<version>2.0.0</version>
-		<relativePath>../pom.xml</relativePath>
+		<version>3.0.0</version>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-ucm-client-java</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<!-- Requires -->
 		<dependency>
@@ -29,15 +28,11 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-infra-support</artifactId>
 		</dependency>
-		<!-- Optional(Iam with SCM configuration will not be loaded by default) -->
+		<!-- Optional(Iam with UCM configuration will not be loaded by default) -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-iam-client-springboot</artifactId>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.retry</groupId>
-			<artifactId>spring-retry</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -110,13 +105,13 @@
 						</option>
 						<!-- 不混淆的包下的类名、或方法配置 -->
 						<option>-keep class
-							com.wl4g.dopaas.scm.client.config.*Configuration { *; }
+							com.wl4g.dopaas.ucm.client.config.*Configuration { *; }
 						</option>
 						<option>-keep class
-							com.wl4g.dopaas.scm.client.configure.RefreshBean { *; }
+							com.wl4g.dopaas.ucm.client.configure.RefreshBean { *; }
 						</option>
 						<option>-keep class
-							com.wl4g.dopaas.scm.client.configure.BeanCurrentlyConfigureAspect
+							com.wl4g.dopaas.ucm.client.configure.BeanCurrentlyConfigureAspect
 							{
 							*; }
 						</option>
@@ -129,7 +124,7 @@
 					<!-- 不添加则不会将pom.xml打包进去 -->
 					<addMavenDescriptor>true</addMavenDescriptor>
 					<!-- 加载文件的过滤器，就是你的工程目录了 -->
-					<!-- <inFilter>com/wl4g/devops/scm/client/**</inFilter> -->
+					<!-- <inFilter>com/wl4g/devops/ucm/client/**</inFilter> -->
 					<!-- 对什么东西进行加载，这里仅有classes成功，毕竟你也不可能对配置文件及JSP混淆吧 -->
 					<injar>classes</injar>
 					<!-- 输出目录 -->

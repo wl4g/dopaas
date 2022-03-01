@@ -22,11 +22,6 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-uds-service-data</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
             <groupId>com.wl4g</groupId>
             <artifactId>dopaas-uci-client-springboot</artifactId>
             <version>${project.parent.version}</version>
@@ -52,6 +47,20 @@
 			<groupId>org.apache.openjpa</groupId>
 			<artifactId>openjpa</artifactId>
 			<version>3.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-infra-data</artifactId>
+		</dependency>
+		<!-- Elasticjob-Cloud -->
+		<dependency>
+			<groupId>org.apache.shardingsphere.elasticjob</groupId>
+			<artifactId>elasticjob-cloud-common</artifactId>
+		</dependency>
+		<!-- Elasticjob-Lite -->
+		<dependency>
+			<groupId>org.apache.shardingsphere.elasticjob</groupId>
+			<artifactId>elasticjob-lite-lifecycle</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

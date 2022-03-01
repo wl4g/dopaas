@@ -32,23 +32,26 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/orchestration-service")
 public interface OrchestrationService {
 
-	@RequestMapping(value = "/list", method = POST)
-	PageHolder<Orchestration> list(@RequestBody PageHolder<Orchestration> pm,
-			@RequestParam(name = "name", required = false) String name);
+    @RequestMapping(value = "/list", method = POST)
+    PageHolder<Orchestration> list(@RequestBody PageHolder<Orchestration> pm,
+            @RequestParam(name = "name", required = false) String name);
 
-	@RequestMapping(value = "/save", method = POST)
-	void save(@RequestBody Orchestration orchestration);
+    @RequestMapping(value = "/save", method = POST)
+    void save(@RequestBody Orchestration orchestration);
 
-	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name = "id", required = false) Long id);
+    @RequestMapping(value = "/update", method = POST)
+    int update(@RequestBody Orchestration record);
 
-	@RequestMapping(value = "/detail", method = POST)
-	Orchestration detail(@RequestParam(name = "id", required = false) Long id);
+    @RequestMapping(value = "/del", method = POST)
+    void del(@RequestParam(name = "id", required = false) Long id);
 
-	@RequestMapping(value = "/run", method = POST)
-	void run(@RequestParam(name = "id", required = false) Long id, @RequestParam(name = "remark", required = false) String remark,
-			@RequestParam(name = "taskTraceId", required = false) String taskTraceId,
-			@RequestParam(name = "taskTraceType", required = false) String taskTraceType,
-			@RequestParam(name = "annex", required = false) String annex);
+    @RequestMapping(value = "/detail", method = POST)
+    Orchestration detail(@RequestParam(name = "id", required = false) Long id);
+
+    @RequestMapping(value = "/run", method = POST)
+    void run(@RequestParam(name = "id", required = false) Long id, @RequestParam(name = "remark", required = false) String remark,
+            @RequestParam(name = "taskTraceId", required = false) String taskTraceId,
+            @RequestParam(name = "taskTraceType", required = false) String taskTraceType,
+            @RequestParam(name = "annex", required = false) String annex);
 
 }

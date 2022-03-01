@@ -17,7 +17,6 @@
 		<module>dopaas-umc-alarm</module>
 		<module>dopaas-umc-store</module>
 		<!-- <module>dopaas-umc-watch</module> -->
-		<module>dopaas-umc-service-data</module>
 		<module>dopaas-umc-service-facade</module>
 		<module>dopaas-umc-service-starter-collector</module>
 		<module>dopaas-umc-service-starter-tracker</module>

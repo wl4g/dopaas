@@ -3,23 +3,22 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dopaas-ucm-common</artifactId>
 	<packaging>jar</packaging>
-	<name>DoPaaS SCM Common</name>
+	<name>DoPaaS UCM Common</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>dopaas-ucm</artifactId>
-		<version>2.0.0</version>
-		<relativePath>../pom.xml</relativePath>
+		<version>3.0.0</version>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-common</artifactId>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>

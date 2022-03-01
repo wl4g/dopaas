@@ -28,6 +28,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-urm-service-data</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
@@ -36,6 +41,10 @@
             <artifactId>dopaas-uci-client-springboot</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-infra-data</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-infra-support</artifactId>

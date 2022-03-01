@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.handler;
+package com.wl4g.dopaas.ucm.handler;
 
 import org.springframework.http.ResponseEntity;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.dopaas.scm.common.model.*;
-import com.wl4g.dopaas.scm.publish.WatchDeferredResult;
+import com.wl4g.dopaas.ucm.common.model.*;
+import com.wl4g.dopaas.ucm.publish.WatchDeferredResult;
 
 /**
  * Config soruce context handler interface

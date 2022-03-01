@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.publish;
+package com.wl4g.dopaas.ucm.publish;
 
 import java.io.Serializable;
 
 import org.springframework.web.context.request.async.DeferredResult;
 
-import com.wl4g.dopaas.scm.common.model.FetchReleaseConfigRequest;
+import com.wl4g.dopaas.ucm.common.model.FetchReleaseConfigRequest;
 
 /**
- * SCM configuration soruce server deferred result watch.
+ * UCM configuration soruce server deferred result watch.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月27日

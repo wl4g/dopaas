@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.config;
+package com.wl4g.dopaas.ucm.config;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * SCM web mvc configurer
+ * UCM web mvc configurer
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年6月4日
  * @since
  */
-public class ScmWebMvcConfigurer extends WebMvcConfigurerAdapter {
+public class UcmWebMvcConfigurer extends WebMvcConfigurerAdapter {
 
-	final private ScmProperties config;
+	final private UcmProperties config;
 
 	final private ThreadPoolTaskExecutor executor;
 
-	public ScmWebMvcConfigurer(ScmProperties config, ThreadPoolTaskExecutor executor) {
+	public UcmWebMvcConfigurer(UcmProperties config, ThreadPoolTaskExecutor executor) {
 		super();
 		this.config = config;
 		this.executor = executor;

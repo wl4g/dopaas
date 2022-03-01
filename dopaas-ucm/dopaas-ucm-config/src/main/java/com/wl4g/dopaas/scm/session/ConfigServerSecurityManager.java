@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.session;
+package com.wl4g.dopaas.ucm.session;
 //
 //import static java.util.Collections.singletonMap;
 //
@@ -22,12 +22,12 @@ package com.wl4g.dopaas.scm.session;
 //import org.springframework.beans.factory.annotation.Autowired;
 //
 //import static com.wl4g.infra.common.lang.Assert2.hasTextOf;
-//import static com.wl4g.infra.core.constants.SCMDevOpsConstants.*;
+//import static com.wl4g.infra.core.constants.UCMDevOpsConstants.*;
 //
 //import com.wl4g.infra.common.crypto.asymmetric.AsymmetricCryptor;
 //import com.wl4g.infra.common.crypto.symmetric.AES128ECBPKCS5;
 //import com.wl4g.infra.support.cache.jedis.JedisService;
-//import com.wl4g.dopaas.scm.session.HandshakeResult;
+//import com.wl4g.dopaas.ucm.session.HandshakeResult;
 //
 ///**
 // * {@link ConfigServerSecurityManager}
@@ -60,7 +60,7 @@ package com.wl4g.dopaas.scm.session;
 //
 //		// Generate session key.
 //		String sessionKey = "sk" + generateHumanTokenSuffix(appName);
-//		// Storage scm connection session.
+//		// Storage ucm connection session.
 //		jedisService.mapPut(CACHE_SESSIONS, singletonMap(sessionKey, hexCipherDataKey));
 //
 //		return new HandshakeResult(sessionKey, hexCipherDataKey);

@@ -11,7 +11,6 @@
 		<version>3.0.0</version>
 	</parent>
 	<modules>
-		<module>dopaas-udm-service-data</module>
 		<module>dopaas-udm-service-facade</module>
 		<module>dopaas-udm-service-starter-facade</module>
 		<module>dopaas-udm-service-starter-manager</module>

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.config;
+package com.wl4g.dopaas.ucm.config;
 
-import static com.wl4g.dopaas.scm.common.SCMConstants.URI_S_BASE;
+import static com.wl4g.dopaas.ucm.common.UCMConstants.URI_S_BASE;
 
 import java.util.Map;
 
@@ -26,29 +26,29 @@ import org.springframework.context.annotation.Primary;
 import com.wl4g.iam.client.config.IamClientProperties;
 
 /**
- * {@link IamWithScmAutoConfiguration}
+ * {@link IamWithUcmAutoConfiguration}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年5月26日
  * @since
  */
 @ConditionalOnClass(IamClientProperties.class)
-public class IamWithScmAutoConfiguration {
+public class IamWithUcmAutoConfiguration {
 
 	@Bean
 	@Primary
-	public IamClientProperties iamWithScmProperties() {
-		return new IamWithScmProperties();
+	public IamClientProperties iamWithUcmProperties() {
+		return new IamWithUcmProperties();
 	}
 
 	/**
-	 * {@link IamWithScmProperties}
+	 * {@link IamWithUcmProperties}
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020年5月25日
 	 * @since
 	 */
-	public static class IamWithScmProperties extends IamClientProperties {
+	public static class IamWithUcmProperties extends IamClientProperties {
 
 		private static final long serialVersionUID = -2654363585569068709L;
 

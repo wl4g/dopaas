@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.publish;
+package com.wl4g.dopaas.ucm.publish;
 
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.wl4g.dopaas.scm.common.model.FetchReleaseConfigRequest;
-import com.wl4g.dopaas.scm.common.model.ReleaseConfigInfo;
+import com.wl4g.dopaas.ucm.common.model.FetchReleaseConfigRequest;
+import com.wl4g.dopaas.ucm.common.model.ReleaseConfigInfo;
 
 /**
- * SCM config source server publisher api.
+ * UCM config source server publisher api.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月27日

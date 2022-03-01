@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.config;
+package com.wl4g.dopaas.ucm.config;
 
-import static com.wl4g.dopaas.scm.common.SCMConstants.*;
+import static com.wl4g.dopaas.ucm.common.UCMConstants.*;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,27 +28,27 @@ import com.wl4g.infra.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.infra.core.web.method.PrefixHandlerMappingSupport;
 import com.wl4g.infra.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.infra.support.cache.jedis.JedisService;
-import com.wl4g.dopaas.scm.annotation.ScmEndpoint;
-import com.wl4g.dopaas.scm.endpoint.ScmServerEndpoint;
-import com.wl4g.dopaas.scm.handler.CentralConfigServerHandler;
-import com.wl4g.dopaas.scm.handler.CheckCentralConfigServerHandler;
-import com.wl4g.dopaas.scm.publish.ConfigSourcePublisher;
-import com.wl4g.dopaas.scm.publish.JedisConfigSourcePublisher;
-//import com.wl4g.dopaas.scm.session.ConfigServerSecurityManager;
+import com.wl4g.dopaas.ucm.annotation.UcmEndpoint;
+import com.wl4g.dopaas.ucm.endpoint.UcmServerEndpoint;
+import com.wl4g.dopaas.ucm.handler.CentralConfigServerHandler;
+import com.wl4g.dopaas.ucm.handler.CheckCentralConfigServerHandler;
+import com.wl4g.dopaas.ucm.publish.ConfigSourcePublisher;
+import com.wl4g.dopaas.ucm.publish.JedisConfigSourcePublisher;
+//import com.wl4g.dopaas.ucm.session.ConfigServerSecurityManager;
 
 /**
- * SCM auto configuration
+ * UCM auto configuration
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月27日
  * @since
  */
-public class ScmAutoConfiguration extends AbstractHandlerMappingSupport {
+public class UcmAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
-	@ConfigurationProperties(prefix = "spring.cloud.devops.scm")
-	public ScmProperties scmProperties() {
-		return new ScmProperties();
+	@ConfigurationProperties(prefix = "spring.cloud.devops.ucm")
+	public UcmProperties ucmProperties() {
+		return new UcmProperties();
 	}
 
 	@Bean
@@ -59,11 +59,11 @@ public class ScmAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
 	public ConfigSourcePublisher configSourcePublisher(JedisService jedisService) {
-		return new JedisConfigSourcePublisher(scmProperties(), jedisService);
+		return new JedisConfigSourcePublisher(ucmProperties(), jedisService);
 	}
 
 	@Bean(BEAN_MVC_EXECUTOR)
-	public ThreadPoolTaskExecutor mvcTaskExecutor(ScmProperties config) {
+	public ThreadPoolTaskExecutor mvcTaskExecutor(UcmProperties config) {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(config.getCorePoolSize());
 		executor.setQueueCapacity(config.getQueueCapacity());
@@ -72,13 +72,13 @@ public class ScmAutoConfiguration extends AbstractHandlerMappingSupport {
 	}
 
 	@Bean
-	public ScmWebMvcConfigurer scmWebMvcConfigurer(ScmProperties config,
+	public UcmWebMvcConfigurer ucmWebMvcConfigurer(UcmProperties config,
 			@Qualifier(BEAN_MVC_EXECUTOR) ThreadPoolTaskExecutor executor) {
-		return new ScmWebMvcConfigurer(config, executor);
+		return new UcmWebMvcConfigurer(config, executor);
 	}
 
 	// @Bean
-	// public ConfigServerSecurityManager scmServerConfigSecurityManager() {
+	// public ConfigServerSecurityManager ucmServerConfigSecurityManager() {
 	// return new ConfigServerSecurityManager(new RSACryptor(), new
 	// AES128ECBPKCS5());
 	// }
@@ -88,13 +88,13 @@ public class ScmAutoConfiguration extends AbstractHandlerMappingSupport {
 	//
 
 	@Bean
-	public ScmServerEndpoint scmServerEnndpoint() {
-		return new ScmServerEndpoint();
+	public UcmServerEndpoint ucmServerEnndpoint() {
+		return new UcmServerEndpoint();
 	}
 
 	@Bean
-	public PrefixHandlerMapping scmServerEndpointPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_S_BASE, ScmEndpoint.class);
+	public PrefixHandlerMapping ucmServerEndpointPrefixHandlerMapping() {
+		return super.newPrefixHandlerMapping(URI_S_BASE, UcmEndpoint.class);
 	}
 
 	final public static String BEAN_MVC_EXECUTOR = "mvcTaskExecutor";

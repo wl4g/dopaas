@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.publish;
+package com.wl4g.dopaas.ucm.publish;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -23,10 +23,10 @@ import static com.wl4g.infra.common.lang.Assert2.notNull;
 
 import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.infra.core.task.ApplicationTaskRunner;
-import com.wl4g.dopaas.scm.common.model.FetchReleaseConfigRequest;
-import com.wl4g.dopaas.scm.common.model.ReleaseConfigInfo;
-import com.wl4g.dopaas.scm.common.model.AbstractConfigInfo.ConfigNode;
-import com.wl4g.dopaas.scm.config.ScmProperties;
+import com.wl4g.dopaas.ucm.common.model.FetchReleaseConfigRequest;
+import com.wl4g.dopaas.ucm.common.model.ReleaseConfigInfo;
+import com.wl4g.dopaas.ucm.common.model.AbstractConfigInfo.ConfigNode;
+import com.wl4g.dopaas.ucm.config.UcmProperties;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,8 +58,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner<RunnerProperties>
 		implements ConfigSourcePublisher {
 
-	/** SCM properties configuration */
-	final protected ScmProperties config;
+	/** UCM properties configuration */
+	final protected UcmProperties config;
 
 	/**
 	 * Save all client monitors configuration requests globally (Using:
@@ -67,7 +67,7 @@ public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner
 	 */
 	final private Map<String, Multimap<String, WatchDeferredResult<ResponseEntity<?>>>> watchRequests;
 
-	public GenericConfigSourcePublisher(ScmProperties config) {
+	public GenericConfigSourcePublisher(UcmProperties config) {
 		super(new RunnerProperties(false, 1));
 		this.config = config;
 		this.watchRequests = new ConcurrentHashMap<>(32);

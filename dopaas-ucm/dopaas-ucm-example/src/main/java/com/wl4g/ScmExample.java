@@ -16,7 +16,7 @@
 package com.wl4g;
 
 //import com.wl4g.dopaas.iam.client.annotation.EnableIamClient;
-import com.wl4g.dopaas.scm.client.annotation.EnableScmClient;
+import com.wl4g.dopaas.ucm.client.annotation.EnableUcmClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,15 +24,15 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 //@EnableIamClient
-@EnableScmClient
+@EnableUcmClient
 @EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("com.wl4g.dopaas.dao.*")
 @EnableTransactionManagement
-public class ScmExample {
+public class UcmExample {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ScmExample.class, args);
+		SpringApplication.run(UcmExample.class, args);
 	}
 
 }

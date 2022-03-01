@@ -11,7 +11,6 @@
 		<version>3.0.0</version>
 	</parent>
 	<modules>
-		<module>dopaas-urm-service-data</module>
 		<module>dopaas-urm-operator</module>
 		<module>dopaas-urm-service-facade</module>
 		<module>dopaas-urm-service-starter-facade</module>

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.config;
+package com.wl4g.dopaas.ucm.config;
 
-import com.wl4g.dopaas.scm.common.BaseScmProperties;
+import com.wl4g.dopaas.ucm.common.BaseUcmProperties;
 
-public class ScmProperties extends BaseScmProperties {
+public class UcmProperties extends BaseUcmProperties {
 	private static final long serialVersionUID = -4696830861294720221L;
 
 	/** Deferred long-polling properties */
@@ -63,7 +63,7 @@ public class ScmProperties extends BaseScmProperties {
 
 	@Override
 	public String toString() {
-		return "ScmProperties [corePoolSize=" + corePoolSize + ", maxPoolSize=" + maxPoolSize + ", queueCapacity=" + queueCapacity
+		return "UcmProperties [corePoolSize=" + corePoolSize + ", maxPoolSize=" + maxPoolSize + ", queueCapacity=" + queueCapacity
 				+ ", watchDelay=" + watchDelay + "]";
 	}
 

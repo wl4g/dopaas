@@ -19,11 +19,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-home-service-data</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-home-service-facade</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

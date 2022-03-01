@@ -13,7 +13,6 @@
 	</parent>
 	<modules>
 		<module>dopaas-uds-example</module>
-		<module>dopaas-uds-service-data</module>
 		<module>dopaas-uds-service-facade</module>
 		<module>dopaas-uds-service-starter-facade</module>
 		<module>dopaas-uds-service-starter-manager</module>

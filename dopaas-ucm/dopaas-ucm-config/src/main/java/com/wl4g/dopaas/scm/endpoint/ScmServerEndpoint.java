@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.endpoint;
+package com.wl4g.dopaas.ucm.endpoint;
 
 import com.wl4g.infra.common.web.rest.RespBase;
 import com.wl4g.infra.core.web.BaseController;
-import com.wl4g.dopaas.scm.annotation.ScmEndpoint;
-import com.wl4g.dopaas.scm.common.model.FetchReleaseConfigRequest;
-import com.wl4g.dopaas.scm.common.model.ReleaseConfigInfo;
-import com.wl4g.dopaas.scm.common.model.ReportChangedRequest;
-import com.wl4g.dopaas.scm.handler.CentralConfigServerHandler;
-//import com.wl4g.dopaas.scm.session.HandshakeRequest;
-//import com.wl4g.dopaas.scm.session.ConfigServerSecurityManager;
+import com.wl4g.dopaas.ucm.annotation.UcmEndpoint;
+import com.wl4g.dopaas.ucm.common.model.FetchReleaseConfigRequest;
+import com.wl4g.dopaas.ucm.common.model.ReleaseConfigInfo;
+import com.wl4g.dopaas.ucm.common.model.ReportChangedRequest;
+import com.wl4g.dopaas.ucm.handler.CentralConfigServerHandler;
+//import com.wl4g.dopaas.ucm.session.HandshakeRequest;
+//import com.wl4g.dopaas.ucm.session.ConfigServerSecurityManager;
 
-import static com.wl4g.dopaas.scm.common.SCMConstants.*;
+import static com.wl4g.dopaas.ucm.common.UCMConstants.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,18 +34,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 /**
- * SCM server end-point API
+ * UCM server end-point API
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月27日
  * @since
  */
-@ScmEndpoint
+@UcmEndpoint
 @ResponseBody
-public class ScmServerEndpoint extends BaseController {
+public class UcmServerEndpoint extends BaseController {
 
 	/**
-	 * Scm config handler.
+	 * Ucm config handler.
 	 */
 	@Autowired
 	protected CentralConfigServerHandler handler;
@@ -61,19 +61,19 @@ public class ScmServerEndpoint extends BaseController {
 //	 */
 //	@RequestMapping(value = URI_S_HANDSHAKE, method = POST)
 //	public RespBase<?> handshake(@Validated HandshakeRequest reg) {
-//		log.info("Scm handshaking ... <= {}", reg);
+//		log.info("Ucm handshaking ... <= {}", reg);
 //
 //		RespBase<Object> resp = new RespBase<>();
 //		resp.setData(securityManager.registerSession(reg.getClientSecretKey()));
 //
-//		log.info("Scm handshake => {}", resp);
+//		log.info("Ucm handshake => {}", resp);
 //		return resp;
 //	}
 
 	/**
 	 * Watching configuration source. </br>
 	 * <a href=
-	 * "#">http://localhost:17030/scm/scm-server/watch?instance.host=localhost&instance.port=14044&group=scm-example&namespace=application-test.yml&profile=test&meta.version=1&meta.releaseId=1</a>
+	 * "#">http://localhost:17030/ucm/ucm-server/watch?instance.host=localhost&instance.port=14044&group=ucm-example&namespace=application-test.yml&profile=test&meta.version=1&meta.releaseId=1</a>
 	 * 
 	 * @param watch
 	 * @return

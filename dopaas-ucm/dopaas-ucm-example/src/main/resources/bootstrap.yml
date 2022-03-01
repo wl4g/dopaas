@@ -13,14 +13,14 @@
 # loaded at initialization, so configurations other than bootstrap.yml cannot be used at initialization.
 #
 spring: # Base configuration.
-  application.name: scm-example
+  application.name: ucm-example
   profiles:
     include: common,util
     active: dev
   # Devops configuration.
   xcloud: 
-    ucm.client: # SCM client configuration.
-      base-uri: http://127.0.0.1:17030/scm-server
+    ucm.client: # UCM client configuration.
+      base-uri: http://127.0.0.1:17030/ucm-server
       #connect-timeout: 5000
       #max-response-size: 65535
       #fetch-read-timeout: 5000

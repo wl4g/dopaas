@@ -57,11 +57,10 @@ import com.wl4g.dopaas.uci.config.CiProperties;
 import com.wl4g.dopaas.uci.core.PipelineJobExecutor;
 import com.wl4g.dopaas.uci.core.context.PipelineContext;
 import com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl;
-import com.wl4g.dopaas.uci.data.PipeStageBuildingProjectDao;
-import com.wl4g.dopaas.uci.data.ProjectDao;
 import com.wl4g.dopaas.uci.pipeline.deploy.CossPipeDeployer;
 import com.wl4g.dopaas.uci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.dopaas.uci.service.DependencyService;
+import com.wl4g.dopaas.uci.service.PipelineService;
 import com.wl4g.dopaas.udm.service.EnterpriseApiService;
 import com.wl4g.dopaas.urm.operator.VcsOperator;
 import com.wl4g.dopaas.urm.operator.VcsOperator.VcsProviderKind;
@@ -74,351 +73,352 @@ import com.wl4g.dopaas.urm.operator.VcsOperator.VcsProviderKind;
  * @date 2019-08-05 17:17:00
  */
 public abstract class AbstractPipelineProvider implements PipelineProvider {
-	protected final SmartLogger log = getLogger(getClass());
+    protected final SmartLogger log = getLogger(getClass());
 
-	/** Pipeline context. */
-	protected final PipelineContext context;
+    /** Pipeline context. */
+    protected final PipelineContext context;
 
-	protected @Autowired BeanFactory beanFactory;
-	protected @Autowired NamingPrototypeBeanFactory namingBeanFactory;
+    protected @Autowired BeanFactory beanFactory;
+    protected @Autowired NamingPrototypeBeanFactory namingBeanFactory;
 
-	protected @Autowired CiProperties config;
-	protected @Autowired GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsManager;
-	protected @Autowired JedisLockManager lockManager;
-	protected @Autowired DestroableProcessManager pm;
-	protected @Autowired PipelineJobExecutor jobExecutor;
-	protected @Autowired DefaultOrchestrationManagerImpl flowManager;
+    protected @Autowired CiProperties config;
+    protected @Autowired GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsManager;
+    protected @Autowired JedisLockManager lockManager;
+    protected @Autowired DestroableProcessManager pm;
+    protected @Autowired PipelineJobExecutor jobExecutor;
+    protected @Autowired DefaultOrchestrationManagerImpl flowManager;
 
-	protected @Autowired DependencyService dependencyService;
-	protected @Autowired ProjectDao projectDao;
-	protected @Autowired ProjectService projectService;
-	protected @Autowired PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
+    protected @Autowired DependencyService dependencyService;
+    protected @Autowired ProjectService projectService;
+    protected @Autowired PipelineService pipelineService;
 
-	protected @Autowired EnterpriseApiService enterpriseApiService;
+    protected @Autowired EnterpriseApiService enterpriseApiService;
 
-	/**
-	 * Pull project source from VCS files fingerprint.
-	 */
-	private String sourceFingerprint;
+    /**
+     * Pull project source from VCS files fingerprint.
+     */
+    private String sourceFingerprint;
 
-	/**
-	 * Build project assets files fingerprint.
-	 */
-	private String assetsFingerprint;
+    /**
+     * Build project assets files fingerprint.
+     */
+    private String assetsFingerprint;
 
-	public AbstractPipelineProvider(PipelineContext context) {
-		this.context = notNullOf(context, "pipelineContext");
-	}
+    public AbstractPipelineProvider(PipelineContext context) {
+        this.context = notNullOf(context, "pipelineContext");
+    }
 
-	/**
-	 * Basic pipeline.
-	 */
-	public PipelineContext getContext() {
-		return context;
-	}
+    /**
+     * Basic pipeline.
+     */
+    public PipelineContext getContext() {
+        return context;
+    }
 
-	/**
-	 * Get VCS operator for specific project.
-	 * 
-	 * @param project
-	 * @return
-	 */
-	protected VcsOperator getVcsOperator(Project project) {
-		notNull(project, "Project can't be null.");
-		notNull(project.getVcs(), "Project.vcs can't be null.");
-		return getVcsOperator(project.getVcs().getProviderKind());
-	}
+    /**
+     * Get VCS operator for specific project.
+     * 
+     * @param project
+     * @return
+     */
+    protected VcsOperator getVcsOperator(Project project) {
+        notNull(project, "Project can't be null.");
+        notNull(project.getVcs(), "Project.vcs can't be null.");
+        return getVcsOperator(project.getVcs().getProviderKind());
+    }
 
-	/**
-	 * Get VCS operator for specific provider.
-	 * 
-	 * @param vcsKind
-	 * @return
-	 */
-	protected VcsOperator getVcsOperator(String vcsKind) {
-		return vcsManager.forOperator(vcsKind);
-	}
+    /**
+     * Get VCS operator for specific provider.
+     * 
+     * @param vcsKind
+     * @return
+     */
+    protected VcsOperator getVcsOperator(String vcsKind) {
+        return vcsManager.forOperator(vcsKind);
+    }
 
-	// --- Fingerprint's. ---
+    // --- Fingerprint's. ---
 
-	/**
-	 * Get pull project source from VCS files fingerprint.
-	 */
-	@Override
-	public String getSourceFingerprint() {
-		return sourceFingerprint;
-	}
+    /**
+     * Get pull project source from VCS files fingerprint.
+     */
+    @Override
+    public String getSourceFingerprint() {
+        return sourceFingerprint;
+    }
 
-	/**
-	 * Get build project assets files fingerprint.
-	 */
-	@Override
-	public String getAssetsFingerprint() {
-		return assetsFingerprint;
-	}
+    /**
+     * Get build project assets files fingerprint.
+     */
+    @Override
+    public String getAssetsFingerprint() {
+        return assetsFingerprint;
+    }
 
-	/**
-	 * Setup pull project source from VCS files fingerprint.
-	 * 
-	 * @param sourceFingerprint
-	 */
-	protected void setSourceFingerprint(String sourceFingerprint) {
-		hasText(sourceFingerprint, "sourceFingerprint must not be empty.");
-		this.sourceFingerprint = sourceFingerprint;
-	}
+    /**
+     * Setup pull project source from VCS files fingerprint.
+     * 
+     * @param sourceFingerprint
+     */
+    protected void setSourceFingerprint(String sourceFingerprint) {
+        hasText(sourceFingerprint, "sourceFingerprint must not be empty.");
+        this.sourceFingerprint = sourceFingerprint;
+    }
 
-	/**
-	 * Setup build project assets files fingerprint.
-	 * 
-	 * @param assetsFingerprint
-	 */
-	protected void setAssetsFingerprint(String assetsFingerprint) {
-		hasText(assetsFingerprint, "assetsFingerprint must not be empty.");
-		this.assetsFingerprint = assetsFingerprint;
-	}
+    /**
+     * Setup build project assets files fingerprint.
+     * 
+     * @param assetsFingerprint
+     */
+    protected void setAssetsFingerprint(String assetsFingerprint) {
+        hasText(assetsFingerprint, "assetsFingerprint must not be empty.");
+        this.assetsFingerprint = assetsFingerprint;
+    }
 
-	// --- Remote deployment's. ---
+    // --- Remote deployment's. ---
 
-	/**
-	 * Execution remote commands
-	 * 
-	 * @param remoteHost
-	 * @param user
-	 * @param command
-	 * @param sshkey
-	 * @return
-	 * @throws Exception
-	 */
-	@Override
-	public void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception {
-		hasText(command, "Commands must not be empty.");
+    /**
+     * Execution remote commands
+     * 
+     * @param remoteHost
+     * @param user
+     * @param command
+     * @param sshkey
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception {
+        hasText(command, "Commands must not be empty.");
 
-		// Remote timeout(Ms)
-		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
-		writeBuildLog("Execute remote of %s@%s, timeout: %s, command: [%s]", user, remoteHost, timeoutMs, command);
+        // Remote timeout(Ms)
+        long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
+        writeBuildLog("Execute remote of %s@%s, timeout: %s, command: [%s]", user, remoteHost, timeoutMs, command);
 
-		try {
-			RemoteDestroableCommand cmd = new RemoteDestroableCommand(command, timeoutMs, user, remoteHost,
-					getUsableCipherSshKey(sshkey));
-			// Execution command.
-			String outmsg = pm.execWaitForComplete(cmd);
+        try {
+            RemoteDestroableCommand cmd = new RemoteDestroableCommand(command, timeoutMs, user, remoteHost,
+                    getUsableCipherSshKey(sshkey));
+            // Execution command.
+            String outmsg = pm.execWaitForComplete(cmd);
 
-			log.info(writeBuildLog("%s@%s, command: [%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command, outmsg));
-		} catch (Exception e) {
-			String logmsg = writeBuildLog("%s@%s, command: [%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
-					e.getMessage());
-			log.info(logmsg);
+            log.info(writeBuildLog("%s@%s, command: [%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command, outmsg));
+        } catch (Exception e) {
+            String logmsg = writeBuildLog("%s@%s, command: [%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
+                    e.getMessage());
+            log.info(logmsg);
 
-			// Strictly handle, as long as there is error message in remote
-			// command execution, throw error.
-			throw new PipelineIntegrationBuildingException(logmsg);
-		}
+            // Strictly handle, as long as there is error message in remote
+            // command execution, throw error.
+            throw new PipelineIntegrationBuildingException(logmsg);
+        }
 
-	}
+    }
 
-	/**
-	 * Deciphering usable cipher SSH2 key.
-	 * 
-	 * @param sshkey
-	 * @return
-	 * @throws Exception
-	 */
-	@Override
-	public char[] getUsableCipherSshKey(String sshkey) throws Exception {
-		// Obtain text-plain privateKey(RSA)
-		byte[] cipherKey = config.getDeploy().getCipherKey().getBytes(UTF_8);
-		char[] sshkeyPlain = new AES128ECBPKCS5().decrypt(cipherKey, CodecSource.fromHex(sshkey)).toString().toCharArray();
+    /**
+     * Deciphering usable cipher SSH2 key.
+     * 
+     * @param sshkey
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public char[] getUsableCipherSshKey(String sshkey) throws Exception {
+        // Obtain text-plain privateKey(RSA)
+        byte[] cipherKey = config.getDeploy().getCipherKey().getBytes(UTF_8);
+        char[] sshkeyPlain = new AES128ECBPKCS5().decrypt(cipherKey, CodecSource.fromHex(sshkey)).toString().toCharArray();
 
-		log.info(writeBuildLog("Decryption plain sshkey: %s => %s", cipherKey, "******"));
-		return sshkeyPlain;
-	}
+        log.info(writeBuildLog("Decryption plain sshkey: %s => %s", cipherKey, "******"));
+        return sshkeyPlain;
+    }
 
-	/**
-	 * Execution distribution transfer to remote instances for deployments.
-	 */
-	protected final void startExecutionDeploying() {
-		// Creating transfer instances jobs.
-		SshBean ssh = getContext().getAppCluster().getSsh();
-		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
-			return (Runnable) () -> {
-				File jobDeployerLog = config.getJobDeployerLog(context.getPipelineHistory().getId(), i.getId());
-				try {
-					writeBLineFile(jobDeployerLog, LOG_FILE_START);
+    /**
+     * Execution distribution transfer to remote instances for deployments.
+     */
+    protected final void startExecutionDeploying() {
+        // Creating transfer instances jobs.
+        SshBean ssh = getContext().getAppCluster().getSsh();
+        List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
+            return (Runnable) () -> {
+                File jobDeployerLog = config.getJobDeployerLog(context.getPipelineHistory().getId(), i.getId());
+                try {
+                    writeBLineFile(jobDeployerLog, LOG_FILE_START);
 
-					// Do deploying.
-					createPipeDeployer(i).run();
+                    // Do deploying.
+                    createPipeDeployer(i).run();
 
-					// Print successful.
-					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
-							getContext().getAppCluster().getName(), ssh.getUsername(), i.getHostname());
-				} catch (Throwable e) {
-					String logmsg = writeBuildLog("Failed to deployed to remote! Caused by: \n%s", getStackTraceAsString(e));
-					log.error(logmsg);
-					// TODO
-				} finally {
-					writeALineFile(jobDeployerLog, LOG_FILE_END);
-				}
-			};
-		}).collect(toList());
+                    // Print successful.
+                    writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
+                            getContext().getAppCluster().getName(), ssh.getUsername(), i.getHostname());
+                } catch (Throwable e) {
+                    String logmsg = writeBuildLog("Failed to deployed to remote! Caused by: \n%s", getStackTraceAsString(e));
+                    log.error(logmsg);
+                    // TODO
+                } finally {
+                    writeALineFile(jobDeployerLog, LOG_FILE_END);
+                }
+            };
+        }).collect(toList());
 
-		// Submit jobs for complete.
-		if (!isEmpty(jobs)) {
-			List<String> instanceStrs = getContext().getInstances().stream().map(i -> i.getHostname() + ":" + i.getEndpoint())
-					.collect(toList());
+        // Submit jobs for complete.
+        if (!isEmpty(jobs)) {
+            List<String> instanceStrs = getContext().getInstances()
+                    .stream()
+                    .map(i -> i.getHostname() + ":" + i.getEndpoint())
+                    .collect(toList());
 
-			log.info(writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s' ... ",
-					getContext().getAppCluster().getName(), instanceStrs));
+            log.info(writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s' ... ",
+                    getContext().getAppCluster().getName(), instanceStrs));
 
-			jobExecutor.getWorker().submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
-		}
+            jobExecutor.getWorker().submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
+        }
 
-	}
+    }
 
-	/**
-	 * Write provider building log to file.
-	 * 
-	 * @param format
-	 * @param args
-	 * @return Returns the actual log content, excluding time prefixes such as
-	 *         append.
-	 */
-	protected String writeBuildLog(String format, Object... args) {
-		String content = String.format(format, args);
-		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"),
-				getContext().getPipelineHistory().getId(), content);
-		writeALineFile(config.getJobLog(context.getPipelineHistory().getId()), message);
-		return content;
-	}
+    /**
+     * Write provider building log to file.
+     * 
+     * @param format
+     * @param args
+     * @return Returns the actual log content, excluding time prefixes such as
+     *         append.
+     */
+    protected String writeBuildLog(String format, Object... args) {
+        String content = String.format(format, args);
+        String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"),
+                getContext().getPipelineHistory().getId(), content);
+        writeALineFile(config.getJobLog(context.getPipelineHistory().getId()), message);
+        return content;
+    }
 
-	/**
-	 * Resolve commands placeholder variables.
-	 * 
-	 * @param commands
-	 * @return
-	 */
-	protected String resolveCmdPlaceholderVariables(String commands) {
-		return new PlaceholderVariableResolver(commands).resolve().get();
-	}
+    /**
+     * Resolve commands placeholder variables.
+     * 
+     * @param commands
+     * @return
+     */
+    protected String resolveCmdPlaceholderVariables(String commands) {
+        return new PlaceholderVariableResolver(commands).resolve().get();
+    }
 
-	/**
-	 * Create pipeline task deployer.
-	 * 
-	 * @param instance
-	 * @return
-	 */
-	protected abstract Runnable newPipeDeployer(AppInstance instance);
+    /**
+     * Create pipeline task deployer.
+     * 
+     * @param instance
+     * @return
+     */
+    protected abstract Runnable newPipeDeployer(AppInstance instance);
 
-	/**
-	 * Create distrbuted pipeline deployer.
-	 * 
-	 * @param instance
-	 * @return
-	 */
-	private Runnable createPipeDeployer(AppInstance instance) {
-		switch (getContext().getAppCluster().getDeployType()) {
-		case 2:// docker
-			Object[] args2 = { this, instance, getContext().getPipelineHistoryInstances() };
-			return beanFactory.getBean(DockerNativePipeDeployer.class, args2);
-		case 4:// coss
-			Object[] args4 = { this, instance, getContext().getPipelineHistoryInstances() };
-			return beanFactory.getBean(CossPipeDeployer.class, args4);
-		default:
-			return newPipeDeployer(instance);
-		}
+    /**
+     * Create distrbuted pipeline deployer.
+     * 
+     * @param instance
+     * @return
+     */
+    private Runnable createPipeDeployer(AppInstance instance) {
+        switch (getContext().getAppCluster().getDeployType()) {
+        case 2:// docker
+            Object[] args2 = { this, instance, getContext().getPipelineHistoryInstances() };
+            return beanFactory.getBean(DockerNativePipeDeployer.class, args2);
+        case 4:// coss
+            Object[] args4 = { this, instance, getContext().getPipelineHistoryInstances() };
+            return beanFactory.getBean(CossPipeDeployer.class, args4);
+        default:
+            return newPipeDeployer(instance);
+        }
 
-	};
+    };
 
-	/**
-	 * Placeholder variables resolver.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年11月5日
-	 * @since
-	 */
-	class PlaceholderVariableResolver {
+    /**
+     * Placeholder variables resolver.
+     * 
+     * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+     * @version v1.0 2019年11月5日
+     * @since
+     */
+    class PlaceholderVariableResolver {
 
-		/** Placeholder for projectDir. */
-		public static final String PH_PROJECT_DIR = "{pipe.projectDir}";
+        /** Placeholder for projectDir. */
+        public static final String PH_PROJECT_DIR = "{pipe.projectDir}";
 
-		/** Placeholder for workspaceDir. */
-		public static final String PH_WORKSPACE_DIR = "{pipe.workspaceDir}";
+        /** Placeholder for workspaceDir. */
+        public static final String PH_WORKSPACE_DIR = "{pipe.workspaceDir}";
 
-		/** Placeholder for temporary scripts file. */
-		public static final String PH_TMP_SCRIPT_FILE = "{pipe.tmpScriptFile}";
+        /** Placeholder for temporary scripts file. */
+        public static final String PH_TMP_SCRIPT_FILE = "{pipe.tmpScriptFile}";
 
-		/** Placeholder for backupDir. */
-		public static final String PH_BACKUP_DIR = "{pipe.backupDir}";
+        /** Placeholder for backupDir. */
+        public static final String PH_BACKUP_DIR = "{pipe.backupDir}";
 
-		/** Placeholder for logPath. */
-		public static final String PH_LOG_FILE = "{pipe.logFile}";
+        /** Placeholder for logPath. */
+        public static final String PH_LOG_FILE = "{pipe.logFile}";
 
-		/** Placeholder for remoteTmpDir. */
-		public static final String PH_REMOTE_TMP_DIR = "{pipe.remoteTmpDir}";
+        /** Placeholder for remoteTmpDir. */
+        public static final String PH_REMOTE_TMP_DIR = "{pipe.remoteTmpDir}";
 
-		/** Resolving commands. */
-		private String commands;
+        /** Resolving commands. */
+        private String commands;
 
-		public PlaceholderVariableResolver(String commands) {
-			hasText(commands, "Resolving pipeline commands must not be empty.");
-			this.commands = commands;
-		}
+        public PlaceholderVariableResolver(String commands) {
+            hasText(commands, "Resolving pipeline commands must not be empty.");
+            this.commands = commands;
+        }
 
-		/**
-		 * Resolving placeholder variables.
-		 * 
-		 * @param context
-		 * @param command
-		 * @return
-		 */
-		PlaceholderVariableResolver resolve() {
-			// Replace for workspace.
-			commands = replace(commands, PH_WORKSPACE_DIR, config.getWorkspace());
+        /**
+         * Resolving placeholder variables.
+         * 
+         * @param context
+         * @param command
+         * @return
+         */
+        PlaceholderVariableResolver resolve() {
+            // Replace for workspace.
+            commands = replace(commands, PH_WORKSPACE_DIR, config.getWorkspace());
 
-			// Replace for projectDir.
-			String projectDir = config.getProjectSourceDir(getContext().getProject().getProjectName()).getAbsolutePath();
-			commands = replace(commands, PH_PROJECT_DIR, projectDir);
+            // Replace for projectDir.
+            String projectDir = config.getProjectSourceDir(getContext().getProject().getProjectName()).getAbsolutePath();
+            commands = replace(commands, PH_PROJECT_DIR, projectDir);
 
-			// Replace for backupDir.
-			File tmpScriptFile = config.getJobTmpCommandFile(getContext().getPipelineHistory().getId(),
-					getContext().getProject().getId());
-			commands = replace(commands, PH_TMP_SCRIPT_FILE, tmpScriptFile.getAbsolutePath());
+            // Replace for backupDir.
+            File tmpScriptFile = config.getJobTmpCommandFile(getContext().getPipelineHistory().getId(),
+                    getContext().getProject().getId());
+            commands = replace(commands, PH_TMP_SCRIPT_FILE, tmpScriptFile.getAbsolutePath());
 
-			// Replace for backupDir.
-			File backupDir = config.getJobBackupDir(getContext().getPipelineHistory().getId());
-			commands = replace(commands, PH_BACKUP_DIR, backupDir.getAbsolutePath());
+            // Replace for backupDir.
+            File backupDir = config.getJobBackupDir(getContext().getPipelineHistory().getId());
+            commands = replace(commands, PH_BACKUP_DIR, backupDir.getAbsolutePath());
 
-			// Replace for logPath.
-			File logFile = config.getJobLog(getContext().getPipelineHistory().getId());
-			commands = replace(commands, PH_LOG_FILE, logFile.getAbsolutePath());
+            // Replace for logPath.
+            File logFile = config.getJobLog(getContext().getPipelineHistory().getId());
+            commands = replace(commands, PH_LOG_FILE, logFile.getAbsolutePath());
 
-			// Replace for remoteTmpDir.
-			String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
-			commands = replace(commands, PH_REMOTE_TMP_DIR, remoteTmpDir);
+            // Replace for remoteTmpDir.
+            String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
+            commands = replace(commands, PH_REMOTE_TMP_DIR, remoteTmpDir);
 
-			return this;
-		}
+            return this;
+        }
 
-		/**
-		 * Get safety asserted commands.
-		 * 
-		 * @return
-		 */
-		String get() {
-			// Invalid placeholder ?
-			if (containsAny(commands, "{", "}")) {
-				if (contains(commands, "{") && contains(commands, "}")) {
-					String invalidVar = commands.substring(commands.indexOf("{"), commands.indexOf("}") + 1);
-					throw new BadCommandScriptException(String.format(
-							"Bad placeholder '%s' in commands script. See:https://github.com/wl4g/super-devops/blob/master/super-devops-ci/README.md",
-							invalidVar));
-				} else {
-					throw new BadCommandScriptException(String.format("Bad commands script for: %s", commands));
-				}
-			}
+        /**
+         * Get safety asserted commands.
+         * 
+         * @return
+         */
+        String get() {
+            // Invalid placeholder ?
+            if (containsAny(commands, "{", "}")) {
+                if (contains(commands, "{") && contains(commands, "}")) {
+                    String invalidVar = commands.substring(commands.indexOf("{"), commands.indexOf("}") + 1);
+                    throw new BadCommandScriptException(String.format(
+                            "Bad placeholder '%s' in commands script. See:https://github.com/wl4g/super-devops/blob/master/super-devops-ci/README.md",
+                            invalidVar));
+                } else {
+                    throw new BadCommandScriptException(String.format("Bad commands script for: %s", commands));
+                }
+            }
 
-			return commands;
-		}
+            return commands;
+        }
 
-	}
+    }
 
 }

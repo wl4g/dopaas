@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-umc-service-data</artifactId>
+			<artifactId>dopaas-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -57,6 +57,10 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>dopaas-iam-service-facade</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>dopaas-infra-data</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

@@ -16,11 +16,6 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-udm-service-data</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
             <groupId>com.wl4g</groupId>
             <artifactId>dopaas-umc-client-springboot</artifactId>
             <version>${project.parent.version}</version>
@@ -46,7 +41,7 @@
 		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically configured. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-core</artifactId> -->
+		<!-- <artifactId>dopaas-infra-integration-feign-istio</artifactId> -->
 		<!-- </dependency> -->
 
 		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. -->
@@ -59,7 +54,7 @@
 			Only relying on feign's interface annotation. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-springcloud-dubbo</artifactId> -->
+		<!-- <artifactId>dopaas-infra-integration-feign-dubbo</artifactId> -->
 		<!-- </dependency> -->
 
 		<dependency>

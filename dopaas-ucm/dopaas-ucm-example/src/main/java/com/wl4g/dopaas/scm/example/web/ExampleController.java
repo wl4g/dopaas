@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.example.web;
+package com.wl4g.dopaas.ucm.example.web;
 
 import com.wl4g.infra.common.serialize.JacksonUtils;
-import com.wl4g.dopaas.scm.example.service.ExampleService;
+import com.wl4g.dopaas.ucm.example.service.ExampleService;
 import com.wl4g.iam.bean.User;
 import com.wl4g.iam.dao.UserDao;
 

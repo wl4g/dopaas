@@ -25,6 +25,8 @@ import com.wl4g.dopaas.common.bean.uci.Trigger;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,112 +44,118 @@ import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizat
 @Service
 public class TriggerServiceImpl implements TriggerService {
 
-	private @Autowired TriggerDao triggerDao;
+    private @Autowired TriggerDao triggerDao;
 
-	private @Autowired TimingPipelineManager timingManager;
+    private @Autowired TimingPipelineManager timingManager;
 
-	@Override
-	public PageHolder<Trigger> list(PageHolder<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,
-			String endDate) {
-		String endDateStr = null;
-		if (isNotBlank(endDate)) {
-			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
-		}
-		pm.useCount().bind();
-		pm.setRecords(triggerDao.list(getRequestOrganizationCodes(), id, name, taskId, enable, startDate, endDateStr));
-		return pm;
-	}
+    @Override
+    public PageHolder<Trigger> list(PageHolder<Trigger> pm, Long id, String name, Long taskId, Integer enable, String startDate,
+            String endDate) {
+        String endDateStr = null;
+        if (isNotBlank(endDate)) {
+            endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
+        }
+        pm.useCount().bind();
+        pm.setRecords(triggerDao.list(getRequestOrganizationCodes(), id, name, taskId, enable, startDate, endDateStr));
+        return pm;
+    }
 
-	@Override
-	public void save(Trigger trigger) {
-		checkTriggerCron(trigger);
-		if (null != trigger.getId() && trigger.getId() > 0) {
-			trigger.preUpdate();
-			trigger = update(trigger);
-		} else {
-			trigger.preInsert(getRequestOrganizationCode());
-			trigger.setDelFlag(DEL_FLAG_NORMAL);
-			trigger = insert(trigger);
-		}
-		if (trigger.getType() != null && trigger.getType() == TASK_TYPE_TIMMING) {
-			restart(trigger.getId());
-		}
-	}
+    @Override
+    public void save(Trigger trigger) {
+        checkTriggerCron(trigger);
+        if (null != trigger.getId() && trigger.getId() > 0) {
+            trigger.preUpdate();
+            trigger = update(trigger);
+        } else {
+            trigger.preInsert(getRequestOrganizationCode());
+            trigger.setDelFlag(DEL_FLAG_NORMAL);
+            trigger = insert(trigger);
+        }
+        if (trigger.getType() != null && trigger.getType() == TASK_TYPE_TIMMING) {
+            restart(trigger.getId());
+        }
+    }
 
-	@Transactional
-	public Trigger insert(Trigger trigger) {
-		triggerDao.insertSelective(trigger);
-		return trigger;
-	}
+    @Transactional
+    public Trigger insert(Trigger trigger) {
+        triggerDao.insertSelective(trigger);
+        return trigger;
+    }
 
-	@Transactional
-	public Trigger update(Trigger trigger) {
-		trigger.preUpdate();
-		triggerDao.updateByPrimaryKeySelective(trigger);
-		return trigger;
-	}
+    @Transactional
+    public Trigger update(Trigger trigger) {
+        trigger.preUpdate();
+        triggerDao.updateByPrimaryKeySelective(trigger);
+        return trigger;
+    }
 
-	@Override
-	@Transactional
-	public int delete(Long id) {
-		timingManager.stopPipeline(triggerDao.selectByPrimaryKey(id));
-		return triggerDao.deleteByPrimaryKey(id);
-	}
+    @Override
+    @Transactional
+    public int delete(Long id) {
+        timingManager.stopPipeline(triggerDao.selectByPrimaryKey(id));
+        return triggerDao.deleteByPrimaryKey(id);
+    }
 
-	@Override
-	public void enable(Long id) {
-		Trigger trigger = new Trigger();
-		trigger.setId(id);
-		trigger.preUpdate();
-		trigger.setEnable(BaseBean.ENABLED);
-		triggerDao.updateByPrimaryKeySelective(trigger);
-	}
+    @Override
+    public void enable(Long id) {
+        Trigger trigger = new Trigger();
+        trigger.setId(id);
+        trigger.preUpdate();
+        trigger.setEnable(BaseBean.ENABLED);
+        triggerDao.updateByPrimaryKeySelective(trigger);
+    }
 
-	@Override
-	public void disable(Long id) {
-		Trigger trigger = new Trigger();
-		trigger.setId(id);
-		trigger.preUpdate();
-		trigger.setEnable(BaseBean.DISABLED);
-		triggerDao.updateByPrimaryKeySelective(trigger);
-	}
+    @Override
+    public void disable(Long id) {
+        Trigger trigger = new Trigger();
+        trigger.setId(id);
+        trigger.preUpdate();
+        trigger.setEnable(BaseBean.DISABLED);
+        triggerDao.updateByPrimaryKeySelective(trigger);
+    }
 
-	@Override
-	public void updateSha(Long id, String sha) {
-		Trigger trigger = new Trigger();
-		trigger.setId(id);
-		trigger.setSha(sha);
-		triggerDao.updateByPrimaryKeySelective(trigger);
-	}
+    @Override
+    public void updateSha(Long id, String sha) {
+        Trigger trigger = new Trigger();
+        trigger.setId(id);
+        trigger.setSha(sha);
+        triggerDao.updateByPrimaryKeySelective(trigger);
+    }
 
-	@Override
-	public Trigger getById(Long id) {
-		Assert.notNull(id, "id can not be null");
-		return triggerDao.selectByPrimaryKey(id);
-	}
+    @Override
+    public Trigger getById(Long id) {
+        Assert.notNull(id, "id can not be null");
+        return triggerDao.selectByPrimaryKey(id);
+    }
 
-	/**
-	 * Check form
-	 *
-	 * @param trigger
-	 */
-	private void checkTriggerCron(Trigger trigger) {
-		Assert.notNull(trigger, "trigger can not be null");
-		Assert.notNull(trigger.getType(), "type can not be null");
-		Assert.notNull(trigger.getAppClusterId(), "project can not be null");
-		if (trigger.getType() == TASK_TYPE_TIMMING) {
-			Assert.notNull(trigger.getCron(), "cron can not be null");
-		}
-	}
+    @Override
+    public List<Trigger> getByType(Integer type) {
+        Assert.notNull(type, "type can not be null");
+        return triggerDao.selectByType(type);
+    }
 
-	/**
-	 * Restart Cron -- when modify or create the timing task , restart the cron
-	 *
-	 * @param triggerId
-	 */
-	private void restart(Long triggerId) {
-		Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
-		timingManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
-	}
+    /**
+     * Check form
+     *
+     * @param trigger
+     */
+    private void checkTriggerCron(Trigger trigger) {
+        Assert.notNull(trigger, "trigger can not be null");
+        Assert.notNull(trigger.getType(), "type can not be null");
+        Assert.notNull(trigger.getAppClusterId(), "project can not be null");
+        if (trigger.getType() == TASK_TYPE_TIMMING) {
+            Assert.notNull(trigger.getCron(), "cron can not be null");
+        }
+    }
+
+    /**
+     * Restart Cron -- when modify or create the timing task , restart the cron
+     *
+     * @param triggerId
+     */
+    private void restart(Long triggerId) {
+        Trigger trigger = triggerDao.selectByPrimaryKey(triggerId);
+        timingManager.refreshPipeline(trigger.getId().toString(), trigger.getCron(), trigger);
+    }
 
 }

@@ -78,423 +78,446 @@ import com.wl4g.dopaas.uci.service.ProjectService;
 @Service
 public class PipelineServiceImpl implements PipelineService {
 
-	private @Autowired PipelineDao pipelineDao;
-	private @Autowired PipelineInstanceDao pipelineInstanceDao;
-	private @Autowired PipeStageBuildingDao pipeStageBuildingDao;
-	private @Autowired PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
-	private @Autowired PipeStagePcmDao pipeStepPcmDao;
-	private @Autowired PipeStepApiDao pipeStepApiDao;
-	private @Autowired PipeStageNotificationDao pipeStepNotificationDao;
-	private @Autowired DependencyService dependencyService;
-	private @Autowired ProjectService projectService;
-	private @Autowired PipeStageInstanceCommandDao pipeStepInstanceCommandDao;
-	private @Autowired PipeStageDeployDao pipeStepDeployDao;
-	private @Autowired ClusterExtensionDao clusterExtensionDao;
-	private @Autowired AppClusterService appClusterService;
-	private @Autowired AppInstanceService appInstanceService;
+    private @Autowired PipelineDao pipelineDao;
+    private @Autowired PipelineInstanceDao pipelineInstanceDao;
+    private @Autowired PipeStageBuildingDao pipeStageBuildingDao;
+    private @Autowired PipeStageBuildingProjectDao pipeStepBuildingProjectDao;
+    private @Autowired PipeStagePcmDao pipeStepPcmDao;
+    private @Autowired PipeStepApiDao pipeStepApiDao;
+    private @Autowired PipeStageNotificationDao pipeStepNotificationDao;
+    private @Autowired DependencyService dependencyService;
+    private @Autowired ProjectService projectService;
+    private @Autowired PipeStageInstanceCommandDao pipeStepInstanceCommandDao;
+    private @Autowired PipeStageDeployDao pipeStepDeployDao;
+    private @Autowired ClusterExtensionDao clusterExtensionDao;
+    private @Autowired AppClusterService appClusterService;
+    private @Autowired AppInstanceService appInstanceService;
 
-	@Override
-	public PageHolder<Pipeline> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
-		pm.useCount().bind();
+    @Override
+    public PageHolder<Pipeline> list(PageHolder<Pipeline> pm, String pipeName, String providerKind, String environment) {
+        pm.useCount().bind();
 
-		List<Pipeline> pipes = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment);
-		pm.setRecords(pipes);
+        List<Pipeline> pipes = pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment);
+        pm.setRecords(pipes);
 
-		for (Pipeline p : safeList(pipes)) {
-			p.setPipeStepBuildingProjects(pipeStepBuildingProjectDao.selectByPipeId(p.getId()));
+        for (Pipeline p : safeList(pipes)) {
+            p.setPipeStepBuildingProjects(pipeStepBuildingProjectDao.selectByPipeId(p.getId()));
 
-			AppCluster appCluster = appClusterService.getById(p.getClusterId());
-			if (Objects.nonNull(appCluster)) {
-				p.setClusterName(appCluster.getName());
-			}
+            AppCluster appCluster = appClusterService.getById(p.getClusterId());
+            if (Objects.nonNull(appCluster)) {
+                p.setClusterName(appCluster.getName());
+            }
 
-			List<AppInstance> appInstances = new ArrayList<>();
-			List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(p.getId());
-			for (PipelineInstance pipelineInstance : pipelineInstances) {
-				AppInstance detail = appInstanceService.detail(pipelineInstance.getInstanceId());
-				appInstances.add(detail);
-			}
-			p.setInstances(appInstances);
-		}
-		return pm;
-	}
+            List<AppInstance> appInstances = new ArrayList<>();
+            List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(p.getId());
+            for (PipelineInstance pipelineInstance : pipelineInstances) {
+                AppInstance detail = appInstanceService.detail(pipelineInstance.getInstanceId());
+                appInstances.add(detail);
+            }
+            p.setInstances(appInstances);
+        }
+        return pm;
+    }
 
-	@Override
-	public List<Pipeline> findList(List<String> organizationCodes, Long id, String pipeName, String providerKind,
-			String environment, String clusterName) {
-		return pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment);
-	}
+    @Override
+    public List<Pipeline> findList(List<String> organizationCodes, Long id, String pipeName, String providerKind,
+            String environment, String clusterName) {
+        return pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment);
+    }
 
-	@Override
-	public void save(Pipeline pipeline) {
-		if (nonNull(pipeline.getId())) {
-			update(pipeline);
-		} else {
-			insert(pipeline);
-		}
-	}
+    @Override
+    public void save(Pipeline pipeline) {
+        if (nonNull(pipeline.getId())) {
+            update(pipeline);
+        } else {
+            insert(pipeline);
+        }
+    }
 
-	@Override
-	public Pipeline detail(Long id) {
-		Assert2.notNullOf(id, "id");
-		// Pipeline
-		Pipeline pipeline = pipelineDao.selectByPrimaryKey(id);
-		// Pipeline Deploy
-		PipeStageDeploy pipeStepDeploy = pipeStepDeployDao.selectByPipeId(id);
-		pipeline.setPipeStepDeploy(pipeStepDeploy);
-		// Pipeline Instance
-		List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(id);
-		Long[] instanceIds = new Long[pipelineInstances.size()];
-		for (int i = 0; i < pipelineInstances.size(); i++) {
-			instanceIds[i] = pipelineInstances.get(i).getInstanceId();
-		}
-		pipeline.setInstanceIds(instanceIds);
+    @Override
+    public Pipeline detail(Long id) {
+        Assert2.notNullOf(id, "id");
+        // Pipeline
+        Pipeline pipeline = pipelineDao.selectByPrimaryKey(id);
+        // Pipeline Deploy
+        PipeStageDeploy pipeStepDeploy = pipeStepDeployDao.selectByPipeId(id);
+        pipeline.setPipeStepDeploy(pipeStepDeploy);
+        // Pipeline Instance
+        List<PipelineInstance> pipelineInstances = pipelineInstanceDao.selectByPipeId(id);
+        Long[] instanceIds = new Long[pipelineInstances.size()];
+        for (int i = 0; i < pipelineInstances.size(); i++) {
+            instanceIds[i] = pipelineInstances.get(i).getInstanceId();
+        }
+        pipeline.setInstanceIds(instanceIds);
 
-		// Pipeline Building
-		PipeStageBuilding pipeStepBuilding = pipeStageBuildingDao.selectByPipeId(id);
-		pipeline.setPipeStepBuilding(pipeStepBuilding);
+        // Pipeline Building
+        PipeStageBuilding pipeStepBuilding = pipeStageBuildingDao.selectByPipeId(id);
+        pipeline.setPipeStepBuilding(pipeStepBuilding);
 
-		// Pipeline Pcm
-		PipeStagePcm pipeStepPcm = pipeStepPcmDao.selectByPipeId(id);
-		pipeline.setPipeStepPcm(pipeStepPcm);
+        // Pipeline Pcm
+        PipeStagePcm pipeStepPcm = pipeStepPcmDao.selectByPipeId(id);
+        pipeline.setPipeStepPcm(pipeStepPcm);
 
-		// Pipeline Notification
-		PipeStageNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(id);
-		if (Objects.nonNull(pipeStepNotification)) {
-			pipeStepNotification.setContactGroupId2(pipeStepNotification.getContactGroupIds().split(","));
-			pipeline.setPipeStepNotification(pipeStepNotification);
-		}
+        // Pipeline Notification
+        PipeStageNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(id);
+        if (Objects.nonNull(pipeStepNotification)) {
+            pipeStepNotification.setContactGroupId2(pipeStepNotification.getContactGroupIds().split(","));
+            pipeline.setPipeStepNotification(pipeStepNotification);
+        }
 
-		// Pipeline Instance Command
-		PipeStageInstanceCommand pipeStepInstanceCommand = pipeStepInstanceCommandDao.selectByPipeId(id);
-		pipeline.setPipeStepInstanceCommand(pipeStepInstanceCommand);
+        // Pipeline Instance Command
+        PipeStageInstanceCommand pipeStepInstanceCommand = pipeStepInstanceCommandDao.selectByPipeId(id);
+        pipeline.setPipeStepInstanceCommand(pipeStepInstanceCommand);
 
-		// TODO ...... testing,analysis,docker,k8s
+        // TODO ...... testing,analysis,docker,k8s
 
-		// Pipeline Api
-		PipeStepApi pipeStepApi = pipeStepApiDao.selectByPipeId(id);
-		pipeline.setPipeStepApi(pipeStepApi);
+        // Pipeline Api
+        PipeStepApi pipeStepApi = pipeStepApiDao.selectByPipeId(id);
+        pipeline.setPipeStepApi(pipeStepApi);
 
-		return pipeline;
-	}
+        return pipeline;
+    }
 
-	@Override
-	public void del(Long id) {
-		Pipeline pipeline = new Pipeline();
-		pipeline.setId(id);
-		pipeline.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		pipelineDao.updateByPrimaryKeySelective(pipeline);
-	}
+    @Override
+    public PipeStageNotification getPipeStageNotification(Long id) {
+        Assert2.notNullOf(id, "id");
+        return pipeStepNotificationDao.selectByPipeId(id);
+    }
 
-	@Override
-	public List<Pipeline> getByClusterId(Long clusterId) {
-		return pipelineDao.selectByClusterId(clusterId);
-	}
+    @Override
+    public Pipeline getPipe(Long id) {
+        Assert2.notNullOf(id, "id");
+        return pipelineDao.selectByPrimaryKey(id);
+    }
 
-	public void insert(Pipeline pipeline) {
-		Assert2.notNullOf(pipeline, "pipeline");
-		// Insert Pipeline
-		pipeline.preInsert(getRequestOrganizationCode());
-		pipelineDao.insertSelective(pipeline);
-		// Insert PipeInstance
-		Long[] instanceIds = pipeline.getInstanceIds();
+    @Override
+    public PipeStepApi getPipeStageApi(Long id) {
+        Assert2.notNullOf(id, "id");
+        return pipeStepApiDao.selectByPipeId(id);
+    }
 
-		PipeStageDeploy pipeStepDeploy = pipeline.getPipeStepDeploy();
-		if (isNull(pipeStepDeploy)) {
-			pipeStepDeploy = new PipeStageDeploy();
-		}
-		pipeStepDeploy.preInsert();
-		pipeStepDeploy.setPipeId(pipeline.getId());
-		pipeStepDeployDao.insertSelective(pipeStepDeploy);
+    @Override
+    public void del(Long id) {
+        Pipeline pipeline = new Pipeline();
+        pipeline.setId(id);
+        pipeline.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        pipelineDao.updateByPrimaryKeySelective(pipeline);
+    }
 
-		if (nonNull(instanceIds) && instanceIds.length > 0) {
-			List<PipelineInstance> pipelineInstances = new ArrayList<>();
-			for (Long i : instanceIds) {
-				PipelineInstance pipelineInstance = new PipelineInstance();
-				pipelineInstance.preInsert();
-				pipelineInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
-				pipelineInstance.setDeployId(pipeStepDeploy.getId());
-				pipelineInstance.setInstanceId(i);
-				pipelineInstances.add(pipelineInstance);
-			}
-			if (!CollectionUtils.isEmpty(pipelineInstances)) {
-				pipelineInstanceDao.insertBatch(pipelineInstances);
-			}
+    @Override
+    public List<Pipeline> getByClusterId(Long clusterId) {
+        return pipelineDao.selectByClusterId(clusterId);
+    }
 
-		}
-		// Insert PipeStepBuilding
-		PipeStageBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
-		if (nonNull(pipeStepBuilding)) {
-			pipeStepBuilding.preInsert();
-			pipeStepBuilding.setPipeId(pipeline.getId());
-			pipeStageBuildingDao.insertSelective(pipeStepBuilding);
-			// Insert PipeStepBuildingProject
-			List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding()
-					.getPipeStepBuildingProjects();
-			if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
-				for (int i = 0; i < pipeStepBuildingProjects.size(); i++) {
-					pipeStepBuildingProjects.get(i).preInsert();
-					pipeStepBuildingProjects.get(i).setId(SnowflakeIdGenerator.getDefault().nextId());
-					pipeStepBuildingProjects.get(i).setSort(i + 1);
-					pipeStepBuildingProjects.get(i).setBuildingId(pipeStepBuilding.getId());
-				}
-				pipeStepBuildingProjectDao.insertBatch(pipeStepBuildingProjects);
-			}
-		}
+    public void insert(Pipeline pipeline) {
+        Assert2.notNullOf(pipeline, "pipeline");
+        // Insert Pipeline
+        pipeline.preInsert(getRequestOrganizationCode());
+        pipelineDao.insertSelective(pipeline);
+        // Insert PipeInstance
+        Long[] instanceIds = pipeline.getInstanceIds();
 
-		// Insert Pipeline Instance Command
-		PipeStageInstanceCommand pipeStepInstanceCommand = pipeline.getPipeStepInstanceCommand();
-		if (nonNull(pipeStepInstanceCommand)) {
-			pipeStepInstanceCommand.preInsert();
-			pipeStepInstanceCommand.setPipeId(pipeline.getId());
-			pipeStepInstanceCommandDao.insertSelective(pipeStepInstanceCommand);
-		}
+        PipeStageDeploy pipeStepDeploy = pipeline.getPipeStepDeploy();
+        if (isNull(pipeStepDeploy)) {
+            pipeStepDeploy = new PipeStageDeploy();
+        }
+        pipeStepDeploy.preInsert();
+        pipeStepDeploy.setPipeId(pipeline.getId());
+        pipeStepDeployDao.insertSelective(pipeStepDeploy);
 
-		// TODO ...... testing,analysis,docker,k8s
+        if (nonNull(instanceIds) && instanceIds.length > 0) {
+            List<PipelineInstance> pipelineInstances = new ArrayList<>();
+            for (Long i : instanceIds) {
+                PipelineInstance pipelineInstance = new PipelineInstance();
+                pipelineInstance.preInsert();
+                pipelineInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
+                pipelineInstance.setDeployId(pipeStepDeploy.getId());
+                pipelineInstance.setInstanceId(i);
+                pipelineInstances.add(pipelineInstance);
+            }
+            if (!CollectionUtils.isEmpty(pipelineInstances)) {
+                pipelineInstanceDao.insertBatch(pipelineInstances);
+            }
 
-		// Insert Api Config
-		PipeStepApi pipeStepApi = pipeline.getPipeStepApi();
-		if (nonNull(pipeStepApi)) {
-			pipeStepApi.preInsert();
-			pipeStepApi.setPipeId(pipeline.getId());
-			pipeStepApiDao.insertSelective(pipeStepApi);
-		}
+        }
+        // Insert PipeStepBuilding
+        PipeStageBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
+        if (nonNull(pipeStepBuilding)) {
+            pipeStepBuilding.preInsert();
+            pipeStepBuilding.setPipeId(pipeline.getId());
+            pipeStageBuildingDao.insertSelective(pipeStepBuilding);
+            // Insert PipeStepBuildingProject
+            List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding()
+                    .getPipeStepBuildingProjects();
+            if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
+                for (int i = 0; i < pipeStepBuildingProjects.size(); i++) {
+                    pipeStepBuildingProjects.get(i).preInsert();
+                    pipeStepBuildingProjects.get(i).setId(SnowflakeIdGenerator.getDefault().nextId());
+                    pipeStepBuildingProjects.get(i).setSort(i + 1);
+                    pipeStepBuildingProjects.get(i).setBuildingId(pipeStepBuilding.getId());
+                }
+                pipeStepBuildingProjectDao.insertBatch(pipeStepBuildingProjects);
+            }
+        }
 
-		// Insert Pcm
-		PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
-		if (nonNull(pipeStepPcm)) {
-			// pipeStepPcm.preInsert();
-			pipeStepPcm.setPipeId(pipeline.getId());
-			pipeStepPcmDao.insertSelective(pipeStepPcm);
-		}
-		// Insert Notification
-		PipeStageNotification pipeStepNotification = pipeline.getPipeStepNotification();
-		if (nonNull(pipeStepNotification)) {
-			pipeStepNotification.preInsert();
-			pipeStepNotification.setPipeId(pipeline.getId());
-			pipeStepNotification.setContactGroupIds(StringUtils.join(pipeStepNotification.getContactGroupId(), ","));
-			pipeStepNotificationDao.insertSelective(pipeStepNotification);
-		}
+        // Insert Pipeline Instance Command
+        PipeStageInstanceCommand pipeStepInstanceCommand = pipeline.getPipeStepInstanceCommand();
+        if (nonNull(pipeStepInstanceCommand)) {
+            pipeStepInstanceCommand.preInsert();
+            pipeStepInstanceCommand.setPipeId(pipeline.getId());
+            pipeStepInstanceCommandDao.insertSelective(pipeStepInstanceCommand);
+        }
 
-	}
+        // TODO ...... testing,analysis,docker,k8s
 
-	public void update(Pipeline pipeline) {
-		pipeline.preUpdate();
-		Assert2.notNullOf(pipeline, "pipeline");
-		// Update Pipeline
-		pipeline.preUpdate();
-		pipelineDao.updateByPrimaryKeySelective(pipeline);
+        // Insert Api Config
+        PipeStepApi pipeStepApi = pipeline.getPipeStepApi();
+        if (nonNull(pipeStepApi)) {
+            pipeStepApi.preInsert();
+            pipeStepApi.setPipeId(pipeline.getId());
+            pipeStepApiDao.insertSelective(pipeStepApi);
+        }
 
-		PipeStageDeploy pipeStepDeploy = pipeline.getPipeStepDeploy();
-		if (nonNull(pipeStepDeploy)) {
-			pipeStepDeployDao.updateByPrimaryKeySelective(pipeStepDeploy);
-		} else {
-			pipeStepDeploy = new PipeStageDeploy();
-			pipeStepDeploy.preInsert();
-			pipeStepDeploy.setPipeId(pipeline.getId());
-			pipeStepDeployDao.insertSelective(pipeStepDeploy);
-		}
+        // Insert Pcm
+        PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
+        if (nonNull(pipeStepPcm)) {
+            // pipeStepPcm.preInsert();
+            pipeStepPcm.setPipeId(pipeline.getId());
+            pipeStepPcmDao.insertSelective(pipeStepPcm);
+        }
+        // Insert Notification
+        PipeStageNotification pipeStepNotification = pipeline.getPipeStepNotification();
+        if (nonNull(pipeStepNotification)) {
+            pipeStepNotification.preInsert();
+            pipeStepNotification.setPipeId(pipeline.getId());
+            pipeStepNotification.setContactGroupIds(StringUtils.join(pipeStepNotification.getContactGroupId(), ","));
+            pipeStepNotificationDao.insertSelective(pipeStepNotification);
+        }
 
-		// Update PipeInstance
-		Long[] instanceIds = pipeline.getInstanceIds();
-		pipelineInstanceDao.deleteByPipeId(pipeline.getId());
-		if (nonNull(instanceIds)) {
-			List<PipelineInstance> pipelineInstances = new ArrayList<>();
-			for (Long i : instanceIds) {
-				PipelineInstance pipelineInstance = new PipelineInstance();
-				pipelineInstance.preInsert();
-				pipelineInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
-				pipelineInstance.setDeployId(pipeStepDeploy.getId());
-				pipelineInstance.setInstanceId(i);
-				pipelineInstances.add(pipelineInstance);
-			}
-			if (!CollectionUtils.isEmpty(pipelineInstances)) {
-				pipelineInstanceDao.insertBatch(pipelineInstances);
-			}
-		}
-		// Update PipeStepBuilding
-		pipeStepBuildingProjectDao.deleteByPipeId(pipeline.getId());
-		pipeStageBuildingDao.deleteByPipeId(pipeline.getId());
-		PipeStageBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
-		if (nonNull(pipeStepBuilding)) {
-			pipeStepBuilding.preInsert();
-			pipeStepBuilding.setPipeId(pipeline.getId());
-			pipeStageBuildingDao.insertSelective(pipeStepBuilding);
-			// Update PipeStepBuildingProject
-			List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding()
-					.getPipeStepBuildingProjects();
-			if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
-				for (int i = 0; i < pipeStepBuildingProjects.size(); i++) {
-					pipeStepBuildingProjects.get(i).preInsert();
-					pipeStepBuildingProjects.get(i).setId(SnowflakeIdGenerator.getDefault().nextId());
-					pipeStepBuildingProjects.get(i).setSort(i + 1);
-					pipeStepBuildingProjects.get(i).setBuildingId(pipeStepBuilding.getId());
-				}
-				pipeStepBuildingProjectDao.insertBatch(pipeStepBuildingProjects);
-			}
-		}
+    }
 
-		// Update Pipeline Instance Command
-		pipeStepInstanceCommandDao.deleteByPipeId(pipeline.getId());
-		PipeStageInstanceCommand pipeStepInstanceCommand = pipeline.getPipeStepInstanceCommand();
-		if (nonNull(pipeStepInstanceCommand)) {
-			pipeStepInstanceCommand.preInsert();
-			pipeStepInstanceCommand.setPipeId(pipeline.getId());
-			pipeStepInstanceCommandDao.insertSelective(pipeStepInstanceCommand);
-		}
+    public void update(Pipeline pipeline) {
+        pipeline.preUpdate();
+        Assert2.notNullOf(pipeline, "pipeline");
+        // Update Pipeline
+        pipeline.preUpdate();
+        pipelineDao.updateByPrimaryKeySelective(pipeline);
 
-		// TODO ...... testing,analysis,docker,k8s
+        PipeStageDeploy pipeStepDeploy = pipeline.getPipeStepDeploy();
+        if (nonNull(pipeStepDeploy)) {
+            pipeStepDeployDao.updateByPrimaryKeySelective(pipeStepDeploy);
+        } else {
+            pipeStepDeploy = new PipeStageDeploy();
+            pipeStepDeploy.preInsert();
+            pipeStepDeploy.setPipeId(pipeline.getId());
+            pipeStepDeployDao.insertSelective(pipeStepDeploy);
+        }
 
-		PipeStepApi pipeStepApi = pipeline.getPipeStepApi();
-		if (nonNull(pipeStepApi)) {
-			if (nonNull(pipeStepApi.getId())) {
-				pipeStepApi.preUpdate();
-				pipeStepApi.setPipeId(pipeline.getId());
-				pipeStepApiDao.updateByPrimaryKeySelective(pipeStepApi);
-			} else {
-				pipeStepApi.preInsert();
-				pipeStepApi.setPipeId(pipeline.getId());
-				pipeStepApiDao.insertSelective(pipeStepApi);
-			}
-		}
+        // Update PipeInstance
+        Long[] instanceIds = pipeline.getInstanceIds();
+        pipelineInstanceDao.deleteByPipeId(pipeline.getId());
+        if (nonNull(instanceIds)) {
+            List<PipelineInstance> pipelineInstances = new ArrayList<>();
+            for (Long i : instanceIds) {
+                PipelineInstance pipelineInstance = new PipelineInstance();
+                pipelineInstance.preInsert();
+                pipelineInstance.setId(SnowflakeIdGenerator.getDefault().nextId());
+                pipelineInstance.setDeployId(pipeStepDeploy.getId());
+                pipelineInstance.setInstanceId(i);
+                pipelineInstances.add(pipelineInstance);
+            }
+            if (!CollectionUtils.isEmpty(pipelineInstances)) {
+                pipelineInstanceDao.insertBatch(pipelineInstances);
+            }
+        }
+        // Update PipeStepBuilding
+        pipeStepBuildingProjectDao.deleteByPipeId(pipeline.getId());
+        pipeStageBuildingDao.deleteByPipeId(pipeline.getId());
+        PipeStageBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
+        if (nonNull(pipeStepBuilding)) {
+            pipeStepBuilding.preInsert();
+            pipeStepBuilding.setPipeId(pipeline.getId());
+            pipeStageBuildingDao.insertSelective(pipeStepBuilding);
+            // Update PipeStepBuildingProject
+            List<PipeStageBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding()
+                    .getPipeStepBuildingProjects();
+            if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
+                for (int i = 0; i < pipeStepBuildingProjects.size(); i++) {
+                    pipeStepBuildingProjects.get(i).preInsert();
+                    pipeStepBuildingProjects.get(i).setId(SnowflakeIdGenerator.getDefault().nextId());
+                    pipeStepBuildingProjects.get(i).setSort(i + 1);
+                    pipeStepBuildingProjects.get(i).setBuildingId(pipeStepBuilding.getId());
+                }
+                pipeStepBuildingProjectDao.insertBatch(pipeStepBuildingProjects);
+            }
+        }
 
-		// Update Pcm
-		pipeStepPcmDao.deleteByPipeId(pipeline.getId());
-		PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
-		if (nonNull(pipeStepPcm)) {
-			pipeStepPcm.preInsert();
-			pipeStepPcm.setPipeId(pipeline.getId());
-			pipeStepPcmDao.insertSelective(pipeStepPcm);
-		}
-		// Update Notification
-		pipeStepNotificationDao.deleteByPipeId(pipeline.getId());
-		PipeStageNotification pipeStepNotification = pipeline.getPipeStepNotification();
-		if (nonNull(pipeStepNotification)) {
-			pipeStepNotification.preInsert();
-			pipeStepNotification.setPipeId(pipeline.getId());
-			pipeStepNotification.setContactGroupIds(StringUtils.join(pipeStepNotification.getContactGroupId(), ","));
-			pipeStepNotificationDao.insertSelective(pipeStepNotification);
-		}
-	}
+        // Update Pipeline Instance Command
+        pipeStepInstanceCommandDao.deleteByPipeId(pipeline.getId());
+        PipeStageInstanceCommand pipeStepInstanceCommand = pipeline.getPipeStepInstanceCommand();
+        if (nonNull(pipeStepInstanceCommand)) {
+            pipeStepInstanceCommand.preInsert();
+            pipeStepInstanceCommand.setPipeId(pipeline.getId());
+            pipeStepInstanceCommandDao.insertSelective(pipeStepInstanceCommand);
+        }
 
-	@Override
-	public PipeStageBuilding getSimplePipeStageBuilding(Long pipeId) {
-		return pipeStageBuildingDao.selectByPipeId(pipeId);
-	}
+        // TODO ...... testing,analysis,docker,k8s
 
-	@Override
-	public PipeStageBuilding getPipeStageBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
-		Project project = notNullOf(projectService.getByAppClusterId(clusterId), "project");
+        PipeStepApi pipeStepApi = pipeline.getPipeStepApi();
+        if (nonNull(pipeStepApi)) {
+            if (nonNull(pipeStepApi.getId())) {
+                pipeStepApi.preUpdate();
+                pipeStepApi.setPipeId(pipeline.getId());
+                pipeStepApiDao.updateByPrimaryKeySelective(pipeStepApi);
+            } else {
+                pipeStepApi.preInsert();
+                pipeStepApi.setPipeId(pipeline.getId());
+                pipeStepApiDao.insertSelective(pipeStepApi);
+            }
+        }
 
-		PipeStageBuilding pipeStepBuilding = pipeStageBuildingDao.selectByPipeId(pipeId);
-		if (Objects.isNull(pipeStepBuilding)) {
-			pipeStepBuilding = new PipeStageBuilding();
-			pipeStepBuilding.setPipeId(pipeId);
-		}
-		if (nonNull(refType)) {
-			pipeStepBuilding.setRefType(refType);
-		}
+        // Update Pcm
+        pipeStepPcmDao.deleteByPipeId(pipeline.getId());
+        PipeStagePcm pipeStepPcm = pipeline.getPipeStepPcm();
+        if (nonNull(pipeStepPcm)) {
+            pipeStepPcm.preInsert();
+            pipeStepPcm.setPipeId(pipeline.getId());
+            pipeStepPcmDao.insertSelective(pipeStepPcm);
+        }
+        // Update Notification
+        pipeStepNotificationDao.deleteByPipeId(pipeline.getId());
+        PipeStageNotification pipeStepNotification = pipeline.getPipeStepNotification();
+        if (nonNull(pipeStepNotification)) {
+            pipeStepNotification.preInsert();
+            pipeStepNotification.setPipeId(pipeline.getId());
+            pipeStepNotification.setContactGroupIds(StringUtils.join(pipeStepNotification.getContactGroupId(), ","));
+            pipeStepNotificationDao.insertSelective(pipeStepNotification);
+        }
+    }
 
-		List<PipeStageBuildingProject> pipeStageBuildingProjects1 = pipeStepBuildingProjectDao.selectByPipeId(pipeId);
-		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);
+    @Override
+    public PipeStageBuilding getSimplePipeStageBuilding(Long pipeId) {
+        return pipeStageBuildingDao.selectByPipeId(pipeId);
+    }
 
-		List<PipeStageBuildingProject> pipeStageBuildingProjects2 = new ArrayList<>();
-		for (Dependency dependency : dependencys) {
-			PipeStageBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStageBuildingProjects1,
-					dependency.getDependentId());
-			if (isNull(pipeStepBuildingProject)) {
-				pipeStepBuildingProject = new PipeStageBuildingProject();
-			}
-			Project project1 = projectService.getProjectById(dependency.getDependentId());
-			if (project1 == null) {
-				continue;
-			}
-			pipeStepBuildingProject.setProjectId(dependency.getDependentId());
-			pipeStepBuildingProject.setProjectName(project1.getProjectName());
-			List<String> branchs = projectService.getBranchsByProjectId(pipeStepBuildingProject.getProjectId(), refType);
-			pipeStepBuildingProject.setBranchs(branchs);
-			pipeStageBuildingProjects2.add(pipeStepBuildingProject);
-		}
+    @Override
+    public PipeStageBuilding getPipeStageBuilding(Long clusterId, Long pipeId, Integer refType) throws Exception {
+        Project project = notNullOf(projectService.getByAppClusterId(clusterId), "project");
 
-		// self
-		PipeStageBuildingProject pipeStageBuildingProject = getPipeStepBuildingProject(pipeStageBuildingProjects1,
-				project.getId());
-		if (isNull(pipeStageBuildingProject)) {
-			pipeStageBuildingProject = new PipeStageBuildingProject();
-		}
-		pipeStageBuildingProject.setProjectId(project.getId());
-		pipeStageBuildingProject.setProjectName(project.getProjectName());
-		List<String> branchs = projectService.getBranchsByProjectId(pipeStageBuildingProject.getProjectId(), refType);
-		pipeStageBuildingProject.setBranchs(branchs);
-		pipeStageBuildingProjects2.add(pipeStageBuildingProject);
+        PipeStageBuilding pipeStepBuilding = pipeStageBuildingDao.selectByPipeId(pipeId);
+        if (Objects.isNull(pipeStepBuilding)) {
+            pipeStepBuilding = new PipeStageBuilding();
+            pipeStepBuilding.setPipeId(pipeId);
+        }
+        if (nonNull(refType)) {
+            pipeStepBuilding.setRefType(refType);
+        }
 
-		pipeStepBuilding.setPipeStepBuildingProjects(pipeStageBuildingProjects2);
-		return pipeStepBuilding;
-	}
+        List<PipeStageBuildingProject> pipeStageBuildingProjects1 = pipeStepBuildingProjectDao.selectByPipeId(pipeId);
+        LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);
 
-	@Override
-	public List<Pipeline> getForSelect(String environment) {
-		return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment);
-	}
+        List<PipeStageBuildingProject> pipeStageBuildingProjects2 = new ArrayList<>();
+        for (Dependency dependency : dependencys) {
+            PipeStageBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStageBuildingProjects1,
+                    dependency.getDependentId());
+            if (isNull(pipeStepBuildingProject)) {
+                pipeStepBuildingProject = new PipeStageBuildingProject();
+            }
+            Project project1 = projectService.getProjectById(dependency.getDependentId());
+            if (project1 == null) {
+                continue;
+            }
+            pipeStepBuildingProject.setProjectId(dependency.getDependentId());
+            pipeStepBuildingProject.setProjectName(project1.getProjectName());
+            List<String> branchs = projectService.getBranchsByProjectId(pipeStepBuildingProject.getProjectId(), refType);
+            pipeStepBuildingProject.setBranchs(branchs);
+            pipeStageBuildingProjects2.add(pipeStepBuildingProject);
+        }
 
-	@Override
-	public PageHolder<ClusterExtension> clusterExtensionList(PageHolder<ClusterExtension> pm, String clusterName) {
-		pm.useCount().bind();
-		List<AppCluster> appClusters = appClusterService.getByLikeName(clusterName);
+        // self
+        PipeStageBuildingProject pipeStageBuildingProject = getPipeStepBuildingProject(pipeStageBuildingProjects1,
+                project.getId());
+        if (isNull(pipeStageBuildingProject)) {
+            pipeStageBuildingProject = new PipeStageBuildingProject();
+        }
+        pipeStageBuildingProject.setProjectId(project.getId());
+        pipeStageBuildingProject.setProjectName(project.getProjectName());
+        List<String> branchs = projectService.getBranchsByProjectId(pipeStageBuildingProject.getProjectId(), refType);
+        pipeStageBuildingProject.setBranchs(branchs);
+        pipeStageBuildingProjects2.add(pipeStageBuildingProject);
 
-		List<ClusterExtension> list = new ArrayList<>();
-		for (AppCluster appCluster : appClusters) {
-			ClusterExtension clusterExtension = clusterExtensionDao.selectByClusterId(appCluster.getId());
-			if (nonNull(clusterExtension)) {
-				clusterExtension.setClusterName(appCluster.getName());
-				list.add(clusterExtension);
-			} else {
-				clusterExtension = new ClusterExtension();
-				clusterExtension.setClusterName(appCluster.getName());
-				clusterExtension.setClusterId(appCluster.getId());
-				list.add(clusterExtension);
-			}
-		}
-		pm.setRecords(list);
-		return pm;
-	}
+        pipeStepBuilding.setPipeStepBuildingProjects(pipeStageBuildingProjects2);
+        return pipeStepBuilding;
+    }
 
-	@Override
-	public void saveClusterExtension(ClusterExtension clusterExtension) {
-		Assert2.notNull(clusterExtension, "clusterExtension");
-		ClusterExtension clusterExtensionDb = clusterExtensionDao.selectByClusterId(clusterExtension.getClusterId());
-		if (Objects.nonNull(clusterExtensionDb)) {// update
-			clusterExtensionDb.preUpdate();
-			clusterExtensionDao.updateByPrimaryKeySelective(clusterExtension);
-		} else {// insert
-			clusterExtension.preInsert();
-			clusterExtensionDao.insertSelective(clusterExtension);
-		}
-	}
+    @Override
+    public List<Pipeline> getForSelect(String environment) {
+        return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment);
+    }
 
-	private PipeStageBuildingProject getPipeStepBuildingProject(List<PipeStageBuildingProject> pipeStepBuildingProjects,
-			Long projectId) {
-		if (isEmpty(pipeStepBuildingProjects) || isNull(projectId)) {
-			return null;
-		}
-		for (PipeStageBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
-			if (pipeStepBuildingProject.getProjectId().equals(projectId)) {
-				return pipeStepBuildingProject;
-			}
-		}
-		return null;
-	}
+    @Override
+    public PageHolder<ClusterExtension> clusterExtensionList(PageHolder<ClusterExtension> pm, String clusterName) {
+        pm.useCount().bind();
+        List<AppCluster> appClusters = appClusterService.getByLikeName(clusterName);
 
-	@Override
-	public ClusterExtension getClusterExtensionByName(String clusterName) {
-		AppCluster appCluster = appClusterService.getByName(clusterName);
-		Assert2.notNullOf(appCluster, "appCluster");
-		return clusterExtensionDao.selectByClusterId(appCluster.getId());
-	}
+        List<ClusterExtension> list = new ArrayList<>();
+        for (AppCluster appCluster : appClusters) {
+            ClusterExtension clusterExtension = clusterExtensionDao.selectByClusterId(appCluster.getId());
+            if (nonNull(clusterExtension)) {
+                clusterExtension.setClusterName(appCluster.getName());
+                list.add(clusterExtension);
+            } else {
+                clusterExtension = new ClusterExtension();
+                clusterExtension.setClusterName(appCluster.getName());
+                clusterExtension.setClusterId(appCluster.getId());
+                list.add(clusterExtension);
+            }
+        }
+        pm.setRecords(list);
+        return pm;
+    }
 
-	@Override
-	public PipeStageInstanceCommand getPipeInstanceById(Long pipeId) {
-		return pipeStepInstanceCommandDao.selectByPipeId(pipeId);
-	}
+    @Override
+    public void saveClusterExtension(ClusterExtension clusterExtension) {
+        Assert2.notNull(clusterExtension, "clusterExtension");
+        ClusterExtension clusterExtensionDb = clusterExtensionDao.selectByClusterId(clusterExtension.getClusterId());
+        if (Objects.nonNull(clusterExtensionDb)) {// update
+            clusterExtensionDb.preUpdate();
+            clusterExtensionDao.updateByPrimaryKeySelective(clusterExtension);
+        } else {// insert
+            clusterExtension.preInsert();
+            clusterExtensionDao.insertSelective(clusterExtension);
+        }
+    }
+
+    private PipeStageBuildingProject getPipeStepBuildingProject(List<PipeStageBuildingProject> pipeStepBuildingProjects,
+            Long projectId) {
+        if (isEmpty(pipeStepBuildingProjects) || isNull(projectId)) {
+            return null;
+        }
+        for (PipeStageBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
+            if (pipeStepBuildingProject.getProjectId().equals(projectId)) {
+                return pipeStepBuildingProject;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public ClusterExtension getClusterExtensionByName(String clusterName) {
+        AppCluster appCluster = appClusterService.getByName(clusterName);
+        Assert2.notNullOf(appCluster, "appCluster");
+        return clusterExtensionDao.selectByClusterId(appCluster.getId());
+    }
+
+    @Override
+    public PipeStageInstanceCommand getPipeInstanceById(Long pipeId) {
+        return pipeStepInstanceCommandDao.selectByPipeId(pipeId);
+    }
+
+    @Override
+    public List<PipeStageBuildingProject> findByPipeId(Long pipeId) {
+        return pipeStepBuildingProjectDao.selectByPipeId(pipeId);
+    }
 
 }

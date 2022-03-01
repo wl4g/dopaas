@@ -46,130 +46,135 @@ import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizat
 @Service
 public class OrchestrationServcieImpl implements OrchestrationService {
 
-	private @Autowired OrchestrationDao orchestrationDao;
+    private @Autowired OrchestrationDao orchestrationDao;
 
-	private @Autowired OrchestrationPipelineDao orchestrationPipelineDao;
+    private @Autowired OrchestrationPipelineDao orchestrationPipelineDao;
 
-	private @Autowired OrchestrationManagerAdapter flowManagerService;
+    private @Autowired OrchestrationManagerAdapter flowManagerService;
 
-	private @Autowired JedisService jedisService;
+    private @Autowired JedisService jedisService;
 
-	@Override
-	public PageHolder<Orchestration> list(PageHolder<Orchestration> pm, String name) {
-		pm.useCount().bind();
-		pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
-		return pm;
-	}
+    @Override
+    public PageHolder<Orchestration> list(PageHolder<Orchestration> pm, String name) {
+        pm.useCount().bind();
+        pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
+        return pm;
+    }
 
-	@Override
-	public void save(Orchestration orchestration) {
-		if (orchestration.getId() == null) {
-			orchestration.preInsert(getRequestOrganizationCode());
-			insert(orchestration);
-		} else {
-			orchestration.preUpdate();
-			update(orchestration);
-		}
-	}
+    @Override
+    public void save(Orchestration orchestration) {
+        if (orchestration.getId() == null) {
+            orchestration.preInsert(getRequestOrganizationCode());
+            doInsert(orchestration);
+        } else {
+            orchestration.preUpdate();
+            doUpdate(orchestration);
+        }
+    }
 
-	private void insert(Orchestration orchestration) {
-		insertOrUpdateOrchestrationPipelines(orchestration.getOrchestrationPipelines(), orchestration.getId());
-		orchestrationDao.insertSelective(orchestration);
-	}
+    @Override
+    public int update(Orchestration record) {
+        return orchestrationDao.updateByPrimaryKeySelective(record);
+    }
 
-	private void update(Orchestration orchestration) {
-		insertOrUpdateOrchestrationPipelines(orchestration.getOrchestrationPipelines(), orchestration.getId());
-		orchestrationDao.updateByPrimaryKeySelective(orchestration);
-	}
+    private void doInsert(Orchestration orchestration) {
+        insertOrUpdateOrchestrationPipelines(orchestration.getOrchestrationPipelines(), orchestration.getId());
+        orchestrationDao.insertSelective(orchestration);
+    }
 
-	private void insertOrUpdateOrchestrationPipelines(List<OrchestrationPipeline> orchestrationPipelines, Long orchestrationId) {
+    private void doUpdate(Orchestration orchestration) {
+        insertOrUpdateOrchestrationPipelines(orchestration.getOrchestrationPipelines(), orchestration.getId());
+        orchestrationDao.updateByPrimaryKeySelective(orchestration);
+    }
 
-		List<OrchestrationPipeline> oldOrchestrationPipelines = orchestrationPipelineDao.selectByOrchestrationId(orchestrationId);
-		cleanOldOrchestrationPipelines(oldOrchestrationPipelines, orchestrationPipelines);
-		cleanRepeat(orchestrationPipelines);
+    private void insertOrUpdateOrchestrationPipelines(List<OrchestrationPipeline> orchestrationPipelines, Long orchestrationId) {
+        List<OrchestrationPipeline> oldOrchestrationPipelines = orchestrationPipelineDao.selectByOrchestrationId(orchestrationId);
+        cleanOldOrchestrationPipelines(oldOrchestrationPipelines, orchestrationPipelines);
+        cleanRepeat(orchestrationPipelines);
 
-		for (OrchestrationPipeline orchestrationPipeline : orchestrationPipelines) {
-			if (Objects.isNull(orchestrationPipeline.getPipelineId())) {
-				continue;
-			}
-			if (Objects.isNull(orchestrationPipeline.getId())) {
-				orchestrationPipeline.preInsert();
-				orchestrationPipeline.setOrchestrationId(orchestrationId);
-				orchestrationPipelineDao.insertSelective(orchestrationPipeline);
-			} else {
-				orchestrationPipelineDao.updateByPrimaryKeySelective(orchestrationPipeline);
-			}
-		}
-	}
+        for (OrchestrationPipeline orchestrationPipeline : orchestrationPipelines) {
+            if (Objects.isNull(orchestrationPipeline.getPipelineId())) {
+                continue;
+            }
+            if (Objects.isNull(orchestrationPipeline.getId())) {
+                orchestrationPipeline.preInsert();
+                orchestrationPipeline.setOrchestrationId(orchestrationId);
+                orchestrationPipelineDao.insertSelective(orchestrationPipeline);
+            } else {
+                orchestrationPipelineDao.updateByPrimaryKeySelective(orchestrationPipeline);
+            }
+        }
+    }
 
-	private void cleanOldOrchestrationPipelines(List<OrchestrationPipeline> oldOrchestrationPipelines,
-			List<OrchestrationPipeline> newOrchestrationPipelines) {
-		for (OrchestrationPipeline oldOrchestrationPipeline : oldOrchestrationPipelines) {
-			boolean had = false;
-			for (OrchestrationPipeline newOrchestrationPipeline : newOrchestrationPipelines) {
-				if (newOrchestrationPipeline.getId() == null) {
-					continue;
-				}
-				if (oldOrchestrationPipeline.getId().longValue() == newOrchestrationPipeline.getId().longValue()) {
-					had = true;
-					break;
-				}
-			}
-			if (!had) {
-				orchestrationPipelineDao.deleteByPrimaryKey(oldOrchestrationPipeline.getId());
-			}
-		}
-	}
+    private void cleanOldOrchestrationPipelines(List<OrchestrationPipeline> oldOrchestrationPipelines,
+            List<OrchestrationPipeline> newOrchestrationPipelines) {
+        for (OrchestrationPipeline oldOrchestrationPipeline : oldOrchestrationPipelines) {
+            boolean had = false;
+            for (OrchestrationPipeline newOrchestrationPipeline : newOrchestrationPipelines) {
+                if (newOrchestrationPipeline.getId() == null) {
+                    continue;
+                }
+                if (oldOrchestrationPipeline.getId().longValue() == newOrchestrationPipeline.getId().longValue()) {
+                    had = true;
+                    break;
+                }
+            }
+            if (!had) {
+                orchestrationPipelineDao.deleteByPrimaryKey(oldOrchestrationPipeline.getId());
+            }
+        }
+    }
 
-	private void cleanRepeat(List<OrchestrationPipeline> orchestrationPipelines) {
-		List<OrchestrationPipeline> needRemove = new ArrayList<>();
-		for (int i = 0; i < orchestrationPipelines.size(); i++) {
-			for (int j = i + 1; j < orchestrationPipelines.size(); j++) {
-				if (orchestrationPipelines.get(i).getPipelineId().longValue() == orchestrationPipelines.get(j).getPipelineId()
-						.longValue()) {
-					needRemove.add(orchestrationPipelines.get(i));
-				}
-			}
-		}
-		orchestrationPipelines.removeAll(needRemove);
-	}
+    private void cleanRepeat(List<OrchestrationPipeline> orchestrationPipelines) {
+        List<OrchestrationPipeline> needRemove = new ArrayList<>();
+        for (int i = 0; i < orchestrationPipelines.size(); i++) {
+            for (int j = i + 1; j < orchestrationPipelines.size(); j++) {
+                if (orchestrationPipelines.get(i).getPipelineId().longValue() == orchestrationPipelines.get(j)
+                        .getPipelineId()
+                        .longValue()) {
+                    needRemove.add(orchestrationPipelines.get(i));
+                }
+            }
+        }
+        orchestrationPipelines.removeAll(needRemove);
+    }
 
-	@Override
-	public void del(Long id) {
-		Orchestration orchestration = new Orchestration();
-		orchestration.setId(id);
-		orchestration.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		orchestrationDao.updateByPrimaryKeySelective(orchestration);
-	}
+    @Override
+    public void del(Long id) {
+        Orchestration orchestration = new Orchestration();
+        orchestration.setId(id);
+        orchestration.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        orchestrationDao.updateByPrimaryKeySelective(orchestration);
+    }
 
-	@Override
-	public Orchestration detail(Long id) {
-		return orchestrationDao.selectByPrimaryKey(id);
-	}
+    @Override
+    public Orchestration detail(Long id) {
+        return orchestrationDao.selectByPrimaryKey(id);
+    }
 
-	@Override
-	public void run(Long id, String remark, String taskTraceId, String taskTraceType, String annex) {
-		Assert2.notNullOf(id, "id");
-		Assert2.isTrue(!isMaxRuner(), "Runner is biggest , cant not create any more");
-		Orchestration orchestration = orchestrationDao.selectByPrimaryKey(id);
-		Assert2.notNullOf(orchestration, "orchestration");
-		orchestration.setStatus(1);
-		orchestrationDao.updateByPrimaryKeySelective(orchestration);
-		flowManagerService.runOrchestration(orchestration, remark, taskTraceId, taskTraceType, annex);
-	}
+    @Override
+    public void run(Long id, String remark, String taskTraceId, String taskTraceType, String annex) {
+        Assert2.notNullOf(id, "id");
+        Assert2.isTrue(!isMaxRuner(), "Runner is biggest , cant not create any more");
+        Orchestration orchestration = orchestrationDao.selectByPrimaryKey(id);
+        Assert2.notNullOf(orchestration, "orchestration");
+        orchestration.setStatus(1);
+        orchestrationDao.updateByPrimaryKeySelective(orchestration);
+        flowManagerService.runOrchestration(orchestration, remark, taskTraceId, taskTraceType, annex);
+    }
 
-	private boolean isMaxRuner() {
-		ScanCursor<RunModel> scan = jedisService.scan(UciConstants.REDIS_CI_RUN_PRE, UciConstants.REDIS_CI_RUN_SCAN_BATCH + 1,
-				RunModel.class);
-		int count = 0;
-		while (scan.hasNext()) {
-			scan.next();
-			count++;
-			if (count >= UciConstants.REDIS_CI_RUN_SCAN_BATCH) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean isMaxRuner() {
+        ScanCursor<RunModel> scan = jedisService.scan(UciConstants.REDIS_CI_RUN_PRE, UciConstants.REDIS_CI_RUN_SCAN_BATCH + 1,
+                RunModel.class);
+        int count = 0;
+        while (scan.hasNext()) {
+            scan.next();
+            count++;
+            if (count >= UciConstants.REDIS_CI_RUN_SCAN_BATCH) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

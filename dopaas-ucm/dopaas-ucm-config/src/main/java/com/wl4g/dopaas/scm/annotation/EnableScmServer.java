@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.annotation;
+package com.wl4g.dopaas.ucm.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,17 +22,17 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.wl4g.dopaas.scm.config.IamWithScmAutoConfiguration;
-import com.wl4g.dopaas.scm.config.ScmAutoConfiguration;
+import com.wl4g.dopaas.ucm.config.IamWithUcmAutoConfiguration;
+import com.wl4g.dopaas.ucm.config.UcmAutoConfiguration;
 
 /**
- * SCM annotation to enable configuration.
+ * UCM annotation to enable configuration.
  *
  * @since 1.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-@Import({ IamWithScmAutoConfiguration.class, ScmAutoConfiguration.class })
-public @interface EnableScmServer {
+@Import({ IamWithUcmAutoConfiguration.class, UcmAutoConfiguration.class })
+public @interface EnableUcmServer {
 
 }

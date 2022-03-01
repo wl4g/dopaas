@@ -16,11 +16,6 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>dopaas-home-service-data</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
             <groupId>com.wl4g</groupId>
             <artifactId>dopaas-umc-client-springboot</artifactId>
             <version>${project.parent.version}</version>
@@ -30,19 +25,12 @@
 			<artifactId>dopaas-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<!-- @see: https://github.com/elastic/elasticsearch/blob/v6.2.3/buildSrc/version.properties -->
-		<dependency>
-			<groupId>org.elasticsearch.client</groupId>
-			<artifactId>elasticsearch-rest-high-level-client</artifactId>
-			<scope>compile</scope>
-		</dependency>
-
 		<!-- Here are 3 different replaceable distributed architectures:(It can only be one of them) -->
 
 		<!-- ①[SpringBoot + Feign + Istio] When turned on comments and @SpringBootFeignClients is used on the boot class, it is automatically configured. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-core</artifactId> -->
+		<!-- <artifactId>dopaas-infra-integration-feign-istio</artifactId> -->
 		<!-- </dependency> -->
 
 		<!-- ②[SpringCloud + Feign + Netflix] When turned on comments and @FeignClients is used on the boot class, it is automatically configured. -->
@@ -55,7 +43,7 @@
 			Only relying on feign's interface annotation. -->
 		<!-- <dependency> -->
 		<!-- <groupId>com.wl4g</groupId> -->
-		<!-- <artifactId>dopaas-infra-integration-feign-springcloud-dubbo</artifactId> -->
+		<!-- <artifactId>dopaas-infra-integration-feign-dubbo</artifactId> -->
 		<!-- </dependency> -->
 	</dependencies>
 	<build>

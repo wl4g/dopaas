@@ -32,8 +32,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/orchestrationHistory-service")
 public interface OrchestrationHistoryService {
 
-	@RequestMapping(value = "/list", method = POST)
-	PageHolder<OrchestrationHistory> list(@RequestBody PageHolder<OrchestrationHistory> pm,
-			@RequestParam(name = "runId", required = false) String runId);
+    @RequestMapping(value = "/list", method = POST)
+    PageHolder<OrchestrationHistory> list(@RequestBody PageHolder<OrchestrationHistory> pm,
+            @RequestParam(name = "runId", required = false) String runId);
+
+    @RequestMapping(value = "/insert", method = POST)
+    int insert(@RequestBody OrchestrationHistory record);
+
+    @RequestMapping(value = "/update", method = POST)
+    int update(@RequestBody OrchestrationHistory record);
 
 }

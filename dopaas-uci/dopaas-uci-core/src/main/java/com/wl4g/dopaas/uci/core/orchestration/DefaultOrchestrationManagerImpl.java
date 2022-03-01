@@ -15,7 +15,6 @@
  */
 package com.wl4g.dopaas.uci.core.orchestration;
 
-import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.dopaas.common.constant.UciConstants.REDIS_CI_RUN_PRE;
 import static com.wl4g.dopaas.common.constant.UciConstants.REDIS_CI_RUN_SCAN_BATCH;
 import static com.wl4g.dopaas.common.constant.UciConstants.REDIS_SAVE_TIME_S;
@@ -28,6 +27,7 @@ import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManager
 import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.SUCCESS;
 import static com.wl4g.dopaas.uci.core.orchestration.DefaultOrchestrationManagerImpl.FlowStatus.WAITING;
 import static com.wl4g.iam.common.utils.IamOrganizationUtils.getRequestOrganizationCode;
+import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 
 import java.util.ArrayList;
@@ -43,13 +43,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.infra.common.lang.Assert2;
-import com.wl4g.infra.common.serialize.JacksonUtils;
-import com.wl4g.infra.common.task.RunnerProperties;
-import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
-import com.wl4g.infra.support.cache.jedis.JedisService;
-import com.wl4g.infra.support.cache.jedis.ScanCursor;
-import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.dopaas.common.bean.uci.Orchestration;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationHistory;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationPipeline;
@@ -61,9 +54,16 @@ import com.wl4g.dopaas.common.bean.uci.param.RunParameter;
 import com.wl4g.dopaas.common.constant.UciConstants;
 import com.wl4g.dopaas.uci.core.PipelineJobExecutor;
 import com.wl4g.dopaas.uci.core.PipelineManager;
-import com.wl4g.dopaas.uci.data.OrchestrationDao;
-import com.wl4g.dopaas.uci.data.OrchestrationHistoryDao;
+import com.wl4g.dopaas.uci.service.OrchestrationHistoryService;
+import com.wl4g.dopaas.uci.service.OrchestrationService;
 import com.wl4g.dopaas.uci.service.PipelineHistoryService;
+import com.wl4g.infra.common.lang.Assert2;
+import com.wl4g.infra.common.serialize.JacksonUtils;
+import com.wl4g.infra.common.task.RunnerProperties;
+import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
+import com.wl4g.infra.support.cache.jedis.JedisService;
+import com.wl4g.infra.support.cache.jedis.ScanCursor;
 
 /**
  * {@link DefaultOrchestrationManagerImpl}
@@ -79,8 +79,8 @@ public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
     private @Autowired JedisService jedisService;
     private @Autowired PipelineManager pipelineManager;
     private @Autowired PipelineJobExecutor jobExecutor;
-    private @Autowired OrchestrationDao orchestrationDao;
-    private @Autowired OrchestrationHistoryDao orchestrationHistoryDao;
+    private @Autowired OrchestrationService orchestrationService;
+    private @Autowired OrchestrationHistoryService orchestrationHistoryService;
     // private @Autowired PipelineHistoryDao pipelineHistoryDao;
     private @Autowired PipelineHistoryService pipelineHistoryService;
 
@@ -103,7 +103,7 @@ public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
         orchestrationHistory.setRunId(runModel.getRunId());
         orchestrationHistory.setStatus(TASK_STATUS_RUNNING);
         orchestrationHistory.setInfo(JacksonUtils.toJSONString(runModel));
-        orchestrationHistoryDao.insertSelective(orchestrationHistory);
+        orchestrationHistoryService.insert(orchestrationHistory);
 
         jobExecutor.getWorker().execute(() -> {
             try {
@@ -257,7 +257,7 @@ public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
                 orchestrationHistoryNew.setStatus(TASK_STATUS_FAIL);
             }
             orchestrationHistoryNew.setCostTime(endTime - startTime);
-            orchestrationHistoryDao.updateByPrimaryKeySelective(orchestrationHistoryNew);
+            orchestrationHistoryService.update(orchestrationHistoryNew);
         }
 
         runner.close();
@@ -396,7 +396,7 @@ public class DefaultOrchestrationManagerImpl implements OrchestrationManager {
         Orchestration orchestration = new Orchestration();
         orchestration.setId(Long.valueOf(split[0]));
         orchestration.setStatus(5);
-        orchestrationDao.updateByPrimaryKeySelective(orchestration);
+        orchestrationService.update(orchestration);
     }
 
     private RunModel getRunModel(String runId) {

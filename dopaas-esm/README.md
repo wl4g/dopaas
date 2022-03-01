@@ -1,1 +1,0 @@
-dopaas-esm      Elastic scaling management(弹性伸缩管理中心, 如：集成k8s、docker基于CPU、网络流量自动/手动容器伸缩管理)

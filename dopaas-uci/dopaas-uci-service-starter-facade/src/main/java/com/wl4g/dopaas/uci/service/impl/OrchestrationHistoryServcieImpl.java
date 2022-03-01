@@ -22,12 +22,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.dopaas.common.bean.uci.OrchestrationHistory;
 import com.wl4g.dopaas.common.bean.uci.PipelineHistory;
 import com.wl4g.dopaas.uci.data.OrchestrationHistoryDao;
 import com.wl4g.dopaas.uci.service.OrchestrationHistoryService;
 import com.wl4g.dopaas.uci.service.PipelineHistoryService;
+import com.wl4g.infra.core.page.PageHolder;
 
 /**
  * @author vjay
@@ -36,20 +36,30 @@ import com.wl4g.dopaas.uci.service.PipelineHistoryService;
 @Service
 public class OrchestrationHistoryServcieImpl implements OrchestrationHistoryService {
 
-	private @Autowired OrchestrationHistoryDao orchestrationHistoryDao;
-	private @Autowired PipelineHistoryService pipelineHistoryService;
+    private @Autowired OrchestrationHistoryDao orchestrationHistoryDao;
+    private @Autowired PipelineHistoryService pipelineHistoryService;
 
-	@Override
-	public PageHolder<OrchestrationHistory> list(PageHolder<OrchestrationHistory> pm, String runId) {
-		pm.useCount().bind();
-		List<OrchestrationHistory> list = orchestrationHistoryDao.list(getRequestOrganizationCodes(), runId);
-		for (OrchestrationHistory orch : list) {
-			List<PipelineHistory> pipeHis = pipelineHistoryService.listWithoutPage(null, null, null, null, null, null, null, 2,
-					orch.getId());
-			orch.setPipeHistories(pipeHis);
-		}
-		pm.setRecords(list);
-		return pm;
-	}
+    @Override
+    public PageHolder<OrchestrationHistory> list(PageHolder<OrchestrationHistory> pm, String runId) {
+        pm.useCount().bind();
+        List<OrchestrationHistory> list = orchestrationHistoryDao.list(getRequestOrganizationCodes(), runId);
+        for (OrchestrationHistory orch : list) {
+            List<PipelineHistory> pipeHis = pipelineHistoryService.listWithoutPage(null, null, null, null, null, null, null, 2,
+                    orch.getId());
+            orch.setPipeHistories(pipeHis);
+        }
+        pm.setRecords(list);
+        return pm;
+    }
+
+    @Override
+    public int insert(OrchestrationHistory record) {
+        return orchestrationHistoryDao.insertSelective(record);
+    }
+
+    @Override
+    public int update(OrchestrationHistory record) {
+        return orchestrationHistoryDao.updateByPrimaryKeySelective(record);
+    }
 
 }

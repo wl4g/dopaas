@@ -19,7 +19,10 @@ import com.wl4g.infra.core.page.PageHolder;
 import com.wl4g.infra.integration.feign.core.annotation.FeignConsumer;
 import com.wl4g.dopaas.common.bean.uci.ClusterExtension;
 import com.wl4g.dopaas.common.bean.uci.PipeStageBuilding;
+import com.wl4g.dopaas.common.bean.uci.PipeStageBuildingProject;
 import com.wl4g.dopaas.common.bean.uci.PipeStageInstanceCommand;
+import com.wl4g.dopaas.common.bean.uci.PipeStageNotification;
+import com.wl4g.dopaas.common.bean.uci.PipeStepApi;
 import com.wl4g.dopaas.common.bean.uci.Pipeline;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,53 +45,65 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/pipeline-service")
 public interface PipelineService {
 
-	@RequestMapping(value = "/list", method = POST)
-	PageHolder<Pipeline> list(@RequestBody PageHolder<Pipeline> pm,
-			@RequestParam(name = "pipeName", required = false) String pipeName,
-			@RequestParam(name = "providerKind", required = false) String providerKind,
-			@RequestParam(name = "environment", required = false) String environment);
+    @RequestMapping(value = "/list", method = POST)
+    PageHolder<Pipeline> list(@RequestBody PageHolder<Pipeline> pm,
+            @RequestParam(name = "pipeName", required = false) String pipeName,
+            @RequestParam(name = "providerKind", required = false) String providerKind,
+            @RequestParam(name = "environment", required = false) String environment);
 
-	@RequestMapping(value = "/findList", method = POST)
-	List<Pipeline> findList(@RequestBody List<String> organizationCodes, @RequestParam(name = "id", required = false) Long id,
-			@RequestParam(name = "pipeName", required = false) String pipeName,
-			@RequestParam(name = "providerKind", required = false) String providerKind,
-			@RequestParam(name = "environment", required = false) String environment,
-			@RequestParam(name = "clusterName", required = false) String clusterName);
+    @RequestMapping(value = "/findList", method = POST)
+    List<Pipeline> findList(@RequestBody List<String> organizationCodes, @RequestParam(name = "id", required = false) Long id,
+            @RequestParam(name = "pipeName", required = false) String pipeName,
+            @RequestParam(name = "providerKind", required = false) String providerKind,
+            @RequestParam(name = "environment", required = false) String environment,
+            @RequestParam(name = "clusterName", required = false) String clusterName);
 
-	@RequestMapping(value = "/save", method = POST)
-	void save(@RequestBody Pipeline pipeline);
+    @RequestMapping(value = "/save", method = POST)
+    void save(@RequestBody Pipeline pipeline);
 
-	@RequestMapping(value = "/detail", method = POST)
-	Pipeline detail(@RequestParam(name = "id", required = false) Long id);
+    @RequestMapping(value = "/detail", method = POST)
+    Pipeline detail(@RequestParam(name = "id", required = false) Long id);
 
-	@RequestMapping(value = "/del", method = POST)
-	void del(@RequestParam(name = "id", required = false) Long id);
+    @RequestMapping(value = "/getPipeStageNotification", method = POST)
+    PipeStageNotification getPipeStageNotification(@RequestParam(name = "id", required = false) Long id);
 
-	@RequestMapping(value = "/getByClusterId", method = POST)
-	List<Pipeline> getByClusterId(@RequestParam(name = "clusterId", required = false) Long clusterId);
+    @RequestMapping(value = "/getPipe", method = POST)
+    Pipeline getPipe(@RequestParam(name = "id", required = false) Long id);
 
-	@RequestMapping(value = "/getSimplePipeStageBuilding", method = POST)
-	PipeStageBuilding getSimplePipeStageBuilding(@RequestParam(name = "pipeId", required = false) Long pipeId);
+    @RequestMapping(value = "/getPipeStageApi", method = POST)
+    PipeStepApi getPipeStageApi(@RequestParam(name = "id", required = false) Long id);
 
-	@RequestMapping(value = "/getPipeStageBuilding", method = POST)
-	PipeStageBuilding getPipeStageBuilding(@RequestParam(name = "clusterId", required = false) Long clusterId,
-			@RequestParam(name = "pipeId", required = false) Long pipeId,
-			@RequestParam(name = "refType", required = false) Integer refType) throws Exception;
+    @RequestMapping(value = "/del", method = POST)
+    void del(@RequestParam(name = "id", required = false) Long id);
 
-	@RequestMapping(value = "/getForSelect", method = POST)
-	List<Pipeline> getForSelect(@RequestParam(name = "environment", required = false) String environment);
+    @RequestMapping(value = "/getByClusterId", method = POST)
+    List<Pipeline> getByClusterId(@RequestParam(name = "clusterId", required = false) Long clusterId);
 
-	@RequestMapping(value = "/clusterExtensionList", method = POST)
-	PageHolder<ClusterExtension> clusterExtensionList(@RequestBody PageHolder<ClusterExtension> pm,
-			@RequestParam(name = "clusterName", required = false) String clusterName);
+    @RequestMapping(value = "/getSimplePipeStageBuilding", method = POST)
+    PipeStageBuilding getSimplePipeStageBuilding(@RequestParam(name = "pipeId", required = false) Long pipeId);
 
-	@RequestMapping(value = "/saveClusterExtension", method = POST)
-	void saveClusterExtension(@RequestBody ClusterExtension clusterExtension);
+    @RequestMapping(value = "/getPipeStageBuilding", method = POST)
+    PipeStageBuilding getPipeStageBuilding(@RequestParam(name = "clusterId", required = false) Long clusterId,
+            @RequestParam(name = "pipeId", required = false) Long pipeId,
+            @RequestParam(name = "refType", required = false) Integer refType) throws Exception;
 
-	@RequestMapping(value = "/getClusterExtensionByName", method = POST)
-	ClusterExtension getClusterExtensionByName(@RequestParam(name = "clusterName", required = false) String clusterName);
+    @RequestMapping(value = "/getForSelect", method = POST)
+    List<Pipeline> getForSelect(@RequestParam(name = "environment", required = false) String environment);
 
-	@RequestMapping(value = "/getPipeInstanceById", method = POST)
-	PipeStageInstanceCommand getPipeInstanceById(@RequestParam(name = "pipeId", required = false) Long pipeId);
+    @RequestMapping(value = "/clusterExtensionList", method = POST)
+    PageHolder<ClusterExtension> clusterExtensionList(@RequestBody PageHolder<ClusterExtension> pm,
+            @RequestParam(name = "clusterName", required = false) String clusterName);
+
+    @RequestMapping(value = "/saveClusterExtension", method = POST)
+    void saveClusterExtension(@RequestBody ClusterExtension clusterExtension);
+
+    @RequestMapping(value = "/getClusterExtensionByName", method = POST)
+    ClusterExtension getClusterExtensionByName(@RequestParam(name = "clusterName", required = false) String clusterName);
+
+    @RequestMapping(value = "/getPipeInstanceById", method = POST)
+    PipeStageInstanceCommand getPipeInstanceById(@RequestParam(name = "pipeId", required = false) Long pipeId);
+
+    @RequestMapping(value = "/findByPipeId", method = POST)
+    List<PipeStageBuildingProject> findByPipeId(@RequestParam(name = "pipeId", required = false) Long pipeId);
 
 }

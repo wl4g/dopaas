@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.publish;
+package com.wl4g.dopaas.ucm.publish;
 
 import com.wl4g.infra.support.cache.jedis.JedisService;
-import com.wl4g.dopaas.scm.config.ScmProperties;
+import com.wl4g.dopaas.ucm.config.UcmProperties;
 
 import org.apache.commons.codec.binary.Hex;
 
@@ -26,14 +26,14 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.dopaas.scm.common.SCMConstants.CACHE_PUB_GROUPS;
-import static com.wl4g.dopaas.scm.common.SCMConstants.KEY_PUB_PREFIX;
+import static com.wl4g.dopaas.ucm.common.UCMConstants.CACHE_PUB_GROUPS;
+import static com.wl4g.dopaas.ucm.common.UCMConstants.KEY_PUB_PREFIX;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * SCM configuration source server publisher implements
+ * UCM configuration source server publisher implements
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月27日
@@ -43,7 +43,7 @@ public class JedisConfigSourcePublisher extends GenericConfigSourcePublisher {
 
 	final private JedisService jedisService;
 
-	public JedisConfigSourcePublisher(ScmProperties config, JedisService jedisService) {
+	public JedisConfigSourcePublisher(UcmProperties config, JedisService jedisService) {
 		super(config);
 		this.jedisService = jedisService;
 	}

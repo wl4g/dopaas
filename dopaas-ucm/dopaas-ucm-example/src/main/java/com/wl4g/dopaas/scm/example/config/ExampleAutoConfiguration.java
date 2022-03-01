@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.dopaas.scm.example.config;
+package com.wl4g.dopaas.ucm.example.config;
 
-import com.wl4g.dopaas.scm.example.service.ExampleService;
+import com.wl4g.dopaas.ucm.example.service.ExampleService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;

@@ -15,10 +15,10 @@
  */
 package com.wl4g.dopaas.uci.pipeline;
 
+import static com.wl4g.dopaas.common.constant.UciConstants.KEY_FINALIZER_INTERVALMS;
 import static com.wl4g.infra.common.lang.Assert2.isTrue;
 import static com.wl4g.infra.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.infra.support.cache.jedis.util.RedisSpecUtil.safeFormat;
-import static com.wl4g.dopaas.common.constant.UciConstants.KEY_FINALIZER_INTERVALMS;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -30,14 +30,14 @@ import java.util.concurrent.locks.Lock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 
+import com.wl4g.dopaas.uci.config.CiProperties;
+import com.wl4g.dopaas.uci.service.PipelineHistoryService;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
+import com.wl4g.infra.core.task.ApplicationTaskRunner;
 import com.wl4g.infra.support.cache.jedis.JedisService;
 import com.wl4g.infra.support.cache.locks.JedisLockManager;
-import com.wl4g.infra.core.task.ApplicationTaskRunner;
-import com.wl4g.dopaas.uci.config.CiProperties;
-import com.wl4g.dopaas.uci.data.PipelineHistoryDao;
 
 /**
  * Global timeout jobs eviction finalizer.
@@ -59,7 +59,7 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
     @Autowired
     protected JedisService jedisService;
     @Autowired
-    protected PipelineHistoryDao pipelineHistoryDao;
+    protected PipelineHistoryService pipelineHistoryService;
 
     /** Timing jobs future {@link ScheduledFuture} */
     protected ScheduledFuture<?> future;
@@ -93,7 +93,7 @@ public class TimeoutJobsEvictor extends ApplicationTaskRunner<RunnerProperties> 
             // acquire lock are on ready in place.
             if (lock.tryLock()) {
                 long begin = System.currentTimeMillis();
-                int count = pipelineHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
+                int count = pipelineHistoryService.updatePipeTime(config.getBuild().getJobTimeoutSec());
                 if (count > 0) {
                     log.info("Updated pipeline timeout jobs, with jobTimeoutSec:{}, count:{}, cost: {}ms",
                             config.getBuild().getJobTimeoutSec(), count, (currentTimeMillis() - begin));
