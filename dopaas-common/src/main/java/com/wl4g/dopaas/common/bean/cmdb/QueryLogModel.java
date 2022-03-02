@@ -26,13 +26,13 @@ import java.util.List;
 @Setter
 public class QueryLogModel {
 
-	@NotBlank
-	private String index;
-	private Long startTime;
-	private Long endTime;
-	private Integer from;
-	private Integer limit;
-	private Integer level;
-	private List<Querycriteria> queryList;
+    @NotBlank
+    private String index;
+    private Long startTime;
+    private Long endTime;
+    private Integer from;
+    private Integer limit;
+    private Integer level;
+    private List<Querycriteria> queryList;
 
 }

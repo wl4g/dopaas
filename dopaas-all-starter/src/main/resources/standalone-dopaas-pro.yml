@@ -18,7 +18,7 @@ spring:
         connect-timeout: 10000
         max-attempts: 10
         # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-        nodes: ${STANDALONE_DOPAAS_REDIS_NODES:redis.standalone.wl4g.com:6379,redis.standalone.wl4g.com:6380,redis.standalone.wl4g.com:6381,redis.standalone.wl4g.com:7379,redis.standalone.wl4g.com:7380,redis.standalone.wl4g.com:7381}
+        nodes: ${STANDALONE_DOPAAS_REDIS_NODES:redis.standalone.dopaas.com:6379,redis.standalone.dopaas.com:6380,redis.standalone.dopaas.com:6381,redis.standalone.dopaas.com:7379,redis.standalone.dopaas.com:7380,redis.standalone.dopaas.com:7381}
   iam:
     cors:
       rules:
@@ -34,13 +34,13 @@ spring:
       denyIpRange: ${DOPAAS_IAM_ACL_DENY}
     client:
       server-uri: ${DOPAAS_SCHEMA:https}://iam.${DOPAAS_ZONE:wl4g.com}/iam-web
-      unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
+      unauthorized-uri: ${spring.iam.client.server-uri}/view/403.html
       success-uri: ${DOPAAS_SCHEMA:https}://dopaas.${DOPAAS_ZONE:wl4g.com}/#/ci/taskhis
   datasource:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
-      jdbcUrl: ${STANDALONE_DOPAAS_DB_URL:jdbc:mysql://rds.standalone.wl4g.com:3306/dopaas_standalone?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+      jdbcUrl: ${STANDALONE_DOPAAS_DB_URL:jdbc:mysql://rds.standalone.dopaas.com:3306/dopaas_standalone?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${STANDALONE_DOPAAS_DB_USER:dopaas_standalone}
       password: ${STANDALONE_DOPAAS_DB_PASSWD:123456}
       connectionTimeout: 30000

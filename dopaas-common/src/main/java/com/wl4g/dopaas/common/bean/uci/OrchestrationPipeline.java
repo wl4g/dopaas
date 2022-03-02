@@ -19,35 +19,35 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class OrchestrationPipeline extends BaseBean {
 
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Long orchestrationId;
+    private Long orchestrationId;
 
-	private Long pipelineId;
+    private Long pipelineId;
 
-	private Integer priority;
+    private Integer priority;
 
-	public Long getOrchestrationId() {
-		return orchestrationId;
-	}
+    public Long getOrchestrationId() {
+        return orchestrationId;
+    }
 
-	public void setOrchestrationId(Long orchestrationId) {
-		this.orchestrationId = orchestrationId;
-	}
+    public void setOrchestrationId(Long orchestrationId) {
+        this.orchestrationId = orchestrationId;
+    }
 
-	public Long getPipelineId() {
-		return pipelineId;
-	}
+    public Long getPipelineId() {
+        return pipelineId;
+    }
 
-	public void setPipelineId(Long pipelineId) {
-		this.pipelineId = pipelineId;
-	}
+    public void setPipelineId(Long pipelineId) {
+        this.pipelineId = pipelineId;
+    }
 
-	public Integer getPriority() {
-		return priority;
-	}
+    public Integer getPriority() {
+        return priority;
+    }
 
-	public void setPriority(Integer priority) {
-		this.priority = priority;
-	}
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
 }

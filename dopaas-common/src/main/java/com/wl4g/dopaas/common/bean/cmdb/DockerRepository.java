@@ -24,77 +24,77 @@ import java.util.Objects;
 
 public class DockerRepository extends BaseBean {
 
-	private static final long serialVersionUID = -7546448616357790576L;
+    private static final long serialVersionUID = -7546448616357790576L;
 
-	private String name;
+    private String name;
 
-	private String registryAddress;
+    private String registryAddress;
 
-	private String authConfig;
+    private String authConfig;
 
-	// ===expand
+    // ===expand
 
-	private AuthConfigModel authConfigModel;
+    private AuthConfigModel authConfigModel;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getRegistryAddress() {
-		return registryAddress;
-	}
+    public String getRegistryAddress() {
+        return registryAddress;
+    }
 
-	public void setRegistryAddress(String registryAddress) {
-		this.registryAddress = registryAddress == null ? null : registryAddress.trim();
-	}
+    public void setRegistryAddress(String registryAddress) {
+        this.registryAddress = registryAddress == null ? null : registryAddress.trim();
+    }
 
-	public String getAuthConfig() {
-		if (StringUtils.isBlank(authConfig) && Objects.nonNull(authConfigModel)) {
-			authConfig = JacksonUtils.toJSONString(authConfigModel);
-		}
-		return authConfig;
-	}
+    public String getAuthConfig() {
+        if (StringUtils.isBlank(authConfig) && Objects.nonNull(authConfigModel)) {
+            authConfig = JacksonUtils.toJSONString(authConfigModel);
+        }
+        return authConfig;
+    }
 
-	public void setAuthConfig(String authConfig) {
-		this.authConfig = authConfig == null ? null : authConfig.trim();
-	}
+    public void setAuthConfig(String authConfig) {
+        this.authConfig = authConfig == null ? null : authConfig.trim();
+    }
 
-	public AuthConfigModel getAuthConfigModel() {
-		if (Objects.isNull(authConfigModel) && StringUtils.isNotBlank(authConfig)) {
-			authConfigModel = JacksonUtils.parseJSON(authConfig, AuthConfigModel.class);
-		}
-		return authConfigModel;
-	}
+    public AuthConfigModel getAuthConfigModel() {
+        if (Objects.isNull(authConfigModel) && StringUtils.isNotBlank(authConfig)) {
+            authConfigModel = JacksonUtils.parseJSON(authConfig, AuthConfigModel.class);
+        }
+        return authConfigModel;
+    }
 
-	public void setAuthConfigModel(AuthConfigModel authConfigModel) {
-		this.authConfigModel = authConfigModel;
-	}
+    public void setAuthConfigModel(AuthConfigModel authConfigModel) {
+        this.authConfigModel = authConfigModel;
+    }
 
-	public static class AuthConfigModel {
+    public static class AuthConfigModel {
 
-		private String username;
+        private String username;
 
-		private String password;
+        private String password;
 
-		public String getUsername() {
-			return username;
-		}
+        public String getUsername() {
+            return username;
+        }
 
-		public void setUsername(String username) {
-			this.username = username;
-		}
+        public void setUsername(String username) {
+            this.username = username;
+        }
 
-		public String getPassword() {
-			return password;
-		}
+        public String getPassword() {
+            return password;
+        }
 
-		public void setPassword(String password) {
-			this.password = password;
-		}
-	}
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
 
 }

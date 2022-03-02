@@ -20,7 +20,7 @@ import java.util.Collection;
 import com.wl4g.dopaas.common.bean.ucm.model.ReportChangedRequest.ChangedRecord;
 import com.wl4g.dopaas.ucm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.ucm.client.internal.AbstractRefreshWatcher;
-import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
 import com.wl4g.infra.common.annotation.Reserved;
 import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
@@ -35,7 +35,7 @@ import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
 @Reserved
 public class RpcRefreshWatcher extends AbstractRefreshWatcher<RpcUcmClientConfig> {
 
-    public RpcRefreshWatcher(RpcUcmClientConfig config, ChangeRecorder recorder, ConfigEventListener... listeners) {
+    public RpcRefreshWatcher(RpcUcmClientConfig config, ChangedRecorder recorder, ConfigEventListener... listeners) {
         super(new RunnerProperties(StartupMode.ASYNC), config, recorder, listeners);
     }
 

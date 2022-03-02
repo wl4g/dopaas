@@ -21,34 +21,34 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class DockerCluster extends BaseBean {
 
-	private static final long serialVersionUID = -7546448616357790576L;
+    private static final long serialVersionUID = -7546448616357790576L;
 
-	private List<Long> hostIds;
-	private String name;
-	private String masterAddr;
+    private List<Long> hostIds;
+    private String name;
+    private String masterAddr;
 
-	public List<Long> getHostIds() {
-		return hostIds;
-	}
+    public List<Long> getHostIds() {
+        return hostIds;
+    }
 
-	public void setHostIds(List<Long> hostIds) {
-		this.hostIds = hostIds;
-	}
+    public void setHostIds(List<Long> hostIds) {
+        this.hostIds = hostIds;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getMasterAddr() {
-		return masterAddr;
-	}
+    public String getMasterAddr() {
+        return masterAddr;
+    }
 
-	public void setMasterAddr(String masterAddr) {
-		this.masterAddr = masterAddr == null ? null : masterAddr.trim();
-	}
+    public void setMasterAddr(String masterAddr) {
+        this.masterAddr = masterAddr == null ? null : masterAddr.trim();
+    }
 
 }

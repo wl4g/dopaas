@@ -18,97 +18,97 @@ package com.wl4g.dopaas.common.bean.cmdb;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class AppEnvironment extends BaseBean {
-	private static final long serialVersionUID = -3298424126317938674L;
+    private static final long serialVersionUID = -3298424126317938674L;
 
-	private Long clusterId;
+    private Long clusterId;
 
-	private Long repositoryId;
+    private Long repositoryId;
 
-	private String envType;
+    private String envType;
 
-	private String organizationCode;
+    private String organizationCode;
 
-	private String runCommand;
+    private String runCommand;
 
-	private String configContent;
+    private String configContent;
 
-	private String customRepositoryConfig;
+    private String customRepositoryConfig;
 
-	private String repositoryNamespace;
+    private String repositoryNamespace;
 
-	// expand
+    // expand
 
-	private DockerRepository dockerRepository;
+    private DockerRepository dockerRepository;
 
-	public Long getClusterId() {
-		return clusterId;
-	}
+    public Long getClusterId() {
+        return clusterId;
+    }
 
-	public void setClusterId(Long clusterId) {
-		this.clusterId = clusterId;
-	}
+    public void setClusterId(Long clusterId) {
+        this.clusterId = clusterId;
+    }
 
-	public String getEnvType() {
-		return envType;
-	}
+    public String getEnvType() {
+        return envType;
+    }
 
-	public void setEnvType(String envType) {
-		this.envType = envType == null ? null : envType.trim();
-	}
+    public void setEnvType(String envType) {
+        this.envType = envType == null ? null : envType.trim();
+    }
 
-	public String getOrganizationCode() {
-		return organizationCode;
-	}
+    public String getOrganizationCode() {
+        return organizationCode;
+    }
 
-	public void setOrganizationCode(String organizationCode) {
-		this.organizationCode = organizationCode == null ? null : organizationCode.trim();
-	}
+    public void setOrganizationCode(String organizationCode) {
+        this.organizationCode = organizationCode == null ? null : organizationCode.trim();
+    }
 
-	public String getRunCommand() {
-		return runCommand;
-	}
+    public String getRunCommand() {
+        return runCommand;
+    }
 
-	public void setRunCommand(String runCommand) {
-		this.runCommand = runCommand == null ? null : runCommand.trim();
-	}
+    public void setRunCommand(String runCommand) {
+        this.runCommand = runCommand == null ? null : runCommand.trim();
+    }
 
-	public String getConfigContent() {
-		return configContent;
-	}
+    public String getConfigContent() {
+        return configContent;
+    }
 
-	public void setConfigContent(String configContent) {
-		this.configContent = configContent;
-	}
+    public void setConfigContent(String configContent) {
+        this.configContent = configContent;
+    }
 
-	public Long getRepositoryId() {
-		return repositoryId;
-	}
+    public Long getRepositoryId() {
+        return repositoryId;
+    }
 
-	public void setRepositoryId(Long repositoryId) {
-		this.repositoryId = repositoryId;
-	}
+    public void setRepositoryId(Long repositoryId) {
+        this.repositoryId = repositoryId;
+    }
 
-	public String getCustomRepositoryConfig() {
-		return customRepositoryConfig;
-	}
+    public String getCustomRepositoryConfig() {
+        return customRepositoryConfig;
+    }
 
-	public void setCustomRepositoryConfig(String customRepositoryConfig) {
-		this.customRepositoryConfig = customRepositoryConfig;
-	}
+    public void setCustomRepositoryConfig(String customRepositoryConfig) {
+        this.customRepositoryConfig = customRepositoryConfig;
+    }
 
-	public DockerRepository getDockerRepository() {
-		return dockerRepository;
-	}
+    public DockerRepository getDockerRepository() {
+        return dockerRepository;
+    }
 
-	public void setDockerRepository(DockerRepository dockerRepository) {
-		this.dockerRepository = dockerRepository;
-	}
+    public void setDockerRepository(DockerRepository dockerRepository) {
+        this.dockerRepository = dockerRepository;
+    }
 
-	public String getRepositoryNamespace() {
-		return repositoryNamespace;
-	}
+    public String getRepositoryNamespace() {
+        return repositoryNamespace;
+    }
 
-	public void setRepositoryNamespace(String repositoryNamespace) {
-		this.repositoryNamespace = repositoryNamespace;
-	}
+    public void setRepositoryNamespace(String repositoryNamespace) {
+        this.repositoryNamespace = repositoryNamespace;
+    }
 }

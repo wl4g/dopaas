@@ -13,28 +13,49 @@
 # Spring boot configuration.
 spring:
   resources.static-locations: classpath:/static/
-
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.dopaas.common.bean.*.*
-
-# Logging configuration.
+## Logging configuration.
 logging:
-  file: ${server.tomcat.basedir}/../log/${spring.application.name}/${spring.application.name}.log
+  file:
+    # see:com.wl4g.infra.core.logging.logback.EnhancedLogbackConfigurer#apply
+    # see:org.springframework.boot.logging.LogFile#toString
+    name: ${server.tomcat.basedir}/../log/${spring.application.name}/${spring.application.name}.log
+    clean-history-on-start: false
+    total-size-cap: 200GB # default to 200GB
+    max-size: 1GB # default to 10MB
+    max-history: 30 # default to 7
+  pattern:
+    #console: ${logging.pattern.file}
+    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.cloud.dopaas.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
   root: INFO
-  # Custom configuration(Non spring-boot standard).
-  policy:
-    maxFileSize: 1GB
-    minIndex: 1
-    maxIndex: 10
   level:
     de.codecentric.boot.admin: INFO
     org:
       springframework: INFO
       apache: INFO
+    com:
+      wl4g.dopaas.ucm: DEBUG
 
+## Server configuration. ###
+server:
+  servlet:
+    contextPath: /${spring.application.name}
+  #address: 0.0.0.0
+  port: 17092
+  sessionTimeout: 30
+  tomcat:
+    uri-encoding: UTF-8
+    protocolHeader: x-forwarded-proto
+    remoteIpHeader: x-forwarded-for
+    basedir: /tmp/${spring.application.name}
+    access-log-enabled: false
+    accesslog.directory: logs/
+    backgroundProcessorDelay: 30 #seconds
+    max-thread: 50 # Max worker threads(default:200).
 
+mybatis:
+  configLocation: mybatis/mybatis-config.xml
+  mapperLocations: classpath:mybatis/**/*Mapper.xml
+  typeAliasesPackage: com.wl4g.dopaas.common.bean.*.*
 
 example2:
   firstName: 张

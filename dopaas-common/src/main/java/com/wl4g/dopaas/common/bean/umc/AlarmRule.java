@@ -20,85 +20,85 @@ import java.io.Serializable;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class AlarmRule extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private Long templateId;
+    private Long templateId;
 
-	private String aggregator;
+    private String aggregator;
 
-	private Integer relateOperator;
+    private Integer relateOperator;
 
-	private Integer logicalOperator;
+    private Integer logicalOperator;
 
-	private Long queueTimeWindow;
+    private Long queueTimeWindow;
 
-	private Double value;
+    private Double value;
 
-	private Integer alarmLevel;
+    private Integer alarmLevel;
 
-	private Double compareValue;
+    private Double compareValue;
 
-	public Long getTemplateId() {
-		return templateId;
-	}
+    public Long getTemplateId() {
+        return templateId;
+    }
 
-	public void setTemplateId(Long templateId) {
-		this.templateId = templateId;
-	}
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
 
-	public String getAggregator() {
-		return aggregator;
-	}
+    public String getAggregator() {
+        return aggregator;
+    }
 
-	public void setAggregator(String aggregator) {
-		this.aggregator = aggregator == null ? null : aggregator.trim();
-	}
+    public void setAggregator(String aggregator) {
+        this.aggregator = aggregator == null ? null : aggregator.trim();
+    }
 
-	public Integer getRelateOperator() {
-		return relateOperator;
-	}
+    public Integer getRelateOperator() {
+        return relateOperator;
+    }
 
-	public void setRelateOperator(Integer relateOperator) {
-		this.relateOperator = relateOperator;
-	}
+    public void setRelateOperator(Integer relateOperator) {
+        this.relateOperator = relateOperator;
+    }
 
-	public Integer getLogicalOperator() {
-		return logicalOperator;
-	}
+    public Integer getLogicalOperator() {
+        return logicalOperator;
+    }
 
-	public void setLogicalOperator(Integer logicalOperator) {
-		this.logicalOperator = logicalOperator;
-	}
+    public void setLogicalOperator(Integer logicalOperator) {
+        this.logicalOperator = logicalOperator;
+    }
 
-	public Long getQueueTimeWindow() {
-		return queueTimeWindow;
-	}
+    public Long getQueueTimeWindow() {
+        return queueTimeWindow;
+    }
 
-	public void setQueueTimeWindow(Long queueTimeWindow) {
-		this.queueTimeWindow = queueTimeWindow;
-	}
+    public void setQueueTimeWindow(Long queueTimeWindow) {
+        this.queueTimeWindow = queueTimeWindow;
+    }
 
-	public Double getValue() {
-		return value;
-	}
+    public Double getValue() {
+        return value;
+    }
 
-	public void setValue(Double value) {
-		this.value = value;
-	}
+    public void setValue(Double value) {
+        this.value = value;
+    }
 
-	public Integer getAlarmLevel() {
-		return alarmLevel;
-	}
+    public Integer getAlarmLevel() {
+        return alarmLevel;
+    }
 
-	public void setAlarmLevel(Integer alarmLevel) {
-		this.alarmLevel = alarmLevel;
-	}
+    public void setAlarmLevel(Integer alarmLevel) {
+        this.alarmLevel = alarmLevel;
+    }
 
-	public Double getCompareValue() {
-		return compareValue;
-	}
+    public Double getCompareValue() {
+        return compareValue;
+    }
 
-	public void setCompareValue(Double compareValue) {
-		this.compareValue = compareValue;
-	}
+    public void setCompareValue(Double compareValue) {
+        this.compareValue = compareValue;
+    }
 }

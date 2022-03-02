@@ -21,197 +21,197 @@ import com.wl4g.dopaas.common.bean.cmdb.AppInstance;
 import java.util.List;
 
 public class Pipeline extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private String pipeName;
+    private String pipeName;
 
-	private Long clusterId;
+    private Long clusterId;
 
-	private String providerKind;
+    private String providerKind;
 
-	private String environment;
+    private String environment;
 
-	private String parentAppHome;
+    private String parentAppHome;
 
-	private String assetsDir;
+    private String assetsDir;
 
-	private String clusterName;
+    private String clusterName;
 
-	// ==================Expand==================
+    // ==================Expand==================
 
-	private List<AppInstance> instances;
+    private List<AppInstance> instances;
 
-	private Long[] instanceIds;
+    private Long[] instanceIds;
 
-	private PipeStageBuilding pipeStepBuilding;
+    private PipeStageBuilding pipeStepBuilding;
 
-	private PipeStagePcm pipeStepPcm;
+    private PipeStagePcm pipeStepPcm;
 
-	private PipeStageNotification pipeStepNotification;
+    private PipeStageNotification pipeStepNotification;
 
-	private PipeStageInstanceCommand pipeStepInstanceCommand;
+    private PipeStageInstanceCommand pipeStepInstanceCommand;
 
-	private PipeStageDeploy pipeStepDeploy;
+    private PipeStageDeploy pipeStepDeploy;
 
-	private PipeStepApi pipeStepApi;
+    private PipeStepApi pipeStepApi;
 
-	private Integer pcmEnable;
+    private Integer pcmEnable;
 
-	private Long pcmId;
+    private Long pcmId;
 
-	private Long deployId;
+    private Long deployId;
 
-	private List<PipeStageBuildingProject> pipeStepBuildingProjects;
+    private List<PipeStageBuildingProject> pipeStepBuildingProjects;
 
-	public String getPipeName() {
-		return pipeName;
-	}
+    public String getPipeName() {
+        return pipeName;
+    }
 
-	public void setPipeName(String pipeName) {
-		this.pipeName = pipeName == null ? null : pipeName.trim();
-	}
+    public void setPipeName(String pipeName) {
+        this.pipeName = pipeName == null ? null : pipeName.trim();
+    }
 
-	public Long getClusterId() {
-		return clusterId;
-	}
+    public Long getClusterId() {
+        return clusterId;
+    }
 
-	public void setClusterId(Long clusterId) {
-		this.clusterId = clusterId;
-	}
+    public void setClusterId(Long clusterId) {
+        this.clusterId = clusterId;
+    }
 
-	public String getProviderKind() {
-		return providerKind;
-	}
+    public String getProviderKind() {
+        return providerKind;
+    }
 
-	public void setProviderKind(String providerKind) {
-		this.providerKind = providerKind == null ? null : providerKind.trim();
-	}
+    public void setProviderKind(String providerKind) {
+        this.providerKind = providerKind == null ? null : providerKind.trim();
+    }
 
-	public String getEnvironment() {
-		return environment;
-	}
+    public String getEnvironment() {
+        return environment;
+    }
 
-	public void setEnvironment(String environment) {
-		this.environment = environment == null ? null : environment.trim();
-	}
+    public void setEnvironment(String environment) {
+        this.environment = environment == null ? null : environment.trim();
+    }
 
-	public String getParentAppHome() {
-		return parentAppHome;
-	}
+    public String getParentAppHome() {
+        return parentAppHome;
+    }
 
-	public void setParentAppHome(String parentAppHome) {
-		this.parentAppHome = parentAppHome == null ? null : parentAppHome.trim();
-	}
+    public void setParentAppHome(String parentAppHome) {
+        this.parentAppHome = parentAppHome == null ? null : parentAppHome.trim();
+    }
 
-	public String getAssetsDir() {
-		return assetsDir;
-	}
+    public String getAssetsDir() {
+        return assetsDir;
+    }
 
-	public void setAssetsDir(String assetsDir) {
-		this.assetsDir = assetsDir == null ? null : assetsDir.trim();
-	}
+    public void setAssetsDir(String assetsDir) {
+        this.assetsDir = assetsDir == null ? null : assetsDir.trim();
+    }
 
-	public String getClusterName() {
-		return clusterName;
-	}
+    public String getClusterName() {
+        return clusterName;
+    }
 
-	public void setClusterName(String clusterName) {
-		this.clusterName = clusterName;
-	}
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
 
-	public List<AppInstance> getInstances() {
-		return instances;
-	}
+    public List<AppInstance> getInstances() {
+        return instances;
+    }
 
-	public void setInstances(List<AppInstance> instances) {
-		this.instances = instances;
-	}
+    public void setInstances(List<AppInstance> instances) {
+        this.instances = instances;
+    }
 
-	public Long[] getInstanceIds() {
-		return instanceIds;
-	}
+    public Long[] getInstanceIds() {
+        return instanceIds;
+    }
 
-	public void setInstanceIds(Long[] instanceIds) {
-		this.instanceIds = instanceIds;
-	}
+    public void setInstanceIds(Long[] instanceIds) {
+        this.instanceIds = instanceIds;
+    }
 
-	public PipeStageBuilding getPipeStepBuilding() {
-		return pipeStepBuilding;
-	}
+    public PipeStageBuilding getPipeStepBuilding() {
+        return pipeStepBuilding;
+    }
 
-	public void setPipeStepBuilding(PipeStageBuilding pipeStepBuilding) {
-		this.pipeStepBuilding = pipeStepBuilding;
-	}
+    public void setPipeStepBuilding(PipeStageBuilding pipeStepBuilding) {
+        this.pipeStepBuilding = pipeStepBuilding;
+    }
 
-	public PipeStagePcm getPipeStepPcm() {
-		return pipeStepPcm;
-	}
+    public PipeStagePcm getPipeStepPcm() {
+        return pipeStepPcm;
+    }
 
-	public void setPipeStepPcm(PipeStagePcm pipeStepPcm) {
-		this.pipeStepPcm = pipeStepPcm;
-	}
+    public void setPipeStepPcm(PipeStagePcm pipeStepPcm) {
+        this.pipeStepPcm = pipeStepPcm;
+    }
 
-	public PipeStageNotification getPipeStepNotification() {
-		return pipeStepNotification;
-	}
+    public PipeStageNotification getPipeStepNotification() {
+        return pipeStepNotification;
+    }
 
-	public void setPipeStepNotification(PipeStageNotification pipeStepNotification) {
-		this.pipeStepNotification = pipeStepNotification;
-	}
+    public void setPipeStepNotification(PipeStageNotification pipeStepNotification) {
+        this.pipeStepNotification = pipeStepNotification;
+    }
 
-	public PipeStageInstanceCommand getPipeStepInstanceCommand() {
-		return pipeStepInstanceCommand;
-	}
+    public PipeStageInstanceCommand getPipeStepInstanceCommand() {
+        return pipeStepInstanceCommand;
+    }
 
-	public void setPipeStepInstanceCommand(PipeStageInstanceCommand pipeStepInstanceCommand) {
-		this.pipeStepInstanceCommand = pipeStepInstanceCommand;
-	}
+    public void setPipeStepInstanceCommand(PipeStageInstanceCommand pipeStepInstanceCommand) {
+        this.pipeStepInstanceCommand = pipeStepInstanceCommand;
+    }
 
-	public Integer getPcmEnable() {
-		return pcmEnable;
-	}
+    public Integer getPcmEnable() {
+        return pcmEnable;
+    }
 
-	public void setPcmEnable(Integer pcmEnable) {
-		this.pcmEnable = pcmEnable;
-	}
+    public void setPcmEnable(Integer pcmEnable) {
+        this.pcmEnable = pcmEnable;
+    }
 
-	public Long getPcmId() {
-		return pcmId;
-	}
+    public Long getPcmId() {
+        return pcmId;
+    }
 
-	public void setPcmId(Long pcmId) {
-		this.pcmId = pcmId;
-	}
+    public void setPcmId(Long pcmId) {
+        this.pcmId = pcmId;
+    }
 
-	public PipeStageDeploy getPipeStepDeploy() {
-		return pipeStepDeploy;
-	}
+    public PipeStageDeploy getPipeStepDeploy() {
+        return pipeStepDeploy;
+    }
 
-	public void setPipeStepDeploy(PipeStageDeploy pipeStepDeploy) {
-		this.pipeStepDeploy = pipeStepDeploy;
-	}
+    public void setPipeStepDeploy(PipeStageDeploy pipeStepDeploy) {
+        this.pipeStepDeploy = pipeStepDeploy;
+    }
 
-	public Long getDeployId() {
-		return deployId;
-	}
+    public Long getDeployId() {
+        return deployId;
+    }
 
-	public void setDeployId(Long deployId) {
-		this.deployId = deployId;
-	}
+    public void setDeployId(Long deployId) {
+        this.deployId = deployId;
+    }
 
-	public List<PipeStageBuildingProject> getPipeStepBuildingProjects() {
-		return pipeStepBuildingProjects;
-	}
+    public List<PipeStageBuildingProject> getPipeStepBuildingProjects() {
+        return pipeStepBuildingProjects;
+    }
 
-	public void setPipeStepBuildingProjects(List<PipeStageBuildingProject> pipeStepBuildingProjects) {
-		this.pipeStepBuildingProjects = pipeStepBuildingProjects;
-	}
+    public void setPipeStepBuildingProjects(List<PipeStageBuildingProject> pipeStepBuildingProjects) {
+        this.pipeStepBuildingProjects = pipeStepBuildingProjects;
+    }
 
-	public PipeStepApi getPipeStepApi() {
-		return pipeStepApi;
-	}
+    public PipeStepApi getPipeStepApi() {
+        return pipeStepApi;
+    }
 
-	public void setPipeStepApi(PipeStepApi pipeStepApi) {
-		this.pipeStepApi = pipeStepApi;
-	}
+    public void setPipeStepApi(PipeStepApi pipeStepApi) {
+        this.pipeStepApi = pipeStepApi;
+    }
 }

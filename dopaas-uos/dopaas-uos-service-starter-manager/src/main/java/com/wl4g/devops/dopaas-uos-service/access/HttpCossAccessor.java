@@ -89,7 +89,7 @@ public class HttpCossAccessor extends BaseController {
 
 	/**
 	 * e.g:
-	 * http://wl4g.debug:14061/uos-server/webservice/listBuckets?uosProvider=hdfs&prefix=sm&marker=sm-clound&maxKeys=100&_stacktrace=true
+	 * http://wl4g.dev:14061/uos-server/webservice/listBuckets?uosProvider=hdfs&prefix=sm&marker=sm-clound&maxKeys=100&_stacktrace=true
 	 * {"bucketList":[{"name":"sm-clound","owner":{"displayName":"root","id":"root"},"creationDate":0}]}
 	 */
 	@RequestMapping("listBuckets")
@@ -167,7 +167,7 @@ public class HttpCossAccessor extends BaseController {
 
 	/**
 	 * e.g:
-	 * http://wl4g.debug:14061/uos-server/webservice/listObjects?uosProvider=hdfs&prefix=sm&bucketName=sm-clound
+	 * http://wl4g.dev:14061/uos-server/webservice/listObjects?uosProvider=hdfs&prefix=sm&bucketName=sm-clound
 	 * {"objectSummaries":[{"bucketName":"sm-clound","key":"hdfs-uos-sample.txt","size":9800,"mtime":1584348593100,"atime":1584348592700,"storageType":"hdfs","owner":{"displayName":"root","id":"root"},"etag":"512@MD5-of-0MD5-of-512CRC32C"}],"commonPrefixes":[],"bucketName":null,"nextMarker":null,"prefix":"sm","marker":null,"maxKeys":0,"delimiter":"/","encodingType":"UTF-8","truncated":false}
 	 */
 	@RequestMapping("listObjects")

@@ -21,7 +21,6 @@ import com.wl4g.dopaas.ucm.client.refresh.UcmLoggingRebinder;
 
 import static com.wl4g.dopaas.ucm.common.UCMConstants.URI_C_BASE;
 
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.cloud.logging.LoggingRebinder;
@@ -56,7 +55,7 @@ public class UcmClientAutoConfiguration extends PrefixHandlerMappingSupport {
     }
 
     /**
-     * See:{@link RefreshAutoConfiguration#loggingRebinder()}
+     * See:{@link org.springframework.cloud.autoconfigure.RefreshAutoConfiguration#loggingRebinder()}
      * 
      * @param context
      * @param scope
@@ -69,9 +68,9 @@ public class UcmClientAutoConfiguration extends PrefixHandlerMappingSupport {
 
     // --- Endpoint's. ---
 
-    // @Bean
-    // public PrefixHandlerMapping ucmClientEndpointPrefixHandlerMapping() {
-    // return super.newPrefixHandlerMapping(URI_C_BASE, UcmEndpoint.class);
-    // }
+    @Bean
+    public Object ucmClientEndpointPrefixHandlerMapping() {
+        return super.newPrefixHandlerMapping(URI_C_BASE, UcmEndpoint.class);
+    }
 
 }

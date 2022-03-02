@@ -18,7 +18,7 @@ spring:
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${UCI_DOPAAS_REDIS_NODES:redis.uci.wl4g.uat:6379,redis.uci.wl4g.uat:6380,redis.uci.wl4g.uat:6381,redis.uci.wl4g.uat:7379,redis.uci.wl4g.uat:7380,redis.uci.wl4g.uat:7381}
+          nodes: ${UCI_DOPAAS_REDIS_NODES:redis.uci.dopaas.uat:6379,redis.uci.dopaas.uat:6380,redis.uci.dopaas.uat:6381,redis.uci.dopaas.uat:7379,redis.uci.dopaas.uat:7380,redis.uci.dopaas.uat:7381}
     iam:
       cors:
         rules:
@@ -34,9 +34,9 @@ spring:
         denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
         server-uri: http://iam.${DOPAAS_ZONE:wl4g.uat}/iam-web
-        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
+        unauthorized-uri: ${spring.iam.client.server-uri}/view/403.html
         success-uri: http://dopaas.${DOPAAS_ZONE:wl4g.uat}/#/ci/taskhis
     dopaas.uci:
       testing-report:
         upload-path: /mnt/dist1/upload
-        download-url: http://uci.wl4g.uat/ci-server/fs/download
+        download-url: http://uci.dopaas.uat/ci-server/fs/download

@@ -22,77 +22,77 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class Share extends BaseBean {
 
-	private static final long serialVersionUID = -7171357316844793042L;
+    private static final long serialVersionUID = -7171357316844793042L;
 
-	private String shareCode;
+    private String shareCode;
 
-	private String docCode;
+    private String docCode;
 
-	private Integer shareType;
+    private Integer shareType;
 
-	private String passwd;
+    private String passwd;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private Date expireTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date expireTime;
 
-	private Integer expireType;
+    private Integer expireType;
 
-	// other
-	private String name;
+    // other
+    private String name;
 
-	public String getShareCode() {
-		return shareCode;
-	}
+    public String getShareCode() {
+        return shareCode;
+    }
 
-	public void setShareCode(String shareCode) {
-		this.shareCode = shareCode == null ? null : shareCode.trim();
-	}
+    public void setShareCode(String shareCode) {
+        this.shareCode = shareCode == null ? null : shareCode.trim();
+    }
 
-	public String getDocCode() {
-		return docCode;
-	}
+    public String getDocCode() {
+        return docCode;
+    }
 
-	public void setDocCode(String docCode) {
-		this.docCode = docCode == null ? null : docCode.trim();
-	}
+    public void setDocCode(String docCode) {
+        this.docCode = docCode == null ? null : docCode.trim();
+    }
 
-	public Integer getShareType() {
-		return shareType;
-	}
+    public Integer getShareType() {
+        return shareType;
+    }
 
-	public void setShareType(Integer shareType) {
-		this.shareType = shareType;
-	}
+    public void setShareType(Integer shareType) {
+        this.shareType = shareType;
+    }
 
-	public String getPasswd() {
-		return passwd;
-	}
+    public String getPasswd() {
+        return passwd;
+    }
 
-	public void setPasswd(String passwd) {
-		this.passwd = passwd == null ? null : passwd.trim();
-	}
+    public void setPasswd(String passwd) {
+        this.passwd = passwd == null ? null : passwd.trim();
+    }
 
-	public Date getExpireTime() {
-		return expireTime;
-	}
+    public Date getExpireTime() {
+        return expireTime;
+    }
 
-	public void setExpireTime(Date expireTime) {
-		this.expireTime = expireTime;
-	}
+    public void setExpireTime(Date expireTime) {
+        this.expireTime = expireTime;
+    }
 
-	public Integer getExpireType() {
-		return expireType;
-	}
+    public Integer getExpireType() {
+        return expireType;
+    }
 
-	public void setExpireType(Integer expireType) {
-		this.expireType = expireType;
-	}
+    public void setExpireType(Integer expireType) {
+        this.expireType = expireType;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 }

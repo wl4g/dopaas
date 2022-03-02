@@ -30,21 +30,21 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AppCluster extends BaseBean {
-	private static final long serialVersionUID = -3298424126317938674L;
+    private static final long serialVersionUID = -3298424126317938674L;
 
-	private String name;
-	private Integer type;
-	private Integer enable;
-	private String remark;
-	private String endpoint;
-	private Long sshId;
-	private Integer deployType;
-	private SshBean ssh;
+    private String name;
+    private Integer type;
+    private Integer enable;
+    private String remark;
+    private String endpoint;
+    private Long sshId;
+    private Integer deployType;
+    private SshBean ssh;
 
-	// --- Temporary. ---
+    // --- Temporary. ---
 
-	private Long instanceCount;
-	private List<AppInstance> instances;
-	private List<AppEnvironment> environments;
+    private Long instanceCount;
+    private List<AppInstance> instances;
+    private List<AppEnvironment> environments;
 
 }

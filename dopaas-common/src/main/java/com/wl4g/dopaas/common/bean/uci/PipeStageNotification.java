@@ -25,56 +25,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PipeStageNotification extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Long pipeId;
-	private Integer enable;
-	private Long[] contactGroupId;
-	private String contactGroupIds;
+    private Long pipeId;
+    private Integer enable;
+    private Long[] contactGroupId;
+    private String contactGroupIds;
 
-	public Long getPipeId() {
-		return pipeId;
-	}
+    public Long getPipeId() {
+        return pipeId;
+    }
 
-	public void setPipeId(Long pipeId) {
-		this.pipeId = pipeId;
-	}
+    public void setPipeId(Long pipeId) {
+        this.pipeId = pipeId;
+    }
 
-	public Integer getEnable() {
-		return enable;
-	}
+    public Integer getEnable() {
+        return enable;
+    }
 
-	public void setEnable(Integer enable) {
-		this.enable = enable;
-	}
+    public void setEnable(Integer enable) {
+        this.enable = enable;
+    }
 
-	public Long[] getContactGroupId() {
-		return contactGroupId;
-	}
+    public Long[] getContactGroupId() {
+        return contactGroupId;
+    }
 
-	public void setContactGroupId(Long[] contactGroupId) {
-		this.contactGroupId = contactGroupId;
-	}
+    public void setContactGroupId(Long[] contactGroupId) {
+        this.contactGroupId = contactGroupId;
+    }
 
-	public void setContactGroupId2(String[] contactGroupId) {
-		if (!isEmptyArray(contactGroupId)) {
-			List<Long> list = new ArrayList<>();
-			for (int i = 0; i < contactGroupId.length; i++) {
-				if (NumberUtils.isCreatable(contactGroupId[i])) {
-					list.add(Long.parseLong(contactGroupId[i]));
-				}
-			}
-			Long[] result = new Long[list.size()];
-			list.toArray(result);
-			this.contactGroupId = result;
-		}
-	}
+    public void setContactGroupId2(String[] contactGroupId) {
+        if (!isEmptyArray(contactGroupId)) {
+            List<Long> list = new ArrayList<>();
+            for (int i = 0; i < contactGroupId.length; i++) {
+                if (NumberUtils.isCreatable(contactGroupId[i])) {
+                    list.add(Long.parseLong(contactGroupId[i]));
+                }
+            }
+            Long[] result = new Long[list.size()];
+            list.toArray(result);
+            this.contactGroupId = result;
+        }
+    }
 
-	public String getContactGroupIds() {
-		return contactGroupIds;
-	}
+    public String getContactGroupIds() {
+        return contactGroupIds;
+    }
 
-	public void setContactGroupIds(String contactGroupIds) {
-		this.contactGroupIds = contactGroupIds;
-	}
+    public void setContactGroupIds(String contactGroupIds) {
+        this.contactGroupIds = contactGroupIds;
+    }
 }

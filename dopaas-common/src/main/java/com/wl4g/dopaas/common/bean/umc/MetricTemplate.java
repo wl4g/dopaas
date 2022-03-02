@@ -21,36 +21,36 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class MetricTemplate extends BaseBean implements Serializable {
 
-	private static final long serialVersionUID = 1466220729681199183L;
+    private static final long serialVersionUID = 1466220729681199183L;
 
-	private String metric;
+    private String metric;
 
-	private String classify;
+    private String classify;
 
-	private String remark;
+    private String remark;
 
-	public String getMetric() {
-		return metric;
-	}
+    public String getMetric() {
+        return metric;
+    }
 
-	public void setMetric(String metric) {
-		this.metric = metric == null ? null : metric.trim();
-	}
+    public void setMetric(String metric) {
+        this.metric = metric == null ? null : metric.trim();
+    }
 
-	public String getClassify() {
-		return classify;
-	}
+    public String getClassify() {
+        return classify;
+    }
 
-	public void setClassify(String classify) {
-		this.classify = classify == null ? null : classify.trim();
-	}
+    public void setClassify(String classify) {
+        this.classify = classify == null ? null : classify.trim();
+    }
 
-	public String getRemark() {
-		return remark;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
-	public void setRemark(String remark) {
-		this.remark = remark == null ? null : remark.trim();
-	}
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
+    }
 
 }

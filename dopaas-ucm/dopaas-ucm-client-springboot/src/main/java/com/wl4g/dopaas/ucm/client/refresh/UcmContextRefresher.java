@@ -26,7 +26,6 @@ import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.config.ConfigFileApplicationListener;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.bootstrap.BootstrapApplicationListener;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
@@ -50,37 +49,36 @@ import static org.springframework.web.context.support.StandardServletEnvironment
  * Implementing UCM dynamic configuration refresher, which is almost consistent
  * with the origin {@link ContextRefresher} logic, mainly changes the details
  * related to UCM-server communication.</br>
- * See:{@link RefreshAutoConfiguration#contextRefresher()}
+ * See:{@link org.springframework.cloud.autoconfigure.RefreshAutoConfiguration#contextRefresher(ConfigurableApplicationContext,RefreshScope)}
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月30日
  * @since
  */
 public class UcmContextRefresher extends ContextRefresher {
-
-    final public static String UCM_REFRESH_PROPERTY_SOURCE = "_DevOpsUcmPropertySource_";
+    public static final String UCM_REFRESH_PROPERTY_SOURCE = "_UcmDoPaaSPropertySource_";
 
     /**
      * Order matters, cli args aren't first, things get messy
      */
-    final private static String[] DEFAULT_PROPERTY_SOURCES = new String[] { COMMAND_LINE_PROPERTY_SOURCE_NAME,
+    private static final String[] DEFAULT_PROPERTY_SOURCES = new String[] { COMMAND_LINE_PROPERTY_SOURCE_NAME,
             "defaultProperties" };
 
     /**
      * Replacement of Spring boot built-in configuration source is not allowed.
      */
-    final private static List<String> STANDARD_SOURCES = Arrays.asList(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME,
+    private static final List<String> STANDARD_SOURCES = Arrays.asList(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME,
             SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, JNDI_PROPERTY_SOURCE_NAME, SERVLET_CONFIG_PROPERTY_SOURCE_NAME,
             SERVLET_CONTEXT_PROPERTY_SOURCE_NAME);
 
     /**
      * Required based application listeners.
      */
-    final private static List<ApplicationListener<?>> REQUIRE_LISTENERS = Arrays.asList(new BootstrapApplicationListener(),
+    private static final List<ApplicationListener<?>> REQUIRE_LISTENERS = Arrays.asList(new BootstrapApplicationListener(),
             new ConfigFileApplicationListener());
 
-    final private ConfigurableApplicationContext context;
-    final private RefreshScope scope;
+    private final ConfigurableApplicationContext context;
+    private final RefreshScope scope;
 
     public UcmContextRefresher(ConfigurableApplicationContext context, RefreshScope scope) {
         super(context, scope);

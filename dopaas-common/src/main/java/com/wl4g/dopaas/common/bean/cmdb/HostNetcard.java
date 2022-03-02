@@ -19,126 +19,126 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class HostNetcard extends BaseBean {
 
-	private static final long serialVersionUID = 4324569366421220002L;
+    private static final long serialVersionUID = 4324569366421220002L;
 
-	private Long hostId;
+    private Long hostId;
 
-	private String name;
+    private String name;
 
-	private String status;
+    private String status;
 
-	private Integer vpnTunnelType;
+    private Integer vpnTunnelType;
 
-	private Integer openvpnTunnelId;
+    private Integer openvpnTunnelId;
 
-	private Integer pptpTunnelId;
+    private Integer pptpTunnelId;
 
-	private String ipv4;
+    private String ipv4;
 
-	private String ipv6;
+    private String ipv6;
 
-	private String hwaddr;
+    private String hwaddr;
 
-	private String netmask;
+    private String netmask;
 
-	private String broadcast;
+    private String broadcast;
 
-	private String getway;
+    private String getway;
 
-	public Long getHostId() {
-		return hostId;
-	}
+    public Long getHostId() {
+        return hostId;
+    }
 
-	public void setHostId(Long hostId) {
-		this.hostId = hostId;
-	}
+    public void setHostId(Long hostId) {
+        this.hostId = hostId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status == null ? null : status.trim();
-	}
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
+    }
 
-	public Integer getVpnTunnelType() {
-		return vpnTunnelType;
-	}
+    public Integer getVpnTunnelType() {
+        return vpnTunnelType;
+    }
 
-	public void setVpnTunnelType(Integer vpnTunnelType) {
-		this.vpnTunnelType = vpnTunnelType;
-	}
+    public void setVpnTunnelType(Integer vpnTunnelType) {
+        this.vpnTunnelType = vpnTunnelType;
+    }
 
-	public Integer getOpenvpnTunnelId() {
-		return openvpnTunnelId;
-	}
+    public Integer getOpenvpnTunnelId() {
+        return openvpnTunnelId;
+    }
 
-	public void setOpenvpnTunnelId(Integer openvpnTunnelId) {
-		this.openvpnTunnelId = openvpnTunnelId;
-	}
+    public void setOpenvpnTunnelId(Integer openvpnTunnelId) {
+        this.openvpnTunnelId = openvpnTunnelId;
+    }
 
-	public Integer getPptpTunnelId() {
-		return pptpTunnelId;
-	}
+    public Integer getPptpTunnelId() {
+        return pptpTunnelId;
+    }
 
-	public void setPptpTunnelId(Integer pptpTunnelId) {
-		this.pptpTunnelId = pptpTunnelId;
-	}
+    public void setPptpTunnelId(Integer pptpTunnelId) {
+        this.pptpTunnelId = pptpTunnelId;
+    }
 
-	public String getIpv4() {
-		return ipv4;
-	}
+    public String getIpv4() {
+        return ipv4;
+    }
 
-	public void setIpv4(String ipv4) {
-		this.ipv4 = ipv4 == null ? null : ipv4.trim();
-	}
+    public void setIpv4(String ipv4) {
+        this.ipv4 = ipv4 == null ? null : ipv4.trim();
+    }
 
-	public String getIpv6() {
-		return ipv6;
-	}
+    public String getIpv6() {
+        return ipv6;
+    }
 
-	public void setIpv6(String ipv6) {
-		this.ipv6 = ipv6 == null ? null : ipv6.trim();
-	}
+    public void setIpv6(String ipv6) {
+        this.ipv6 = ipv6 == null ? null : ipv6.trim();
+    }
 
-	public String getHwaddr() {
-		return hwaddr;
-	}
+    public String getHwaddr() {
+        return hwaddr;
+    }
 
-	public void setHwaddr(String hwaddr) {
-		this.hwaddr = hwaddr == null ? null : hwaddr.trim();
-	}
+    public void setHwaddr(String hwaddr) {
+        this.hwaddr = hwaddr == null ? null : hwaddr.trim();
+    }
 
-	public String getNetmask() {
-		return netmask;
-	}
+    public String getNetmask() {
+        return netmask;
+    }
 
-	public void setNetmask(String netmask) {
-		this.netmask = netmask == null ? null : netmask.trim();
-	}
+    public void setNetmask(String netmask) {
+        this.netmask = netmask == null ? null : netmask.trim();
+    }
 
-	public String getBroadcast() {
-		return broadcast;
-	}
+    public String getBroadcast() {
+        return broadcast;
+    }
 
-	public void setBroadcast(String broadcast) {
-		this.broadcast = broadcast == null ? null : broadcast.trim();
-	}
+    public void setBroadcast(String broadcast) {
+        this.broadcast = broadcast == null ? null : broadcast.trim();
+    }
 
-	public String getGetway() {
-		return getway;
-	}
+    public String getGetway() {
+        return getway;
+    }
 
-	public void setGetway(String getway) {
-		this.getway = getway == null ? null : getway.trim();
-	}
+    public void setGetway(String getway) {
+        this.getway = getway == null ? null : getway.trim();
+    }
 
 }

@@ -20,128 +20,128 @@ import java.util.List;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class FileChanges extends BaseBean {
-	private static final long serialVersionUID = -3425763977484915010L;
+    private static final long serialVersionUID = -3425763977484915010L;
 
-	private String name;
+    private String name;
 
-	private String docCode;
+    private String docCode;
 
-	private String type;
+    private String type;
 
-	private String action;
+    private String action;
 
-	private String lang;
+    private String lang;
 
-	private String content;
+    private String content;
 
-	private String sha;
+    private String sha;
 
-	private String description;
+    private String description;
 
-	private Integer isLatest;
+    private Integer isLatest;
 
-	// --- Temporary ---
+    // --- Temporary ---
 
-	private List<Label> labels;
+    private List<Label> labels;
 
-	private List<Long> labelIds;
+    private List<Long> labelIds;
 
-	private String createByStr;
+    private String createByStr;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getDocCode() {
-		return docCode;
-	}
+    public String getDocCode() {
+        return docCode;
+    }
 
-	public void setDocCode(String docCode) {
-		this.docCode = docCode == null ? null : docCode.trim();
-	}
+    public void setDocCode(String docCode) {
+        this.docCode = docCode == null ? null : docCode.trim();
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type == null ? null : type.trim();
-	}
+    public void setType(String type) {
+        this.type = type == null ? null : type.trim();
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action == null ? null : action.trim();
-	}
+    public void setAction(String action) {
+        this.action = action == null ? null : action.trim();
+    }
 
-	public String getLang() {
-		return lang;
-	}
+    public String getLang() {
+        return lang;
+    }
 
-	public void setLang(String lang) {
-		this.lang = lang == null ? null : lang.trim();
-	}
+    public void setLang(String lang) {
+        this.lang = lang == null ? null : lang.trim();
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public void setContent(String content) {
-		this.content = content == null ? null : content.trim();
-	}
+    public void setContent(String content) {
+        this.content = content == null ? null : content.trim();
+    }
 
-	public String getSha() {
-		return sha;
-	}
+    public String getSha() {
+        return sha;
+    }
 
-	public void setSha(String sha) {
-		this.sha = sha == null ? null : sha.trim();
-	}
+    public void setSha(String sha) {
+        this.sha = sha == null ? null : sha.trim();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description == null ? null : description.trim();
-	}
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
+    }
 
-	public Integer getIsLatest() {
-		return isLatest;
-	}
+    public Integer getIsLatest() {
+        return isLatest;
+    }
 
-	public void setIsLatest(Integer isLatest) {
-		this.isLatest = isLatest;
-	}
+    public void setIsLatest(Integer isLatest) {
+        this.isLatest = isLatest;
+    }
 
-	public List<Label> getLabels() {
-		return labels;
-	}
+    public List<Label> getLabels() {
+        return labels;
+    }
 
-	public void setLabels(List<Label> labels) {
-		this.labels = labels;
-	}
+    public void setLabels(List<Label> labels) {
+        this.labels = labels;
+    }
 
-	public List<Long> getLabelIds() {
-		return labelIds;
-	}
+    public List<Long> getLabelIds() {
+        return labelIds;
+    }
 
-	public void setLabelIds(List<Long> labelIds) {
-		this.labelIds = labelIds;
-	}
+    public void setLabelIds(List<Long> labelIds) {
+        this.labelIds = labelIds;
+    }
 
-	public String getCreateByStr() {
-		return createByStr;
-	}
+    public String getCreateByStr() {
+        return createByStr;
+    }
 
-	public void setCreateByStr(String createByStr) {
-		this.createByStr = createByStr;
-	}
+    public void setCreateByStr(String createByStr) {
+        this.createByStr = createByStr;
+    }
 
 }

@@ -21,67 +21,67 @@ import com.wl4g.infra.core.bean.BaseBean;
 import java.util.Date;
 
 public class CustomHistory extends BaseBean {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private Long customEngineId;
+    private Long customEngineId;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private Date startTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date startTime;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private Date endTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date endTime;
 
-	private Integer state;
+    private Integer state;
 
-	private String engineName;
+    private String engineName;
 
-	private Long costTime;
+    private Long costTime;
 
-	public Long getCustomEngineId() {
-		return customEngineId;
-	}
+    public Long getCustomEngineId() {
+        return customEngineId;
+    }
 
-	public void setCustomEngineId(Long customEngineId) {
-		this.customEngineId = customEngineId;
-	}
+    public void setCustomEngineId(Long customEngineId) {
+        this.customEngineId = customEngineId;
+    }
 
-	public Date getStartTime() {
-		return startTime;
-	}
+    public Date getStartTime() {
+        return startTime;
+    }
 
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
 
-	public Date getEndTime() {
-		return endTime;
-	}
+    public Date getEndTime() {
+        return endTime;
+    }
 
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
 
-	public Integer getState() {
-		return state;
-	}
+    public Integer getState() {
+        return state;
+    }
 
-	public void setState(Integer state) {
-		this.state = state;
-	}
+    public void setState(Integer state) {
+        this.state = state;
+    }
 
-	public String getEngineName() {
-		return engineName;
-	}
+    public String getEngineName() {
+        return engineName;
+    }
 
-	public void setEngineName(String engineName) {
-		this.engineName = engineName;
-	}
+    public void setEngineName(String engineName) {
+        this.engineName = engineName;
+    }
 
-	public Long getCostTime() {
-		return costTime;
-	}
+    public Long getCostTime() {
+        return costTime;
+    }
 
-	public void setCostTime(Long costTime) {
-		this.costTime = costTime;
-	}
+    public void setCostTime(Long costTime) {
+        this.costTime = costTime;
+    }
 }

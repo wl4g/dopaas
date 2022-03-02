@@ -63,6 +63,10 @@ public abstract class UCMConstants extends DoPaaSConstants {
 
     // --- Client. ---
 
+    /** Key of configuration prefix. */
+    public static final String KEY_UCM_BASE_PREFIX = KEY_DOPAAS_BASE_PREFIX + ".ucm";
+    /** Key of client configuration. */
+    public static final String KEY_UCM_CLIENT = KEY_UCM_BASE_PREFIX + ".client";
     /** Service web root URI. */
     public static final String URI_C_BASE = "/ucm-client";
     /** Refresh URI. */

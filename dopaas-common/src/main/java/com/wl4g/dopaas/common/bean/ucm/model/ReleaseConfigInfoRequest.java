@@ -15,18 +15,22 @@
  */
 package com.wl4g.dopaas.common.bean.ucm.model;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import lombok.Getter;
-import lombok.Setter;
-
 import static com.wl4g.infra.common.collection.CollectionUtils2.safeList;
 import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ConfigProfile;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * {@link ReleaseConfigInfoRequest}
@@ -37,14 +41,10 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class ReleaseConfigInfoRequest extends AbstractConfigInfo {
-    final private static long serialVersionUID = -4016863811283064989L;
-
-    /**
-     * {@link ConfigNode} of current myself SCM client application.
-     */
-    @NotNull
-    private ConfigNode node;
+@ToString
+@NoArgsConstructor
+public class ReleaseConfigInfoRequest extends BaseConfigInfo {
+    private static final long serialVersionUID = -4016863811283064989L;
 
     /**
      * Configuration files. (like spring.profiles)
@@ -53,15 +53,17 @@ public class ReleaseConfigInfoRequest extends AbstractConfigInfo {
     @NotEmpty
     private List<ConfigProfile> profiles = new ArrayList<>(2);
 
-    public ReleaseConfigInfoRequest() {
-        super();
-    }
+    /**
+     * {@link ConfigInstance} of current myself SCM client application.
+     */
+    @NotNull
+    private ConfigInstance instance;
 
     @Override
     public void validate(boolean versionValidate, boolean releaseValidate) {
         super.validate(versionValidate, releaseValidate);
-        notNullOf(getNode(), "configNode");
-        getNode().validation();
+        notNullOf(getInstance(), "configNode");
+        getInstance().validation();
         notEmptyOf(getProfiles(), "profiles");
         safeList(getProfiles()).stream().forEach(p -> p.validate());
     }

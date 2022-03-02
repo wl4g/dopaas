@@ -18,55 +18,55 @@ package com.wl4g.dopaas.common.bean.uci;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class PipeStageDeploy extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Long pipeId;
+    private Long pipeId;
 
-	private Integer deployType = 1;
+    private Integer deployType = 1;
 
-	private String deployDockerfileContent;
+    private String deployDockerfileContent;
 
-	private Integer deployConfigType;
+    private Integer deployConfigType;
 
-	private String deployConfigContent;
+    private String deployConfigContent;
 
-	public Long getPipeId() {
-		return pipeId;
-	}
+    public Long getPipeId() {
+        return pipeId;
+    }
 
-	public void setPipeId(Long pipeId) {
-		this.pipeId = pipeId;
-	}
+    public void setPipeId(Long pipeId) {
+        this.pipeId = pipeId;
+    }
 
-	public Integer getDeployType() {
-		return deployType;
-	}
+    public Integer getDeployType() {
+        return deployType;
+    }
 
-	public void setDeployType(Integer deployType) {
-		this.deployType = deployType;
-	}
+    public void setDeployType(Integer deployType) {
+        this.deployType = deployType;
+    }
 
-	public String getDeployDockerfileContent() {
-		return deployDockerfileContent;
-	}
+    public String getDeployDockerfileContent() {
+        return deployDockerfileContent;
+    }
 
-	public void setDeployDockerfileContent(String deployDockerfileContent) {
-		this.deployDockerfileContent = deployDockerfileContent == null ? null : deployDockerfileContent.trim();
-	}
+    public void setDeployDockerfileContent(String deployDockerfileContent) {
+        this.deployDockerfileContent = deployDockerfileContent == null ? null : deployDockerfileContent.trim();
+    }
 
-	public Integer getDeployConfigType() {
-		return deployConfigType;
-	}
+    public Integer getDeployConfigType() {
+        return deployConfigType;
+    }
 
-	public void setDeployConfigType(Integer deployConfigType) {
-		this.deployConfigType = deployConfigType;
-	}
+    public void setDeployConfigType(Integer deployConfigType) {
+        this.deployConfigType = deployConfigType;
+    }
 
-	public String getDeployConfigContent() {
-		return deployConfigContent;
-	}
+    public String getDeployConfigContent() {
+        return deployConfigContent;
+    }
 
-	public void setDeployConfigContent(String deployConfigContent) {
-		this.deployConfigContent = deployConfigContent == null ? null : deployConfigContent.trim();
-	}
+    public void setDeployConfigContent(String deployConfigContent) {
+        this.deployConfigContent = deployConfigContent == null ? null : deployConfigContent.trim();
+    }
 }

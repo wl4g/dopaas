@@ -15,13 +15,12 @@
  */
 package com.wl4g.dopaas.ucm.client.refresh;
 
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.logging.LoggingRebinder;
 
 /**
  * Implementing UCM dynamic configuration logger level update, which is almost
  * consistent with the origin {@link LoggingRebinder} logic.</br>
- * See:{@link RefreshAutoConfiguration#loggingRebinder()}
+ * See:{@link org.springframework.cloud.autoconfigure.RefreshAutoConfiguration#loggingRebinder()}
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月30日

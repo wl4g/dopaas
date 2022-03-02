@@ -20,33 +20,33 @@ import java.io.Serializable;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class AlarmRecordRule extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private Long recordId;
-	private Long ruleId;
-	private Double compareValue;
+    private Long recordId;
+    private Long ruleId;
+    private Double compareValue;
 
-	public Long getRecordId() {
-		return recordId;
-	}
+    public Long getRecordId() {
+        return recordId;
+    }
 
-	public void setRecordId(Long recordId) {
-		this.recordId = recordId;
-	}
+    public void setRecordId(Long recordId) {
+        this.recordId = recordId;
+    }
 
-	public Long getRuleId() {
-		return ruleId;
-	}
+    public Long getRuleId() {
+        return ruleId;
+    }
 
-	public void setRuleId(Long ruleId) {
-		this.ruleId = ruleId;
-	}
+    public void setRuleId(Long ruleId) {
+        this.ruleId = ruleId;
+    }
 
-	public Double getCompareValue() {
-		return compareValue;
-	}
+    public Double getCompareValue() {
+        return compareValue;
+    }
 
-	public void setCompareValue(Double compareValue) {
-		this.compareValue = compareValue;
-	}
+    public void setCompareValue(Double compareValue) {
+        this.compareValue = compareValue;
+    }
 }

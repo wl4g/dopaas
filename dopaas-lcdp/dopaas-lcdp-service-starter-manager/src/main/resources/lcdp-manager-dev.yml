@@ -16,10 +16,10 @@ spring:
       rules:
         '[/**]':
           allows-origins:
-            #- http://${DOPAAS_ZONE:wl4g.debug}
-            #- http://${DOPAAS_ZONE:wl4g.debug:${server.port}}
-            #- http://*.${DOPAAS_ZONE:wl4g.debug}
-            #- http://*.${DOPAAS_ZONE:wl4g.debug:${server.port}}
+            #- http://${DOPAAS_ZONE:wl4g.dev}
+            #- http://${DOPAAS_ZONE:wl4g.dev:${server.port}}
+            #- http://*.${DOPAAS_ZONE:wl4g.dev}
+            #- http://*.${DOPAAS_ZONE:wl4g.dev:${server.port}}
             #- http://localhost:8080
             #- http://localhost:18080
             #- http://127.0.0.1:8080
@@ -30,9 +30,9 @@ spring:
         allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
         denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
-        # To facilitate debugging, it is recommended to configure local hosts, wl4g.debug/wl4g.local/wl4g.dev
+        # To facilitate debugging, it is recommended to configure local hosts, wl4g.dev/wl4g.local/wl4g.dev
         # resolve to 127.0.0.1 (consistent with the server deployment structure), and the relevant front-end
         # logic is in global_variable.js:55, related database table: sys_cluster_config
-        server-uri: http://wl4g.debug:18080/iam-web
-        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: http://wl4g.debug/#/home/overview
+        server-uri: http://wl4g.dev:18080/iam-web
+        unauthorized-uri: ${spring.iam.client.server-uri}/view/403.html
+        success-uri: http://wl4g.dev/#/home/overview

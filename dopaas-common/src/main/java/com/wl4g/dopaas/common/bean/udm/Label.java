@@ -18,16 +18,16 @@ package com.wl4g.dopaas.common.bean.udm;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class Label extends BaseBean {
-	private static final long serialVersionUID = -7171357316844793042L;
+    private static final long serialVersionUID = -7171357316844793042L;
 
-	private String name;
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
 }

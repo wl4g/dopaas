@@ -18,16 +18,14 @@ package com.wl4g.dopaas.ucm.client.event;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static java.util.Objects.nonNull;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import com.wl4g.dopaas.ucm.client.event.RefreshConfigEvent.RefreshContext;
-import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
-import com.wl4g.dopaas.ucm.client.recorder.ReleaseConfigSourceWrapper;
-import com.wl4g.dopaas.ucm.common.config.UcmConfigSource;
 import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo;
+import com.wl4g.dopaas.ucm.client.event.RefreshConfigEvent.RefreshContext;
+import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.ReleasedWrapper;
 
 /**
  * {@link RefreshConfigEvent}
@@ -51,21 +49,16 @@ public class RefreshConfigEvent extends GenericUcmEvent<RefreshContext> {
     public static class RefreshContext {
 
         /** {@link ReleaseConfigInfo} */
-        private final ReleaseConfigSourceWrapper release;
+        private final ReleasedWrapper release;
 
-        /** {@link ChangeRecorder} */
-        protected final ChangeRecorder recorder;
+        /** {@link ChangedRecorder} */
+        protected final ChangedRecorder recorder;
 
-        public RefreshContext(ReleaseConfigSourceWrapper release, ChangeRecorder repository) {
+        public RefreshContext(ReleasedWrapper release, ChangedRecorder repository) {
             notNullOf(release, "release");
             notNullOf(repository, "repository");
             this.release = release;
             this.recorder = repository;
-        }
-
-        /** Gets current refreshing sources of {@link UcmConfigSource} */
-        public List<UcmConfigSource> getSources() {
-            return release.getSources();
         }
 
         /**

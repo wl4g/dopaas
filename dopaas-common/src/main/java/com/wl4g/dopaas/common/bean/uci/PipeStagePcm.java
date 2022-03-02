@@ -18,95 +18,95 @@ package com.wl4g.dopaas.common.bean.uci;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class PipeStagePcm extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Integer enable;
+    private Integer enable;
 
-	private Long pipeId;
+    private Long pipeId;
 
-	private Long pcmId;
+    private Long pcmId;
 
-	private String xProjectId;
+    private String xProjectId;
 
-	private String xTracker;
+    private String xTracker;
 
-	private String xAssignTo;
+    private String xAssignTo;
 
-	private String xStatus;
+    private String xStatus;
 
-	private String xPriority;
+    private String xPriority;
 
-	private String xCustomFields;
+    private String xCustomFields;
 
-	public Integer getEnable() {
-		return enable;
-	}
+    public Integer getEnable() {
+        return enable;
+    }
 
-	public void setEnable(Integer enable) {
-		this.enable = enable;
-	}
+    public void setEnable(Integer enable) {
+        this.enable = enable;
+    }
 
-	public Long getPipeId() {
-		return pipeId;
-	}
+    public Long getPipeId() {
+        return pipeId;
+    }
 
-	public void setPipeId(Long pipeId) {
-		this.pipeId = pipeId;
-	}
+    public void setPipeId(Long pipeId) {
+        this.pipeId = pipeId;
+    }
 
-	public Long getPcmId() {
-		return pcmId;
-	}
+    public Long getPcmId() {
+        return pcmId;
+    }
 
-	public void setPcmId(Long pcmId) {
-		this.pcmId = pcmId;
-	}
+    public void setPcmId(Long pcmId) {
+        this.pcmId = pcmId;
+    }
 
-	public String getxProjectId() {
-		return xProjectId;
-	}
+    public String getxProjectId() {
+        return xProjectId;
+    }
 
-	public void setxProjectId(String xProjectId) {
-		this.xProjectId = xProjectId;
-	}
+    public void setxProjectId(String xProjectId) {
+        this.xProjectId = xProjectId;
+    }
 
-	public String getxTracker() {
-		return xTracker;
-	}
+    public String getxTracker() {
+        return xTracker;
+    }
 
-	public void setxTracker(String xTracker) {
-		this.xTracker = xTracker == null ? null : xTracker.trim();
-	}
+    public void setxTracker(String xTracker) {
+        this.xTracker = xTracker == null ? null : xTracker.trim();
+    }
 
-	public String getxStatus() {
-		return xStatus;
-	}
+    public String getxStatus() {
+        return xStatus;
+    }
 
-	public void setxStatus(String xStatus) {
-		this.xStatus = xStatus == null ? null : xStatus.trim();
-	}
+    public void setxStatus(String xStatus) {
+        this.xStatus = xStatus == null ? null : xStatus.trim();
+    }
 
-	public String getxPriority() {
-		return xPriority;
-	}
+    public String getxPriority() {
+        return xPriority;
+    }
 
-	public void setxPriority(String xPriority) {
-		this.xPriority = xPriority == null ? null : xPriority.trim();
-	}
+    public void setxPriority(String xPriority) {
+        this.xPriority = xPriority == null ? null : xPriority.trim();
+    }
 
-	public String getxCustomFields() {
-		return xCustomFields;
-	}
+    public String getxCustomFields() {
+        return xCustomFields;
+    }
 
-	public void setxCustomFields(String xCustomFields) {
-		this.xCustomFields = xCustomFields == null ? null : xCustomFields.trim();
-	}
+    public void setxCustomFields(String xCustomFields) {
+        this.xCustomFields = xCustomFields == null ? null : xCustomFields.trim();
+    }
 
-	public String getxAssignTo() {
-		return xAssignTo;
-	}
+    public String getxAssignTo() {
+        return xAssignTo;
+    }
 
-	public void setxAssignTo(String xAssignTo) {
-		this.xAssignTo = xAssignTo;
-	}
+    public void setxAssignTo(String xAssignTo) {
+        this.xAssignTo = xAssignTo;
+    }
 }

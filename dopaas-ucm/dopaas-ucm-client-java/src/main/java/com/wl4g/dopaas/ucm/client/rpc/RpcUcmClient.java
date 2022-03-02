@@ -18,7 +18,7 @@ package com.wl4g.dopaas.ucm.client.rpc;
 import com.wl4g.infra.common.annotation.Reserved;
 import com.wl4g.dopaas.ucm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.ucm.client.internal.AbstractUcmClient;
-import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
 
 /**
  * {@link RpcUcmClient}
@@ -30,7 +30,7 @@ import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
 @Reserved
 public class RpcUcmClient extends AbstractUcmClient {
 
-    public RpcUcmClient(RpcUcmClientConfig config, ChangeRecorder repository, ConfigEventListener... listeners) {
+    public RpcUcmClient(RpcUcmClientConfig config, ChangedRecorder repository, ConfigEventListener... listeners) {
         super(new RpcRefreshWatcher(config, repository, listeners));
     }
 

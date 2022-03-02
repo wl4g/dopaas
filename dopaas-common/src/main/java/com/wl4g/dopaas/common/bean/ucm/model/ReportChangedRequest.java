@@ -15,14 +15,23 @@
  */
 package com.wl4g.dopaas.common.bean.ucm.model;
 
-import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import com.wl4g.dopaas.common.bean.ucm.model.BaseConfigInfo.ConfigInstance;
+import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ConfigSource;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Wither;
 
 /**
@@ -35,19 +44,12 @@ import lombok.experimental.Wither;
 @Getter
 @Setter
 @Wither
+@ToString
+@AllArgsConstructor
 public class ReportChangedRequest extends ReleaseConfigInfoRequest {
-    final private static long serialVersionUID = 2523769504519533902L;
+    private static final long serialVersionUID = 2523769504519533902L;
 
     private Collection<ChangedRecord> changedRecords;
-
-    public ReportChangedRequest(Collection<ChangedRecord> changedRecords) {
-        this.changedRecords = changedRecords;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
-    }
 
     /**
      * {@link ChangedRecord}
@@ -57,25 +59,25 @@ public class ReportChangedRequest extends ReleaseConfigInfoRequest {
     @Getter
     @Setter
     @Wither
-    public static class ChangedRecord {
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChangedRecord extends BaseConfigInfo {
+        private static final long serialVersionUID = 1197156266938234001L;
 
+        /** Release configuration changed keys. */
         private Set<String> changedKeys = new HashSet<>();
-        private ReleaseConfigInfo sources = new ReleaseConfigInfo();
 
-        public ChangedRecord() {
-            super();
-        }
+        /** Release configuration content sources */
+        @NotNull
+        @NotEmpty
+        private List<ConfigSource> sources = new ArrayList<>(1);
 
-        public ChangedRecord(Set<String> changedKeys, ReleaseConfigInfo sources) {
-            this.changedKeys = changedKeys;
-            this.sources = sources;
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
-        }
-
+        /**
+         * {@link ConfigInstance} of current myself SCM client application.
+         */
+        @NotNull
+        private ConfigInstance instance;
     }
 
 }

@@ -33,17 +33,14 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo;
-import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ReleaseContent;
+import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ConfigSource;
 import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfoRequest;
 import com.wl4g.dopaas.ucm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.ucm.client.event.UcmEventPublisher;
 import com.wl4g.dopaas.ucm.client.event.UcmEventSubscriber;
-import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
-import com.wl4g.dopaas.ucm.client.recorder.ReleaseConfigSourceWrapper;
-import com.wl4g.dopaas.ucm.client.utils.NodeHolder;
-import com.wl4g.dopaas.ucm.common.config.UcmConfigSource;
-import com.wl4g.dopaas.ucm.common.config.resolve.DefaultPropertySourceResolver;
-import com.wl4g.dopaas.ucm.common.config.resolve.PropertySourceResolver;
+import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.ReleasedWrapper;
+import com.wl4g.dopaas.ucm.client.utils.InstanceHolder;
 import com.wl4g.dopaas.ucm.common.exception.UcmException;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.infra.common.task.GenericTaskRunner;
@@ -71,10 +68,10 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
     protected final UcmEventSubscriber subscriber;
 
     /** UCM client instance holder */
-    protected final NodeHolder nodeHolder;
+    protected final InstanceHolder nodeHolder;
 
-    /** {@link ChangeRecorder} */
-    protected final ChangeRecorder recorder;
+    /** {@link ChangedRecorder} */
+    protected final ChangedRecorder recorder;
 
     /** {@link PropertySourceResolver} */
     protected final PropertySourceResolver resolver;
@@ -85,7 +82,7 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
      */
     protected long lastRefreshTime = 0;
 
-    public AbstractRefreshWatcher(@NotNull RunnerProperties runner, @NotNull T config, @NotNull ChangeRecorder repository,
+    public AbstractRefreshWatcher(@NotNull RunnerProperties runner, @NotNull T config, @NotNull ChangedRecorder repository,
             @Nullable ConfigEventListener... listeners) {
         super(runner);
         this.config = notNullOf(config, "config");
@@ -93,7 +90,7 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
         EventBusSupport bus = new EventBusSupport(getUcmConfig().getEventThreads());
         this.publisher = new UcmEventPublisher(this, bus);
         this.subscriber = new UcmEventSubscriber(this, bus, listeners);
-        this.nodeHolder = new NodeHolder(config);
+        this.nodeHolder = new InstanceHolder(config);
         this.resolver = new DefaultPropertySourceResolver();
     }
 
@@ -125,20 +122,20 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
     }
 
     /**
-     * Gets {@link NodeHolder}
+     * Gets {@link InstanceHolder}
      * 
      * @return
      */
-    public NodeHolder getNodeHolder() {
+    public InstanceHolder getNodeHolder() {
         return nodeHolder;
     }
 
     /**
-     * Gets {@link ChangeRecorder}
+     * Gets {@link ChangedRecorder}
      * 
      * @return
      */
-    public ChangeRecorder getRecorder() {
+    public ChangedRecorder getRecorder() {
         return recorder;
     }
 
@@ -154,13 +151,13 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
      * @return
      */
     protected ReleaseConfigInfoRequest createFetchRequest() {
-        // Create config watching fetching command
-        ReleaseConfigSourceWrapper last = recorder.lastRelease();
+        // Create configuration watching fetching command
+        ReleasedWrapper last = recorder.last();
 
         ReleaseConfigInfoRequest fetch = new ReleaseConfigInfoRequest();
         fetch.setZone(config.getZone());
         fetch.setCluster(config.getCluster());
-        fetch.setNode(nodeHolder.getConfigNode());
+        fetch.setInstance(nodeHolder.getConfigInstance());
         fetch.setProfiles(config.getProfiles());
         fetch.setMeta(nonNull(last) ? last.getRelease().getMeta() : null);
         return fetch;
@@ -185,12 +182,12 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
             printConfigSources(info);
 
             // Resolving to property sources.
-            List<UcmConfigSource> sources = safeList(info.getReleases()).stream()
-                    .map(r -> resolver.resolve(r.getProfile(), r.getSourceContent()))
+            List<UcmConfigSource> sources = safeList(info.getSources()).stream()
+                    .map(r -> resolver.resolve(r.getProfile(), r.getText()))
                     .collect(toList());
 
             // Addition refresh config source.
-            ReleaseConfigSourceWrapper wrapper = new ReleaseConfigSourceWrapper(info, sources);
+            ReleasedWrapper wrapper = new ReleasedWrapper(info, sources);
             recorder.save(wrapper);
 
             // Publishing refresh
@@ -218,10 +215,10 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
                 release.getMeta());
 
         if (log.isDebugEnabled()) {
-            List<ReleaseContent> rss = release.getReleases();
-            if (rss != null) {
-                int pscount = release.getReleases().size();
-                log.debug("Release config profiles: {}, the property sources sizeof: {}", rss.size(), pscount);
+            List<ConfigSource> sources = release.getSources();
+            if (sources != null) {
+                int pscount = release.getSources().size();
+                log.debug("Release config profiles: {}, the property sources sizeof: {}", sources.size(), pscount);
             }
         }
     }

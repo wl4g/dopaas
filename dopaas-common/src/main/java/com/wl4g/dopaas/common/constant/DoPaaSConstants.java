@@ -26,6 +26,6 @@ import com.wl4g.infra.core.constant.BaseConstant;
  */
 public abstract class DoPaaSConstants extends BaseConstant {
 
-	public static final String KEY_DOPAAS_BASE_PREFIX = "spring.xcloud.dopaas";
+	public static final String KEY_DOPAAS_BASE_PREFIX = "spring.dopaas";
 
 }

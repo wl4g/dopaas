@@ -15,9 +15,10 @@
  */
 /**
  * {@link package-info}
+ * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0 2021-03-23 
+ * @version v1.0 2021-03-23
  * @sine v1.0
- * @see 
+ * @see
  */
 package com.wl4g.dopaas.common.bean.uos;

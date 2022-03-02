@@ -19,24 +19,24 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class K8sInstance extends BaseBean {
 
-	private static final long serialVersionUID = -7546448616357790576L;
+    private static final long serialVersionUID = -7546448616357790576L;
 
-	private Long k8sId;
-	private Long hostId;
+    private Long k8sId;
+    private Long hostId;
 
-	public Long getK8sId() {
-		return k8sId;
-	}
+    public Long getK8sId() {
+        return k8sId;
+    }
 
-	public void setK8sId(Long k8sId) {
-		this.k8sId = k8sId;
-	}
+    public void setK8sId(Long k8sId) {
+        this.k8sId = k8sId;
+    }
 
-	public Long getHostId() {
-		return hostId;
-	}
+    public Long getHostId() {
+        return hostId;
+    }
 
-	public void setHostId(Long hostId) {
-		this.hostId = hostId;
-	}
+    public void setHostId(Long hostId) {
+        this.hostId = hostId;
+    }
 }

@@ -21,69 +21,69 @@ import java.util.Objects;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class Dependency extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private Long projectId;
+    private Long projectId;
 
-	private Long dependentId;
+    private Long dependentId;
 
-	private String projectName;
+    private String projectName;
 
-	private String parentName;
+    private String parentName;
 
-	public Dependency() {
+    public Dependency() {
 
-	}
+    }
 
-	public Dependency(Long projectId) {
-		this.projectId = projectId;
-	}
+    public Dependency(Long projectId) {
+        this.projectId = projectId;
+    }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
-	public Long getDependentId() {
-		return dependentId;
-	}
+    public Long getDependentId() {
+        return dependentId;
+    }
 
-	public void setDependentId(Long dependentId) {
-		this.dependentId = dependentId;
-	}
+    public void setDependentId(Long dependentId) {
+        this.dependentId = dependentId;
+    }
 
-	public String getProjectName() {
-		return projectName;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
-	public String getParentName() {
-		return parentName;
-	}
+    public String getParentName() {
+        return parentName;
+    }
 
-	public void setParentName(String parentName) {
-		this.parentName = parentName;
-	}
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Dependency that = (Dependency) o;
-		return Objects.equals(dependentId, that.dependentId);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Dependency that = (Dependency) o;
+        return Objects.equals(dependentId, that.dependentId);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(dependentId);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(dependentId);
+    }
 
 }

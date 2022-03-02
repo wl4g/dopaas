@@ -20,45 +20,45 @@ import java.util.List;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class CustomDataSource extends BaseBean {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String name;
+    private String name;
 
-	private String provider;
+    private String provider;
 
-	private Integer status;
+    private Integer status;
 
-	private List<CustomDataSourceProperties> customDataSourceProperties;
+    private List<CustomDataSourceProperties> customDataSourceProperties;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getProvider() {
-		return provider;
-	}
+    public String getProvider() {
+        return provider;
+    }
 
-	public void setProvider(String provider) {
-		this.provider = provider == null ? null : provider.trim();
-	}
+    public void setProvider(String provider) {
+        this.provider = provider == null ? null : provider.trim();
+    }
 
-	public Integer getStatus() {
-		return status;
-	}
+    public Integer getStatus() {
+        return status;
+    }
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
-	public List<CustomDataSourceProperties> getCustomDataSourceProperties() {
-		return customDataSourceProperties;
-	}
+    public List<CustomDataSourceProperties> getCustomDataSourceProperties() {
+        return customDataSourceProperties;
+    }
 
-	public void setCustomDataSourceProperties(List<CustomDataSourceProperties> customDataSourceProperties) {
-		this.customDataSourceProperties = customDataSourceProperties;
-	}
+    public void setCustomDataSourceProperties(List<CustomDataSourceProperties> customDataSourceProperties) {
+        this.customDataSourceProperties = customDataSourceProperties;
+    }
 }

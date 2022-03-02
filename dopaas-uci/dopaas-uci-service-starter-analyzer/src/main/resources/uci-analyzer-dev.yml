@@ -21,10 +21,10 @@ spring:
         rules:
           '[/**]':
             allows-origins:
-              #- http://${DOPAAS_ZONE:wl4g.debug}
-              #- http://${DOPAAS_ZONE:wl4g.debug:${server.port}}
-              #- http://*.${DOPAAS_ZONE:wl4g.debug}
-              #- http://*.${DOPAAS_ZONE:wl4g.debug:${server.port}}
+              #- http://${DOPAAS_ZONE:wl4g.dev}
+              #- http://${DOPAAS_ZONE:wl4g.dev:${server.port}}
+              #- http://*.${DOPAAS_ZONE:wl4g.dev}
+              #- http://*.${DOPAAS_ZONE:wl4g.dev:${server.port}}
               #- http://localhost:8080
               #- http://localhost:18080
               #- http://127.0.0.1:8080
@@ -35,9 +35,9 @@ spring:
         allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
         denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
-        server-uri: http://wl4g.debug:18080/iam-web
-        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: http://wl4g.debug/#/home/overview
+        server-uri: http://wl4g.dev:18080/iam-web
+        unauthorized-uri: ${spring.iam.client.server-uri}/view/403.html
+        success-uri: http://wl4g.dev/#/home/overview
     dopaas.ci:
       analyzers: # CI analyses configuration.
         executor:
@@ -70,7 +70,7 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
-      jdbcUrl: ${UCI_DOPAAS_DB_URL:jdbc:mysql://rds.uci.wl4g.debug:3306/dopaas_uci?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+      jdbcUrl: ${UCI_DOPAAS_DB_URL:jdbc:mysql://rds.uci.dopaas.dev:3306/dopaas_uci?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${UCI_DOPAAS_DB_USER:dopaas_uci}
       password: ${UCI_DOPAAS_DB_PASSWD:123456}
       connectionTimeout: 30000

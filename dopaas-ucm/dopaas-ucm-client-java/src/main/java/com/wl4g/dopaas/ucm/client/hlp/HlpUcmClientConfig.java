@@ -31,7 +31,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.dopaas.common.bean.ucm.model.AbstractConfigInfo.ConfigProfile;
+import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ConfigProfile;
 import com.wl4g.dopaas.common.utils.InetHolder;
 import com.wl4g.dopaas.common.utils.InetHolder.HostInfo;
 import com.wl4g.dopaas.common.utils.InetHolder.InetProperties;

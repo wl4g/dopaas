@@ -44,7 +44,7 @@ import com.wl4g.dopaas.common.bean.ucm.model.ReportChangedRequest;
 import com.wl4g.dopaas.common.bean.ucm.model.ReportChangedRequest.ChangedRecord;
 import com.wl4g.dopaas.ucm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.ucm.client.internal.AbstractRefreshWatcher;
-import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
 import com.wl4g.infra.common.reflect.ParameterizedTypeReference;
 import com.wl4g.infra.common.remoting.ClientHttpRequestInterceptor;
 import com.wl4g.infra.common.remoting.ClientHttpResponse;
@@ -84,7 +84,7 @@ public class HttpLongPollingRefreshWatcher extends AbstractRefreshWatcher<HlpUcm
      */
     private RestClient http;
 
-    public HttpLongPollingRefreshWatcher(HlpUcmClientConfig config, ChangeRecorder recorder, ConfigEventListener... listeners) {
+    public HttpLongPollingRefreshWatcher(HlpUcmClientConfig config, ChangedRecorder recorder, ConfigEventListener... listeners) {
         super(new RunnerProperties(StartupMode.ASYNC, 1), config, recorder, listeners);
         this.http = initNetworkClient(config);
     }

@@ -26,8 +26,8 @@ import java.util.function.Function;
 import com.wl4g.infra.common.log.SmartLogger;
 import com.wl4g.dopaas.ucm.client.internal.AbstractRefreshWatcher;
 import com.wl4g.dopaas.ucm.client.internal.RefreshWatcher;
-import com.wl4g.dopaas.ucm.client.recorder.ReleaseConfigSourceWrapper;
-import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ReleaseContent;
+import com.wl4g.dopaas.ucm.client.recorder.ReleasedWrapper;
+import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ConfigSource;
 import com.wl4g.shell.common.annotation.ShellMethod;
 import com.wl4g.shell.common.annotation.ShellOption;
 
@@ -63,17 +63,17 @@ public class UcmManagementConsole {
         log.info("Exporting configuration soruce... format: {}", format);
 
         // Gets current used configuration.
-        ReleaseConfigSourceWrapper release = getRuntimeUseConfiguration();
+        ReleasedWrapper release = getRuntimeUseConfiguration();
 
         switch (format.toUpperCase()) {
         case "JSON":
             printConfigSources(release, s -> toJSONString(s));
             break;
         case "XML":
-            printConfigSources(release, s -> toXml(s, "UTF-8", ReleaseContent.class));
+            printConfigSources(release, s -> toXml(s, "UTF-8", ConfigSource.class));
             break;
         default:
-            printConfigSources(release, s -> s.getSourceContent());
+            printConfigSources(release, s -> s.getText());
             break;
         }
 
@@ -84,8 +84,8 @@ public class UcmManagementConsole {
      * 
      * @return
      */
-    private ReleaseConfigSourceWrapper getRuntimeUseConfiguration() {
-        return ((AbstractRefreshWatcher<?>) watcher).getRecorder().currentRelease();
+    private ReleasedWrapper getRuntimeUseConfiguration() {
+        return ((AbstractRefreshWatcher<?>) watcher).getRecorder().current();
     }
 
     /**
@@ -94,8 +94,8 @@ public class UcmManagementConsole {
      * @param release
      * @param func
      */
-    private void printConfigSources(ReleaseConfigSourceWrapper release, Function<ReleaseContent, String> func) {
-        for (ReleaseContent source : release.getRelease().getReleases()) {
+    private void printConfigSources(ReleasedWrapper release, Function<ConfigSource, String> func) {
+        for (ConfigSource source : release.getRelease().getSources()) {
             out.println("--- ".concat(source.getProfile().getName()).concat(".").concat(source.getProfile().getType()).concat(
                     " ---"));
             out.println(func.apply(source));

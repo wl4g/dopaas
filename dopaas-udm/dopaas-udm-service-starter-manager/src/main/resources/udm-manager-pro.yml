@@ -26,7 +26,7 @@ spring:
         denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
         server-uri: ${DOPAAS_SCHEMA:https}://iam.${DOPAAS_ZONE:wl4g.com}/iam-web
-        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
+        unauthorized-uri: ${spring.iam.client.server-uri}/view/403.html
         success-uri: ${DOPAAS_SCHEMA:https}://dopaas.${DOPAAS_ZONE:wl4g.com}/#/home/overview
 
 doc:

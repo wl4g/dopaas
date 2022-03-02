@@ -26,13 +26,13 @@ import lombok.Setter;
 @Setter
 public class Trigger extends BaseBean implements Serializable {
 
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String name;
-	private Long appClusterId;
-	private Long taskId;
-	private Integer type;
-	private String cron;
-	private String sha;
+    private String name;
+    private Long appClusterId;
+    private Long taskId;
+    private Integer type;
+    private String cron;
+    private String sha;
 
 }

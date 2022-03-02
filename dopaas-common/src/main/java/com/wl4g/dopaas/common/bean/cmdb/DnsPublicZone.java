@@ -18,25 +18,25 @@ package com.wl4g.dopaas.common.bean.cmdb;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class DnsPublicZone extends BaseBean {
-	private static final long serialVersionUID = -3298424126317938674L;
+    private static final long serialVersionUID = -3298424126317938674L;
 
-	private String zone;
+    private String zone;
 
-	private String dnsKind;
+    private String dnsKind;
 
-	public String getZone() {
-		return zone;
-	}
+    public String getZone() {
+        return zone;
+    }
 
-	public void setZone(String zone) {
-		this.zone = zone == null ? null : zone.trim();
-	}
+    public void setZone(String zone) {
+        this.zone = zone == null ? null : zone.trim();
+    }
 
-	public String getDnsKind() {
-		return dnsKind;
-	}
+    public String getDnsKind() {
+        return dnsKind;
+    }
 
-	public void setDnsKind(String dnsKind) {
-		this.dnsKind = dnsKind == null ? null : dnsKind.trim();
-	}
+    public void setDnsKind(String dnsKind) {
+        this.dnsKind = dnsKind == null ? null : dnsKind.trim();
+    }
 }

@@ -18,16 +18,16 @@ spring:
           connect-timeout: 10000
           max-attempts: 10
           # Redis server nodes, support standalone mode single node and cluster mode multiple nodes, separated by commas.
-          nodes: ${UCI_DOPAAS_REDIS_NODES:redis.uci.wl4g.debug:6379,redis.uci.wl4g.debug:6380,redis.uci.wl4g.debug:6381,redis.uci.wl4g.debug:7379,redis.uci.wl4g.debug:7380,redis.uci.wl4g.debug:7381}
+          nodes: ${UCI_DOPAAS_REDIS_NODES:redis.uci.dopaas.dev:6379,redis.uci.dopaas.dev:6380,redis.uci.dopaas.dev:6381,redis.uci.dopaas.dev:7379,redis.uci.dopaas.dev:7380,redis.uci.dopaas.dev:7381}
     iam:
       cors:
         rules:
           '[/**]':
             allows-origins:
-              #- http://${DOPAAS_ZONE:wl4g.debug}
-              #- http://${DOPAAS_ZONE:wl4g.debug:${server.port}}
-              #- http://*.${DOPAAS_ZONE:wl4g.debug}
-              #- http://*.${DOPAAS_ZONE:wl4g.debug:${server.port}}
+              #- http://${DOPAAS_ZONE:wl4g.dev}
+              #- http://${DOPAAS_ZONE:wl4g.dev:${server.port}}
+              #- http://*.${DOPAAS_ZONE:wl4g.dev}
+              #- http://*.${DOPAAS_ZONE:wl4g.dev:${server.port}}
               #- http://localhost:8080
               #- http://localhost:18080
               #- http://127.0.0.1:8080
@@ -38,10 +38,10 @@ spring:
         allowIpRange: ${DOPAAS_IAM_ACL_ALLOW:127.0.0.1}
         denyIpRange: ${DOPAAS_IAM_ACL_DENY}
       client:
-        server-uri: http://wl4g.debug:18080/iam-web
-        unauthorized-uri: ${spring.xcloud.iam.client.server-uri}/view/403.html
-        success-uri: http://wl4g.debug/#/home/overview
+        server-uri: http://wl4g.dev:18080/iam-web
+        unauthorized-uri: ${spring.iam.client.server-uri}/view/403.html
+        success-uri: http://wl4g.dev/#/home/overview
     dopaas.uci:
       testing-report:
         upload-path: /Users/vjay/Downloads/myupload
-        download-url: http://wl4g.debug:17020/ci-server/fs/download
+        download-url: http://wl4g.dev:17020/ci-server/fs/download

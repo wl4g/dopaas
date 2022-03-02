@@ -23,15 +23,18 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import com.google.common.eventbus.Subscribe;
 import com.google.common.io.Resources;
 import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo;
-import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ReleaseContent;
+import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ConfigProfile;
+import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ConfigSource;
 import com.wl4g.dopaas.common.bean.ucm.model.ReportChangedRequest.ChangedRecord;
 import com.wl4g.dopaas.ucm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.ucm.client.internal.AbstractRefreshWatcher;
-import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
-import com.wl4g.dopaas.ucm.client.recorder.ReleaseConfigSourceWrapper;
+import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.ReleasedWrapper;
 import com.wl4g.infra.common.annotation.Reserved;
 import com.wl4g.infra.common.io.FileEventWatcher;
 import com.wl4g.infra.common.io.FileEventWatcher.FileChangedEvent;
@@ -50,7 +53,7 @@ public class ConfigmapRefreshWatcher extends AbstractRefreshWatcher<ConfigmapUcm
 
     private FileEventWatcher watcher;
 
-    public ConfigmapRefreshWatcher(ConfigmapUcmClientConfig config, ChangeRecorder recorder, ConfigEventListener... listeners) {
+    public ConfigmapRefreshWatcher(ConfigmapUcmClientConfig config, ChangedRecorder recorder, ConfigEventListener... listeners) {
         super(new RunnerProperties(StartupMode.ASYNC), config, recorder, listeners);
     }
 
@@ -78,21 +81,20 @@ public class ConfigmapRefreshWatcher extends AbstractRefreshWatcher<ConfigmapUcm
 
     class FileChangedEventListener {
         @Subscribe
-        public void onChangedConfiguration(FileChangedEvent event) {
+        public void onChanged(FileChangedEvent event) {
             log.debug("changed: {} -> {}", event.getEventType(), event.getSource());
-
             try {
+                String filename = event.getSource().getFileName().toString();
+                String filetype = StringUtils.getFilenameExtension(filename);
                 String changedText = Resources.toString(event.getSource().toUri().toURL(), UTF_8);
 
                 ReleaseConfigInfo release = new ReleaseConfigInfo();
-                ReleaseContent content = new ReleaseContent();
-                content.setSourceContent(changedText);
-                release.getReleases().add(content);
+                release.getSources().add(new ConfigSource(new ConfigProfile(filetype, filename), changedText));
 
                 // TODO
-                getPublisher().publishRefreshEvent(new ReleaseConfigSourceWrapper(release, null));
+                getPublisher().publishRefreshEvent(new ReleasedWrapper(release, null));
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Failed to process changed configuration.", e);
             }
         }
     }

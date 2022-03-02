@@ -24,7 +24,7 @@ import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.dopaas.ucm.client.event.RefreshConfigEvent.RefreshContext;
 import com.wl4g.dopaas.ucm.client.internal.AbstractRefreshWatcher;
 import com.wl4g.dopaas.ucm.client.internal.RefreshWatcher;
-import com.wl4g.dopaas.ucm.client.recorder.ReleaseConfigSourceWrapper;
+import com.wl4g.dopaas.ucm.client.recorder.ReleasedWrapper;
 
 /**
  * {@link UcmEventPublisher}
@@ -51,7 +51,7 @@ public class UcmEventPublisher {
      * 
      * @param release
      */
-    public void publishRefreshEvent(ReleaseConfigSourceWrapper release) {
+    public void publishRefreshEvent(ReleasedWrapper release) {
         bus.post(new RefreshConfigEvent(new RefreshContext(release, watcher.getRecorder())));
     }
 

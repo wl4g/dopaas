@@ -74,7 +74,7 @@ public class ReportingConfigListener implements ConfigEventListener {
      * DO retrievable execution reporting
      */
     protected void handleRetrievableReporting() {
-        if (!watcher.getRecorder().getChangedAll().isEmpty()) {
+        if (!watcher.getRecorder().getAll().isEmpty()) {
             log.info("UCM retrievable reporting ...");
             try {
                 newReportingRetryer().call(handler);
@@ -124,7 +124,7 @@ public class ReportingConfigListener implements ConfigEventListener {
     class ConfigReportingHandler implements Callable<Boolean> {
         @Override
         public Boolean call() throws Exception {
-            Collection<ChangedRecord> records = watcher.getRecorder().getChangedAll();
+            Collection<ChangedRecord> records = watcher.getRecorder().getAll();
             boolean result = watcher.doReporting(records);
             if (result) { // Success and cleanup
                 records = watcher.getRecorder().pollAll();

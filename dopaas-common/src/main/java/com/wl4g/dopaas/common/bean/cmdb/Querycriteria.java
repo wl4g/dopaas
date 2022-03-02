@@ -16,22 +16,22 @@
 package com.wl4g.dopaas.common.bean.cmdb;
 
 public class Querycriteria {
-	private boolean enable;
-	private String value;
+    private boolean enable;
+    private String value;
 
-	public boolean isEnable() {
-		return enable;
-	}
+    public boolean isEnable() {
+        return enable;
+    }
 
-	public void setEnable(boolean enable) {
-		this.enable = enable;
-	}
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

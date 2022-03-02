@@ -18,36 +18,36 @@ package com.wl4g.dopaas.common.bean.cmdb;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class DnsPrivateBlacklist extends BaseBean {
-	private static final long serialVersionUID = -3298424126317938674L;
+    private static final long serialVersionUID = -3298424126317938674L;
 
-	private String expression;
+    private String expression;
 
-	private String type;
+    private String type;
 
-	private Integer enable;
+    private Integer enable;
 
-	public String getExpression() {
-		return expression;
-	}
+    public String getExpression() {
+        return expression;
+    }
 
-	public void setExpression(String expression) {
-		this.expression = expression;
-	}
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type == null ? null : type.trim();
-	}
+    public void setType(String type) {
+        this.type = type == null ? null : type.trim();
+    }
 
-	public Integer getEnable() {
-		return enable;
-	}
+    public Integer getEnable() {
+        return enable;
+    }
 
-	public void setEnable(Integer enable) {
-		this.enable = enable;
-	}
+    public void setEnable(Integer enable) {
+        this.enable = enable;
+    }
 
 }

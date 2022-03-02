@@ -17,7 +17,7 @@ package com.wl4g.dopaas.ucm.client.configmap;
 
 import com.wl4g.dopaas.ucm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.ucm.client.internal.AbstractUcmClient;
-import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
 import com.wl4g.infra.common.annotation.Reserved;
 
 /**
@@ -30,7 +30,7 @@ import com.wl4g.infra.common.annotation.Reserved;
 @Reserved
 public class ConfigmapUcmClient extends AbstractUcmClient {
 
-    public ConfigmapUcmClient(ConfigmapUcmClientConfig config, ChangeRecorder repository,
+    public ConfigmapUcmClient(ConfigmapUcmClientConfig config, ChangedRecorder repository,
             ConfigEventListener... listeners) {
         super(new ConfigmapRefreshWatcher(config, repository, listeners));
     } 

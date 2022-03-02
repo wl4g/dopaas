@@ -33,12 +33,12 @@ import java.util.List;
 @Getter
 @Setter
 public class OrchestrationHistory extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private String runId;
-	private Integer status;
-	private String info;
-	private Long costTime;
-	private List<PipelineHistory> pipeHistories;
+    private String runId;
+    private Integer status;
+    private String info;
+    private Long costTime;
+    private List<PipelineHistory> pipeHistories;
 
 }

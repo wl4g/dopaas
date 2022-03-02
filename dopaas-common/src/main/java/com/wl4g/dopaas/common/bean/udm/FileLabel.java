@@ -18,24 +18,24 @@ package com.wl4g.dopaas.common.bean.udm;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class FileLabel extends BaseBean {
-	private static final long serialVersionUID = -5720902148220736503L;
+    private static final long serialVersionUID = -5720902148220736503L;
 
-	private Long labelId;
-	private Long fileId;
+    private Long labelId;
+    private Long fileId;
 
-	public Long getLabelId() {
-		return labelId;
-	}
+    public Long getLabelId() {
+        return labelId;
+    }
 
-	public void setLabelId(Long labelId) {
-		this.labelId = labelId;
-	}
+    public void setLabelId(Long labelId) {
+        this.labelId = labelId;
+    }
 
-	public Long getFileId() {
-		return fileId;
-	}
+    public Long getFileId() {
+        return fileId;
+    }
 
-	public void setFileId(Long fileId) {
-		this.fileId = fileId;
-	}
+    public void setFileId(Long fileId) {
+        this.fileId = fileId;
+    }
 }

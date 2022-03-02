@@ -21,55 +21,55 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class Host extends BaseBean {
 
-	private static final long serialVersionUID = -7546448616357790576L;
+    private static final long serialVersionUID = -7546448616357790576L;
 
-	private String name;
+    private String name;
 
-	private String hostname;
+    private String hostname;
 
-	private Long idcId;
+    private Long idcId;
 
-	private Integer status;
+    private Integer status;
 
-	private List<Long> sshIds;
+    private List<Long> sshIds;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getHostname() {
-		return hostname;
-	}
+    public String getHostname() {
+        return hostname;
+    }
 
-	public void setHostname(String hostname) {
-		this.hostname = hostname == null ? null : hostname.trim();
-	}
+    public void setHostname(String hostname) {
+        this.hostname = hostname == null ? null : hostname.trim();
+    }
 
-	public Long getIdcId() {
-		return idcId;
-	}
+    public Long getIdcId() {
+        return idcId;
+    }
 
-	public void setIdcId(Long idcId) {
-		this.idcId = idcId;
-	}
+    public void setIdcId(Long idcId) {
+        this.idcId = idcId;
+    }
 
-	public Integer getStatus() {
-		return status;
-	}
+    public Integer getStatus() {
+        return status;
+    }
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
-	public List<Long> getSshIds() {
-		return sshIds;
-	}
+    public List<Long> getSshIds() {
+        return sshIds;
+    }
 
-	public void setSshIds(List<Long> sshIds) {
-		this.sshIds = sshIds;
-	}
+    public void setSshIds(List<Long> sshIds) {
+        this.sshIds = sshIds;
+    }
 }

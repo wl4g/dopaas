@@ -14,40 +14,37 @@ spring:
   profiles:
     include: common,support,util,base
     active: dev
-  xcloud:
-    component:
-      core.web:
-        embedded-webapps:
-          enabled: true # Default false
-          base-uri: /view
-          webapp-location: classpath*:/default-webapps
-      support:
-        cli.enabled: true
-    iam: # IAM client configuration.
-      cors:
-        enabled: true # Default: true
-        rules:
-          '[/**]':
-            allows-methods: [GET,HEAD,OPTIONS,POST]
-            allows-headers: [X-Iam-*]
-            allow-credentials: true
-              #allows-origins:
-            #- '*'
-      xsrf:
-        enabled: true
-      replay:
-        enabled: true
-      xss:
-        enabled: true # Default: true
-      client: # IAM client configuration.
-        filter-chain:
-          '[/public/**]': anon # Public rule release
-          '[/view/**]': anon
-          '[/external/**]': anon
-        cipher:
-          enable-data-cipher: true # Default by true
-        session:
-          enable-access-token-validity: true # Default by true
+  infra:
+    core.web:
+      embedded-webapps:
+        enabled: true # Default false
+        base-uri: /view
+        webapp-location: classpath*:/default-webapps
+    support:
+      cli.enabled: true
+  iam: # IAM client configuration.
+    cors:
+      enabled: true # Default: true
+      rules:
+        '[/**]':
+          allows-methods: [GET,HEAD,OPTIONS,POST]
+          allows-headers: [X-Iam-*]
+          allow-credentials: true
+          #allows-origins:
+          #- '*'
+    xsrf:
+      enabled: true
+    replay:
+      enabled: true
+    xss:
+      enabled: true # Default: true
+    client: # IAM client configuration.
+      filter-chain:
+        '[/public/**]': anon # Public rule release
+      cipher:
+        enable-data-cipher: true # Default by true
+      session:
+        enable-access-token-validity: true # Default by true
   servlet:
     http:
       multipart:

@@ -25,26 +25,26 @@ import java.util.List;
 @Getter
 @Setter
 public class PipelineHistory extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Long pipeId;
-	private String providerKind;
-	private Integer status;
-	private String shaLocal;
-	private Long refId;
-	private Long costTime;
-	private String trackType;
-	private String trackId;
-	private String annex;
-	private Integer orchestrationType;
-	private Long orchestrationId;
+    private Long pipeId;
+    private String providerKind;
+    private Integer status;
+    private String shaLocal;
+    private Long refId;
+    private Long costTime;
+    private String trackType;
+    private String trackId;
+    private String annex;
+    private Integer orchestrationType;
+    private Long orchestrationId;
 
-	// other
-	private String pipeName;
-	private String clusterName;
-	private String createByName;
-	private String environment;
-	private List<PipelineHistoryInstance> pipelineHistoryInstances;
-	private Long clusterId;
+    // other
+    private String pipeName;
+    private String clusterName;
+    private String createByName;
+    private String environment;
+    private List<PipelineHistoryInstance> pipelineHistoryInstances;
+    private Long clusterId;
 
 }

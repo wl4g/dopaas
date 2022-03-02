@@ -25,8 +25,8 @@ import com.wl4g.dopaas.ucm.client.console.UcmManagementConsole;
 import com.wl4g.dopaas.ucm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.ucm.client.hlp.HlpUcmClient;
 import com.wl4g.dopaas.ucm.client.hlp.HlpUcmClientConfig;
-import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
-import com.wl4g.dopaas.ucm.client.recorder.InMemoryChangeRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.InMemoryChangedRecorder;
 import com.wl4g.dopaas.ucm.client.rpc.RpcUcmClient;
 import com.wl4g.dopaas.ucm.client.rpc.RpcUcmClientConfig;
 import com.wl4g.dopaas.ucm.common.exception.UcmException;
@@ -48,8 +48,8 @@ public class UcmClientBuilder {
     /** Configuration refreshing {@link ConfigEventListener} */
     private ConfigEventListener[] listeners;
 
-    /** {@link ChangeRecorder} */
-    private ChangeRecorder recorder = new InMemoryChangeRecorder();
+    /** {@link ChangedRecorder} */
+    private ChangedRecorder recorder = new InMemoryChangedRecorder();
 
     /** Enable management console for {@link UcmManagementConsole} */
     private boolean enableManagementConsole = false;
@@ -95,12 +95,12 @@ public class UcmClientBuilder {
     }
 
     /**
-     * Sets use refresh configuration source of {@link InMemoryChangeRecorder}
+     * Sets use refresh configuration source of {@link InMemoryChangedRecorder}
      * 
      * @return
      */
     public UcmClientBuilder useInMemoryConfigStore() {
-        this.recorder = new InMemoryChangeRecorder();
+        this.recorder = new InMemoryChangedRecorder();
         return this;
     }
 

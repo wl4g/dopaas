@@ -79,11 +79,6 @@ class DoPaaSCommonBootstrappingConfigurer implements IBootstrappingConfigurer {
 		configName.append(",cmdb-facade-etc")
 		configName.append(",cmdb-manager")
 		configName.append(",cmdb-manager-etc")
-		// ESM
-		//configName.append(",esm-facade")
-		//configName.append(",esm-facade-etc")
-		//configName.append(",esm-manager")
-		//configName.append(",esm-manager-etc")
 		// UCM
 		configName.append(",ucm-facade")
 		configName.append(",ucm-facade-etc")

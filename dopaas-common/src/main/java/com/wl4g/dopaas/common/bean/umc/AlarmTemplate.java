@@ -30,108 +30,108 @@ import static com.wl4g.infra.common.serialize.JacksonUtils.parseJSON;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class AlarmTemplate extends BaseBean implements Serializable {
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String name;
+    private String name;
 
-	private Integer metricId;
+    private Integer metricId;
 
-	private String metric;
+    private String metric;
 
-	private String classify;
+    private String classify;
 
-	private String tags;
+    private String tags;
 
-	private Integer notifyLevel;
+    private Integer notifyLevel;
 
-	private List<AlarmRule> rules = new ArrayList<>();
+    private List<AlarmRule> rules = new ArrayList<>();
 
-	private List<Map<String, String>> tagMap;
+    private List<Map<String, String>> tagMap;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getMetric() {
-		return metric;
-	}
+    public String getMetric() {
+        return metric;
+    }
 
-	public void setMetric(String metric) {
-		this.metric = metric == null ? null : metric.trim();
-	}
+    public void setMetric(String metric) {
+        this.metric = metric == null ? null : metric.trim();
+    }
 
-	public String getClassify() {
-		return classify;
-	}
+    public String getClassify() {
+        return classify;
+    }
 
-	public void setClassify(String classify) {
-		this.classify = classify == null ? null : classify.trim();
-	}
+    public void setClassify(String classify) {
+        this.classify = classify == null ? null : classify.trim();
+    }
 
-	public String getTags() {
-		return tags;
-	}
+    public String getTags() {
+        return tags;
+    }
 
-	public void setTags(String tags) {
-		this.tags = tags == null ? null : tags.trim();
-	}
+    public void setTags(String tags) {
+        this.tags = tags == null ? null : tags.trim();
+    }
 
-	public Integer getNotifyLevel() {
-		return notifyLevel;
-	}
+    public Integer getNotifyLevel() {
+        return notifyLevel;
+    }
 
-	public void setNotifyLevel(Integer notifyLevel) {
-		this.notifyLevel = notifyLevel;
-	}
+    public void setNotifyLevel(Integer notifyLevel) {
+        this.notifyLevel = notifyLevel;
+    }
 
-	public List<AlarmRule> getRules() {
-		return rules;
-	}
+    public List<AlarmRule> getRules() {
+        return rules;
+    }
 
-	public void setRules(List<AlarmRule> rules) {
-		this.rules = rules;
-	}
+    public void setRules(List<AlarmRule> rules) {
+        this.rules = rules;
+    }
 
-	public List<Map<String, String>> getTagMap() {
-		return tagMap;
-	}
+    public List<Map<String, String>> getTagMap() {
+        return tagMap;
+    }
 
-	public void setTagMap(List<Map<String, String>> tagMap) {
-		if (isEmpty(tagMap) && StringUtils.isNotBlank(getTags())) {
-			tagMap = parseJSON(getTags(), new TypeReference<List<Map<String, String>>>() {
-			});
-		}
-		this.tagMap = tagMap;
-	}
+    public void setTagMap(List<Map<String, String>> tagMap) {
+        if (isEmpty(tagMap) && StringUtils.isNotBlank(getTags())) {
+            tagMap = parseJSON(getTags(), new TypeReference<List<Map<String, String>>>() {
+            });
+        }
+        this.tagMap = tagMap;
+    }
 
-	public Integer getMetricId() {
-		return metricId;
-	}
+    public Integer getMetricId() {
+        return metricId;
+    }
 
-	public void setMetricId(Integer metricId) {
-		this.metricId = metricId;
-	}
+    public void setMetricId(Integer metricId) {
+        this.metricId = metricId;
+    }
 
-	@SuppressWarnings("unchecked")
-	public synchronized Map<String, String> getTagsMap() {
-		if (isEmpty(tagMap) && StringUtils.isNotBlank(getTags())) {
-			tagMap = parseJSON(getTags(), List.class);
-		}
+    @SuppressWarnings("unchecked")
+    public synchronized Map<String, String> getTagsMap() {
+        if (isEmpty(tagMap) && StringUtils.isNotBlank(getTags())) {
+            tagMap = parseJSON(getTags(), List.class);
+        }
 
-		Map<String, String> map = new HashMap<String, String>();
-		if (isEmpty(tagMap)) {
-			return map;
-		}
-		for (Map<String, String> m : tagMap) {
-			if (m.get("name") != null && m.get("value") != null && StringUtils.isNotBlank(m.get("name"))
-					&& StringUtils.isNotBlank(m.get("value"))) {
-				map.put(m.get("name"), m.get("value"));
-			}
-		}
-		return map;
-	}
+        Map<String, String> map = new HashMap<String, String>();
+        if (isEmpty(tagMap)) {
+            return map;
+        }
+        for (Map<String, String> m : tagMap) {
+            if (m.get("name") != null && m.get("value") != null && StringUtils.isNotBlank(m.get("name"))
+                    && StringUtils.isNotBlank(m.get("value"))) {
+                map.put(m.get("name"), m.get("value"));
+            }
+        }
+        return map;
+    }
 }

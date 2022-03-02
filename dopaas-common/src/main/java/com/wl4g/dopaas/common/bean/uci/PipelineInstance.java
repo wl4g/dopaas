@@ -18,24 +18,24 @@ package com.wl4g.dopaas.common.bean.uci;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class PipelineInstance extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Long deployId;
-	private Long instanceId;
+    private Long deployId;
+    private Long instanceId;
 
-	public Long getDeployId() {
-		return deployId;
-	}
+    public Long getDeployId() {
+        return deployId;
+    }
 
-	public void setDeployId(Long deployId) {
-		this.deployId = deployId;
-	}
+    public void setDeployId(Long deployId) {
+        this.deployId = deployId;
+    }
 
-	public Long getInstanceId() {
-		return instanceId;
-	}
+    public Long getInstanceId() {
+        return instanceId;
+    }
 
-	public void setInstanceId(Long instanceId) {
-		this.instanceId = instanceId;
-	}
+    public void setInstanceId(Long instanceId) {
+        this.instanceId = instanceId;
+    }
 }

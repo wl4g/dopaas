@@ -23,14 +23,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ClusterExtension extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Long clusterId;
-	private String defaultEnv;
-	private String defaultBranch;
+    private Long clusterId;
+    private String defaultEnv;
+    private String defaultBranch;
 
-	// --- Temporary. ---
+    // --- Temporary. ---
 
-	private String clusterName;
+    private String clusterName;
 
 }

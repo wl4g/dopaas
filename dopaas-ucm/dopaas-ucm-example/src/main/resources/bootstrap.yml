@@ -17,10 +17,9 @@ spring: # Base configuration.
   profiles:
     include: common,util
     active: dev
-  # Devops configuration.
-  xcloud: 
+  dopaas:  
     ucm.client: # UCM client configuration.
-      base-uri: http://127.0.0.1:17030/ucm-server
+      base-uri: http://127.0.0.1:17090/ucm-server
       #connect-timeout: 5000
       #max-response-size: 65535
       #fetch-read-timeout: 5000
@@ -34,18 +33,3 @@ spring: # Base configuration.
         #delay: 1000
         #max-delay: 5000
         #threshold-fastfail: true
-
-# #### Server configuration. ####
-server:
-  servlet:
-    contextPath: /${spring.application.name}
-  #address: 0.0.0.0
-  port: 14044
-  sessionTimeout: 30
-  tomcat:
-    uri-encoding: UTF-8
-    basedir: /tmp/${spring.application.name}
-    access-log-enabled: false
-    accesslog.directory: logs/
-    backgroundProcessorDelay: 30 #seconds
-    max-thread: 50 # Max worker threads(default:200).

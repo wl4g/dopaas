@@ -19,33 +19,33 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class CustomDataSourceProperties extends BaseBean {
 
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private Long dataSourceId;
-	private String key;
-	private String value;
+    private Long dataSourceId;
+    private String key;
+    private String value;
 
-	public Long getDataSourceId() {
-		return dataSourceId;
-	}
+    public Long getDataSourceId() {
+        return dataSourceId;
+    }
 
-	public void setDataSourceId(Long dataSourceId) {
-		this.dataSourceId = dataSourceId;
-	}
+    public void setDataSourceId(Long dataSourceId) {
+        this.dataSourceId = dataSourceId;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key == null ? null : key.trim();
-	}
+    public void setKey(String key) {
+        this.key = key == null ? null : key.trim();
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value == null ? null : value.trim();
-	}
+    public void setValue(String value) {
+        this.value = value == null ? null : value.trim();
+    }
 }

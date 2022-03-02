@@ -13,10 +13,9 @@
 spring:
   banner:
     location: classpath:banner.txt
-  xcloud:
-    component:
-      data:
-        mybatis:
-          configLocation: mybatis/mybatis-config.xml
-          mapperLocations: classpath:mybatis/**/*Mapper.xml
-          typeAliasesPackage: com.wl4g.dopaas.common.bean.*.*
+  infra:
+    data:
+      mybatis:
+        configLocation: mybatis/mybatis-config.xml
+        mapperLocations: classpath:mybatis/**/*Mapper.xml
+        typeAliasesPackage: com.wl4g.dopaas.common.bean.*.*

@@ -22,6 +22,8 @@ import java.io.IOException;
 
 import com.wl4g.infra.common.log.SmartLogger;
 
+import lombok.Getter;
+
 /**
  * {@link AbstractUcmClient}
  *
@@ -29,6 +31,7 @@ import com.wl4g.infra.common.log.SmartLogger;
  * @version v1.0 2020-08-10
  * @since
  */
+@Getter
 public abstract class AbstractUcmClient implements UcmClient {
 
     protected final SmartLogger log = getLogger(getClass());

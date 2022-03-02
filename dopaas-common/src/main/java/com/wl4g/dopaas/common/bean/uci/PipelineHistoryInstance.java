@@ -20,66 +20,66 @@ import java.util.Date;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class PipelineHistoryInstance extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Long pipeHistoryId;
+    private Long pipeHistoryId;
 
-	private Long instanceId;
+    private Long instanceId;
 
-	private Integer status;
+    private Integer status;
 
-	private Date createDate;
+    private Date createDate;
 
-	private Long costTime;
+    private Long costTime;
 
-	// other
-	private String instanceName;
+    // other
+    private String instanceName;
 
-	public Long getPipeHistoryId() {
-		return pipeHistoryId;
-	}
+    public Long getPipeHistoryId() {
+        return pipeHistoryId;
+    }
 
-	public void setPipeHistoryId(Long pipeHistoryId) {
-		this.pipeHistoryId = pipeHistoryId;
-	}
+    public void setPipeHistoryId(Long pipeHistoryId) {
+        this.pipeHistoryId = pipeHistoryId;
+    }
 
-	public Long getInstanceId() {
-		return instanceId;
-	}
+    public Long getInstanceId() {
+        return instanceId;
+    }
 
-	public void setInstanceId(Long instanceId) {
-		this.instanceId = instanceId;
-	}
+    public void setInstanceId(Long instanceId) {
+        this.instanceId = instanceId;
+    }
 
-	public Integer getStatus() {
-		return status;
-	}
+    public Integer getStatus() {
+        return status;
+    }
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
-	public Date getCreateDate() {
-		return createDate;
-	}
+    public Date getCreateDate() {
+        return createDate;
+    }
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
-	public Long getCostTime() {
-		return costTime;
-	}
+    public Long getCostTime() {
+        return costTime;
+    }
 
-	public void setCostTime(Long costTime) {
-		this.costTime = costTime;
-	}
+    public void setCostTime(Long costTime) {
+        this.costTime = costTime;
+    }
 
-	public String getInstanceName() {
-		return instanceName;
-	}
+    public String getInstanceName() {
+        return instanceName;
+    }
 
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
 }

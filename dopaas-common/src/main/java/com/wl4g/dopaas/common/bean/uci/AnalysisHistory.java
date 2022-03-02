@@ -23,15 +23,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnalysisHistory extends BaseBean {
-	private static final long serialVersionUID = -7378346361141717320L;
+    private static final long serialVersionUID = -7378346361141717320L;
 
-	private Long projectId;
-	private String analyzerKind;
-	private String language;
-	private String assetVersion;
-	private Integer assetBytes;
-	private Integer assetAnalysisSize;
-	private Integer state;
-	private String bugCollectionFile;
+    private Long projectId;
+    private String analyzerKind;
+    private String language;
+    private String assetVersion;
+    private Integer assetBytes;
+    private Integer assetAnalysisSize;
+    private Integer state;
+    private String bugCollectionFile;
 
 }

@@ -20,65 +20,65 @@ import java.util.Date;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class DnsOperationLog extends BaseBean {
-	private static final long serialVersionUID = -3298424126317938674L;
+    private static final long serialVersionUID = -3298424126317938674L;
 
-	private Integer zoneType;
+    private Integer zoneType;
 
-	private String domain;
+    private String domain;
 
-	private Date operDate;
+    private Date operDate;
 
-	private String operBy;
+    private String operBy;
 
-	private String description;
+    private String description;
 
-	private String result;
+    private String result;
 
-	public Integer getZoneType() {
-		return zoneType;
-	}
+    public Integer getZoneType() {
+        return zoneType;
+    }
 
-	public void setZoneType(Integer zoneType) {
-		this.zoneType = zoneType;
-	}
+    public void setZoneType(Integer zoneType) {
+        this.zoneType = zoneType;
+    }
 
-	public String getDomain() {
-		return domain;
-	}
+    public String getDomain() {
+        return domain;
+    }
 
-	public void setDomain(String domain) {
-		this.domain = domain == null ? null : domain.trim();
-	}
+    public void setDomain(String domain) {
+        this.domain = domain == null ? null : domain.trim();
+    }
 
-	public Date getOperDate() {
-		return operDate;
-	}
+    public Date getOperDate() {
+        return operDate;
+    }
 
-	public void setOperDate(Date operDate) {
-		this.operDate = operDate;
-	}
+    public void setOperDate(Date operDate) {
+        this.operDate = operDate;
+    }
 
-	public String getOperBy() {
-		return operBy;
-	}
+    public String getOperBy() {
+        return operBy;
+    }
 
-	public void setOperBy(String operBy) {
-		this.operBy = operBy == null ? null : operBy.trim();
-	}
+    public void setOperBy(String operBy) {
+        this.operBy = operBy == null ? null : operBy.trim();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description == null ? null : description.trim();
-	}
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
+    }
 
-	public String getResult() {
-		return result;
-	}
+    public String getResult() {
+        return result;
+    }
 
-	public void setResult(String result) {
-		this.result = result == null ? null : result.trim();
-	}
+    public void setResult(String result) {
+        this.result = result == null ? null : result.trim();
+    }
 }

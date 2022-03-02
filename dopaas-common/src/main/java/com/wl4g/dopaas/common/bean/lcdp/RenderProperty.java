@@ -35,20 +35,20 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD, ElementType.METHOD })
 public @interface RenderProperty {
 
-	/**
-	 * Serialized property name. When it is empty, the JavaBean field name is
-	 * used by default.
-	 * 
-	 * @return
-	 */
-	String propertyName() default "";
+    /**
+     * Serialized property name. When it is empty, the JavaBean field name is
+     * used by default.
+     * 
+     * @return
+     */
+    String propertyName() default "";
 
-	/**
-	 * It is used to control whether to continue to reflect the structure of the
-	 * field recursively if the field traversed by reflection is of object type.
-	 * 
-	 * @return
-	 */
-	String describeForObjField() default "Yes";
+    /**
+     * It is used to control whether to continue to reflect the structure of the
+     * field recursively if the field traversed by reflection is of object type.
+     * 
+     * @return
+     */
+    String describeForObjField() default "Yes";
 
 }

@@ -23,90 +23,90 @@ import com.wl4g.dopaas.common.bean.cmdb.log.Prospector;
 
 public class Log {
 
-	@JsonProperty(value = "@timestamp")
-	private String timestamp;
+    @JsonProperty(value = "@timestamp")
+    private String timestamp;
 
-	private int offset;
+    private int offset;
 
-	private String message;
+    private String message;
 
-	private String source;
+    private String source;
 
-	private Beat beat;
+    private Beat beat;
 
-	private LogHost host;
+    private LogHost host;
 
-	private Prospector prospector;
+    private Prospector prospector;
 
-	private Input input;
+    private Input input;
 
-	public int getOffset() {
-		return offset;
-	}
+    public int getOffset() {
+        return offset;
+    }
 
-	public void setOffset(int offset) {
-		this.offset = offset;
-	}
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public String getSource() {
-		return source;
-	}
+    public String getSource() {
+        return source;
+    }
 
-	public void setSource(String source) {
-		this.source = source;
-	}
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-	public Beat getBeat() {
-		return beat;
-	}
+    public Beat getBeat() {
+        return beat;
+    }
 
-	public void setBeat(Beat beat) {
-		this.beat = beat;
-	}
+    public void setBeat(Beat beat) {
+        this.beat = beat;
+    }
 
-	public LogHost getHost() {
-		return host;
-	}
+    public LogHost getHost() {
+        return host;
+    }
 
-	public void setHost(LogHost host) {
-		this.host = host;
-	}
+    public void setHost(LogHost host) {
+        this.host = host;
+    }
 
-	public Prospector getProspector() {
-		return prospector;
-	}
+    public Prospector getProspector() {
+        return prospector;
+    }
 
-	public void setProspector(Prospector prospector) {
-		this.prospector = prospector;
-	}
+    public void setProspector(Prospector prospector) {
+        this.prospector = prospector;
+    }
 
-	public Input getInput() {
-		return input;
-	}
+    public Input getInput() {
+        return input;
+    }
 
-	public void setInput(Input input) {
-		this.input = input;
-	}
+    public void setInput(Input input) {
+        this.input = input;
+    }
 
-	public String getTimestamp() {
-		return timestamp;
-	}
+    public String getTimestamp() {
+        return timestamp;
+    }
 
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
-	}
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	@Override
-	public String toString() {
-		return "Log{" + "timestamp=" + timestamp + ", offset=" + offset + ", message='" + message + '\'' + ", source='" + source
-				+ '\'' + ", beat=" + beat.toString() + ", host=" + host + ", prospector=" + prospector + ", input=" + input + '}';
-	}
+    @Override
+    public String toString() {
+        return "Log{" + "timestamp=" + timestamp + ", offset=" + offset + ", message='" + message + '\'' + ", source='" + source
+                + '\'' + ", beat=" + beat.toString() + ", host=" + host + ", prospector=" + prospector + ", input=" + input + '}';
+    }
 }

@@ -9,7 +9,7 @@
 #
 ########## The default DNS records of all services in DoPaaS standalone mode. ##########
 
-#10.0.0.100    wl4g.debug
-#10.0.0.100    redis.standalone.wl4g.debug
-#10.0.0.100    rds.standalone.wl4g.debug
+#10.0.0.100    wl4g.dev
+#10.0.0.100    redis.standalone.wl4g.dev
+#10.0.0.100    rds.standalone.wl4g.dev
 #10.0.0.100    peer1 peer2 peer3 # Using for eureka/zookeeper.

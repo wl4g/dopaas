@@ -15,10 +15,12 @@
  */
 package com.wl4g.dopaas.ucm.client.config;
 
+import com.wl4g.dopaas.ucm.client.hlp.HlpUcmClientConfig;
 import com.wl4g.dopaas.ucm.client.internal.UcmClient;
 import com.wl4g.dopaas.ucm.client.internal.UcmClientBuilder;
 import com.wl4g.dopaas.ucm.client.locator.BootstrapUcmPropertySourceLocator;
 import com.wl4g.dopaas.ucm.client.refresh.SpringRefreshConfigEventListener;
+import com.wl4g.dopaas.ucm.common.UCMConstants;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,10 +39,10 @@ import org.springframework.context.annotation.Bean;
  */
 public class UcmBootstrapAutoConfiguration {
 
-    @ConfigurationProperties(prefix = "spring.cloud.devops.ucm.client")
     @Bean
-    public UcmClientProperties<?> ucmClientProperties() {
-        return new UcmClientProperties<>();
+    @ConfigurationProperties(prefix = UCMConstants.KEY_UCM_CLIENT)
+    public HlpUcmClientConfig hlpUcmClientConfig() {
+        return new HlpUcmClientConfig();
     }
 
     @Bean
@@ -49,13 +51,8 @@ public class UcmBootstrapAutoConfiguration {
     }
 
     @Bean
-    public UcmClient defaultUcmClient(UcmClientProperties<?> config, SpringRefreshConfigEventListener listener) {
-        UcmClient client = UcmClientBuilder.newBuilder()
-                .withConfiguration(config)
-                .enableManagementConsole()
-                .withListeners(listener)
-                .build();
-        return client;
+    public UcmClient defaultUcmClient(HlpUcmClientConfig config, SpringRefreshConfigEventListener listener) {
+        return UcmClientBuilder.newBuilder().withConfig(config).enableManagementConsole().withListeners(listener).build();
     }
 
     @Bean

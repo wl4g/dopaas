@@ -39,77 +39,77 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GenDataSource extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	@RenderProperty(propertyName = GEN_DB_NAME)
-	private String name;
+    @RenderProperty(propertyName = GEN_DB_NAME)
+    private String name;
 
-	/**
-	 * {@link com.wl4g.dopaas.lcdp.codegen.engine.converter.DbTypeConverter.DbType}
-	 */
-	@RenderProperty(propertyName = GEN_DB_TYPE)
-	private String type;
+    /**
+     * {@link com.wl4g.dopaas.lcdp.codegen.engine.converter.DbTypeConverter.DbType}
+     */
+    @RenderProperty(propertyName = GEN_DB_TYPE)
+    private String type;
 
-	@RenderProperty(propertyName = GEN_DB_HOST)
-	private String host;
+    @RenderProperty(propertyName = GEN_DB_HOST)
+    private String host;
 
-	@RenderProperty(propertyName = GEN_DB_PORT)
-	private String port;
+    @RenderProperty(propertyName = GEN_DB_PORT)
+    private String port;
 
-	@RenderProperty(propertyName = GEN_DB_DATABAES)
-	private String database;
+    @RenderProperty(propertyName = GEN_DB_DATABAES)
+    private String database;
 
-	@RenderProperty(propertyName = GEN_DB_USERNAME)
-	private String username;
+    @RenderProperty(propertyName = GEN_DB_USERNAME)
+    private String username;
 
-	@RenderProperty(propertyName = GEN_DB_PASSWORD)
-	private String password;
+    @RenderProperty(propertyName = GEN_DB_PASSWORD)
+    private String password;
 
-	@RenderProperty(propertyName = GEN_DB_VERSION)
-	private String dbversion;
+    @RenderProperty(propertyName = GEN_DB_VERSION)
+    private String dbversion;
 
-	public GenDataSource() {
-		super();
-	}
+    public GenDataSource() {
+        super();
+    }
 
-	public GenDataSource withName(String name) {
-		this.name = name;
-		return this;
-	}
+    public GenDataSource withName(String name) {
+        this.name = name;
+        return this;
+    }
 
-	public GenDataSource withType(String type) {
-		this.type = type;
-		return this;
-	}
+    public GenDataSource withType(String type) {
+        this.type = type;
+        return this;
+    }
 
-	public GenDataSource withHost(String host) {
-		this.host = host;
-		return this;
-	}
+    public GenDataSource withHost(String host) {
+        this.host = host;
+        return this;
+    }
 
-	public GenDataSource withPort(String port) {
-		this.port = port;
-		return this;
-	}
+    public GenDataSource withPort(String port) {
+        this.port = port;
+        return this;
+    }
 
-	public GenDataSource withDatabase(String database) {
-		this.database = database;
-		return this;
-	}
+    public GenDataSource withDatabase(String database) {
+        this.database = database;
+        return this;
+    }
 
-	public GenDataSource withUsername(String username) {
-		this.username = username;
-		return this;
-	}
+    public GenDataSource withUsername(String username) {
+        this.username = username;
+        return this;
+    }
 
-	public GenDataSource withPassword(String password) {
-		this.password = password;
-		return this;
-	}
+    public GenDataSource withPassword(String password) {
+        this.password = password;
+        return this;
+    }
 
-	public GenDataSource withDbversion(String dbversion) {
-		this.dbversion = dbversion;
-		return this;
-	}
+    public GenDataSource withDbversion(String dbversion) {
+        this.dbversion = dbversion;
+        return this;
+    }
 
 }

@@ -19,24 +19,24 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class DockerInstance extends BaseBean {
 
-	private static final long serialVersionUID = -7546448616357790576L;
+    private static final long serialVersionUID = -7546448616357790576L;
 
-	private Long dockerId;
-	private Long hostId;
+    private Long dockerId;
+    private Long hostId;
 
-	public Long getDockerId() {
-		return dockerId;
-	}
+    public Long getDockerId() {
+        return dockerId;
+    }
 
-	public void setDockerId(Long dockerId) {
-		this.dockerId = dockerId;
-	}
+    public void setDockerId(Long dockerId) {
+        this.dockerId = dockerId;
+    }
 
-	public Long getHostId() {
-		return hostId;
-	}
+    public Long getHostId() {
+        return hostId;
+    }
 
-	public void setHostId(Long hostId) {
-		this.hostId = hostId;
-	}
+    public void setHostId(Long hostId) {
+        this.hostId = hostId;
+    }
 }

@@ -17,7 +17,7 @@ package com.wl4g.dopaas.ucm.client.hlp;
 
 import com.wl4g.dopaas.ucm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.ucm.client.internal.AbstractUcmClient;
-import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
+import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
 
 /**
  * {@link HlpUcmClient}
@@ -28,7 +28,7 @@ import com.wl4g.dopaas.ucm.client.recorder.ChangeRecorder;
  */
 public class HlpUcmClient extends AbstractUcmClient {
 
-    public HlpUcmClient(HlpUcmClientConfig config, ChangeRecorder repository, ConfigEventListener... listeners) {
+    public HlpUcmClient(HlpUcmClientConfig config, ChangedRecorder repository, ConfigEventListener... listeners) {
         super(new HttpLongPollingRefreshWatcher(config, repository, listeners));
     }
 

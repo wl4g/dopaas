@@ -13,33 +13,32 @@ spring:
   profiles:
     include: common,support,util,base
     active: dev
-  xcloud:
-    iam: # IAM client configuration.
-      cors:
-        enabled: true # Default: true
-        rules:
-          '[/**]':
-            allows-methods: [GET,HEAD,OPTIONS,POST]
-            allows-headers: [X-Iam-*]
-            allow-credentials: true
-            #allows-origins:
-              #- '*'
-      xsrf:
-        enabled: true
-      replay:
-        enabled: true
-      xss:
-        enabled: true # Default: true
-      client: # IAM client configuration.
-        filter-chain:
-          '[/public/**]': anon # Public rule release
-        cipher:
-          enable-data-cipher: true # Default by true
-        session:
-          enable-access-token-validity: true # Default by true
-    dopaas.lcdp:
-        codegen:
-          #workspace: ${HOME}/.codegen-workspace
+  iam: # IAM client configuration.
+    cors:
+      enabled: true # Default: true
+      rules:
+        '[/**]':
+          allows-methods: [GET,HEAD,OPTIONS,POST]
+          allows-headers: [X-Iam-*]
+          allow-credentials: true
+          #allows-origins:
+            #- '*'
+    xsrf:
+      enabled: true
+    replay:
+      enabled: true
+    xss:
+      enabled: true # Default: true
+    client: # IAM client configuration.
+      filter-chain:
+        '[/public/**]': anon # Public rule release
+      cipher:
+        enable-data-cipher: true # Default by true
+      session:
+        enable-access-token-validity: true # Default by true
+  dopaas.lcdp:
+      codegen:
+        #workspace: ${HOME}/.codegen-workspace
 
 # Logging configuration.
 logging:

@@ -18,86 +18,86 @@ package com.wl4g.dopaas.common.bean.cmdb;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class DnsPrivateResolution extends BaseBean {
-	private static final long serialVersionUID = -3298424126317938674L;
+    private static final long serialVersionUID = -3298424126317938674L;
 
-	private Long domainId;
+    private Long domainId;
 
-	private String host;
+    private String host;
 
-	private String resolveType;
+    private String resolveType;
 
-	private String lineIsp;
+    private String lineIsp;
 
-	private String value;
+    private String value;
 
-	private Integer ttl;
+    private Integer ttl;
 
-	private Integer priority;
+    private Integer priority;
 
-	private String status;
+    private String status;
 
-	public Long getDomainId() {
-		return domainId;
-	}
+    public Long getDomainId() {
+        return domainId;
+    }
 
-	public void setDomainId(Long domainId) {
-		this.domainId = domainId;
-	}
+    public void setDomainId(Long domainId) {
+        this.domainId = domainId;
+    }
 
-	public String getHost() {
-		return host;
-	}
+    public String getHost() {
+        return host;
+    }
 
-	public void setHost(String host) {
-		this.host = host == null ? null : host.trim();
-	}
+    public void setHost(String host) {
+        this.host = host == null ? null : host.trim();
+    }
 
-	public String getResolveType() {
-		return resolveType;
-	}
+    public String getResolveType() {
+        return resolveType;
+    }
 
-	public void setResolveType(String resolveType) {
-		this.resolveType = resolveType == null ? null : resolveType.trim();
-	}
+    public void setResolveType(String resolveType) {
+        this.resolveType = resolveType == null ? null : resolveType.trim();
+    }
 
-	public String getLineIsp() {
-		return lineIsp;
-	}
+    public String getLineIsp() {
+        return lineIsp;
+    }
 
-	public void setLineIsp(String lineIsp) {
-		this.lineIsp = lineIsp == null ? null : lineIsp.trim();
-	}
+    public void setLineIsp(String lineIsp) {
+        this.lineIsp = lineIsp == null ? null : lineIsp.trim();
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value == null ? null : value.trim();
-	}
+    public void setValue(String value) {
+        this.value = value == null ? null : value.trim();
+    }
 
-	public Integer getTtl() {
-		return ttl;
-	}
+    public Integer getTtl() {
+        return ttl;
+    }
 
-	public void setTtl(Integer ttl) {
-		this.ttl = ttl;
-	}
+    public void setTtl(Integer ttl) {
+        this.ttl = ttl;
+    }
 
-	public Integer getPriority() {
-		return priority;
-	}
+    public Integer getPriority() {
+        return priority;
+    }
 
-	public void setPriority(Integer priority) {
-		this.priority = priority;
-	}
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status == null ? null : status.trim();
-	}
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
+    }
 
 }

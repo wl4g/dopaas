@@ -19,24 +19,24 @@ import com.wl4g.infra.core.bean.BaseBean;
 
 public class HostSsh extends BaseBean {
 
-	private static final long serialVersionUID = -7546448616357790576L;
+    private static final long serialVersionUID = -7546448616357790576L;
 
-	private Long hostId;
-	private Long sshId;
+    private Long hostId;
+    private Long sshId;
 
-	public Long getHostId() {
-		return hostId;
-	}
+    public Long getHostId() {
+        return hostId;
+    }
 
-	public void setHostId(Long hostId) {
-		this.hostId = hostId;
-	}
+    public void setHostId(Long hostId) {
+        this.hostId = hostId;
+    }
 
-	public Long getSshId() {
-		return sshId;
-	}
+    public Long getSshId() {
+        return sshId;
+    }
 
-	public void setSshId(Long sshId) {
-		this.sshId = sshId;
-	}
+    public void setSshId(Long sshId) {
+        this.sshId = sshId;
+    }
 }

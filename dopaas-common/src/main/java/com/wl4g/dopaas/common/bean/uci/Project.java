@@ -33,143 +33,143 @@ import static java.util.Objects.nonNull;
  */
 public class Project extends BaseBean implements Serializable {
 
-	private static final long serialVersionUID = 381411777614066880L;
+    private static final long serialVersionUID = 381411777614066880L;
 
-	private String projectName;
+    private String projectName;
 
-	private Long vcsId;
+    private Long vcsId;
 
-	private String httpUrl;
+    private String httpUrl;
 
-	private String sshUrl;
+    private String sshUrl;
 
-	private String gitInfo;
+    private String gitInfo;
 
-	private CompositeBasicVcsProjectModel vcsProject;
+    private CompositeBasicVcsProjectModel vcsProject;
 
-	private Long appClusterId;
+    private Long appClusterId;
 
-	/** 构建的文件/目录路径（maven项目的target目录，vue项目的dist目录） */
-	// private String assetsPath;
+    /** 构建的文件/目录路径（maven项目的target目录，vue项目的dist目录） */
+    // private String assetsPath;
 
-	// private String parentAppHome;
+    // private String parentAppHome;
 
-	private String groupName;
+    private String groupName;
 
-	private Integer lockStatus;
+    private Integer lockStatus;
 
-	private Integer isBoot;
+    private Integer isBoot;
 
-	private List<Dependency> dependencies;
+    private List<Dependency> dependencies;
 
-	/**
-	 * Project mapping to Vcs credentials.</br>
-	 * Many(Project)-to-One(Vcs)
-	 */
-	private SourceRepo vcs = new SourceRepo();
+    /**
+     * Project mapping to Vcs credentials.</br>
+     * Many(Project)-to-One(Vcs)
+     */
+    private SourceRepo vcs = new SourceRepo();
 
-	public String getProjectName() {
-		return projectName;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
-	public Long getAppClusterId() {
-		return appClusterId;
-	}
+    public Long getAppClusterId() {
+        return appClusterId;
+    }
 
-	public void setAppClusterId(Long appClusterId) {
-		this.appClusterId = appClusterId;
-	}
+    public void setAppClusterId(Long appClusterId) {
+        this.appClusterId = appClusterId;
+    }
 
-	public String getHttpUrl() {
-		return httpUrl;
-	}
+    public String getHttpUrl() {
+        return httpUrl;
+    }
 
-	public void setHttpUrl(String httpUrl) {
-		this.httpUrl = httpUrl;
-	}
+    public void setHttpUrl(String httpUrl) {
+        this.httpUrl = httpUrl;
+    }
 
-	public String getGroupName() {
-		return groupName;
-	}
+    public String getGroupName() {
+        return groupName;
+    }
 
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 
-	public Integer getLockStatus() {
-		return lockStatus;
-	}
+    public Integer getLockStatus() {
+        return lockStatus;
+    }
 
-	public void setLockStatus(Integer lockStatus) {
-		this.lockStatus = lockStatus;
-	}
+    public void setLockStatus(Integer lockStatus) {
+        this.lockStatus = lockStatus;
+    }
 
-	public List<Dependency> getDependencies() {
-		return dependencies;
-	}
+    public List<Dependency> getDependencies() {
+        return dependencies;
+    }
 
-	public void setDependencies(List<Dependency> dependencies) {
-		this.dependencies = dependencies;
-	}
+    public void setDependencies(List<Dependency> dependencies) {
+        this.dependencies = dependencies;
+    }
 
-	public SourceRepo getVcs() {
-		return vcs;
-	}
+    public SourceRepo getVcs() {
+        return vcs;
+    }
 
-	public Long getVcsId() {
-		return vcsId;
-	}
+    public Long getVcsId() {
+        return vcsId;
+    }
 
-	public void setVcsId(Long vcsId) {
-		this.vcsId = vcsId;
-	}
+    public void setVcsId(Long vcsId) {
+        this.vcsId = vcsId;
+    }
 
-	public String getSshUrl() {
-		return sshUrl;
-	}
+    public String getSshUrl() {
+        return sshUrl;
+    }
 
-	public void setSshUrl(String sshUrl) {
-		this.sshUrl = sshUrl;
-	}
+    public void setSshUrl(String sshUrl) {
+        this.sshUrl = sshUrl;
+    }
 
-	public void setVcs(SourceRepo vcs) {
-		if (nonNull(vcs)) {
-			this.vcs = vcs;
-		}
-	}
+    public void setVcs(SourceRepo vcs) {
+        if (nonNull(vcs)) {
+            this.vcs = vcs;
+        }
+    }
 
-	public Integer getIsBoot() {
-		return isBoot;
-	}
+    public Integer getIsBoot() {
+        return isBoot;
+    }
 
-	public void setIsBoot(Integer isBoot) {
-		this.isBoot = isBoot;
-	}
+    public void setIsBoot(Integer isBoot) {
+        this.isBoot = isBoot;
+    }
 
-	public String getGitInfo() {
-		return gitInfo;
-	}
+    public String getGitInfo() {
+        return gitInfo;
+    }
 
-	public void setGitInfo(String gitInfo) {
-		this.gitInfo = gitInfo;
-	}
+    public void setGitInfo(String gitInfo) {
+        this.gitInfo = gitInfo;
+    }
 
-	public CompositeBasicVcsProjectModel getVcsProject() {
-		return vcsProject;
-	}
+    public CompositeBasicVcsProjectModel getVcsProject() {
+        return vcsProject;
+    }
 
-	public void setVcsProject(CompositeBasicVcsProjectModel vcsProject) {
-		this.vcsProject = vcsProject;
-	}
+    public void setVcsProject(CompositeBasicVcsProjectModel vcsProject) {
+        this.vcsProject = vcsProject;
+    }
 
-	@Override
-	public String toString() {
-		return "Project{" + "projectName='" + projectName + '\'' + ", vcsId=" + vcsId + ", httpUrl='" + httpUrl + '\''
-				+ ", sshUrl='" + sshUrl + '\'' + ", appClusterId=" + appClusterId + ", groupName='" + groupName + '\''
-				+ ", lockStatus=" + lockStatus + ", isBoot=" + isBoot + ", dependencies=" + dependencies + ", vcs=" + vcs + '}';
-	}
+    @Override
+    public String toString() {
+        return "Project{" + "projectName='" + projectName + '\'' + ", vcsId=" + vcsId + ", httpUrl='" + httpUrl + '\''
+                + ", sshUrl='" + sshUrl + '\'' + ", appClusterId=" + appClusterId + ", groupName='" + groupName + '\''
+                + ", lockStatus=" + lockStatus + ", isBoot=" + isBoot + ", dependencies=" + dependencies + ", vcs=" + vcs + '}';
+    }
 }

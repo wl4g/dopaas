@@ -20,83 +20,83 @@ import java.util.List;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class PipeStageBuildingProject extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Long buildingId;
+    private Long buildingId;
 
-	private Long projectId;
+    private Long projectId;
 
-	private String buildCommand;
+    private String buildCommand;
 
-	private String ref;
+    private String ref;
 
-	private Integer sort;
+    private Integer sort;
 
-	// ext
-	private String projectName;
+    // ext
+    private String projectName;
 
-	List<String> branchs;
+    List<String> branchs;
 
-	public Long getBuildingId() {
-		return buildingId;
-	}
+    public Long getBuildingId() {
+        return buildingId;
+    }
 
-	public void setBuildingId(Long buildingId) {
-		this.buildingId = buildingId;
-	}
+    public void setBuildingId(Long buildingId) {
+        this.buildingId = buildingId;
+    }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
-	public String getBuildCommand() {
-		return buildCommand;
-	}
+    public String getBuildCommand() {
+        return buildCommand;
+    }
 
-	public void setBuildCommand(String buildCommand) {
-		this.buildCommand = buildCommand == null ? null : buildCommand.trim();
-	}
+    public void setBuildCommand(String buildCommand) {
+        this.buildCommand = buildCommand == null ? null : buildCommand.trim();
+    }
 
-	public String getRef() {
-		return ref;
-	}
+    public String getRef() {
+        return ref;
+    }
 
-	public void setRef(String ref) {
-		this.ref = ref == null ? null : ref.trim();
-	}
+    public void setRef(String ref) {
+        this.ref = ref == null ? null : ref.trim();
+    }
 
-	public String getProjectName() {
-		return projectName;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
-	public List<String> getBranchs() {
-		return branchs;
-	}
+    public List<String> getBranchs() {
+        return branchs;
+    }
 
-	public void setBranchs(List<String> branchs) {
-		this.branchs = branchs;
-	}
+    public void setBranchs(List<String> branchs) {
+        this.branchs = branchs;
+    }
 
-	public Integer getSort() {
-		return sort;
-	}
+    public Integer getSort() {
+        return sort;
+    }
 
-	public void setSort(Integer sort) {
-		this.sort = sort;
-	}
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
 
-	@Override
-	public String toString() {
-		return "PipeStepBuildingProject{" + "buildingId=" + buildingId + ", projectId=" + projectId + ", buildCommand='"
-				+ buildCommand + '\'' + ", ref='" + ref + '\'' + ", projectName='" + projectName + '\'' + ", branchs=" + branchs
-				+ '}';
-	}
+    @Override
+    public String toString() {
+        return "PipeStepBuildingProject{" + "buildingId=" + buildingId + ", projectId=" + projectId + ", buildCommand='"
+                + buildCommand + '\'' + ", ref='" + ref + '\'' + ", projectName='" + projectName + '\'' + ", branchs=" + branchs
+                + '}';
+    }
 }

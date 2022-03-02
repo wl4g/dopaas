@@ -25,7 +25,7 @@ spring:
   # @see:org.springframework.cloud.sleuth.zipkin2.ZipkinProperties
   zipkin:
     enabled: true # Default by true
-    base-url: http://umc.wl4g.uat:9411/
+    base-url: http://umc.dopaas.uat:9411/
     service:
       name: ${spring.application.name}
     sender:

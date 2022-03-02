@@ -25,21 +25,21 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PipeHistoryPcm extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private Integer enable;
-	private Long pipeId;
-	private Long pcmId;
-	private Long xProjectId;
-	private String xTracker;
-	private String xStatus;
-	private String xSubject;
-	private String xDescription;
-	private String xPriority;
-	private String xAssignTo;
-	private Date xStartDate;
-	private Long xExpectedTime;
-	private String xCustomFields;
-	private String xParentIssueId;
+    private Integer enable;
+    private Long pipeId;
+    private Long pcmId;
+    private Long xProjectId;
+    private String xTracker;
+    private String xStatus;
+    private String xSubject;
+    private String xDescription;
+    private String xPriority;
+    private String xAssignTo;
+    private Date xStartDate;
+    private Long xExpectedTime;
+    private String xCustomFields;
+    private String xParentIssueId;
 
 }

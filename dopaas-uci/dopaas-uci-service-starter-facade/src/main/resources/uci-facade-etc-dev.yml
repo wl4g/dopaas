@@ -25,7 +25,7 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource # com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
-      jdbcUrl: ${UCI_DOPAAS_DB_URL:jdbc:mysql://rds.uci.wl4g.debug:3306/dopaas_uci?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
+      jdbcUrl: ${UCI_DOPAAS_DB_URL:jdbc:mysql://rds.uci.dopaas.dev:3306/dopaas_uci?useunicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&autoReconnect=true}
       username: ${UCI_DOPAAS_DB_USER:dopaas_uci}
       password: ${UCI_DOPAAS_DB_PASSWD:123456}
       connectionTimeout: 30000

@@ -147,5 +147,4 @@ public class EnterpriseApi extends BaseBean {
         return this;
     }
 
-
 }

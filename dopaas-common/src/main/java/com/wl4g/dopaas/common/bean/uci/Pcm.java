@@ -18,76 +18,76 @@ package com.wl4g.dopaas.common.bean.uci;
 import com.wl4g.infra.core.bean.BaseBean;
 
 public class Pcm extends BaseBean {
-	private static final long serialVersionUID = 6815608076300843748L;
+    private static final long serialVersionUID = 6815608076300843748L;
 
-	private String name;
+    private String name;
 
-	private String providerKind;
+    private String providerKind;
 
-	private String baseUrl;
+    private String baseUrl;
 
-	private Integer authType;
+    private Integer authType;
 
-	private String accessToken;
+    private String accessToken;
 
-	private String username;
+    private String username;
 
-	private String password;
+    private String password;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name == null ? null : name.trim();
-	}
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
 
-	public String getProviderKind() {
-		return providerKind;
-	}
+    public String getProviderKind() {
+        return providerKind;
+    }
 
-	public void setProviderKind(String providerKind) {
-		this.providerKind = providerKind == null ? null : providerKind.trim();
-	}
+    public void setProviderKind(String providerKind) {
+        this.providerKind = providerKind == null ? null : providerKind.trim();
+    }
 
-	public String getBaseUrl() {
-		return baseUrl;
-	}
+    public String getBaseUrl() {
+        return baseUrl;
+    }
 
-	public void setBaseUrl(String baseUrl) {
-		this.baseUrl = baseUrl == null ? null : baseUrl.trim();
-	}
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl == null ? null : baseUrl.trim();
+    }
 
-	public Integer getAuthType() {
-		return authType;
-	}
+    public Integer getAuthType() {
+        return authType;
+    }
 
-	public void setAuthType(Integer authType) {
-		this.authType = authType;
-	}
+    public void setAuthType(Integer authType) {
+        this.authType = authType;
+    }
 
-	public String getAccessToken() {
-		return accessToken;
-	}
+    public String getAccessToken() {
+        return accessToken;
+    }
 
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken == null ? null : accessToken.trim();
-	}
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken == null ? null : accessToken.trim();
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username == null ? null : username.trim();
-	}
+    public void setUsername(String username) {
+        this.username = username == null ? null : username.trim();
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password == null ? null : password.trim();
-	}
+    public void setPassword(String password) {
+        this.password = password == null ? null : password.trim();
+    }
 
 }

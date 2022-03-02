@@ -20,14 +20,20 @@ import static com.wl4g.infra.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.infra.common.lang.Assert2.notNullOf;
 import static com.wl4g.infra.common.serialize.JacksonUtils.toJSONString;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Wither;
 
 /**
  * {@link ReleaseConfigInfo}
@@ -38,56 +44,106 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ReleaseConfigInfo extends AbstractConfigInfo {
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+public class ReleaseConfigInfo extends BaseConfigInfo {
     private static final long serialVersionUID = -4016863811283064989L;
 
+    /** Release configuration content sources */
+    @NotNull
+    @NotEmpty
+    private List<ConfigSource> sources = new ArrayList<>(1);
+
     /**
-     * Pulish configuration to nodes.
+     * Publish configuration to services.
      */
     @NotNull
     @NotEmpty
-    private List<ConfigNode> nodes = new ArrayList<>();
+    private List<ConfigInstance> instances = new ArrayList<>();
 
-    /** {@link ReleaseContent} */
-    @NotNull
-    @NotEmpty
-    private List<ReleaseContent> releases = new ArrayList<>(1);
-
-    public ReleaseConfigInfo() {
-        super();
+    public ReleaseConfigInfo(ReleaseConfigInfo release) {
+        setZone(release.getZone());
+        setCluster(release.getCluster());
+        setMeta(release.getMeta());
+        setSources(release.getSources());
+        setInstances(release.getInstances());
     }
 
     @Override
     public void validate(boolean versionValidate, boolean releaseValidate) {
         super.validate(versionValidate, releaseValidate);
-        notEmptyOf(getReleases(), "releases");
-        getReleases().stream().forEach(rs -> rs.validate());
+        notEmptyOf(getSources(), "sources");
+        getSources().stream().forEach(rs -> rs.validate());
     }
 
     /**
-     * {@link ReleaseContent}
+     * {@link ConfigSource}
      *
      * @since
      */
     @Getter
     @Setter
-    public static final class ReleaseContent {
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ConfigSource implements Serializable {
+        private static final long serialVersionUID = -1190806923724681557L;
 
         /** Configuration property source profile. */
         private ConfigProfile profile;
 
         /** Configuration property source content text. */
-        private String sourceContent;
+        private String text;
+
+        public void validate() {
+            notNullOf(getProfile(), "profile");
+            getProfile().validate();
+            hasTextOf(getText(), "sourceContent");
+        }
+
+    }
+
+    /**
+     * {@link ConfigProfile}
+     *
+     * @since
+     */
+    @Getter
+    @Setter
+    @Wither
+    public static class ConfigProfile implements Serializable {
+        private static final long serialVersionUID = -3449133053778594018L;
+
+        /**
+         * Configuration property source type. for example: "YAML"
+         */
+        @NotNull
+        @NotBlank
+        private String type;
+
+        /**
+         * Configuration property source file. for example:"application-pro.yml"
+         */
+        @NotNull
+        @NotBlank
+        private String name;
+
+        public ConfigProfile(@NotBlank String type, @NotBlank String name) {
+            this.type = type;
+            this.name = name;
+            validate();
+        }
 
         @Override
         public String toString() {
             return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
         }
 
-        public void validate() {
-            notNullOf(getProfile(), "profile");
-            getProfile().validate();
-            hasTextOf(getSourceContent(), "sourceContent");
+        public ConfigProfile validate() {
+            notNullOf(getType(), "type");
+            hasTextOf(getName(), "name");
+            return this;
         }
 
     }
