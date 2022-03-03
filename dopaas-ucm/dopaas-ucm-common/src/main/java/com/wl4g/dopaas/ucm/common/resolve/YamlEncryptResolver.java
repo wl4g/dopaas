@@ -27,7 +27,7 @@ import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo.ConfigSource;
 import lombok.Getter;
 
 /**
- * {@link YamlMapEncryptResolver}
+ * {@link YamlEncryptResolver}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-15
@@ -35,7 +35,7 @@ import lombok.Getter;
  * @see
  */
 @Getter
-public class YamlMapEncryptResolver extends AbstractEncryptResolver {
+public class YamlEncryptResolver extends AbstractEncryptResolver {
     private static final long serialVersionUID = -4793468560178245882L;
 
     @Override

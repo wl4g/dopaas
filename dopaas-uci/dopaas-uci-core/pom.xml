@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dopaas-uci-core</artifactId>
 	<packaging>jar</packaging>
-	<name>DoPaaS CI Core</name>
+	<name>DoPaaS UCI Core</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

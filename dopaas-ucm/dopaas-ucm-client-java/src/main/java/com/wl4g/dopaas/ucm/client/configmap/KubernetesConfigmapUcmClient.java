@@ -21,18 +21,18 @@ import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
 import com.wl4g.infra.common.annotation.Reserved;
 
 /**
- * {@link ConfigmapUcmClient}
+ * {@link KubernetesConfigmapUcmClient}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-08-18
  * @since
  */
 @Reserved
-public class ConfigmapUcmClient extends AbstractUcmClient {
+public class KubernetesConfigmapUcmClient extends AbstractUcmClient {
 
-    public ConfigmapUcmClient(ConfigmapUcmClientConfig config, ChangedRecorder repository,
+    public KubernetesConfigmapUcmClient(KubernetesConfigmapUcmClientConfig config, ChangedRecorder repository,
             ConfigEventListener... listeners) {
-        super(new ConfigmapRefreshWatcher(config, repository, listeners));
+        super(new KubernetesConfigmapRefreshWatcher(config, repository, listeners));
     } 
 
     @Override

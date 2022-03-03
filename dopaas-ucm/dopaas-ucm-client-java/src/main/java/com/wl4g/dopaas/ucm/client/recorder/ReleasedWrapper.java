@@ -51,9 +51,9 @@ public class ReleasedWrapper {
     @NotEmpty
     private List<ConfigSource> resolvedSources = new ArrayList<>(1);
 
-    public ReleasedWrapper(@NotNull ReleaseConfigInfo release, @NotEmpty List<ConfigSource> sources) {
+    public ReleasedWrapper(@NotNull ReleaseConfigInfo release, @NotEmpty List<ConfigSource> resolvedSources) {
         this.release = notNullOf(release, "release");
-        this.resolvedSources = notEmptyOf(sources, "sources");
+        this.resolvedSources = notEmptyOf(resolvedSources, "resolvedSources");
     }
 
 }

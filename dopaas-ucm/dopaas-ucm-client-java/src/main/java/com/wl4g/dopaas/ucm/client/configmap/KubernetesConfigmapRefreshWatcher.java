@@ -42,18 +42,18 @@ import com.wl4g.infra.common.task.RunnerProperties;
 import com.wl4g.infra.common.task.RunnerProperties.StartupMode;
 
 /**
- * {@link ConfigmapRefreshWatcher}
+ * {@link KubernetesConfigmapRefreshWatcher}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-08-19
  * @since
  */
 @Reserved
-public class ConfigmapRefreshWatcher extends AbstractRefreshWatcher<ConfigmapUcmClientConfig> {
+public class KubernetesConfigmapRefreshWatcher extends AbstractRefreshWatcher<KubernetesConfigmapUcmClientConfig> {
 
     private FileEventWatcher watcher;
 
-    public ConfigmapRefreshWatcher(ConfigmapUcmClientConfig config, ChangedRecorder recorder, ConfigEventListener... listeners) {
+    public KubernetesConfigmapRefreshWatcher(KubernetesConfigmapUcmClientConfig config, ChangedRecorder recorder, ConfigEventListener... listeners) {
         super(new RunnerProperties(StartupMode.ASYNC), config, recorder, listeners);
     }
 

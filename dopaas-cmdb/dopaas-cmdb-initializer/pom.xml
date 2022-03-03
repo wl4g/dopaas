@@ -10,7 +10,6 @@
 		<groupId>com.wl4g</groupId>
 		<artifactId>dopaas-cmdb</artifactId>
 		<version>2.0.0</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>

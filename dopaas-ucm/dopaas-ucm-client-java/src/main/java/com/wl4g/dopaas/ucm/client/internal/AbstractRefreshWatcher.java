@@ -42,6 +42,7 @@ import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
 import com.wl4g.dopaas.ucm.client.recorder.ReleasedWrapper;
 import com.wl4g.dopaas.ucm.client.utils.InstanceHolder;
 import com.wl4g.dopaas.ucm.common.exception.UcmException;
+import com.wl4g.dopaas.ucm.common.resolve.EncryptResolverFactory;
 import com.wl4g.infra.common.eventbus.EventBusSupport;
 import com.wl4g.infra.common.task.GenericTaskRunner;
 import com.wl4g.infra.common.task.RunnerProperties;
@@ -82,16 +83,16 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
      */
     protected long lastRefreshTime = 0;
 
-    public AbstractRefreshWatcher(@NotNull RunnerProperties runner, @NotNull T config, @NotNull ChangedRecorder repository,
+    public AbstractRefreshWatcher(@NotNull RunnerProperties runner, @NotNull T config, @NotNull ChangedRecorder recorder,
             @Nullable ConfigEventListener... listeners) {
         super(runner);
         this.config = notNullOf(config, "config");
-        this.recorder = notNullOf(repository, "repository");
+        this.recorder = notNullOf(recorder, "recorder");
         EventBusSupport bus = new EventBusSupport(getUcmConfig().getEventThreads());
         this.publisher = new UcmEventPublisher(this, bus);
         this.subscriber = new UcmEventSubscriber(this, bus, listeners);
         this.nodeHolder = new InstanceHolder(config);
-        this.resolver = new DefaultPropertySourceResolver();
+        this.resolver = new EncryptResolverFactory();
     }
 
     /**

@@ -27,14 +27,14 @@ import com.wl4g.dopaas.ucm.common.exception.UnknownEncryptResolverException;
 import com.wl4g.infra.common.reflect.ObjectInstantiators;
 
 /**
- * {@link EncryptResolverHelper}
+ * {@link EncryptResolverFactory}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-20
  * @sine v1.0.0
  * @see
  */
-public class EncryptResolverHelper {
+public class EncryptResolverFactory {
 
     public ConfigSource resolve(ConfigSource source) {
         Class<? extends UcmEncryptResolver> resolveClass = getPropertySourceOfType(source.getProfile().getType());
@@ -50,7 +50,7 @@ public class EncryptResolverHelper {
      * @return
      */
     private Class<? extends UcmEncryptResolver> getPropertySourceOfType(String type) {
-        return PRPERTY_SOURCE_TYPE.entrySet()
+        return PROPERTY_SOURCE_TYPE.entrySet()
                 .stream()
                 .filter(e -> e.getKey().stream().filter(t -> t.equalsIgnoreCase(type)).findFirst().isPresent())
                 .map(e -> e.getValue())
@@ -61,15 +61,15 @@ public class EncryptResolverHelper {
     /**
      * Property source definitions of {@link UcmEncryptResolver}
      */
-    public static final Map<List<String>, Class<? extends UcmEncryptResolver>> PRPERTY_SOURCE_TYPE = new ConcurrentHashMap<>();
+    public static final Map<List<String>, Class<? extends UcmEncryptResolver>> PROPERTY_SOURCE_TYPE = new ConcurrentHashMap<>();
 
     static {
-        PRPERTY_SOURCE_TYPE.put(asList("yaml", "yml"), YamlMapEncryptResolver.class);
-        PRPERTY_SOURCE_TYPE.put(asList("properties"), PropertiesEncryptResolver.class);
-        PRPERTY_SOURCE_TYPE.put(asList("json"), JsonEncryptResolver.class);
-        PRPERTY_SOURCE_TYPE.put(asList("hocon", "conf"), HoconEncryptResolver.class);
-        PRPERTY_SOURCE_TYPE.put(asList("ini", "toml"), TomlEncryptResolver.class);
-        PRPERTY_SOURCE_TYPE.put(asList("xml"), XmlEncryptResolver.class);
+        PROPERTY_SOURCE_TYPE.put(asList("yaml", "yml"), YamlEncryptResolver.class);
+        PROPERTY_SOURCE_TYPE.put(asList("properties"), PropertiesEncryptResolver.class);
+        PROPERTY_SOURCE_TYPE.put(asList("json"), JsonEncryptResolver.class);
+        PROPERTY_SOURCE_TYPE.put(asList("hocon", "conf"), HoconEncryptResolver.class);
+        PROPERTY_SOURCE_TYPE.put(asList("ini", "toml"), TomlEncryptResolver.class);
+        PROPERTY_SOURCE_TYPE.put(asList("xml"), XmlEncryptResolver.class);
     }
 
 }

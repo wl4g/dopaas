@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.wl4g.dopaas.ucm.client.configmap.ConfigmapUcmClientConfig;
+import com.wl4g.dopaas.ucm.client.configmap.KubernetesConfigmapUcmClientConfig;
 import com.wl4g.dopaas.ucm.client.event.RefreshConfigEvent.RefreshContext;
 import com.wl4g.dopaas.ucm.client.hlp.HlpUcmClientConfig;
 import com.wl4g.dopaas.ucm.client.internal.UcmClient;
@@ -81,7 +81,7 @@ public class UcmClientTests {
         out.println("UCM configmap client starting ...");
 
         UcmClient client = UcmClientBuilder.newBuilder()
-                .withConfig(new ConfigmapUcmClientConfig().withCluster("my-orderservice-web"))
+                .withConfig(new KubernetesConfigmapUcmClientConfig().withCluster("my-orderservice-web"))
                 .enableManagementConsole()
                 .withListeners(event -> {
                     out.println("On refresh configuration...");

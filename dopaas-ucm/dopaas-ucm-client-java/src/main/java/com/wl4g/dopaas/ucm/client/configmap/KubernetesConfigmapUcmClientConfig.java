@@ -26,7 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Based on Kubernetes ConfigMap change event UCM client properties.
+ * Based on KUBERNETES ConfigMap change event UCM client properties.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年6月3日
@@ -34,7 +34,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ConfigmapUcmClientConfig extends AbstractUcmClientConfig<ConfigmapUcmClientConfig> {
+public class KubernetesConfigmapUcmClientConfig extends AbstractUcmClientConfig<KubernetesConfigmapUcmClientConfig> {
     private static final long serialVersionUID = -2133451846066162424L;
 
     private List<String> configDirs = new ArrayList<String>() {

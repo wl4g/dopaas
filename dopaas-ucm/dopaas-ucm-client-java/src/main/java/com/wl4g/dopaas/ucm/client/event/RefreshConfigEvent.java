@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import com.wl4g.dopaas.common.bean.ucm.model.ReleaseConfigInfo;
 import com.wl4g.dopaas.ucm.client.event.RefreshConfigEvent.RefreshContext;
 import com.wl4g.dopaas.ucm.client.recorder.ChangedRecorder;
 import com.wl4g.dopaas.ucm.client.recorder.ReleasedWrapper;
@@ -54,11 +53,9 @@ public class RefreshConfigEvent extends GenericUcmEvent<RefreshContext> {
         /** {@link ChangedRecorder} */
         protected final ChangedRecorder recorder;
 
-        public RefreshContext(ReleasedWrapper release, ChangedRecorder repository) {
-            notNullOf(release, "release");
-            notNullOf(repository, "repository");
-            this.release = release;
-            this.recorder = repository;
+        public RefreshContext(ReleasedWrapper release, ChangedRecorder recorder) {
+            this.release = notNullOf(release, "release");
+            this.recorder = notNullOf(recorder, "recorder");
         }
 
         /**
@@ -70,8 +67,6 @@ public class RefreshConfigEvent extends GenericUcmEvent<RefreshContext> {
         public void commitChanged(@Nullable Set<String> changedKeys) {
             if (nonNull(changedKeys)) {
                 recorder.save(changedKeys, release);
-            } else {
-                // TODO ...
             }
         }
 

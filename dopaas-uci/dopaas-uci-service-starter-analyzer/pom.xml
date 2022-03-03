@@ -3,13 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dopaas-uci-service-starter-analyzer</artifactId>
 	<packaging>jar</packaging>
-	<name>DoPaaS CI Codes Analyzer Server</name>
+	<name>DoPaaS UCI Codes Analyzer Server</name>
 	<url>https://ci.dopaas.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>dopaas-uci</artifactId>
 		<version>3.0.0</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>

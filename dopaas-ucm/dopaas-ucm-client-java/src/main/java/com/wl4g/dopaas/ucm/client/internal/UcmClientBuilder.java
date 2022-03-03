@@ -19,8 +19,8 @@ import static java.util.Objects.nonNull;
 
 import org.apache.commons.beanutils.BeanUtilsBean2;
 
-import com.wl4g.dopaas.ucm.client.configmap.ConfigmapUcmClient;
-import com.wl4g.dopaas.ucm.client.configmap.ConfigmapUcmClientConfig;
+import com.wl4g.dopaas.ucm.client.configmap.KubernetesConfigmapUcmClient;
+import com.wl4g.dopaas.ucm.client.configmap.KubernetesConfigmapUcmClientConfig;
 import com.wl4g.dopaas.ucm.client.console.UcmManagementConsole;
 import com.wl4g.dopaas.ucm.client.event.ConfigEventListener;
 import com.wl4g.dopaas.ucm.client.hlp.HlpUcmClient;
@@ -126,8 +126,8 @@ public class UcmClientBuilder {
             client = new HlpUcmClient((HlpUcmClientConfig) config, recorder, listeners);
         } else if (config instanceof RpcUcmClientConfig) {
             client = new RpcUcmClient((RpcUcmClientConfig) config, recorder, listeners);
-        } else if (config instanceof ConfigmapUcmClientConfig) {
-            client = new ConfigmapUcmClient((ConfigmapUcmClientConfig) config, recorder, listeners);
+        } else if (config instanceof KubernetesConfigmapUcmClientConfig) {
+            client = new KubernetesConfigmapUcmClient((KubernetesConfigmapUcmClientConfig) config, recorder, listeners);
         } else {
             throw new Error("Shouldn't be here");
         }

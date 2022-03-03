@@ -12,9 +12,9 @@
 		<version>3.0.0</version>
 	</parent>
 	<modules>
-		<module>dopaas-ucm-example</module>
-		<module>dopaas-ucm-common</module>
-		<module>dopaas-ucm-client-java</module>
+		<!-- <module>dopaas-ucm-example</module> -->
+		<!-- <module>dopaas-ucm-common</module> -->
+		<!-- <module>dopaas-ucm-client-java</module> -->
 		<!-- <module>dopaas-ucm-client-springboot</module> -->
 		<!-- <module>dopaas-ucm-config</module> -->
 		<!-- <module>dopaas-ucm-service-facade</module> -->

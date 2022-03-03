@@ -3,13 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dopaas-uci-service-starter-server</artifactId>
 	<packaging>jar</packaging>
-	<name>DoPaaS CI Server</name>
+	<name>DoPaaS UCI Server</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>dopaas-uci</artifactId>
 		<version>3.0.0</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
