@@ -11,43 +11,42 @@
 # #### Configuration of specical on which DoPaaS(uci-facade) service(dev). ####
 #
 spring:
-  xcloud:
-    component:
-      notification:
-        mail:
-          host: smtp.163.com
-          port: 465
-          username: babaa1f4@163.com
-          password: UDKTGOHTZOBOTHVL
-          protocol: smtp
-        sms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-        vms:
-          aliyun:
-            accessKeyId: ${ALIYUN_KEY}
-            accessKeySecret: ${ALIYUN_SECRET}
-            calledShowNumber: 055162153866
-    dopaas.uci:
-      #workspace: # Default by to {user.home}/.ci-workspace
-      executor:
-        concurrency: 10
-        accept-queue: 2
-      vcs:
-        gitlab:
-          search-projects-default-page-limit: 20
-      build:
-        job-max-clean-interval-ms: 30_000
-        job-timeout-ms: 3000_000
-        shared-dependency-try-timeout-ms: 1200_000
-      deploy:
-        #remoteHome-tmp-dir: # Default by to $HOME/.ci-temporary
-        cipher-key: 03DE18C2FC4E605F
-        transfer-timeout-ms: 300_000
-        docker-native:
-          docker-push-username: xburnerair00
-          docker-push-password: hwj13535248668
-      docker:
-        #make docker image in where addr,e.g: tcp://localhost:2375 default port is 2375
-          make-image-addr: tcp://10.0.0.161:2375
+  infra:
+    notification:
+      mail:
+        host: smtp.163.com
+        port: 465
+        username: babaa1f4@163.com
+        password: UDKTGOHTZOBOTHVL
+        protocol: smtp
+      sms:
+        aliyun:
+          accessKeyId: ${ALIYUN_KEY}
+          accessKeySecret: ${ALIYUN_SECRET}
+      vms:
+        aliyun:
+          accessKeyId: ${ALIYUN_KEY}
+          accessKeySecret: ${ALIYUN_SECRET}
+          calledShowNumber: 055162153866
+  dopaas.uci:
+    #workspace: # Default by to {user.home}/.ci-workspace
+    executor:
+      concurrency: 10
+      accept-queue: 2
+    vcs:
+      gitlab:
+        search-projects-default-page-limit: 20
+    build:
+      job-max-clean-interval-ms: 30_000
+      job-timeout-ms: 3000_000
+      shared-dependency-try-timeout-ms: 1200_000
+    deploy:
+      #remoteHome-tmp-dir: # Default by to $HOME/.ci-temporary
+      cipher-key: 03DE18C2FC4E605F
+      transfer-timeout-ms: 300_000
+      docker-native:
+        docker-push-username: xburnerair00
+        docker-push-password: hwj13535248668
+    docker:
+      #make docker image in where addr,e.g: tcp://localhost:2375 default port is 2375
+        make-image-addr: tcp://10.0.0.161:2375

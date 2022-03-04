@@ -13,10 +13,9 @@ spring:
   profiles:
     include: common,support,util
     active: dev
-  xcloud:
-    component:
-      support:
-        cli.enabled: true
+  infra:
+    support:
+      cli.enabled: true
 
 # Logging configuration.
 logging:

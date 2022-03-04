@@ -12,7 +12,7 @@
 #
 spring:
   banner:
-    location: classpath:banner.txt
+    location: classpath:dopaas-banner.txt
   infra:
     data:
       mybatis:

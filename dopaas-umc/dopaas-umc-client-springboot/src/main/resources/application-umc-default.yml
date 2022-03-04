@@ -10,22 +10,22 @@
 
 spring:
   dopaas:
-      umc:
-        client:
-          scrape:
-            initialDelayMs: 3_000 # Default by 3000ms.
-            delayMs: 15_000 # Default by 15000ms.
-            concurrency: 1 # Default by 1 threads.
-          counter:
+    umc:
+      client:
+        scrape:
+          initialDelayMs: 3_000 # Default by 3000ms.
+          delayMs: 15_000 # Default by 15000ms.
+          concurrency: 1 # Default by 1 threads.
+        counter:
+          enabled: false
+          expression: execution(* com.wl4g.dopaas.umc.example.web.ExampleController.*(..))
+        timing:
+          enabled: false
+          expression: execution(* com.wl4g.dopaas.umc.example.web.ExampleController.*(..))
+          addon-to-health:
             enabled: false
-            expression: execution(* com.wl4g.dopaas.umc.example.web.ExampleController.*(..))
-          timing:
-            enabled: false
-            expression: execution(* com.wl4g.dopaas.umc.example.web.ExampleController.*(..))
-            addon-to-health:
-              enabled: false
-              samples: 32
-              timeoutThresholdMs: 5_000
+            samples: 32
+            timeoutThresholdMs: 5_000
 
 # see:https://docs.spring.io/spring-boot/docs/2.3.2.RELEASE/actuator-api/html/#overview
 # see:org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties

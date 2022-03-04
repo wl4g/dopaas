@@ -74,8 +74,8 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
     /** {@link ChangedRecorder} */
     protected final ChangedRecorder recorder;
 
-    /** {@link PropertySourceResolver} */
-    protected final PropertySourceResolver resolver;
+    /** {@link EncryptResolverFactory} */
+    protected final EncryptResolverFactory factory;
 
     /**
      * 
@@ -92,7 +92,7 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
         this.publisher = new UcmEventPublisher(this, bus);
         this.subscriber = new UcmEventSubscriber(this, bus, listeners);
         this.nodeHolder = new InstanceHolder(config);
-        this.resolver = new EncryptResolverFactory();
+        this.factory = new EncryptResolverFactory();
     }
 
     /**
@@ -153,14 +153,13 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
      */
     protected ReleaseConfigInfoRequest createFetchRequest() {
         // Create configuration watching fetching command
-        ReleasedWrapper last = recorder.last();
-
+        ReleasedWrapper lastChanged = recorder.last();
         ReleaseConfigInfoRequest fetch = new ReleaseConfigInfoRequest();
         fetch.setZone(config.getZone());
         fetch.setCluster(config.getCluster());
         fetch.setInstance(nodeHolder.getConfigInstance());
         fetch.setProfiles(config.getProfiles());
-        fetch.setMeta(nonNull(last) ? last.getRelease().getMeta() : null);
+        fetch.setMeta(nonNull(lastChanged) ? lastChanged.getRelease().getMeta() : null);
         return fetch;
     }
 
@@ -183,16 +182,15 @@ public abstract class AbstractRefreshWatcher<T extends AbstractUcmClientConfig<?
             printConfigSources(info);
 
             // Resolving to property sources.
-            List<UcmConfigSource> sources = safeList(info.getSources()).stream()
-                    .map(r -> resolver.resolve(r.getProfile(), r.getText()))
-                    .collect(toList());
+            List<ConfigSource> resolvedSources = safeList(info.getSources()).stream().map(cs -> factory.resolve(cs)).collect(
+                    toList());
 
-            // Addition refresh config source.
-            ReleasedWrapper wrapper = new ReleasedWrapper(info, sources);
-            recorder.save(wrapper);
+            // Addition refresh configuration source.
+            ReleasedWrapper wrap = new ReleasedWrapper(info, resolvedSources);
+            recorder.save(wrap);
 
             // Publishing refresh
-            getPublisher().publishRefreshEvent(wrapper);
+            getPublisher().publishRefreshEvent(wrap);
             break;
         case WATCH_CHECKPOINT:
             // Report refresh changed
