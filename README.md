@@ -203,8 +203,8 @@ com.wl4g.UrmManager
 - [IAM](iam/README.md)                Unified identity and access management services, support SSO/CAS/oauth2/opensaml etc, It also supports multiple deployment modes(local/cluster/gateway)
 - [Gateway](gateway/README.md)        Enterprise microservice gateway based on spring cloud gateway, Can integrate with CI to realize Canary deployment.
 
-
 ## 5. Communicate, feedback and contribute?
+
 - Click add to group [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)
 - ![q855349515](shots/q855349515.jpg)
 - GitHub: https://github.com/wl4g/dopaas
@@ -212,3 +212,7 @@ com.wl4g.UrmManager
 - No matter how strong a person's personal ability is, he can't defeat a team. He hopes that his brothers and sisters can support him and contribute some of his own code to improve it together (^_^).
 
 [Share Code?](https://www.cnblogs.com/wenber/p/3630921.html)
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/wl4g/dopaas.svg)](https://starchart.cc/wl4g/dopaas)

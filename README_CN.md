@@ -1,4 +1,5 @@
-# DoPaaS
+# DoPaaS (DevOps on PaaS)
+
 ![DoPaaS](shots/logo.jpg)
 
 [中文文档](README_CN.md) | English version goes [here](README.md)
@@ -202,6 +203,7 @@ http://wl4g.debug &nbsp;&nbsp; 默认账号密码：root/wl4g.com
 
 
 ## 5. 如何交流、反馈、参与贡献？
+
 - 点击入群 [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)
 - ![q855349515](shots/q855349515.jpg)
 - GitHub：https://github.com/wl4g/dopaas
@@ -209,3 +211,7 @@ http://wl4g.debug &nbsp;&nbsp; 默认账号密码：root/wl4g.com
 - 一个人的个人能力再强，也无法战胜一个团队，希望兄弟姐妹的支持，能够贡献出自己的部分代码，参与进来共同完善它(^_^)。
 
 [如何共享代码](https://www.cnblogs.com/wenber/p/3630921.html)
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/wl4g/dopaas.svg)](https://starchart.cc/wl4g/dopaas)
