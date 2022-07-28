@@ -25,10 +25,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 
 import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.RdbmsRepository;
-import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.SimpleHfileToRdbmsExporter;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
+import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
 
 /**
  * {@link RdbmsHandler}
@@ -62,9 +63,13 @@ public abstract class RdbmsHandler {
      */
     private final RdbmsRepository repository;
 
-    public RdbmsHandler(CommandLine line) {
-        this.tableName = HBaseTools.getShortTableName(line.getOptionValue("tabname"));
-        this.repository = createRepository0(line);
+    public RdbmsHandler(CommandLineFacade line) {
+        try {
+            this.tableName = HBaseTools.getShortTableName(line.getString("tabname"));
+            this.repository = createRepository0(line);
+        } catch (ParseException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -73,8 +78,8 @@ public abstract class RdbmsHandler {
      * @param alias
      * @return
      */
-    public static RdbmsHandler getInstance(CommandLine line) throws Exception {
-        String jdbcUrl = line.getOptionValue("jdbcUrl");
+    public static RdbmsHandler getInstance(CommandLineFacade line) throws Exception {
+        String jdbcUrl = line.getString("jdbcUrl");
 
         Class<? extends RdbmsHandler> cls = null;
         Iterator<Entry<String[], Class<? extends RdbmsHandler>>> it = registers.entrySet().iterator();
@@ -96,14 +101,14 @@ public abstract class RdbmsHandler {
      * 
      * @param line
      * @return
+     * @throws ParseException
      */
-    private RdbmsRepository createRepository0(CommandLine line) {
+    private RdbmsRepository createRepository0(CommandLineFacade line) throws ParseException {
         String driver = getDriverClass();
-        String url = line.getOptionValue("jdbcUrl");
-        String username = line.getOptionValue("username");
-        String password = line.getOptionValue("password");
-        String maxConnections = line.getOptionValue("maxConnections",
-                SimpleHfileToRdbmsExporter.DEFAULT_RMDB_MAXCONNECTIONS + "");
+        String url = line.getString("jdbcUrl");
+        String username = line.getString("username");
+        String password = line.getString("password");
+        String maxConnections = line.getString("maxConnections");
         return new RdbmsRepository(driver, url, username, password, Integer.parseInt(maxConnections));
     }
 

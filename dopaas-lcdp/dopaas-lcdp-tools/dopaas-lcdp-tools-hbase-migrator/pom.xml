@@ -14,13 +14,12 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<scala.version>2.11</scala.version>
-		<!-- HBase-1.2.5 dependencies -->
 		<protobuf.version>2.5.0</protobuf.version>
-		<guava.version>12.0.1</guava.version>
-		<hadoop.version>2.7.2</hadoop.version>
-		<hbase-hadoop2.version>1.4.14</hbase-hadoop2.version>
+		<guava.version>11.0.2</guava.version>
+		<hadoop.version>2.8.5</hadoop.version>
+		<hbase-hadoop2.version>2.2.0</hbase-hadoop2.version>
 		<spark.version>2.4.8</spark.version>
-		<spark-logging.version>1.5.2</spark-logging.version>
+		<!-- <spark-logging.version>1.5.2</spark-logging.version> -->
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -71,26 +70,26 @@
 				<artifactId>spark-core_${scala.version}</artifactId>
 				<version>${spark.version}</version>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.spark</groupId> -->
-			<!-- <artifactId>spark-sql_${scala.version}</artifactId> -->
-			<!-- <version>${spark.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.spark</groupId> -->
-			<!-- <artifactId>spark-streaming_${scala.version}</artifactId> -->
-			<!-- <version>${spark.version}</version> -->
-			<!-- </dependency> -->
-			<!-- <dependency> -->
-			<!-- <groupId>org.apache.spark</groupId> -->
-			<!-- <artifactId>spark-streaming-kafka-0-10_${scala.version}</artifactId> -->
-			<!-- <version>${spark.version}</version> -->
-			<!-- </dependency> -->
 			<dependency>
 				<groupId>org.apache.spark</groupId>
-				<artifactId>spark-core-logging</artifactId>
-				<version>${spark-logging.version}</version>
+				<artifactId>spark-sql_${scala.version}</artifactId>
+				<version>${spark.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-streaming_${scala.version}</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.spark</groupId>
+				<artifactId>spark-streaming-kafka-0-10_${scala.version}</artifactId>
+				<version>${spark.version}</version>
+			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>org.apache.spark</groupId> -->
+			<!-- <artifactId>spark-core-logging</artifactId> -->
+			<!-- <version>${spark-logging.version}</version> -->
+			<!-- </dependency> -->
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -129,25 +128,25 @@
 			<artifactId>spark-core_${scala.version}</artifactId>
 			<version>${spark.version}</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.spark</groupId> -->
-		<!-- <artifactId>spark-sql_${scala.version}</artifactId> -->
-		<!-- <version>${spark.version}</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.spark</groupId> -->
-		<!-- <artifactId>spark-streaming_${scala.version}</artifactId> -->
-		<!-- <version>${spark.version}</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.spark</groupId> -->
-		<!-- <artifactId>spark-streaming-kafka-0-10_${scala.version}</artifactId> -->
-		<!-- <version>${spark.version}</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-core-logging</artifactId>
+			<artifactId>spark-sql_${scala.version}</artifactId>
+			<version>${spark.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-streaming_${scala.version}</artifactId>
+			<version>${spark.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-streaming-kafka-0-10_${scala.version}</artifactId>
+			<version>${spark.version}</version>
+		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.spark</groupId> -->
+		<!-- <artifactId>spark-core-logging</artifactId> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>jdk.tools</groupId>
 			<artifactId>jdk.tools</artifactId>

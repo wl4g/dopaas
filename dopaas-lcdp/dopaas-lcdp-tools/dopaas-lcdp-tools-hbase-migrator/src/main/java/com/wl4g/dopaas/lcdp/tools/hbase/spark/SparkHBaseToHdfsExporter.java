@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,10 +47,11 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 
-import com.wl4g.infra.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.HfileBulkToHdfsExporter;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.CsvUtil;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
+import com.wl4g.infra.common.cli.CommandLineTool.Builder;
+import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
 
 import scala.Tuple2;
 
@@ -88,7 +88,7 @@ public class SparkHBaseToHdfsExporter implements Serializable {
      * </pre>
      */
     public static void main(String[] args) throws Exception {
-        CommandLine cli = new Builder().option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.")
+        CommandLineFacade cli = new Builder().option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.")
                 .option("z", "zkaddr", null, "Zookeeper address.")
                 .option("t", "tabname", null, "Hbase table name.")
                 .option("o", "output", DEFAULT_OUTPUT_DIR + "/{tabname}", "Hfile export output hdfs directory.")
@@ -97,13 +97,13 @@ public class SparkHBaseToHdfsExporter implements Serializable {
                 .option("e", "endRow", EMPTY, "Scan end rowkey.")
                 .option("S", "startTime", EMPTY, "Scan start timestamp.")
                 .option("E", "endTime", EMPTY, "Scan end timestamp.")
-                .option("R", "repartition", EMPTY, "Repartition number.")
+                .option("R", "repartition", "0", "Repartition number.")
                 .build(args);
-        String zkaddr = cli.getOptionValue("zkaddr");
-        String tabname = cli.getOptionValue("tabname");
-        String outputdir = cli.getOptionValue("output", DEFAULT_OUTPUT_DIR) + "/" + tabname;
-        String user = cli.getOptionValue("user", DEFAULT_USER);
-        int repartition = Integer.parseInt(cli.getOptionValue("repartition", "0"));
+        String zkaddr = cli.getString("zkaddr");
+        String tabname = cli.getString("tabname");
+        String outputdir = cli.getString("output") + "/" + tabname;
+        String user = cli.getString("user");
+        int repartition = Integer.parseInt(cli.getString("repartition"));
 
         SparkConf conf = new SparkConf().setAppName(SparkHBaseToHdfsExporter.class.getSimpleName())
                 .setMaster("local[*]")

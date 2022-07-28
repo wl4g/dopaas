@@ -25,7 +25,6 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -37,6 +36,7 @@ import org.apache.hadoop.hbase.util.Base64;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import com.google.common.io.Resources;
+import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
 import com.wl4g.infra.common.lang.Assert2;
 import com.wl4g.infra.common.resource.resolver.ClassPathResourcePatternResolver;
 
@@ -127,11 +127,11 @@ public abstract class HBaseTools {
      * @param cli
      * @throws IOException
      */
-    public static void setScanIfNecessary(Configuration conf, CommandLine cli) throws IOException {
-        String startRow = cli.getOptionValue("startRow");
-        String endRow = cli.getOptionValue("endRow");
-        String startTime = cli.getOptionValue("startTime");
-        String endTime = cli.getOptionValue("endTime");
+    public static void setScanIfNecessary(Configuration conf, CommandLineFacade cli) throws Exception {
+        String startRow = cli.getString("startRow");
+        String endRow = cli.getString("endRow");
+        String startTime = cli.getString("startTime");
+        String endTime = cli.getString("endTime");
 
         boolean enabledScan = false;
         Scan scan = new Scan();

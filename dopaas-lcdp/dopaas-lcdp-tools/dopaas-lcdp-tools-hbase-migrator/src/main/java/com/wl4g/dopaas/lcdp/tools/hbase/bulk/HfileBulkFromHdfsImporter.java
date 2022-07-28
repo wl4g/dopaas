@@ -17,7 +17,6 @@ package com.wl4g.dopaas.lcdp.tools.hbase.bulk;
 
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_MAP_LIMIT;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -29,8 +28,9 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 
-import com.wl4g.infra.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
+import com.wl4g.infra.common.cli.CommandLineTool.Builder;
+import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
 
 /**
  * HASE hfile bulk importer.
@@ -57,21 +57,21 @@ public class HfileBulkFromHdfsImporter {
      */
     public static void main(String[] args) throws Exception {
         HBaseTools.showBanner();
-        CommandLine line = new Builder().option("z", "zkaddr", null, "Zookeeper address.")
+        CommandLineFacade line = new Builder().option("z", "zkaddr", null, "Zookeeper address.")
                 .option("t", "tabname", null, "Hbase table name.")
                 .option("p", "path", null, "Data hdfs path to be import. eg. hdfs://localhost:9000/bak/mydb.tb_example1")
                 .option("L", "mapLimit", DEFAULT_MAP_LIMIT, "Mapred tasks limit.")
                 .build(args);
 
         Configuration conf = HBaseConfiguration.create();
-        conf.set(HConstants.ZOOKEEPER_QUORUM, line.getOptionValue("z"));
+        conf.set(HConstants.ZOOKEEPER_QUORUM, line.getString("z"));
 
         Connection conn = ConnectionFactory.createConnection(conf);
         Admin admin = conn.getAdmin();
-        Table table = conn.getTable(TableName.valueOf(line.getOptionValue("t")));
+        Table table = conn.getTable(TableName.valueOf(line.getString("t")));
         LoadIncrementalHFiles load = new LoadIncrementalHFiles(conf);
-        load.doBulkLoad(new Path(line.getOptionValue("p")), admin, table,
-                conn.getRegionLocator(TableName.valueOf(line.getOptionValue("t"))));
+        load.doBulkLoad(new Path(line.getString("p")), admin, table,
+                conn.getRegionLocator(TableName.valueOf(line.getString("t"))));
     }
 
 }

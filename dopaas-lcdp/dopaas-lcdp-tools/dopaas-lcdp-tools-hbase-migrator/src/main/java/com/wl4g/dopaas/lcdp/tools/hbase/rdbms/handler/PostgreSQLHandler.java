@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.cli.CommandLine;
+import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
 
 /**
  * Mysql sql builder
@@ -31,7 +31,7 @@ import org.apache.commons.cli.CommandLine;
  */
 public class PostgreSQLHandler extends RdbmsHandler {
 
-    public PostgreSQLHandler(CommandLine line) {
+    public PostgreSQLHandler(CommandLineFacade line) {
         super(line);
     }
 

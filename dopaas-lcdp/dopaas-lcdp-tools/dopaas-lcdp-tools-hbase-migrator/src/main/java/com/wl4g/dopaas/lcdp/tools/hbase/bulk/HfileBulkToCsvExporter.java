@@ -15,7 +15,6 @@
  */
 package com.wl4g.dopaas.lcdp.tools.hbase.bulk;
 
-import static com.wl4g.infra.common.lang.Assert2.state;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_HBASE_MR_TMPDIR;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_MAP_LIMIT;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_OUTPUT_DIR;
@@ -24,13 +23,13 @@ import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_USER;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_GROUP;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_PROCESSED;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_TOTAL;
+import static com.wl4g.infra.common.lang.Assert2.state;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.net.URI;
 import java.util.Date;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.logging.Log;
@@ -48,9 +47,10 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import com.wl4g.infra.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.bulk.mapred.HfileToCsvMapper;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
+import com.wl4g.infra.common.cli.CommandLineTool.Builder;
+import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
 
 /**
  * Simple HBase hfile to CSV files exporter. </br>
@@ -86,7 +86,7 @@ public class HfileBulkToCsvExporter {
      */
     public static void main(String[] args) throws Exception {
         HBaseTools.showBanner();
-        CommandLine cli = new Builder().option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.")
+        CommandLineFacade cli = new Builder().option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.")
                 .option("z", "zkaddr", null, "Zookeeper address.")
                 .option("t", "tabname", null, "Hbase table name.")
                 .option("o", "output", DEFAULT_OUTPUT_DIR + "/{tabname}", "Hfile export output hdfs directory.")
@@ -109,17 +109,16 @@ public class HfileBulkToCsvExporter {
      * @throws Exception
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void doExporting(CommandLine cli) throws Exception {
+    public static void doExporting(CommandLineFacade cli) throws Exception {
         // Gets arguments.
-        String zkaddr = cli.getOptionValue("zkaddr");
-        String tabname = cli.getOptionValue("tabname");
-        String user = cli.getOptionValue("user", DEFAULT_USER);
-        String tmpdir = cli.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR);
-        String outputdir = cli.getOptionValue("output", DEFAULT_OUTPUT_DIR) + "/" + tabname;
-        String batchSize = cli.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE);
-        String mapLimit = cli.getOptionValue("mapLimit", DEFAULT_MAP_LIMIT);
-        Class<TableMapper> mapperClass = (Class<TableMapper>) ClassUtils
-                .getClass(cli.getOptionValue("mapperClass", DEFAULT_MAPPER_CLASS));
+        String zkaddr = cli.getString("zkaddr");
+        String tabname = cli.getString("tabname");
+        String user = cli.getString("user");
+        String tmpdir = cli.getString("T");
+        String outputdir = cli.getString("output");
+        String batchSize = cli.getString("batchSize");
+        String mapLimit = cli.getString("mapLimit");
+        Class<TableMapper> mapperClass = (Class<TableMapper>) ClassUtils.getClass(cli.getString("mapperClass"));
 
         // Configuration.
         Configuration conf = HBaseConfiguration.create();

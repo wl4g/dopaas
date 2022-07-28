@@ -15,21 +15,19 @@
  */
 package com.wl4g.dopaas.lcdp.tools.hbase.rdbms;
 
-import static com.wl4g.infra.common.lang.Assert2.state;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_HBASE_MR_TMPDIR;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_OUTPUT_DIR;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_SCAN_BATCH_SIZE;
-import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFAULT_USER;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_GROUP;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_PROCESSED;
 import static com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools.DEFUALT_COUNTER_TOTAL;
+import static com.wl4g.infra.common.lang.Assert2.state;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.net.URI;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,10 +46,11 @@ import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import com.wl4g.infra.common.cli.CommandUtils.Builder;
 import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.handler.RdbmsHandler;
 import com.wl4g.dopaas.lcdp.tools.hbase.rdbms.mapred.SimpleHfileToRdbmsMapper;
 import com.wl4g.dopaas.lcdp.tools.hbase.util.HBaseTools;
+import com.wl4g.infra.common.cli.CommandLineTool.Builder;
+import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
 
 /**
  * Simple HBase HFile to RDBMS exporter. </br>
@@ -99,30 +98,31 @@ public class SimpleHfileToRdbmsExporter {
     public static void main(String[] args) throws Exception {
         HBaseTools.showBanner();
 
-        Builder builder = new Builder();
-        builder.option("V", "verbose", "false", "Set to true to show messages about what the migrator(MR) is doing.");
-        builder.option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.");
-        builder.option("z", "zkaddr", null, "Zookeeper address.");
-        builder.option("t", "tabname", null, "Hbase table name.");
-        builder.option("o", "outputDir", DEFAULT_OUTPUT_DIR + "/{tableName}", "Hfile export output hdfs directory.");
-        builder.option("b", "batchSize", DEFAULT_SCAN_BATCH_SIZE, "Scan batch size.");
-        builder.option("s", "startRow", EMPTY, "Scan start rowkey.");
-        builder.option("e", "endRow", EMPTY, "Scan end rowkey.");
-        builder.option("S", "startTime", EMPTY, "Scan start timestamp.");
-        builder.option("E", "endTime", EMPTY, "Scan end timestamp.");
-        builder.option("U", "user", "hbase", "User name used for scan check.");
-        builder.option("M", "mapperClass", DEFAULT_MAPPER_CLASS, "Transfrom migration mapper class name.");
-        builder.option("j", "jdbcUrl", null, "Hbase to rmdb database jdbc url");
-        builder.option("u", "username", null, "Hbase to rmdb database jdbc username");
-        builder.option("p", "password", null, "Hbase to rmdb database jdbc password");
-        builder.option("c", "maxConnections", valueOf(DEFAULT_RMDB_MAXCONNECTIONS),
-                "Hbase to rmdb database jdbc maxConnections.");
-        CommandLine line = builder.build(args);
+        CommandLineFacade line = new Builder()
+                .option("V", "verbose", "false", "Set to true to show messages about what the migrator(MR) is doing.")
+                .option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.")
+                .option("z", "zkaddr", null, "Zookeeper address.")
+                .option("t", "tabname", null, "Hbase table name.")
+                .option("o", "outputDir", DEFAULT_OUTPUT_DIR + "/{tableName}", "Hfile export output hdfs directory.")
+                .option("b", "batchSize", DEFAULT_SCAN_BATCH_SIZE, "Scan batch size.")
+                .option("b", "mapLimit", "0", "map limit.")
+                .option("s", "startRow", EMPTY, "Scan start rowkey.")
+                .option("e", "endRow", EMPTY, "Scan end rowkey.")
+                .option("S", "startTime", EMPTY, "Scan start timestamp.")
+                .option("E", "endTime", EMPTY, "Scan end timestamp.")
+                .option("U", "user", "hbase", "User name used for scan check.")
+                .option("M", "mapperClass", DEFAULT_MAPPER_CLASS, "Transfrom migration mapper class name.")
+                .option("j", "jdbcUrl", null, "Hbase to rmdb database jdbc url")
+                .option("u", "username", null, "Hbase to rmdb database jdbc username")
+                .option("p", "password", null, "Hbase to rmdb database jdbc password")
+                .option("c", "maxConnections", valueOf(DEFAULT_RMDB_MAXCONNECTIONS),
+                        "Hbase to rmdb database jdbc maxConnections.")
+                .build(args);
 
         // Gets rmdb provider instance.
         currentMigrator = RdbmsHandler.getInstance(line);
         // Verbose
-        verbose = Boolean.parseBoolean(line.getOptionValue("verbose"));
+        verbose = Boolean.parseBoolean(line.getString("verbose"));
 
         // DO exporting
         doExporting(line);
@@ -135,17 +135,16 @@ public class SimpleHfileToRdbmsExporter {
      * @throws Exception
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void doExporting(CommandLine line) throws Exception {
+    public static void doExporting(CommandLineFacade line) throws Exception {
         // Gets arguments.
-        String tabname = line.getOptionValue("tabname");
-        String user = line.getOptionValue("user", DEFAULT_USER);
-        String tmpdir = line.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR);
-        String outputdir = line.getOptionValue("output", DEFAULT_OUTPUT_DIR) + "/" + tabname;
-        String zkaddr = line.getOptionValue("zkaddr");
-        String batchSize = line.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE);
-        String mapLimit = line.getOptionValue("mapLimit", "0");
-        Class<TableMapper> mapperClass = (Class<TableMapper>) ClassUtils
-                .getClass(line.getOptionValue("mapperClass", DEFAULT_MAPPER_CLASS));
+        String tabname = line.getString("tabname");
+        String user = line.getString("user");
+        String tmpdir = line.getString("T");
+        String outputdir = line.getString("output") + "/" + tabname;
+        String zkaddr = line.getString("zkaddr");
+        String batchSize = line.getString("batchSize");
+        String mapLimit = line.getString("mapLimit");
+        Class<TableMapper> mapperClass = (Class<TableMapper>) ClassUtils.getClass(line.getString("mapperClass"));
 
         // Configuration.
         Configuration conf = HBaseConfiguration.create();

@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.cli.CommandLine;
+import com.wl4g.infra.common.cli.CommandLineTool.CommandLineFacade;
 
 /**
  * Oracle11g sql builder
@@ -31,7 +31,7 @@ import org.apache.commons.cli.CommandLine;
  */
 public class Oracle11gHandler extends RdbmsHandler {
 
-    public Oracle11gHandler(CommandLine line) {
+    public Oracle11gHandler(CommandLineFacade line) {
         super(line);
     }
 
