@@ -17,7 +17,7 @@
 		<!-- HBase-1.2.5 dependencies -->
 		<protobuf.version>2.5.0</protobuf.version>
 		<guava.version>12.0.1</guava.version>
-		<hadoop.version>2.7.2</hadoop.version>
+		<hadoop.version>2.7.0</hadoop.version>
 		<hbase-hadoop2.version>1.4.14</hbase-hadoop2.version>
 		<spark.version>2.4.8</spark.version>
 		<spark-logging.version>1.5.2</spark-logging.version>
